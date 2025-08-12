@@ -187,20 +187,81 @@ const updateNxProjectConfigurationBuildOutputs = (outputs: JsonUpdate) => {
   });
 };
 
-const computePackageJsonFilesAndPreconstructConfig = (
+type SubpathPackageJson = {
+  name: string;
+  private: boolean;
+  types: string;
+  module: string;
+  main: string;
+  sideEffects?: boolean;
+};
+const writeSubpathPackageJsonFiles = (moduleDirectories: string[]) => {
+  moduleDirectories.forEach((moduleDirectory) => {
+    const moduleName = getLastPathFolder(moduleDirectory);
+    if (moduleName === undefined) {
+      throw new Error(
+        `Should never occur, moduleName is undefined ${moduleDirectory}`,
+      );
+    }
+
+    const content: SubpathPackageJson = {
+      name: `twenty-shared/${moduleName}`,
+      private: true,
+      types: `../dist/${moduleName}/index.d.ts`,
+      module: `../dist/${moduleName}.mjs`,
+      main: `../dist/${moduleName}.cjs`,
+      sideEffects: false,
+    };
+
+    updateJsonFile({
+      file: path.join(PACKAGE_PATH, moduleName, PACKAGE_JSON_FILENAME),
+      content,
+    });
+  });
+};
+
+type ExportOccurence = {
+  types: string;
+  import: string;
+  require: string;
+};
+type ExportsConfig = Record<string, ExportOccurence | string>;
+
+const generateModulePackageExports = (moduleDirectories: string[]) => {
+  return moduleDirectories.reduce<ExportsConfig>((acc, moduleDirectory) => {
+    const moduleName = getLastPathFolder(moduleDirectory);
+    if (moduleName === undefined) {
+      throw new Error(
+        `Should never occur, moduleName is undefined ${moduleDirectory}`,
+      );
+    }
+
+    return {
+      ...acc,
+      [`./${moduleName}`]: {
+        types: `./dist/${moduleName}/index.d.ts`,
+        import: `./dist/${moduleName}.mjs`,
+        require: `./dist/${moduleName}.cjs`,
+      },
+    };
+  }, {});
+};
+
+const computePackageJsonFilesAndExportsConfig = (
   moduleDirectories: string[],
 ) => {
   const entrypoints = moduleDirectories.map(getLastPathFolder);
+  const exports = {
+    '.': {
+      types: './dist/index.d.ts',
+      import: './dist/index.mjs',
+      require: './dist/index.cjs',
+    },
+    ...generateModulePackageExports(moduleDirectories),
+  } satisfies ExportsConfig;
 
   return {
-    preconstruct: {
-      // TODO refactor to merge in existing configuration
-      tsconfig: 'tsconfig.lib.json',
-      entrypoints: [
-        './index.ts',
-        ...entrypoints.map((module) => `./${module}/index.ts`),
-      ],
-    },
+    exports,
     files: ['dist', ...entrypoints],
   };
 };
@@ -407,13 +468,14 @@ const main = () => {
   const moduleDirectories = getSubDirectoryPaths(SRC_PATH);
   const exportsByBarrel = retrieveExportsByBarrel(moduleDirectories);
   const moduleIndexFiles = generateModuleIndexFiles(exportsByBarrel);
-  const packageJsonPreconstructConfigAndFiles =
-    computePackageJsonFilesAndPreconstructConfig(moduleDirectories);
+  const packageJsonConfig =
+    computePackageJsonFilesAndExportsConfig(moduleDirectories);
   const nxBuildOutputsPath =
     computeProjectNxBuildOutputsPath(moduleDirectories);
 
   updateNxProjectConfigurationBuildOutputs(nxBuildOutputsPath);
-  writeInPackageJson(packageJsonPreconstructConfigAndFiles);
+  writeInPackageJson(packageJsonConfig);
+  writeSubpathPackageJsonFiles(moduleDirectories);
   moduleIndexFiles.forEach(createTypeScriptFile);
 };
 main();

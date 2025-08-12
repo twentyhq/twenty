@@ -1,4 +1,8 @@
 {
-  "main": "dist/twenty-shared-types.cjs.js",
-  "module": "dist/twenty-shared-types.esm.js"
+  "name": "twenty-shared/types",
+  "private": true,
+  "types": "../dist/types/index.d.ts",
+  "module": "../dist/types.mjs",
+  "main": "../dist/types.cjs",
+  "sideEffects": false
 }

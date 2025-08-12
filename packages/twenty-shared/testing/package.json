@@ -1,4 +1,8 @@
 {
-  "main": "dist/twenty-shared-testing.cjs.js",
-  "module": "dist/twenty-shared-testing.esm.js"
+  "name": "twenty-shared/testing",
+  "private": true,
+  "types": "../dist/testing/index.d.ts",
+  "module": "../dist/testing.mjs",
+  "main": "../dist/testing.cjs",
+  "sideEffects": false
 }

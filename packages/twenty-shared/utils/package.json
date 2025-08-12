@@ -1,4 +1,8 @@
 {
-  "main": "dist/twenty-shared-utils.cjs.js",
-  "module": "dist/twenty-shared-utils.esm.js"
+  "name": "twenty-shared/utils",
+  "private": true,
+  "types": "../dist/utils/index.d.ts",
+  "module": "../dist/utils.mjs",
+  "main": "../dist/utils.cjs",
+  "sideEffects": false
 }

@@ -1,4 +1,8 @@
 {
-  "main": "dist/twenty-shared-workflow.cjs.js",
-  "module": "dist/twenty-shared-workflow.esm.js"
+  "name": "twenty-shared/workflow",
+  "private": true,
+  "types": "../dist/workflow/index.d.ts",
+  "module": "../dist/workflow.mjs",
+  "main": "../dist/workflow.cjs",
+  "sideEffects": false
 }
