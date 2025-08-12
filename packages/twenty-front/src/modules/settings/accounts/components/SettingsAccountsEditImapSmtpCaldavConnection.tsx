@@ -63,7 +63,7 @@ export const SettingsAccountsEditImapSmtpCaldavConnection = () => {
         title={t`Edit Email Account`}
         links={[
           {
-            children: t`Workspace`,
+            children: t`User`,
             href: getSettingsPath(SettingsPath.Workspace),
           },
           {
