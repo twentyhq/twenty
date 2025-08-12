@@ -450,9 +450,22 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   }
 
   public async deleteOneObject(
-    input: DeleteOneObjectInput,
+    deleteObjectInput: DeleteOneObjectInput,
     workspaceId: string,
   ): Promise<Partial<ObjectMetadataEntity>> {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspaceId,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      return await this.objectMetadataServiceV2.deleteOne({
+        deleteObjectInput,
+        workspaceId,
+      });
+    }
+
     const mainDataSource =
       await this.workspaceDataSourceService.connectToMainDataSource();
     const queryRunner = mainDataSource.createQueryRunner();
@@ -474,7 +487,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           'fields.relationTargetFieldMetadata.object',
         ],
         where: {
-          id: input.id,
+          id: deleteObjectInput.id,
           workspaceId,
         },
       });

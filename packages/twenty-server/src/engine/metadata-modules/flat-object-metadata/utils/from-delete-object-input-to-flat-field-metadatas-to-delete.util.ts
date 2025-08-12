@@ -9,6 +9,7 @@ import { getRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-module
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import {
   ObjectMetadataException,
@@ -23,7 +24,7 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
 }): {
   flatFieldMetadatasToDelete: FlatFieldMetadata[];
-  objectMetadataToDeleteId: string;
+  flatObjectMetadataToDelete: FlatObjectMetadata;
 } => {
   const { id: objectMetadataToDeleteId } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -69,6 +70,6 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
 
   return {
     flatFieldMetadatasToDelete,
-    objectMetadataToDeleteId,
+    flatObjectMetadataToDelete,
   };
 };
