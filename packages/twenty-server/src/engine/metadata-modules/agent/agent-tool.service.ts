@@ -7,11 +7,13 @@ import { z } from 'zod';
 
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
+import { WorkflowToolService } from 'src/engine/core-modules/ai/services/workflow-tool.service';
 import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
 import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { AGENT_HANDOFF_DESCRIPTION_TEMPLATE } from 'src/engine/metadata-modules/agent/constants/agent-handoff-description.const';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { WORKFLOW_CREATION_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/workflow-creation-agent';
 import { camelCase } from 'src/utils/camel-case';
 
 @Injectable()
@@ -24,6 +26,7 @@ export class AgentToolService {
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly toolService: ToolService,
     private readonly toolAdapterService: ToolAdapterService,
+    private readonly workflowToolService: WorkflowToolService,
   ) {}
 
   async generateToolsForAgent(
@@ -51,6 +54,11 @@ export class AgentToolService {
       return {};
     }
 
+    const workflowTools = this.getWorkflowTools({
+      agentStandardId: agent.standardId,
+      workspaceId,
+    });
+
     const actionTools = await this.toolAdapterService.getTools(
       role.id,
       workspaceId,
@@ -61,7 +69,12 @@ export class AgentToolService {
       workspaceId,
     );
 
-    return { ...databaseTools, ...actionTools, ...handoffTools };
+    return {
+      ...databaseTools,
+      ...actionTools,
+      ...handoffTools,
+      ...workflowTools,
+    };
   }
 
   private async generateHandoffTools(
@@ -123,5 +136,18 @@ export class AgentToolService {
     }, {});
 
     return handoffTools;
+  }
+
+  private getWorkflowTools({
+    agentStandardId,
+    workspaceId,
+  }: {
+    agentStandardId?: string;
+    workspaceId: string;
+  }): ToolSet {
+    if (agentStandardId === WORKFLOW_CREATION_AGENT.standardId) {
+      return this.workflowToolService.generateWorkflowTools(workspaceId);
+    }
+    return {};
   }
 }
