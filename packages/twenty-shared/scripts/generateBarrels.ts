@@ -187,38 +187,7 @@ const updateNxProjectConfigurationBuildOutputs = (outputs: JsonUpdate) => {
   });
 };
 
-type SubpathPackageJson = {
-  name: string;
-  private: boolean;
-  types: string;
-  module: string;
-  main: string;
-  sideEffects?: boolean;
-};
-const writeSubpathPackageJsonFiles = (moduleDirectories: string[]) => {
-  moduleDirectories.forEach((moduleDirectory) => {
-    const moduleName = getLastPathFolder(moduleDirectory);
-    if (moduleName === undefined) {
-      throw new Error(
-        `Should never occur, moduleName is undefined ${moduleDirectory}`,
-      );
-    }
-
-    const content: SubpathPackageJson = {
-      name: `twenty-shared/${moduleName}`,
-      private: true,
-      types: `../dist/${moduleName}/index.d.ts`,
-      module: `../dist/${moduleName}.mjs`,
-      main: `../dist/${moduleName}.cjs`,
-      sideEffects: false,
-    };
-
-    updateJsonFile({
-      file: path.join(PACKAGE_PATH, moduleName, PACKAGE_JSON_FILENAME),
-      content,
-    });
-  });
-};
+// No submodule package.json generation: stick to a single package with subpath exports
 
 type ExportOccurrence = {
   types: string;
@@ -243,8 +212,16 @@ const generateModulePackageExports = (moduleDirectories: string[]) => {
         import: `./dist/${moduleName}.mjs`,
         require: `./dist/${moduleName}.cjs`,
       },
+      // Back-compat for historic deep imports like "twenty-shared/src/${moduleName}"
+      [`./src/${moduleName}`]: {
+        types: `./dist/${moduleName}/index.d.ts`,
+        import: `./dist/${moduleName}.mjs`,
+        require: `./dist/${moduleName}.cjs`,
+      },
+      // Back-compat wildcard passthrough under src -> dist
+      [`./src/${moduleName}/*`]: `./dist/${moduleName}/*`,
     };
-  }, {});
+  }, { './src/*': './dist/*' });
 };
 
 const computePackageJsonFilesAndExportsConfig = (
@@ -260,8 +237,25 @@ const computePackageJsonFilesAndExportsConfig = (
     ...generateModulePackageExports(moduleDirectories),
   } satisfies ExportsConfig;
 
+  const typesVersionsEntries = entrypoints.reduce<Record<string, string[]>>(
+    (acc, moduleName) => ({
+      ...acc,
+      // clean subpaths
+      [`${moduleName}`]: [`dist/${moduleName}/index.d.ts`],
+      [`${moduleName}/*`]: [`dist/${moduleName}/*`],
+      // back-compat historic deep imports under src/
+      [`src/${moduleName}`]: [`dist/${moduleName}/index.d.ts`],
+      [`src/${moduleName}/*`]: [`dist/${moduleName}/*`],
+    }),
+    {
+      '*': ['dist/*'],
+      'src/*': ['dist/*'],
+    },
+  );
+
   return {
     exports,
+    typesVersions: { '*': typesVersionsEntries },
     files: ['dist', ...entrypoints],
   };
 };
@@ -475,7 +469,6 @@ const main = () => {
 
   updateNxProjectConfigurationBuildOutputs(nxBuildOutputsPath);
   writeInPackageJson(packageJsonConfig);
-  writeSubpathPackageJsonFiles(moduleDirectories);
   moduleIndexFiles.forEach(createTypeScriptFile);
 };
 main();
