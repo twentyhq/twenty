@@ -2,6 +2,7 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 
+import { FieldMetadataType } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '../types/FieldMetadataItem';
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 
@@ -22,10 +23,20 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
 
   const relationFieldMetadataId = field.relation?.targetFieldMetadata.id;
 
+  const isRelation = field.type === FieldMetadataType.RELATION;
+  const isMorphRelation = field.type === FieldMetadataType.MORPH_RELATION;
+
+  const relationType = isRelation
+    ? field.relation?.type
+    : isMorphRelation
+      ? field.morphRelations?.[0]?.type
+      : undefined;
+
   const fieldDefintionMetadata = {
     fieldName: field.name,
     placeHolder: field.label,
-    relationType: field.relation?.type,
+    relationType,
+    morphRelations: isMorphRelation ? field.morphRelations : [],
     relationFieldMetadataId,
     relationObjectMetadataNameSingular:
       relationObjectMetadataItem?.nameSingular ?? '',
