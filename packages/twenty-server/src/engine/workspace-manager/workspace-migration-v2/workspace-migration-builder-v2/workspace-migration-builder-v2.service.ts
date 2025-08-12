@@ -58,6 +58,7 @@ export class WorkspaceMigrationBuilderV2Service {
         ),
       );
 
+    // TODO fix issue with ordering here of actions here, should delete fields before object
     const deletedObjectWorkspaceMigrationDeleteFieldActions =
       inferDeletionFromMissingObjectFieldIndex
         ? deletedObjectMetadata.flatMap((flatObjectMetadata) =>
@@ -93,8 +94,8 @@ export class WorkspaceMigrationBuilderV2Service {
     return {
       workspaceId,
       actions: [
-        ...objectWorkspaceMigrationActions,
         ...deletedObjectWorkspaceMigrationDeleteFieldActions,
+        ...objectWorkspaceMigrationActions,
         ...createdObjectMetadataCreateIndexActions,
         ...fieldWorkspaceMigrationActions,
         ...indexWorkspaceMigrationActions,
