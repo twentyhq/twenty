@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 import { type WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -64,7 +65,7 @@ export class WorkflowVersionEdgeWorkspaceService {
       );
     }
 
-    const isSourceTrigger = source === 'trigger';
+    const isSourceTrigger = source === TRIGGER_STEP_ID;
 
     if (isSourceTrigger) {
       return this.createTriggerEdge({
@@ -124,7 +125,7 @@ export class WorkflowVersionEdgeWorkspaceService {
       );
     }
 
-    const isSourceTrigger = source === 'trigger';
+    const isSourceTrigger = source === TRIGGER_STEP_ID;
 
     if (isSourceTrigger) {
       return this.deleteTriggerEdge({

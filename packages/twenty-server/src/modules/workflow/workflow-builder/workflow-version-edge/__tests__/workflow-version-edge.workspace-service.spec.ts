@@ -1,5 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
@@ -119,7 +121,7 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
     it('should throw if target does not exists', async () => {
       const call = async () =>
         await service.createWorkflowVersionEdge({
-          source: 'trigger',
+          source: TRIGGER_STEP_ID,
           target: 'not-existing-step',
           workflowVersionId: mockWorkflowVersionId,
           workspaceId: mockWorkspaceId,
@@ -133,7 +135,7 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
     describe('with source is the trigger', () => {
       it('should create an edge between trigger and step-1', async () => {
         const result = await service.createWorkflowVersionEdge({
-          source: 'trigger',
+          source: TRIGGER_STEP_ID,
           target: 'step-3',
           workflowVersionId: mockWorkflowVersionId,
           workspaceId: mockWorkspaceId,
@@ -167,7 +169,7 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
 
       it('should not duplicate stepIds if edge already exists', async () => {
         const result = await service.createWorkflowVersionEdge({
-          source: 'trigger',
+          source: TRIGGER_STEP_ID,
           target: 'step-1',
           workflowVersionId: mockWorkflowVersionId,
           workspaceId: mockWorkspaceId,
@@ -264,7 +266,7 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
     it('should throw if target does not exists', async () => {
       const call = async () =>
         await service.deleteWorkflowVersionEdge({
-          source: 'trigger',
+          source: TRIGGER_STEP_ID,
           target: 'not-existing-step',
           workflowVersionId: mockWorkflowVersionId,
           workspaceId: mockWorkspaceId,
@@ -278,7 +280,7 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
     describe('with source is the trigger', () => {
       it('should delete an edge between trigger and step-1', async () => {
         const result = await service.deleteWorkflowVersionEdge({
-          source: 'trigger',
+          source: TRIGGER_STEP_ID,
           target: 'step-1',
           workflowVersionId: mockWorkflowVersionId,
           workspaceId: mockWorkspaceId,
@@ -312,7 +314,7 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
 
       it('should not delete if edge does not exists', async () => {
         const result = await service.deleteWorkflowVersionEdge({
-          source: 'trigger',
+          source: TRIGGER_STEP_ID,
           target: 'step-2',
           workflowVersionId: mockWorkflowVersionId,
           workspaceId: mockWorkspaceId,
@@ -467,7 +469,7 @@ describe('WorkflowVersionEdgeWorkspaceService', () => {
         );
 
         const result = await service.deleteWorkflowVersionEdge({
-          source: 'trigger',
+          source: TRIGGER_STEP_ID,
           target: 'step-2',
           workflowVersionId: mockWorkflowVersionId,
           workspaceId: mockWorkspaceId,
