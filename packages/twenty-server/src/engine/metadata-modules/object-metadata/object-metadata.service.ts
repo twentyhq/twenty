@@ -156,18 +156,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createObjectInput.labelSingular = capitalize(
         createObjectInput.labelSingular,
       );
-      createObjectInput.labelPlural = capitalize(
-        createObjectInput.labelPlural,
-      );
+      createObjectInput.labelPlural = capitalize(createObjectInput.labelPlural);
 
       validateObjectMetadataInputNamesOrThrow(createObjectInput);
       validateObjectMetadataInputLabelsOrThrow(createObjectInput);
 
       validateLowerCasedAndTrimmedStringsAreDifferentOrThrow({
-        inputs: [
-          createObjectInput.nameSingular,
-          createObjectInput.namePlural,
-        ],
+        inputs: [createObjectInput.nameSingular, createObjectInput.namePlural],
         message:
           'The singular and plural names cannot be the same for an object',
       });

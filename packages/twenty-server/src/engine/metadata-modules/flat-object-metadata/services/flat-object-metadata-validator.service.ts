@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
@@ -17,7 +18,6 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { doesOtherObjectWithSameNameExists } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
-import { isDefined } from 'twenty-shared/utils';
 
 export type ValidateOneFlatObjectMetadataArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
