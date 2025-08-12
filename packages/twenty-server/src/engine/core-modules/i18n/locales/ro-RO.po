@@ -1668,10 +1668,25 @@ msgstr "Numele \"{computedMetadataNameFromLabel}\" nu poate fi la fel pe ambele 
 msgid "Name is not available, it may be duplicating another field's name."
 msgstr "Numele nu este disponibil, poate fi duplicat cu un alt câmp."
 
+#. js-lingui-id: Ny5wFU
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
+msgstr ""
+
+#. js-lingui-id: zjh2SJ
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "Name is too long"
+msgstr ""
+
 #. js-lingui-id: 0MobB1
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils.ts
 msgid "Name is too long: it exceeds the 63 characters limit."
 msgstr "Numele este prea lung: depășește limita de 63 de caractere."
+
+#. js-lingui-id: go/Vg1
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "Name is too short"
+msgstr ""
 
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -1682,6 +1697,11 @@ msgstr "Numele dosarului favorit"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Name of the workflow run"
 msgstr "Numele rulării workflow-ului"
+
+#. js-lingui-id: P+jdmX
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "Name should be in camelCase"
+msgstr ""
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1818,8 +1838,19 @@ msgstr "Numărul de angajați în companie"
 
 #. js-lingui-id: ECRKYR
 #: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Object already exists"
 msgstr "Obiectul există deja"
+
+#. js-lingui-id: wLX74t
+#: src/engine/metadata-modules/flat-object-metadata/validators/validate-flat-object-metadata-label.validator.ts
+msgid "Object label is too long"
+msgstr ""
+
+#. js-lingui-id: nmhjwk
+#: src/engine/metadata-modules/flat-object-metadata/validators/validate-flat-object-metadata-label.validator.ts
+msgid "Object label is too short"
+msgstr ""
 
 #. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2005,6 +2036,11 @@ msgstr "Telefon"
 msgid "Phones"
 msgstr "Telefoane"
 
+#. js-lingui-id: euNBsm
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Plural name is not synced with plural label"
+msgstr ""
+
 #. js-lingui-id: P04j61
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Point of Contact"
@@ -2113,6 +2149,11 @@ msgstr "Adresa de email a utilizatorului asociat"
 msgid "Relations"
 msgstr "Relații"
 
+#. js-lingui-id: yVxtzR
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Remote objects are not supported yet"
+msgstr ""
+
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Request has expired, please try again."
@@ -2151,6 +2192,11 @@ msgstr "Vector căutare"
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "Settings"
 msgstr "Setări"
+
+#. js-lingui-id: Uu4yF7
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Singular name is not synced with singular label"
+msgstr ""
 
 #. js-lingui-id: Cj2Gtd
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
@@ -2446,10 +2492,25 @@ msgstr "Dosarul căruia îi aparține acest favorit"
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Versiunea inițială a unui flux de lucru nu poate fi ștearsă"
 
+#. js-lingui-id: YTftFF
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "The name is not available"
+msgstr ""
+
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "The opportunity name"
 msgstr "Numele oportunității"
+
+#. js-lingui-id: H1tAJD
+#: src/engine/metadata-modules/flat-object-metadata/validators/validate-flat-object-metadata-label.validator.ts
+msgid "The singular and plural labels cannot be the same for an object"
+msgstr ""
+
+#. js-lingui-id: FOEWHl
+#: src/engine/metadata-modules/flat-object-metadata/validators/validate-flat-object-metadata-name.validator.ts
+msgid "The singular and plural names cannot be the same for an object"
+msgstr ""
 
 #. js-lingui-id: 5N6QtE
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
