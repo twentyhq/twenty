@@ -15,21 +15,22 @@ export const isValidUniqueFieldDefaultValueCombination = ({
   isUnique: boolean;
   type: FieldMetadataType;
 }) => {
+  if (!isUnique) return true;
+
   const defaultDefaultValue = generateDefaultValue(type);
 
   if (!isCompositeFieldMetadataType(type))
-    return !isUnique || defaultValue === defaultDefaultValue;
+    return defaultValue === defaultDefaultValue;
 
-  return (
-    !isUnique ||
-    (compositeTypeDefinitions
+  const doUniquePropertiesHaveDefaultValues =
+    compositeTypeDefinitions
       .get(type)
       ?.properties.filter((property) => property.isIncludedInUniqueConstraint)
       .every(
         ({ name }) =>
           (defaultValue as Record<string, string | null>)?.[name] ===
           (defaultDefaultValue as Record<string, string | null>)?.[name],
-      ) ??
-      false)
-  );
+      ) ?? false;
+
+  return doUniquePropertiesHaveDefaultValues;
 };
