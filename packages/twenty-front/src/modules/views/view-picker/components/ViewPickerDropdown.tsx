@@ -1,6 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { useWorkspaceFavorites } from '@/favorites/hooks/useWorkspaceFavorites';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -48,6 +49,11 @@ export const ViewPickerDropdown = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
+  const { workspaceFavoritesObjectMetadataItems } = useWorkspaceFavorites();
+  const customizedLabelPlural = workspaceFavoritesObjectMetadataItems?.find(
+    (item: { id: any }) => item.id === currentView?.objectMetadataId,
+  )?.labelPlural;
+
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
 
   const { totalCount } = useGetRecordIndexTotalCount();
@@ -82,7 +88,9 @@ export const ViewPickerDropdown = () => {
           ) : (
             <IconList size={theme.icon.size.md} />
           )}
-          <StyledViewName>{currentView?.name ?? 'All'}</StyledViewName>
+          <StyledViewName>
+            {customizedLabelPlural ?? currentView?.name ?? 'All'}          
+          </StyledViewName>
           <StyledDropdownLabelAdornments>
             {isDefined(totalCount) && <>· {totalCount} </>}
             <IconChevronDown size={theme.icon.size.sm} />
