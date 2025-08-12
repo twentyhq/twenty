@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 
+import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { WorkflowVersionEdgeWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-edge/workflow-version-edge.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
@@ -64,7 +65,7 @@ export class WorkflowToolService {
         },
         required: ['input'],
       },
-      execute: async (parameters: { input: any }) => {
+      execute: async (parameters: { input: CreateWorkflowVersionStepInput }) => {
         try {
           this.logger.log(`Creating workflow version step: ${parameters.input.stepType}`);
           return await this.workflowVersionStepService.createWorkflowVersionStep({
