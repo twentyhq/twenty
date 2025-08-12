@@ -20615,7 +20615,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/trusted-types@npm:*":
+"@types/trusted-types@npm:*, @types/trusted-types@npm:^2.0.7":
   version: 2.0.7
   resolution: "@types/trusted-types@npm:2.0.7"
   checksum: 10c0/4c4855f10de7c6c135e0d32ce462419d8abbbc33713b31d294596c0cc34ae1fa6112a2f9da729c8f7a20707782b0d69da3b1f8df6645b0366d08825ca1522e0c
@@ -28906,10 +28906,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:3.1.6":
-  version: 3.1.6
-  resolution: "dompurify@npm:3.1.6"
-  checksum: 10c0/3de1cca187c78d3d8cb4134fc2985b644d6a81f6b4e024c77cfb04c1c2f38544ccf7b0ea37a48ce22fcca64594170ed7c22252574c75b801c44345cdd7b06c64
+"dompurify@npm:3.2.6":
+  version: 3.2.6
+  resolution: "dompurify@npm:3.2.6"
+  dependencies:
+    "@types/trusted-types": "npm:^2.0.7"
+  dependenciesMeta:
+    "@types/trusted-types":
+      optional: true
+  checksum: 10c0/c8f8e5b0879a0d93c84a2e5e78649a47d0c057ed0f7850ca3d573d2cca64b84fb1ff85bd4b20980ade69c4e5b80ae73011340f1c2ff375c7ef98bb8268e1d13a
   languageName: node
   linkType: hard
 
@@ -37303,7 +37308,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsdom@npm:^26.0.0":
+"jsdom@npm:^26.0.0, jsdom@npm:^26.1.0":
   version: 26.1.0
   resolution: "jsdom@npm:26.1.0"
   dependencies:
@@ -50910,7 +50915,7 @@ __metadata:
     dataloader: "npm:2.2.2"
     date-fns: "npm:2.30.0"
     deep-equal: "npm:2.2.3"
-    dompurify: "npm:3.1.6"
+    dompurify: "npm:3.2.6"
     dotenv: "npm:16.4.5"
     express: "npm:4.21.2"
     express-session: "npm:^1.18.1"
@@ -50933,7 +50938,7 @@ __metadata:
     handlebars: "npm:^4.7.8"
     imapflow: "npm:1.0.187"
     ioredis: "npm:5.6.0"
-    jsdom: "npm:~22.1.0"
+    jsdom: "npm:^26.1.0"
     json-schema: "npm:0.4.0"
     jsonc-eslint-parser: "npm:2.4.0"
     jsonwebtoken: "npm:9.0.2"
