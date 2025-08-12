@@ -326,7 +326,7 @@ export class FieldMetadataServiceV2 {
         });
 
       const validationErrors =
-        await this.flatFieldMetadataValidatorService.validateOneFlatFieldMetadataCreation(
+        await this.flatFieldMetadataValidatorService.validateFlatFieldMetadataCreation(
           {
             existingFlatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
             flatFieldMetadataToValidate: flatFieldMetadataToCreate,

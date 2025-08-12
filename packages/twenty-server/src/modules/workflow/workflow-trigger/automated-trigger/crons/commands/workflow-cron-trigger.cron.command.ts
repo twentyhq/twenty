@@ -12,7 +12,7 @@ import {
   name: 'cron:workflow:automated-cron-trigger',
   description: 'Starts a cron job to trigger cron triggered workflows',
 })
-export class CronTriggerCronCommand extends CommandRunner {
+export class WorkflowCronTriggerCronCommand extends CommandRunner {
   constructor(
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,

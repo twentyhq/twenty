@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { StepStatus, WorkflowRunStepInfo } from 'twenty-shared/workflow';
+import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
 
@@ -44,9 +44,9 @@ export class WorkflowRunWorkspaceService {
   }: {
     workflowVersionId: string;
     createdBy: ActorMetadata;
-    workflowRunId?: string;
     status: WorkflowRunStatus.NOT_STARTED | WorkflowRunStatus.ENQUEUED;
     triggerPayload: object;
+    workflowRunId?: string;
   }) {
     const workspaceId =
       this.scopedWorkspaceContextFactory.create()?.workspaceId;
@@ -124,6 +124,8 @@ export class WorkflowRunWorkspaceService {
       status,
       position,
       state: initState,
+      enqueuedAt:
+        status === WorkflowRunStatus.ENQUEUED ? new Date().toISOString() : null,
     });
 
     await workflowRunRepository.insert(workflowRun);
@@ -145,13 +147,20 @@ export class WorkflowRunWorkspaceService {
     });
 
     if (
+      workflowRunToUpdate.status === WorkflowRunStatus.COMPLETED ||
+      workflowRunToUpdate.status === WorkflowRunStatus.FAILED
+    ) {
+      throw new WorkflowRunException(
+        'Cannot start a workflow run already ended',
+        WorkflowRunExceptionCode.INVALID_OPERATION,
+      );
+    }
+
+    if (
       workflowRunToUpdate.status !== WorkflowRunStatus.ENQUEUED &&
       workflowRunToUpdate.status !== WorkflowRunStatus.NOT_STARTED
     ) {
-      throw new WorkflowRunException(
-        'Workflow run already started',
-        WorkflowRunExceptionCode.INVALID_OPERATION,
-      );
+      return;
     }
 
     const partialUpdate = {
