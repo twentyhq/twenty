@@ -22,8 +22,6 @@ export type FlatObjectMetadata = Omit<
   ObjectMetadataEntity,
   | ObjectMetadataRelationProperties
   | 'dataSourceId'
-  | 'createdAt'
-  | 'updatedAt'
   | 'duplicateCriteria'
 > & {
   uniqueIdentifier: string;

@@ -36,7 +36,10 @@ export const fromCreateObjectInputToFlatObjectMetadata = ({
       workspaceId,
     });
 
+  const createdAt = new Date();
   return {
+    createdAt,
+    updatedAt: createdAt,
     description: createObjectInput.description ?? null,
     flatFieldMetadatas: Object.values(baseCustomFlatFieldMetadatas),
     flatIndexMetadatas: [],

@@ -125,6 +125,7 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
   workspaceId,
   objectMetadataId,
 }: BuildDefaultFlatFieldMetadataForCustomObjectArgs) => {
+  const createdAt = new Date();
   const idField: FlatFieldMetadata<FieldMetadataType.UUID> = {
     type: FieldMetadataType.UUID,
     id: v4(),
@@ -144,6 +145,8 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
     isSystem: true,
     defaultValue: 'uuid',
 
+    createdAt,
+    updatedAt: createdAt,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,
     options: null,
@@ -172,6 +175,8 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
     isSystem: false,
     defaultValue: "'Untitled'",
 
+    createdAt,
+    updatedAt: createdAt,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,
     options: null,
@@ -200,6 +205,8 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
     isSystem: false,
     defaultValue: 'now',
 
+    createdAt,
+    updatedAt: createdAt,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,
     options: null,
@@ -228,6 +235,8 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
     isSystem: false,
     defaultValue: 'now',
 
+    createdAt,
+    updatedAt: createdAt,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,
     options: null,
@@ -256,6 +265,8 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
     isSystem: false,
     defaultValue: null,
 
+    createdAt,
+    updatedAt: createdAt,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,
     options: null,
@@ -284,6 +295,8 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
     isSystem: false,
     defaultValue: { name: "''", source: "'MANUAL'" },
 
+    createdAt,
+    updatedAt: createdAt,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,
     options: null,
@@ -312,6 +325,8 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
     isSystem: true,
     defaultValue: 0,
 
+    createdAt,
+    updatedAt: createdAt,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,
     options: null,
