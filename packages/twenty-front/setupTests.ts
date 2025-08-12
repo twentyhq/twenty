@@ -12,7 +12,7 @@ declare global {
       toMatchSnapshot(propertyMatchers?: any): R;
     }
   }
-  
+
   namespace Vi {
     interface Assertion {
       toMatchSnapshot(propertyMatchers?: any): void;

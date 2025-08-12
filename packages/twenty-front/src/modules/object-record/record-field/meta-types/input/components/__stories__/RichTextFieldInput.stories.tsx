@@ -1,7 +1,6 @@
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
@@ -14,29 +13,25 @@ import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { RichTextFieldInput } from '../RichTextFieldInput';
+import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
 
-const clickOutsideJestFn = fn();
-const escapeJestFn = fn();
+const targetableObjectId = 'test-id';
 
-type RichTextFieldInputWithContextProps = {
-  targetableObjectId?: string;
-  onClickOutside?: typeof clickOutsideJestFn;
-  onEscape?: typeof escapeJestFn;
-};
+const {
+  FieldInputEventContextProviderWithJestMocks,
+  handleEscapeMocked,
+  handleClickoutsideMocked,
+} = getFieldInputEventContextProviderWithJestMocks();
 
 const clearMocksDecorator: Decorator = (Story, context) => {
   if (context.parameters.clearMocks !== false) {
-    clickOutsideJestFn.mockClear();
-    escapeJestFn.mockClear();
+    handleClickoutsideMocked.mockClear();
+    handleEscapeMocked.mockClear();
   }
   return <Story />;
 };
 
-const RichTextFieldInputWithContext = ({
-  targetableObjectId = 'test-id',
-  onClickOutside,
-  onEscape,
-}: RichTextFieldInputWithContextProps) => {
+const RichTextFieldInputWithContext = () => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const instanceId = getRecordFieldInputInstanceId({
@@ -78,14 +73,9 @@ const RichTextFieldInputWithContext = ({
           isRecordFieldReadOnly: false,
         }}
       >
-        <RichTextFieldInput
-          targetableObject={{
-            id: targetableObjectId,
-            targetObjectNameSingular: CoreObjectNameSingular.Note,
-          }}
-          onClickOutside={onClickOutside}
-          onEscape={onEscape}
-        />
+        <FieldInputEventContextProviderWithJestMocks>
+          <RichTextFieldInput />
+        </FieldInputEventContextProviderWithJestMocks>
       </FieldContext.Provider>
       <div data-testid="click-outside-element" />
     </RecordFieldComponentInstanceContext.Provider>
@@ -97,8 +87,8 @@ const meta: Meta = {
   component: RichTextFieldInputWithContext,
   args: {
     targetableObjectId: 'test-id',
-    onClickOutside: clickOutsideJestFn,
-    onEscape: escapeJestFn,
+    onClickOutside: handleClickoutsideMocked,
+    onEscape: handleEscapeMocked,
   },
   argTypes: {
     onClickOutside: { control: false },
@@ -124,13 +114,13 @@ export const Default: Story = {};
 export const Escape: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    expect(escapeJestFn).toHaveBeenCalledTimes(0);
+    expect(handleEscapeMocked).toHaveBeenCalledTimes(0);
 
     await canvas.findByTestId('click-outside-element');
     await userEvent.keyboard('{esc}');
 
     await waitFor(() => {
-      expect(escapeJestFn).toHaveBeenCalledTimes(1);
+      expect(handleEscapeMocked).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -138,14 +128,14 @@ export const Escape: Story = {
 export const ClickOutside: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
+    expect(handleClickoutsideMocked).toHaveBeenCalledTimes(0);
 
     const outsideElement = await canvas.findByTestId('click-outside-element');
 
     await userEvent.click(outsideElement);
 
     await waitFor(() => {
-      expect(clickOutsideJestFn).toHaveBeenCalledTimes(1);
+      expect(handleClickoutsideMocked).toHaveBeenCalledTimes(1);
     });
   },
 };

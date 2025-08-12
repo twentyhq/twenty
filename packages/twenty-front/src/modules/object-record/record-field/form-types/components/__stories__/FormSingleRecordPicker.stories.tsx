@@ -97,7 +97,7 @@ export const Disabled: Story = {
     expect(variablePicker).not.toBeInTheDocument();
 
     // Clicking should not trigger onChange
-    if(isDefined(dropdown)) {
+    if (isDefined(dropdown)) {
       await userEvent.click(dropdown);
     }
     expect(args.onChange).not.toHaveBeenCalled();

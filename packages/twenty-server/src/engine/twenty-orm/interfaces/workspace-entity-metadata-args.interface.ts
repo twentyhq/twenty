@@ -13,7 +13,7 @@ export interface WorkspaceEntityMetadataArgs {
    * Function target is a table defined in the class.
    * String target is a table defined in a json schema.
    */
-   
+
   readonly target: Function;
 
   /**

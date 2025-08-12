@@ -1,6 +1,9 @@
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
-import { type CurrentUser, currentUserState } from '@/auth/states/currentUserState';
+import {
+  type CurrentUser,
+  currentUserState,
+} from '@/auth/states/currentUserState';
 import {
   type CurrentWorkspace,
   currentWorkspaceState,

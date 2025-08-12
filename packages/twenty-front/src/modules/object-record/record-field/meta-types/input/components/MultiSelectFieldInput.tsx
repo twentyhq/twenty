@@ -1,21 +1,29 @@
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
 import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
 import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { type FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
+
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useContext } from 'react';
 
-type MultiSelectFieldInputProps = {
-  onCancel?: () => void;
-};
+export const MultiSelectFieldInput = () => {
+  const { fieldDefinition, draftValue, setDraftValue } = useMultiSelectField();
 
-export const MultiSelectFieldInput = ({
-  onCancel,
-}: MultiSelectFieldInputProps) => {
-  const { persistField, fieldDefinition, fieldValues } = useMultiSelectField();
+  const { onSubmit } = useContext(FieldInputEventContext);
+
+  const handleOptionSelected = (newDraftValue: FieldMultiSelectValue) => {
+    setDraftValue(newDraftValue);
+  };
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
+
+  const handleCancel = () => {
+    onSubmit?.({ newValue: draftValue });
+  };
 
   return (
     <MultiSelectInput
@@ -24,9 +32,9 @@ export const MultiSelectFieldInput = ({
       }
       focusId={instanceId}
       options={fieldDefinition.metadata.options}
-      onCancel={onCancel}
-      onOptionSelected={persistField}
-      values={fieldValues}
+      onCancel={handleCancel}
+      onOptionSelected={handleOptionSelected}
+      values={draftValue}
     />
   );
 };

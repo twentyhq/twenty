@@ -77,7 +77,7 @@ export class WorkspaceFixService {
     manager: EntityManager,
     objectMetadataCollection: ObjectMetadataEntity[],
     type: WorkspaceHealthFixKind,
-     
+
     issues: WorkspaceHealthIssue[],
   ): Promise<CompareEntity<unknown>[]> {
     switch (type) {

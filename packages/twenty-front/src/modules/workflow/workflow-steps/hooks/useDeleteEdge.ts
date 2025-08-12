@@ -1,14 +1,15 @@
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { assertWorkflowWithCurrentVersionIsDefined } from '@/workflow/utils/assertWorkflowWithCurrentVersionIsDefined';
+import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagramEdge';
 import { useDeleteWorkflowVersionEdge } from '@/workflow/workflow-steps/hooks/useDeleteWorkflowVersionEdge';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagramEdge';
 
 export const useDeleteEdge = ({
   workflow,
 }: {
-  workflow: WorkflowWithCurrentVersion;
+  workflow: WorkflowWithCurrentVersion | undefined;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -17,6 +18,8 @@ export const useDeleteEdge = ({
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
 
   const deleteEdge = async ({ source, target }: WorkflowDiagramEdge) => {
+    assertWorkflowWithCurrentVersionIsDefined(workflow);
+
     if (isLoading) {
       return;
     }

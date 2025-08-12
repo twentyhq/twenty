@@ -12,7 +12,7 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { useLingui } from '@lingui/react/macro';
 import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { FieldMetadataType, type StepFilter } from 'twenty-shared/src/types';
+import { FieldMetadataType, type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
 

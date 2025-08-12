@@ -11,6 +11,7 @@ type CompanyDataSeed = {
   createdByWorkspaceMemberId: string;
   createdByName: string;
   accountOwnerId: string;
+  position: number;
 };
 
 export const COMPANY_DATA_SEED_COLUMNS: (keyof CompanyDataSeed)[] = [
@@ -24,6 +25,7 @@ export const COMPANY_DATA_SEED_COLUMNS: (keyof CompanyDataSeed)[] = [
   'createdByWorkspaceMemberId',
   'createdByName',
   'accountOwnerId',
+  'position',
 ];
 
 // prettier-ignore
@@ -630,7 +632,7 @@ export const COMPANY_DATA_SEED_IDS = {
 };
 
 // prettier-ignore
-export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
+const COMPANY_DATA_SEEDS_RAW = [
   {
     id: COMPANY_DATA_SEED_IDS.ID_1,
     name: 'Google',
@@ -8518,3 +8520,10 @@ export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = [
     accountOwnerId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 ];
+
+export const COMPANY_DATA_SEEDS: CompanyDataSeed[] = COMPANY_DATA_SEEDS_RAW.map(
+  (company, index) => ({
+    ...company,
+    position: index + 1,
+  }),
+);

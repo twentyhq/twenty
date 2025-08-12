@@ -1,9 +1,10 @@
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect, useState } from 'react';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -13,7 +14,8 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { useTextField } from '../../../hooks/useTextField';
-import { TextFieldInput, type TextFieldInputProps } from '../TextFieldInput';
+import { TextFieldInput } from '../TextFieldInput';
+
 const TextFieldValueSetterEffect = ({ value }: { value: string }) => {
   const { setFieldValue } = useTextField();
 
@@ -24,7 +26,16 @@ const TextFieldValueSetterEffect = ({ value }: { value: string }) => {
   return <></>;
 };
 
-type TextFieldInputWithContextProps = TextFieldInputProps & {
+const {
+  FieldInputEventContextProviderWithJestMocks,
+  handleEscapeMocked,
+  handleClickoutsideMocked,
+  handleEnterMocked,
+  handleShiftTabMocked,
+  handleTabMocked,
+} = getFieldInputEventContextProviderWithJestMocks();
+
+type TextFieldInputWithContextProps = {
   value: string;
   recordId: string;
 };
@@ -32,11 +43,6 @@ type TextFieldInputWithContextProps = TextFieldInputProps & {
 const TextFieldInputWithContext = ({
   recordId,
   value,
-  onEnter,
-  onEscape,
-  onClickOutside,
-  onTab,
-  onShiftTab,
 }: TextFieldInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const [isReady, setIsReady] = useState(false);
@@ -85,14 +91,10 @@ const TextFieldInputWithContext = ({
           isRecordFieldReadOnly: false,
         }}
       >
-        <TextFieldValueSetterEffect value={value} />
-        <TextFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <FieldInputEventContextProviderWithJestMocks>
+          <TextFieldValueSetterEffect value={value} />
+          <TextFieldInput />
+        </FieldInputEventContextProviderWithJestMocks>
       </FieldContext.Provider>
       {isReady && <div data-testid="is-ready-marker" />}
       <div data-testid="data-field-input-click-outside-div" />
@@ -100,19 +102,13 @@ const TextFieldInputWithContext = ({
   );
 };
 
-const enterJestFn = fn();
-const escapeJestfn = fn();
-const clickOutsideJestFn = fn();
-const tabJestFn = fn();
-const shiftTabJestFn = fn();
-
 const clearMocksDecorator: Decorator = (Story, context) => {
   if (context.parameters.clearMocks === true) {
-    enterJestFn.mockClear();
-    escapeJestfn.mockClear();
-    clickOutsideJestFn.mockClear();
-    tabJestFn.mockClear();
-    shiftTabJestFn.mockClear();
+    handleEnterMocked.mockClear();
+    handleEscapeMocked.mockClear();
+    handleClickoutsideMocked.mockClear();
+    handleTabMocked.mockClear();
+    handleShiftTabMocked.mockClear();
   }
   return <Story />;
 };
@@ -122,11 +118,11 @@ const meta: Meta = {
   component: TextFieldInputWithContext,
   args: {
     value: 'text',
-    onEnter: enterJestFn,
-    onEscape: escapeJestfn,
-    onClickOutside: clickOutsideJestFn,
-    onTab: tabJestFn,
-    onShiftTab: shiftTabJestFn,
+    onEnter: handleEnterMocked,
+    onEscape: handleEscapeMocked,
+    onClickOutside: handleClickoutsideMocked,
+    onTab: handleTabMocked,
+    onShiftTab: handleShiftTabMocked,
   },
   argTypes: {
     onEnter: { control: false },
@@ -151,13 +147,13 @@ export const Enter: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(enterJestFn).toHaveBeenCalledTimes(0);
+    expect(handleEnterMocked).toHaveBeenCalledTimes(0);
 
     await canvas.findByTestId('is-ready-marker');
     await userEvent.keyboard('{enter}');
 
     await waitFor(() => {
-      expect(enterJestFn).toHaveBeenCalledTimes(1);
+      expect(handleEnterMocked).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -166,13 +162,13 @@ export const Escape: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(escapeJestfn).toHaveBeenCalledTimes(0);
+    expect(handleEscapeMocked).toHaveBeenCalledTimes(0);
 
     await canvas.findByTestId('is-ready-marker');
     await userEvent.keyboard('{esc}');
 
     await waitFor(() => {
-      expect(escapeJestfn).toHaveBeenCalledTimes(1);
+      expect(handleEscapeMocked).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -181,7 +177,7 @@ export const ClickOutside: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
+    expect(handleClickoutsideMocked).toHaveBeenCalledTimes(0);
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
     await canvas.findByTestId('is-ready-marker');
@@ -189,7 +185,7 @@ export const ClickOutside: Story = {
     await userEvent.click(emptyDiv);
 
     await waitFor(() => {
-      expect(clickOutsideJestFn).toHaveBeenCalled();
+      expect(handleClickoutsideMocked).toHaveBeenCalled();
     });
   },
 };
@@ -200,12 +196,12 @@ export const Tab: Story = {
 
     await canvas.findByTestId('is-ready-marker');
 
-    expect(tabJestFn).toHaveBeenCalledTimes(0);
+    expect(handleTabMocked).toHaveBeenCalledTimes(0);
 
     await userEvent.keyboard('{tab}');
 
     await waitFor(() => {
-      expect(tabJestFn).toHaveBeenCalledTimes(1);
+      expect(handleTabMocked).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -216,12 +212,12 @@ export const ShiftTab: Story = {
 
     await canvas.findByTestId('is-ready-marker');
 
-    expect(shiftTabJestFn).toHaveBeenCalledTimes(0);
+    expect(handleShiftTabMocked).toHaveBeenCalledTimes(0);
 
     await userEvent.keyboard('{shift>}{tab}');
 
     await waitFor(() => {
-      expect(shiftTabJestFn).toHaveBeenCalledTimes(1);
+      expect(handleShiftTabMocked).toHaveBeenCalledTimes(1);
     });
   },
 };

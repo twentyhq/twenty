@@ -1,6 +1,5 @@
 import { createHash } from 'crypto';
 
-
 export function createDeterministicUuid(
   uuidOrUuids: string[] | string,
 ): string {

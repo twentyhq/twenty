@@ -7,7 +7,11 @@ import { type ComponentReadOnlySelector } from '@/ui/utilities/state/component-s
 import { type ComponentSelector } from '@/ui/utilities/state/component-state/types/ComponentSelector';
 import { type ComponentState } from '@/ui/utilities/state/component-state/types/ComponentState';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { type RecoilState, type RecoilValueReadOnly, type SerializableParam } from 'recoil';
+import {
+  type RecoilState,
+  type RecoilValueReadOnly,
+  type SerializableParam,
+} from 'recoil';
 
 export function useRecoilComponentCallbackState<ValueType>(
   componentState: ComponentState<ValueType>,

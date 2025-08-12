@@ -6,29 +6,17 @@ import { FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGER
 import { LAST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/meta-types/input/constants/LastNamePlaceholder';
 import { isDoubleTextFieldEmpty } from '@/object-record/record-field/meta-types/input/utils/isDoubleTextFieldEmpty';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import {
-  type FieldInputClickOutsideEvent,
-  type FieldInputEvent,
-} from '@/object-record/record-field/types/FieldInputEvent';
+
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useContext } from 'react';
 
-type FullNameFieldInputProps = {
-  onClickOutside?: FieldInputClickOutsideEvent;
-  onEnter?: FieldInputEvent;
-  onEscape?: FieldInputEvent;
-  onTab?: FieldInputEvent;
-  onShiftTab?: FieldInputEvent;
-};
+export const FullNameFieldInput = () => {
+  const { draftValue, setDraftValue } = useFullNameField();
 
-export const FullNameFieldInput = ({
-  onEnter,
-  onEscape,
-  onClickOutside,
-  onTab,
-  onShiftTab,
-}: FullNameFieldInputProps) => {
-  const { draftValue, setDraftValue, persistFullNameField } =
-    useFullNameField();
+  const { onEnter, onEscape, onClickOutside, onTab, onShiftTab } = useContext(
+    FieldInputEventContext,
+  );
 
   const convertToFullName = (newDoubleText: FieldDoubleText) => {
     return {
@@ -46,29 +34,26 @@ export const FullNameFieldInput = ({
   };
 
   const handleEnter = (newDoubleText: FieldDoubleText) => {
-    onEnter?.(() => persistFullNameField(convertToFullName(newDoubleText)));
+    onEnter?.({ newValue: convertToFullName(newDoubleText) });
   };
 
   const handleEscape = (newDoubleText: FieldDoubleText) => {
-    onEscape?.(() => persistFullNameField(convertToFullName(newDoubleText)));
+    onEscape?.({ newValue: convertToFullName(newDoubleText) });
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newDoubleText: FieldDoubleText,
   ) => {
-    onClickOutside?.(
-      () => persistFullNameField(convertToFullName(newDoubleText)),
-      event,
-    );
+    onClickOutside?.({ newValue: convertToFullName(newDoubleText), event });
   };
 
   const handleTab = (newDoubleText: FieldDoubleText) => {
-    onTab?.(() => persistFullNameField(convertToFullName(newDoubleText)));
+    onTab?.({ newValue: convertToFullName(newDoubleText) });
   };
 
   const handleShiftTab = (newDoubleText: FieldDoubleText) => {
-    onShiftTab?.(() => persistFullNameField(convertToFullName(newDoubleText)));
+    onShiftTab?.({ newValue: convertToFullName(newDoubleText) });
   };
 
   const handleChange = (newDoubleText: FieldDoubleText) => {

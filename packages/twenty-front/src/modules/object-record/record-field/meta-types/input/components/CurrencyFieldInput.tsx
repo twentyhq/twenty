@@ -6,31 +6,21 @@ import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
 
 import { useCurrencyField } from '../../hooks/useCurrencyField';
 
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import {
-  type FieldInputClickOutsideEvent,
-  type FieldInputEvent,
-} from '@/object-record/record-field/types/FieldInputEvent';
+
+import { isFieldCurrencyValue } from '@/object-record/record-field/types/guards/isFieldCurrencyValue';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useContext } from 'react';
+import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-type CurrencyFieldInputProps = {
-  onClickOutside?: FieldInputClickOutsideEvent;
-  onEnter?: FieldInputEvent;
-  onEscape?: FieldInputEvent;
-  onTab?: FieldInputEvent;
-  onShiftTab?: FieldInputEvent;
-};
+export const CurrencyFieldInput = () => {
+  const { draftValue, setDraftValue, defaultValue } = useCurrencyField();
 
-export const CurrencyFieldInput = ({
-  onEnter,
-  onEscape,
-  onClickOutside,
-  onTab,
-  onShiftTab,
-}: CurrencyFieldInputProps) => {
-  const { draftValue, persistCurrencyField, setDraftValue, defaultValue } =
-    useCurrencyField();
+  const { onClickOutside, onEnter, onEscape, onShiftTab, onTab } = useContext(
+    FieldInputEventContext,
+  );
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
@@ -55,21 +45,44 @@ export const CurrencyFieldInput = ({
       ? defaultCurrencyCodeWithoutSQLQuotes
       : CurrencyCode.USD;
 
+  const getNewCurrencyValue = ({
+    amountText,
+    currencyCode,
+  }: {
+    amountText: string;
+    currencyCode: string;
+  }) => {
+    const amount = parseFloat(amountText);
+
+    const newCurrencyValue = {
+      amountMicros: isNaN(amount)
+        ? null
+        : convertCurrencyAmountToCurrencyMicros(amount),
+      currencyCode,
+    };
+
+    if (!isFieldCurrencyValue(newCurrencyValue)) {
+      return;
+    }
+
+    return newCurrencyValue;
+  };
+
   const handleEnter = (newValue: string) => {
-    onEnter?.(() => {
-      persistCurrencyField({
+    onEnter?.({
+      newValue: getNewCurrencyValue({
         amountText: newValue,
         currencyCode,
-      });
+      }),
     });
   };
 
   const handleEscape = (newValue: string) => {
-    onEscape?.(() => {
-      persistCurrencyField({
+    onEscape?.({
+      newValue: getNewCurrencyValue({
         amountText: newValue,
         currencyCode,
-      });
+      }),
     });
   };
 
@@ -77,30 +90,31 @@ export const CurrencyFieldInput = ({
     event: MouseEvent | TouchEvent,
     newValue: string,
   ) => {
-    onClickOutside?.(() => {
-      persistCurrencyField({
+    onClickOutside?.({
+      newValue: getNewCurrencyValue({
         amountText: newValue,
         currencyCode,
-      });
-    }, event);
+      }),
+      event,
+    });
   };
 
   const handleTab = (newValue: string) => {
-    onTab?.(() => {
-      persistCurrencyField({
+    onTab?.({
+      newValue: getNewCurrencyValue({
         amountText: newValue,
         currencyCode,
-      });
+      }),
     });
   };
 
   const handleShiftTab = (newValue: string) => {
-    onShiftTab?.(() =>
-      persistCurrencyField({
+    onShiftTab?.({
+      newValue: getNewCurrencyValue({
         amountText: newValue,
         currencyCode,
       }),
-    );
+    });
   };
 
   const handleChange = (newValue: string) => {

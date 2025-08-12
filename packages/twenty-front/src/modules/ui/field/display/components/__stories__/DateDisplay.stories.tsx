@@ -2,7 +2,7 @@ import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
 import { UserContext } from '@/users/contexts/UserContext';
-import { expect , within } from '@storybook/test';
+import { expect, within } from '@storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
 import { DateDisplay } from '../DateDisplay';
 
