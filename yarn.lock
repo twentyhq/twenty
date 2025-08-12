@@ -51307,7 +51307,7 @@ __metadata:
     ts-loader: "npm:^9.2.3"
     ts-node: "npm:10.9.1"
     tsconfig-paths: "npm:^4.2.0"
-    tslib: "npm:^2.3.0"
+    tslib: "npm:^2.8.1"
     tsx: "npm:^4.17.0"
     type-fest: "npm:4.10.1"
     typescript: "npm:5.9.2"
