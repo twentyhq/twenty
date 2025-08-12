@@ -1,6 +1,6 @@
 import {
-    type WorkflowAction,
-    type WorkflowTrigger,
+  type WorkflowAction,
+  type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { findStepPosition } from '@/workflow/utils/findStepPosition';
 import { isDefined } from 'twenty-shared/utils';

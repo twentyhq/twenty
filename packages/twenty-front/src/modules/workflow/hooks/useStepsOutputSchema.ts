@@ -5,8 +5,8 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import {
-    type OutputSchema,
-    type StepOutputSchema,
+  type OutputSchema,
+  type StepOutputSchema,
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';

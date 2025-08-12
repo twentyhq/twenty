@@ -1,6 +1,10 @@
 import { type WorkflowRunFlow } from '@/workflow/types/Workflow';
 import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
-import { getWorkflowRunContext, TRIGGER_STEP_ID, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
+import {
+  getWorkflowRunContext,
+  TRIGGER_STEP_ID,
+  type WorkflowRunStepInfos,
+} from 'twenty-shared/workflow';
 
 export const getWorkflowRunStepContext = ({
   stepId,

@@ -1,6 +1,6 @@
 import {
-    type WorkflowAction,
-    type WorkflowTrigger,
+  type WorkflowAction,
+  type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { getStepDefinitionOrThrow } from '../getStepDefinitionOrThrow';
