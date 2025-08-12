@@ -1,5 +1,5 @@
 import { type Decorator, type Meta, type StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect, useState } from 'react';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -7,6 +7,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -14,10 +15,16 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { useNumberField } from '../../../hooks/useNumberField';
-import {
-  NumberFieldInput,
-  type NumberFieldInputProps,
-} from '../NumberFieldInput';
+import { NumberFieldInput } from '../NumberFieldInput';
+
+const {
+  FieldInputEventContextProviderWithJestMocks,
+  handleEnterMocked,
+  handleEscapeMocked,
+  handleClickoutsideMocked,
+  handleTabMocked,
+  handleShiftTabMocked,
+} = getFieldInputEventContextProviderWithJestMocks();
 
 const NumberFieldValueSetterEffect = ({ value }: { value: number }) => {
   const { setFieldValue } = useNumberField();
@@ -29,7 +36,7 @@ const NumberFieldValueSetterEffect = ({ value }: { value: number }) => {
   return <></>;
 };
 
-type NumberFieldInputWithContextProps = NumberFieldInputProps & {
+type NumberFieldInputWithContextProps = {
   value: number;
   recordId: string;
 };
@@ -37,11 +44,6 @@ type NumberFieldInputWithContextProps = NumberFieldInputProps & {
 const NumberFieldInputWithContext = ({
   recordId,
   value,
-  onEnter,
-  onEscape,
-  onClickOutside,
-  onTab,
-  onShiftTab,
 }: NumberFieldInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
@@ -94,15 +96,11 @@ const NumberFieldInputWithContext = ({
           isRecordFieldReadOnly: false,
         }}
       >
-        {isReady && <StorybookFieldInputDropdownFocusIdSetterEffect />}
-        <NumberFieldValueSetterEffect value={value} />
-        <NumberFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <FieldInputEventContextProviderWithJestMocks>
+          {isReady && <StorybookFieldInputDropdownFocusIdSetterEffect />}
+          <NumberFieldValueSetterEffect value={value} />
+          <NumberFieldInput />
+        </FieldInputEventContextProviderWithJestMocks>
       </FieldContext.Provider>
       {isReady && <div data-testid="is-ready-marker" />}
       <div data-testid="data-field-input-click-outside-div" />
@@ -110,19 +108,13 @@ const NumberFieldInputWithContext = ({
   );
 };
 
-const enterJestFn = fn();
-const escapeJestfn = fn();
-const clickOutsideJestFn = fn();
-const tabJestFn = fn();
-const shiftTabJestFn = fn();
-
 const clearMocksDecorator: Decorator = (Story, context) => {
   if (context.parameters.clearMocks === true) {
-    enterJestFn.mockClear();
-    escapeJestfn.mockClear();
-    clickOutsideJestFn.mockClear();
-    tabJestFn.mockClear();
-    shiftTabJestFn.mockClear();
+    handleEnterMocked.mockClear();
+    handleEscapeMocked.mockClear();
+    handleClickoutsideMocked.mockClear();
+    handleTabMocked.mockClear();
+    handleShiftTabMocked.mockClear();
   }
   return <Story />;
 };
@@ -133,11 +125,11 @@ const meta: Meta = {
   args: {
     value: 1000,
     isPositive: true,
-    onEnter: enterJestFn,
-    onEscape: escapeJestfn,
-    onClickOutside: clickOutsideJestFn,
-    onTab: tabJestFn,
-    onShiftTab: shiftTabJestFn,
+    onEnter: handleEnterMocked,
+    onEscape: handleEscapeMocked,
+    onClickOutside: handleClickoutsideMocked,
+    onTab: handleTabMocked,
+    onShiftTab: handleShiftTabMocked,
   },
   argTypes: {
     onEnter: { control: false },
@@ -162,13 +154,13 @@ export const Enter: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(enterJestFn).toHaveBeenCalledTimes(0);
+    expect(handleEnterMocked).toHaveBeenCalledTimes(0);
 
     await canvas.findByTestId('is-ready-marker');
     await userEvent.keyboard('{enter}');
 
     await waitFor(() => {
-      expect(enterJestFn).toHaveBeenCalledTimes(1);
+      expect(handleEnterMocked).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -177,13 +169,13 @@ export const Escape: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(escapeJestfn).toHaveBeenCalledTimes(0);
+    expect(handleEscapeMocked).toHaveBeenCalledTimes(0);
 
     await canvas.findByTestId('is-ready-marker');
     await userEvent.keyboard('{esc}');
 
     await waitFor(() => {
-      expect(escapeJestfn).toHaveBeenCalledTimes(1);
+      expect(handleEscapeMocked).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -192,7 +184,7 @@ export const ClickOutside: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
+    expect(handleClickoutsideMocked).toHaveBeenCalledTimes(0);
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
 
@@ -200,7 +192,7 @@ export const ClickOutside: Story = {
     await userEvent.click(emptyDiv);
 
     await waitFor(() => {
-      expect(clickOutsideJestFn).toHaveBeenCalledTimes(1);
+      expect(handleClickoutsideMocked).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -209,13 +201,13 @@ export const Tab: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(tabJestFn).toHaveBeenCalledTimes(0);
+    expect(handleTabMocked).toHaveBeenCalledTimes(0);
 
     await canvas.findByTestId('is-ready-marker');
     await userEvent.keyboard('{tab}');
 
     await waitFor(() => {
-      expect(tabJestFn).toHaveBeenCalledTimes(1);
+      expect(handleTabMocked).toHaveBeenCalledTimes(1);
     });
   },
 };
@@ -224,13 +216,13 @@ export const ShiftTab: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(shiftTabJestFn).toHaveBeenCalledTimes(0);
+    expect(handleShiftTabMocked).toHaveBeenCalledTimes(0);
 
     await canvas.findByTestId('is-ready-marker');
     await userEvent.keyboard('{shift>}{tab}');
 
     await waitFor(() => {
-      expect(shiftTabJestFn).toHaveBeenCalledTimes(1);
+      expect(handleShiftTabMocked).toHaveBeenCalledTimes(1);
     });
   },
 };

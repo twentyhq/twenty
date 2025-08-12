@@ -1,60 +1,50 @@
 import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 
-import { usePersistField } from '../../../hooks/usePersistField';
 import { useTextField } from '../../hooks/useTextField';
 
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import {
-  type FieldInputClickOutsideEvent,
-  type FieldInputEvent,
-} from '@/object-record/record-field/types/FieldInputEvent';
+
 import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useContext } from 'react';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 
-export type TextFieldInputProps = {
-  onClickOutside?: FieldInputClickOutsideEvent;
-  onEnter?: FieldInputEvent;
-  onEscape?: FieldInputEvent;
-  onTab?: FieldInputEvent;
-  onShiftTab?: FieldInputEvent;
-};
-
-export const TextFieldInput = ({
-  onEnter,
-  onEscape,
-  onClickOutside,
-  onTab,
-  onShiftTab,
-}: TextFieldInputProps) => {
+export const TextFieldInput = () => {
   const { fieldDefinition, draftValue, setDraftValue } = useTextField();
+
+  const { onEnter, onEscape, onClickOutside, onTab, onShiftTab } = useContext(
+    FieldInputEventContext,
+  );
 
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
 
-  const persistField = usePersistField();
   const handleEnter = (newText: string) => {
-    onEnter?.(() => persistField(newText.trim()));
+    onEnter?.({ newValue: newText.trim() });
   };
 
   const handleEscape = (newText: string) => {
-    onEscape?.(() => persistField(newText.trim()));
+    onEscape?.({ newValue: newText.trim() });
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
-    onClickOutside?.(() => persistField(newText.trim()), event);
+    onClickOutside?.({
+      newValue: newText.trim(),
+      event,
+    });
   };
 
   const handleTab = (newText: string) => {
-    onTab?.(() => persistField(newText.trim()));
+    onTab?.({ newValue: newText.trim() });
   };
 
   const handleShiftTab = (newText: string) => {
-    onShiftTab?.(() => persistField(newText.trim()));
+    onShiftTab?.({ newValue: newText.trim() });
   };
 
   const handleChange = (newText: string) => {

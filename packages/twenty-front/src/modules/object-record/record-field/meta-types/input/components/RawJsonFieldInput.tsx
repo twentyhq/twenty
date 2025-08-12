@@ -1,30 +1,20 @@
 import styled from '@emotion/styled';
 
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
 import { isWorkflowRunJsonField } from '@/object-record/record-field/meta-types/utils/isWorkflowRunJsonField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import {
-  type FieldInputClickOutsideEvent,
-  type FieldInputEvent,
-} from '@/object-record/record-field/types/FieldInputEvent';
+
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useLingui } from '@lingui/react/macro';
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconPencil } from 'twenty-ui/display';
 import { CodeEditor, FloatingIconButton } from 'twenty-ui/input';
 import { JsonTree, isTwoFirstDepths } from 'twenty-ui/json-visualizer';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useJsonField } from '../../hooks/useJsonField';
-
-type RawJsonFieldInputProps = {
-  onClickOutside?: FieldInputClickOutsideEvent;
-  onEnter?: FieldInputEvent;
-  onEscape?: FieldInputEvent;
-  onTab?: FieldInputEvent;
-  onShiftTab?: FieldInputEvent;
-};
 
 const CONTAINER_HEIGHT = 300;
 
@@ -51,47 +41,66 @@ const StyledJsonTreeContainer = styled.div`
   width: min-content;
 `;
 
-export const RawJsonFieldInput = ({
-  onEscape,
-  onClickOutside,
-  onTab,
-  onShiftTab,
-}: RawJsonFieldInputProps) => {
+export const RawJsonFieldInput = () => {
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
 
-  const {
-    draftValue,
-    precomputedDraftValue,
-    setDraftValue,
-    persistJsonField,
-    fieldDefinition,
-  } = useJsonField();
+  const { draftValue, precomputedDraftValue, setDraftValue, fieldDefinition } =
+    useJsonField();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
 
+  const { onEscape, onClickOutside, onTab, onShiftTab } = useContext(
+    FieldInputEventContext,
+  );
+
   const [isEditing, setIsEditing] = useState(false);
 
+  const parseJsonField = (
+    nextValue: string,
+  ): { success: boolean; value?: any } => {
+    if (!nextValue) {
+      return {
+        success: true,
+        value: null,
+      };
+    }
+
+    try {
+      return { success: true, value: JSON.parse(nextValue) };
+    } catch {
+      return { success: false };
+    }
+  };
+
   const handleEscape = (newText: string) => {
-    onEscape?.(() => persistJsonField(newText));
+    const { success, value } = parseJsonField(newText);
+
+    onEscape?.({ newValue: value, skipPersist: !success });
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
-    onClickOutside?.(() => persistJsonField(newText), event);
+    const { success, value } = parseJsonField(newText);
+
+    onClickOutside?.({ newValue: value, skipPersist: !success, event });
   };
 
   const handleTab = (newText: string) => {
-    onTab?.(() => persistJsonField(newText));
+    const { success, value } = parseJsonField(newText);
+
+    onTab?.({ newValue: value, skipPersist: !success });
   };
 
   const handleShiftTab = (newText: string) => {
-    onShiftTab?.(() => persistJsonField(newText));
+    const { success, value } = parseJsonField(newText);
+
+    onShiftTab?.({ newValue: value, skipPersist: !success });
   };
 
   const handleChange = (newText: string) => {

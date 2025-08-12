@@ -398,6 +398,11 @@ msgstr "Thêm mới"
 msgid "Add node"
 msgstr ""
 
+#. js-lingui-id: 1Ltnvs
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+msgid "Add Node"
+msgstr ""
+
 #. js-lingui-id: dEO3Zx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
@@ -1337,10 +1342,10 @@ msgstr "Xác nhận xóa vai trò {roleName}? Điều này không thể hoàn t�
 msgid "Connect a new account to your workspace"
 msgstr "Kết nối tài khoản mới với không gian làm việc của bạn"
 
-#. js-lingui-id: ffVcxj
+#. js-lingui-id: dUcoLZ
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-msgid "Connect Email Account"
-msgstr "Kết nối tài khoản Email"
+msgid "Connect Account"
+msgstr ""
 
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -1674,10 +1679,20 @@ msgstr "Đối tượng tùy chỉnh"
 msgid "Customise the fields available in the {objectLabelSingular} views."
 msgstr "Tùy chỉnh các trường có sẵn trong các chế độ xem {objectLabelSingular}."
 
+#. js-lingui-id: qqLY+j
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+msgid "Customization"
+msgstr ""
+
 #. js-lingui-id: CMhr4u
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Customize Domain"
 msgstr "Tùy chỉnh Domain"
+
+#. js-lingui-id: wiqA3D
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+msgid "Customize field settings"
+msgstr ""
 
 #. js-lingui-id: RP2we8
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
@@ -1901,6 +1916,11 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Delete API key"
 msgstr "Xóa khóa API"
+
+#. js-lingui-id: YLfVFw
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+msgid "Delete branch"
+msgstr ""
 
 #. js-lingui-id: x2p4/4
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -2170,6 +2190,12 @@ msgstr "Chỉnh sửa"
 msgid "Edit {objectLabelPlural}"
 msgstr ""
 
+#. js-lingui-id: 9B436y
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
+msgid "Edit Account"
+msgstr ""
+
 #. js-lingui-id: CQrc7J
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Edit Agent"
@@ -2179,13 +2205,6 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Edit CRM data structure and fields"
 msgstr "Chỉnh sửa cấu trúc dữ liệu CRM và các trường"
-
-#. js-lingui-id: AyPkS4
-#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-msgid "Edit Email Account"
-msgstr "Chỉnh sửa tài khoản Email"
 
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -3667,6 +3686,11 @@ msgstr "Tìm kiếm người dùng và quản lý cờ đặc trưng trong khôn
 msgid "Look up users to impersonate them."
 msgstr "Tìm kiếm người dùng để mạo danh họ."
 
+#. js-lingui-id: MsaCqr
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Mail Account"
+msgstr ""
+
 #. js-lingui-id: n0FHLv
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Manage API keys and webhooks"
@@ -3966,6 +3990,12 @@ msgstr ""
 msgid "New account"
 msgstr "Tài khoản mới"
 
+#. js-lingui-id: zlKiaf
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+msgid "New Account"
+msgstr ""
+
 #. js-lingui-id: mJIA0/
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -3978,13 +4008,6 @@ msgstr ""
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "New Approved Access Domain"
 msgstr "Miền Truy Cập Đã Được Phê Duyệt Mới"
-
-#. js-lingui-id: 7JRigF
-#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-msgid "New Email Account"
-msgstr "Tài khoản Email mới"
 
 #. js-lingui-id: 8YPqRx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -4759,6 +4782,11 @@ msgstr "Xóa tài khoản"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove as default"
 msgstr "Xóa mặc định"
+
+#. js-lingui-id: rn2/2V
+#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+msgid "Remove filter"
+msgstr ""
 
 #. js-lingui-id: T/pF0Z
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5846,7 +5874,6 @@ msgstr "Trang mà bạn đang tìm kiếm hoặc không còn tồn tại hoặc 
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "The values of this field"
 msgstr "Giá trị của trường này"
 
@@ -6151,10 +6178,10 @@ msgstr "Cập nhật"
 msgid "Update agent information"
 msgstr ""
 
-#. js-lingui-id: cAn7CC
+#. js-lingui-id: qbg8VE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-msgid "Update your email account configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
-msgstr "Cập nhật cấu hình tài khoản email của bạn. Cấu hình bất kỳ sự kết hợp nào của IMAP, SMTP và CalDAV theo nhu cầu."
+msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
+msgstr ""
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -6215,6 +6242,8 @@ msgstr "Sử dụng API của chúng tôi hoặc thêm {objectLabel} của bạn
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 msgid "User"
 msgstr "Người dùng"
 
@@ -6268,7 +6297,6 @@ msgstr "Giá trị được đặt trong môi trường máy chủ, nó có th�
 #. js-lingui-id: fXVIZq
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Values"
 msgstr "Giá trị"
 
@@ -6486,8 +6514,6 @@ msgstr "Quy Trình Làm Việc"
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"
 msgstr "Workspace"

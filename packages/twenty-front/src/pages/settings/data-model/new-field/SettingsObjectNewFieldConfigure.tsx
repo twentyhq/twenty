@@ -214,8 +214,8 @@ export const SettingsObjectNewFieldConfigure = () => {
           </Section>
           <Section>
             <H2Title
-              title={t`Values`}
-              description={t`The values of this field`}
+              title={t`Customization`}
+              description={t`Customize field settings`}
             />
             <SettingsDataModelFieldSettingsFormCard
               fieldMetadataItem={{

@@ -20,6 +20,7 @@ import { isFieldFullName } from '@/object-record/record-field/types/guards/isFie
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldLinksValue } from '@/object-record/record-field/types/guards/isFieldLinksValue';
+import { isFieldMorphRelation } from '@/object-record/record-field/types/guards/isFieldMorphRelation';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
@@ -78,6 +79,12 @@ export const isFieldValueEmpty = ({
       return !isNonEmptyArray(fieldValue);
     }
     return isValueEmpty(fieldValue);
+  }
+
+  if (isFieldMorphRelation(fieldDefinition)) {
+    return isArray(fieldValue)
+      ? !isNonEmptyArray(fieldValue)
+      : isValueEmpty(fieldValue);
   }
 
   if (isFieldMultiSelect(fieldDefinition) || isFieldArray(fieldDefinition)) {
