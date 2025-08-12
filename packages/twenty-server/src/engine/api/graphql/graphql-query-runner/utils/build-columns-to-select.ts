@@ -71,8 +71,6 @@ const getRequiredRelationColumns = (
         continue;
       }
 
-      // not sure here if i need pluralise
-      // not sure here if the trailing id
       const morphRelationFieldName = computeMorphRelationFieldName({
         fieldName: fieldMetadata.name,
         relationDirection: fieldMetadata.settings.relationType,
