@@ -1,24 +1,24 @@
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import {
-  addDays,
-  addMonths,
-  addWeeks,
-  addYears,
-  endOfDay,
-  endOfMonth,
-  endOfWeek,
-  endOfYear,
-  roundToNearestMinutes,
-  startOfDay,
-  startOfMonth,
-  startOfWeek,
-  startOfYear,
-  subDays,
-  subMonths,
-  subWeeks,
-  subYears,
+    addDays,
+    addMonths,
+    addWeeks,
+    addYears,
+    endOfDay,
+    endOfMonth,
+    endOfWeek,
+    endOfYear,
+    roundToNearestMinutes,
+    startOfDay,
+    startOfMonth,
+    startOfWeek,
+    startOfYear,
+    subDays,
+    subMonths,
+    subWeeks,
+    subYears,
 } from 'date-fns';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { z } from 'zod';
 

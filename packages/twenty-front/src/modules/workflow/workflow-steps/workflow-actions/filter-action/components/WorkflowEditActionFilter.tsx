@@ -6,9 +6,9 @@ import { StepFilterGroupsComponentInstanceContext } from '@/workflow/workflow-st
 import { StepFiltersComponentInstanceContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/StepFiltersComponentInstanceContext';
 import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-actions/hooks/useWorkflowActionHeader';
 import {
-  type StepFilter,
-  type StepFilterGroup,
-} from 'twenty-shared/src/types/StepFilters';
+    type StepFilter,
+    type StepFilterGroup,
+} from 'twenty-shared/types';
 import { useIcons } from 'twenty-ui/display';
 
 type WorkflowEditActionFilterProps = {

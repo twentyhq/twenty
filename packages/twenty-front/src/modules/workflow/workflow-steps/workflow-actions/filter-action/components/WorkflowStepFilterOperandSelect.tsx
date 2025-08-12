@@ -7,9 +7,9 @@ import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-ac
 import { getViewFilterOperands } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/getStepFilterOperands';
 import { useContext } from 'react';
 import {
-  type StepFilter,
-  type ViewFilterOperand,
-} from 'twenty-shared/src/types';
+    type StepFilter,
+    type ViewFilterOperand,
+} from 'twenty-shared/types';
 
 type WorkflowStepFilterOperandSelectProps = {
   stepFilter: StepFilter;
