@@ -8,7 +8,7 @@ import {
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 
-type FromDeleteFieldInputToFlatFieldMetadatasToDeleteUtilArgs = {
+type GetRelationFlatFieldMetadatasUtilArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   flatFieldMetadata: FlatFieldMetadata<
     FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
@@ -18,7 +18,7 @@ type FromDeleteFieldInputToFlatFieldMetadatasToDeleteUtilArgs = {
 export const getRelationFlatFieldMetadatasOrThrow = ({
   existingFlatObjectMetadataMaps,
   flatFieldMetadata,
-}: FromDeleteFieldInputToFlatFieldMetadatasToDeleteUtilArgs): FlatFieldMetadata[] => {
+}: GetRelationFlatFieldMetadatasUtilArgs): FlatFieldMetadata[] => {
   const { relationTargetFieldMetadataId, relationTargetObjectMetadataId } =
     flatFieldMetadata;
 

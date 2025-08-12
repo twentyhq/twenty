@@ -47,7 +47,7 @@ export class FlatObjectMetadataValidatorService {
     if (!isDefined(flatObjectMetadataToDelete)) {
       errors.push(
         new ObjectMetadataException(
-          'Object does not exist',
+          t`Object does not exist`,
           ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         ),
       );
@@ -55,7 +55,7 @@ export class FlatObjectMetadataValidatorService {
       if (flatObjectMetadataToDelete.isRemote) {
         errors.push(
           new ObjectMetadataException(
-            'Remote objects are not supported yet',
+            t`Remote objects are not supported yet`,
             ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           ),
         );
@@ -67,7 +67,7 @@ export class FlatObjectMetadataValidatorService {
       ) {
         errors.push(
           new ObjectMetadataException(
-            'Standard objects cannot be deleted',
+            t`Standard objects cannot be deleted`,
             ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           ),
         );
