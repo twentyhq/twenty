@@ -70,6 +70,11 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     recordSeeds: MKT_ORDER_DATA_SEEDS,
   },
   {
+    tableName: 'mktOrderItem',
+    pgColumns: MKT_ORDER_ITEM_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_ORDER_ITEM_DATA_SEEDS,
+  },
+  {
     tableName: 'mktContract',
     pgColumns: MKT_CONTRACT_DATA_SEED_COLUMNS,
     recordSeeds: MKT_CONTRACT_DATA_SEEDS,
