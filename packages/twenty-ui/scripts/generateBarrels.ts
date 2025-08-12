@@ -72,10 +72,10 @@ const getSubDirectoryPaths = (directoryPath: string): string[] => {
   }).sort((a, b) => a.localeCompare(b));
 };
 
-const partitionFileExportsByType = (declarations: DeclarationOccurence[]) => {
+const partitionFileExportsByType = (declarations: DeclarationOccurrence[]) => {
   return declarations.reduce<{
-    typeAndInterfaceDeclarations: DeclarationOccurence[];
-    otherDeclarations: DeclarationOccurence[];
+    typeAndInterfaceDeclarations: DeclarationOccurrence[];
+    otherDeclarations: DeclarationOccurrence[];
   }>(
     (acc, { kind, name }) => {
       if (kind === 'type' || kind === 'interface') {
@@ -117,7 +117,7 @@ const generateModuleIndexFiles = (exportByBarrel: ExportByBarrel[]) => {
             ),
           );
           const mapDeclarationNameAndJoin = (
-            declarations: DeclarationOccurence[],
+            declarations: DeclarationOccurrence[],
           ) => declarations.map(({ name }) => name).join(', ');
 
           const typeExport =
@@ -187,12 +187,12 @@ const updateNxProjectConfigurationBuildOutputs = (outputs: JsonUpdate) => {
   });
 };
 
-type ExportOccurence = {
+type ExportOccurrence = {
   types: string;
   import: string;
   require: string;
 };
-type ExportsConfig = Record<string, ExportOccurence | string>;
+type ExportsConfig = Record<string, ExportOccurrence | string>;
 const generateModulePackageExports = (moduleDirectories: string[]) => {
   return moduleDirectories.reduce<ExportsConfig>(
     (acc, moduleDirectory) => {
@@ -291,7 +291,7 @@ const getKind = (
 };
 
 function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
-  const exports: DeclarationOccurence[] = [];
+  const exports: DeclarationOccurrence[] = [];
 
   function visit(node: ts.Node) {
     if (!ts.canHaveModifiers(node)) {
@@ -410,10 +410,10 @@ type ExportKind =
   | 'let'
   | 'var'
   | 'class';
-type DeclarationOccurence = { kind: ExportKind; name: string };
+type DeclarationOccurrence = { kind: ExportKind; name: string };
 type FileExports = Array<{
   file: string;
-  exports: DeclarationOccurence[];
+  exports: DeclarationOccurrence[];
 }>;
 
 function findAllExports(directoryPath: string): FileExports {
