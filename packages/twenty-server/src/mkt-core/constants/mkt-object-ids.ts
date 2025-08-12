@@ -13,4 +13,5 @@ export const MKT_OBJECT_IDS = {
   mktVariant: 'd1aa8878-0462-46fa-b3f8-2cb8e7793f85',
   mktVariantAttribute: '5f628bdb-845d-47a4-9940-30a094af7497',
   mktOrder: '9ff5be11-0088-456e-b7cb-9885fd167a48',
+  mktOrderItem: '7a3b1f2e-4c5d-6e7f-8901-234567890abc',
 };

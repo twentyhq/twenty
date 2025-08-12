@@ -14,12 +14,12 @@ type MktOrderDataSeed = {
 };
 
 export enum OrderStatus {
-    PENDING = 'pending',
-    PAID = 'paid',
-    FAILED = 'failed',
-    CANCELLED = 'cancelled',
-    FULFILLED = 'fulfilled',
-  }
+  PENDING = 'pending',
+  PAID = 'paid',
+  FAILED = 'failed',
+  CANCELLED = 'cancelled',
+  FULFILLED = 'fulfilled',
+}
 
 // prettier-ignore
 export const MKT_ORDER_DATA_SEED_COLUMNS: (keyof MktOrderDataSeed)[] = [

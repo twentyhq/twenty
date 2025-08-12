@@ -24,44 +24,35 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
-import { MKT_ORDER_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
-import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
+import { MKT_ORDER_ITEM_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
+import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
+import { MktProductWorkspaceEntity } from 'src/mkt-core/product/standard-objects/mkt-product.workspace-entity';
 
-// ✅ Define fields to be used for search
-const SEARCH_FIELDS_FOR_ORDER: FieldTypeAndNameMetadata[] = [
-  { name: 'orderCode', type: FieldMetadataType.TEXT },
-  { name: 'note', type: FieldMetadataType.TEXT },
+const SEARCH_FIELDS_FOR_ORDER_ITEM: FieldTypeAndNameMetadata[] = [
+  { name: 'name', type: FieldMetadataType.TEXT },
 ];
 
-export enum OrderStatus {
-  PENDING = 'pending',
-  PAID = 'paid',
-  FAILED = 'failed',
-  CANCELLED = 'cancelled',
-  FULFILLED = 'fulfilled',
-}
-
 @WorkspaceEntity({
-  standardId: MKT_OBJECT_IDS.mktOrder,
-  namePlural: 'orders',
-  labelSingular: msg`Order`,
-  labelPlural: msg`Orders`,
-  description: msg`Represents a customer order.`,
-  icon: 'IconShoppingCart',
-  shortcut: 'O',
-  labelIdentifierStandardId: MKT_ORDER_FIELD_IDS.name,
+  standardId: MKT_OBJECT_IDS.mktOrderItem,
+  namePlural: 'orderItems',
+  labelSingular: msg`Order Item`,
+  labelPlural: msg`Order Items`,
+  description: msg`Represents an item in an order.`,
+  icon: 'IconShoppingCartCog',
+  shortcut: 'OI',
+  labelIdentifierStandardId: MKT_ORDER_ITEM_FIELD_IDS.name,
 })
 @WorkspaceIsSearchable()
-export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
+export class MktOrderItemWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
-    standardId: MKT_ORDER_FIELD_IDS.name,
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: msg`Name`,
   })
   name: string;
 
   @WorkspaceField({
-    standardId: MKT_ORDER_FIELD_IDS.position,
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: msg`Position`,
     description: msg`Position in list`,
@@ -71,112 +62,88 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
 
   @WorkspaceField({
-    standardId: MKT_ORDER_FIELD_IDS.orderCode,
-    type: FieldMetadataType.TEXT,
-    label: msg`Order Code`,
-  })
-  orderCode: string;
-
-  @WorkspaceField({
-    standardId: MKT_ORDER_FIELD_IDS.status,
-    type: FieldMetadataType.SELECT,
-    label: msg`Status`,
-    description: msg`Current order status`,
-    options: [
-      {
-        value: OrderStatus.PENDING,
-        label: 'Pending',
-        color: 'gray',
-        position: 0,
-      },
-      { value: OrderStatus.PAID, label: 'Paid', color: 'green', position: 1 },
-      { value: OrderStatus.FAILED, label: 'Failed', color: 'red', position: 2 },
-      {
-        value: OrderStatus.CANCELLED,
-        label: 'Cancelled',
-        color: 'orange',
-        position: 3,
-      },
-      {
-        value: OrderStatus.FULFILLED,
-        label: 'Fulfilled',
-        color: 'blue',
-        position: 4,
-      },
-    ],
-  })
-  @WorkspaceIsNullable()
-  status?: OrderStatus;
-
-  @WorkspaceField({
-    standardId: MKT_ORDER_FIELD_IDS.totalAmount,
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.quantity,
     type: FieldMetadataType.NUMBER,
-    label: msg`Total Amount`,
+    label: msg`Quantity`,
+    description: msg`Quantity of the product`,
+    icon: 'IconNumbers',
   })
-  @WorkspaceIsNullable()
-  totalAmount?: number;
+  quantity: number;
 
   @WorkspaceField({
-    standardId: MKT_ORDER_FIELD_IDS.currency,
-    type: FieldMetadataType.TEXT,
-    label: msg`Currency`,
-    defaultValue: "'USD'",
-  })
-  currency: string;
-
-  @WorkspaceField({
-    standardId: MKT_ORDER_FIELD_IDS.note,
-    type: FieldMetadataType.TEXT,
-    label: msg`Note`,
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.unitPrice,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Unit Price`,
+    description: msg`Price per unit of the product`,
+    icon: 'IconCurrencyDollar',
   })
   @WorkspaceIsNullable()
-  note?: string;
+  unitPrice?: number;
 
   @WorkspaceField({
-    standardId: MKT_ORDER_FIELD_IDS.requireContract,
-    type: FieldMetadataType.BOOLEAN,
-    label: msg`Require Contract`,
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.totalPrice,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Total Price`,
+    description: msg`Total price for this line item (quantity * unit price)`,
+    icon: 'IconCurrencyDollar',
   })
   @WorkspaceIsNullable()
-  requireContract?: boolean;
+  totalPrice?: number;
 
   @WorkspaceRelation({
-    standardId: MKT_ORDER_FIELD_IDS.orderItems,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Order Items`,
-    description: msg`Items included in this order`,
-    icon: 'IconShoppingCartCog',
-    inverseSideTarget: () => MktOrderItemWorkspaceEntity,
-    inverseSideFieldKey: 'mktOrder',
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.mktOrder,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Order`,
+    description: msg`Order this item belongs to`,
+    icon: 'IconShoppingCart',
+    inverseSideTarget: () => MktOrderWorkspaceEntity,
+    inverseSideFieldKey: 'orderItems',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @WorkspaceIsNullable()
-  orderItems: Relation<MktOrderItemWorkspaceEntity[]>;
+  mktOrder: Relation<MktOrderWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('mktOrder')
+  mktOrderId: string;
 
   @WorkspaceRelation({
-    standardId: MKT_ORDER_FIELD_IDS.timelineActivities,
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.mktProduct,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Product`,
+    description: msg`Product for this order item`,
+    icon: 'IconBox',
+    inverseSideTarget: () => MktProductWorkspaceEntity,
+    inverseSideFieldKey: 'orderItems',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  mktProduct?: Relation<MktProductWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('mktProduct')
+  mktProductId?: string;
+
+  @WorkspaceRelation({
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Timeline Activities`,
-    description: msg`Timeline Activities linked to the order`,
+    description: msg`Timeline Activities linked to the order item`,
     icon: 'IconIconTimelineEvent',
     inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    inverseSideFieldKey: 'mktOrder',
+    inverseSideFieldKey: 'mktOrderItem',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
-  // ✅ Search vector field
   @WorkspaceField({
-    standardId: MKT_ORDER_FIELD_IDS.searchVector,
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,
     label: SEARCH_VECTOR_FIELD.label,
     description: SEARCH_VECTOR_FIELD.description,
     icon: 'IconSearch',
     generatedType: 'STORED',
     asExpression: getTsVectorColumnExpressionFromFields(
-      SEARCH_FIELDS_FOR_ORDER,
+      SEARCH_FIELDS_FOR_ORDER_ITEM,
     ),
   })
   @WorkspaceIsNullable()
@@ -185,13 +152,13 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   searchVector: string;
 
   @WorkspaceRelation({
-    standardId: MKT_ORDER_FIELD_IDS.accountOwner,
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.accountOwner,
     type: RelationType.MANY_TO_ONE,
     label: msg`Account Owner`,
-    description: msg`Your team member responsible for managing the order account`,
+    description: msg`Your team member responsible for managing the order item`,
     icon: 'IconUserCircle',
     inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
-    inverseSideFieldKey: 'accountOwnerForMktOrders',
+    inverseSideFieldKey: 'accountOwnerForMktOrderItems',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
@@ -201,7 +168,7 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   accountOwnerId: string | null;
 
   @WorkspaceField({
-    standardId: MKT_ORDER_FIELD_IDS.createdBy,
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
     label: msg`Created by`,
     icon: 'IconCreativeCommonsSa',

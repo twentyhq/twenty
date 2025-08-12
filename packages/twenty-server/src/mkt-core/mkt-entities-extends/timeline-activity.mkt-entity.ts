@@ -15,6 +15,7 @@ import { MktValueWorkspaceEntity } from 'src/mkt-core/value/mkt-value.workspace-
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
 import { MktVariantAttributeWorkspaceEntity } from 'src/mkt-core/variant_attribute/mkt-variant-attribute.workspace-entity';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
+import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
 
 export class TimelineActivityMktEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
@@ -112,4 +113,20 @@ export class TimelineActivityMktEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('mktOrder')
   mktOrderId: string | null;
+
+  @WorkspaceRelation({
+    standardId: TIMELINE_ACTIVITY_MKT_FIELD_IDS.mktOrderItem,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Order Item`,
+    description: msg`Event order item`,
+    icon: 'IconShoppingCartCog',
+    inverseSideTarget: () => MktOrderItemWorkspaceEntity,
+    inverseSideFieldKey: 'timelineActivities',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  mktOrderItem: Relation<MktOrderItemWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('mktOrderItem')
+  mktOrderItemId: string | null;
 }

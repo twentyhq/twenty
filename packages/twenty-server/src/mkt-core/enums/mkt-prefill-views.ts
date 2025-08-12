@@ -4,6 +4,7 @@ import { mktValuesAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-value
 import { mktVariantsAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-variant-all.view';
 import { mktVariantAttributesAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-variant-attribute-all.view';
 import { mktOrdersAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-order-all.view';
+import { mktOrderItemsAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-order-item-all.view';
 
 export const MKT_ALL_VIEWS = [
   // product views
@@ -14,4 +15,5 @@ export const MKT_ALL_VIEWS = [
   mktVariantAttributesAllView,
   // order views
   mktOrdersAllView,
+  mktOrderItemsAllView,
 ];
