@@ -68,7 +68,7 @@ export class FlatObjectMetadataValidatorService {
       if (computedNameSingular !== flatObjectMetadataToValidate.nameSingular) {
         errors.push(
           new ObjectMetadataException(
-            t`Singular name is not synced with singular label`,  
+            t`Singular name is not synced with singular label`,
             ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           ),
         );
@@ -81,7 +81,7 @@ export class FlatObjectMetadataValidatorService {
       if (computedNamePlural !== flatObjectMetadataToValidate.namePlural) {
         errors.push(
           new ObjectMetadataException(
-            t`Plural name is not synced with plural label`,  
+            t`Plural name is not synced with plural label`,
             ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           ),
         );

@@ -1,8 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type FieldMetadataException
-} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { type FieldMetadataException } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { runFlatFieldMetadataValidator } from 'src/engine/metadata-modules/flat-field-metadata/utils/run-flat-field-metadata-validator.util';
 import { type ObjectMetadataException } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { type FlatMetadataValidator } from 'src/engine/metadata-modules/types/flat-metadata-validator.type';
