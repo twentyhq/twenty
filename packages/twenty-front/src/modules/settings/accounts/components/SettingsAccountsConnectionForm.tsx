@@ -70,7 +70,7 @@ export const SettingsAccountsConnectionForm = ({
 
   const getDescription = () => {
     if (isEditing) {
-      return t`Update your internet account configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed.`;
+      return t`Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed.`;
     }
     return t`You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync).`;
   };

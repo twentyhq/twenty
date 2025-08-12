@@ -69,7 +69,7 @@ export const SettingsAccountsListEmptyStateCard = () => {
         >
           <SettingsCard
             Icon={<IconAt size={theme.icon.size.md} />}
-            title={t`Connect Internet Account`}
+            title={t`Connect Account`}
           />
         </UndecoratedLink>
       )}

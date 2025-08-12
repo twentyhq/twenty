@@ -60,7 +60,7 @@ export const SettingsAccountsEditImapSmtpCaldavConnection = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formMethods}>
       <SubMenuTopBarContainer
-        title={t`Edit Internet Account`}
+        title={t`Edit Account`}
         links={[
           {
             children: t`User`,
@@ -70,7 +70,7 @@ export const SettingsAccountsEditImapSmtpCaldavConnection = () => {
             children: t`Accounts`,
             href: getSettingsPath(SettingsPath.Accounts),
           },
-          { children: t`Edit Internet Account` },
+          { children: t`Edit Account` },
         ]}
         actionButton={
           <SaveAndCancelButtons
