@@ -193,38 +193,51 @@ type ExportOccurrence = {
   require: string;
 };
 type ExportsConfig = Record<string, ExportOccurrence | string>;
-const generateModulePackageExports = (moduleDirectories: string[]) => {
-  return moduleDirectories.reduce<ExportsConfig>(
-    (acc, moduleDirectory) => {
-      const moduleName = getLastPathFolder(moduleDirectory);
-      if (moduleName === undefined) {
-        throw new Error(
-          `Should never occur, moduleName is undefined ${moduleDirectory}`,
-        );
-      }
 
-      return {
-        ...acc,
-        [`./${moduleName}`]: {
-          types: `./dist/${moduleName}/index.d.ts`,
-          import: `./dist/${moduleName}.mjs`,
-          require: `./dist/${moduleName}.cjs`,
-        },
-      };
-    },
-    {
-      './style.css': './dist/style.css',
-    },
-  );
+const generateModulePackageExports = (moduleDirectories: string[]) => {
+  return moduleDirectories.reduce<ExportsConfig>((acc, moduleDirectory) => {
+    const moduleName = getLastPathFolder(moduleDirectory);
+    if (moduleName === undefined) {
+      throw new Error(
+        `Should never occur, moduleName is undefined ${moduleDirectory}`,
+      );
+    }
+
+    return {
+      ...acc,
+      [`./${moduleName}`]: {
+        types: `./dist/${moduleName}/index.d.ts`,
+        import: `./dist/${moduleName}.mjs`,
+        require: `./dist/${moduleName}.cjs`,
+      },
+    };
+  }, {});
 };
 
 const computePackageJsonFilesAndExportsConfig = (
   moduleDirectories: string[],
 ) => {
   const entrypoints = moduleDirectories.map(getLastPathFolder);
-  const exports = generateModulePackageExports(moduleDirectories);
+  const exports = {
+    '.': {
+      types: './dist/index.d.ts',
+      import: './dist/index.mjs',
+      require: './dist/index.cjs',
+    },
+    ...generateModulePackageExports(moduleDirectories),
+  } satisfies ExportsConfig;
+
+  const typesVersionsEntries = entrypoints.reduce<Record<string, string[]>>(
+    (acc, moduleName) => ({
+      ...acc,
+      [`${moduleName}`]: [`dist/${moduleName}/index.d.ts`],
+    }),
+    {},
+  );
+
   return {
     exports,
+    typesVersions: { '*': typesVersionsEntries },
     files: ['dist', 'assets', ...entrypoints],
   };
 };
@@ -254,7 +267,6 @@ const EXCLUDED_DIRECTORIES = [
   '**/__mocks__/**',
   '**/__stories__/**',
   '**/internal/**',
-  '**/assets/**',
 ] as const;
 function getTypeScriptFiles(
   directoryPath: string,
@@ -302,7 +314,7 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
       (mod) => mod.kind === ts.SyntaxKind.ExportKeyword,
     );
 
-    if (!isExport && !ts.isExportDeclaration(node)) {
+    if (!isExport) {
       return ts.forEachChild(node, visit);
     }
 
@@ -368,7 +380,6 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
           name: node.name.text,
         });
         break;
-
       case ts.isExportDeclaration(node):
         if (node.exportClause && ts.isNamedExports(node.exportClause)) {
           node.exportClause.elements.forEach((element) => {

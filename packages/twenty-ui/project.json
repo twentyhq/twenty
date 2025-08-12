@@ -16,6 +16,8 @@
         "{projectRoot}/dist",
         "{projectRoot}/accessibility/package.json",
         "{projectRoot}/accessibility/dist",
+        "{projectRoot}/assets/package.json",
+        "{projectRoot}/assets/dist",
         "{projectRoot}/components/package.json",
         "{projectRoot}/components/dist",
         "{projectRoot}/display/package.json",

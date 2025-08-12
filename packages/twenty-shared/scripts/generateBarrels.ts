@@ -187,8 +187,6 @@ const updateNxProjectConfigurationBuildOutputs = (outputs: JsonUpdate) => {
   });
 };
 
-// No submodule package.json generation: stick to a single package with subpath exports
-
 type ExportOccurrence = {
   types: string;
   import: string;
@@ -234,9 +232,7 @@ const computePackageJsonFilesAndExportsConfig = (
       ...acc,
       [`${moduleName}`]: [`dist/${moduleName}/index.d.ts`],
     }),
-    {
-    
-    },
+    {},
   );
 
   return {
@@ -353,11 +349,26 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
 
       case ts.isVariableStatement(node):
         node.declarationList.declarations.forEach((decl) => {
+          const kind = getKind(node);
+
           if (ts.isIdentifier(decl.name)) {
-            const kind = getKind(node);
             exports.push({
               kind,
               name: decl.name.text,
+            });
+          } else if (ts.isObjectBindingPattern(decl.name)) {
+            decl.name.elements.forEach((element) => {
+              if (
+                !ts.isBindingElement(element) ||
+                !ts.isIdentifier(element.name)
+              ) {
+                return;
+              }
+
+              exports.push({
+                kind,
+                name: element.name.text,
+              });
             });
           }
         });
@@ -368,6 +379,30 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
           kind: 'class',
           name: node.name.text,
         });
+        break;
+      case ts.isExportDeclaration(node):
+        if (node.exportClause && ts.isNamedExports(node.exportClause)) {
+          node.exportClause.elements.forEach((element) => {
+            const exportName = element.name.text;
+
+            // Check both the declaration and the individual specifier for type-only exports
+            const isTypeExport =
+              node.isTypeOnly || ts.isTypeOnlyExportDeclaration(node);
+            if (isTypeExport) {
+              // should handle kind
+              exports.push({
+                kind: 'type',
+                name: exportName,
+              });
+              return;
+            }
+
+            exports.push({
+              kind: 'const',
+              name: exportName,
+            });
+          });
+        }
         break;
     }
     return ts.forEachChild(node, visit);
