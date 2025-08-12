@@ -5,7 +5,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   WORKFLOW_HANDLE_STALED_RUNS_CRON_PATTERN,
-  WorkflowHandleStaledRunsJob
+  WorkflowHandleStaledRunsJob,
 } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-handle-staled-runs.job';
 
 @Command({
