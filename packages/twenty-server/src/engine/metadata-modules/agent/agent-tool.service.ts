@@ -148,6 +148,7 @@ export class AgentToolService {
     if (agentStandardId === WORKFLOW_CREATION_AGENT.standardId) {
       return this.workflowToolService.generateWorkflowTools(workspaceId);
     }
+
     return {};
   }
 }

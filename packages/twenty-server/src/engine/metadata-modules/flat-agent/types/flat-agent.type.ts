@@ -7,7 +7,8 @@ export const agentEntityRelationProperties = [
   'incomingHandoffs',
 ] as const;
 
-export type AgentEntityRelationProperties = typeof agentEntityRelationProperties[number];
+export type AgentEntityRelationProperties =
+  (typeof agentEntityRelationProperties)[number];
 
 export type FlatAgent = Omit<
   AgentEntity,

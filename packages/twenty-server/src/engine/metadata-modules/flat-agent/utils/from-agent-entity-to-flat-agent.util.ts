@@ -1,4 +1,5 @@
 import { type AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+
 import { type FlatAgent } from '../types/flat-agent.type';
 
 export const fromAgentEntityToFlatAgent = (

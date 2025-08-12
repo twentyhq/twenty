@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+
 import { ComparatorAction } from '../interfaces/comparator.interface';
 
 type AgentComparatorResult = {

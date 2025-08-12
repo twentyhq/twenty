@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
-import { IsNull, Not, Repository, type EntityManager } from 'typeorm';
+import { IsNull, Not, type Repository, type EntityManager } from 'typeorm';
 
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
@@ -119,6 +119,7 @@ export class WorkspaceSyncAgentService {
         this.logger.warn(
           `Admin role not found for workspace ${workspaceId}, cannot assign to workflow creation agent`,
         );
+
         return;
       }
 
@@ -134,6 +135,7 @@ export class WorkspaceSyncAgentService {
         this.logger.log(
           `Workflow creation agent already has admin role assigned`,
         );
+
         return;
       }
 
@@ -151,5 +153,5 @@ export class WorkspaceSyncAgentService {
         `Failed to assign admin role to workflow creation agent: ${error.message}`,
       );
     }
-    }
+  }
 }

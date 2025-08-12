@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 
-import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
+import { type CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { WorkflowVersionEdgeWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-edge/workflow-version-edge.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
@@ -25,9 +25,9 @@ export class WorkflowToolService {
   generateWorkflowTools(workspaceId: string): ToolSet {
     const tools: ToolSet = {};
 
-    
     tools.create_workflow_version_step = {
-      description: 'Create a new step in a workflow version. This adds a step to the specified workflow version with the given configuration.',
+      description:
+        'Create a new step in a workflow version. This adds a step to the specified workflow version with the given configuration.',
       parameters: {
         type: 'object',
         properties: {
@@ -36,20 +36,24 @@ export class WorkflowToolService {
             properties: {
               workflowVersionId: {
                 type: 'string',
-                description: 'The ID of the workflow version to add the step to',
+                description:
+                  'The ID of the workflow version to add the step to',
               },
               stepType: {
                 type: 'string',
-                description: 'The type of step to create (e.g., "CREATE_RECORD", "SEND_EMAIL", "AI_AGENT", "CODE", "HTTP_REQUEST", "FORM", "FILTER")',
+                description:
+                  'The type of step to create (e.g., "CREATE_RECORD", "SEND_EMAIL", "AI_AGENT", "CODE", "HTTP_REQUEST", "FORM", "FILTER")',
                 enum: Object.values(WorkflowActionType),
               },
               parentStepId: {
                 type: 'string',
-                description: 'Optional ID of the parent step this step should come after',
+                description:
+                  'Optional ID of the parent step this step should come after',
               },
               nextStepId: {
                 type: 'string',
-                description: 'Optional ID of the step this new step should connect to',
+                description:
+                  'Optional ID of the step this new step should connect to',
               },
               position: {
                 type: 'object',
@@ -65,22 +69,32 @@ export class WorkflowToolService {
         },
         required: ['input'],
       },
-      execute: async (parameters: { input: CreateWorkflowVersionStepInput }) => {
+      execute: async (parameters: {
+        input: CreateWorkflowVersionStepInput;
+      }) => {
         try {
-          this.logger.log(`Creating workflow version step: ${parameters.input.stepType}`);
-          return await this.workflowVersionStepService.createWorkflowVersionStep({
-            workspaceId,
-            input: parameters.input,
-          });
+          this.logger.log(
+            `Creating workflow version step: ${parameters.input.stepType}`,
+          );
+
+          return await this.workflowVersionStepService.createWorkflowVersionStep(
+            {
+              workspaceId,
+              input: parameters.input,
+            },
+          );
         } catch (error) {
-          this.logger.error(`Failed to create workflow version step: ${error.message}`);
+          this.logger.error(
+            `Failed to create workflow version step: ${error.message}`,
+          );
           throw error;
         }
       },
     };
 
     tools.update_workflow_version_step = {
-      description: 'Update an existing step in a workflow version. This modifies the step configuration.',
+      description:
+        'Update an existing step in a workflow version. This modifies the step configuration.',
       parameters: {
         type: 'object',
         properties: {
@@ -89,7 +103,8 @@ export class WorkflowToolService {
             properties: {
               workflowVersionId: {
                 type: 'string',
-                description: 'The ID of the workflow version containing the step',
+                description:
+                  'The ID of the workflow version containing the step',
               },
               step: {
                 type: 'object',
@@ -122,21 +137,29 @@ export class WorkflowToolService {
       },
       execute: async (parameters: { input: any }) => {
         try {
-          this.logger.log(`Updating workflow version step: ${parameters.input.step.id}`);
-          return await this.workflowVersionStepService.updateWorkflowVersionStep({
-            workspaceId,
-            workflowVersionId: parameters.input.workflowVersionId,
-            step: parameters.input.step,
-          });
+          this.logger.log(
+            `Updating workflow version step: ${parameters.input.step.id}`,
+          );
+
+          return await this.workflowVersionStepService.updateWorkflowVersionStep(
+            {
+              workspaceId,
+              workflowVersionId: parameters.input.workflowVersionId,
+              step: parameters.input.step,
+            },
+          );
         } catch (error) {
-          this.logger.error(`Failed to update workflow version step: ${error.message}`);
+          this.logger.error(
+            `Failed to update workflow version step: ${error.message}`,
+          );
           throw error;
         }
       },
     };
 
     tools.delete_workflow_version_step = {
-      description: 'Delete a step from a workflow version. This removes the step and any connections to it.',
+      description:
+        'Delete a step from a workflow version. This removes the step and any connections to it.',
       parameters: {
         type: 'object',
         properties: {
@@ -145,7 +168,8 @@ export class WorkflowToolService {
             properties: {
               workflowVersionId: {
                 type: 'string',
-                description: 'The ID of the workflow version containing the step',
+                description:
+                  'The ID of the workflow version containing the step',
               },
               stepId: {
                 type: 'string',
@@ -159,21 +183,29 @@ export class WorkflowToolService {
       },
       execute: async (parameters: { input: any }) => {
         try {
-          this.logger.log(`Deleting workflow version step: ${parameters.input.stepId}`);
-          return await this.workflowVersionStepService.deleteWorkflowVersionStep({
-            workspaceId,
-            workflowVersionId: parameters.input.workflowVersionId,
-            stepIdToDelete: parameters.input.stepId,
-          });
+          this.logger.log(
+            `Deleting workflow version step: ${parameters.input.stepId}`,
+          );
+
+          return await this.workflowVersionStepService.deleteWorkflowVersionStep(
+            {
+              workspaceId,
+              workflowVersionId: parameters.input.workflowVersionId,
+              stepIdToDelete: parameters.input.stepId,
+            },
+          );
         } catch (error) {
-          this.logger.error(`Failed to delete workflow version step: ${error.message}`);
+          this.logger.error(
+            `Failed to delete workflow version step: ${error.message}`,
+          );
           throw error;
         }
       },
     };
 
     tools.submit_form_step = {
-      description: 'Submit a response for a form step in a workflow run. This processes user input for form steps.',
+      description:
+        'Submit a response for a form step in a workflow run. This processes user input for form steps.',
       parameters: {
         type: 'object',
         properties: {
@@ -201,6 +233,7 @@ export class WorkflowToolService {
       execute: async (parameters: { input: any }) => {
         try {
           this.logger.log(`Submitting form step: ${parameters.input.stepId}`);
+
           return await this.workflowVersionStepService.submitFormStep({
             workspaceId,
             stepId: parameters.input.stepId,
@@ -215,7 +248,8 @@ export class WorkflowToolService {
     };
 
     tools.create_workflow_version_edge = {
-      description: 'Create a connection between two steps in a workflow version. This connects the source step to the target step.',
+      description:
+        'Create a connection between two steps in a workflow version. This connects the source step to the target step.',
       parameters: {
         type: 'object',
         properties: {
@@ -224,7 +258,8 @@ export class WorkflowToolService {
             properties: {
               source: {
                 type: 'string',
-                description: 'The ID of the source step (or "trigger" for workflow trigger)',
+                description:
+                  'The ID of the source step (or "trigger" for workflow trigger)',
               },
               target: {
                 type: 'string',
@@ -242,22 +277,30 @@ export class WorkflowToolService {
       },
       execute: async (parameters: { input: any }) => {
         try {
-          this.logger.log(`Creating workflow version edge: ${parameters.input.source} -> ${parameters.input.target}`);
-          return await this.workflowVersionEdgeService.createWorkflowVersionEdge({
-            source: parameters.input.source,
-            target: parameters.input.target,
-            workflowVersionId: parameters.input.workflowVersionId,
-            workspaceId,
-          });
+          this.logger.log(
+            `Creating workflow version edge: ${parameters.input.source} -> ${parameters.input.target}`,
+          );
+
+          return await this.workflowVersionEdgeService.createWorkflowVersionEdge(
+            {
+              source: parameters.input.source,
+              target: parameters.input.target,
+              workflowVersionId: parameters.input.workflowVersionId,
+              workspaceId,
+            },
+          );
         } catch (error) {
-          this.logger.error(`Failed to create workflow version edge: ${error.message}`);
+          this.logger.error(
+            `Failed to create workflow version edge: ${error.message}`,
+          );
           throw error;
         }
       },
     };
 
     tools.delete_workflow_version_edge = {
-      description: 'Remove a connection between two steps in a workflow version. This disconnects the source step from the target step.',
+      description:
+        'Remove a connection between two steps in a workflow version. This disconnects the source step from the target step.',
       parameters: {
         type: 'object',
         properties: {
@@ -266,7 +309,8 @@ export class WorkflowToolService {
             properties: {
               source: {
                 type: 'string',
-                description: 'The ID of the source step (or "trigger" for workflow trigger)',
+                description:
+                  'The ID of the source step (or "trigger" for workflow trigger)',
               },
               target: {
                 type: 'string',
@@ -284,22 +328,30 @@ export class WorkflowToolService {
       },
       execute: async (parameters: { input: any }) => {
         try {
-          this.logger.log(`Deleting workflow version edge: ${parameters.input.source} -> ${parameters.input.target}`);
-          return await this.workflowVersionEdgeService.deleteWorkflowVersionEdge({
-            source: parameters.input.source,
-            target: parameters.input.target,
-            workflowVersionId: parameters.input.workflowVersionId,
-            workspaceId,
-          });
+          this.logger.log(
+            `Deleting workflow version edge: ${parameters.input.source} -> ${parameters.input.target}`,
+          );
+
+          return await this.workflowVersionEdgeService.deleteWorkflowVersionEdge(
+            {
+              source: parameters.input.source,
+              target: parameters.input.target,
+              workflowVersionId: parameters.input.workflowVersionId,
+              workspaceId,
+            },
+          );
         } catch (error) {
-          this.logger.error(`Failed to delete workflow version edge: ${error.message}`);
+          this.logger.error(
+            `Failed to delete workflow version edge: ${error.message}`,
+          );
           throw error;
         }
       },
     };
 
     tools.create_draft_from_workflow_version = {
-      description: 'Create a new draft version from an existing workflow version. This copies the workflow structure to a new draft.',
+      description:
+        'Create a new draft version from an existing workflow version. This copies the workflow structure to a new draft.',
       parameters: {
         type: 'object',
         properties: {
@@ -322,21 +374,29 @@ export class WorkflowToolService {
       },
       execute: async (parameters: { input: any }) => {
         try {
-          this.logger.log(`Creating draft from workflow version: ${parameters.input.workflowVersionIdToCopy}`);
-          return await this.workflowVersionService.createDraftFromWorkflowVersion({
-            workspaceId,
-            workflowId: parameters.input.workflowId,
-            workflowVersionIdToCopy: parameters.input.workflowVersionIdToCopy,
-          });
+          this.logger.log(
+            `Creating draft from workflow version: ${parameters.input.workflowVersionIdToCopy}`,
+          );
+
+          return await this.workflowVersionService.createDraftFromWorkflowVersion(
+            {
+              workspaceId,
+              workflowId: parameters.input.workflowId,
+              workflowVersionIdToCopy: parameters.input.workflowVersionIdToCopy,
+            },
+          );
         } catch (error) {
-          this.logger.error(`Failed to create draft from workflow version: ${error.message}`);
+          this.logger.error(
+            `Failed to create draft from workflow version: ${error.message}`,
+          );
           throw error;
         }
       },
     };
 
     tools.update_workflow_version_positions = {
-      description: 'Update the positions of steps and trigger in a workflow version. This modifies the visual layout of the workflow.',
+      description:
+        'Update the positions of steps and trigger in a workflow version. This modifies the visual layout of the workflow.',
       parameters: {
         type: 'object',
         properties: {
@@ -373,22 +433,29 @@ export class WorkflowToolService {
       },
       execute: async (parameters: { input: any }) => {
         try {
-          this.logger.log(`Updating workflow version positions: ${parameters.input.workflowVersionId}`);
-          return await this.workflowVersionService.updateWorkflowVersionPositions({
-            workflowVersionId: parameters.input.workflowVersionId,
-            positions: parameters.input.positions,
-            workspaceId,
-          });
+          this.logger.log(
+            `Updating workflow version positions: ${parameters.input.workflowVersionId}`,
+          );
+
+          return await this.workflowVersionService.updateWorkflowVersionPositions(
+            {
+              workflowVersionId: parameters.input.workflowVersionId,
+              positions: parameters.input.positions,
+              workspaceId,
+            },
+          );
         } catch (error) {
-          this.logger.error(`Failed to update workflow version positions: ${error.message}`);
+          this.logger.error(
+            `Failed to update workflow version positions: ${error.message}`,
+          );
           throw error;
         }
       },
     };
 
-
     tools.activate_workflow_version = {
-      description: 'Activate a workflow version. This makes the workflow version active and ready to be triggered.',
+      description:
+        'Activate a workflow version. This makes the workflow version active and ready to be triggered.',
       parameters: {
         type: 'object',
         properties: {
@@ -401,17 +468,25 @@ export class WorkflowToolService {
       },
       execute: async (parameters: { workflowVersionId: string }) => {
         try {
-          this.logger.log(`Activating workflow version: ${parameters.workflowVersionId}`);
-          return await this.workflowTriggerService.activateWorkflowVersion(parameters.workflowVersionId);
+          this.logger.log(
+            `Activating workflow version: ${parameters.workflowVersionId}`,
+          );
+
+          return await this.workflowTriggerService.activateWorkflowVersion(
+            parameters.workflowVersionId,
+          );
         } catch (error) {
-          this.logger.error(`Failed to activate workflow version: ${error.message}`);
+          this.logger.error(
+            `Failed to activate workflow version: ${error.message}`,
+          );
           throw error;
         }
       },
     };
 
     tools.deactivate_workflow_version = {
-      description: 'Deactivate a workflow version. This makes the workflow version inactive and stops it from being triggered.',
+      description:
+        'Deactivate a workflow version. This makes the workflow version inactive and stops it from being triggered.',
       parameters: {
         type: 'object',
         properties: {
@@ -424,17 +499,25 @@ export class WorkflowToolService {
       },
       execute: async (parameters: { workflowVersionId: string }) => {
         try {
-          this.logger.log(`Deactivating workflow version: ${parameters.workflowVersionId}`);
-          return await this.workflowTriggerService.deactivateWorkflowVersion(parameters.workflowVersionId);
+          this.logger.log(
+            `Deactivating workflow version: ${parameters.workflowVersionId}`,
+          );
+
+          return await this.workflowTriggerService.deactivateWorkflowVersion(
+            parameters.workflowVersionId,
+          );
         } catch (error) {
-          this.logger.error(`Failed to deactivate workflow version: ${error.message}`);
+          this.logger.error(
+            `Failed to deactivate workflow version: ${error.message}`,
+          );
           throw error;
         }
       },
     };
 
     tools.compute_step_output_schema = {
-      description: 'Compute the output schema for a workflow step. This determines what data the step will produce.',
+      description:
+        'Compute the output schema for a workflow step. This determines what data the step will produce.',
       parameters: {
         type: 'object',
         properties: {
@@ -460,13 +543,18 @@ export class WorkflowToolService {
       },
       execute: async (parameters: { input: any }) => {
         try {
-          this.logger.log(`Computing step output schema: ${parameters.input.step.id}`);
+          this.logger.log(
+            `Computing step output schema: ${parameters.input.step.id}`,
+          );
+
           return await this.workflowSchemaService.computeStepOutputSchema({
             step: parameters.input.step,
             workspaceId,
           });
         } catch (error) {
-          this.logger.error(`Failed to compute step output schema: ${error.message}`);
+          this.logger.error(
+            `Failed to compute step output schema: ${error.message}`,
+          );
           throw error;
         }
       },
