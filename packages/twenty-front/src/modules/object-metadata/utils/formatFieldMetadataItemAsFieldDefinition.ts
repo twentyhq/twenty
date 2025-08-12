@@ -27,10 +27,10 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
   const isMorphRelation = field.type === FieldMetadataType.MORPH_RELATION;
 
   const relationType = isRelation
-  ? field.relation?.type
-  : isMorphRelation
-    ? field.morphRelations?.[0]?.type
-    : undefined;
+    ? field.relation?.type
+    : isMorphRelation
+      ? field.morphRelations?.[0]?.type
+      : undefined;
 
   const fieldDefintionMetadata = {
     fieldName: field.name,

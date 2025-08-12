@@ -1,4 +1,4 @@
-import { FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
+import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { type ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
