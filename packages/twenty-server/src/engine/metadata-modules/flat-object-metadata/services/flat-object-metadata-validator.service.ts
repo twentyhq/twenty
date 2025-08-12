@@ -17,6 +17,7 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { doesOtherObjectWithSameNameExists } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
+import { isDefined } from 'twenty-shared/utils';
 
 export type ValidateOneFlatObjectMetadataArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
@@ -30,6 +31,39 @@ export class FlatObjectMetadataValidatorService {
   constructor(
     private readonly flatFieldMetadataValidatorService: FlatFieldMetadataValidatorService,
   ) {}
+
+  public validateFlatObjectMetadataDeletion({
+    existingFlatObjectMetadataMaps,
+    objectMetadataToDeleteId,
+  }: {
+    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+    objectMetadataToDeleteId: string;
+  }) {
+    const errors: FailedFlatObjectMetadataValidationExceptions[] = [];
+
+    const flatObjectMetadataToDelete =
+      existingFlatObjectMetadataMaps.byId[objectMetadataToDeleteId];
+
+    if (!isDefined(flatObjectMetadataToDelete)) {
+      errors.push(
+        new ObjectMetadataException(
+          'Object does not exist',
+          ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        ),
+      );
+    } else {
+      if (flatObjectMetadataToDelete.isRemote) {
+        errors.push(
+          new ObjectMetadataException(
+            'Remote objects are not supported yet',
+            ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+          ),
+        );
+      }
+    }
+
+    return errors;
+  }
 
   public async validateFlatObjectMetadataCreation({
     existingFlatObjectMetadataMaps,
