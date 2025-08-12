@@ -82,10 +82,9 @@ export const isFieldValueEmpty = ({
   }
 
   if (isFieldMorphRelation(fieldDefinition)) {
-    if (isArray(fieldValue)) {
-      return !isNonEmptyArray(fieldValue);
-    }
-    return isValueEmpty(fieldValue);
+    return isArray(fieldValue)
+      ? !isNonEmptyArray(fieldValue)
+      : isValueEmpty(fieldValue);
   }
 
   if (isFieldMultiSelect(fieldDefinition) || isFieldArray(fieldDefinition)) {

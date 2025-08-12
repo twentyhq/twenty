@@ -1,3 +1,4 @@
+import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { type ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -139,6 +140,7 @@ export type FieldPositionMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
+// for later: refactor this in order to directly use relation without mapping
 export type FieldRelationMetadata = BaseFieldMetadata & {
   relationFieldMetadataId: string;
   relationObjectMetadataNamePlural: string;
@@ -150,14 +152,9 @@ export type FieldRelationMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
-// todo @guillim: this might need to change
 export type FieldMorphRelationMetadata = BaseFieldMetadata & {
-  relationFieldMetadataId: string;
-  relationObjectMetadataNamePlural: string;
-  relationObjectMetadataNameSingular: string;
-  relationObjectMetadataId: string;
-  relationType?: RelationType;
-  targetFieldMetadataName?: string;
+  morphRelations: FieldMetadataItemRelation[];
+  relationType: RelationType;
   useEditButton?: boolean;
   settings?: null;
 };

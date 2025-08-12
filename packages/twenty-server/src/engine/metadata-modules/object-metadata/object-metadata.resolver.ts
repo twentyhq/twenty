@@ -21,8 +21,8 @@ import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dto
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import {
-  type UpdateObjectPayload,
   UpdateOneObjectInput,
+  type UpdateObjectPayload,
 } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';

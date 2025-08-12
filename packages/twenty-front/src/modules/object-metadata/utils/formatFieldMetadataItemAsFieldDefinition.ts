@@ -2,9 +2,9 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 
+import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '../types/FieldMetadataItem';
-import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 
 export type FieldMetadataItemAsFieldDefinitionProps = {
   field: FieldMetadataItem;
@@ -28,23 +28,11 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
       ? field.morphRelations?.[0]?.type
       : undefined;
 
-  const morphRelations = isMorphRelation
-    ? field.morphRelations?.map((morphRelation) => ({
-        targetFieldMetadataName: morphRelation.targetFieldMetadata?.name,
-        relationObjectMetadataNameSingular:
-          morphRelation.targetObjectMetadata?.nameSingular,
-        relationObjectMetadataNamePlural:
-          morphRelation.targetObjectMetadata?.namePlural,
-        relationObjectMetadataId: morphRelation.targetObjectMetadata?.id,
-        relationFieldMetadataId: morphRelation.targetFieldMetadata?.id,
-      }))
-    : [];
-
-  const fieldDefinitionMetadata = {
+  const fieldDefintionMetadata = {
     fieldName: field.name,
     placeHolder: field.label,
     relationType,
-    morphRelations,
+    morphRelations: isMorphRelation ? field.morphRelations : [],
     relationFieldMetadataId: field.relation?.targetFieldMetadata.id,
     relationObjectMetadataNameSingular:
       field.relation?.targetObjectMetadata?.nameSingular ?? '',
@@ -65,11 +53,11 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
     showLabel,
     labelWidth,
     type: field.type,
-    metadata: fieldDefinitionMetadata,
+    metadata: fieldDefintionMetadata,
     iconName: field.icon ?? 'Icon123',
     defaultValue: field.defaultValue,
     editButtonIcon: getFieldButtonIcon({
-      metadata: fieldDefinitionMetadata,
+      metadata: fieldDefintionMetadata,
       type: field.type,
     }),
   };
