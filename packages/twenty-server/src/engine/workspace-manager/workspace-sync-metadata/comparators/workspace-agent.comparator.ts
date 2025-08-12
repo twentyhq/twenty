@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 
-import { ComparatorAction } from '../interfaces/comparator.interface';
+import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 
 type AgentComparatorResult = {
   action:
