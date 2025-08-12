@@ -104,15 +104,15 @@ export const SettingsDataModelFieldPreview = ({
     previewRecord?.id ??
     `${objectMetadataItem.nameSingular}-${fieldName}-${fieldMetadataItem.relation?.type}-${relationObjectMetadataItem?.nameSingular}-preview`;
 
-    const metadata = {
-      fieldName,
-      objectMetadataNameSingular: objectMetadataItem.nameSingular,
-      relationObjectMetadataNameSingular:
-        relationObjectMetadataItem?.nameSingular || '',
-      options: fieldMetadataItem.options ?? [],
-      settings: fieldMetadataItem.settings,
-      relationType: fieldMetadataItem.relation?.type,
-    };
+  const metadata = {
+    fieldName,
+    objectMetadataNameSingular: objectMetadataItem.nameSingular,
+    relationObjectMetadataNameSingular:
+      relationObjectMetadataItem?.nameSingular || '',
+    options: fieldMetadataItem.options ?? [],
+    settings: fieldMetadataItem.settings,
+    relationType: fieldMetadataItem.relation?.type,
+  };
 
   return (
     <>
