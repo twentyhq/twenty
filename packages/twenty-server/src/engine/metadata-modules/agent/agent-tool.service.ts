@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
-import { WorkflowToolService } from 'src/engine/core-modules/ai/services/workflow-tool.service';
+import { WorkflowToolWorkspaceService as WorkflowToolService } from 'src/engine/core-modules/ai/services/workflow-tool.workspace-service';
 import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
 import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
