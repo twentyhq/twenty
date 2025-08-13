@@ -1,4 +1,3 @@
-import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -12,7 +11,6 @@ import {
 } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useIsRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/useIsRecordFieldReadOnly';
 import { RecordInlineCellHoveredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellHoveredPortal';
-import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -37,31 +35,15 @@ export const RecordFieldListCellAnchoredPortal = ({
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const recordIdIfInCommandMenu = useRecoilComponentValue(
-    viewableRecordIdComponentState,
-  );
   const targetedRecordsRuleFromContextStore = useRecoilComponentValue(
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  let recordIdFromContextStore;
+  let recordId;
 
   if (targetedRecordsRuleFromContextStore.mode === 'selection') {
-    recordIdFromContextStore =
-      targetedRecordsRuleFromContextStore.selectedRecordIds[0];
+    recordId = targetedRecordsRuleFromContextStore.selectedRecordIds[0];
   }
-
-  const { objectRecordId: recordIdFromShowPage } =
-    useRecordShowPage(
-      objectMetadataItem.nameSingular,
-      recordIdFromContextStore ?? '',
-    ) ?? {};
-
-  const recordId = recordIdIfInCommandMenu ?? recordIdFromShowPage;
-
-  console.log('recordIdIfInCommandMenu', recordIdIfInCommandMenu);
-  console.log('recordIdFromShowPage', recordIdFromShowPage);
-  console.log('recordIdFromContextStore', recordIdFromContextStore);
 
   const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
     fieldMetadataId: fieldMetadataItem.id,
