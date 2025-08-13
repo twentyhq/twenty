@@ -146,6 +146,7 @@ export const WorkflowDiagramStepNodeBase = ({
   nodeType,
   name,
   variant,
+  selected,
   Icon,
   RightFloatingElement,
   BottomHoverFloatingElement,
@@ -158,6 +159,7 @@ export const WorkflowDiagramStepNodeBase = ({
   nodeType: WorkflowDiagramStepNodeData['nodeType'];
   name: string;
   variant: WorkflowDiagramNodeVariant;
+  selected?: boolean;
   Icon?: React.ReactNode;
   RightFloatingElement?: React.ReactNode;
   BottomHoverFloatingElement?: React.ReactNode;
@@ -207,7 +209,7 @@ export const WorkflowDiagramStepNodeBase = ({
         type="source"
         position={Position.Bottom}
         isVisible={displayHandle}
-        selected={handlesSelectedState.sourceHandle}
+        selected={handlesSelectedState.sourceHandle || selected}
       />
     </StyledStepNodeContainer>
   );
