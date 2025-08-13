@@ -156,7 +156,7 @@ export const WorkflowEditTriggerManualForm = ({
 
         <Select
           dropdownId={'workflow-edit-manual-trigger-availability'}
-          label={t`Availablity`}
+          label={t`Availability`}
           description={availabilityDescriptions[manualTriggerAvailability]}
           fullWidth
           disabled={triggerOptions.readonly}
