@@ -1,12 +1,12 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { QueryRunner } from 'typeorm';
+import { type QueryRunner } from 'typeorm';
+
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
-
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { WorkspaceSchemaFieldActionRunnerService } from '../workspace-schema-field-action-runner.service';
+import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
+import { WorkspaceSchemaFieldActionRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/workspace-schema-field-action-runner.service';
 
 describe('WorkspaceSchemaFieldActionRunner', () => {
   let service: WorkspaceSchemaFieldActionRunnerService;
@@ -17,7 +17,10 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
   const mockObjectMetadataId = '20202020-1c25-4d02-bf25-6aeccf7ea418';
   const mockFieldMetadataId = '20202020-1c25-4d02-bf25-6aeccf7ea417';
 
-  const createMockFlatObjectMetadataMaps = (objectMetadata: any, fieldMetadata: any) => ({
+  const createMockFlatObjectMetadataMaps = (
+    objectMetadata: any,
+    fieldMetadata: any,
+  ) => ({
     byId: {
       [mockObjectMetadataId]: {
         ...objectMetadata,
@@ -54,7 +57,9 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
 
     mockQueryRunner = {} as any;
 
-    service = new WorkspaceSchemaFieldActionRunnerService(mockSchemaManagerService);
+    service = new WorkspaceSchemaFieldActionRunnerService(
+      mockSchemaManagerService,
+    );
   });
 
   describe('DELETE Field Migration', () => {
@@ -74,7 +79,10 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         uniqueIdentifier: 'person',
       });
 
-      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(objectMetadata, addressField);
+      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(
+        objectMetadata,
+        addressField,
+      );
 
       await service.runDeleteFieldSchemaMigration({
         action: {
@@ -87,7 +95,9 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       });
 
       // All 8 ADDRESS composite columns must be dropped
-      expect(mockSchemaManagerService.columnManager.dropColumns).toHaveBeenCalledWith(
+      expect(
+        mockSchemaManagerService.columnManager.dropColumns,
+      ).toHaveBeenCalledWith(
         mockQueryRunner,
         'workspace_1wgvd1injqtife6y4rvfbu3h5',
         '_person',
@@ -104,7 +114,9 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       );
 
       // No enum operations should be performed for ADDRESS fields
-      expect(mockSchemaManagerService.enumManager.dropEnum).not.toHaveBeenCalled();
+      expect(
+        mockSchemaManagerService.enumManager.dropEnum,
+      ).not.toHaveBeenCalled();
     });
 
     it('should properly delete SELECT fields with enum cleanup', async () => {
@@ -114,8 +126,20 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         type: FieldMetadataType.SELECT,
         name: 'status',
         options: [
-          { id: '1', value: 'ACTIVE', label: 'Active', color: 'green', position: 0 },
-          { id: '2', value: 'INACTIVE', label: 'Inactive', color: 'red', position: 1 },
+          {
+            id: '1',
+            value: 'ACTIVE',
+            label: 'Active',
+            color: 'green',
+            position: 0,
+          },
+          {
+            id: '2',
+            value: 'INACTIVE',
+            label: 'Inactive',
+            color: 'red',
+            position: 1,
+          },
         ],
         uniqueIdentifier: 'status',
       });
@@ -127,7 +151,10 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         uniqueIdentifier: 'person',
       });
 
-      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(objectMetadata, selectField);
+      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(
+        objectMetadata,
+        selectField,
+      );
 
       await service.runDeleteFieldSchemaMigration({
         action: {
@@ -140,7 +167,9 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       });
 
       // Column must be dropped first
-      expect(mockSchemaManagerService.columnManager.dropColumns).toHaveBeenCalledWith(
+      expect(
+        mockSchemaManagerService.columnManager.dropColumns,
+      ).toHaveBeenCalledWith(
         mockQueryRunner,
         'workspace_1wgvd1injqtife6y4rvfbu3h5',
         '_person',
@@ -148,7 +177,9 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       );
 
       // Enum type must be properly cleaned up
-      expect(mockSchemaManagerService.enumManager.dropEnum).toHaveBeenCalledWith(
+      expect(
+        mockSchemaManagerService.enumManager.dropEnum,
+      ).toHaveBeenCalledWith(
         mockQueryRunner,
         'workspace_1wgvd1injqtife6y4rvfbu3h5',
         '_person_status_enum',
@@ -175,7 +206,10 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         uniqueIdentifier: 'person',
       });
 
-      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(objectMetadata, relationField);
+      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(
+        objectMetadata,
+        relationField,
+      );
 
       await service.runDeleteFieldSchemaMigration({
         action: {
@@ -188,7 +222,9 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       });
 
       // Foreign key column must be dropped
-      expect(mockSchemaManagerService.columnManager.dropColumns).toHaveBeenCalledWith(
+      expect(
+        mockSchemaManagerService.columnManager.dropColumns,
+      ).toHaveBeenCalledWith(
         mockQueryRunner,
         'workspace_1wgvd1injqtife6y4rvfbu3h5',
         '_person',
@@ -196,7 +232,9 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       );
 
       // No enum operations for relation fields
-      expect(mockSchemaManagerService.enumManager.dropEnum).not.toHaveBeenCalled();
+      expect(
+        mockSchemaManagerService.enumManager.dropEnum,
+      ).not.toHaveBeenCalled();
     });
   });
 
@@ -220,7 +258,10 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         uniqueIdentifier: 'task',
       });
 
-      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(objectMetadata, selectField);
+      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(
+        objectMetadata,
+        selectField,
+      );
 
       await service.runCreateFieldSchemaMigration({
         action: {
@@ -232,12 +273,20 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       });
 
       // Enum must be created BEFORE column that depends on it
-      const enumCreateMock = mockSchemaManagerService.enumManager.createEnum as unknown as jest.Mock;
-      const addColumnsMock = mockSchemaManagerService.columnManager.addColumns as unknown as jest.Mock;
+      const enumCreateMock = mockSchemaManagerService.enumManager
+        .createEnum as unknown as jest.Mock;
+      const addColumnsMock = mockSchemaManagerService.columnManager
+        .addColumns as unknown as jest.Mock;
 
       const allCalls = [
-        ...enumCreateMock.mock.calls.map((call: unknown[]) => ({ type: 'enum', call })),
-        ...addColumnsMock.mock.calls.map((call: unknown[]) => ({ type: 'column', call })),
+        ...enumCreateMock.mock.calls.map((call: unknown[]) => ({
+          type: 'enum',
+          call,
+        })),
+        ...addColumnsMock.mock.calls.map((call: unknown[]) => ({
+          type: 'column',
+          call,
+        })),
       ];
 
       expect(allCalls).toHaveLength(2);
@@ -245,7 +294,9 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       expect(allCalls[1].type).toBe('column');
 
       // Enum creation with correct parameters
-      expect(mockSchemaManagerService.enumManager.createEnum).toHaveBeenCalledWith(
+      expect(
+        mockSchemaManagerService.enumManager.createEnum,
+      ).toHaveBeenCalledWith(
         mockQueryRunner,
         'workspace_1wgvd1injqtife6y4rvfbu3h5',
         '_task_priority_enum',
@@ -253,19 +304,23 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       );
 
       // Column creation with enum reference
-      expect(mockSchemaManagerService.columnManager.addColumns).toHaveBeenCalledWith(
+      expect(
+        mockSchemaManagerService.columnManager.addColumns,
+      ).toHaveBeenCalledWith(
         mockQueryRunner,
         'workspace_1wgvd1injqtife6y4rvfbu3h5',
         '_task',
-        [{
-          name: 'priority',
-          type: '_task_priority_enum',
-          isNullable: true,
-          isArray: false,
-          isUnique: false,
-          default: null,
-          enumValues: ['HIGH', 'LOW'],
-        }],
+        [
+          {
+            name: 'priority',
+            type: '_task_priority_enum',
+            isNullable: true,
+            isArray: false,
+            isUnique: false,
+            default: null,
+            enumValues: ['HIGH', 'LOW'],
+          },
+        ],
       );
     });
 
@@ -288,7 +343,10 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         uniqueIdentifier: 'employee',
       });
 
-      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(objectMetadata, currencyField);
+      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(
+        objectMetadata,
+        currencyField,
+      );
 
       await service.runCreateFieldSchemaMigration({
         action: {
@@ -300,10 +358,14 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       });
 
       // No enum operations for composite fields
-      expect(mockSchemaManagerService.enumManager.createEnum).not.toHaveBeenCalled();
+      expect(
+        mockSchemaManagerService.enumManager.createEnum,
+      ).not.toHaveBeenCalled();
 
       // Both composite columns must be created
-      expect(mockSchemaManagerService.columnManager.addColumns).toHaveBeenCalledWith(
+      expect(
+        mockSchemaManagerService.columnManager.addColumns,
+      ).toHaveBeenCalledWith(
         mockQueryRunner,
         'workspace_1wgvd1injqtife6y4rvfbu3h5',
         '_employee',
@@ -346,7 +408,10 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         uniqueIdentifier: 'company',
       });
 
-      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(objectMetadata, addressField);
+      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(
+        objectMetadata,
+        addressField,
+      );
 
       await service.runUpdateFieldSchemaMigration({
         action: {
@@ -354,11 +419,13 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
           workspaceId: mockWorkspaceId,
           fieldMetadataId: mockFieldMetadataId,
           objectMetadataId: mockObjectMetadataId,
-          updates: [{
-            property: 'name',
-            from: 'oldAddress',
-            to: 'newAddress',
-          }],
+          updates: [
+            {
+              property: 'name',
+              from: 'oldAddress',
+              to: 'newAddress',
+            },
+          ],
         },
         queryRunner: mockQueryRunner,
         flatObjectMetadataMaps,
@@ -376,10 +443,14 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         ['oldAddressAddressLng', 'newAddressAddressLng'],
       ];
 
-      expect(mockSchemaManagerService.columnManager.renameColumn).toHaveBeenCalledTimes(8);
-      
+      expect(
+        mockSchemaManagerService.columnManager.renameColumn,
+      ).toHaveBeenCalledTimes(8);
+
       expectedRenameCalls.forEach(([fromName, toName]) => {
-        expect(mockSchemaManagerService.columnManager.renameColumn).toHaveBeenCalledWith(
+        expect(
+          mockSchemaManagerService.columnManager.renameColumn,
+        ).toHaveBeenCalledWith(
           mockQueryRunner,
           'workspace_1wgvd1injqtife6y4rvfbu3h5',
           '_company',
@@ -396,8 +467,20 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         type: FieldMetadataType.SELECT,
         name: 'status',
         options: [
-          { id: '1', value: 'UPDATED_ACTIVE', label: 'Updated Active', color: 'green', position: 0 },
-          { id: '2', value: 'UPDATED_INACTIVE', label: 'Updated Inactive', color: 'red', position: 1 },
+          {
+            id: '1',
+            value: 'UPDATED_ACTIVE',
+            label: 'Updated Active',
+            color: 'green',
+            position: 0,
+          },
+          {
+            id: '2',
+            value: 'UPDATED_INACTIVE',
+            label: 'Updated Inactive',
+            color: 'red',
+            position: 1,
+          },
         ],
         uniqueIdentifier: 'status',
       });
@@ -409,7 +492,10 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         uniqueIdentifier: 'person',
       });
 
-      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(objectMetadata, selectField);
+      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(
+        objectMetadata,
+        selectField,
+      );
 
       await service.runUpdateFieldSchemaMigration({
         action: {
@@ -417,24 +503,52 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
           workspaceId: mockWorkspaceId,
           fieldMetadataId: mockFieldMetadataId,
           objectMetadataId: mockObjectMetadataId,
-          updates: [{
-            property: 'options',
-            from: [
-              { id: '1', value: 'ACTIVE', label: 'Active', color: 'green', position: 0 },
-              { id: '2', value: 'INACTIVE', label: 'Inactive', color: 'red', position: 1 },
-            ],
-            to: [
-              { id: '1', value: 'UPDATED_ACTIVE', label: 'Updated Active', color: 'green', position: 0 },
-              { id: '2', value: 'UPDATED_INACTIVE', label: 'Updated Inactive', color: 'red', position: 1 },
-            ],
-          }],
+          updates: [
+            {
+              property: 'options',
+              from: [
+                {
+                  id: '1',
+                  value: 'ACTIVE',
+                  label: 'Active',
+                  color: 'green',
+                  position: 0,
+                },
+                {
+                  id: '2',
+                  value: 'INACTIVE',
+                  label: 'Inactive',
+                  color: 'red',
+                  position: 1,
+                },
+              ],
+              to: [
+                {
+                  id: '1',
+                  value: 'UPDATED_ACTIVE',
+                  label: 'Updated Active',
+                  color: 'green',
+                  position: 0,
+                },
+                {
+                  id: '2',
+                  value: 'UPDATED_INACTIVE',
+                  label: 'Updated Inactive',
+                  color: 'red',
+                  position: 1,
+                },
+              ],
+            },
+          ],
         },
         queryRunner: mockQueryRunner,
         flatObjectMetadataMaps,
       });
 
       // Enum values must be updated with proper mapping
-      expect(mockSchemaManagerService.enumManager.alterEnumValues).toHaveBeenCalledWith(
+      expect(
+        mockSchemaManagerService.enumManager.alterEnumValues,
+      ).toHaveBeenCalledWith(
         mockQueryRunner,
         'workspace_1wgvd1injqtife6y4rvfbu3h5',
         '_person',
@@ -448,8 +562,8 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
           enumValues: ['UPDATED_ACTIVE', 'UPDATED_INACTIVE'],
         },
         {
-          'ACTIVE': 'UPDATED_ACTIVE',
-          'INACTIVE': 'UPDATED_INACTIVE',
+          ACTIVE: 'UPDATED_ACTIVE',
+          INACTIVE: 'UPDATED_INACTIVE',
         },
       );
     });
@@ -474,7 +588,10 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         uniqueIdentifier: 'product',
       });
 
-      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(objectMetadata, currencyField);
+      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(
+        objectMetadata,
+        currencyField,
+      );
 
       await service.runUpdateFieldSchemaMigration({
         action: {
@@ -482,24 +599,28 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
           workspaceId: mockWorkspaceId,
           fieldMetadataId: mockFieldMetadataId,
           objectMetadataId: mockObjectMetadataId,
-          updates: [{
-            property: 'defaultValue',
-            from: {
-              amountMicros: '0',
-              currencyCode: 'USD',
+          updates: [
+            {
+              property: 'defaultValue',
+              from: {
+                amountMicros: '0',
+                currencyCode: 'USD',
+              },
+              to: {
+                amountMicros: '100000000',
+                currencyCode: 'EUR',
+              },
             },
-            to: {
-              amountMicros: '100000000',
-              currencyCode: 'EUR',
-            },
-          }],
+          ],
         },
         queryRunner: mockQueryRunner,
         flatObjectMetadataMaps,
       });
 
       // Both composite column defaults must be updated
-      expect(mockSchemaManagerService.columnManager.alterColumnDefault).toHaveBeenCalledWith(
+      expect(
+        mockSchemaManagerService.columnManager.alterColumnDefault,
+      ).toHaveBeenCalledWith(
         mockQueryRunner,
         'workspace_1wgvd1injqtife6y4rvfbu3h5',
         '_product',
@@ -507,7 +628,9 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         "'100000000'",
       );
 
-      expect(mockSchemaManagerService.columnManager.alterColumnDefault).toHaveBeenCalledWith(
+      expect(
+        mockSchemaManagerService.columnManager.alterColumnDefault,
+      ).toHaveBeenCalledWith(
         mockQueryRunner,
         'workspace_1wgvd1injqtife6y4rvfbu3h5',
         '_product',
@@ -535,7 +658,10 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         uniqueIdentifier: 'person',
       });
 
-      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(objectMetadata, relationFieldWithoutSettings);
+      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(
+        objectMetadata,
+        relationFieldWithoutSettings,
+      );
 
       await service.runDeleteFieldSchemaMigration({
         action: {
@@ -548,7 +674,9 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       });
 
       // Should not attempt to drop columns for relations without join columns
-      expect(mockSchemaManagerService.columnManager.dropColumns).toHaveBeenCalledWith(
+      expect(
+        mockSchemaManagerService.columnManager.dropColumns,
+      ).toHaveBeenCalledWith(
         mockQueryRunner,
         'workspace_1wgvd1injqtife6y4rvfbu3h5',
         '_person',
@@ -573,7 +701,10 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         uniqueIdentifier: 'test',
       });
 
-      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(objectMetadata, selectFieldWithoutOptions);
+      const flatObjectMetadataMaps = createMockFlatObjectMetadataMaps(
+        objectMetadata,
+        selectFieldWithoutOptions,
+      );
 
       await service.runCreateFieldSchemaMigration({
         action: {
@@ -585,7 +716,9 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       });
 
       // Should still create enum even with empty values
-      expect(mockSchemaManagerService.enumManager.createEnum).toHaveBeenCalledWith(
+      expect(
+        mockSchemaManagerService.enumManager.createEnum,
+      ).toHaveBeenCalledWith(
         mockQueryRunner,
         'workspace_1wgvd1injqtife6y4rvfbu3h5',
         '_test_emptyStatus_enum',

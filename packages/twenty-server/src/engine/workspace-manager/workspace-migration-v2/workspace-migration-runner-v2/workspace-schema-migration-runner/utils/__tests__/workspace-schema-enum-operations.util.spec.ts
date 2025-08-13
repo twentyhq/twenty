@@ -3,12 +3,11 @@ import { type QueryRunner } from 'typeorm';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
-
-import { WorkspaceSchemaMigrationException } from '../../exceptions/workspace-schema-migration.exception';
+import { WorkspaceSchemaMigrationException } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/exceptions/workspace-schema-migration.exception';
 import {
   collectEnumOperationsForField,
   executeBatchEnumOperations,
-} from '../workspace-schema-enum-operations.util';
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/workspace-schema-enum-operations.util';
 
 describe('WorkspaceSchemaEnumOperations', () => {
   let mockSchemaManagerService: jest.Mocked<WorkspaceSchemaManagerService>;
@@ -42,17 +41,33 @@ describe('WorkspaceSchemaEnumOperations', () => {
         .mockResolvedValueOnce(undefined);
 
       await expect(
-        executeBatchEnumOperations({ operation: 'create', enumOperations, queryRunner: mockQueryRunner, schemaName: 'test_schema', workspaceSchemaManagerService: mockSchemaManagerService }),
+        executeBatchEnumOperations({
+          operation: 'create',
+          enumOperations,
+          queryRunner: mockQueryRunner,
+          schemaName: 'test_schema',
+          workspaceSchemaManagerService: mockSchemaManagerService,
+        }),
       ).rejects.toThrow(WorkspaceSchemaMigrationException);
 
       // All operations should be attempted in parallel despite failure
-      expect(mockSchemaManagerService.enumManager.createEnum).toHaveBeenCalledTimes(3);
+      expect(
+        mockSchemaManagerService.enumManager.createEnum,
+      ).toHaveBeenCalledTimes(3);
     });
 
     it('should handle empty operations without unnecessary database calls', async () => {
-      await executeBatchEnumOperations({ operation: 'create', enumOperations: [], queryRunner: mockQueryRunner, schemaName: 'test_schema', workspaceSchemaManagerService: mockSchemaManagerService });
+      await executeBatchEnumOperations({
+        operation: 'create',
+        enumOperations: [],
+        queryRunner: mockQueryRunner,
+        schemaName: 'test_schema',
+        workspaceSchemaManagerService: mockSchemaManagerService,
+      });
 
-      expect(mockSchemaManagerService.enumManager.createEnum).not.toHaveBeenCalled();
+      expect(
+        mockSchemaManagerService.enumManager.createEnum,
+      ).not.toHaveBeenCalled();
     });
   });
 
@@ -64,12 +79,28 @@ describe('WorkspaceSchemaEnumOperations', () => {
         type: FieldMetadataType.SELECT,
         name: 'status',
         options: [
-          { id: '1', value: 'ACTIVE', label: 'Active', color: 'green', position: 0 },
-          { id: '2', value: 'INACTIVE', label: 'Inactive', color: 'red', position: 1 },
+          {
+            id: '1',
+            value: 'ACTIVE',
+            label: 'Active',
+            color: 'green',
+            position: 0,
+          },
+          {
+            id: '2',
+            value: 'INACTIVE',
+            label: 'Inactive',
+            color: 'red',
+            position: 1,
+          },
         ],
       });
 
-      const enumOps = collectEnumOperationsForField({ fieldMetadata: selectField, tableName: 'contacts', operation: 'create' });
+      const enumOps = collectEnumOperationsForField({
+        fieldMetadata: selectField,
+        tableName: 'contacts',
+        operation: 'create',
+      });
 
       expect(enumOps).toHaveLength(1);
       expect(enumOps[0]).toMatchObject({
@@ -85,12 +116,28 @@ describe('WorkspaceSchemaEnumOperations', () => {
         type: FieldMetadataType.MULTI_SELECT,
         name: 'tags',
         options: [
-          { id: '1', value: 'URGENT', label: 'Urgent', color: 'red', position: 0 },
-          { id: '2', value: 'LOW_PRIORITY', label: 'Low Priority', color: 'blue', position: 1 },
+          {
+            id: '1',
+            value: 'URGENT',
+            label: 'Urgent',
+            color: 'red',
+            position: 0,
+          },
+          {
+            id: '2',
+            value: 'LOW_PRIORITY',
+            label: 'Low Priority',
+            color: 'blue',
+            position: 1,
+          },
         ],
       });
 
-      const enumOps = collectEnumOperationsForField({ fieldMetadata: multiSelectField, tableName: 'tasks', operation: 'create' });
+      const enumOps = collectEnumOperationsForField({
+        fieldMetadata: multiSelectField,
+        tableName: 'tasks',
+        operation: 'create',
+      });
 
       expect(enumOps).toHaveLength(1);
       expect(enumOps[0]).toMatchObject({
@@ -132,7 +179,11 @@ describe('WorkspaceSchemaEnumOperations', () => {
         name: 'primaryAddress',
       });
 
-      const enumOps = collectEnumOperationsForField({ fieldMetadata: addressField, tableName: 'contacts', operation: 'create' });
+      const enumOps = collectEnumOperationsForField({
+        fieldMetadata: addressField,
+        tableName: 'contacts',
+        operation: 'create',
+      });
 
       // Current implementation doesn't handle composite enum fields
       expect(enumOps).toEqual([]);
@@ -146,7 +197,11 @@ describe('WorkspaceSchemaEnumOperations', () => {
         name: 'company',
       });
 
-      const enumOps = collectEnumOperationsForField({ fieldMetadata: relationField, tableName: 'contacts', operation: 'create' });
+      const enumOps = collectEnumOperationsForField({
+        fieldMetadata: relationField,
+        tableName: 'contacts',
+        operation: 'create',
+      });
 
       // Relation fields should not generate enum operations
       expect(enumOps).toEqual([]);
@@ -162,7 +217,11 @@ describe('WorkspaceSchemaEnumOperations', () => {
         name: 'description',
       });
 
-      const enumOps = collectEnumOperationsForField({ fieldMetadata: textField, tableName: 'contacts', operation: 'create' });
+      const enumOps = collectEnumOperationsForField({
+        fieldMetadata: textField,
+        tableName: 'contacts',
+        operation: 'create',
+      });
 
       expect(enumOps).toEqual([]);
     });

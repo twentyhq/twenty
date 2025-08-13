@@ -1,12 +1,22 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType, FromTo } from 'twenty-shared/types';
+import { FieldMetadataType, type FromTo } from 'twenty-shared/types';
+import { type QueryRunner } from 'typeorm';
 
+import { type FieldMetadataDefaultValueForAnyType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+
+import {
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
+} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFlatObjectMetadataFromMapOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-flat-object-metadata-from-map-or-throw.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import {
   type CreateFieldAction,
@@ -18,14 +28,14 @@ import { type RunnerMethodForActionType } from 'src/engine/workspace-manager/wor
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/generate-column-definitions.util';
 
-import { FieldMetadataComplexOption, FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { FieldMetadataDefaultValueForAnyType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { getFlatObjectMetadataFromMapOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-flat-object-metadata-from-map-or-throw.util';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { QueryRunner } from 'typeorm';
-import { prepareFieldWorkspaceSchemaContext, prepareWorkspaceSchemaContext } from './utils/workspace-schema-context.util';
-import { collectEnumOperationsForField, executeBatchEnumOperations } from './utils/workspace-schema-enum-operations.util';
+import {
+  prepareFieldWorkspaceSchemaContext,
+  prepareWorkspaceSchemaContext,
+} from './utils/workspace-schema-context.util';
+import {
+  collectEnumOperationsForField,
+  executeBatchEnumOperations,
+} from './utils/workspace-schema-enum-operations.util';
 
 @Injectable()
 export class WorkspaceSchemaFieldActionRunnerService
@@ -36,23 +46,28 @@ export class WorkspaceSchemaFieldActionRunnerService
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {}
 
-  runDeleteFieldSchemaMigration = async (
-    {
-      action,
-      queryRunner,
-      flatObjectMetadataMaps,
-    }: WorkspaceMigrationActionRunnerArgs<DeleteFieldAction>,
-  ) => {
+  runDeleteFieldSchemaMigration = async ({
+    action,
+    queryRunner,
+    flatObjectMetadataMaps,
+  }: WorkspaceMigrationActionRunnerArgs<DeleteFieldAction>) => {
     const { objectMetadataId, fieldMetadataId } = action;
-    const { schemaName, tableName, fieldMetadata } = prepareFieldWorkspaceSchemaContext({
+    const { schemaName, tableName, fieldMetadata } =
+      prepareFieldWorkspaceSchemaContext({
+        flatObjectMetadataMaps,
+        objectMetadataId,
+        fieldMetadataId,
+      });
+
+    const flatObjectMetadata = getFlatObjectMetadataFromMapOrThrow(
       flatObjectMetadataMaps,
       objectMetadataId,
-      fieldMetadataId,
+    );
+
+    const columnDefinitions = generateColumnDefinitions({
+      fieldMetadata,
+      objectMetadata: flatObjectMetadata,
     });
-
-    const flatObjectMetadata = getFlatObjectMetadataFromMapOrThrow(flatObjectMetadataMaps, objectMetadataId); 
-
-    const columnDefinitions = generateColumnDefinitions({ fieldMetadata, objectMetadata: flatObjectMetadata });
     const columnNamesToDrop = columnDefinitions.map((def) => def.name);
 
     await this.workspaceSchemaManagerService.columnManager.dropColumns(
@@ -62,31 +77,53 @@ export class WorkspaceSchemaFieldActionRunnerService
       columnNamesToDrop,
     );
 
-    const enumOperations = collectEnumOperationsForField({ fieldMetadata, tableName, operation: 'drop' });
+    const enumOperations = collectEnumOperationsForField({
+      fieldMetadata,
+      tableName,
+      operation: 'drop',
+    });
 
-    await executeBatchEnumOperations({ operation: 'drop', enumOperations, queryRunner, schemaName, workspaceSchemaManagerService: this.workspaceSchemaManagerService });
+    await executeBatchEnumOperations({
+      operation: 'drop',
+      enumOperations,
+      queryRunner,
+      schemaName,
+      workspaceSchemaManagerService: this.workspaceSchemaManagerService,
+    });
 
     return;
   };
 
-  runCreateFieldSchemaMigration = async (
-    {
-      action,
-      queryRunner,
-      flatObjectMetadataMaps,
-    }: WorkspaceMigrationActionRunnerArgs<CreateFieldAction>,
-  ) => {
+  runCreateFieldSchemaMigration = async ({
+    action,
+    queryRunner,
+    flatObjectMetadataMaps,
+  }: WorkspaceMigrationActionRunnerArgs<CreateFieldAction>) => {
     const { flatFieldMetadata } = action;
-    const { schemaName, tableName, flatObjectMetadata } = prepareWorkspaceSchemaContext({
-      flatObjectMetadataMaps,
-      objectMetadataId: flatFieldMetadata.objectMetadataId,
+    const { schemaName, tableName, flatObjectMetadata } =
+      prepareWorkspaceSchemaContext({
+        flatObjectMetadataMaps,
+        objectMetadataId: flatFieldMetadata.objectMetadataId,
+      });
+
+    const enumOperations = collectEnumOperationsForField({
+      fieldMetadata: flatFieldMetadata,
+      tableName,
+      operation: 'create',
     });
 
-    const enumOperations = collectEnumOperationsForField({ fieldMetadata: flatFieldMetadata, tableName, operation: 'create' });
+    await executeBatchEnumOperations({
+      operation: 'create',
+      enumOperations,
+      queryRunner,
+      schemaName,
+      workspaceSchemaManagerService: this.workspaceSchemaManagerService,
+    });
 
-    await executeBatchEnumOperations({ operation: 'create', enumOperations, queryRunner, schemaName, workspaceSchemaManagerService: this.workspaceSchemaManagerService });
-
-    const columnDefinitions = generateColumnDefinitions({ fieldMetadata: flatFieldMetadata, objectMetadata: flatObjectMetadata });
+    const columnDefinitions = generateColumnDefinitions({
+      fieldMetadata: flatFieldMetadata,
+      objectMetadata: flatObjectMetadata,
+    });
 
     await this.workspaceSchemaManagerService.columnManager.addColumns(
       queryRunner,
@@ -98,16 +135,18 @@ export class WorkspaceSchemaFieldActionRunnerService
     return;
   };
 
-
-  runUpdateFieldSchemaMigration = async (
-    {
-      action,
-      queryRunner,
-      flatObjectMetadataMaps,
-    }: WorkspaceMigrationActionRunnerArgs<UpdateFieldAction>,
-  ) => {
+  runUpdateFieldSchemaMigration = async ({
+    action,
+    queryRunner,
+    flatObjectMetadataMaps,
+  }: WorkspaceMigrationActionRunnerArgs<UpdateFieldAction>) => {
     const { objectMetadataId, fieldMetadataId, updates } = action;
-    const { schemaName, tableName, flatObjectMetadata, fieldMetadata: currentFlatFieldMetadata } = prepareFieldWorkspaceSchemaContext({
+    const {
+      schemaName,
+      tableName,
+      flatObjectMetadata,
+      fieldMetadata: currentFlatFieldMetadata,
+    } = prepareFieldWorkspaceSchemaContext({
       flatObjectMetadataMaps,
       objectMetadataId,
       fieldMetadataId,
@@ -117,15 +156,37 @@ export class WorkspaceSchemaFieldActionRunnerService
 
     for (const update of updates) {
       if (update.property === 'name') {
-        await this.handleFieldNameUpdate(queryRunner, schemaName, tableName, optimisticFlatFieldMetadata, update);
+        await this.handleFieldNameUpdate(
+          queryRunner,
+          schemaName,
+          tableName,
+          optimisticFlatFieldMetadata,
+          update,
+        );
         optimisticFlatFieldMetadata.name = update.to;
       }
       if (update.property === 'defaultValue') {
-        await this.handleFieldDefaultValueUpdate(queryRunner, schemaName, tableName, optimisticFlatFieldMetadata, update);
+        await this.handleFieldDefaultValueUpdate(
+          queryRunner,
+          schemaName,
+          tableName,
+          optimisticFlatFieldMetadata,
+          update,
+        );
         optimisticFlatFieldMetadata.defaultValue = update.to;
       }
-      if (update.property === 'options' && isEnumFieldMetadataType(optimisticFlatFieldMetadata.type)) {
-        await this.handleFieldOptionsUpdate(queryRunner, schemaName, tableName, flatObjectMetadata, optimisticFlatFieldMetadata, update);
+      if (
+        update.property === 'options' &&
+        isEnumFieldMetadataType(optimisticFlatFieldMetadata.type)
+      ) {
+        await this.handleFieldOptionsUpdate(
+          queryRunner,
+          schemaName,
+          tableName,
+          flatObjectMetadata,
+          optimisticFlatFieldMetadata,
+          update,
+        );
         optimisticFlatFieldMetadata.options = update.to ?? [];
       }
     }
@@ -133,9 +194,15 @@ export class WorkspaceSchemaFieldActionRunnerService
     return;
   };
 
-  private async handleFieldNameUpdate(queryRunner: QueryRunner, schemaName: string, tableName: string, fieldMetadata: FlatFieldMetadata, update: {
-    property: "name";
-} & FromTo<string>) {
+  private async handleFieldNameUpdate(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    fieldMetadata: FlatFieldMetadata,
+    update: {
+      property: 'name';
+    } & FromTo<string>,
+  ) {
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
       const compositeType = getCompositeTypeOrThrow(fieldMetadata.type);
 
@@ -144,8 +211,14 @@ export class WorkspaceSchemaFieldActionRunnerService
           continue;
         }
 
-        const fromCompositeColumnName = computeCompositeColumnName(update.from, property);
-        const toCompositeColumnName = computeCompositeColumnName(update.to, property);
+        const fromCompositeColumnName = computeCompositeColumnName(
+          update.from,
+          property,
+        );
+        const toCompositeColumnName = computeCompositeColumnName(
+          update.to,
+          property,
+        );
 
         await this.workspaceSchemaManagerService.columnManager.renameColumn(
           queryRunner,
@@ -165,16 +238,33 @@ export class WorkspaceSchemaFieldActionRunnerService
       );
     }
 
-    const enumOperations = collectEnumOperationsForField({ fieldMetadata, tableName, operation: 'rename', options: {
-      newFieldName: update.to,
-    } });
+    const enumOperations = collectEnumOperationsForField({
+      fieldMetadata,
+      tableName,
+      operation: 'rename',
+      options: {
+        newFieldName: update.to,
+      },
+    });
 
-    await executeBatchEnumOperations({ operation: 'rename', enumOperations, queryRunner, schemaName, workspaceSchemaManagerService: this.workspaceSchemaManagerService });
+    await executeBatchEnumOperations({
+      operation: 'rename',
+      enumOperations,
+      queryRunner,
+      schemaName,
+      workspaceSchemaManagerService: this.workspaceSchemaManagerService,
+    });
   }
 
-  private async handleFieldDefaultValueUpdate(queryRunner: QueryRunner, schemaName: string, tableName: string, fieldMetadata: FlatFieldMetadata, update: {
-    property: "defaultValue";
-} & FromTo<FieldMetadataDefaultValueForAnyType>) {
+  private async handleFieldDefaultValueUpdate(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    fieldMetadata: FlatFieldMetadata,
+    update: {
+      property: 'defaultValue';
+    } & FromTo<FieldMetadataDefaultValueForAnyType>,
+  ) {
     if (isCompositeFieldMetadataType(fieldMetadata.type)) {
       const compositeType = getCompositeTypeOrThrow(fieldMetadata.type);
 
@@ -183,15 +273,24 @@ export class WorkspaceSchemaFieldActionRunnerService
           continue;
         }
 
-        const compositeColumnName = computeCompositeColumnName(fieldMetadata.name, property);
-        let compositeDefaultValue = (update.to as any)?.[property.name];
+        const compositeColumnName = computeCompositeColumnName(
+          fieldMetadata.name,
+          property,
+        );
+        // @ts-expect-error - TODO: fix this
+        let compositeDefaultValue = update.to?.[property.name];
 
         // Ensure string defaults for composite properties are properly quoted
-        if (typeof compositeDefaultValue === 'string' && !compositeDefaultValue.startsWith("'")) {
+        if (
+          typeof compositeDefaultValue === 'string' &&
+          !compositeDefaultValue.startsWith("'")
+        ) {
           compositeDefaultValue = `'${compositeDefaultValue}'`;
         }
 
-        const serializedNewDefaultValue = serializeDefaultValue(compositeDefaultValue);
+        const serializedNewDefaultValue = serializeDefaultValue(
+          compositeDefaultValue,
+        );
 
         await this.workspaceSchemaManagerService.columnManager.alterColumnDefault(
           queryRunner,
@@ -214,13 +313,28 @@ export class WorkspaceSchemaFieldActionRunnerService
     }
   }
 
-  private async handleFieldOptionsUpdate(queryRunner: QueryRunner, schemaName: string, tableName: string, flatObjectMetadata: FlatObjectMetadata, fieldMetadata: FlatFieldMetadata, update: {
-    property: "options";
-} & FromTo<FieldMetadataDefaultOption[] | FieldMetadataComplexOption[] | null>) {
+  private async handleFieldOptionsUpdate(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    flatObjectMetadata: FlatObjectMetadata,
+    fieldMetadata: FlatFieldMetadata,
+    update: {
+      property: 'options';
+    } & FromTo<
+      FieldMetadataDefaultOption[] | FieldMetadataComplexOption[] | null
+    >,
+  ) {
     const fromOptionsById = new Map(
       (update.from ?? [])
-        .filter((opt: FieldMetadataDefaultOption | FieldMetadataComplexOption) => Boolean(opt.id))
-        .map((opt: FieldMetadataDefaultOption | FieldMetadataComplexOption) => [opt.id, opt]),
+        .filter(
+          (opt: FieldMetadataDefaultOption | FieldMetadataComplexOption) =>
+            Boolean(opt.id),
+        )
+        .map((opt: FieldMetadataDefaultOption | FieldMetadataComplexOption) => [
+          opt.id,
+          opt,
+        ]),
     );
 
     const valueMapping: Record<string, string> = {};
@@ -232,12 +346,29 @@ export class WorkspaceSchemaFieldActionRunnerService
 
       const fromOption = fromOptionsById.get(toOption.id);
 
-      if (fromOption && (fromOption as FieldMetadataDefaultOption | FieldMetadataComplexOption).value !== (toOption as FieldMetadataDefaultOption | FieldMetadataComplexOption).value) {
-        valueMapping[(fromOption as FieldMetadataDefaultOption | FieldMetadataComplexOption).value] = (toOption as FieldMetadataDefaultOption | FieldMetadataComplexOption).value;
+      if (
+        fromOption &&
+        (fromOption as FieldMetadataDefaultOption | FieldMetadataComplexOption)
+          .value !==
+          (toOption as FieldMetadataDefaultOption | FieldMetadataComplexOption)
+            .value
+      ) {
+        valueMapping[
+          (
+            fromOption as
+              | FieldMetadataDefaultOption
+              | FieldMetadataComplexOption
+          ).value
+        ] = (
+          toOption as FieldMetadataDefaultOption | FieldMetadataComplexOption
+        ).value;
       }
     }
 
-    const optimisticColumnDefinitions = generateColumnDefinitions({ fieldMetadata, objectMetadata: flatObjectMetadata });
+    const optimisticColumnDefinitions = generateColumnDefinitions({
+      fieldMetadata,
+      objectMetadata: flatObjectMetadata,
+    });
 
     await this.workspaceSchemaManagerService.enumManager.alterEnumValues(
       queryRunner,

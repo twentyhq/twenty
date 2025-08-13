@@ -1,4 +1,3 @@
-
 import { type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
@@ -17,7 +16,7 @@ export class WorkspaceSchemaEnumManagerService {
     if (values.length === 0) {
       throw new Error(`Cannot create enum with no values`);
     }
-    
+
     const sanitizedValues = values
       .map((value) => removeSqlDDLInjection(value.toString()))
       .map((value) => `'${value}'`)
@@ -112,8 +111,13 @@ export class WorkspaceSchemaEnumManagerService {
       await queryRunner.startTransaction();
     }
 
-    if (!columnDefinition.enumValues || columnDefinition.enumValues.length === 0) {
-      throw new Error(`Cannot alter enum values for column ${columnDefinition.name} because it has no enum values`);
+    if (
+      !columnDefinition.enumValues ||
+      columnDefinition.enumValues.length === 0
+    ) {
+      throw new Error(
+        `Cannot alter enum values for column ${columnDefinition.name} because it has no enum values`,
+      );
     }
 
     try {
@@ -128,13 +132,30 @@ export class WorkspaceSchemaEnumManagerService {
 
       await this.renameEnum(queryRunner, schemaName, enumName, oldEnumName);
 
-      await this.createEnum(queryRunner, schemaName, enumName, columnDefinition.enumValues);
+      await this.createEnum(
+        queryRunner,
+        schemaName,
+        enumName,
+        columnDefinition.enumValues,
+      );
 
       const oldColumnName = `${columnName}_old`;
 
-      await this.renameColumn(queryRunner, schemaName, tableName, columnName, oldColumnName);
+      await this.renameColumn(
+        queryRunner,
+        schemaName,
+        tableName,
+        columnName,
+        oldColumnName,
+      );
 
-      await this.createColumnUsingEnum(queryRunner, schemaName, tableName, columnDefinition, enumName);
+      await this.createColumnUsingEnum(
+        queryRunner,
+        schemaName,
+        tableName,
+        columnDefinition,
+        enumName,
+      );
 
       if (valueMapping && Object.keys(valueMapping).length > 0) {
         await this.migrateEnumData(
@@ -153,7 +174,6 @@ export class WorkspaceSchemaEnumManagerService {
       if (!isTransactionAlreadyActive) {
         await queryRunner.commitTransaction();
       }
-
     } catch (error) {
       if (!isTransactionAlreadyActive) {
         await queryRunner.rollbackTransaction();
@@ -186,14 +206,13 @@ export class WorkspaceSchemaEnumManagerService {
     enumTypeName: string,
   ): Promise<void> {
     const columnDef = buildColumnDefinition({
-        ...columnDefinition,
-        type: enumTypeName,
-      }
-    );
+      ...columnDefinition,
+      type: enumTypeName,
+    });
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ADD COLUMN ${columnDef}`;
-    
+
     await queryRunner.query(sql);
   }
 

@@ -3,10 +3,14 @@ import { type FieldMetadataType } from 'twenty-shared/types';
 import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import {
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 
-import { FieldMetadataException, FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-
-export const getCompositeTypeOrThrow = (fieldType: FieldMetadataType): CompositeType => {
+export const getCompositeTypeOrThrow = (
+  fieldType: FieldMetadataType,
+): CompositeType => {
   const compositeType = compositeTypeDefinitions.get(fieldType);
 
   if (!compositeType) {

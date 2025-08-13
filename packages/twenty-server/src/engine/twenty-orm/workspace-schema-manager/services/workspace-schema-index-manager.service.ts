@@ -1,4 +1,3 @@
-
 import { type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaIndexDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-index-definition.type';

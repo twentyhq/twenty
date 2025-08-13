@@ -45,7 +45,7 @@ describe('typeormBuildCreateColumnSql', () => {
     };
     const sql = typeormBuildCreateColumnSql({ table, column });
 
-    expect(sql).toBe('"col3" "_my_table_col3_enum"');
+    expect(sql).toBe('"col3" "my_table_col3_enum"');
   });
 
   it('should generate SQL for an enum[] (array) column', () => {
@@ -60,7 +60,7 @@ describe('typeormBuildCreateColumnSql', () => {
     };
     const sql = typeormBuildCreateColumnSql({ table, column });
 
-    expect(sql).toBe('"col4" "_my_table_col4_enum"[] NOT NULL');
+    expect(sql).toBe('"col4" "my_table_col4_enum"[] NOT NULL');
   });
 
   it('should include default and nullability', () => {

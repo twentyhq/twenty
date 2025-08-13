@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import {
   type CreateObjectAction,
   type DeleteObjectAction,
@@ -12,9 +13,11 @@ import { type RunnerMethodForActionType } from 'src/engine/workspace-manager/wor
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/generate-column-definitions.util';
 
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { prepareWorkspaceSchemaContext } from './utils/workspace-schema-context.util';
-import { collectEnumOperationsForObject, executeBatchEnumOperations } from './utils/workspace-schema-enum-operations.util';
+import {
+  collectEnumOperationsForObject,
+  executeBatchEnumOperations,
+} from './utils/workspace-schema-enum-operations.util';
 
 @Injectable()
 export class WorkspaceSchemaObjectActionRunnerService
@@ -25,17 +28,16 @@ export class WorkspaceSchemaObjectActionRunnerService
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {}
 
-  runDeleteObjectSchemaMigration = async (
-    {
-      action: { objectMetadataId },
-      queryRunner,
-      flatObjectMetadataMaps,
-    }: WorkspaceMigrationActionRunnerArgs<DeleteObjectAction>,
-  ) => {
-    const { schemaName, tableName, flatObjectMetadata } = prepareWorkspaceSchemaContext({
-      flatObjectMetadataMaps,
-      objectMetadataId,
-    });
+  runDeleteObjectSchemaMigration = async ({
+    action: { objectMetadataId },
+    queryRunner,
+    flatObjectMetadataMaps,
+  }: WorkspaceMigrationActionRunnerArgs<DeleteObjectAction>) => {
+    const { schemaName, tableName, flatObjectMetadata } =
+      prepareWorkspaceSchemaContext({
+        flatObjectMetadataMaps,
+        objectMetadataId,
+      });
 
     await this.workspaceSchemaManagerService.tableManager.dropTable(
       queryRunner,
@@ -43,22 +45,35 @@ export class WorkspaceSchemaObjectActionRunnerService
       tableName,
     );
 
-    const enumOperations = collectEnumOperationsForObject({ objectMetadata: flatObjectMetadata, tableName, operation: 'drop' });
+    const enumOperations = collectEnumOperationsForObject({
+      objectMetadata: flatObjectMetadata,
+      tableName,
+      operation: 'drop',
+    });
 
-    await executeBatchEnumOperations({ operation: 'drop', enumOperations, queryRunner, schemaName, workspaceSchemaManagerService: this.workspaceSchemaManagerService });
-  };
-  runCreateObjectSchemaMigration = async (
-    {
-      action: { flatObjectMetadataWithoutFields, createFieldActions },
+    await executeBatchEnumOperations({
+      operation: 'drop',
+      enumOperations,
       queryRunner,
-    }: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>,
-  ) => {
+      schemaName,
+      workspaceSchemaManagerService: this.workspaceSchemaManagerService,
+    });
+  };
+  runCreateObjectSchemaMigration = async ({
+    action: { flatObjectMetadataWithoutFields, createFieldActions },
+    queryRunner,
+  }: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>) => {
     const flatObjectMetadata = flatObjectMetadataWithoutFields;
     const schemaName = getWorkspaceSchemaName(flatObjectMetadata.workspaceId);
     const tableName = computeObjectTargetTable(flatObjectMetadata);
 
     const columnDefinitions = createFieldActions
-      .map((createFieldAction) => generateColumnDefinitions({ fieldMetadata: createFieldAction.flatFieldMetadata, objectMetadata: flatObjectMetadata }))
+      .map((createFieldAction) =>
+        generateColumnDefinitions({
+          fieldMetadata: createFieldAction.flatFieldMetadata,
+          objectMetadata: flatObjectMetadata,
+        }),
+      )
       .flat();
 
     await this.workspaceSchemaManagerService.tableManager.createTable(
@@ -68,15 +83,17 @@ export class WorkspaceSchemaObjectActionRunnerService
       columnDefinitions,
     );
   };
-  runUpdateObjectSchemaMigration = async (
-    {
-      action,
-      queryRunner,
-      flatObjectMetadataMaps,
-    }: WorkspaceMigrationActionRunnerArgs<UpdateObjectAction>,
-  ) => {
+  runUpdateObjectSchemaMigration = async ({
+    action,
+    queryRunner,
+    flatObjectMetadataMaps,
+  }: WorkspaceMigrationActionRunnerArgs<UpdateObjectAction>) => {
     const { objectMetadataId, updates } = action;
-    const { schemaName, tableName: currentTableName, flatObjectMetadata } = prepareWorkspaceSchemaContext({
+    const {
+      schemaName,
+      tableName: currentTableName,
+      flatObjectMetadata,
+    } = prepareWorkspaceSchemaContext({
       flatObjectMetadataMaps,
       objectMetadataId,
     });
@@ -98,11 +115,22 @@ export class WorkspaceSchemaObjectActionRunnerService
             newTableName,
           );
 
-          const enumOperations = collectEnumOperationsForObject({ objectMetadata: flatObjectMetadata, tableName: currentTableName, operation: 'rename', options: {
-            newTableName,
-          } });
+          const enumOperations = collectEnumOperationsForObject({
+            objectMetadata: flatObjectMetadata,
+            tableName: currentTableName,
+            operation: 'rename',
+            options: {
+              newTableName,
+            },
+          });
 
-          await executeBatchEnumOperations({ operation: 'rename', enumOperations, queryRunner, schemaName, workspaceSchemaManagerService: this.workspaceSchemaManagerService });
+          await executeBatchEnumOperations({
+            operation: 'rename',
+            enumOperations,
+            queryRunner,
+            schemaName,
+            workspaceSchemaManagerService: this.workspaceSchemaManagerService,
+          });
         }
       }
     }

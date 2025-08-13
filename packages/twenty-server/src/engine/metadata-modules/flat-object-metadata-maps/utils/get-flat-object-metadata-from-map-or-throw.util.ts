@@ -1,6 +1,9 @@
-import { FlatObjectMetadataMapsException, FlatObjectMetadataMapsExceptionCode } from "src/engine/metadata-modules/flat-object-metadata-maps/flat-object-metadata-maps.exception";
-import { type FlatObjectMetadataMaps } from "src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type";
-import { type FlatObjectMetadataWithFlatFieldMaps } from "src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type";
+import {
+  FlatObjectMetadataMapsException,
+  FlatObjectMetadataMapsExceptionCode,
+} from 'src/engine/metadata-modules/flat-object-metadata-maps/flat-object-metadata-maps.exception';
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { type FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
 
 export const getFlatObjectMetadataFromMapOrThrow = (
   flatObjectMetadataMaps: FlatObjectMetadataMaps,

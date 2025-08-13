@@ -8,5 +8,5 @@ export type WorkspaceSchemaColumnDefinition = {
   isArray?: boolean;
   asExpression?: string;
   generatedType?: 'STORED' | 'VIRTUAL';
-  enumValues?: string[];
+  enumValues?: string[]; // TODO: remove this
 };

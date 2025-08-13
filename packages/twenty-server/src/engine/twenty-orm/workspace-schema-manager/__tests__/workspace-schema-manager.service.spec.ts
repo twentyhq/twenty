@@ -28,7 +28,7 @@ describe('WorkspaceSchemaManager', () => {
     } as any;
 
     columnManager = {
-      addColumn: jest.fn(),
+      addColumns: jest.fn(),
       dropColumn: jest.fn(),
       renameColumn: jest.fn(),
       columnExists: jest.fn(),
@@ -105,6 +105,12 @@ describe('WorkspaceSchemaManager', () => {
       // Act & Assert
       expect(service.tableManager).toBeInstanceOf(Object);
       expect(service.tableManager.createTable).toBeDefined();
+    });
+
+    it('should provide access to column manager', () => {
+      // Act & Assert
+      expect(service.columnManager).toBeInstanceOf(Object);
+      expect(service.columnManager.addColumns).toBeDefined();
     });
 
     it('should provide access to index manager', () => {

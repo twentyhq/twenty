@@ -1,4 +1,3 @@
-
 import { type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaForeignKeyDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-foreign-key-definition.type';

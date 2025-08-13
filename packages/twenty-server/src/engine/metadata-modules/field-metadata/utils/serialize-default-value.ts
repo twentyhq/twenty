@@ -38,11 +38,6 @@ export const serializeDefaultValue = (
     return defaultValue;
   }
 
-  // Accept numeric-like strings and quote them to be consistent with existing expectations
-  if (typeof defaultValue === 'string' && /^-?\d+(\.\d+)?$/.test(defaultValue)) {
-    return `'${defaultValue}'`;
-  }
-
   if (typeof defaultValue === 'boolean') {
     return defaultValue;
   }

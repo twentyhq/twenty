@@ -1,4 +1,3 @@
-
 import { type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
@@ -18,7 +17,7 @@ export class WorkspaceSchemaColumnManagerService {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const addColumnClauses = columnDefinitions.map(
-      (column) => `ADD COLUMN ${buildColumnDefinition(column)}`
+      (column) => `ADD COLUMN ${buildColumnDefinition(column)}`,
     );
     const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ${addColumnClauses.join(', ')}`;
 

@@ -2,10 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-
-import {
-  generateColumnDefinitions,
-} from '../generate-column-definitions.util';
+import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/generate-column-definitions.util';
 
 describe('Generate Column Definitions', () => {
   const mockObjectMetadata = getFlatObjectMetadataMock({
@@ -23,20 +20,35 @@ describe('Generate Column Definitions', () => {
         type: FieldMetadataType.SELECT,
         name: 'status',
         options: [
-          { id: '1', value: 'ACTIVE', label: 'Active', color: 'green', position: 0 },
-          { id: '2', value: 'INACTIVE', label: 'Inactive', color: 'red', position: 1 },
+          {
+            id: '1',
+            value: 'ACTIVE',
+            label: 'Active',
+            color: 'green',
+            position: 0,
+          },
+          {
+            id: '2',
+            value: 'INACTIVE',
+            label: 'Inactive',
+            color: 'red',
+            position: 1,
+          },
         ],
       });
 
-      const columns = generateColumnDefinitions({ fieldMetadata: enumField, objectMetadata: mockObjectMetadata });
+      const columns = generateColumnDefinitions({
+        fieldMetadata: enumField,
+        objectMetadata: mockObjectMetadata,
+      });
 
       expect(columns).toHaveLength(1);
-      
+
       const column = columns[0];
 
       expect(column).toEqual({
         name: 'status',
-        type: '__person_status_enum',
+        type: '_person_status_enum',
         enumValues: ['ACTIVE', 'INACTIVE'],
         isArray: false,
         isNullable: true,
@@ -52,20 +64,35 @@ describe('Generate Column Definitions', () => {
         type: FieldMetadataType.MULTI_SELECT,
         name: 'tags',
         options: [
-          { id: '1', value: 'URGENT', label: 'Urgent', color: 'red', position: 0 },
-          { id: '2', value: 'LOW_PRIORITY', label: 'Low Priority', color: 'blue', position: 1 },
+          {
+            id: '1',
+            value: 'URGENT',
+            label: 'Urgent',
+            color: 'red',
+            position: 0,
+          },
+          {
+            id: '2',
+            value: 'LOW_PRIORITY',
+            label: 'Low Priority',
+            color: 'blue',
+            position: 1,
+          },
         ],
       });
 
-      const columns = generateColumnDefinitions({ fieldMetadata: multiSelectField, objectMetadata: mockObjectMetadata });
+      const columns = generateColumnDefinitions({
+        fieldMetadata: multiSelectField,
+        objectMetadata: mockObjectMetadata,
+      });
 
       expect(columns).toHaveLength(1);
-      
+
       const column = columns[0];
 
       expect(column).toEqual({
         name: 'tags',
-        type: '__person_tags_enum',
+        type: '_person_tags_enum',
         enumValues: ['URGENT', 'LOW_PRIORITY'],
         isArray: false,
         isNullable: true,
@@ -85,7 +112,10 @@ describe('Generate Column Definitions', () => {
         settings: undefined,
       });
 
-      const columns = generateColumnDefinitions({ fieldMetadata: relationField, objectMetadata: mockObjectMetadata });
+      const columns = generateColumnDefinitions({
+        fieldMetadata: relationField,
+        objectMetadata: mockObjectMetadata,
+      });
 
       // Relations without join columns must return empty array
       expect(columns).toStrictEqual([]);
@@ -103,10 +133,13 @@ describe('Generate Column Definitions', () => {
         },
       });
 
-      const columns = generateColumnDefinitions({ fieldMetadata: relationField, objectMetadata: mockObjectMetadata });
+      const columns = generateColumnDefinitions({
+        fieldMetadata: relationField,
+        objectMetadata: mockObjectMetadata,
+      });
 
       expect(columns).toHaveLength(1);
-      
+
       const column = columns[0];
 
       expect(column).toEqual({
@@ -130,15 +163,18 @@ describe('Generate Column Definitions', () => {
         isNullable: true,
       });
 
-      const columns = generateColumnDefinitions({ fieldMetadata: addressField, objectMetadata: mockObjectMetadata });
+      const columns = generateColumnDefinitions({
+        fieldMetadata: addressField,
+        objectMetadata: mockObjectMetadata,
+      });
 
       expect(columns).toHaveLength(8);
-      
-      const columnNames = columns.map(col => col.name);
+
+      const columnNames = columns.map((col) => col.name);
 
       expect(columnNames).toEqual([
         'homeAddressAddressStreet1',
-        'homeAddressAddressStreet2', 
+        'homeAddressAddressStreet2',
         'homeAddressAddressCity',
         'homeAddressAddressPostcode',
         'homeAddressAddressState',
@@ -146,9 +182,9 @@ describe('Generate Column Definitions', () => {
         'homeAddressAddressLat',
         'homeAddressAddressLng',
       ]);
-      
+
       // All composite columns must inherit parent nullable constraint
-      columns.forEach(column => {
+      columns.forEach((column) => {
         expect(column.isNullable).toBe(true);
         expect(column.isUnique).toBe(false);
         expect(column.default).toBe(null);
@@ -167,17 +203,17 @@ describe('Generate Column Definitions', () => {
         },
       });
 
-      const columns = generateColumnDefinitions({ fieldMetadata: currencyField, objectMetadata: mockObjectMetadata });
+      const columns = generateColumnDefinitions({
+        fieldMetadata: currencyField,
+        objectMetadata: mockObjectMetadata,
+      });
 
       expect(columns).toHaveLength(2);
-      
-      const columnNames = columns.map(col => col.name);
 
-      expect(columnNames).toEqual([
-        'priceAmountMicros',
-        'priceCurrencyCode',
-      ]);
-      
+      const columnNames = columns.map((col) => col.name);
+
+      expect(columnNames).toEqual(['priceAmountMicros', 'priceCurrencyCode']);
+
       expect(columns[0]).toMatchObject({
         name: 'priceAmountMicros',
         type: 'numeric',
@@ -185,7 +221,7 @@ describe('Generate Column Definitions', () => {
         isUnique: false,
         default: null,
       });
-      
+
       expect(columns[1]).toMatchObject({
         name: 'priceCurrencyCode',
         type: 'text',
@@ -206,10 +242,13 @@ describe('Generate Column Definitions', () => {
         defaultValue: null,
       });
 
-      const columns = generateColumnDefinitions({ fieldMetadata: textField, objectMetadata: mockObjectMetadata });
+      const columns = generateColumnDefinitions({
+        fieldMetadata: textField,
+        objectMetadata: mockObjectMetadata,
+      });
 
       expect(columns).toHaveLength(1);
-      
+
       const column = columns[0];
 
       expect(column).toEqual({
@@ -232,10 +271,13 @@ describe('Generate Column Definitions', () => {
         defaultValue: true,
       });
 
-      const columns = generateColumnDefinitions({ fieldMetadata: booleanField, objectMetadata: mockObjectMetadata });
+      const columns = generateColumnDefinitions({
+        fieldMetadata: booleanField,
+        objectMetadata: mockObjectMetadata,
+      });
 
       expect(columns).toHaveLength(1);
-      
+
       const column = columns[0];
 
       expect(column).toEqual({
@@ -259,10 +301,13 @@ describe('Generate Column Definitions', () => {
         name: 'content',
       });
 
-      const columns = generateColumnDefinitions({ fieldMetadata: textField, objectMetadata: mockObjectMetadata });
+      const columns = generateColumnDefinitions({
+        fieldMetadata: textField,
+        objectMetadata: mockObjectMetadata,
+      });
 
       expect(columns).toHaveLength(1);
-      
+
       const column = columns[0];
 
       expect(column).toEqual({
@@ -284,10 +329,13 @@ describe('Generate Column Definitions', () => {
         name: 'uuid',
       });
 
-      const columns = generateColumnDefinitions({ fieldMetadata: uuidField, objectMetadata: mockObjectMetadata });
+      const columns = generateColumnDefinitions({
+        fieldMetadata: uuidField,
+        objectMetadata: mockObjectMetadata,
+      });
 
       expect(columns).toHaveLength(1);
-      
+
       const column = columns[0];
 
       expect(column).toEqual({

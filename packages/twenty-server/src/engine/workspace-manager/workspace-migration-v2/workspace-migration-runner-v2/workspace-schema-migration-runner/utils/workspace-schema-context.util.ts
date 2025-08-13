@@ -1,13 +1,13 @@
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { type FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
 import { getFlatFieldMetadataFromMapOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-flat-field-metadata-from-map-or-throw.util';
 import { getFlatObjectMetadataFromMapOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-flat-object-metadata-from-map-or-throw.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 import { getWorkspaceSchemaContextForMigration } from './get-workspace-schema-context-for-migration.util';
 
 export interface WorkspaceSchemaContext {
-  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadata: FlatObjectMetadataWithFlatFieldMaps;
   schemaName: string;
   tableName: string;
 }
@@ -45,7 +45,10 @@ export const prepareFieldWorkspaceSchemaContext = ({
   objectMetadataId: string;
   fieldMetadataId: string;
 }): WorkspaceSchemaContext & { fieldMetadata: FlatFieldMetadata } => {
-  const context = prepareWorkspaceSchemaContext({ flatObjectMetadataMaps, objectMetadataId });
+  const context = prepareWorkspaceSchemaContext({
+    flatObjectMetadataMaps,
+    objectMetadataId,
+  });
   const fieldMetadata = getFlatFieldMetadataFromMapOrThrow(
     flatObjectMetadataMaps,
     objectMetadataId,

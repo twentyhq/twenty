@@ -1,4 +1,3 @@
-
 import { type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
@@ -12,7 +11,8 @@ export class WorkspaceSchemaTableManagerService {
     tableName: string,
     columns?: WorkspaceSchemaColumnDefinition[],
   ): Promise<void> {
-    const columnDefinitions = columns?.map((column) => buildColumnDefinition(column)) || [];
+    const columnDefinitions =
+      columns?.map((column) => buildColumnDefinition(column)) || [];
 
     // Add default columns if no columns specified
     if (columnDefinitions.length === 0) {
