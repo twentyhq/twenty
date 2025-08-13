@@ -8,6 +8,7 @@ import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
+import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
 import { FailedFlatObjectMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { validateFlatObjectMetadataLabel } from 'src/engine/metadata-modules/flat-object-metadata/validators/validate-flat-object-metadata-label.validator';
@@ -32,6 +33,32 @@ export class FlatObjectMetadataValidatorService {
     private readonly flatFieldMetadataValidatorService: FlatFieldMetadataValidatorService,
   ) {}
 
+  public validateFlatObjectMetadataUpdate({
+    existingFlatObjectMetadataMaps,
+    updatedFlatObjectMetadata,
+  }: {
+    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+    updatedFlatObjectMetadata: FlatObjectMetadata;
+  }) {
+    const existingFlatObjectMetadata =
+      findFlatObjectMetadataInFlatObjectMetadataMaps({
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        objectMetadataId: updatedFlatObjectMetadata.id,
+      });
+
+    if (!isDefined(existingFlatObjectMetadata)) {
+      return [
+        new ObjectMetadataException(
+          t`Object to update not found`,
+          ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        ),
+      ];
+    }
+    const errors: FailedFlatObjectMetadataValidationExceptions[] = [];
+
+    return errors;
+  }
+
   public validateFlatObjectMetadataDeletion({
     existingFlatObjectMetadataMaps,
     objectMetadataToDeleteId,
@@ -47,7 +74,7 @@ export class FlatObjectMetadataValidatorService {
     if (!isDefined(flatObjectMetadataToDelete)) {
       errors.push(
         new ObjectMetadataException(
-          t`Object does not exist`,
+          t`Object to delete not found`,
           ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         ),
       );
