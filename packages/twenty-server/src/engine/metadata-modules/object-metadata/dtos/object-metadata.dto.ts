@@ -35,9 +35,6 @@ export class ObjectMetadataDTO {
   @IDField(() => UUIDScalarType)
   id: string;
 
-  @Field(() => UUIDScalarType)
-  dataSourceId: string;
-
   @Field()
   nameSingular: string;
 

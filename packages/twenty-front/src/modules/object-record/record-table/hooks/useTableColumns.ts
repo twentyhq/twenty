@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 

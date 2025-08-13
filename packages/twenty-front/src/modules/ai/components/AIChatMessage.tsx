@@ -2,10 +2,10 @@ import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 
-import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
+import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
-import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
+import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 
 import { type AgentChatMessage } from '~/generated/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';

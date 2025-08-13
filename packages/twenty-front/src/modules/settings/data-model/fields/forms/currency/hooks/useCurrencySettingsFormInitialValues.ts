@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { CurrencyCode } from '@/object-record/record-field/ui/types/CurrencyCode';
 import { type SettingsDataModelFieldCurrencyFormValues } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 

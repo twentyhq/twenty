@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type SettingsDataModelFieldDateFormValues } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
 
 export const useDateSettingsFormInitialValues = ({
