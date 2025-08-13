@@ -1,13 +1,19 @@
 import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { t } from '@lingui/core/macro';
+import pluralize from 'pluralize';
+import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import {
+  IconChevronDown,
+  type IconComponent,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
 import { type MultiSelectOption } from 'twenty-ui/input';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';
 
-// TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
 const StyledControlContainer = styled.div<{
   disabled?: boolean;
   hasIcon: boolean;
@@ -61,7 +67,9 @@ const StyledIconChevronDown = styled(IconChevronDown)<{
 `;
 
 type MultiSelectControlProps<T> = {
-  selectedOption: MultiSelectOption<T>;
+  fixedIcon?: IconComponent;
+  fixedText?: string;
+  selectedOptions: MultiSelectOption<T>[];
   isDisabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
   textAccent?: SelectControlTextAccent;
@@ -69,7 +77,9 @@ type MultiSelectControlProps<T> = {
 };
 
 export const MultiSelectControl = <T,>({
-  selectedOption,
+  fixedIcon,
+  fixedText,
+  selectedOptions,
   isDisabled,
   selectSizeVariant,
   textAccent = 'default',
@@ -77,22 +87,39 @@ export const MultiSelectControl = <T,>({
 }: MultiSelectControlProps<T>) => {
   const theme = useTheme();
 
+  const firstSelectedOption = selectedOptions[0];
+  const selectedOptionsCount = selectedOptions.length;
   return (
     <StyledControlContainer
       disabled={isDisabled}
-      hasIcon={isDefined(selectedOption.Icon)}
+      hasIcon={isDefined(fixedIcon) || isDefined(firstSelectedOption.Icon)}
       selectSizeVariant={selectSizeVariant}
       textAccent={textAccent}
       hasRightElement={hasRightElement}
     >
-      {isDefined(selectedOption.Icon) ? (
-        <selectedOption.Icon
+      {isDefined(fixedIcon) ? (
+        React.createElement(fixedIcon, {
+          color: isDisabled ? theme.font.color.light : theme.font.color.primary,
+          size: theme.icon.size.md,
+          stroke: theme.icon.stroke.sm,
+        })
+      ) : isDefined(firstSelectedOption.Icon) ? (
+        <firstSelectedOption.Icon
           color={isDisabled ? theme.font.color.light : theme.font.color.primary}
           size={theme.icon.size.md}
           stroke={theme.icon.stroke.sm}
         />
       ) : null}
-      <OverflowingTextWithTooltip text={selectedOption.label} />
+      {isDefined(fixedText) ? (
+        <OverflowingTextWithTooltip
+          text={t`${selectedOptionsCount} ${
+            selectedOptionsCount <= 1 ? fixedText : pluralize(fixedText)
+          }`}
+        />
+      ) : (
+        <OverflowingTextWithTooltip text={firstSelectedOption.label} />
+      )}
+
       <StyledIconChevronDown disabled={isDisabled} size={theme.icon.size.md} />
     </StyledControlContainer>
   );

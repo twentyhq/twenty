@@ -165,8 +165,6 @@ export const SettingsDataModelFieldMorphRelationForm = ({
           )}
         />
 
-        {/* needs to switch to multiInput */}
-
         <Controller
           name="morphRelations"
           control={control}
@@ -178,6 +176,7 @@ export const SettingsDataModelFieldMorphRelationForm = ({
               fullWidth
               disabled={disableRelationEdition}
               value={value}
+              withSearchInput={true}
               options={activeObjectMetadataItems
                 .filter(isObjectMetadataAvailableForRelation)
                 .sort((item1, item2) =>

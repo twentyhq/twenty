@@ -17,7 +17,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui/display';
+import { IconBox, type IconComponent } from 'twenty-ui/display';
 import { type MultiSelectOption } from 'twenty-ui/input';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
 
@@ -153,7 +153,9 @@ export const SettingsMorphRelationMultiSelect = ({
       {!!label && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
         <MultiSelectControl<MorphRelationOptionType>
-          selectedOption={selectedOptions[0]}
+          selectedOptions={selectedOptions}
+          fixedIcon={IconBox}
+          fixedText="Object"
           isDisabled={isDisabled}
           selectSizeVariant={selectSizeVariant}
           hasRightElement={hasRightElement}
@@ -166,7 +168,9 @@ export const SettingsMorphRelationMultiSelect = ({
           onOpen={handleDropdownOpen}
           clickableComponent={
             <MultiSelectControl<MorphRelationOptionType>
-              selectedOption={selectedOptions[0]}
+              selectedOptions={selectedOptions}
+              fixedIcon={IconBox}
+              fixedText="Object"
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
               hasRightElement={hasRightElement}
