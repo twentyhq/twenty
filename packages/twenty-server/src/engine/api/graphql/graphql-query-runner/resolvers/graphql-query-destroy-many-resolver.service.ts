@@ -12,7 +12,6 @@ import { type DestroyManyResolverArgs } from 'src/engine/api/graphql/workspace-r
 
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
 export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseResolverService<
@@ -31,14 +30,9 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const tableName = computeTableName(
-      objectMetadataItemWithFieldMaps.nameSingular,
-      objectMetadataItemWithFieldMaps.isCustom,
-    );
-
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      tableName,
+      objectMetadataItemWithFieldMaps.nameSingular,
       executionArgs.args.filter,
     );
 
@@ -46,6 +40,7 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const deletedObjectRecords = await queryBuilder

@@ -91,6 +91,16 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   name: string;
 
   @WorkspaceField({
+    standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.enqueuedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: msg`Workflow run enqueued at`,
+    description: msg`Workflow run enqueued at`,
+    icon: 'IconHistory',
+  })
+  @WorkspaceIsNullable()
+  enqueuedAt: Date | null;
+
+  @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.startedAt,
     type: FieldMetadataType.DATE_TIME,
     label: msg`Workflow run started at`,

@@ -7,13 +7,13 @@ import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
 import { useRelationField } from '@/object-record/record-field/meta-types/hooks/useRelationField';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
 import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { type FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { type FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
@@ -24,17 +24,13 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-type RelationFromManyFieldInputProps = {
-  onSubmit?: FieldInputEvent;
-};
-
-export const RelationFromManyFieldInput = ({
-  onSubmit,
-}: RelationFromManyFieldInputProps) => {
+export const RelationFromManyFieldInput = () => {
   const { fieldDefinition, recordId } = useContext(FieldContext);
   const instanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
+
+  const { onSubmit } = useContext(FieldInputEventContext);
 
   const { updateRelation } = useUpdateRelationFromManyFieldInput();
   const fieldName = fieldDefinition.metadata.fieldName;
@@ -51,7 +47,7 @@ export const RelationFromManyFieldInput = ({
   const { fieldValue } = useRelationField();
 
   const handleSubmit = () => {
-    onSubmit?.(() => {});
+    onSubmit?.({ skipPersist: true });
   };
 
   const isRelationFromActivityTargets =

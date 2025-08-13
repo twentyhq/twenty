@@ -52,7 +52,7 @@ const meta: Meta<typeof ObjectOptionsDropdownContent> = {
               value={{ instanceId }}
             >
               <RecordTableComponentInstanceContext.Provider
-                value={{ instanceId, onColumnsChange: () => {} }}
+                value={{ instanceId }}
               >
                 <ViewComponentInstanceContext.Provider value={{ instanceId }}>
                   <MemoryRouter

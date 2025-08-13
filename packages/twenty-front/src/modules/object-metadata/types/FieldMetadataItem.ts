@@ -14,12 +14,13 @@ export type FieldMetadataItemOption = {
 
 export type FieldMetadataItem = Omit<
   Field,
-  '__typename' | 'defaultValue' | 'options' | 'relation'
+  '__typename' | 'defaultValue' | 'options' | 'relation' | 'morphRelations'
 > & {
   __typename?: string;
   defaultValue?: any;
   options?: FieldMetadataItemOption[] | null;
   relation?: FieldMetadataItemRelation | null;
+  morphRelations?: FieldMetadataItemRelation[] | null;
   settings?: FieldDateMetadataSettings;
   isLabelSyncedWithName?: boolean | null;
 };

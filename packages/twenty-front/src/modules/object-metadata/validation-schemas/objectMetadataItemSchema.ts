@@ -9,7 +9,6 @@ import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStrin
 export const objectMetadataItemSchema = z.object({
   __typename: z.literal('Object').optional(),
   createdAt: z.string().datetime(),
-  dataSourceId: z.string().uuid(),
   description: z.string().trim().nullable().optional(),
   fields: z.array(fieldMetadataItemSchema()),
   readableFields: z.array(fieldMetadataItemSchema()),

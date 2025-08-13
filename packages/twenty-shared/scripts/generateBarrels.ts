@@ -72,10 +72,10 @@ const getSubDirectoryPaths = (directoryPath: string): string[] => {
   }).sort((a, b) => a.localeCompare(b));
 };
 
-const partitionFileExportsByType = (declarations: DeclarationOccurence[]) => {
+const partitionFileExportsByType = (declarations: DeclarationOccurrence[]) => {
   return declarations.reduce<{
-    typeAndInterfaceDeclarations: DeclarationOccurence[];
-    otherDeclarations: DeclarationOccurence[];
+    typeAndInterfaceDeclarations: DeclarationOccurrence[];
+    otherDeclarations: DeclarationOccurrence[];
   }>(
     (acc, { kind, name }) => {
       if (kind === 'type' || kind === 'interface') {
@@ -117,7 +117,7 @@ const generateModuleIndexFiles = (exportByBarrel: ExportByBarrel[]) => {
             ),
           );
           const mapDeclarationNameAndJoin = (
-            declarations: DeclarationOccurence[],
+            declarations: DeclarationOccurrence[],
           ) => declarations.map(({ name }) => name).join(', ');
 
           const typeExport =
@@ -187,20 +187,57 @@ const updateNxProjectConfigurationBuildOutputs = (outputs: JsonUpdate) => {
   });
 };
 
-const computePackageJsonFilesAndPreconstructConfig = (
+type ExportOccurrence = {
+  types: string;
+  import: string;
+  require: string;
+};
+type ExportsConfig = Record<string, ExportOccurrence | string>;
+
+const generateModulePackageExports = (moduleDirectories: string[]) => {
+  return moduleDirectories.reduce<ExportsConfig>((acc, moduleDirectory) => {
+    const moduleName = getLastPathFolder(moduleDirectory);
+    if (moduleName === undefined) {
+      throw new Error(
+        `Should never occur, moduleName is undefined ${moduleDirectory}`,
+      );
+    }
+
+    return {
+      ...acc,
+      [`./${moduleName}`]: {
+        types: `./dist/${moduleName}/index.d.ts`,
+        import: `./dist/${moduleName}.mjs`,
+        require: `./dist/${moduleName}.cjs`,
+      },
+    };
+  }, {});
+};
+
+const computePackageJsonFilesAndExportsConfig = (
   moduleDirectories: string[],
 ) => {
   const entrypoints = moduleDirectories.map(getLastPathFolder);
+  const exports = {
+    '.': {
+      types: './dist/index.d.ts',
+      import: './dist/index.mjs',
+      require: './dist/index.cjs',
+    },
+    ...generateModulePackageExports(moduleDirectories),
+  } satisfies ExportsConfig;
+
+  const typesVersionsEntries = entrypoints.reduce<Record<string, string[]>>(
+    (acc, moduleName) => ({
+      ...acc,
+      [`${moduleName}`]: [`dist/${moduleName}/index.d.ts`],
+    }),
+    {},
+  );
 
   return {
-    preconstruct: {
-      // TODO refactor to merge in existing configuration
-      tsconfig: 'tsconfig.lib.json',
-      entrypoints: [
-        './index.ts',
-        ...entrypoints.map((module) => `./${module}/index.ts`),
-      ],
-    },
+    exports,
+    typesVersions: { '*': typesVersionsEntries },
     files: ['dist', ...entrypoints],
   };
 };
@@ -266,7 +303,7 @@ const getKind = (
 };
 
 function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
-  const exports: DeclarationOccurence[] = [];
+  const exports: DeclarationOccurrence[] = [];
 
   function visit(node: ts.Node) {
     if (!ts.canHaveModifiers(node)) {
@@ -277,7 +314,7 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
       (mod) => mod.kind === ts.SyntaxKind.ExportKeyword,
     );
 
-    if (!isExport) {
+    if (!isExport && !ts.isExportDeclaration(node)) {
       return ts.forEachChild(node, visit);
     }
 
@@ -312,11 +349,26 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
 
       case ts.isVariableStatement(node):
         node.declarationList.declarations.forEach((decl) => {
+          const kind = getKind(node);
+
           if (ts.isIdentifier(decl.name)) {
-            const kind = getKind(node);
             exports.push({
               kind,
               name: decl.name.text,
+            });
+          } else if (ts.isObjectBindingPattern(decl.name)) {
+            decl.name.elements.forEach((element) => {
+              if (
+                !ts.isBindingElement(element) ||
+                !ts.isIdentifier(element.name)
+              ) {
+                return;
+              }
+
+              exports.push({
+                kind,
+                name: element.name.text,
+              });
             });
           }
         });
@@ -327,6 +379,30 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
           kind: 'class',
           name: node.name.text,
         });
+        break;
+      case ts.isExportDeclaration(node):
+        if (node.exportClause && ts.isNamedExports(node.exportClause)) {
+          node.exportClause.elements.forEach((element) => {
+            const exportName = element.name.text;
+
+            // Check both the declaration and the individual specifier for type-only exports
+            const isTypeExport =
+              node.isTypeOnly || ts.isTypeOnlyExportDeclaration(node);
+            if (isTypeExport) {
+              // should handle kind
+              exports.push({
+                kind: 'type',
+                name: exportName,
+              });
+              return;
+            }
+
+            exports.push({
+              kind: 'const',
+              name: exportName,
+            });
+          });
+        }
         break;
     }
     return ts.forEachChild(node, visit);
@@ -345,10 +421,10 @@ type ExportKind =
   | 'let'
   | 'var'
   | 'class';
-type DeclarationOccurence = { kind: ExportKind; name: string };
+type DeclarationOccurrence = { kind: ExportKind; name: string };
 type FileExports = Array<{
   file: string;
-  exports: DeclarationOccurence[];
+  exports: DeclarationOccurrence[];
 }>;
 
 function findAllExports(directoryPath: string): FileExports {
@@ -407,13 +483,13 @@ const main = () => {
   const moduleDirectories = getSubDirectoryPaths(SRC_PATH);
   const exportsByBarrel = retrieveExportsByBarrel(moduleDirectories);
   const moduleIndexFiles = generateModuleIndexFiles(exportsByBarrel);
-  const packageJsonPreconstructConfigAndFiles =
-    computePackageJsonFilesAndPreconstructConfig(moduleDirectories);
+  const packageJsonConfig =
+    computePackageJsonFilesAndExportsConfig(moduleDirectories);
   const nxBuildOutputsPath =
     computeProjectNxBuildOutputsPath(moduleDirectories);
 
   updateNxProjectConfigurationBuildOutputs(nxBuildOutputsPath);
-  writeInPackageJson(packageJsonPreconstructConfigAndFiles);
+  writeInPackageJson(packageJsonConfig);
   moduleIndexFiles.forEach(createTypeScriptFile);
 };
 main();

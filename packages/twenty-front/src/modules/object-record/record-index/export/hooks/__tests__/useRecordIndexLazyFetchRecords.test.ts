@@ -232,6 +232,7 @@ describe('useRecordData', () => {
                 relationObjectMetadataNamePlural: '',
                 relationObjectMetadataNameSingular: '',
                 relationType: undefined,
+                morphRelations: [],
                 targetFieldMetadataName: '',
                 settings: {
                   displayFormat: 'RELATIVE',

@@ -1,8 +1,11 @@
+import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { type ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type AllowedAddressSubField } from 'twenty-shared/src/types/AddressFieldsType';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  type AllowedAddressSubField,
+} from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
 import { type RelationType } from '~/generated-metadata/graphql';
@@ -137,6 +140,7 @@ export type FieldPositionMetadata = BaseFieldMetadata & {
   settings?: null;
 };
 
+// for later: refactor this in order to directly use relation without mapping
 export type FieldRelationMetadata = BaseFieldMetadata & {
   relationFieldMetadataId: string;
   relationObjectMetadataNamePlural: string;
@@ -144,6 +148,13 @@ export type FieldRelationMetadata = BaseFieldMetadata & {
   relationObjectMetadataId: string;
   relationType?: RelationType;
   targetFieldMetadataName?: string;
+  useEditButton?: boolean;
+  settings?: null;
+};
+
+export type FieldMorphRelationMetadata = BaseFieldMetadata & {
+  morphRelations: FieldMetadataItemRelation[];
+  relationType: RelationType;
   useEditButton?: boolean;
   settings?: null;
 };
@@ -188,6 +199,7 @@ export type FieldMetadata =
   | FieldPhoneMetadata
   | FieldRatingMetadata
   | FieldRelationMetadata
+  | FieldMorphRelationMetadata
   | FieldRichTextMetadata
   | FieldSelectMetadata
   | FieldMultiSelectMetadata

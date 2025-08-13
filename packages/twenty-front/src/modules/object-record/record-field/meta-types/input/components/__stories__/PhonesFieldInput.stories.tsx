@@ -1,12 +1,12 @@
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { expect, userEvent, within } from '@storybook/test';
 import { useEffect } from 'react';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePhonesField } from '@/object-record/record-field/meta-types/hooks/usePhonesField';
+import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { type FieldInputClickOutsideEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { type FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
@@ -15,48 +15,34 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { PhonesFieldInput } from '../PhonesFieldInput';
 
-const updateRecord = fn();
+const { FieldInputEventContextProviderWithJestMocks } =
+  getFieldInputEventContextProviderWithJestMocks();
 
 const PhoneValueSetterEffect = ({ value }: { value: FieldPhonesValue }) => {
-  const { setFieldValue } = usePhonesField();
+  const { setFieldValue, setDraftValue } = usePhonesField();
 
   useEffect(() => {
     setFieldValue(value);
-  }, [setFieldValue, value]);
+    setDraftValue(value);
+  }, [setFieldValue, value, setDraftValue]);
 
   return null;
 };
 
-type PhoneFieldValueGaterProps = Pick<
-  PhoneInputWithContextProps,
-  'onCancel' | 'onClickOutside'
->;
-
-const PhoneFieldValueGater = ({
-  onCancel,
-  onClickOutside,
-}: PhoneFieldValueGaterProps) => {
+const PhoneFieldValueGater = () => {
   const { fieldValue } = usePhonesField();
 
-  return (
-    fieldValue && (
-      <PhonesFieldInput onCancel={onCancel} onClickOutside={onClickOutside} />
-    )
-  );
+  return fieldValue && <PhonesFieldInput />;
 };
 
 type PhoneInputWithContextProps = {
   value: FieldPhonesValue;
   recordId?: string;
-  onCancel?: () => void;
-  onClickOutside?: FieldInputClickOutsideEvent;
 };
 
 const PhoneInputWithContext = ({
   value,
   recordId = 'record-id',
-  onCancel,
-  onClickOutside,
 }: PhoneInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const instanceId = getRecordFieldInputInstanceId({
@@ -97,14 +83,13 @@ const PhoneInputWithContext = ({
           recordId,
           isLabelIdentifier: false,
           isRecordFieldReadOnly: false,
-          useUpdateRecord: () => [updateRecord, { loading: false }],
+          useUpdateRecord: () => [() => {}, { loading: false }],
         }}
       >
-        <PhoneValueSetterEffect value={value} />
-        <PhoneFieldValueGater
-          onCancel={onCancel}
-          onClickOutside={onClickOutside}
-        />
+        <FieldInputEventContextProviderWithJestMocks>
+          <PhoneValueSetterEffect value={value} />
+          <PhoneFieldValueGater />
+        </FieldInputEventContextProviderWithJestMocks>
       </FieldContext.Provider>
     </RecordFieldComponentInstanceContext.Provider>
   );
@@ -173,35 +158,6 @@ export const TrimInput: Story = {
 
     const newPhoneElement = await canvas.findByText('+33 6 42 64 62 74');
     expect(newPhoneElement).toBeVisible();
-
-    // Verify the update was called with swapped phones
-    await waitFor(() => {
-      expect(updateRecord).toHaveBeenCalledWith({
-        variables: {
-          where: { id: 'record-id' },
-          updateOneRecordInput: {
-            phones: {
-              primaryPhoneCallingCode: '+33',
-              primaryPhoneCountryCode: 'FR',
-              primaryPhoneNumber: '642646272',
-              additionalPhones: [
-                {
-                  countryCode: 'FR',
-                  number: '642646273',
-                  callingCode: '+33',
-                },
-                {
-                  countryCode: 'FR',
-                  number: '642646274',
-                  callingCode: '+33',
-                },
-              ],
-            },
-          },
-        },
-      });
-    });
-    expect(updateRecord).toHaveBeenCalledTimes(1);
   },
 };
 

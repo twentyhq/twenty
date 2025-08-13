@@ -118,15 +118,17 @@ export const generateColumns = (
           <StyledHeaderLabel id={formatSafeId(column.key)}>
             {column.label}
           </StyledHeaderLabel>
-          {column.description &&
-            createPortal(
-              <AppTooltip
-                anchorSelect={`#${formatSafeId(column.key)}`}
-                place="top"
-                content={column.description}
-              />,
-              document.body,
-            )}
+          <>
+            {column.description &&
+              createPortal(
+                <AppTooltip
+                  anchorSelect={`#${formatSafeId(column.key)}`}
+                  place="top"
+                  content={column.description}
+                />,
+                document.body,
+              )}
+          </>
         </StyledHeaderContainer>
       ),
       editable: column.fieldType.type !== 'checkbox',
