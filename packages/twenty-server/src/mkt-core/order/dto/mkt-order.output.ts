@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, Int } from '@nestjs/graphql';
 
 import { OrderStatusGraphQL } from 'src/mkt-core/order/graphql/order-status.enum';
 
@@ -78,4 +78,34 @@ export class MktOrderOutput {
 
   @Field(() => [MktOrderItemOutput], { nullable: true })
   orderItems?: MktOrderItemOutput[];
+}
+
+@ObjectType()
+export class MktOrdersPageInfo {
+  @Field(() => Int)
+  currentPage: number;
+
+  @Field(() => Int)
+  totalPages: number;
+
+  @Field(() => Int)
+  totalItems: number;
+
+  @Field(() => Int)
+  limit: number;
+
+  @Field()
+  hasNextPage: boolean;
+
+  @Field()
+  hasPreviousPage: boolean;
+}
+
+@ObjectType()
+export class MktOrdersOutput {
+  @Field(() => [MktOrderOutput])
+  data: MktOrderOutput[];
+
+  @Field(() => MktOrdersPageInfo)
+  pageInfo: MktOrdersPageInfo;
 }

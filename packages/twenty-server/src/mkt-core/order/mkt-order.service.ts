@@ -7,7 +7,13 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { MktProductWorkspaceEntity } from 'src/mkt-core/product/standard-objects/mkt-product.workspace-entity';
 import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
 
-import { CreateOrderWithItemsInput } from './dto';
+import {
+  CreateOrderWithItemsInput,
+  GetOrderInput,
+  GetOrdersInput,
+  OrderSortBy,
+  SortOrder,
+} from './dto';
 import { MktOrderWorkspaceEntity } from './mkt-order.workspace-entity';
 
 import { mapGraphQLOrderStatusToEntity } from './utils/order-status.mapper';
@@ -125,5 +131,69 @@ export class MktOrderService {
 
       return completeOrder as MktOrderWorkspaceEntity;
     });
+  }
+
+  async getOrderWithItems(
+    input: GetOrderInput,
+  ): Promise<MktOrderWorkspaceEntity> {
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
+    if (!workspaceId) {
+      throw new Error('Workspace ID is required');
+    }
+
+    const orderRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderWorkspaceEntity>(
+        workspaceId,
+        'mktOrder',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const order = await orderRepository.findOne({
+      where: { id: input.id },
+      relations: ['orderItems', 'orderItems.mktProduct'],
+    });
+
+    if (!order) {
+      throw new NotFoundException(`Order with ID ${input.id} not found`);
+    }
+
+    return order;
+  }
+
+  async getOrdersWithPaging(
+    input: GetOrdersInput,
+  ): Promise<{ orders: MktOrderWorkspaceEntity[]; total: number }> {
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
+    if (!workspaceId) {
+      throw new Error('Workspace ID is required');
+    }
+
+    const orderRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderWorkspaceEntity>(
+        workspaceId,
+        'mktOrder',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const page = input.page || 1;
+    const limit = input.limit || 10;
+    const sortBy = input.sortBy || OrderSortBy.CREATED_AT;
+    const sortOrder = input.sortOrder || SortOrder.DESC;
+    const skip = (page - 1) * limit;
+
+    const orderOptions: Record<string, string> = {};
+
+    orderOptions[sortBy] = sortOrder;
+
+    const [orders, total] = await orderRepository.findAndCount({
+      relations: ['orderItems', 'orderItems.mktProduct'],
+      skip,
+      take: limit,
+      order: orderOptions,
+    });
+
+    return { orders, total };
   }
 }
