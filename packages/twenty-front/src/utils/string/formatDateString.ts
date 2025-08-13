@@ -5,7 +5,7 @@ import { formatDateISOStringToRelativeDate } from '@/localization/utils/formatDa
 import {
   FieldDateDisplayFormat,
   type FieldDateMetadataSettings,
-} from '@/object-record/record-field/types/FieldMetadata';
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isDefined } from 'twenty-shared/utils';
 
 export const formatDateString = ({

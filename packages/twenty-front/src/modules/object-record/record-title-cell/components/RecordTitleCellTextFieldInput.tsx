@@ -1,6 +1,6 @@
-import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
-import { useTextField } from '@/object-record/record-field/meta-types/hooks/useTextField';
-import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
+import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import { useTextField } from '@/object-record/record-field/ui/meta-types/hooks/useTextField';
+import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useContext, useRef } from 'react';

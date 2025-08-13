@@ -5,13 +5,13 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import {
   FieldInputEventContext,
   type FieldInputEvent,
-} from '@/object-record/record-field/contexts/FieldInputEventContext';
-import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
-import { type FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+} from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import { usePersistField } from '@/object-record/record-field/ui/hooks/usePersistField';
+import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
 import { RecordDetailRelationSectionDropdown } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSectionDropdown';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';

@@ -1,9 +1,9 @@
 import {
-  type FieldMetadataItemAsFieldDefinitionProps,
   formatFieldMetadataItemAsFieldDefinition,
+  type FieldMetadataItemAsFieldDefinitionProps,
 } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
 type FieldMetadataItemAsColumnDefinitionProps = {

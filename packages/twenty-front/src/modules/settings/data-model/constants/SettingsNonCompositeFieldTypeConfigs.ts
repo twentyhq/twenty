@@ -11,12 +11,11 @@ import {
   type FieldSelectValue,
   type FieldTextValue,
   type FieldUUidValue,
-} from '@/object-record/record-field/types/FieldMetadata';
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
 import { type SettingsFieldTypeCategoryType } from '@/settings/data-model/types/SettingsFieldTypeCategoryType';
 import { type SettingsNonCompositeFieldType } from '@/settings/data-model/types/SettingsNonCompositeFieldType';
 import {
-  type IconComponent,
   IllustrationIconArray,
   IllustrationIconCalendarEvent,
   IllustrationIconCalendarTime,
@@ -29,6 +28,7 @@ import {
   IllustrationIconText,
   IllustrationIconToggle,
   IllustrationIconUid,
+  type IconComponent,
 } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
