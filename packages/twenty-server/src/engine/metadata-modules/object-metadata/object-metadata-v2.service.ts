@@ -94,8 +94,27 @@ export class ObjectMetadataServiceV2 {
       );
     }
 
+    const { flatObjectMetadataMaps: recomputedFlatObjectMetadataMaps } =
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
+        {
+          workspaceId,
+        },
+      );
+
+    const updatedFlatObjectMetadata =
+      recomputedFlatObjectMetadataMaps.byId[
+        optimisticallyUpdatedFlatObjectMetadata.id
+      ];
+
+    if (!isDefined(updatedFlatObjectMetadata)) {
+      throw new ObjectMetadataException(
+        'Updated object metadata not found in recomputed cache',
+        ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
     return fromFlatObjectMetadataToObjectMetadataDto(
-      optimisticallyUpdatedFlatObjectMetadata, // recompute from cache,
+      updatedFlatObjectMetadata,
     );
   }
 
@@ -255,7 +274,7 @@ export class ObjectMetadataServiceV2 {
 
     if (!isDefined(createdFlatObjectMetadata)) {
       throw new ObjectMetadataException(
-        'Fail to find just created object metadata',
+        'Created object metadata not found in recomputed cache',
         ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
     }
