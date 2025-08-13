@@ -9,6 +9,7 @@ export interface ViewDefinition {
   key: string | null;
   position: number;
   icon?: string;
+  isCustom?: boolean;
   openRecordIn?: ViewOpenRecordInType;
   kanbanFieldMetadataId?: string;
   kanbanAggregateOperation?: AggregateOperations;

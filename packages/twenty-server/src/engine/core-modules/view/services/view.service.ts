@@ -109,7 +109,10 @@ export class ViewService {
       );
     }
 
-    const view = this.viewRepository.create(viewData);
+    const view = this.viewRepository.create({
+      ...viewData,
+      isCustom: true, // User-created views are custom
+    });
 
     return this.viewRepository.save(view);
   }

@@ -211,6 +211,46 @@ msgstr "Aggregate operation"
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "Aggregated / filtered event to be displayed on the timeline"
 
+#. js-lingui-id: tZLcDK
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
+msgid "All Companies"
+msgstr "All Companies"
+
+#. js-lingui-id: EDmCFR
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
+msgid "All Notes"
+msgstr "All Notes"
+
+#. js-lingui-id: GTFTPw
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
+msgid "All Opportunities"
+msgstr "All Opportunities"
+
+#. js-lingui-id: CdMWOd
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
+msgid "All People"
+msgstr "All People"
+
+#. js-lingui-id: ao1zYt
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
+msgid "All Tasks"
+msgstr "All Tasks"
+
+#. js-lingui-id: F07cj7
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
+msgid "All Workflow Runs"
+msgstr "All Workflow Runs"
+
+#. js-lingui-id: gT9CX+
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
+msgid "All Workflow Versions"
+msgstr "All Workflow Versions"
+
+#. js-lingui-id: Vh9B8k
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
+msgid "All Workflows"
+msgstr "All Workflows"
+
 #. js-lingui-id: hehnjM
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Amount"
@@ -264,6 +304,11 @@ msgstr "ARR"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Assigned tasks"
 msgstr "Assigned tasks"
+
+#. js-lingui-id: kZ7PLo
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me.ts
+msgid "Assigned to Me"
+msgstr "Assigned to Me"
 
 #. js-lingui-id: ojKCLU
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -434,6 +479,17 @@ msgstr "Blocklists"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Body"
 msgstr "Body"
+
+#. js-lingui-id: 6+byWT
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
+msgid "By Stage"
+msgstr "By Stage"
+
+#. js-lingui-id: jQX8V+
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view.ts
+msgid "By Status"
+msgstr "By Status"
 
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts

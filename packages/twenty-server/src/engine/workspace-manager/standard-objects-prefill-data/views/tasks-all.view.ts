@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
@@ -15,7 +17,7 @@ export const tasksAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
   }
 
   return {
-    name: 'All Tasks',
+    name: msg`All Tasks`.message ?? '',
     objectMetadataId: taskObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

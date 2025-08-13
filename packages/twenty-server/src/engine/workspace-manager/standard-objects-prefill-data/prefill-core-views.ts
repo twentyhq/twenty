@@ -93,6 +93,7 @@ const createCoreViews = async (
       key,
       position,
       icon,
+      isCustom,
       openRecordIn,
       kanbanAggregateOperation,
       kanbanAggregateOperationFieldMetadataId,
@@ -105,6 +106,7 @@ const createCoreViews = async (
       position,
       icon,
       isCompact: false,
+      isCustom: isCustom ?? false, // Default to false for standard views
       openRecordIn:
         openRecordIn === 'SIDE_PANEL'
           ? ViewOpenRecordIn.SIDE_PANEL

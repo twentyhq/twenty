@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
@@ -18,7 +20,7 @@ export const workflowVersionsAllView = (
   }
 
   return {
-    name: 'All Workflow Versions',
+    name: msg`All Workflow Versions`.message ?? '',
     objectMetadataId: workflowVersionObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

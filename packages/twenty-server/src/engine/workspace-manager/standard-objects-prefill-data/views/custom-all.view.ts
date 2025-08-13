@@ -22,6 +22,7 @@ export const customAllView = (objectMetadataItem: ObjectMetadataEntity) => {
     key: 'INDEX',
     position: 0,
     icon: 'IconList',
+    isCustom: true, // Views for custom objects are custom
     kanbanFieldMetadataId: '',
     filters: [],
     fields: [

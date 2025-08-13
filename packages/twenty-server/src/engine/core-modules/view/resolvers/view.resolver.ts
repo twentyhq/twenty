@@ -1,8 +1,19 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 
+import { i18n } from '@lingui/core';
 import { isDefined } from 'twenty-shared/utils';
 
+import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
 import { ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
@@ -17,6 +28,24 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @UseGuards(WorkspaceAuthGuard)
 export class ViewResolver {
   constructor(private readonly viewService: ViewService) {}
+
+  @ResolveField(() => String)
+  async name(
+    @Parent() view: ViewDTO,
+    @Context() _context: I18nContext,
+  ): Promise<string> {
+    // Custom views: return as-is
+    if (view.isCustom) {
+      return view.name;
+    }
+
+    // Standard views: translate using the same pattern as objects
+    const messageId = generateMessageId(view.name);
+    const translatedMessage = i18n._(messageId);
+
+    // Fallback to original if no translation found
+    return translatedMessage !== messageId ? translatedMessage : view.name;
+  }
 
   @Query(() => [ViewDTO])
   async getCoreViews(

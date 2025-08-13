@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
@@ -18,7 +20,7 @@ export const companiesAllView = (
   }
 
   return {
-    name: 'All Companies',
+    name: msg`All Companies`.message ?? '',
     objectMetadataId: companyObjectMetadata.id ?? '',
     type: 'table',
     key: 'INDEX',

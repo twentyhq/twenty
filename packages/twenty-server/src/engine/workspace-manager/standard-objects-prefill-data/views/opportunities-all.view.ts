@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
@@ -15,7 +17,7 @@ export const opportunitiesAllView = (
   }
 
   return {
-    name: 'All Opportunities',
+    name: msg`All Opportunities`.message ?? '',
     objectMetadataId: opportunityObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

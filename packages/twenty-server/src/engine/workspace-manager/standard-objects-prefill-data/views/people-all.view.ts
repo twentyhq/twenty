@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
@@ -16,7 +18,7 @@ export const peopleAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
   }
 
   return {
-    name: 'All People',
+    name: msg`All People`.message ?? '',
     objectMetadataId: personObjectMetadata.id,
     type: 'table',
     key: 'INDEX',
