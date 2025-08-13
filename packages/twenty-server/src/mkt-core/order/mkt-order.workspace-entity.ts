@@ -27,19 +27,13 @@ import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MKT_ORDER_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
 
-// ✅ Define fields to be used for search
+import { ORDER_STATUS_OPTIONS, OrderStatus } from './constants';
+
+// Define fields to be used for search
 const SEARCH_FIELDS_FOR_ORDER: FieldTypeAndNameMetadata[] = [
   { name: 'orderCode', type: FieldMetadataType.TEXT },
   { name: 'note', type: FieldMetadataType.TEXT },
 ];
-
-export enum OrderStatus {
-  PENDING = 'pending',
-  PAID = 'paid',
-  FAILED = 'failed',
-  CANCELLED = 'cancelled',
-  FULFILLED = 'fulfilled',
-}
 
 @WorkspaceEntity({
   standardId: MKT_OBJECT_IDS.mktOrder,
@@ -82,28 +76,7 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.SELECT,
     label: msg`Status`,
     description: msg`Current order status`,
-    options: [
-      {
-        value: OrderStatus.PENDING,
-        label: 'Pending',
-        color: 'gray',
-        position: 0,
-      },
-      { value: OrderStatus.PAID, label: 'Paid', color: 'green', position: 1 },
-      { value: OrderStatus.FAILED, label: 'Failed', color: 'red', position: 2 },
-      {
-        value: OrderStatus.CANCELLED,
-        label: 'Cancelled',
-        color: 'orange',
-        position: 3,
-      },
-      {
-        value: OrderStatus.FULFILLED,
-        label: 'Fulfilled',
-        color: 'blue',
-        position: 4,
-      },
-    ],
+    options: ORDER_STATUS_OPTIONS,
   })
   @WorkspaceIsNullable()
   status?: OrderStatus;

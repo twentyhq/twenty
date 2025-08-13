@@ -14,6 +14,7 @@ import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
+import { ModulesModule } from 'src/modules/modules.module';
 import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -68,7 +69,7 @@ export class GraphQLConfigService
 
     const config: YogaDriverConfig = {
       autoSchemaFile: true,
-      include: [CoreEngineModule],
+      include: [CoreEngineModule, ModulesModule],
       conditionalSchema: async (context) => {
         let user: User | null | undefined;
         let workspace: Workspace | undefined;
