@@ -101,7 +101,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
 
   const emptyCellHeader = <TableHeader key="empty-cell"></TableHeader>;
 
-  let headerCells: React.ReactNode[] = [];
+  const headerCells: React.ReactNode[] = [];
 
   if (cannotAllowFieldReadRestrict) headerCells.push(emptyCellHeader);
   else if (cannotAllowFieldUpdateRestrict)
