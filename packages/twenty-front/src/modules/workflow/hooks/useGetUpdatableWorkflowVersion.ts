@@ -12,19 +12,25 @@ export const useGetUpdatableWorkflowVersion = () => {
   );
   const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
 
-  const getUpdatableWorkflowVersion = async () => {
+  const getUpdatableWorkflowVersion = async (): Promise<string> => {
     if (!isDefined(workflowVisualizerWorkflowId) || !isDefined(workflow)) {
-      return;
+      throw new Error('Failed to get updatable workflow version');
     }
 
     if (workflow.currentVersion.status === 'DRAFT') {
       return workflow.currentVersion.id;
     }
 
-    return await createDraftFromWorkflowVersion({
+    const draftVersionId = await createDraftFromWorkflowVersion({
       workflowId: workflowVisualizerWorkflowId,
       workflowVersionIdToCopy: workflow.currentVersion.id,
     });
+
+    if (!isDefined(draftVersionId)) {
+      throw new Error('Failed to create draft version');
+    }
+
+    return draftVersionId;
   };
 
   return { getUpdatableWorkflowVersion };

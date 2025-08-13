@@ -2,7 +2,6 @@ import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatable
 import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagramEdge';
 import { useDeleteWorkflowVersionEdge } from '@/workflow/workflow-steps/hooks/useDeleteWorkflowVersionEdge';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useDeleteEdge = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -20,10 +19,6 @@ export const useDeleteEdge = () => {
 
     try {
       const workflowVersionId = await getUpdatableWorkflowVersion();
-
-      if (!isDefined(workflowVersionId)) {
-        throw new Error('Cannot find a workflow version to update');
-      }
 
       const deletedEdge = (
         await deleteWorkflowVersionEdge({

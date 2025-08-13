@@ -6,7 +6,6 @@ import {
   type WorkflowTrigger,
   type WorkflowVersion,
 } from '@/workflow/types/Workflow';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useUpdateWorkflowVersionTrigger = () => {
   const { updateOneRecord: updateOneWorkflowVersion } =
@@ -35,10 +34,6 @@ export const useUpdateWorkflowVersionTrigger = () => {
         ...updatedTrigger.settings,
         outputSchema: outputSchema || {},
       };
-    }
-
-    if (!isDefined(workflowVersionId)) {
-      throw new Error('Workflow version not found');
     }
 
     await updateOneWorkflowVersion({

@@ -71,16 +71,16 @@ describe('useGetUpdatableWorkflowVersion', () => {
     expect(workflowVersionId).toEqual('457');
   });
 
-  it('should return undefined when workflow is not found', async () => {
+  it('should throw an error when workflow is not found', async () => {
     const {
       useWorkflowWithCurrentVersion,
     } = require('@/workflow/hooks/useWorkflowWithCurrentVersion');
     useWorkflowWithCurrentVersion.mockReturnValue(undefined);
 
     const { result } = renderHook(() => useGetUpdatableWorkflowVersion());
-    const workflowVersionId =
-      await result.current.getUpdatableWorkflowVersion();
 
-    expect(workflowVersionId).toBeUndefined();
+    await expect(result.current.getUpdatableWorkflowVersion()).rejects.toThrow(
+      'Failed to get updatable workflow version',
+    );
   });
 });

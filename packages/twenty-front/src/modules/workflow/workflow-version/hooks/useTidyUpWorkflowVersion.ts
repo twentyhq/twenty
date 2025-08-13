@@ -49,10 +49,6 @@ export const useTidyUpWorkflowVersion = () => {
   ) => {
     const workflowVersionId = await getUpdatableWorkflowVersion();
 
-    if (!isDefined(workflowVersionId)) {
-      throw new Error('Cannot find a workflow version to update');
-    }
-
     await mutate({ variables: { input: { workflowVersionId, positions } } });
 
     const cachedRecord = getRecordFromCache<WorkflowVersion>(workflowVersionId);
