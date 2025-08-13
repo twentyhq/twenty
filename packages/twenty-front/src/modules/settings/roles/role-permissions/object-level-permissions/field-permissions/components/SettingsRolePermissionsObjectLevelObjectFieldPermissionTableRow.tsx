@@ -142,6 +142,37 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
         objectMetadataItemId: objectMetadataItem.id,
       });
 
+    const readCell = (
+      <TableCell>
+        <OverridableCheckbox
+          disabled={fieldMetadataItem.isUIReadOnly ?? false}
+          checked={true}
+          onChange={handleSeeChange}
+          type={isReadRestricted ? 'override' : 'default'}
+        />
+      </TableCell>
+    );
+
+    const updateCell = (
+      <TableCell align="left">
+        <OverridableCheckbox
+          disabled={fieldMetadataItem.isUIReadOnly ?? false}
+          checked={true}
+          onChange={handleUpdateChange}
+          type={isUpdateRestricted ? 'override' : 'default'}
+        />
+      </TableCell>
+    );
+
+    const emptyCell = <TableCell key="empty-cell" />;
+
+    let readAndUpdateCells: React.ReactNode[] = [];
+
+    if (objectReadIsRestricted) readAndUpdateCells.push(emptyCell);
+    else if (objectUpdateIsRestricted)
+      readAndUpdateCells.push(emptyCell, readCell);
+    else readAndUpdateCells.push(readCell, updateCell);
+
     return (
       <StyledObjectFieldTableRow>
         <StyledNameTableCell>
@@ -172,30 +203,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
             value={fieldType as SettingsFieldType}
           />
         </TableCell>
-        {objectReadIsRestricted ? (
-          <TableCell />
-        ) : (
-          <TableCell>
-            <OverridableCheckbox
-              disabled={fieldMetadataItem.isUIReadOnly ?? false}
-              checked={true}
-              onChange={handleSeeChange}
-              type={isReadRestricted ? 'override' : 'default'}
-            />
-          </TableCell>
-        )}
-        {objectUpdateIsRestricted ? (
-          <TableCell />
-        ) : (
-          <TableCell align="left">
-            <OverridableCheckbox
-              disabled={fieldMetadataItem.isUIReadOnly ?? false}
-              checked={true}
-              onChange={handleUpdateChange}
-              type={isUpdateRestricted ? 'override' : 'default'}
-            />
-          </TableCell>
-        )}
+        <>{readAndUpdateCells}</>
       </StyledObjectFieldTableRow>
     );
   };

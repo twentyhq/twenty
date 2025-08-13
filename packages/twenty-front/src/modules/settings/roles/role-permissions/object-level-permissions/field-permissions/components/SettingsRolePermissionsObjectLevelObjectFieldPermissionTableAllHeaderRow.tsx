@@ -92,35 +92,43 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
       }
     };
 
+    const readCell = (
+      <StyledCheckboxContainer>
+        <OverridableCheckbox
+          disabled={false}
+          checked={true}
+          onChange={handleReadAllChange}
+          type={hasAnyRestrictionOnRead ? 'override' : 'default'}
+        />
+      </StyledCheckboxContainer>
+    );
+
+    const updateCell = (
+      <StyledCheckboxContainer>
+        <OverridableCheckbox
+          disabled={false}
+          checked={true}
+          onChange={handleUpdateAllChange}
+          type={hasAnyRestrictionOnUpdate ? 'override' : 'default'}
+        />
+      </StyledCheckboxContainer>
+    );
+
+    const emptyCell = <div key="empty-cell"></div>;
+
+    let readAndUpdateCellHeaders: React.ReactNode[] = [];
+
+    if (cannotAllowFieldReadRestrict) readAndUpdateCellHeaders.push(emptyCell);
+    else if (cannotAllowFieldUpdateRestrict)
+      readAndUpdateCellHeaders.push(emptyCell, readCell);
+    else readAndUpdateCellHeaders.push(readCell, updateCell);
+
     return (
       <>
         <StyledSectionHeader>
           <Label>{t`All`}</Label>
           <div></div>
-          {cannotAllowFieldReadRestrict ? (
-            <div></div>
-          ) : (
-            <StyledCheckboxContainer>
-              <OverridableCheckbox
-                disabled={false}
-                checked={true}
-                onChange={handleReadAllChange}
-                type={hasAnyRestrictionOnRead ? 'override' : 'default'}
-              />
-            </StyledCheckboxContainer>
-          )}
-          {cannotAllowFieldUpdateRestrict ? (
-            <div></div>
-          ) : (
-            <StyledCheckboxContainer>
-              <OverridableCheckbox
-                disabled={false}
-                checked={true}
-                onChange={handleUpdateAllChange}
-                type={hasAnyRestrictionOnUpdate ? 'override' : 'default'}
-              />
-            </StyledCheckboxContainer>
-          )}
+          <>{readAndUpdateCellHeaders}</>
         </StyledSectionHeader>
       </>
     );

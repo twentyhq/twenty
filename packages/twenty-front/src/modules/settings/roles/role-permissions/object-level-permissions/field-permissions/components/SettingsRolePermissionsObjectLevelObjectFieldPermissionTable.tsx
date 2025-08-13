@@ -87,6 +87,27 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
       objectMetadataItemId: objectMetadataItem.id,
     });
 
+  const readCellHeader = (
+    <TableHeader>
+      <TableHeaderText>{t`See`}</TableHeaderText>
+    </TableHeader>
+  );
+
+  const updateCellHeader = (
+    <TableHeader>
+      <TableHeaderText>{t`Edit`}</TableHeaderText>
+    </TableHeader>
+  );
+
+  const emptyCellHeader = <TableHeader key="empty-cell"></TableHeader>;
+
+  let headerCells: React.ReactNode[] = [];
+
+  if (cannotAllowFieldReadRestrict) headerCells.push(emptyCellHeader);
+  else if (cannotAllowFieldUpdateRestrict)
+    headerCells.push(emptyCellHeader, readCellHeader);
+  else headerCells.push(readCellHeader, updateCellHeader);
+
   return (
     <Section>
       <H2Title
@@ -113,20 +134,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
           <TableHeader>
             <TableHeaderText>{t`Data type`}</TableHeaderText>
           </TableHeader>
-          {cannotAllowFieldReadRestrict ? (
-            <TableHeader></TableHeader>
-          ) : (
-            <TableHeader>
-              <TableHeaderText>{t`See`}</TableHeaderText>
-            </TableHeader>
-          )}
-          {cannotAllowFieldUpdateRestrict ? (
-            <TableHeader></TableHeader>
-          ) : (
-            <TableHeader>
-              <TableHeaderText>{t`Edit`}</TableHeaderText>
-            </TableHeader>
-          )}
+          <>{headerCells}</>
         </StyledObjectFieldTableRow>
         <SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow
           roleId={roleId}
