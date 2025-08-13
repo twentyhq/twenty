@@ -19,6 +19,10 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
   showLabel,
   labelWidth,
 }: FieldMetadataItemAsFieldDefinitionProps): FieldDefinition<FieldMetadata> => {
+  const relationObjectMetadataItem = field.relation?.targetObjectMetadata;
+
+  const relationFieldMetadataId = field.relation?.targetFieldMetadata.id;
+
   const isRelation = field.type === FieldMetadataType.RELATION;
   const isMorphRelation = field.type === FieldMetadataType.MORPH_RELATION;
 
@@ -33,12 +37,12 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
     placeHolder: field.label,
     relationType,
     morphRelations: isMorphRelation ? field.morphRelations : [],
-    relationFieldMetadataId: field.relation?.targetFieldMetadata.id,
+    relationFieldMetadataId,
     relationObjectMetadataNameSingular:
-      field.relation?.targetObjectMetadata?.nameSingular ?? '',
+      relationObjectMetadataItem?.nameSingular ?? '',
     relationObjectMetadataNamePlural:
-      field.relation?.targetObjectMetadata?.namePlural ?? '',
-    relationObjectMetadataId: field.relation?.targetObjectMetadata?.id ?? '',
+      relationObjectMetadataItem?.namePlural ?? '',
+    relationObjectMetadataId: relationObjectMetadataItem?.id ?? '',
     objectMetadataNameSingular: objectMetadataItem.nameSingular ?? '',
     targetFieldMetadataName: field.relation?.targetFieldMetadata?.name ?? '',
     options: field.options,
