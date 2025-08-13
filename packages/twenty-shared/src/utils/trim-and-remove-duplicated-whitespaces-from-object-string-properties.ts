@@ -1,4 +1,4 @@
-import { trimAndRemoveDuplicatedWhitespacesFromString } from '@/utils/trim-and-remove-duplicated-whitespaces-from-string';
+import { trimAndRemoveDuplicatedWhitespacesFromString } from './trim-and-remove-duplicated-whitespaces-from-string';
 
 type OnlyStringPropertiesKey<T> = Extract<keyof T, string>;
 

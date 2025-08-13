@@ -1,6 +1,6 @@
-import { FieldMetadataType } from '@/types';
-import { StepStatus } from '@/workflow/types/WorkflowRunStateStepInfos';
 import { z } from 'zod';
+import { FieldMetadataType } from '../../types/FieldMetadataType';
+import { StepStatus } from '../types/WorkflowRunStateStepInfos';
 
 // Base schemas
 export const objectRecordSchema = z.record(z.any());
