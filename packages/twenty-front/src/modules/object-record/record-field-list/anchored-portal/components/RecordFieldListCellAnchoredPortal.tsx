@@ -1,0 +1,122 @@
+import { viewableRecordIdComponentState } from '@/command-menu/pages/record-page/states/viewableRecordIdComponentState';
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { RecordFieldListCellAnchorPortalContext } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellAnchorPortalContext';
+import {
+  FieldContext,
+  type RecordUpdateHook,
+  type RecordUpdateHookParams,
+} from '@/object-record/record-field/ui/contexts/FieldContext';
+import { useIsRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/useIsRecordFieldReadOnly';
+import { RecordInlineCellHoveredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellHoveredPortal';
+import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { createPortal } from 'react-dom';
+import { isDefined } from 'twenty-shared/utils';
+
+type RecordFieldListCellAnchoredPortalProps = {
+  position: number;
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'id' | 'name' | 'type' | 'createdAt' | 'updatedAt' | 'label'
+  >;
+  children: React.ReactNode;
+};
+
+export const RecordFieldListCellAnchoredPortal = ({
+  position,
+  fieldMetadataItem,
+  children,
+}: RecordFieldListCellAnchoredPortalProps) => {
+  const anchorElement = document.body.querySelector<HTMLAnchorElement>(
+    `#record-field-list-cell-${position}`,
+  );
+
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
+  const recordIdIfInCommandMenu = useRecoilComponentValue(
+    viewableRecordIdComponentState,
+  );
+  const targetedRecordsRuleFromContextStore = useRecoilComponentValue(
+    contextStoreTargetedRecordsRuleComponentState,
+  );
+
+  let recordIdFromContextStore;
+
+  if (targetedRecordsRuleFromContextStore.mode === 'selection') {
+    recordIdFromContextStore =
+      targetedRecordsRuleFromContextStore.selectedRecordIds[0];
+  }
+
+  const { objectRecordId: recordIdFromShowPage } =
+    useRecordShowPage(
+      objectMetadataItem.nameSingular,
+      recordIdFromContextStore ?? '',
+    ) ?? {};
+
+  const recordId = recordIdIfInCommandMenu ?? recordIdFromShowPage;
+
+  console.log('recordIdIfInCommandMenu', recordIdIfInCommandMenu);
+  console.log('recordIdFromShowPage', recordIdFromShowPage);
+  console.log('recordIdFromContextStore', recordIdFromContextStore);
+
+  const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
+    fieldMetadataId: fieldMetadataItem.id,
+    objectMetadataId: objectMetadataItem.id,
+    recordId: recordId ?? '',
+  });
+
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
+
+  const useUpdateOneObjectRecordMutation: RecordUpdateHook = () => {
+    const updateEntity = ({ variables }: RecordUpdateHookParams) => {
+      updateOneRecord?.({
+        idToUpdate: variables.where.id as string,
+        updateOneRecordInput: variables.updateOneRecordInput,
+      });
+    };
+
+    return [updateEntity, { loading: false }];
+  };
+
+  if (!isDefined(anchorElement) || !isDefined(recordId)) {
+    return null;
+  }
+
+  return (
+    <FieldContext.Provider
+      key={recordId + fieldMetadataItem.id}
+      value={{
+        recordId,
+        maxWidth: 200,
+        isLabelIdentifier: false,
+        fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+          field: fieldMetadataItem,
+          position: 0,
+          objectMetadataItem,
+          showLabel: true,
+          labelWidth: 90,
+        }),
+        useUpdateRecord: useUpdateOneObjectRecordMutation,
+        isDisplayModeFixHeight: true,
+        isRecordFieldReadOnly,
+      }}
+    >
+      <>
+        {createPortal(
+          <RecordFieldListCellAnchorPortalContext>
+            <RecordInlineCellHoveredPortal>
+              {children}
+            </RecordInlineCellHoveredPortal>
+          </RecordFieldListCellAnchorPortalContext>,
+          anchorElement,
+        )}
+      </>
+    </FieldContext.Provider>
+  );
+};

@@ -38,8 +38,10 @@ export type GenericFieldContextType = {
   onRecordChipClick?: (event: MouseEvent) => void;
   onOpenEditMode?: () => void;
   onCloseEditMode?: () => void;
+  onMouseMove?: () => void;
   triggerEvent?: TriggerEventType;
   isForbidden?: boolean;
+  anchorId?: string;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(
