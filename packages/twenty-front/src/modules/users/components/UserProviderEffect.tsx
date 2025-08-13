@@ -17,11 +17,12 @@ import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
+import { arePrefetchViewsLoadedState } from '@/prefetch/states/arePrefetchViewsLoaded';
+import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { AppPath } from '@/types/AppPath';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
-import { coreViewsState } from '@/views/states/coreViewsState';
+import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { enUS } from 'date-fns/locale';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -32,9 +33,9 @@ import {
   type WorkspaceMember,
   useGetCurrentUserQuery,
 } from '~/generated-metadata/graphql';
-import { FeatureFlagKey, useFindManyCoreViewsQuery } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const UserProviderEffect = () => {
@@ -75,7 +76,6 @@ export const UserProviderEffect = () => {
   const setCurrentWorkspaceMembersWithDeleted = useSetRecoilState(
     currentWorkspaceDeletedMembersState,
   );
-  const setCoreViews = useSetRecoilState(coreViewsState);
 
   const { data: queryData, loading: queryLoading } = useGetCurrentUserQuery({
     skip:
@@ -85,15 +85,20 @@ export const UserProviderEffect = () => {
       isMatchingLocation(location, AppPath.VerifyEmail),
   });
 
-  const featureFlagsMap = useFeatureFlagsMap();
+  const setPrefetchViewsState = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (views: CoreViewWithRelations[]) => {
+        const existingViews = snapshot
+          .getLoadable(prefetchViewsState)
+          .getValue();
 
-  const isCoreViewEnabled =
-    featureFlagsMap[FeatureFlagKey.IS_CORE_VIEW_ENABLED];
-
-  const { data: coreViewsData, loading: areCoreViewsLoading } =
-    useFindManyCoreViewsQuery({
-      skip: !isCoreViewEnabled,
-    });
+        if (!isDeeplyEqual(existingViews, views)) {
+          set(prefetchViewsState, views);
+          set(arePrefetchViewsLoadedState, true);
+        }
+      },
+    [],
+  );
 
   useEffect(() => {
     if (!queryLoading) {
@@ -197,16 +202,13 @@ export const UserProviderEffect = () => {
     updateLocaleCatalog,
   ]);
 
-  useEffect(() => {
-    if (!isCoreViewEnabled || areCoreViewsLoading) return;
+  const views = queryData?.currentUser.currentWorkspace?.views;
 
-    setCoreViews(coreViewsData?.getCoreViews ?? []);
-  }, [
-    areCoreViewsLoading,
-    coreViewsData?.getCoreViews,
-    setCoreViews,
-    isCoreViewEnabled,
-  ]);
+  useEffect(() => {
+    if (isDefined(views)) {
+      setPrefetchViewsState(views);
+    }
+  }, [views, setPrefetchViewsState]);
 
   return <></>;
 };
