@@ -83,6 +83,15 @@ export class GraphqlQuerySelectedFieldsParser {
       if (
         isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION)
       ) {
+        const joinColumnName = fieldMetadata.settings?.joinColumnName;
+
+        if (
+          isDefined(joinColumnName) &&
+          isDefined(graphqlSelectedFields[joinColumnName])
+        ) {
+          accumulator.select[joinColumnName] = true;
+        }
+
         const graphqlSelectedFieldValue =
           graphqlSelectedFields[fieldMetadata.name];
 
@@ -114,6 +123,15 @@ export class GraphqlQuerySelectedFieldsParser {
           !isDefined(targetObjectMetadata)
         ) {
           continue;
+        }
+
+        const joinColumnName = fieldMetadata.settings?.joinColumnName;
+
+        if (
+          isDefined(joinColumnName) &&
+          isDefined(graphqlSelectedFields[joinColumnName])
+        ) {
+          accumulator.select[joinColumnName] = true;
         }
 
         const morphRelationFieldName = computeMorphRelationFieldName({
