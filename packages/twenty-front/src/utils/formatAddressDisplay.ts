@@ -1,4 +1,4 @@
-import { type FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import {
   ALLOWED_ADDRESS_SUBFIELDS,
   type AllowedAddressSubField,

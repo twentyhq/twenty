@@ -1,12 +1,12 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
-import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
-import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
+import { useIsFieldEmpty } from '@/object-record/record-field/ui/hooks/useIsFieldEmpty';
+import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import {
-  type RecordInlineCellContextProps,
   useRecordInlineCellContext,
+  type RecordInlineCellContextProps,
 } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
 import { useLingui } from '@lingui/react/macro';

@@ -5,7 +5,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import {
   addressSchema as addressFieldDefaultValueSchema,
   addressSettingsSchema,
-} from '@/object-record/record-field/types/guards/isFieldAddressValue';
+} from '@/object-record/record-field/ui/types/guards/isFieldAddressValue';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { MultiSelectAddressFields } from '@/settings/data-model/fields/forms/address/components/MultiSelectAddressFields';
 import { DEFAULT_SELECTION_ADDRESS_WITH_MESSAGES } from '@/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages';
@@ -17,10 +17,10 @@ import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent } from 'react';
 import {
   IconCircleOff,
-  type IconComponentProps,
   IconList,
   IconMap,
   IconRefresh,
+  type IconComponentProps,
 } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { z } from 'zod';

@@ -6,13 +6,12 @@ import {
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
-import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
 import { isDefined } from 'twenty-shared/utils';
 import {
   AppTooltip,
@@ -22,6 +21,7 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { MenuItemDraggable } from 'twenty-ui/navigation';
+import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
 
 type ViewFieldsVisibilityDropdownSectionProps = {
   fields: Omit<ColumnDefinition<FieldMetadata>, 'size'>[];

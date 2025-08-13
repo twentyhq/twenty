@@ -1,4 +1,4 @@
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useSaveColumnsToView } from '@/object-record/record-table/hooks/useSaveColumnsToView';
 import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTableColumns';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
