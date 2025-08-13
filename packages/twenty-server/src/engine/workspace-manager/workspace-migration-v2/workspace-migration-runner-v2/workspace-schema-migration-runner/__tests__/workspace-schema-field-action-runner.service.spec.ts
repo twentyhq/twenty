@@ -375,7 +375,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
             type: 'numeric',
             isNullable: true,
             isUnique: false,
-            default: null,
+            default: '5000000000',
             isArray: false,
           },
           {
@@ -383,7 +383,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
             type: 'text',
             isNullable: true,
             isUnique: false,
-            default: null,
+            default: 'USD',
             isArray: false,
           },
         ],
