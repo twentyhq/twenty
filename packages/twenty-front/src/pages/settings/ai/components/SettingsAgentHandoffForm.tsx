@@ -3,10 +3,9 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Select } from '@/ui/input/components/Select';
+import { Select, type SelectOption } from 'twenty-ui/input';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { IconPlus } from 'twenty-ui/display';
-import { Button, type SelectOption } from 'twenty-ui/input';
 import { useCreateAgentHandoffMutation } from '~/generated-metadata/graphql';
 
 const StyledAddHandoffForm = styled.div`

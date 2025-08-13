@@ -4,7 +4,7 @@ import { useApplyObjectFilterDropdownOperand } from '@/object-record/object-filt
 import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { SelectControl } from '@/ui/input/components/SelectControl';
+import { SelectControl } from 'twenty-ui/input';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';

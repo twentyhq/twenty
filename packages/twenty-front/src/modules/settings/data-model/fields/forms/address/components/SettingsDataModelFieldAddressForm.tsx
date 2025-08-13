@@ -11,7 +11,7 @@ import { MultiSelectAddressFields } from '@/settings/data-model/fields/forms/add
 import { DEFAULT_SELECTION_ADDRESS_WITH_MESSAGES } from '@/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages';
 import { useAddressSettingsFormInitialValues } from '@/settings/data-model/fields/forms/address/hooks/useAddressSettingsFormInitialValues';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
-import { Select } from '@/ui/input/components/Select';
+import { Select } from 'twenty-ui/input';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent } from 'react';

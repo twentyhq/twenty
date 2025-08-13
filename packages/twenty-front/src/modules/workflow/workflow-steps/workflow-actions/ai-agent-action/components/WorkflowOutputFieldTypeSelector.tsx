@@ -1,4 +1,4 @@
-import { Select } from '@/ui/input/components/Select';
+import { Select } from 'twenty-ui/input';
 import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import { t } from '@lingui/core/macro';
 import { OUTPUT_FIELD_TYPE_OPTIONS } from '@/ai/constants/OutputFieldTypeOptions';

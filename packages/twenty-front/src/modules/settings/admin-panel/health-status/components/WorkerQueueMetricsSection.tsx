@@ -1,5 +1,5 @@
 import { WORKER_QUEUE_METRICS_SELECT_OPTIONS } from '@/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions';
-import { Select } from '@/ui/input/components/Select';
+import { Select } from 'twenty-ui/input';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';

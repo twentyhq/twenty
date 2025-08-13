@@ -1,26 +1,26 @@
 import styled from '@emotion/styled';
 import { type MouseEvent, useMemo, useRef, useState } from 'react';
 
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { Dropdown } from '@ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuItemsContainer } from '@ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@ui/layout/dropdown/components/DropdownMenuSeparator';
 
-import { type SelectValue } from '@/ui/input/components/internal/select/types';
-import { SelectControl } from '@/ui/input/components/SelectControl';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type SelectValue } from './types';
+import { SelectControl } from './SelectControl';
+import { DropdownContent } from '@ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useCloseDropdown } from '@ui/layout/dropdown/hooks/useCloseDropdown';
+import { type DropdownOffset } from '@ui/layout/dropdown/types/DropdownOffset';
+import { SelectableList } from '@ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@ui/layout/selectable-list/components/SelectableListItem';
+import { useSelectableList } from '@ui/layout/selectable-list/hooks/useSelectableList';
+import { selectedItemIdComponentState } from '@ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useRecoilComponentValue } from '@ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { type IconComponent } from '@ui/display';
+import { type SelectOption } from '../types/SelectOption';
+import { MenuItem, MenuItemSelect } from '@ui/navigation';
 
 export type SelectSizeVariant = 'small' | 'default';
 

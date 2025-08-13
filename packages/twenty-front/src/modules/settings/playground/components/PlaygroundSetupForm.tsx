@@ -4,7 +4,7 @@ import { playgroundApiKeyState } from '@/settings/playground/states/playgroundAp
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { PlaygroundTypes } from '@/settings/playground/types/PlaygroundTypes';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Select } from '@/ui/input/components/Select';
+import { Select, Button } from 'twenty-ui/input';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,7 +12,6 @@ import { useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { useRecoilState } from 'recoil';
 import { IconApi, IconBrandGraphql } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
 import { z } from 'zod';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

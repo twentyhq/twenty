@@ -1,5 +1,5 @@
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import { Select } from '@/ui/input/components/Select';
+import { Select } from 'twenty-ui/input';
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import styled from '@emotion/styled';
 import { type Meta, type StoryObj } from '@storybook/react';

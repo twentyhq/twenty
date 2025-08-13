@@ -1,7 +1,7 @@
 import { useAiAgentOutputSchema } from '@/ai/hooks/useAiAgentOutputSchema';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { Select } from '@/ui/input/components/Select';
+import { Select, type SelectOption } from 'twenty-ui/input';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
@@ -12,7 +12,6 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
 import { useFindManyAgentsQuery } from '~/generated-metadata/graphql';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 import { WorkflowOutputSchemaBuilder } from './WorkflowOutputSchemaBuilder';

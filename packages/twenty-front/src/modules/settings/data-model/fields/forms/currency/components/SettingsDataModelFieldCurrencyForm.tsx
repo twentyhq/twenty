@@ -8,7 +8,7 @@ import { currencyFieldSettingsSchema } from '@/object-record/record-field/ui/val
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
-import { Select } from '@/ui/input/components/Select';
+import { Select } from 'twenty-ui/input';
 import { useLingui } from '@lingui/react/macro';
 import { IconCheckbox, IconCurrencyDollar } from 'twenty-ui/display';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';

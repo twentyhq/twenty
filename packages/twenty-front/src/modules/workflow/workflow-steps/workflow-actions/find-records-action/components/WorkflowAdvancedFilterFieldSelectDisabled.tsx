@@ -1,5 +1,5 @@
 import { useRecordFilterField } from '@/object-record/advanced-filter/hooks/useRecordFilterField';
-import { SelectControl } from '@/ui/input/components/SelectControl';
+import { SelectControl } from 'twenty-ui/input';
 
 type WorkflowAdvancedFilterFieldSelectDisabledProps = {
   recordFilterId: string;

@@ -1,5 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { Select } from '@/ui/input/components/Select';
+import { Select } from 'twenty-ui/input';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { type Role } from '~/generated-metadata/graphql';

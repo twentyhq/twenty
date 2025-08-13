@@ -3,7 +3,7 @@ import { formatInTimeZone } from 'date-fns-tz';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { detectDateFormat } from '@/localization/utils/detectDateFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
-import { Select } from '@/ui/input/components/Select';
+import { Select } from 'twenty-ui/input';
 import { t } from '@lingui/core/macro';
 
 type DateTimeSettingsDateFormatSelectProps = {

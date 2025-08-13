@@ -3,7 +3,7 @@ import {
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import { Select } from '@/ui/input/components/Select';
+import { Select } from 'twenty-ui/input';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';

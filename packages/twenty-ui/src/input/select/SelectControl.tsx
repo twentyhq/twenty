@@ -1,9 +1,9 @@
-import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
+import { IconChevronDown, OverflowingTextWithTooltip } from '@ui/display';
+import { type SelectOption } from '../types/SelectOption';
+import { type SelectSizeVariant } from './Select';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';
 
@@ -97,3 +97,4 @@ export const SelectControl = ({
     </StyledControlContainer>
   );
 };
+

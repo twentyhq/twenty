@@ -4,7 +4,7 @@ import { getOperandLabel } from '@/object-record/object-filter-dropdown/utils/ge
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { SelectControl } from '@/ui/input/components/SelectControl';
+import { SelectControl } from 'twenty-ui/input';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';

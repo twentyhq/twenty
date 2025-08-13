@@ -1,6 +1,5 @@
 import { CustomError } from '@/error-handler/CustomError';
-import { Select } from '@/ui/input/components/Select';
-import { SelectControl } from '@/ui/input/components/SelectControl';
+import { Select, SelectControl } from 'twenty-ui/input';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';

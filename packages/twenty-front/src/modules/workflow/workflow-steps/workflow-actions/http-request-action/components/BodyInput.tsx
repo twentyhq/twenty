@@ -2,7 +2,7 @@ import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-ty
 import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
 
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { Select } from '@/ui/input/components/Select';
+import { Select } from 'twenty-ui/input';
 import {
   DEFAULT_JSON_BODY_PLACEHOLDER,
   type HttpRequestBody,

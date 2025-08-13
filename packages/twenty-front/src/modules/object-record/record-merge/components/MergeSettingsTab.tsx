@@ -1,5 +1,5 @@
 import { useMergeRecordsSettings } from '@/object-record/record-merge/hooks/useMergeRecordsSettings';
-import { Select } from '@/ui/input/components/Select';
+import { Select } from 'twenty-ui/input';
 import styled from '@emotion/styled';
 import { Section } from 'twenty-ui/layout';
 import { getPositionNumberIcon } from '../utils/getPositionNumberIcon';

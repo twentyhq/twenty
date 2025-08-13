@@ -7,7 +7,7 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { type WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Select } from '@/ui/input/components/Select';
+import { Select } from 'twenty-ui/input';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';

@@ -1,5 +1,5 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { Select } from '@/ui/input/components/Select';
+import { Select, type SelectOption } from 'twenty-ui/input';
 import { type WorkflowFindRecordsAction } from '@/workflow/types/Workflow';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useEffect, useState } from 'react';
@@ -19,7 +19,7 @@ import { useWorkflowActionHeader } from '@/workflow/workflow-steps/workflow-acti
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
+
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 

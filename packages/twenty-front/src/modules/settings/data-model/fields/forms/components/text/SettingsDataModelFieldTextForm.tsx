@@ -3,7 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { TEXT_DATA_MODEL_SELECT_OPTIONS } from '@/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions';
-import { Select } from '@/ui/input/components/Select';
+import { Select } from 'twenty-ui/input';
 import { useLingui } from '@lingui/react/macro';
 import { IconTextWrap } from 'twenty-ui/display';
 import { z } from 'zod';
