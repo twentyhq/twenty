@@ -12,6 +12,7 @@ import {
   GetOrderInput,
   GetOrdersInput,
   UpdateOrderInput,
+  DeleteOrderInput,
   OrderSortBy,
   SortOrder,
 } from './dto';
@@ -320,5 +321,42 @@ export class MktOrderService {
 
       return updatedOrder;
     });
+  }
+
+  async deleteOrder(
+    input: DeleteOrderInput,
+  ): Promise<{ success: boolean; message: string; deletedId: string }> {
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
+    if (!workspaceId) {
+      throw new Error('Workspace ID is required');
+    }
+
+    const orderRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderWorkspaceEntity>(
+        workspaceId,
+        'mktOrder',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const { id } = input;
+
+    // Check if order exists
+    const existingOrder = await orderRepository.findOne({
+      where: { id },
+    });
+
+    if (!existingOrder) {
+      throw new NotFoundException(`Order with ID ${id} not found`);
+    }
+
+    // Soft delete using TypeORM's soft delete
+    await orderRepository.softDelete(id);
+
+    return {
+      success: true,
+      message: `Order with ID ${id} has been successfully deleted`,
+      deletedId: id,
+    };
   }
 }

@@ -109,3 +109,15 @@ export class MktOrdersOutput {
   @Field(() => MktOrdersPageInfo)
   pageInfo: MktOrdersPageInfo;
 }
+
+@ObjectType()
+export class DeleteOrderOutput {
+  @Field()
+  success: boolean;
+
+  @Field()
+  message: string;
+
+  @Field()
+  deletedId: string;
+}

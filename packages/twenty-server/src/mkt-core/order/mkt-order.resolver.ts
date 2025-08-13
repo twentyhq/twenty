@@ -10,11 +10,13 @@ import {
 import { MktOrderService } from './mkt-order.service';
 import {
   CreateOrderWithItemsInput,
+  DeleteOrderInput,
+  DeleteOrderOutput,
   GetOrderInput,
   GetOrdersInput,
-  UpdateOrderInput,
   MktOrderOutput,
   MktOrdersOutput,
+  UpdateOrderInput,
 } from './dto';
 
 @Resolver(() => MktOrderOutput)
@@ -62,5 +64,13 @@ export class MktOrderResolver {
     const orderEntity = await this.orderService.updateOrder(input);
 
     return toMktOrderOutput(orderEntity);
+  }
+
+  @Mutation(() => DeleteOrderOutput)
+  @UseGuards(UserAuthGuard)
+  async softDeleteMktOrder(
+    @Args('input') input: DeleteOrderInput,
+  ): Promise<DeleteOrderOutput> {
+    return await this.orderService.deleteOrder(input);
   }
 }
