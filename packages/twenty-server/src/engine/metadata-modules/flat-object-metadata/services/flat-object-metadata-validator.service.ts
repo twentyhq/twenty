@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
@@ -30,6 +31,60 @@ export class FlatObjectMetadataValidatorService {
   constructor(
     private readonly flatFieldMetadataValidatorService: FlatFieldMetadataValidatorService,
   ) {}
+
+  public validateFlatObjectMetadataDeletion({
+    existingFlatObjectMetadataMaps,
+    objectMetadataToDeleteId,
+  }: {
+    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+    objectMetadataToDeleteId: string;
+  }) {
+    const errors: FailedFlatObjectMetadataValidationExceptions[] = [];
+
+    const flatObjectMetadataToDelete =
+      existingFlatObjectMetadataMaps.byId[objectMetadataToDeleteId];
+
+    if (!isDefined(flatObjectMetadataToDelete)) {
+      errors.push(
+        new ObjectMetadataException(
+          t`Object does not exist`,
+          ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        ),
+      );
+    } else {
+      if (flatObjectMetadataToDelete.isRemote) {
+        errors.push(
+          new ObjectMetadataException(
+            t`Remote objects are not supported yet`,
+            ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+          ),
+        );
+      }
+
+      if (
+        flatObjectMetadataToDelete.standardId !== null &&
+        !flatObjectMetadataToDelete.isCustom
+      ) {
+        errors.push(
+          new ObjectMetadataException(
+            t`Standard objects cannot be deleted`,
+            ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+          ),
+        );
+      }
+
+      if (flatObjectMetadataToDelete.isActive) {
+        errors.push(
+          new ObjectMetadataException(
+            t`Active objects cannot be deleted`,
+            ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+          ),
+        );
+      }
+    }
+
+    return errors;
+  }
 
   public async validateFlatObjectMetadataCreation({
     existingFlatObjectMetadataMaps,

@@ -93,8 +93,8 @@ export class WorkspaceMigrationBuilderV2Service {
     return {
       workspaceId,
       actions: [
-        ...objectWorkspaceMigrationActions,
         ...deletedObjectWorkspaceMigrationDeleteFieldActions,
+        ...objectWorkspaceMigrationActions,
         ...createdObjectMetadataCreateIndexActions,
         ...fieldWorkspaceMigrationActions,
         ...indexWorkspaceMigrationActions,

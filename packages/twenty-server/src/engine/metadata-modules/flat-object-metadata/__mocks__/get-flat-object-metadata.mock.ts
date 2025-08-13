@@ -9,6 +9,8 @@ type FlatObjectMetadataOverrides = Required<
 export const getFlatObjectMetadataMock = (
   overrides: FlatObjectMetadataOverrides,
 ): FlatObjectMetadata => {
+  const createdAt = new Date();
+
   return {
     flatFieldMetadatas: [],
     flatIndexMetadatas: [],
@@ -33,6 +35,9 @@ export const getFlatObjectMetadataMock = (
     standardOverrides: null,
     targetTableName: '',
     workspaceId: faker.string.uuid(),
+    createdAt,
+    updatedAt: createdAt,
+    duplicateCriteria: null,
     ...overrides,
   };
 };
