@@ -7,7 +7,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
-import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
+import { SettingsMorphRelationMultiSelect } from '@/settings/components/SettingsMorphRelationMultiSelect';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { useMorphRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/morphRelation/hooks/useMorphRelationSettingsFormInitialValues';
@@ -144,10 +144,12 @@ export const SettingsDataModelFieldMorphRelationForm = ({
         />
 
         {/* needs to switch to multiInput */}
-
-        <FormMultiSelectFieldInput
+        <SettingsMorphRelationMultiSelect
           label={t`Object destination`}
-          defaultValue={initialRelationObjectMetadataItem.id}
+          dropdownId="object-destination-select"
+          fullWidth
+          disabled={disableRelationEdition}
+          value={initialRelationObjectMetadataItem.id}
           options={activeObjectMetadataItems
             .filter(isObjectMetadataAvailableForRelation)
             .sort((item1, item2) =>
@@ -158,9 +160,10 @@ export const SettingsDataModelFieldMorphRelationForm = ({
               value: objectMetadataItem.id,
               Icon: getIcon(objectMetadataItem.icon),
             }))}
-          onChange={() => {}}
+          onChange={() => {}} //todo @guillim: this is not working
         />
 
+        {/* OLD WAY */}
         {/* <Controller
           name="relation.objectMetadataId"
           control={control}
