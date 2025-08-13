@@ -28,6 +28,7 @@ import { type RunnerMethodForActionType } from 'src/engine/workspace-manager/wor
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/generate-column-definitions.util';
 
+import { WorkspaceSchemaMigrationException, WorkspaceSchemaMigrationExceptionCode } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/exceptions/workspace-schema-migration.exception';
 import {
   prepareFieldWorkspaceSchemaContext,
   prepareWorkspaceSchemaContext,
@@ -66,7 +67,7 @@ export class WorkspaceSchemaFieldActionRunnerService
 
     const columnDefinitions = generateColumnDefinitions({
       fieldMetadata,
-      objectMetadata: flatObjectMetadata,
+      objectMetadataWithOrWithoutFields: flatObjectMetadata,
     });
     const columnNamesToDrop = columnDefinitions.map((def) => def.name);
 
@@ -122,7 +123,7 @@ export class WorkspaceSchemaFieldActionRunnerService
 
     const columnDefinitions = generateColumnDefinitions({
       fieldMetadata: flatFieldMetadata,
-      objectMetadata: flatObjectMetadata,
+      objectMetadataWithOrWithoutFields: flatObjectMetadata,
     });
 
     await this.workspaceSchemaManagerService.columnManager.addColumns(
@@ -367,14 +368,26 @@ export class WorkspaceSchemaFieldActionRunnerService
 
     const optimisticColumnDefinitions = generateColumnDefinitions({
       fieldMetadata,
-      objectMetadata: flatObjectMetadata,
+      objectMetadataWithOrWithoutFields: flatObjectMetadata,
     });
+
+    const enumColumnDefinition =
+      optimisticColumnDefinitions.length > 0
+        ? optimisticColumnDefinitions[0]
+        : undefined;
+
+    if (!enumColumnDefinition) {
+      throw new WorkspaceSchemaMigrationException(
+        'No column definition found for enum field',
+        WorkspaceSchemaMigrationExceptionCode.ENUM_OPERATION_FAILED,
+      );
+    }
 
     await this.workspaceSchemaManagerService.enumManager.alterEnumValues(
       queryRunner,
       schemaName,
       tableName,
-      optimisticColumnDefinitions[0],
+      enumColumnDefinition,
       valueMapping,
     );
   }

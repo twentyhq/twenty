@@ -7,15 +7,14 @@ import {
   computeCompositeColumnName,
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
+import { unserializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/unserialize-default-value';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
-import {
-  type FlatObjectMetadata,
-  type FlatObjectMetadataWithoutFields,
-} from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadataWithoutFields } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-runner/utils/compute-postgres-enum-name.util';
@@ -26,12 +25,11 @@ import { getWorkspaceSchemaContextForMigration } from './get-workspace-schema-co
 export const generateCompositeColumnDefinition = ({
   compositeProperty,
   parentFieldMetadata,
-  objectMetadata,
+  objectMetadataWithOrWithoutFields: objectMetadata,
 }: {
   compositeProperty: CompositeProperty;
-  parentFieldMetadata: FlatFieldMetadata;
-  objectMetadata:
-    | FlatObjectMetadata
+  parentFieldMetadata: FlatFieldMetadata<CompositeFieldMetadataType>;
+  objectMetadataWithOrWithoutFields:
     | FlatObjectMetadataWithFlatFieldMaps
     | FlatObjectMetadataWithoutFields;
 }): WorkspaceSchemaColumnDefinition => {
@@ -48,9 +46,11 @@ export const generateCompositeColumnDefinition = ({
     parentFieldMetadata.name,
     compositeProperty,
   );
-  // @ts-expect-error - TODO: fix this
-  const defaultValue = compositeProperty.defaultValue?.[compositeProperty.name];
-  const serializedDefaultValue = serializeDefaultValue(defaultValue);
+  const defaultValue =
+    // @ts-expect-error - TODO: fix this
+    parentFieldMetadata.defaultValue?.[compositeProperty.name];
+
+  const unserializedDefaultValue = unserializeDefaultValue(defaultValue);
 
   const columnType = fieldMetadataTypeToColumnType(compositeProperty.type);
 
@@ -68,7 +68,7 @@ export const generateCompositeColumnDefinition = ({
     // Align composite column nullability with parent field nullability by default
     isNullable: parentFieldMetadata.isNullable ?? true,
     isUnique: parentFieldMetadata.isUnique ?? false,
-    default: serializedDefaultValue,
+    default: unserializedDefaultValue,
     isArray: isArrayFlag,
   };
 
@@ -82,7 +82,7 @@ export const generateCompositeColumnDefinition = ({
 };
 
 const generateTsVectorColumnDefinition = (
-  fieldMetadata: FlatFieldMetadata,
+  fieldMetadata: FlatFieldMetadata<FieldMetadataType.TS_VECTOR>,
 ): WorkspaceSchemaColumnDefinition => {
   const columnName = computeColumnName(fieldMetadata.name);
 
@@ -99,22 +99,18 @@ const generateTsVectorColumnDefinition = (
 };
 
 const generateRelationColumnDefinition = (
-  fieldMetadata: FlatFieldMetadata,
+  fieldMetadata: FlatFieldMetadata<
+    FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+  >,
 ): WorkspaceSchemaColumnDefinition | null => {
-  if (
-    !fieldMetadata.settings ||
-    // @ts-expect-error - TODO: fix this
-    !fieldMetadata.settings.joinColumnName
-  ) {
+  if (!fieldMetadata.settings || !fieldMetadata.settings.joinColumnName) {
     return null;
   }
 
-  // @ts-expect-error - TODO: fix this
   const joinColumnName = fieldMetadata.settings.joinColumnName;
-  const columnName = joinColumnName;
 
   return {
-    name: columnName,
+    name: joinColumnName,
     type: fieldMetadataTypeToColumnType(FieldMetadataType.UUID),
     isNullable: true,
     isArray: false,
@@ -140,7 +136,9 @@ const generateStandardColumnDefinition = (
         ? computePostgresEnumName({ tableName, columnName })
         : columnType,
     isNullable: fieldMetadata.isNullable ?? true,
-    isArray: fieldMetadata.type === FieldMetadataType.ARRAY,
+    isArray:
+      fieldMetadata.type === FieldMetadataType.ARRAY ||
+      fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
     isUnique: fieldMetadata.isUnique ?? false,
     default: serializedDefaultValue,
     enumValues:
@@ -152,11 +150,10 @@ const generateStandardColumnDefinition = (
 
 export const generateColumnDefinitions = ({
   fieldMetadata,
-  objectMetadata,
+  objectMetadataWithOrWithoutFields: objectMetadata,
 }: {
   fieldMetadata: FlatFieldMetadata;
-  objectMetadata:
-    | FlatObjectMetadata
+  objectMetadataWithOrWithoutFields:
     | FlatObjectMetadataWithFlatFieldMaps
     | FlatObjectMetadataWithoutFields;
 }): WorkspaceSchemaColumnDefinition[] => {
@@ -165,7 +162,7 @@ export const generateColumnDefinitions = ({
     flatObjectMetadata: objectMetadata,
   });
 
-  if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+  if (isCompositeFlatFieldMetadata(fieldMetadata)) {
     const compositeType = getCompositeTypeOrThrow(fieldMetadata.type);
     const columnDefinitions: WorkspaceSchemaColumnDefinition[] = [];
 
@@ -174,7 +171,7 @@ export const generateColumnDefinitions = ({
         generateCompositeColumnDefinition({
           compositeProperty: property,
           parentFieldMetadata: fieldMetadata,
-          objectMetadata,
+          objectMetadataWithOrWithoutFields: objectMetadata,
         }),
       );
     }

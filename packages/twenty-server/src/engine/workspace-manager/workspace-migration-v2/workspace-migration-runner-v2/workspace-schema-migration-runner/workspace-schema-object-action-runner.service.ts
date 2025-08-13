@@ -71,7 +71,7 @@ export class WorkspaceSchemaObjectActionRunnerService
       .map((createFieldAction) =>
         generateColumnDefinitions({
           fieldMetadata: createFieldAction.flatFieldMetadata,
-          objectMetadata: flatObjectMetadata,
+          objectMetadataWithOrWithoutFields: flatObjectMetadata,
         }),
       )
       .flat();

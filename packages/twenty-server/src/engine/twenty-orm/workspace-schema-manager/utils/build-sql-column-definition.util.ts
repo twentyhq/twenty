@@ -9,7 +9,7 @@ export const buildColumnDefinition = (
   const parts = [`"${safeName}"`];
 
   if (column.asExpression) {
-    parts.push(`AS (${column.asExpression})`);
+    parts.push(`AS (${column.asExpression})`); // TODO: to sanitize
     if (column.generatedType) {
       parts.push(column.generatedType);
     }
@@ -36,7 +36,7 @@ export const buildColumnDefinition = (
 
         parts.push(`DEFAULT ${safeDefault}`);
       } else {
-        parts.push(`DEFAULT ${column.default}`);
+        parts.push(`DEFAULT ${column.default}`); // TODO: to sanitize
       }
     }
   }

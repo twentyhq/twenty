@@ -39,7 +39,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         fieldMetadata: enumField,
-        objectMetadata: mockObjectMetadata,
+        objectMetadataWithOrWithoutFields: mockObjectMetadata,
       });
 
       expect(columns).toHaveLength(1);
@@ -83,7 +83,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         fieldMetadata: multiSelectField,
-        objectMetadata: mockObjectMetadata,
+        objectMetadataWithOrWithoutFields: mockObjectMetadata,
       });
 
       expect(columns).toHaveLength(1);
@@ -94,7 +94,7 @@ describe('Generate Column Definitions', () => {
         name: 'tags',
         type: '_person_tags_enum',
         enumValues: ['URGENT', 'LOW_PRIORITY'],
-        isArray: false,
+        isArray: true,
         isNullable: true,
         isUnique: false,
         default: null,
@@ -114,7 +114,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         fieldMetadata: relationField,
-        objectMetadata: mockObjectMetadata,
+        objectMetadataWithOrWithoutFields: mockObjectMetadata,
       });
 
       // Relations without join columns must return empty array
@@ -135,7 +135,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         fieldMetadata: relationField,
-        objectMetadata: mockObjectMetadata,
+        objectMetadataWithOrWithoutFields: mockObjectMetadata,
       });
 
       expect(columns).toHaveLength(1);
@@ -165,7 +165,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         fieldMetadata: addressField,
-        objectMetadata: mockObjectMetadata,
+        objectMetadataWithOrWithoutFields: mockObjectMetadata,
       });
 
       expect(columns).toHaveLength(8);
@@ -199,13 +199,13 @@ describe('Generate Column Definitions', () => {
         name: 'price',
         defaultValue: {
           amountMicros: '100000000',
-          currencyCode: 'USD',
+          currencyCode: "'USD'",
         },
       });
 
       const columns = generateColumnDefinitions({
         fieldMetadata: currencyField,
-        objectMetadata: mockObjectMetadata,
+        objectMetadataWithOrWithoutFields: mockObjectMetadata,
       });
 
       expect(columns).toHaveLength(2);
@@ -219,7 +219,7 @@ describe('Generate Column Definitions', () => {
         type: 'numeric',
         isNullable: true,
         isUnique: false,
-        default: null,
+        default: '100000000',
       });
 
       expect(columns[1]).toMatchObject({
@@ -227,7 +227,7 @@ describe('Generate Column Definitions', () => {
         type: 'text',
         isNullable: true,
         isUnique: false,
-        default: null,
+        default: 'USD',
       });
     });
   });
@@ -244,7 +244,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         fieldMetadata: textField,
-        objectMetadata: mockObjectMetadata,
+        objectMetadataWithOrWithoutFields: mockObjectMetadata,
       });
 
       expect(columns).toHaveLength(1);
@@ -273,7 +273,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         fieldMetadata: booleanField,
-        objectMetadata: mockObjectMetadata,
+        objectMetadataWithOrWithoutFields: mockObjectMetadata,
       });
 
       expect(columns).toHaveLength(1);
@@ -303,7 +303,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         fieldMetadata: textField,
-        objectMetadata: mockObjectMetadata,
+        objectMetadataWithOrWithoutFields: mockObjectMetadata,
       });
 
       expect(columns).toHaveLength(1);
@@ -331,7 +331,7 @@ describe('Generate Column Definitions', () => {
 
       const columns = generateColumnDefinitions({
         fieldMetadata: uuidField,
-        objectMetadata: mockObjectMetadata,
+        objectMetadataWithOrWithoutFields: mockObjectMetadata,
       });
 
       expect(columns).toHaveLength(1);

@@ -137,23 +137,21 @@ export const collectEnumOperationsForObject = ({
     .filter((field) => isEnumFieldMetadataType(field.type));
 
   for (const enumField of enumFields) {
-    const field = enumField;
-
     if (operation === 'drop') {
       const enumName = computePostgresEnumName({
         tableName,
-        columnName: field.name,
+        columnName: enumField.name,
       });
 
       enumOperations.push({ enumName });
     } else if (operation === 'rename' && options?.newTableName) {
       const fromEnumName = computePostgresEnumName({
         tableName,
-        columnName: field.name,
+        columnName: enumField.name,
       });
       const toEnumName = computePostgresEnumName({
         tableName: options.newTableName,
-        columnName: field.name,
+        columnName: enumField.name,
       });
 
       enumOperations.push({
@@ -201,21 +199,31 @@ export const executeBatchEnumOperations = async ({
             enumOp.enumName,
           );
         case 'rename':
+          if (!enumOp.fromName || !enumOp.toName) {
+            throw new WorkspaceSchemaMigrationException(
+              'From and to enum names are required for rename',
+              WorkspaceSchemaMigrationExceptionCode.ENUM_OPERATION_FAILED,
+            );
+          }
+
           return workspaceSchemaManagerService.enumManager.renameEnum(
             queryRunner,
             schemaName,
-            enumOp.fromName!,
-            enumOp.toName!,
+            enumOp.fromName,
+            enumOp.toName,
           );
         default:
-          throw new Error(`Unsupported enum operation: ${operation}`);
+          throw new WorkspaceSchemaMigrationException(
+            `Unsupported enum operation: ${operation}`,
+            WorkspaceSchemaMigrationExceptionCode.ENUM_OPERATION_FAILED,
+          );
       }
     });
 
     await Promise.all(enumPromises);
-  } catch {
+  } catch (error) {
     throw new WorkspaceSchemaMigrationException(
-      `Failed to execute batch ${operation} enum operations`,
+      `Failed to execute batch ${operation} enum operations: ${error instanceof Error ? error.message : 'Unknown error'}`,
       WorkspaceSchemaMigrationExceptionCode.ENUM_OPERATION_FAILED,
     );
   }
