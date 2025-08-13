@@ -22,11 +22,11 @@ export const flatObjectMetadataPropertiesToCompare = [
 export type FlatObjectMetadataPropertiesToCompare =
   (typeof flatObjectMetadataPropertiesToCompare)[number];
 
-export const flatObjectdMetadataEntityJsonbProperties = [
+export const flatObjectMetadataEntityJsonbProperties = [
   'standardOverrides',
 ] as const satisfies (keyof FlatObjectMetadata)[];
 export type FlatObjectMetadataEntityJsonbProperties =
-  (typeof flatObjectdMetadataEntityJsonbProperties)[number];
+  (typeof flatObjectMetadataEntityJsonbProperties)[number];
 
 /**
  * This comparator handles update on colliding uniqueIdentifier flatObjectMetadata
@@ -50,7 +50,7 @@ export const compareTwoFlatObjectMetadata = ({
       case 'CHANGE': {
         const { oldValue, path, value } = difference;
         const property = path[0] as FlatObjectMetadataPropertiesToCompare;
-        const isJsonb = flatObjectdMetadataEntityJsonbProperties.includes(
+        const isJsonb = flatObjectMetadataEntityJsonbProperties.includes(
           property as FlatObjectMetadataEntityJsonbProperties,
         );
 
