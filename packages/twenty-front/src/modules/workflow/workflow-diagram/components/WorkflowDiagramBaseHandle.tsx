@@ -1,8 +1,9 @@
-import { Handle, type HandleProps } from '@xyflow/react';
-import styled from '@emotion/styled';
 import { NODE_HANDLE_HEIGHT_PX } from '@/workflow/workflow-diagram/constants/NodeHandleHeightPx';
 import { NODE_HANDLE_WIDTH_PX } from '@/workflow/workflow-diagram/constants/NodeHandleWidthPx';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
+import { Handle, type HandleProps } from '@xyflow/react';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 type WorkflowDiagramBaseHandleProps = HandleProps & {
@@ -45,26 +46,34 @@ const StyledHandle = styled(Handle, {
     }
   }}
 
-  ${({ disableHoverEffect, theme, position, selected }) => {
+  ${({ disableHoverEffect, theme, position }) => {
     if (disableHoverEffect === true) {
-      return '';
+      return undefined;
     }
 
-    let transform = `transform: scale(${HANDLE_SCALE_ON_HOVER}) !important;`;
+    let transform = css`
+      transform: scale(${HANDLE_SCALE_ON_HOVER}) !important;
+    `;
 
     if (position === 'top') {
-      transform = `transform: scale(${HANDLE_SCALE_ON_HOVER}) translate(${-TRANSLATE_PERCENT}%, ${-TRANSLATE_PERCENT}%) !important;`;
+      transform = css`
+        transform: scale(${HANDLE_SCALE_ON_HOVER})
+          translate(${-TRANSLATE_PERCENT}%, ${-TRANSLATE_PERCENT}%) !important;
+      `;
     } else if (position === 'bottom') {
-      transform = `transform: scale(${HANDLE_SCALE_ON_HOVER}) translate(${-TRANSLATE_PERCENT}%, ${TRANSLATE_PERCENT * 2}%) !important;`;
+      transform = css`
+        transform: scale(${HANDLE_SCALE_ON_HOVER})
+          translate(${-TRANSLATE_PERCENT}%, ${TRANSLATE_PERCENT * 2}%) !important;
+      `;
     }
 
-    return `
-    &:hover {
-      border-color: ${selected ? theme.color.blue : theme.font.color.light} !important;
-      background: ${selected ? theme.adaptiveColors.blue1 : theme.background.primary} !important;
-      ${transform}
-    }
-  `;
+    return css`
+      &:hover {
+        background: ${theme.adaptiveColors.blue1} !important;
+        border-color: ${theme.color.blue} !important;
+        ${transform}
+      }
+    `;
   }}
 `;
 
