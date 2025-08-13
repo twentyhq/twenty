@@ -6,8 +6,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
-import { type SelectValue } from '@/ui/input/components/internal/select/types';
-import { SelectControl } from '@/ui/input/components/SelectControl';
+import { MultiSelectControl } from '@/ui/input/components/MultiSelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -19,8 +18,8 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/display';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { type MultiSelectOption } from 'twenty-ui/input';
+import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
 
 export type SelectSizeVariant = 'small' | 'default';
 
@@ -30,21 +29,26 @@ type CallToActionButton = {
   Icon?: IconComponent;
 };
 
-export type SettingsMorphRelationMultiSelectProps<Value extends SelectValue> = {
+type MorphRelationOptionType = {
+  objectMetadataId: string;
+  objectMetadataNameSingular: string;
+};
+
+export type SettingsMorphRelationMultiSelectProps<T> = {
   className?: string;
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
   dropdownId: string;
   dropdownWidth?: number;
   dropdownWidthAuto?: boolean;
-  emptyOption?: SelectOption<Value>;
+
   fullWidth?: boolean;
   label?: string;
   description?: string;
-  onChange?: (value: Value) => void;
+  onChange?: (value: T) => void;
   onBlur?: () => void;
-  options: SelectOption<Value>[];
-  value?: Value;
+  options: MultiSelectOption<T>[];
+  value: T[];
   withSearchInput?: boolean;
   needIconCheck?: boolean;
   callToActionButton?: CallToActionButton;
@@ -69,14 +73,13 @@ const StyledDescription = styled.span`
   font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
-export const SettingsMorphRelationMultiSelect = <Value extends SelectValue>({
+export const SettingsMorphRelationMultiSelect = ({
   className,
   disabled: disabledFromProps,
   selectSizeVariant,
   dropdownId,
   dropdownWidth = GenericDropdownContentWidth.Medium,
   dropdownWidthAuto = false,
-  emptyOption,
   fullWidth,
   label,
   description,
@@ -85,19 +88,23 @@ export const SettingsMorphRelationMultiSelect = <Value extends SelectValue>({
   options,
   value,
   withSearchInput,
-  needIconCheck,
   callToActionButton,
   dropdownOffset,
   hasRightElement,
-}: SettingsMorphRelationMultiSelectProps<Value>) => {
+}: SettingsMorphRelationMultiSelectProps<MorphRelationOptionType>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState('');
 
-  const selectedOption =
-    options.find(({ value: key }) => key === value) ||
-    emptyOption ||
-    options[0];
+  const morphRelations = value;
+  debugger;
+  const selectedOptions =
+    options.filter(({ value: key }) =>
+      morphRelations.find(
+        (morphRelation) =>
+          morphRelation.objectMetadataId === key.objectMetadataId,
+      ),
+    ) || options[0];
 
   const filteredOptions = useMemo(
     () =>
@@ -111,9 +118,7 @@ export const SettingsMorphRelationMultiSelect = <Value extends SelectValue>({
 
   const isDisabled =
     disabledFromProps ||
-    (options.length <= 1 &&
-      !isDefined(callToActionButton) &&
-      (!isDefined(emptyOption) || selectedOption !== emptyOption));
+    (options.length <= 1 && !isDefined(callToActionButton));
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -132,8 +137,8 @@ export const SettingsMorphRelationMultiSelect = <Value extends SelectValue>({
   const { setSelectedItemId } = useSelectableList(dropdownId);
 
   const handleDropdownOpen = () => {
-    if (selectedOption && !searchInputValue) {
-      setSelectedItemId(selectedOption.label);
+    if (selectedOptions && !searchInputValue) {
+      setSelectedItemId(selectedOptions[0].label);
     }
   };
 
@@ -147,8 +152,8 @@ export const SettingsMorphRelationMultiSelect = <Value extends SelectValue>({
     >
       {!!label && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
-        <SelectControl
-          selectedOption={selectedOption}
+        <MultiSelectControl<MorphRelationOptionType>
+          selectedOption={selectedOptions[0]}
           isDisabled={isDisabled}
           selectSizeVariant={selectSizeVariant}
           hasRightElement={hasRightElement}
@@ -160,8 +165,8 @@ export const SettingsMorphRelationMultiSelect = <Value extends SelectValue>({
           dropdownOffset={dropdownOffset}
           onOpen={handleDropdownOpen}
           clickableComponent={
-            <SelectControl
-              selectedOption={selectedOption}
+            <MultiSelectControl<MorphRelationOptionType>
+              selectedOption={selectedOptions[0]}
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
               hasRightElement={hasRightElement}
@@ -196,18 +201,36 @@ export const SettingsMorphRelationMultiSelect = <Value extends SelectValue>({
                           closeDropdown(dropdownId);
                         }}
                       >
-                        <MenuItemSelect
-                          LeftIcon={option.Icon}
+                        <MenuItemMultiSelect
+                          className=""
+                          LeftIcon={option.Icon ?? undefined}
                           text={option.label}
-                          selected={selectedOption.value === option.value}
-                          focused={selectedItemId === option.label}
-                          needIconCheck={needIconCheck}
-                          onClick={() => {
-                            onChange?.(option.value);
+                          selected={selectedOptions.some(
+                            (selectedOption) =>
+                              selectedOption.value.objectMetadataId ===
+                              option.value.objectMetadataId,
+                          )}
+                          isKeySelected={selectedItemId === option.label}
+                          onSelectChange={() => {
+                            let newMorphRelations = [...morphRelations];
+                            const alreadySelected = newMorphRelations.find(
+                              (morphRelation) =>
+                                morphRelation.objectMetadataId ===
+                                option.value.objectMetadataId,
+                            );
+                            if (isDefined(alreadySelected)) {
+                              newMorphRelations = newMorphRelations.filter(
+                                (newMorphRelation) =>
+                                  newMorphRelation !== alreadySelected,
+                              );
+                            } else {
+                              newMorphRelations.push(option.value);
+                            }
+
+                            onChange?.(newMorphRelations);
                             onBlur?.();
-                            closeDropdown(dropdownId);
                           }}
-                        />
+                        />{' '}
                       </SelectableListItem>
                     ))}
                   </SelectableList>

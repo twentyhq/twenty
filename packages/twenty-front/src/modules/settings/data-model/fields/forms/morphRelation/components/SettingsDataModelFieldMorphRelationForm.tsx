@@ -24,7 +24,7 @@ export const settingsDataModelFieldMorphRelationFormSchema = z.object({
   morphRelations: z
     .array(
       z.object({
-        field: fieldMetadataItemSchema()
+        value: fieldMetadataItemSchema()
           .pick({
             icon: true,
             label: true,
@@ -38,6 +38,7 @@ export const settingsDataModelFieldMorphRelationFormSchema = z.object({
               .partial(),
           ),
         objectMetadataId: z.string().uuid(),
+        objectMetadataNameSingular: z.string().min(1),
       }),
     )
     .min(2),
@@ -112,15 +113,36 @@ export const SettingsDataModelFieldMorphRelationForm = ({
   });
 
   // todo tmp @guillim remove this when ready
-  const initialRelationObjectMetadataItem =
+  const firstInitialRelationObjectMetadataItem =
     initialRelationObjectMetadataItems[0];
-  const initialRelationFieldMetadataItem = {
-    icon: initialRelationObjectMetadataItem.icon ?? 'IconUsers',
+  const firstInitialRelationFieldMetadataItem = {
+    icon: firstInitialRelationObjectMetadataItem.icon ?? 'IconUsers',
     label: [RelationType.MANY_TO_ONE].includes(initialRelationType)
-      ? initialRelationObjectMetadataItem.labelPlural
-      : initialRelationObjectMetadataItem.labelSingular,
+      ? firstInitialRelationObjectMetadataItem.labelPlural
+      : firstInitialRelationObjectMetadataItem.labelSingular,
   };
 
+  const secondInitialRelationObjectMetadataItem =
+    initialRelationObjectMetadataItems[1];
+  const secondInitialRelationFieldMetadataItem = {
+    icon: secondInitialRelationObjectMetadataItem.icon ?? 'IconUsers',
+    label: secondInitialRelationObjectMetadataItem.labelPlural,
+  };
+
+  const initialMorphRelations = [
+    {
+      objectMetadataId: firstInitialRelationObjectMetadataItem.id,
+      objectMetadataNameSingular:
+        firstInitialRelationObjectMetadataItem.labelSingular,
+      value: firstInitialRelationFieldMetadataItem,
+    },
+    {
+      objectMetadataId: secondInitialRelationObjectMetadataItem.id,
+      objectMetadataNameSingular:
+        secondInitialRelationObjectMetadataItem.labelSingular,
+      value: secondInitialRelationFieldMetadataItem,
+    },
+  ];
   const isMobile = useIsMobile();
 
   return (
@@ -144,32 +166,13 @@ export const SettingsDataModelFieldMorphRelationForm = ({
         />
 
         {/* needs to switch to multiInput */}
-        <SettingsMorphRelationMultiSelect
-          label={t`Object destination`}
-          dropdownId="object-destination-select"
-          fullWidth
-          disabled={disableRelationEdition}
-          value={initialRelationObjectMetadataItem.id}
-          options={activeObjectMetadataItems
-            .filter(isObjectMetadataAvailableForRelation)
-            .sort((item1, item2) =>
-              item1.labelPlural.localeCompare(item2.labelPlural),
-            )
-            .map((objectMetadataItem) => ({
-              label: objectMetadataItem.labelPlural,
-              value: objectMetadataItem.id,
-              Icon: getIcon(objectMetadataItem.icon),
-            }))}
-          onChange={() => {}} //todo @guillim: this is not working
-        />
 
-        {/* OLD WAY */}
-        {/* <Controller
-          name="relation.objectMetadataId"
+        <Controller
+          name="morphRelations"
           control={control}
-          defaultValue={initialRelationObjectMetadataItem.id}
+          defaultValue={initialMorphRelations}
           render={({ field: { onChange, value } }) => (
-            <Select
+            <SettingsMorphRelationMultiSelect
               label={t`Object destination`}
               dropdownId="object-destination-select"
               fullWidth
@@ -181,20 +184,26 @@ export const SettingsDataModelFieldMorphRelationForm = ({
                   item1.labelPlural.localeCompare(item2.labelPlural),
                 )
                 .map((objectMetadataItem) => ({
-                  label: objectMetadataItem.labelPlural,
-                  value: objectMetadataItem.id,
+                  label: objectMetadataItem.labelSingular,
                   Icon: getIcon(objectMetadataItem.icon),
+                  value: {
+                    objectMetadataId: objectMetadataItem.id,
+                    objectMetadataNameSingular:
+                      objectMetadataItem.labelSingular,
+                    icon: getIcon(objectMetadataItem.icon),
+                  },
                 }))}
               onChange={onChange}
             />
-          )} */}
+          )}
+        />
       </StyledSelectsContainer>
       <StyledInputsLabel>{t`Field on destination`}</StyledInputsLabel>
       <StyledInputsContainer>
         <Controller
           name="iconOnDestination"
           control={control}
-          defaultValue={initialRelationFieldMetadataItem.icon}
+          defaultValue={firstInitialRelationFieldMetadataItem.icon}
           render={({ field: { onChange, value } }) => (
             <IconPicker
               disabled={disableFieldEdition}
@@ -208,7 +217,7 @@ export const SettingsDataModelFieldMorphRelationForm = ({
         <Controller
           name="fieldOnDestination"
           control={control}
-          defaultValue={initialRelationFieldMetadataItem.label}
+          defaultValue={firstInitialRelationFieldMetadataItem.label}
           render={({ field: { onChange, value } }) => (
             <SettingsTextInput
               instanceId="relation-field-label"
