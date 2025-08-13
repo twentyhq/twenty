@@ -1,12 +1,12 @@
-import groupBy from 'lodash.groupby';
-
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { RecordFieldListCellHoveredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortal';
+import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
+import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
+import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useIsRecordReadOnly } from '@/object-record/record-field/ui/hooks/read-only/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isRecordFieldReadOnly';
@@ -19,11 +19,9 @@ import { useRecordShowContainerData } from '@/object-record/record-show/hooks/us
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
-import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 type FieldsCardProps = {
   objectNameSingular: string;
@@ -38,16 +36,14 @@ export const FieldsCard = ({
   objectRecordId,
   showDuplicatesSection = true,
 }: FieldsCardProps) => {
-  const { recordLoading, labelIdentifierFieldMetadataItem, isPrefetchLoading } =
-    useRecordShowContainerData({
-      objectNameSingular,
-      objectRecordId,
-    });
+  const { recordLoading, isPrefetchLoading } = useRecordShowContainerData({
+    objectRecordId,
+  });
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-  const { objectMetadataItems } = useObjectMetadataItems();
+
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
@@ -57,63 +53,34 @@ export const FieldsCard = ({
 
   const { isInRightDrawer } = useIsInRightDrawerOrThrow();
 
-  const availableFieldMetadataItems = objectMetadataItem.readableFields
-    .filter(
-      (fieldMetadataItem) =>
-        isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
-        fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id,
-    )
-    .sort((fieldMetadataItemA, fieldMetadataItemB) =>
-      fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
-    );
-
-  const { inlineFieldMetadataItems, relationFieldMetadataItems } = groupBy(
-    availableFieldMetadataItems
-      .filter(
-        (fieldMetadataItem) =>
-          fieldMetadataItem.name !== 'createdAt' &&
-          fieldMetadataItem.name !== 'deletedAt',
-      )
-      .filter(
-        (fieldMetadataItem) =>
-          fieldMetadataItem.type !== FieldMetadataType.RICH_TEXT_V2,
-      ),
-    (fieldMetadataItem) =>
-      fieldMetadataItem.type === FieldMetadataType.RELATION
-        ? 'relationFieldMetadataItems'
-        : 'inlineFieldMetadataItems',
-  );
-
-  const inlineRelationFieldMetadataItems = relationFieldMetadataItems?.filter(
-    (fieldMetadataItem) =>
-      (objectNameSingular === CoreObjectNameSingular.Note &&
-        fieldMetadataItem.name === 'noteTargets') ||
-      (objectNameSingular === CoreObjectNameSingular.Task &&
-        fieldMetadataItem.name === 'taskTargets'),
-  );
-
-  const boxedRelationFieldMetadataItems = relationFieldMetadataItems?.filter(
-    (fieldMetadataItem) =>
-      !(
-        (objectNameSingular === CoreObjectNameSingular.Note &&
-          fieldMetadataItem.name === 'noteTargets') ||
-        (objectNameSingular === CoreObjectNameSingular.Task &&
-          fieldMetadataItem.name === 'taskTargets')
-      ) &&
-      isDefined(fieldMetadataItem.relation?.targetObjectMetadata.id) &&
-      getObjectPermissionsForObject(
-        objectPermissionsByObjectMetadataId,
-        fieldMetadataItem.relation?.targetObjectMetadata.id,
-      ).canReadObjectRecords,
-  );
-
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: objectRecordId,
     objectMetadataId: objectMetadataItem.id,
   });
 
+  const setRecordFieldListHoverPosition = useSetRecoilComponentState(
+    recordFieldListHoverPositionComponentState,
+    'fields-card',
+  );
+
+  const handleMouseEnter = (index: number) => {
+    setRecordFieldListHoverPosition(index);
+  };
+
+  const {
+    inlineFieldMetadataItems,
+    inlineRelationFieldMetadataItems,
+    boxedRelationFieldMetadataItems,
+  } = useFieldListFieldMetadataItems({
+    objectNameSingular,
+  });
+
   return (
-    <>
+    <RecordFieldListComponentInstanceContext.Provider
+      value={{
+        instanceId: 'fields-card',
+      }}
+    >
       <PropertyBox>
         {isPrefetchLoading ? (
           <PropertyBoxSkeletonLoader />
@@ -200,6 +167,13 @@ export const FieldsCard = ({
                     fieldType: fieldMetadataItem.type,
                     isCustom: fieldMetadataItem.isCustom ?? false,
                   }),
+                  onMouseEnter: () =>
+                    handleMouseEnter(
+                      index + (inlineRelationFieldMetadataItems?.length ?? 0),
+                    ),
+                  anchorId: `record-field-list-cell-${
+                    index + (inlineRelationFieldMetadataItems?.length ?? 0)
+                  }`,
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider
@@ -259,6 +233,10 @@ export const FieldsCard = ({
           />
         </FieldContext.Provider>
       ))}
-    </>
+
+      <RecordFieldListCellHoveredPortal
+        objectMetadataItem={objectMetadataItem}
+      />
+    </RecordFieldListComponentInstanceContext.Provider>
   );
 };

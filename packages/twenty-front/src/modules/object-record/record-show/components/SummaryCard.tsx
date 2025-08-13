@@ -1,4 +1,5 @@
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
+import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
@@ -27,11 +28,9 @@ export const SummaryCard = ({
   objectRecordId,
   isInRightDrawer,
 }: SummaryCardProps) => {
-  const { recordLoading, labelIdentifierFieldMetadataItem, isPrefetchLoading } =
-    useRecordShowContainerData({
-      objectNameSingular,
-      objectRecordId,
-    });
+  const { recordLoading, isPrefetchLoading } = useRecordShowContainerData({
+    objectRecordId,
+  });
 
   const recordCreatedAt = useRecoilValue<string | null>(
     recordStoreFamilySelector({
@@ -59,6 +58,11 @@ export const SummaryCard = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
+  const { labelIdentifierFieldMetadataItem } =
+    useLabelIdentifierFieldMetadataItem({
+      objectNameSingular,
+    });
 
   const isTitleReadOnly = useIsRecordFieldReadOnly({
     recordId: objectRecordId,
