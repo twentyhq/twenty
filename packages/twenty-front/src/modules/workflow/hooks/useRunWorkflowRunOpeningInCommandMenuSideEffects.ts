@@ -30,6 +30,9 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
   const isWorkflowFilteringEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
   );
+  const isWorkflowBranchEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
+  );
 
   const runWorkflowRunOpeningInCommandMenuSideEffects = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -63,6 +66,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           stepInfos: workflowRunRecord.state.stepInfos,
           trigger: workflowRunRecord.state.flow.trigger,
           isWorkflowFilteringEnabled,
+          isWorkflowBranchEnabled,
         });
 
         if (!isDefined(stepToOpenByDefault)) {
@@ -133,6 +137,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
       apolloCoreClient.cache,
       objectPermissionsByObjectMetadataId,
       isWorkflowFilteringEnabled,
+      isWorkflowBranchEnabled,
       openWorkflowRunViewStepInCommandMenu,
       getIcon,
     ],

@@ -20,11 +20,13 @@ export const generateWorkflowRunDiagram = ({
   steps,
   stepInfos,
   isWorkflowFilteringEnabled,
+  isWorkflowBranchEnabled,
 }: {
   trigger: WorkflowTrigger;
   steps: Array<WorkflowStep>;
   stepInfos: WorkflowRunStepInfos | undefined;
   isWorkflowFilteringEnabled: boolean;
+  isWorkflowBranchEnabled: boolean;
 }): {
   diagram: WorkflowRunDiagram;
   stepToOpenByDefault:
@@ -119,6 +121,7 @@ export const generateWorkflowRunDiagram = ({
       nodes: workflowRunDiagramNodes,
       edges: workflowRunDiagramEdges,
       defaultFilterEdgeType: 'filter--run',
+      isWorkflowBranchEnabled,
     }),
     stepToOpenByDefault,
   };
