@@ -11,6 +11,7 @@ import {
   CreateOrderWithItemsInput,
   GetOrderInput,
   GetOrdersInput,
+  UpdateOrderInput,
   OrderSortBy,
   SortOrder,
 } from './dto';
@@ -195,5 +196,129 @@ export class MktOrderService {
     });
 
     return { orders, total };
+  }
+
+  async updateOrder(input: UpdateOrderInput): Promise<MktOrderWorkspaceEntity> {
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
+    if (!workspaceId) {
+      throw new Error('Workspace ID is required');
+    }
+
+    // Get repositories
+    const orderRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderWorkspaceEntity>(
+        workspaceId,
+        'mktOrder',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const productRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktProductWorkspaceEntity>(
+        workspaceId,
+        'mktProduct',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const orderItemRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderItemWorkspaceEntity>(
+        workspaceId,
+        'mktOrderItem',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const { id, items, ...updateData } = input;
+
+    // Check if order exists
+    const existingOrder = await orderRepository.findOne({
+      where: { id },
+      relations: ['orderItems'],
+    });
+
+    if (!existingOrder) {
+      throw new NotFoundException(`Order with ID ${id} not found`);
+    }
+
+    // Get data source for transaction
+    const dataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
+
+    return await dataSource.transaction(async () => {
+      // Map status if provided
+      const dataToUpdate: Partial<MktOrderWorkspaceEntity> = {
+        name: updateData.name,
+        position: updateData.position,
+        totalAmount: updateData.totalAmount,
+        currency: updateData.currency,
+        note: updateData.note,
+        requireContract: updateData.requireContract,
+        accountOwnerId: updateData.accountOwnerId,
+      };
+
+      if (updateData.status) {
+        dataToUpdate.status = mapGraphQLOrderStatusToEntity(updateData.status);
+      }
+
+      // Update items if provided
+      if (items && items.length > 0) {
+        // Delete existing items
+        await orderItemRepository.delete({ mktOrderId: id });
+
+        // Validate products exist
+        const productIds = items.map((item) => item.mktProductId);
+        const products = await productRepository.find({
+          where: { id: In(productIds) },
+        });
+
+        const productMap = new Map(products.map((p) => [p.id, p]));
+        const missingProductIds = productIds.filter(
+          (pid) => !productMap.has(pid),
+        );
+
+        if (missingProductIds.length > 0) {
+          throw new NotFoundException(
+            `Products not found: ${missingProductIds.join(', ')}`,
+          );
+        }
+
+        // Create new items and calculate total
+        let totalAmount = 0;
+        const orderItemsData = items.map((item) => {
+          const product = productMap.get(item.mktProductId);
+          const unitPrice = product?.price ?? 0;
+          const itemTotalPrice = unitPrice * item.quantity;
+
+          totalAmount += itemTotalPrice;
+
+          return {
+            ...item,
+            mktOrderId: id,
+            unitPrice,
+            totalPrice: itemTotalPrice,
+            name: product?.name ?? '',
+          };
+        });
+
+        await orderItemRepository.save(orderItemsData);
+        dataToUpdate.totalAmount = totalAmount;
+      }
+
+      // Update order
+      await orderRepository.update(id, dataToUpdate);
+
+      // Return updated order with relations
+      const updatedOrder = await orderRepository.findOne({
+        where: { id },
+        relations: ['orderItems', 'orderItems.mktProduct'],
+      });
+
+      if (!updatedOrder) {
+        throw new Error('Failed to retrieve updated order');
+      }
+
+      return updatedOrder;
+    });
   }
 }

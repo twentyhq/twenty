@@ -12,6 +12,7 @@ import {
   CreateOrderWithItemsInput,
   GetOrderInput,
   GetOrdersInput,
+  UpdateOrderInput,
   MktOrderOutput,
   MktOrdersOutput,
 } from './dto';
@@ -51,5 +52,15 @@ export class MktOrderResolver {
       await this.orderService.getOrdersWithPaging(input);
 
     return toMktOrdersOutput(orders, total, page, limit);
+  }
+
+  @Mutation(() => MktOrderOutput)
+  @UseGuards(UserAuthGuard)
+  async updateMktOrderWithItems(
+    @Args('input') input: UpdateOrderInput,
+  ): Promise<MktOrderOutput> {
+    const orderEntity = await this.orderService.updateOrder(input);
+
+    return toMktOrderOutput(orderEntity);
   }
 }
