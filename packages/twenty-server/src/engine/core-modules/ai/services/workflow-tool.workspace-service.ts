@@ -432,18 +432,506 @@ export class WorkflowToolWorkspaceService {
 
     tools.compute_step_output_schema = {
       description:
-        'Compute the output schema for a workflow step. This determines what data the step produces.',
+        'Compute the output schema for a workflow step. This determines what data the step produces. The step parameter must be a valid WorkflowTrigger or WorkflowAction with the correct settings structure for its type.',
       parameters: {
         type: 'object',
         properties: {
           step: {
             type: 'object',
-            description: 'The workflow step configuration in JSON format',
-            properties: {
-              id: { type: 'string' },
-              type: { type: 'string' },
-              settings: { type: 'object' },
-            },
+            description:
+              'The workflow step configuration (WorkflowTrigger or WorkflowAction)',
+            oneOf: [
+              {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  name: { type: 'string' },
+                  type: {
+                    type: 'string',
+                    enum: ['DATABASE_EVENT', 'MANUAL', 'CRON', 'WEBHOOK'],
+                  },
+                  settings: {
+                    type: 'object',
+                    description:
+                      'Settings vary by trigger type. See specific trigger type for details.',
+                    oneOf: [
+                      {
+                        type: 'object',
+                        description: 'Settings for DATABASE_EVENT trigger type',
+                        properties: {
+                          eventName: { type: 'string' },
+                          input: { type: 'object' },
+                          outputSchema: { type: 'object' },
+                        },
+                        required: ['eventName', 'outputSchema'],
+                      },
+                      {
+                        type: 'object',
+                        description: 'Settings for MANUAL trigger type',
+                        properties: {
+                          input: { type: 'object' },
+                          outputSchema: { type: 'object' },
+                          objectType: { type: 'string' },
+                          icon: { type: 'string' },
+                        },
+                        required: ['outputSchema'],
+                      },
+                      {
+                        type: 'object',
+                        description: 'Settings for CRON trigger type',
+                        properties: {
+                          type: {
+                            type: 'string',
+                            enum: ['DAYS', 'HOURS', 'MINUTES', 'CUSTOM'],
+                          },
+                          schedule: { type: 'object' },
+                          pattern: { type: 'string' },
+                          input: { type: 'object' },
+                          outputSchema: { type: 'object' },
+                        },
+                        required: ['outputSchema'],
+                      },
+                      {
+                        type: 'object',
+                        description: 'Settings for WEBHOOK trigger type',
+                        properties: {
+                          httpMethod: {
+                            type: 'string',
+                            enum: ['GET', 'POST'],
+                          },
+                          authentication: {
+                            type: 'string',
+                            enum: ['API_KEY', null],
+                          },
+                          expectedBody: { type: 'object' },
+                          input: { type: 'object' },
+                          outputSchema: { type: 'object' },
+                        },
+                        required: ['outputSchema'],
+                      },
+                    ],
+                  },
+                  nextStepIds: {
+                    type: 'array',
+                    items: { type: 'string' },
+                  },
+                  position: {
+                    type: 'object',
+                    properties: {
+                      x: { type: 'number' },
+                      y: { type: 'number' },
+                    },
+                  },
+                },
+                required: ['id', 'name', 'type', 'settings'],
+              },
+              {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' },
+                  name: { type: 'string' },
+                  type: {
+                    type: 'string',
+                    enum: [
+                      'CODE',
+                      'SEND_EMAIL',
+                      'CREATE_RECORD',
+                      'UPDATE_RECORD',
+                      'DELETE_RECORD',
+                      'FIND_RECORDS',
+                      'FORM',
+                      'FILTER',
+                      'HTTP_REQUEST',
+                      'AI_AGENT',
+                    ],
+                  },
+                  settings: {
+                    type: 'object',
+                    description:
+                      'Settings vary by action type. See specific action type for details.',
+                    oneOf: [
+                      {
+                        type: 'object',
+                        description: 'Settings for CODE action type',
+                        properties: {
+                          input: {
+                            type: 'object',
+                            properties: {
+                              serverlessFunctionId: { type: 'string' },
+                              serverlessFunctionVersion: { type: 'string' },
+                              serverlessFunctionInput: { type: 'object' },
+                            },
+                            required: [
+                              'serverlessFunctionId',
+                              'serverlessFunctionVersion',
+                            ],
+                          },
+                          outputSchema: { type: 'object' },
+                          errorHandlingOptions: {
+                            type: 'object',
+                            properties: {
+                              retryOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                              continueOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                            },
+                          },
+                        },
+                        required: [
+                          'input',
+                          'outputSchema',
+                          'errorHandlingOptions',
+                        ],
+                      },
+                      {
+                        type: 'object',
+                        description: 'Settings for SEND_EMAIL action type',
+                        properties: {
+                          input: {
+                            type: 'object',
+                            properties: {
+                              connectedAccountId: { type: 'string' },
+                              email: { type: 'string' },
+                              subject: { type: 'string' },
+                              body: { type: 'string' },
+                            },
+                            required: ['connectedAccountId', 'email'],
+                          },
+                          outputSchema: { type: 'object' },
+                          errorHandlingOptions: {
+                            type: 'object',
+                            properties: {
+                              retryOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                              continueOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                            },
+                          },
+                        },
+                        required: [
+                          'input',
+                          'outputSchema',
+                          'errorHandlingOptions',
+                        ],
+                      },
+                      {
+                        type: 'object',
+                        description: 'Settings for CREATE_RECORD action type',
+                        properties: {
+                          input: {
+                            type: 'object',
+                            properties: {
+                              objectName: { type: 'string' },
+                              objectRecord: { type: 'object' },
+                            },
+                            required: ['objectName', 'objectRecord'],
+                          },
+                          outputSchema: { type: 'object' },
+                          errorHandlingOptions: {
+                            type: 'object',
+                            properties: {
+                              retryOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                              continueOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                            },
+                          },
+                        },
+                        required: [
+                          'input',
+                          'outputSchema',
+                          'errorHandlingOptions',
+                        ],
+                      },
+                      {
+                        type: 'object',
+                        description: 'Settings for UPDATE_RECORD action type',
+                        properties: {
+                          input: {
+                            type: 'object',
+                            properties: {
+                              objectName: { type: 'string' },
+                              objectRecord: { type: 'object' },
+                              objectRecordId: { type: 'string' },
+                              fieldsToUpdate: {
+                                type: 'array',
+                                items: { type: 'string' },
+                              },
+                            },
+                            required: [
+                              'objectName',
+                              'objectRecordId',
+                              'fieldsToUpdate',
+                            ],
+                          },
+                          outputSchema: { type: 'object' },
+                          errorHandlingOptions: {
+                            type: 'object',
+                            properties: {
+                              retryOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                              continueOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                            },
+                          },
+                        },
+                        required: [
+                          'input',
+                          'outputSchema',
+                          'errorHandlingOptions',
+                        ],
+                      },
+                      {
+                        type: 'object',
+                        description: 'Settings for DELETE_RECORD action type',
+                        properties: {
+                          input: {
+                            type: 'object',
+                            properties: {
+                              objectName: { type: 'string' },
+                              objectRecordId: { type: 'string' },
+                            },
+                            required: ['objectName', 'objectRecordId'],
+                          },
+                          outputSchema: { type: 'object' },
+                          errorHandlingOptions: {
+                            type: 'object',
+                            properties: {
+                              retryOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                              continueOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                            },
+                          },
+                        },
+                        required: [
+                          'input',
+                          'outputSchema',
+                          'errorHandlingOptions',
+                        ],
+                      },
+                      {
+                        type: 'object',
+                        description: 'Settings for FIND_RECORDS action type',
+                        properties: {
+                          input: {
+                            type: 'object',
+                            properties: {
+                              objectName: { type: 'string' },
+                              filter: { type: 'object' },
+                              orderBy: { type: 'object' },
+                              limit: { type: 'number' },
+                            },
+                            required: ['objectName'],
+                          },
+                          outputSchema: { type: 'object' },
+                          errorHandlingOptions: {
+                            type: 'object',
+                            properties: {
+                              retryOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                              continueOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                            },
+                          },
+                        },
+                        required: [
+                          'input',
+                          'outputSchema',
+                          'errorHandlingOptions',
+                        ],
+                      },
+                      {
+                        type: 'object',
+                        description: 'Settings for FORM action type',
+                        properties: {
+                          input: {
+                            type: 'array',
+                            items: {
+                              type: 'object',
+                              properties: {
+                                id: { type: 'string' },
+                                name: { type: 'string' },
+                                label: { type: 'string' },
+                                type: { type: 'string' },
+                                value: { type: 'object' },
+                                placeholder: { type: 'string' },
+                                settings: { type: 'object' },
+                              },
+                              required: ['id', 'name', 'label', 'type'],
+                            },
+                          },
+                          outputSchema: { type: 'object' },
+                          errorHandlingOptions: {
+                            type: 'object',
+                            properties: {
+                              retryOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                              continueOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                            },
+                          },
+                        },
+                        required: [
+                          'input',
+                          'outputSchema',
+                          'errorHandlingOptions',
+                        ],
+                      },
+                      {
+                        type: 'object',
+                        description: 'Settings for FILTER action type',
+                        properties: {
+                          input: {
+                            type: 'object',
+                            properties: {
+                              stepFilterGroups: {
+                                type: 'array',
+                                items: { type: 'object' },
+                              },
+                              stepFilters: {
+                                type: 'array',
+                                items: { type: 'object' },
+                              },
+                            },
+                          },
+                          outputSchema: { type: 'object' },
+                          errorHandlingOptions: {
+                            type: 'object',
+                            properties: {
+                              retryOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                              continueOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                            },
+                          },
+                        },
+                        required: [
+                          'input',
+                          'outputSchema',
+                          'errorHandlingOptions',
+                        ],
+                      },
+                      {
+                        type: 'object',
+                        description: 'Settings for HTTP_REQUEST action type',
+                        properties: {
+                          input: {
+                            type: 'object',
+                            properties: {
+                              url: { type: 'string' },
+                              method: {
+                                type: 'string',
+                                enum: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+                              },
+                              headers: { type: 'object' },
+                              body: { type: 'object' },
+                            },
+                            required: ['url', 'method'],
+                          },
+                          outputSchema: { type: 'object' },
+                          errorHandlingOptions: {
+                            type: 'object',
+                            properties: {
+                              retryOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                              continueOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                            },
+                          },
+                        },
+                        required: [
+                          'input',
+                          'outputSchema',
+                          'errorHandlingOptions',
+                        ],
+                      },
+                      {
+                        type: 'object',
+                        description: 'Settings for AI_AGENT action type',
+                        properties: {
+                          input: {
+                            type: 'object',
+                            properties: {
+                              agentId: { type: 'string' },
+                              prompt: { type: 'string' },
+                            },
+                          },
+                          outputSchema: { type: 'object' },
+                          errorHandlingOptions: {
+                            type: 'object',
+                            properties: {
+                              retryOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                              continueOnFailure: {
+                                type: 'object',
+                                properties: { value: { type: 'boolean' } },
+                              },
+                            },
+                          },
+                        },
+                        required: [
+                          'input',
+                          'outputSchema',
+                          'errorHandlingOptions',
+                        ],
+                      },
+                    ],
+                  },
+                  nextStepIds: {
+                    type: 'array',
+                    items: { type: 'string' },
+                  },
+                  position: {
+                    type: 'object',
+                    properties: {
+                      x: { type: 'number' },
+                      y: { type: 'number' },
+                    },
+                  },
+                  valid: { type: 'boolean' },
+                },
+                required: ['id', 'name', 'type', 'settings', 'valid'],
+              },
+            ],
           },
         },
         required: ['step'],
