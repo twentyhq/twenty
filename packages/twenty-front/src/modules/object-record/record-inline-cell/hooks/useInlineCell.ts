@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
-import { useInitDraftValue } from '@/object-record/record-field/hooks/useInitDraftValue';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { useInitDraftValue } from '@/object-record/record-field/ui/hooks/useInitDraftValue';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';

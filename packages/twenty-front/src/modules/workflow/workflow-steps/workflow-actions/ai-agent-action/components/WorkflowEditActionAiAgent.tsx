@@ -1,6 +1,6 @@
 import { useAiAgentOutputSchema } from '@/ai/hooks/useAiAgentOutputSchema';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { Select } from '@/ui/input/components/Select';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';

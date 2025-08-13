@@ -9,10 +9,10 @@ import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metad
 import { buildDefaultFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-fields-for-custom-object.util';
 
 export const fromCreateObjectInputToFlatObjectMetadata = ({
-  objectMetadataInput: rawCreateObjectInput,
+  createObjectInput: rawCreateObjectInput,
   workspaceId,
 }: {
-  objectMetadataInput: Omit<CreateObjectInput, 'workspaceId'>;
+  createObjectInput: Omit<CreateObjectInput, 'workspaceId'>;
   workspaceId: string;
 }): FlatObjectMetadata => {
   const createObjectInput =
@@ -36,7 +36,12 @@ export const fromCreateObjectInputToFlatObjectMetadata = ({
       workspaceId,
     });
 
+  const createdAt = new Date();
+
   return {
+    createdAt,
+    updatedAt: createdAt,
+    duplicateCriteria: null,
     description: createObjectInput.description ?? null,
     flatFieldMetadatas: Object.values(baseCustomFlatFieldMetadatas),
     flatIndexMetadatas: [],

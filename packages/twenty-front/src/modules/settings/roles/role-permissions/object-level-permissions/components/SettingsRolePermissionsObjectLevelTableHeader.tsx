@@ -23,7 +23,7 @@ export const SettingsRolePermissionsObjectLevelTableHeader = ({
     }
   >
     <TableHeader>{t`Object-Level`}</TableHeader>
-    <TableHeader>{showPermissionsLabel ? t`Permissions` : ''}</TableHeader>
+    <TableHeader>{showPermissionsLabel ? t`Records` : ''}</TableHeader>
     {isFieldsPermissionsEnabled && (
       <>
         <TableHeader>{showPermissionsLabel ? t`See Fields` : ''}</TableHeader>

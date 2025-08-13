@@ -3,10 +3,10 @@ import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
-import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
-import { type FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenRightDrawer';
+import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { useSingleRecordPickerOpen } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerOpen';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';

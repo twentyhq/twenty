@@ -185,6 +185,11 @@ msgstr "العمل المطلوب لمنع حذف مساحة العمل"
 msgid "Action Needed to Reset Password"
 msgstr "العمل المطلوب لإعادة تعيين كلمة المرور"
 
+#. js-lingui-id: 0N5kF6
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Active objects cannot be deleted"
+msgstr ""
+
 #. js-lingui-id: Du6bPw
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
@@ -529,9 +534,9 @@ msgstr "لا يمكن الحذف، يرجى تحديث حقل معرف العل�
 msgid "Cannot disable non-active workflow version"
 msgstr "لا يمكن تعطيل إصدار سير العمل غير النشط"
 
-#. js-lingui-id: RATxdO
+#. js-lingui-id: otFZos
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
-msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first."
+msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr ""
 
 #. js-lingui-id: IDMgr/
@@ -1842,6 +1847,11 @@ msgstr "عدد الموظفين في الشركة"
 msgid "Object already exists"
 msgstr "العنصر موجود بالفعل"
 
+#. js-lingui-id: O77HIc
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Object does not exist"
+msgstr ""
+
 #. js-lingui-id: wLX74t
 #: src/engine/metadata-modules/flat-object-metadata/validators/validate-flat-object-metadata-label.validator.ts
 msgid "Object label is too long"
@@ -2151,6 +2161,7 @@ msgstr "العلاقات"
 
 #. js-lingui-id: yVxtzR
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Remote objects are not supported yet"
 msgstr ""
 
@@ -2207,6 +2218,11 @@ msgstr "الحجم"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
 msgstr "المرحلة"
+
+#. js-lingui-id: Ptv+nG
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Standard objects cannot be deleted"
+msgstr ""
 
 #. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts

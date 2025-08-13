@@ -68,7 +68,7 @@ msgstr "· {objectFilterDropdownSearchInput}"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
-#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "[empty string]"
 msgstr "[pusty ciąg]"
 
@@ -413,11 +413,6 @@ msgstr "Dodaj obiekt"
 msgid "Add object permission"
 msgstr "Dodaj uprawnienia do obiektu"
 
-#. js-lingui-id: oLB/Qu
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "Add object rule"
-msgstr ""
-
 #. js-lingui-id: Dl5lVI
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Add option"
@@ -432,6 +427,11 @@ msgstr "Dodaj lub usuń użytkowników"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Add Output Field"
 msgstr "Dodaj Pole Wyjściowe"
+
+#. js-lingui-id: O8tK4v
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Add rule"
+msgstr ""
 
 #. js-lingui-id: sgXUv+
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
@@ -1231,7 +1231,7 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
-#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Collapse"
 msgstr "Zwiń"
 
@@ -2258,7 +2258,7 @@ msgid "Email cannot be empty"
 msgstr "E-mail nie może być pusty"
 
 #. js-lingui-id: UZQ5eW
-#: src/modules/object-record/record-field/meta-types/input/components/EmailsFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
 msgid "Email copied to clipboard"
 msgstr ""
 
@@ -2337,7 +2337,7 @@ msgstr "Puste"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
-#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Array"
 msgstr "Pusta tablica"
 
@@ -2345,7 +2345,7 @@ msgstr "Pusta tablica"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
-#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Object"
 msgstr "Pusty obiekt"
 
@@ -2441,7 +2441,7 @@ msgid "Environment variable"
 msgstr "Zmienne środowiskowe"
 
 #. js-lingui-id: XOEl9R
-#: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Error copying to clipboard"
 msgstr "Błąd podczas kopiowania do schowka"
 
@@ -2561,7 +2561,7 @@ msgstr "Wyjdź z ustawień"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
-#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Expand"
 msgstr "Rozwiń"
 
@@ -4268,12 +4268,12 @@ msgid "Not empty"
 msgstr "Niepusty"
 
 #. js-lingui-id: pAtylB
-#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/VariableChip.tsx
 msgid "Not Found"
 msgstr "Nie znaleziono"
 
 #. js-lingui-id: 51G4/+
-#: src/modules/object-record/record-field/meta-types/display/components/ForbiddenFieldDisplay.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay.tsx
 #: src/modules/activities/calendar/components/CalendarEventNotSharedContent.tsx
 msgid "Not shared"
 msgstr "Nie udostępnione"
@@ -4520,7 +4520,6 @@ msgid "Permanently destroy workflows"
 msgstr "Trwale zniszcz workflow"
 
 #. js-lingui-id: 9cDpsw
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
 msgstr "Uprawnienia"
@@ -4531,7 +4530,7 @@ msgid "Permissions · {objectLabelSingular}"
 msgstr "Uprawnienia · {objectLabelSingular}"
 
 #. js-lingui-id: qlqT9z
-#: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Phone number copied to clipboard"
 msgstr "Numer telefonu został skopiowany do schowka"
 
@@ -4617,9 +4616,9 @@ msgstr ""
 msgid "Prefilling your workspace data..."
 msgstr "Wypełnianie danych twojego miejsca pracy..."
 
-#. js-lingui-id: koeh2Y
+#. js-lingui-id: ut1ZY+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
-msgid "Prevent from assigining the same value to different records"
+msgid "Prevent from assigning the same value to different records"
 msgstr ""
 
 #. js-lingui-id: rdUucN
@@ -4718,6 +4717,11 @@ msgstr "Strona Rekordu"
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Record Selection"
 msgstr "Wybór rekordu"
+
+#. js-lingui-id: PWlTvh
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
+msgid "Records"
+msgstr ""
 
 #. js-lingui-id: LfH+Ea
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -5816,7 +5820,7 @@ msgid "Text"
 msgstr "Tekst"
 
 #. js-lingui-id: lyaiTc
-#: src/modules/object-record/record-field/components/LightCopyIconButton.tsx
+#: src/modules/object-record/record-field/ui/components/LightCopyIconButton.tsx
 msgid "Text copied to clipboard"
 msgstr "Tekst skopiowany do schowka"
 
@@ -6306,7 +6310,7 @@ msgid "Variable deleted successfully."
 msgstr "Zmienna została usunięta pomyślnie."
 
 #. js-lingui-id: dY/1ir
-#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/VariableChip.tsx
 msgid "Variable not found"
 msgstr "Nie znaleziono zmiennej"
 

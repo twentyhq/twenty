@@ -5,14 +5,14 @@ import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
-import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
-import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
-import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
+import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import {
   type FieldMetadata,
   type FieldMultiSelectMetadata,
   type FieldSelectMetadata,
-} from '@/object-record/record-field/types/FieldMetadata';
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';

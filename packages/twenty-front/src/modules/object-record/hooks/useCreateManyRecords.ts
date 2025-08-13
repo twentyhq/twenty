@@ -16,7 +16,7 @@ import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/g
 import { useCreateManyRecordsMutation } from '@/object-record/hooks/useCreateManyRecordsMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
-import { type FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldActorForInputValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';

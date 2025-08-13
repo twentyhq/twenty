@@ -1,5 +1,5 @@
 import { DateFormat } from '@/localization/constants/DateFormat';
-import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { enUS } from 'date-fns/locale';
 import { DateTime } from 'luxon';
 import { formatDateString } from '~/utils/string/formatDateString';

@@ -5,10 +5,10 @@ import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTa
 import { useOpenActivityTargetCellEditMode } from '@/activities/inline-cell/hooks/useOpenActivityTargetCellEditMode';
 import { useUpdateActivityTargetFromCell } from '@/activities/inline-cell/hooks/useUpdateActivityTargetFromCell';
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { FieldContextProvider } from '@/object-record/record-field/components/FieldContextProvider';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { FieldFocusContextProvider } from '@/object-record/record-field/ui/contexts/FieldFocusContextProvider';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';

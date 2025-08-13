@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 

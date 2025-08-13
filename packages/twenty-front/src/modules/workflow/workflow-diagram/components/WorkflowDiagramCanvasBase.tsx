@@ -38,6 +38,7 @@ import {
   type NodeChange,
   type NodeProps,
   type OnBeforeDelete,
+  type OnDelete,
   type OnNodeDrag,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -417,16 +418,28 @@ export const WorkflowDiagramCanvasBase = ({
   const onBeforeDelete: OnBeforeDelete<
     WorkflowDiagramNode,
     WorkflowDiagramEdge
-  > = async (diagram) => {
-    if (
-      diagram.nodes.length === 0 // We don't call deleteEdge when node diagram deletion is called
-    ) {
-      for (const edge of diagram.edges) {
-        onDeleteEdge?.(edge);
-      }
-      return diagram;
+  > = async ({ nodes, edges }) => {
+    if (!isWorkflowBranchEnabled) {
+      return false;
     }
+
+    if (nodes.length === 0 && edges.length > 0) {
+      return true;
+    }
+
     return false;
+  };
+
+  const onDelete: OnDelete<WorkflowDiagramNode, WorkflowDiagramEdge> = async ({
+    edges,
+  }) => {
+    if (!isWorkflowBranchEnabled || !isDefined(onDeleteEdge)) {
+      return;
+    }
+
+    for (const edge of edges) {
+      onDeleteEdge(edge);
+    }
   };
 
   const onPaneContextMenu = useCallback(
@@ -474,9 +487,8 @@ export const WorkflowDiagramCanvasBase = ({
         onEdgesChange={handleEdgesChange}
         onConnect={isWorkflowBranchEnabled ? onConnect : undefined}
         onNodeDragStop={isWorkflowBranchEnabled ? onNodeDragStop : undefined}
-        onBeforeDelete={
-          isWorkflowBranchEnabled ? onBeforeDelete : async () => false
-        }
+        onBeforeDelete={onBeforeDelete}
+        onDelete={onDelete}
         selectNodesOnDrag={false}
         proOptions={{ hideAttribution: true }}
         multiSelectionKeyCode={null}
