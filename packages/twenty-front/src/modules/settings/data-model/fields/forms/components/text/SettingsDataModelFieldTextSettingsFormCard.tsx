@@ -15,8 +15,9 @@ type SettingsDataModelFieldTextSettingsFormCardProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue' | 'isUnique' | 'isCustom'
-  >;
+    'icon' | 'label' | 'type' | 'isCustom' | 'settings'
+  > &
+    Partial<{ id: string }>;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
@@ -49,6 +50,7 @@ export const SettingsDataModelFieldTextSettingsFormCard = ({
           />
           <SettingsDataModelFieldIsUniqueForm
             fieldMetadataItem={fieldMetadataItem}
+            objectMetadataItem={objectMetadataItem}
           />
         </>
       }

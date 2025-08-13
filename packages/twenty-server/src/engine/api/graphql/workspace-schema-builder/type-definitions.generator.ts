@@ -8,6 +8,7 @@ import { CompositeObjectTypeDefinitionFactory } from 'src/engine/api/graphql/wor
 import { EnumTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/enum-type-definition.factory';
 import { ExtendObjectTypeDefinitionV2Factory } from 'src/engine/api/graphql/workspace-schema-builder/factories/extend-object-type-definition-v2.factory';
 import { RelationConnectInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-connect-input-type-definition.factory';
+import { objectContainsMorphRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-morph-relation-field.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
@@ -269,7 +270,11 @@ export class TypeDefinitionsGenerator {
   ) {
     // Generate extended object type defs only for objects that contain composite fields
     const objectMetadataCollectionWithCompositeFields =
-      objectMetadataCollection.filter(objectContainsRelationField);
+      objectMetadataCollection.filter(
+        (obj) =>
+          objectContainsRelationField(obj) ||
+          objectContainsMorphRelationField(obj),
+      );
     const workspaceId =
       objectMetadataCollectionWithCompositeFields[0]?.workspaceId;
 
@@ -282,6 +287,7 @@ export class TypeDefinitionsGenerator {
         this.extendObjectTypeDefinitionV2Factory.create(
           objectMetadata,
           options,
+          objectMetadataCollection,
         ),
     );
 

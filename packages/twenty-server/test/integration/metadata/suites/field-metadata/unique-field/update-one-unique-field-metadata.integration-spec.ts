@@ -288,4 +288,64 @@ describe('update one unique field metadata', () => {
       'Unique index cannot be created for field fullNameField of type FULL_NAME',
     );
   });
+
+  it('should update a standard field to unique field metadata if it has not standard unique index', async () => {
+    const { data: createdField } = await createOneFieldMetadata({
+      input: {
+        name: 'testField',
+        label: 'Test Field',
+        type: FieldMetadataType.TEXT,
+        objectMetadataId: createdObjectId,
+        isUnique: false,
+        isCustom: false,
+      },
+      gqlFields: `
+        id
+        name
+        label
+        type
+        isUnique
+      `,
+    });
+
+    const { data: addUniqueData, errors: addUniqueErrors } =
+      await updateOneFieldMetadata({
+        input: {
+          idToUpdate: createdField.createOneField.id,
+          updatePayload: { isUnique: true },
+        },
+        gqlFields: `
+        id
+        name
+        label
+        type
+        isUnique
+      `,
+      });
+
+    expect(addUniqueErrors).toBeUndefined();
+    expect(addUniqueData).not.toBeNull();
+    expect(addUniqueData.updateOneField).toBeDefined();
+    expect(addUniqueData.updateOneField.isUnique).toBe(true);
+
+    const { data: removeUniqueData, errors: removeUniqueErrors } =
+      await updateOneFieldMetadata({
+        input: {
+          idToUpdate: createdField.createOneField.id,
+          updatePayload: { isUnique: false },
+        },
+        gqlFields: `
+        id
+        name
+        label
+        type
+        isUnique
+      `,
+      });
+
+    expect(removeUniqueErrors).toBeUndefined();
+    expect(removeUniqueData).not.toBeNull();
+    expect(removeUniqueData.updateOneField).toBeDefined();
+    expect(removeUniqueData.updateOneField.isUnique).toBe(false);
+  });
 });

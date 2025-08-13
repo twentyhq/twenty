@@ -103,7 +103,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
       <StyledCreateObjectOverrideSection>
         <Button
           Icon={IconPlus}
-          title={t`Add object rule`}
+          title={t`Add rule`}
           variant="secondary"
           size="small"
           disabled={!isEditable || allObjectsHaveSetPermission}

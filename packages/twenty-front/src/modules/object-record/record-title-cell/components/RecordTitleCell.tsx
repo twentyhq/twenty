@@ -1,13 +1,15 @@
-import { useContext } from 'react';
+import { useCallback, useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+
 import {
+  FieldInputEventContext,
   type FieldInputClickOutsideEvent,
   type FieldInputEvent,
-} from '@/object-record/record-field/types/FieldInputEvent';
-
+} from '@/object-record/record-field/contexts/FieldInputEventContext';
+import { usePersistFieldFromFieldInputContext } from '@/object-record/record-field/hooks/usePersistFieldFromFieldInputContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordTitleCellContainer } from '@/object-record/record-title-cell/components/RecordTitleCellContainer';
 import {
@@ -19,6 +21,7 @@ import { RecordTitleCellFieldInput } from '@/object-record/record-title-cell/com
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { useRecoilCallback } from 'recoil';
 
 type RecordTitleCellProps = {
   loading?: boolean;
@@ -38,53 +41,77 @@ export const RecordTitleCell = ({
 
   const { closeRecordTitleCell } = useRecordTitleCell();
 
-  const closeCell = () => {
+  const closeCell = useCallback(() => {
     closeRecordTitleCell({
       recordId,
       fieldName: fieldDefinition.metadata.fieldName,
       containerType,
     });
+  }, [closeRecordTitleCell, containerType, fieldDefinition, recordId]);
+
+  const { persistFieldFromFieldInputContext } =
+    usePersistFieldFromFieldInputContext();
+
+  const handleEnter: FieldInputEvent = ({ newValue, skipPersist }) => {
+    if (skipPersist !== true) {
+      persistFieldFromFieldInputContext(newValue);
+    }
+
+    closeCell();
   };
 
-  const handleEnter: FieldInputEvent = (persistField) => {
+  const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
+    () =>
+      ({ newValue, skipPersist }) => {
+        if (skipPersist !== true) {
+          persistFieldFromFieldInputContext(newValue);
+        }
+
+        closeCell();
+      },
+    [closeCell, persistFieldFromFieldInputContext],
+  );
+
+  const handleEscape: FieldInputEvent = () => {
     closeCell();
-    persistField();
   };
 
-  const handleEscape = () => {
+  const handleTab: FieldInputEvent = ({ newValue, skipPersist }) => {
+    if (skipPersist !== true) {
+      persistFieldFromFieldInputContext(newValue);
+    }
+
     closeCell();
   };
 
-  const handleTab: FieldInputEvent = (persistField) => {
-    closeCell();
-    persistField();
-  };
+  const handleShiftTab: FieldInputEvent = ({ newValue, skipPersist }) => {
+    if (skipPersist !== true) {
+      persistFieldFromFieldInputContext(newValue);
+    }
 
-  const handleShiftTab: FieldInputEvent = (persistField) => {
     closeCell();
-    persistField();
-  };
-
-  const handleClickOutside: FieldInputClickOutsideEvent = (persistField) => {
-    closeCell();
-    persistField();
   };
 
   const recordTitleCellContextValue: RecordTitleCellContextProps = {
     editModeContent: (
-      <RecordTitleCellFieldInput
-        instanceId={getRecordFieldInputInstanceId({
-          recordId,
-          fieldName: fieldDefinition.metadata.fieldName,
-          prefix: containerType,
-        })}
-        onEnter={handleEnter}
-        onEscape={handleEscape}
-        onTab={handleTab}
-        onShiftTab={handleShiftTab}
-        onClickOutside={handleClickOutside}
-        sizeVariant={sizeVariant}
-      />
+      <FieldInputEventContext.Provider
+        value={{
+          onClickOutside: handleClickOutside,
+          onEnter: handleEnter,
+          onEscape: handleEscape,
+          onShiftTab: handleShiftTab,
+          onTab: handleTab,
+        }}
+      >
+        <RecordTitleCellFieldInput
+          instanceId={getRecordFieldInputInstanceId({
+            recordId,
+            fieldName: fieldDefinition.metadata.fieldName,
+            prefix: containerType,
+          })}
+          sizeVariant={sizeVariant}
+        />
+      </FieldInputEventContext.Provider>
     ),
     displayModeContent: (
       <RecordTitleCellFieldDisplay containerType={containerType} />

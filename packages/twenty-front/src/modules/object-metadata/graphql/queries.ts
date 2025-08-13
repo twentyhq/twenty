@@ -33,6 +33,7 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
             indexWhereClause
             indexType
             isUnique
+            isCustom
             indexFieldMetadataList {
               id
               fieldMetadataId
@@ -60,6 +61,27 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
             settings
             isLabelSyncedWithName
             relation {
+              type
+              sourceObjectMetadata {
+                id
+                nameSingular
+                namePlural
+              }
+              targetObjectMetadata {
+                id
+                nameSingular
+                namePlural
+              }
+              sourceFieldMetadata {
+                id
+                name
+              }
+              targetFieldMetadata {
+                id
+                name
+              }
+            }
+            morphRelations {
               type
               sourceObjectMetadata {
                 id

@@ -10,18 +10,22 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 type SettingsNavigationDrawerItemProps = {
   item: SettingsNavigationItem;
   subItemState?: NavigationDrawerSubItemState;
+  hasActiveSubItem?: boolean;
 };
 
 export const SettingsNavigationDrawerItem = ({
   item,
   subItemState,
+  hasActiveSubItem = false,
 }: SettingsNavigationDrawerItemProps) => {
   const href = item.path ? getSettingsPath(item.path) : '';
   const pathName = useResolvedPath(href).pathname;
-  const isActive = !!useMatch({
+  const matchResult = useMatch({
     path: pathName,
     end: item.matchSubPages === false,
   });
+
+  const isActive = !!matchResult && !hasActiveSubItem;
 
   if (isDefined(item.isHidden) && item.isHidden) {
     return null;

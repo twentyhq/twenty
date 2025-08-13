@@ -69,7 +69,8 @@ export const WorkflowDiagramCanvasEditable = ({
         edges: addEdge(edgeConnect, diagram.edges),
       };
     });
-    createEdge?.(edgeConnect);
+
+    createEdge(edgeConnect);
   };
 
   const onDeleteEdge = async (edge: WorkflowDiagramEdge) => {

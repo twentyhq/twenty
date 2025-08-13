@@ -12,7 +12,7 @@ import { type ViewFilter } from '@/views/types/ViewFilter';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
 import { act } from 'react';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';

@@ -7,6 +7,7 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
 import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
+import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
@@ -26,18 +27,18 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   Background,
-  type EdgeChange,
-  type EdgeProps,
-  type FitViewOptions,
-  type NodeChange,
-  type NodeProps,
   ReactFlow,
   applyEdgeChanges,
   applyNodeChanges,
   useReactFlow,
   type Connection,
-  type OnNodeDrag,
+  type EdgeChange,
+  type EdgeProps,
+  type FitViewOptions,
+  type NodeChange,
+  type NodeProps,
   type OnBeforeDelete,
+  type OnNodeDrag,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React, {
@@ -53,7 +54,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated/graphql';
-import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;

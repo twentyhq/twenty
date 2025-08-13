@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { StepStatus } from 'twenty-shared/workflow';
+import { StepStatus, TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -221,7 +221,7 @@ export class WorkflowVersionStepWorkspaceService {
     const existingTrigger = workflowVersion.trigger;
 
     const isDeletingTrigger =
-      stepIdToDelete === 'trigger' && isDefined(existingTrigger);
+      stepIdToDelete === TRIGGER_STEP_ID && isDefined(existingTrigger);
 
     if (!isDeletingTrigger && !isDefined(workflowVersion.steps)) {
       throw new WorkflowVersionStepException(

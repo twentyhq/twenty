@@ -331,11 +331,10 @@ type DatePickerPropsType = ReactDatePickerLibProps<
   boolean | undefined
 >;
 
-const ReactDatePicker = lazy(
-  () =>
-    import('react-datepicker') as Promise<{
-      default: ComponentType<DatePickerPropsType>;
-    }>,
+const ReactDatePicker = lazy<ComponentType<DatePickerPropsType>>(() =>
+  import('react-datepicker').then((mod) => ({
+    default: mod.default as unknown as ComponentType<DatePickerPropsType>,
+  })),
 );
 
 export const DateTimePicker = ({

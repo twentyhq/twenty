@@ -47,7 +47,7 @@ export const removeEmptyLinks = ({
     }
   }
 
-  const firstLink = filteredLinks.at(0);
+  const firstLink = filteredLinks[0];
   const otherLinks = filteredLinks.slice(1);
 
   return {

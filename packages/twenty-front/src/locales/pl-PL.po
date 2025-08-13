@@ -413,11 +413,6 @@ msgstr "Dodaj obiekt"
 msgid "Add object permission"
 msgstr "Dodaj uprawnienia do obiektu"
 
-#. js-lingui-id: oLB/Qu
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
-msgid "Add object rule"
-msgstr ""
-
 #. js-lingui-id: Dl5lVI
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 msgid "Add option"
@@ -432,6 +427,11 @@ msgstr "Dodaj lub usuń użytkowników"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Add Output Field"
 msgstr "Dodaj Pole Wyjściowe"
+
+#. js-lingui-id: O8tK4v
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
+msgid "Add rule"
+msgstr ""
 
 #. js-lingui-id: sgXUv+
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
@@ -1342,10 +1342,10 @@ msgstr "Potwierdzić usunięcie roli {roleName}? Tego nie można cofnąć. Wszys
 msgid "Connect a new account to your workspace"
 msgstr "Połącz nowe konto ze swoim miejscem pracy"
 
-#. js-lingui-id: ffVcxj
+#. js-lingui-id: dUcoLZ
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
-msgid "Connect Email Account"
-msgstr "Połącz Konto Email"
+msgid "Connect Account"
+msgstr ""
 
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -1679,10 +1679,20 @@ msgstr "Obiekty niestandardowe"
 msgid "Customise the fields available in the {objectLabelSingular} views."
 msgstr "Dostosuj pola dostępne w widokach obiektu {objectLabelSingular}."
 
+#. js-lingui-id: qqLY+j
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+msgid "Customization"
+msgstr ""
+
 #. js-lingui-id: CMhr4u
 #: src/pages/settings/SettingsWorkspace.tsx
 msgid "Customize Domain"
 msgstr "Dostosuj domenę"
+
+#. js-lingui-id: wiqA3D
+#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+msgid "Customize field settings"
+msgstr ""
 
 #. js-lingui-id: RP2we8
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
@@ -2180,6 +2190,12 @@ msgstr "Edytuj"
 msgid "Edit {objectLabelPlural}"
 msgstr ""
 
+#. js-lingui-id: 9B436y
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
+msgid "Edit Account"
+msgstr ""
+
 #. js-lingui-id: CQrc7J
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Edit Agent"
@@ -2189,13 +2205,6 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Edit CRM data structure and fields"
 msgstr "Edytuj strukturę danych CRM i pola"
-
-#. js-lingui-id: AyPkS4
-#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-msgid "Edit Email Account"
-msgstr "Edytuj Konto Email"
 
 #. js-lingui-id: 9QCQIc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -3677,6 +3686,11 @@ msgstr "Wyszukaj użytkowników i zarządzaj ich flagami funkcji w przestrzeni r
 msgid "Look up users to impersonate them."
 msgstr "Wyszukaj użytkowników do ich udawania."
 
+#. js-lingui-id: MsaCqr
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "Mail Account"
+msgstr ""
+
 #. js-lingui-id: n0FHLv
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Manage API keys and webhooks"
@@ -3976,6 +3990,12 @@ msgstr ""
 msgid "New account"
 msgstr "Nowe konto"
 
+#. js-lingui-id: zlKiaf
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+msgid "New Account"
+msgstr ""
+
 #. js-lingui-id: mJIA0/
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -3988,13 +4008,6 @@ msgstr ""
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "New Approved Access Domain"
 msgstr "Nowa zatwierdzona domena dostępu"
-
-#. js-lingui-id: 7JRigF
-#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-msgid "New Email Account"
-msgstr "Nowe Konto Email"
 
 #. js-lingui-id: 8YPqRx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -4507,7 +4520,6 @@ msgid "Permanently destroy workflows"
 msgstr "Trwale zniszcz workflow"
 
 #. js-lingui-id: 9cDpsw
-#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 msgid "Permissions"
 msgstr "Uprawnienia"
@@ -4604,9 +4616,9 @@ msgstr ""
 msgid "Prefilling your workspace data..."
 msgstr "Wypełnianie danych twojego miejsca pracy..."
 
-#. js-lingui-id: koeh2Y
+#. js-lingui-id: ut1ZY+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
-msgid "Prevent from assigining the same value to different records"
+msgid "Prevent from assigning the same value to different records"
 msgstr ""
 
 #. js-lingui-id: rdUucN
@@ -4705,6 +4717,11 @@ msgstr "Strona Rekordu"
 #: src/modules/command-menu/components/CommandMenu.tsx
 msgid "Record Selection"
 msgstr "Wybór rekordu"
+
+#. js-lingui-id: PWlTvh
+#: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
+msgid "Records"
+msgstr ""
 
 #. js-lingui-id: LfH+Ea
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -5861,7 +5878,6 @@ msgstr "Strona, której szukasz, albo zniknęła, albo nigdy nie istniała. Poki
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "The values of this field"
 msgstr "Wartości tego pola"
 
@@ -6166,10 +6182,10 @@ msgstr "Zaktualizuj"
 msgid "Update agent information"
 msgstr ""
 
-#. js-lingui-id: cAn7CC
+#. js-lingui-id: qbg8VE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-msgid "Update your email account configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
-msgstr "Zaktualizuj konfigurację swojego konta email. Skonfiguruj dowolne połączenie IMAP, SMTP i CalDAV w razie potrzeby."
+msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
+msgstr ""
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -6230,6 +6246,8 @@ msgstr "Użyj naszego API lub dodaj swoje pierwsze {objectLabel} manualnie"
 #: src/pages/settings/accounts/SettingsAccountsCalendars.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 msgid "User"
 msgstr "Użytkownik"
 
@@ -6283,7 +6301,6 @@ msgstr "Wartość jest ustawiona w środowisku serwera, może być inna u pracow
 #. js-lingui-id: fXVIZq
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Values"
 msgstr "Wartości"
 
@@ -6501,8 +6518,6 @@ msgstr "Przepływy pracy"
 #: src/modules/settings/roles/components/SettingsRolesContainer.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/modules/favorites/components/WorkspaceFavorites.tsx
 msgid "Workspace"
 msgstr "Miejsce pracy"
