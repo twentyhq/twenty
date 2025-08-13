@@ -290,37 +290,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     updateObjectInput: UpdateOneObjectInput,
     workspaceId: string,
   ): Promise<ObjectMetadataEntity> {
-    const isWorkspaceMigrationV2Enabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        workspaceId,
-      );
-
-    if (isWorkspaceMigrationV2Enabled) {
-      const flatObjectMetadata = await this.objectMetadataServiceV2.updateOne({
-        updateObjectInput,
-        workspaceId,
-      });
-
-      const updatedFlatObjectMetadata = await this.objectMetadataRepository.findOne(
-        {
-          where: {
-            id: flatObjectMetadata.id,
-            workspaceId,
-          },
-        },
-      );
-
-      if (!isDefined(updatedFlatObjectMetadata)) {
-        throw new ObjectMetadataException(
-          'Updated object metadata not found',
-          ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-        );
-      }
-
-      return updatedFlatObjectMetadata;
-    }
-
     const mainDataSource =
       await this.workspaceDataSourceService.connectToMainDataSource();
     const queryRunner = mainDataSource.createQueryRunner();
