@@ -9,7 +9,7 @@ import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-r
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { searchRecordStoreComponentFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
-import { sortMorphItemsByTSRank } from '@/object-record/record-picker/multiple-record-picker/utils/sortMorphItemsByTSRank';
+import { sortMorphItems } from '@/object-record/record-picker/multiple-record-picker/utils/sortMorphItems';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { type ApolloClient } from '@apollo/client';
@@ -261,15 +261,10 @@ export const useMultipleRecordPickerPerformSearch = () => {
             )
           : newMorphItems;
 
-        const searchRecords = [
+        const sortedMorphItems = sortMorphItems(morphItems, [
           ...searchRecordsFilteredOnPickedRecords,
-          ...searchRecordsExcludingPickedRecordsWithoutDuplicates,
-        ];
-
-        const sortedMorphItems = sortMorphItemsByTSRank(
-          morphItems,
-          searchRecords,
-        );
+          ...searchRecordsExcludingPickedRecords,
+        ]);
 
         set(
           multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
@@ -277,6 +272,11 @@ export const useMultipleRecordPickerPerformSearch = () => {
           }),
           sortedMorphItems,
         );
+
+        const searchRecords = [
+          ...searchRecordsFilteredOnPickedRecords,
+          ...searchRecordsExcludingPickedRecordsWithoutDuplicates,
+        ];
 
         searchRecords.forEach((searchRecord) => {
           set(
