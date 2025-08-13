@@ -38,8 +38,11 @@ type SettingsObjectFieldItemTableRowProps = {
   mode: 'view' | 'new-field';
 };
 
-export const StyledObjectFieldTableRow = styled(TableRow)`
-  grid-auto-columns: 180px 148px 148px 36px;
+export const StyledObjectFieldTableRow = styled(TableRow)<{
+  $gridColumns?: string;
+}>`
+  grid-auto-columns: ${({ $gridColumns }) =>
+    $gridColumns || '180px 148px 148px 36px'};
 `;
 
 const StyledNameTableCell = styled(TableCell)`

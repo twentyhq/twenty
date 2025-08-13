@@ -3,6 +3,7 @@ import { filterUserFacingFieldMetadataItems } from '@/object-metadata/utils/filt
 import { StyledObjectFieldTableRow } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow';
 import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow';
+import { FIELD_LEVEL_PERMISSION_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/constants/FieldLevelPermissionTableGridTemplateColumns';
 import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { type OrderBy } from '@/types/OrderBy';
@@ -12,7 +13,6 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -41,7 +41,6 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
   objectMetadataItem,
   roleId,
 }: SettingsRolePermissionsObjectLevelObjectFieldPermissionTableProps) => {
-  const theme = useTheme();
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -98,7 +97,9 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
         onChange={setSearchTerm}
       />
       <Table>
-        <StyledObjectFieldTableRow>
+        <StyledObjectFieldTableRow
+          $gridColumns={FIELD_LEVEL_PERMISSION_TABLE_GRID_TEMPLATE_COLUMNS}
+        >
           <SortableTableHeader
             fieldName={'label'}
             label={t`Name`}
@@ -113,7 +114,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
           {cannotAllowFieldReadRestrict ? (
             <TableHeader></TableHeader>
           ) : (
-            <TableHeader align="center">
+            <TableHeader>
               <TableHeaderText>{t`See`}</TableHeaderText>
             </TableHeader>
           )}
