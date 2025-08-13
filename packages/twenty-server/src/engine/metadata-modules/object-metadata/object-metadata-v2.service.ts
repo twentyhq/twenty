@@ -13,9 +13,11 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { fromCreateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
+import { fromUpdateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-update-object-input-to-flat-object-metadata.util';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -32,6 +34,31 @@ export class ObjectMetadataServiceV2 {
     private readonly workspaceMigrationRunnerV2Service: WorkspaceMigrationRunnerV2Service,
     private readonly flatObjectMetadataValidatorService: FlatObjectMetadataValidatorService,
   ) {}
+
+  async updateOne({
+    updateObjectInput,
+    workspaceId,
+  }: {
+    workspaceId: string;
+    updateObjectInput: UpdateOneObjectInput;
+  }): Promise<ObjectMetadataDTO> {
+    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
+        {
+          workspaceId,
+        },
+      );
+
+    const optimisticallyUpdatedFlatObjectMetadata =
+      fromUpdateObjectInputToFlatObjectMetadata({
+        existingFlatObjectMetadataMaps,
+        updateObjectInput,
+      });
+
+    return fromFlatObjectMetadataToObjectMetadataDto(
+      optimisticallyUpdatedFlatObjectMetadata,
+    );
+  }
 
   async deleteOne({
     deleteObjectInput,

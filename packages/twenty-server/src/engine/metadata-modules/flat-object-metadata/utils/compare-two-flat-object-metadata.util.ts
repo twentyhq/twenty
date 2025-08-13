@@ -7,7 +7,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
-const flatObjectMetadataPropertiesToCompare = [
+export const flatObjectMetadataPropertiesToCompare = [
   'description',
   'icon',
   'isActive',

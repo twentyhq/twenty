@@ -36,20 +36,20 @@ const fieldMetadataEditableProperties =
     > => property !== 'standardOverrides',
   );
 
-type FromUpdateFieldInputToFlatFieldMetadataToUpdateArgs = {
+type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   updateFieldInput: UpdateFieldInput;
 };
-export const fromUpdateFieldInputToFlatFieldMetadataToUpdate = ({
+export const fromUpdateFieldInputToFlatFieldMetadata = ({
   existingFlatObjectMetadataMaps,
   updateFieldInput: rawUpdateFieldInput,
-}: FromUpdateFieldInputToFlatFieldMetadataToUpdateArgs): FieldInputTranspilationResult<FlatFieldMetadata> => {
+}: FromUpdateFieldInputToFlatFieldMetadataArgs): FieldInputTranspilationResult<FlatFieldMetadata> => {
   const updateFieldInputInformalProperties =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawUpdateFieldInput,
       ['objectMetadataId', 'id'],
     );
-  const updatedEditableFields = extractAndSanitizeObjectStringFields(
+  const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
     rawUpdateFieldInput,
     fieldMetadataEditableProperties,
   );
@@ -99,7 +99,7 @@ export const fromUpdateFieldInputToFlatFieldMetadataToUpdate = ({
     !relatedFlatFieldMetadata.isCustom;
 
   if (isStandardField) {
-    const invalidUpdatedProperties = Object.keys(updatedEditableFields).filter(
+    const invalidUpdatedProperties = Object.keys(updatedEditableFieldProperties).filter(
       (property) =>
         fieldMetadataStandardOverridesProperties.includes(
           property as FieldMetadataStandardOverridesProperties,
@@ -118,14 +118,14 @@ export const fromUpdateFieldInputToFlatFieldMetadataToUpdate = ({
 
     const updatedStandardFlatFieldMetadata =
       fieldMetadataStandardOverridesProperties.reduce((acc, property) => {
-        const isPropertyUpdated = updatedEditableFields[property] !== undefined;
+        const isPropertyUpdated = updatedEditableFieldProperties[property] !== undefined;
 
         return {
           ...acc,
           standardOverrides: {
             ...acc.standardOverrides,
             ...(isPropertyUpdated
-              ? { [property]: updatedEditableFields[property] }
+              ? { [property]: updatedEditableFieldProperties[property] }
               : {}),
           },
         };
@@ -139,12 +139,12 @@ export const fromUpdateFieldInputToFlatFieldMetadataToUpdate = ({
 
   const updatedFlatFieldMetadata = fieldMetadataEditableProperties.reduce(
     (acc, property) => {
-      const isPropertyUpdated = updatedEditableFields[property] !== undefined;
+      const isPropertyUpdated = updatedEditableFieldProperties[property] !== undefined;
 
       return {
         ...acc,
         ...(isPropertyUpdated
-          ? { [property]: updatedEditableFields[property] }
+          ? { [property]: updatedEditableFieldProperties[property] }
           : {}),
       };
     },
