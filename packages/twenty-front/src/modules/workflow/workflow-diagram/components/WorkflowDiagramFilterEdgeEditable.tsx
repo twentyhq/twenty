@@ -28,6 +28,7 @@ import {
 import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -48,6 +49,7 @@ import {
 } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 type WorkflowDiagramFilterEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
 
@@ -94,6 +96,9 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   assertFilterEdgeDataOrThrow(data);
 
   const { t } = useLingui();
+  const isWorkflowBranchEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
+  );
 
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -271,11 +276,13 @@ export const WorkflowDiagramFilterEdgeEditable = ({
                       LeftIcon={IconPlus}
                       onClick={handleAddNodeButtonClick}
                     />
-                    <MenuItem
-                      text={t`Delete branch`}
-                      LeftIcon={IconTrash}
-                      onClick={handleDeleteBranchClick}
-                    />
+                    {isWorkflowBranchEnabled && (
+                      <MenuItem
+                        text={t`Delete branch`}
+                        LeftIcon={IconTrash}
+                        onClick={handleDeleteBranchClick}
+                      />
+                    )}
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }
