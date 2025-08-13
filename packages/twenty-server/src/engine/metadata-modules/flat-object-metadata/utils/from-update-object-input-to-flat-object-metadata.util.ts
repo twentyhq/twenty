@@ -58,6 +58,7 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
     );
   }
 
+  // TODO prastoin Should handle standard overrides
   const updatedFlatFieldMetadata = objectMetadataEditableProperties.reduce(
     (acc, property) => {
       const isPropertyUpdated =

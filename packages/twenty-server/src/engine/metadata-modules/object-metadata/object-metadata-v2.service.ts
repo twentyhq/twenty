@@ -8,6 +8,7 @@ import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
 import { getSubFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-or-throw.util';
+import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { FlatObjectMetadataValidatorService } from 'src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata.util';
@@ -68,8 +69,33 @@ export class ObjectMetadataServiceV2 {
       );
     }
 
+    try {
+      const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        objectMetadataIds: [optimisticallyUpdatedFlatObjectMetadata.id],
+      });
+      const toFlatObjectMetadataMaps =
+        replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
+          flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
+          flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
+        });
+      const workspaceMigration = this.workspaceMigrationBuilderV2.build({
+        fromFlatObjectMetadataMaps,
+        toFlatObjectMetadataMaps,
+        inferDeletionFromMissingObjectFieldIndex: false,
+        workspaceId,
+      });
+
+      await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
+    } catch {
+      throw new ObjectMetadataException(
+        'Workspace migration failed to run',
+        ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
     return fromFlatObjectMetadataToObjectMetadataDto(
-      optimisticallyUpdatedFlatObjectMetadata,
+      optimisticallyUpdatedFlatObjectMetadata, // recompute from cache,
     );
   }
 
