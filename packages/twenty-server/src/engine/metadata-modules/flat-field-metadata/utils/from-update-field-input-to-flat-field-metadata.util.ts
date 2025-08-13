@@ -99,11 +99,12 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     !relatedFlatFieldMetadata.isCustom;
 
   if (isStandardField) {
-    const invalidUpdatedProperties = Object.keys(updatedEditableFieldProperties).filter(
-      (property) =>
-        fieldMetadataStandardOverridesProperties.includes(
-          property as FieldMetadataStandardOverridesProperties,
-        ),
+    const invalidUpdatedProperties = Object.keys(
+      updatedEditableFieldProperties,
+    ).filter((property) =>
+      fieldMetadataStandardOverridesProperties.includes(
+        property as FieldMetadataStandardOverridesProperties,
+      ),
     );
 
     if (invalidUpdatedProperties.length > 0) {
@@ -118,7 +119,8 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
 
     const updatedStandardFlatFieldMetadata =
       fieldMetadataStandardOverridesProperties.reduce((acc, property) => {
-        const isPropertyUpdated = updatedEditableFieldProperties[property] !== undefined;
+        const isPropertyUpdated =
+          updatedEditableFieldProperties[property] !== undefined;
 
         return {
           ...acc,
@@ -139,7 +141,8 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
 
   const updatedFlatFieldMetadata = fieldMetadataEditableProperties.reduce(
     (acc, property) => {
-      const isPropertyUpdated = updatedEditableFieldProperties[property] !== undefined;
+      const isPropertyUpdated =
+        updatedEditableFieldProperties[property] !== undefined;
 
       return {
         ...acc,

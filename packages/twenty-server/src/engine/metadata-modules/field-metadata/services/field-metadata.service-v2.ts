@@ -213,11 +213,10 @@ export class FieldMetadataServiceV2 {
         { workspaceId },
       );
 
-    const inputTranspilationResult =
-      fromUpdateFieldInputToFlatFieldMetadata({
-        existingFlatObjectMetadataMaps,
-        updateFieldInput,
-      });
+    const inputTranspilationResult = fromUpdateFieldInputToFlatFieldMetadata({
+      existingFlatObjectMetadataMaps,
+      updateFieldInput,
+    });
 
     if (inputTranspilationResult.status === 'fail') {
       throw inputTranspilationResult.error;

@@ -2,9 +2,9 @@ import {
   isDefined,
   isLabelIdentifierFieldMetadataTypes,
 } from 'twenty-shared/utils';
-
 import { t } from '@lingui/core/macro';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -17,11 +17,13 @@ export const validateFlatObjectMetadataIdentifiers = (
 
   const { labelIdentifierFieldMetadataId, imageIdentifierFieldMetadataId } =
     flatObjectMetadata;
+
   if (isDefined(labelIdentifierFieldMetadataId)) {
     const relatedFlatFieldMetadata = flatObjectMetadata.flatFieldMetadatas.find(
       (flatFieldMetadata) =>
         flatFieldMetadata.id === labelIdentifierFieldMetadataId,
     );
+
     if (!isDefined(relatedFlatFieldMetadata)) {
       errors.push(
         new ObjectMetadataException(
@@ -52,6 +54,7 @@ export const validateFlatObjectMetadataIdentifiers = (
       (flatFieldMetadata) =>
         flatFieldMetadata.id === imageIdentifierFieldMetadataId,
     );
+
     if (!isDefined(relatedFlatFieldMetadata)) {
       errors.push(
         new ObjectMetadataException(

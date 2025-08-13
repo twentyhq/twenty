@@ -1,4 +1,4 @@
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 
 export const isFlatFieldMetadataNameSyncedWithLabel = (
@@ -7,7 +7,7 @@ export const isFlatFieldMetadataNameSyncedWithLabel = (
     'name' | 'isLabelSyncedWithName' | 'label'
   >,
 ) => {
-    const computedName = computeMetadataNameFromLabel(flatFieldMetadata.label);
+  const computedName = computeMetadataNameFromLabel(flatFieldMetadata.label);
 
-    return flatFieldMetadata.name !== computedName;
+  return flatFieldMetadata.name !== computedName;
 };

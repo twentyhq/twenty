@@ -1,24 +1,25 @@
-import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import {
-  FlatObjectMetadataPropertiesToCompare,
-  flatObjectMetadataPropertiesToCompare,
-} from 'src/engine/metadata-modules/flat-object-metadata/utils/compare-two-flat-object-metadata.util';
-import {
-  ObjectMetadataStandardOverridesProperties,
-  objectMetadataStandardOverridesProperties,
-} from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
-import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import {
-  ObjectMetadataException,
-  ObjectMetadataExceptionCode,
-} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
+
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  type FlatObjectMetadataPropertiesToCompare,
+  flatObjectMetadataPropertiesToCompare,
+} from 'src/engine/metadata-modules/flat-object-metadata/utils/compare-two-flat-object-metadata.util';
+import {
+  type ObjectMetadataStandardOverridesProperties,
+  objectMetadataStandardOverridesProperties,
+} from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
+import { type UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import {
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
+} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 
 type FromUpdateObjectInputToFlatObjectMetadataArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
@@ -69,10 +70,11 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
   if (isStandardField) {
     const invalidUpdatedProperties = Object.keys(
       updatedEditableObjectProperties,
-    ).filter((property) =>
-      !objectMetadataStandardOverridesProperties.includes(
-        property as ObjectMetadataStandardOverridesProperties,
-      ),
+    ).filter(
+      (property) =>
+        !objectMetadataStandardOverridesProperties.includes(
+          property as ObjectMetadataStandardOverridesProperties,
+        ),
     );
 
     if (invalidUpdatedProperties.length > 0) {
