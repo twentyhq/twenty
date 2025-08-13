@@ -45,7 +45,7 @@ export type SettingsMorphRelationMultiSelectProps<T> = {
   fullWidth?: boolean;
   label?: string;
   description?: string;
-  onChange?: (value: T) => void;
+  onChange?: (value: T[]) => void;
   onBlur?: () => void;
   options: MultiSelectOption<T>[];
   value: T[];
@@ -97,7 +97,7 @@ export const SettingsMorphRelationMultiSelect = ({
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const morphRelations = value;
-  debugger;
+
   const selectedOptions =
     options.filter(({ value: key }) =>
       morphRelations.find(
@@ -196,7 +196,7 @@ export const SettingsMorphRelationMultiSelect = ({
                         key={`${option.value}-${option.label}`}
                         itemId={option.label}
                         onEnter={() => {
-                          onChange?.(option.value);
+                          onChange?.([option.value]);
                           onBlur?.();
                           closeDropdown(dropdownId);
                         }}
