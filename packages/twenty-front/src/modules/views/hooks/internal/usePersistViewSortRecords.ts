@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -18,13 +17,12 @@ import { DESTROY_CORE_VIEW_SORT } from '@/views/graphql/mutations/destroyCoreVie
 import { UPDATE_CORE_VIEW_SORT } from '@/views/graphql/mutations/updateCoreViewSort';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewSort } from '@/views/types/ViewSort';
-import { convertViewSortDirectionToCoreDirection } from '@/views/utils/convertViewSortDirectionToCoreDirection';
+import { convertViewSortDirectionToCore } from '@/views/utils/convertViewSortDirectionToCore';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useApolloClient } from '@apollo/client';
 import { isNull } from '@sniptt/guards';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { CoreViewSort, FeatureFlagKey } from '~/generated/graphql';
+import { type CoreViewSort, FeatureFlagKey } from '~/generated/graphql';
 
 export const usePersistViewSortRecords = () => {
   const featureFlags = useFeatureFlagsMap();
@@ -54,10 +52,8 @@ export const usePersistViewSortRecords = () => {
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const apolloCoreClient = useApolloCoreClient();
   const apolloClient = useApolloClient();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-
   const createViewSortRecords = useCallback(
-    (viewSortsToCreate: ViewSort[], view: GraphQLView) => {
+    (viewSortsToCreate: ViewSort[], view: Pick<GraphQLView, 'id'>) => {
       if (!viewSortsToCreate.length) return;
       return Promise.all(
         viewSortsToCreate.map((viewSort) =>
@@ -181,7 +177,7 @@ export const usePersistViewSortRecords = () => {
   );
 
   const createCoreViewSortRecords = useCallback(
-    (viewSortsToCreate: ViewSort[], view: GraphQLView) => {
+    (viewSortsToCreate: ViewSort[], view: Pick<GraphQLView, 'id'>) => {
       if (!viewSortsToCreate.length) return;
       return Promise.all(
         viewSortsToCreate.map((viewSort) =>
@@ -191,8 +187,7 @@ export const usePersistViewSortRecords = () => {
               input: {
                 fieldMetadataId: viewSort.fieldMetadataId,
                 viewId: view.id,
-                direction: convertViewSortDirectionToCoreDirection(viewSort.direction),
-                workspaceId: currentWorkspace?.id,
+                direction: convertViewSortDirectionToCore(viewSort.direction),
               } satisfies Partial<CoreViewSort>,
             },
             update: (cache, { data }) => {
@@ -213,7 +208,6 @@ export const usePersistViewSortRecords = () => {
     },
     [
       apolloClient,
-      currentWorkspace?.id,
       objectMetadataItem,
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
@@ -230,7 +224,7 @@ export const usePersistViewSortRecords = () => {
             variables: {
               idToUpdate: viewSort.id,
               input: {
-                direction: convertViewSortDirectionToCoreDirection(viewSort.direction),
+                direction: convertViewSortDirectionToCore(viewSort.direction),
               } satisfies Partial<CoreViewSort>,
             },
             update: (cache, { data }) => {
@@ -255,12 +249,7 @@ export const usePersistViewSortRecords = () => {
         ),
       );
     },
-    [
-      apolloClient,
-      getRecordFromCache,
-      objectMetadataItem,
-      objectMetadataItems,
-    ],
+    [apolloClient, getRecordFromCache, objectMetadataItem, objectMetadataItems],
   );
 
   const deleteCoreViewSortRecords = useCallback(
@@ -294,12 +283,7 @@ export const usePersistViewSortRecords = () => {
         ),
       );
     },
-    [
-      apolloClient,
-      getRecordFromCache,
-      objectMetadataItem,
-      objectMetadataItems,
-    ],
+    [apolloClient, getRecordFromCache, objectMetadataItem, objectMetadataItems],
   );
 
   return {

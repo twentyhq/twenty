@@ -9,6 +9,5 @@ export const VIEW_FILTER_GROUP_FRAGMENT = gql`
     viewId
     createdAt
     updatedAt
-    workspaceId
   }
 `;
