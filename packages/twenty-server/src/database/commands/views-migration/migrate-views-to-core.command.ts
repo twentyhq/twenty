@@ -17,6 +17,7 @@ import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.enti
 import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { type ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
+import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { type ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
@@ -251,7 +252,10 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       name: workspaceView.name,
       objectMetadataId: workspaceView.objectMetadataId,
       type: workspaceView.type === 'table' ? ViewType.TABLE : ViewType.KANBAN,
-      key: workspaceView.key,
+      key:
+        workspaceView.key === 'INDEX' || workspaceView.key === ViewKey.INDEX
+          ? ViewKey.INDEX
+          : null,
       icon: workspaceView.icon,
       position: workspaceView.position,
       isCompact: workspaceView.isCompact,

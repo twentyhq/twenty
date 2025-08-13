@@ -513,6 +513,11 @@ export type CoreView = {
   position: Scalars['Float'];
   type: ViewType;
   updatedAt: Scalars['DateTime'];
+  viewFields: Array<CoreViewField>;
+  viewFilterGroups: Array<CoreViewFilterGroup>;
+  viewFilters: Array<CoreViewFilter>;
+  viewGroups: Array<CoreViewGroup>;
+  viewSorts: Array<CoreViewSort>;
   workspaceId: Scalars['UUID'];
 };
 
@@ -3461,6 +3466,12 @@ export type Workspace = {
   subdomain: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   version?: Maybe<Scalars['String']>;
+  viewFields?: Maybe<Array<CoreViewField>>;
+  viewFilterGroups?: Maybe<Array<CoreViewFilterGroup>>;
+  viewFilters?: Maybe<Array<CoreViewFilter>>;
+  viewGroups?: Maybe<Array<CoreViewGroup>>;
+  viewSorts?: Maybe<Array<CoreViewSort>>;
+  views?: Maybe<Array<CoreView>>;
   workspaceMembersCount?: Maybe<Scalars['Float']>;
   workspaceUrls: WorkspaceUrls;
 };
