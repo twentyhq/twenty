@@ -5,6 +5,10 @@ import {
   FlatObjectMetadataPropertiesToCompare,
   flatObjectMetadataPropertiesToCompare,
 } from 'src/engine/metadata-modules/flat-object-metadata/utils/compare-two-flat-object-metadata.util';
+import {
+  ObjectMetadataStandardOverridesProperties,
+  objectMetadataStandardOverridesProperties,
+} from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
   ObjectMetadataException,
@@ -58,7 +62,45 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
     );
   }
 
-  // TODO prastoin Should handle standard overrides
+  const isStandardField =
+    flatObjectMetadataToUpdate.standardId !== null &&
+    !flatObjectMetadataToUpdate.isCustom;
+
+  if (isStandardField) {
+    const invalidUpdatedProperties = Object.keys(
+      updatedEditableObjectProperties,
+    ).filter((property) =>
+      objectMetadataStandardOverridesProperties.includes(
+        property as ObjectMetadataStandardOverridesProperties,
+      ),
+    );
+
+    if (invalidUpdatedProperties.length > 0) {
+      throw new ObjectMetadataException(
+        `Cannot edit standard object metadata properties: ${invalidUpdatedProperties.join(', ')}`,
+        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+      );
+    }
+
+    const updatedStandardFlatFieldMetadata =
+      objectMetadataStandardOverridesProperties.reduce((acc, property) => {
+        const isPropertyUpdated =
+          updatedEditableObjectProperties[property] !== undefined;
+
+        return {
+          ...acc,
+          standardOverrides: {
+            ...acc.standardOverrides,
+            ...(isPropertyUpdated
+              ? { [property]: updatedEditableObjectProperties[property] }
+              : {}),
+          },
+        };
+      }, flatObjectMetadataToUpdate);
+
+    return updatedStandardFlatFieldMetadata;
+  }
+
   const updatedFlatFieldMetadata = objectMetadataEditableProperties.reduce(
     (acc, property) => {
       const isPropertyUpdated =

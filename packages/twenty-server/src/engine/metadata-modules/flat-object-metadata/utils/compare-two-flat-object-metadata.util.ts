@@ -29,8 +29,12 @@ export const compareTwoFlatObjectMetadata = ({
   from,
   to,
 }: FromTo<FlatObjectMetadata>) => {
-  const fromCompare = transformMetadataForComparison(from, {});
-  const toCompare = transformMetadataForComparison(to, {});
+  const fromCompare = transformMetadataForComparison(from, {
+    propertiesToStringify: ['standardOverrides'],
+  });
+  const toCompare = transformMetadataForComparison(to, {
+    propertiesToStringify: ['standardOverrides'],
+  });
   const objectMetadataDifference = diff(fromCompare, omit(toCompare, 'fields'));
 
   return objectMetadataDifference.flatMap<
@@ -46,12 +50,10 @@ export const compareTwoFlatObjectMetadata = ({
         }
         const property = difference.path[0];
 
-        // TODO investigate why it would be a number, in case of array I guess ?
         if (typeof property === 'number') {
           return [];
         }
 
-        // Could be handled directly from the diff we do above
         if (
           !flatObjectMetadataPropertiesToCompare.includes(
             property as FlatObjectMetadataPropertiesToCompare,

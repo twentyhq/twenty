@@ -2,8 +2,18 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IsJSON, IsOptional, IsString } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
+import { FlatObjectMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-object-metadata/utils/compare-two-flat-object-metadata.util';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
+export const objectMetadataStandardOverridesProperties = [
+  'labelSingular',
+  'labelPlural',
+  'description',
+  'icon',
+] as const satisfies FlatObjectMetadataPropertiesToCompare[];
+
+export type ObjectMetadataStandardOverridesProperties =
+  (typeof objectMetadataStandardOverridesProperties)[number];
 @ObjectType('ObjectStandardOverrides')
 export class ObjectStandardOverridesDTO {
   @IsString()
