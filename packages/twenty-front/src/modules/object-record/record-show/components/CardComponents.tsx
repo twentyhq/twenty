@@ -158,7 +158,7 @@ export const CardComponents: Record<CardType, CardComponentType> = {
       >
         <WorkflowVisualizerEffect workflowId={targetableObject.id} />
         <Suspense fallback={<LoadingSkeleton />}>
-          <WorkflowVisualizer workflowId={targetableObject.id} />
+          <WorkflowVisualizer />
         </Suspense>
       </WorkflowVisualizerComponentInstanceContext.Provider>
     );
