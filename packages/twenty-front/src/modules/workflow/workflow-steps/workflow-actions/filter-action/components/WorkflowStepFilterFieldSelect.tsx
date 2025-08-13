@@ -1,6 +1,6 @@
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useWorkflowStepContextOrThrow } from '@/workflow/states/context/WorkflowStepContext';
+import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
 import { useGetFilterFieldMetadataItem } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useGetFilterFieldMetadataItem';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
@@ -36,7 +36,7 @@ export const WorkflowStepFilterFieldSelect = ({
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
 
   const { t } = useLingui();
-  const { workflowVersionId } = useWorkflowStepContextOrThrow();
+  const workflowVersionId = useWorkflowVersionIdOrThrow();
 
   const stepId = extractRawVariableNamePart({
     rawVariableName: stepFilter.stepOutputKey,

@@ -1,5 +1,4 @@
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
-import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
@@ -62,14 +61,7 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
         instanceId: workflowVisualizerComponentInstanceId,
       }}
     >
-      <WorkflowStepContextProvider
-        value={{
-          workflowVersionId: workflowVersion.id,
-          workflowRunId: '123',
-        }}
-      >
-        {ready && <Story />}
-      </WorkflowStepContextProvider>
+      {ready && <Story />}
     </WorkflowVisualizerComponentInstanceContext.Provider>
   );
 };
