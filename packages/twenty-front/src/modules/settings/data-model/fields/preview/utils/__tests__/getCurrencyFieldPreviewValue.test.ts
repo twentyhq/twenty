@@ -1,4 +1,4 @@
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { CurrencyCode } from '@/object-record/record-field/ui/types/CurrencyCode';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';

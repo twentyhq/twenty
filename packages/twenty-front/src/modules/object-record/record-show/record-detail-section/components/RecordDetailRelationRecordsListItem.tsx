@@ -16,12 +16,12 @@ import {
   FieldContext,
   type RecordUpdateHook,
   type RecordUpdateHookParams,
-} from '@/object-record/record-field/contexts/FieldContext';
-import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
-import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordReadOnly';
-import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { type FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+} from '@/object-record/record-field/ui/contexts/FieldContext';
+import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import { useIsRecordReadOnly } from '@/object-record/record-field/ui/hooks/read-only/useIsRecordReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isRecordFieldReadOnly';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
@@ -43,10 +43,10 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { createPortal } from 'react-dom';
 import {
   IconChevronDown,
-  type IconComponent,
   IconDotsVertical,
   IconTrash,
   IconUnlink,
+  type IconComponent,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';

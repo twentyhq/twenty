@@ -4,8 +4,8 @@ import {
   type WorkflowDiagramEdgeType,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
-import { isDefined } from 'twenty-shared/utils';
 import { transformFilterNodesAsEdges } from '@/workflow/workflow-diagram/utils/transformFilterNodesAsEdges';
+import { isDefined } from 'twenty-shared/utils';
 
 const EMPTY_DIAGRAM: WorkflowDiagram = {
   nodes: [],
@@ -57,5 +57,6 @@ export const getWorkflowVersionDiagram = ({
     nodes: diagram.nodes,
     edges: diagram.edges,
     defaultFilterEdgeType: isEditable ? 'filter--editable' : 'filter--readonly',
+    isWorkflowBranchEnabled: isWorkflowBranchEnabled === true,
   });
 };

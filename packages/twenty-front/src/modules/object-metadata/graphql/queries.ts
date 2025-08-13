@@ -6,7 +6,6 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
       edges {
         node {
           id
-          dataSourceId
           nameSingular
           namePlural
           labelSingular

@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { CurrencyCode } from '@/object-record/record-field/ui/types/CurrencyCode';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';

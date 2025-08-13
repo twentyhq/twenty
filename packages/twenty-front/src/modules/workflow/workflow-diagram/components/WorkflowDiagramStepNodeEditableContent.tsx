@@ -66,6 +66,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
       id={id}
       name={data.name}
       variant={variant}
+      selected={selected}
       nodeType={data.nodeType}
       Icon={<WorkflowDiagramStepNodeIcon data={data} />}
       RightFloatingElement={

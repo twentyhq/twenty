@@ -9,7 +9,7 @@ import { RecordBoardCardMultiDragPreview } from '@/object-record/record-board/re
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
-import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordReadOnly';
+import { useIsRecordReadOnly } from '@/object-record/record-field/ui/hooks/read-only/useIsRecordReadOnly';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 
 const StyledDraggableContainer = styled.div`

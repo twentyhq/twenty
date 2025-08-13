@@ -11,6 +11,7 @@ import { In, Repository } from 'typeorm';
 import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
+import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -22,6 +23,7 @@ import { type FailedFlatFieldMetadataValidationExceptions } from 'src/engine/met
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util';
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
+import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { fromUpdateFieldInputToFlatFieldMetadataToUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata-to-update.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
@@ -75,7 +77,7 @@ export class FieldMetadataServiceV2 {
   }: {
     deleteOneFieldInput: DeleteOneFieldInput;
     workspaceId: string;
-  }): Promise<void> {
+  }): Promise<FieldMetadataDTO> {
     const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
         {
@@ -143,8 +145,9 @@ export class FieldMetadataServiceV2 {
       );
     }
 
-    // TODO to be discussed with coco regarding storing dates in flat in order to build dtos
-    // return flatFieldMetadatasToDelete[0];
+    return fromFlatFieldMetadataToFieldMetadataDto(
+      flatFieldMetadatasToDelete[0],
+    );
   }
 
   private computeOtherFlatObjectMetadataMapsToValidate({

@@ -68,6 +68,9 @@ export const WorkflowRunVisualizerEffect = ({
   const isWorkflowFilteringEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
   );
+  const isWorkflowBranchEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
+  );
 
   useEffect(() => {
     setWorkflowRunId(workflowRunId);
@@ -120,6 +123,7 @@ export const WorkflowRunVisualizerEffect = ({
             steps: workflowRunState.flow.steps,
             stepInfos: workflowRunState.stepInfos,
             isWorkflowFilteringEnabled,
+            isWorkflowBranchEnabled,
           });
 
         if (workflowDiagramStatus !== 'done') {
@@ -190,6 +194,7 @@ export const WorkflowRunVisualizerEffect = ({
     [
       flowState,
       getIcon,
+      isWorkflowBranchEnabled,
       isWorkflowFilteringEnabled,
       openWorkflowRunViewStepInCommandMenu,
       workflowDiagramState,

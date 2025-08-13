@@ -3,9 +3,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PlaceAutocompleteSelect } from '@/geo-map/components/PlaceAutocompleteSelect';
 import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/SelectAutocompleteListDropDownId';
-import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { type FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
-import { type FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
+import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
+import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
+import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { TEXT_INPUT_CLICK_OUTSIDE_ID } from '@/ui/input/components/constants/TextInputClickOutsideId';
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
