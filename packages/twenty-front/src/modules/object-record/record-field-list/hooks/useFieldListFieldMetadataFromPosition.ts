@@ -33,17 +33,13 @@ export const useFieldListFieldMetadataFromPosition = ({
     ...boxedRelationFieldMetadataItems,
   ];
 
-  let hoveredFieldMetadataItem;
+  const hoveredFieldMetadataItem = isDefined(hoverPosition)
+    ? fieldMetadataItems.at(hoverPosition)
+    : undefined;
 
-  if (isDefined(hoverPosition)) {
-    hoveredFieldMetadataItem = fieldMetadataItems.at(hoverPosition);
-  }
-
-  let editedFieldMetadataItem;
-
-  if (isDefined(editModePosition)) {
-    editedFieldMetadataItem = fieldMetadataItems.at(editModePosition);
-  }
+  const editedFieldMetadataItem = isDefined(editModePosition)
+    ? fieldMetadataItems.at(editModePosition)
+    : undefined;
 
   return {
     hoveredFieldMetadataItem,
