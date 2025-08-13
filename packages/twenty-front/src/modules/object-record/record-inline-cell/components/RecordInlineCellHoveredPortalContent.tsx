@@ -15,8 +15,6 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
   cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
   display: flex;
 
-  height: 32px;
-
   outline: ${({ theme, isReadOnly, isRowActive }) =>
     isRowActive
       ? 'none'
