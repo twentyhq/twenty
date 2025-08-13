@@ -63,7 +63,7 @@ export const FieldsCard = ({
     'fields-card',
   );
 
-  const handleMouseMove = (index: number) => {
+  const handleMouseEnter = (index: number) => {
     setRecordFieldListHoverPosition(index);
   };
 
@@ -167,8 +167,13 @@ export const FieldsCard = ({
                     fieldType: fieldMetadataItem.type,
                     isCustom: fieldMetadataItem.isCustom ?? false,
                   }),
-                  onMouseMove: () => handleMouseMove(index),
-                  anchorId: `record-field-list-cell-${index}`,
+                  onMouseEnter: () =>
+                    handleMouseEnter(
+                      index + (inlineRelationFieldMetadataItems?.length ?? 0),
+                    ),
+                  anchorId: `record-field-list-cell-${
+                    index + (inlineRelationFieldMetadataItems?.length ?? 0)
+                  }`,
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider
@@ -228,7 +233,10 @@ export const FieldsCard = ({
           />
         </FieldContext.Provider>
       ))}
-      <RecordFieldListCellHoveredPortal />
+
+      <RecordFieldListCellHoveredPortal
+        objectMetadataItem={objectMetadataItem}
+      />
     </RecordFieldListComponentInstanceContext.Provider>
   );
 };

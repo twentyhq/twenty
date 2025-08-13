@@ -99,7 +99,7 @@ export const RecordInlineCellContainer = () => {
 
   const { isInlineCellInEditMode, openInlineCell } = useInlineCell();
 
-  const { recordId, fieldDefinition, onMouseMove, anchorId } =
+  const { recordId, fieldDefinition, onMouseEnter, onMouseLeave, anchorId } =
     useContext(FieldContext);
 
   const shouldContainerBeClickable =
@@ -115,14 +115,14 @@ export const RecordInlineCellContainer = () => {
     if (!readonly) {
       setIsFocused(true);
     }
-    onMouseMove?.();
+    onMouseEnter?.();
   };
 
   const handleContainerMouseLeave = () => {
     if (!readonly) {
       setIsFocused(false);
     }
-    onMouseMove?.();
+    onMouseLeave?.();
   };
 
   const theme = useTheme();

@@ -1,15 +1,19 @@
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordFieldListCellAnchoredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellAnchoredPortal';
 import { RecordFieldListCellHoveredPortalContent } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortalContent';
 import { useFieldListFieldMetadataFromPosition } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataFromPosition';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
-export const RecordFieldListCellHoveredPortal = () => {
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+type RecordFieldListCellHoveredPortalProps = {
+  objectMetadataItem: ObjectMetadataItem;
+};
 
+export const RecordFieldListCellHoveredPortal = ({
+  objectMetadataItem,
+}: RecordFieldListCellHoveredPortalProps) => {
   const hoverPosition = useRecoilComponentValue(
     recordFieldListHoverPositionComponentState,
   );
@@ -27,7 +31,9 @@ export const RecordFieldListCellHoveredPortal = () => {
       position={hoverPosition}
       fieldMetadataItem={hoveredFieldMetadataItem}
     >
-      <RecordFieldListCellHoveredPortalContent />
+      <RecordFieldListCellHoveredPortalContent
+        objectMetadataItem={objectMetadataItem}
+      />
     </RecordFieldListCellAnchoredPortal>
   );
 };

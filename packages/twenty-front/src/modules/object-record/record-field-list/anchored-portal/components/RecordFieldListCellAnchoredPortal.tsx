@@ -10,7 +10,9 @@ import {
   type RecordUpdateHookParams,
 } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useIsRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/useIsRecordFieldReadOnly';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCellHoveredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellHoveredPortal';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -44,6 +46,8 @@ export const RecordFieldListCellAnchoredPortal = ({
   if (targetedRecordsRuleFromContextStore.mode === 'selection') {
     recordId = targetedRecordsRuleFromContextStore.selectedRecordIds[0];
   }
+
+  const INPUT_ID_PREFIX = 'fields-card';
 
   const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
     fieldMetadataId: fieldMetadataItem.id,
@@ -91,11 +95,21 @@ export const RecordFieldListCellAnchoredPortal = ({
     >
       <>
         {createPortal(
-          <RecordFieldListCellAnchorPortalContext>
-            <RecordInlineCellHoveredPortal>
-              {children}
-            </RecordInlineCellHoveredPortal>
-          </RecordFieldListCellAnchorPortalContext>,
+          <RecordFieldComponentInstanceContext.Provider
+            value={{
+              instanceId: getRecordFieldInputInstanceId({
+                recordId,
+                fieldName: fieldMetadataItem.name,
+                prefix: INPUT_ID_PREFIX,
+              }),
+            }}
+          >
+            <RecordFieldListCellAnchorPortalContext>
+              <RecordInlineCellHoveredPortal>
+                {children}
+              </RecordInlineCellHoveredPortal>
+            </RecordFieldListCellAnchorPortalContext>
+          </RecordFieldComponentInstanceContext.Provider>,
           anchorElement,
         )}
       </>

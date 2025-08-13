@@ -38,7 +38,8 @@ export type GenericFieldContextType = {
   onRecordChipClick?: (event: MouseEvent) => void;
   onOpenEditMode?: () => void;
   onCloseEditMode?: () => void;
-  onMouseMove?: () => void;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
   triggerEvent?: TriggerEventType;
   isForbidden?: boolean;
   anchorId?: string;

@@ -1,30 +1,66 @@
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { BORDER_COMMON } from 'twenty-ui/theme';
 
 const StyledRecordTableCellHoveredPortalContent = styled.div<{
-  isReadOnly: boolean;
-  isRowActive: boolean;
+  readonly?: boolean;
+  isCentered?: boolean;
 }>`
   align-items: center;
-  background: ${({ theme }) => theme.background.transparent.secondary};
-  background-color: ${({ theme, isRowActive }) =>
-    isRowActive ? theme.accent.quaternary : theme.background.primary};
-  border-radius: ${({ isReadOnly }) =>
-    !isReadOnly ? BORDER_COMMON.radius.sm : 'none'};
-  box-sizing: border-box;
-  cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
   display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
 
-  outline: ${({ theme, isReadOnly, isRowActive }) =>
-    isRowActive
-      ? 'none'
-      : isReadOnly
-        ? `1px solid ${theme.border.color.medium}`
-        : `1px solid ${theme.font.color.extraLight}`};
+  ${({ isCentered }) =>
+    isCentered === true &&
+    `
+      justify-content: center;
+    `};
 
-  position: relative;
-  user-select: none;
+  ${({ readonly }) =>
+    !readonly &&
+    css`
+      cursor: pointer;
+    `};
 `;
 
-export const RecordInlineCellHoveredPortalContent =
-  StyledRecordTableCellHoveredPortalContent;
+const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  height: fit-content;
+  gap: ${({ theme }) => theme.spacing(1)};
+  user-select: none;
+  align-items: center;
+  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
+`;
+
+type RecordInlineCellHoveredPortalContentProps = {
+  children: React.ReactNode;
+  readonly: boolean;
+  isCentered?: boolean;
+  onClick?: () => void;
+  onMouseLeave?: () => void;
+};
+
+export const RecordInlineCellHoveredPortalContent = ({
+  children,
+  isCentered,
+  readonly,
+  onClick,
+  onMouseLeave,
+}: RecordInlineCellHoveredPortalContentProps) => {
+  return (
+    <StyledInlineCellBaseContainer
+      readonly={readonly}
+      onClick={onClick}
+      onMouseLeave={onMouseLeave}
+    >
+      <StyledRecordTableCellHoveredPortalContent
+        isCentered={isCentered}
+        readonly={readonly}
+      >
+        {children}
+      </StyledRecordTableCellHoveredPortalContent>
+    </StyledInlineCellBaseContainer>
+  );
+};
