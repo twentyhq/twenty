@@ -113,9 +113,7 @@ export class ObjectMetadataServiceV2 {
       );
     }
 
-    return fromFlatObjectMetadataToObjectMetadataDto(
-      updatedFlatObjectMetadata,
-    );
+    return fromFlatObjectMetadataToObjectMetadataDto(updatedFlatObjectMetadata);
   }
 
   async deleteOne({
