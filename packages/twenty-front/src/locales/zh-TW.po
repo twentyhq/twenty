@@ -68,7 +68,7 @@ msgstr "· {objectFilterDropdownSearchInput}"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
-#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "[empty string]"
 msgstr "[空字串]"
 
@@ -1231,7 +1231,7 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
-#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Collapse"
 msgstr "收起"
 
@@ -2258,7 +2258,7 @@ msgid "Email cannot be empty"
 msgstr "電子郵件不能為空"
 
 #. js-lingui-id: UZQ5eW
-#: src/modules/object-record/record-field/meta-types/input/components/EmailsFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
 msgid "Email copied to clipboard"
 msgstr ""
 
@@ -2337,7 +2337,7 @@ msgstr "空"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
-#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Array"
 msgstr "空陣列"
 
@@ -2345,7 +2345,7 @@ msgstr "空陣列"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
-#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Empty Object"
 msgstr "空對象"
 
@@ -2441,7 +2441,7 @@ msgid "Environment variable"
 msgstr "環境變數"
 
 #. js-lingui-id: XOEl9R
-#: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Error copying to clipboard"
 msgstr "複製到剪貼板時出錯"
 
@@ -2561,7 +2561,7 @@ msgstr "退出設置"
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepInputDetail.tsx
 #: src/modules/settings/admin-panel/health-status/components/JsonDataIndicatorHealthStatus.tsx
-#: src/modules/object-record/record-field/meta-types/input/components/RawJsonFieldInput.tsx
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RawJsonFieldInput.tsx
 msgid "Expand"
 msgstr "展開"
 
@@ -4268,12 +4268,12 @@ msgid "Not empty"
 msgstr "非空"
 
 #. js-lingui-id: pAtylB
-#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/VariableChip.tsx
 msgid "Not Found"
 msgstr "未找到"
 
 #. js-lingui-id: 51G4/+
-#: src/modules/object-record/record-field/meta-types/display/components/ForbiddenFieldDisplay.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay.tsx
 #: src/modules/activities/calendar/components/CalendarEventNotSharedContent.tsx
 msgid "Not shared"
 msgstr "未分享"
@@ -4530,7 +4530,7 @@ msgid "Permissions · {objectLabelSingular}"
 msgstr "權限 · {objectLabelSingular}"
 
 #. js-lingui-id: qlqT9z
-#: src/modules/object-record/record-field/meta-types/display/components/PhonesFieldDisplay.tsx
+#: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
 msgid "Phone number copied to clipboard"
 msgstr "電話號碼已複製到剪貼板"
 
@@ -5820,7 +5820,7 @@ msgid "Text"
 msgstr "文本"
 
 #. js-lingui-id: lyaiTc
-#: src/modules/object-record/record-field/components/LightCopyIconButton.tsx
+#: src/modules/object-record/record-field/ui/components/LightCopyIconButton.tsx
 msgid "Text copied to clipboard"
 msgstr "文本已複製到剪貼板"
 
@@ -6310,7 +6310,7 @@ msgid "Variable deleted successfully."
 msgstr "變量成功刪除。"
 
 #. js-lingui-id: dY/1ir
-#: src/modules/object-record/record-field/form-types/components/VariableChip.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/VariableChip.tsx
 msgid "Variable not found"
 msgstr "變量未找到"
 
