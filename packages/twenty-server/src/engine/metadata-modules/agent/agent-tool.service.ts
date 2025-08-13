@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ToolSet } from 'ai';
@@ -26,7 +27,7 @@ export class AgentToolService {
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly toolService: ToolService,
     private readonly toolAdapterService: ToolAdapterService,
-    private readonly workflowToolService: WorkflowToolService,
+    private readonly moduleRef: ModuleRef,
   ) {}
 
   async generateToolsForAgent(
@@ -146,7 +147,11 @@ export class AgentToolService {
     workspaceId: string;
   }): ToolSet {
     if (agentStandardId === WORKFLOW_CREATION_AGENT.standardId) {
-      return this.workflowToolService.generateWorkflowTools(workspaceId);
+      const workflowToolService = this.moduleRef.get(WorkflowToolService);
+
+      if (workflowToolService) {
+        return workflowToolService.generateWorkflowTools(workspaceId);
+      }
     }
 
     return {};

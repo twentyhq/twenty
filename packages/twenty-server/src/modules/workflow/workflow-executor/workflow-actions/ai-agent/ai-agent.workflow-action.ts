@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { resolveInput } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -25,7 +26,7 @@ import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.gu
 @Injectable()
 export class AiAgentWorkflowAction implements WorkflowAction {
   constructor(
-    private readonly agentExecutionService: AgentExecutionService,
+    private readonly moduleRef: ModuleRef,
     private readonly aiBillingService: AIBillingService,
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
@@ -74,7 +75,12 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         );
       }
 
-      const { result, usage } = await this.agentExecutionService.executeAgent({
+      // Get AgentExecutionService dynamically to avoid circular dependency
+      const agentExecutionService = this.moduleRef.get(AgentExecutionService, {
+        strict: false,
+      });
+
+      const { result, usage } = await agentExecutionService.executeAgent({
         agent,
         context,
         schema: step.settings.outputSchema,
