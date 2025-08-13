@@ -8,6 +8,5 @@ export const VIEW_SORT_FRAGMENT = gql`
     viewId
     createdAt
     updatedAt
-    workspaceId
   }
 `;

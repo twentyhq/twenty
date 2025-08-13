@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
@@ -12,7 +11,6 @@ import { UPDATE_CORE_VIEW_GROUP } from '@/views/graphql/mutations/updateCoreView
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useApolloClient } from '@apollo/client';
-import { useRecoilValue } from 'recoil';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 type CreateViewGroupRecordsArgs = {
@@ -26,7 +24,6 @@ export const usePersistViewGroupRecords = () => {
 
   const apolloCoreClient = useApolloCoreClient();
   const apolloClient = useApolloClient();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { createManyRecords } = useCreateManyRecords({
     objectNameSingular: CoreObjectNameSingular.ViewGroup,
@@ -125,14 +122,13 @@ export const usePersistViewGroupRecords = () => {
                 viewId,
                 isVisible: viewGroup.isVisible,
                 position: viewGroup.position,
-                workspaceId: currentWorkspace?.id,
               },
             },
           }),
         ),
       );
     },
-    [apolloClient, currentWorkspace?.id],
+    [apolloClient],
   );
 
   const updateCoreViewGroupRecords = useCallback(

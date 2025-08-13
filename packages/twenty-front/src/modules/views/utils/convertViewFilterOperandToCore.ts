@@ -1,13 +1,11 @@
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { ViewFilterOperand as CoreViewFilterOperand } from '~/generated-metadata/graphql';
 
-
 const operandMapping: Record<ViewFilterOperand, CoreViewFilterOperand> = {
   [ViewFilterOperand.Is]: CoreViewFilterOperand.IS,
   [ViewFilterOperand.IsNotNull]: CoreViewFilterOperand.IS_NOT_NULL,
   [ViewFilterOperand.IsNot]: CoreViewFilterOperand.IS_NOT,
-  [ViewFilterOperand.LessThanOrEqual]:
-    CoreViewFilterOperand.LESS_THAN_OR_EQUAL,
+  [ViewFilterOperand.LessThanOrEqual]: CoreViewFilterOperand.LESS_THAN_OR_EQUAL,
   [ViewFilterOperand.GreaterThanOrEqual]:
     CoreViewFilterOperand.GREATER_THAN_OR_EQUAL,
   [ViewFilterOperand.IsBefore]: CoreViewFilterOperand.IS_BEFORE,
@@ -23,7 +21,7 @@ const operandMapping: Record<ViewFilterOperand, CoreViewFilterOperand> = {
   [ViewFilterOperand.VectorSearch]: CoreViewFilterOperand.VECTOR_SEARCH,
 };
 
-export const convertViewFilterOperandToCoreOperand = (
+export const convertViewFilterOperandToCore = (
   sharedOperand: ViewFilterOperand,
 ): CoreViewFilterOperand => {
   return operandMapping[sharedOperand];

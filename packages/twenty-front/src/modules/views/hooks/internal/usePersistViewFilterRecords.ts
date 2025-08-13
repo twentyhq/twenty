@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -17,14 +16,13 @@ import { CREATE_CORE_VIEW_FILTER } from '@/views/graphql/mutations/createCoreVie
 import { DESTROY_CORE_VIEW_FILTER } from '@/views/graphql/mutations/destroyCoreViewFilter';
 import { UPDATE_CORE_VIEW_FILTER } from '@/views/graphql/mutations/updateCoreViewFilter';
 import { type GraphQLView } from '@/views/types/GraphQLView';
-import { ViewFilter } from '@/views/types/ViewFilter';
-import { convertViewFilterOperandToCoreOperand } from '@/views/utils/convertViewFilterOperandToCoreOperand';
+import { type ViewFilter } from '@/views/types/ViewFilter';
+import { convertViewFilterOperandToCore } from '@/views/utils/convertViewFilterOperandToCore';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useApolloClient } from '@apollo/client';
 import { isNull } from '@sniptt/guards';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { CoreViewFilter, FeatureFlagKey } from '~/generated/graphql';
+import { type CoreViewFilter, FeatureFlagKey } from '~/generated/graphql';
 
 export const usePersistViewFilterRecords = () => {
   const featureFlags = useFeatureFlagsMap();
@@ -54,10 +52,8 @@ export const usePersistViewFilterRecords = () => {
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const apolloCoreClient = useApolloCoreClient();
   const apolloClient = useApolloClient();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-
   const createViewFilterRecords = useCallback(
-    (viewFiltersToCreate: ViewFilter[], view: GraphQLView) => {
+    (viewFiltersToCreate: ViewFilter[], view: Pick<GraphQLView, 'id'>) => {
       if (viewFiltersToCreate.length === 0) return;
 
       return Promise.all(
@@ -192,7 +188,7 @@ export const usePersistViewFilterRecords = () => {
   );
 
   const createCoreViewFilterRecords = useCallback(
-    (viewFiltersToCreate: ViewFilter[], view: GraphQLView) => {
+    (viewFiltersToCreate: ViewFilter[], view: Pick<GraphQLView, 'id'>) => {
       if (viewFiltersToCreate.length === 0) return;
 
       return Promise.all(
@@ -204,11 +200,10 @@ export const usePersistViewFilterRecords = () => {
                 fieldMetadataId: viewFilter.fieldMetadataId,
                 viewId: view.id,
                 value: viewFilter.value,
-                operand: convertViewFilterOperandToCoreOperand(viewFilter.operand),
+                operand: convertViewFilterOperandToCore(viewFilter.operand),
                 viewFilterGroupId: viewFilter.viewFilterGroupId,
                 positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
                 subFieldName: viewFilter.subFieldName ?? null,
-                workspaceId: currentWorkspace?.id,
               } satisfies Partial<CoreViewFilter>,
             },
             update: (cache, { data }) => {
@@ -229,7 +224,6 @@ export const usePersistViewFilterRecords = () => {
     },
     [
       apolloClient,
-      currentWorkspace?.id,
       objectMetadataItem,
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
@@ -247,7 +241,7 @@ export const usePersistViewFilterRecords = () => {
               idToUpdate: viewFilter.id,
               input: {
                 value: viewFilter.value,
-                operand: convertViewFilterOperandToCoreOperand(viewFilter.operand),
+                operand: convertViewFilterOperandToCore(viewFilter.operand),
                 positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
                 viewFilterGroupId: viewFilter.viewFilterGroupId,
                 subFieldName: viewFilter.subFieldName ?? null,
@@ -275,12 +269,7 @@ export const usePersistViewFilterRecords = () => {
         ),
       );
     },
-    [
-      apolloClient,
-      getRecordFromCache,
-      objectMetadataItem,
-      objectMetadataItems,
-    ],
+    [apolloClient, getRecordFromCache, objectMetadataItem, objectMetadataItems],
   );
 
   const deleteCoreViewFilterRecords = useCallback(
@@ -314,12 +303,7 @@ export const usePersistViewFilterRecords = () => {
         ),
       );
     },
-    [
-      apolloClient,
-      getRecordFromCache,
-      objectMetadataItem,
-      objectMetadataItems,
-    ],
+    [apolloClient, getRecordFromCache, objectMetadataItem, objectMetadataItems],
   );
 
   return {

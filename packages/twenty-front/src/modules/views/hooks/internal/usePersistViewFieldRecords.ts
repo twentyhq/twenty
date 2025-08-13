@@ -3,7 +3,6 @@ import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -19,9 +18,8 @@ import { type ViewField } from '@/views/types/ViewField';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useApolloClient } from '@apollo/client';
 import { isNull } from '@sniptt/guards';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { CoreViewField, FeatureFlagKey } from '~/generated/graphql';
+import { FeatureFlagKey, type CoreViewField } from '~/generated/graphql';
 
 export const usePersistViewFieldRecords = () => {
   const featureFlags = useFeatureFlagsMap();
@@ -47,10 +45,9 @@ export const usePersistViewFieldRecords = () => {
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const apolloCoreClient = useApolloCoreClient();
   const apolloClient = useApolloClient();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const createViewFieldRecords = useCallback(
-    (viewFieldsToCreate: ViewField[], view: GraphQLView) => {
+    (viewFieldsToCreate: ViewField[], view: Pick<GraphQLView, 'id'>) => {
       if (!viewFieldsToCreate.length) return;
       return Promise.all(
         viewFieldsToCreate.map((viewField) =>
@@ -140,7 +137,7 @@ export const usePersistViewFieldRecords = () => {
   );
 
   const createCoreViewFieldRecords = useCallback(
-    (viewFieldsToCreate: ViewField[], view: GraphQLView) => {
+    (viewFieldsToCreate: ViewField[], view: Pick<GraphQLView, 'id'>) => {
       if (!viewFieldsToCreate.length) return;
       return Promise.all(
         viewFieldsToCreate.map((viewField) =>
@@ -153,7 +150,6 @@ export const usePersistViewFieldRecords = () => {
                 isVisible: viewField.isVisible,
                 position: viewField.position,
                 size: viewField.size,
-                workspaceId: currentWorkspace?.id,
               } satisfies Partial<CoreViewField>,
             },
             update: (cache, { data }) => {
@@ -174,7 +170,6 @@ export const usePersistViewFieldRecords = () => {
     },
     [
       apolloClient,
-      currentWorkspace?.id,
       objectMetadataItem,
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
@@ -220,13 +215,7 @@ export const usePersistViewFieldRecords = () => {
         ),
       );
     },
-    [
-      apolloCoreClient,
-      getRecordFromCache,
-      objectMetadataItem,
-      objectMetadataItems,
-      updateOneRecordMutation,
-    ],
+    [apolloClient, getRecordFromCache, objectMetadataItem, objectMetadataItems],
   );
 
   return {

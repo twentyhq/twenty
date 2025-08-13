@@ -11,6 +11,5 @@ export const VIEW_FIELD_FRAGMENT = gql`
     aggregateOperation
     createdAt
     updatedAt
-    workspaceId
   }
 `;

@@ -15,7 +15,6 @@ export const VIEW_FRAGMENT = gql`
     kanbanAggregateOperationFieldMetadataId
     createdAt
     updatedAt
-    workspaceId
     anyFieldFilterValue
   }
 `;
