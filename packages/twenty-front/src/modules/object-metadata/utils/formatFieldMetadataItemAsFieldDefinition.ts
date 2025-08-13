@@ -1,10 +1,10 @@
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { type FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 
+import { getFieldButtonIcon } from '@/object-record/record-field/ui/utils/getFieldButtonIcon';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '../types/FieldMetadataItem';
-import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 
 export type FieldMetadataItemAsFieldDefinitionProps = {
   field: FieldMetadataItem;

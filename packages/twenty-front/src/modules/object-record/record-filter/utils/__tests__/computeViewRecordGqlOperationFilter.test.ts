@@ -1,4 +1,4 @@
-import { type FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { type RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';

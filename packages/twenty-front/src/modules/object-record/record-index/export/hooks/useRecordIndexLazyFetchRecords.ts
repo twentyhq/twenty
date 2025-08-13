@@ -1,4 +1,4 @@
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 

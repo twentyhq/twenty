@@ -1,5 +1,5 @@
 import { type RecordBoardFieldDefinition } from '@/object-record/record-board/types/RecordBoardFieldDefinition';
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 

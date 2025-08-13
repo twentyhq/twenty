@@ -185,6 +185,11 @@ msgstr "Acțiune necesară pentru a preveni ștergerea spațiului de lucru"
 msgid "Action Needed to Reset Password"
 msgstr "Acțiune necesară pentru a reseta parola"
 
+#. js-lingui-id: 0N5kF6
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Active objects cannot be deleted"
+msgstr ""
+
 #. js-lingui-id: Du6bPw
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
@@ -1842,6 +1847,11 @@ msgstr "Numărul de angajați în companie"
 msgid "Object already exists"
 msgstr "Obiectul există deja"
 
+#. js-lingui-id: O77HIc
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Object does not exist"
+msgstr ""
+
 #. js-lingui-id: wLX74t
 #: src/engine/metadata-modules/flat-object-metadata/validators/validate-flat-object-metadata-label.validator.ts
 msgid "Object label is too long"
@@ -2151,6 +2161,7 @@ msgstr "Relații"
 
 #. js-lingui-id: yVxtzR
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Remote objects are not supported yet"
 msgstr ""
 
@@ -2207,6 +2218,11 @@ msgstr "Dimensiune"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
 msgstr "Etapă"
+
+#. js-lingui-id: Ptv+nG
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Standard objects cannot be deleted"
+msgstr ""
 
 #. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts

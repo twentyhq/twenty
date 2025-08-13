@@ -4,9 +4,9 @@ import { type WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { useEffect, useState } from 'react';
 
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
-import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
-import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
+import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';

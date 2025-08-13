@@ -4,7 +4,7 @@ import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';

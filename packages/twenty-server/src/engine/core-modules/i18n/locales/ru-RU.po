@@ -185,6 +185,11 @@ msgstr "Необходимо действие для предотвращени�
 msgid "Action Needed to Reset Password"
 msgstr "Необходимо действие для сброса пароля"
 
+#. js-lingui-id: 0N5kF6
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Active objects cannot be deleted"
+msgstr ""
+
 #. js-lingui-id: Du6bPw
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
@@ -1842,6 +1847,11 @@ msgstr "Количество сотрудников в компании"
 msgid "Object already exists"
 msgstr "Объект уже существует"
 
+#. js-lingui-id: O77HIc
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Object does not exist"
+msgstr ""
+
 #. js-lingui-id: wLX74t
 #: src/engine/metadata-modules/flat-object-metadata/validators/validate-flat-object-metadata-label.validator.ts
 msgid "Object label is too long"
@@ -2151,6 +2161,7 @@ msgstr "\\"
 
 #. js-lingui-id: yVxtzR
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Remote objects are not supported yet"
 msgstr ""
 
@@ -2207,6 +2218,11 @@ msgstr "\\"
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Stage"
 msgstr "\\"
+
+#. js-lingui-id: Ptv+nG
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Standard objects cannot be deleted"
+msgstr ""
 
 #. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts

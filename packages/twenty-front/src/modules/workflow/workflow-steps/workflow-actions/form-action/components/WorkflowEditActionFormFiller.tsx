@@ -1,8 +1,8 @@
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
-import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
-import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { useWorkflowStepContextOrThrow } from '@/workflow/states/context/WorkflowStepContext';
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';

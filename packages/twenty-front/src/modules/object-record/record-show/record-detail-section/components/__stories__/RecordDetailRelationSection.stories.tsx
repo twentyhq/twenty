@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RecordStoreDecorator } from '~/testing/decorators/RecordStoreDecorator';

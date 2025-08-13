@@ -2054,7 +2054,6 @@ export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs 
 export type Object = {
   __typename?: 'Object';
   createdAt: Scalars['DateTime'];
-  dataSourceId: Scalars['UUID'];
   description?: Maybe<Scalars['String']>;
   duplicateCriteria?: Maybe<Array<Array<Scalars['String']>>>;
   fields: ObjectFieldsConnection;

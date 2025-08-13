@@ -1,5 +1,5 @@
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
-import { type FieldDateMetadataSettings } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldDateMetadataSettings } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 import { type ThemeColor } from 'twenty-ui/theme';
 import { type Field } from '~/generated-metadata/graphql';
