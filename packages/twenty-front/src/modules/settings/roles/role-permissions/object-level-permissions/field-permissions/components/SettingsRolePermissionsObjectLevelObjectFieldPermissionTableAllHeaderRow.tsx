@@ -116,7 +116,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
 
     const emptyCell = <div key="empty-cell"></div>;
 
-    let readAndUpdateCellHeaders: React.ReactNode[] = [];
+    const readAndUpdateCellHeaders: React.ReactNode[] = [];
 
     if (cannotAllowFieldReadRestrict) readAndUpdateCellHeaders.push(emptyCell);
     else if (cannotAllowFieldUpdateRestrict)

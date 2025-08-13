@@ -166,7 +166,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
 
     const emptyCell = <TableCell key="empty-cell" />;
 
-    let readAndUpdateCells: React.ReactNode[] = [];
+    const readAndUpdateCells: React.ReactNode[] = [];
 
     if (objectReadIsRestricted) readAndUpdateCells.push(emptyCell);
     else if (objectUpdateIsRestricted)
