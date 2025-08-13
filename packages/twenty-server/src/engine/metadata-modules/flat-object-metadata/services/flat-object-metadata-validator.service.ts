@@ -229,6 +229,7 @@ export class FlatObjectMetadataValidatorService {
         objectMetadataNamePlural: flatObjectMetadataToValidate.namePlural,
         objectMetadataNameSingular: flatObjectMetadataToValidate.nameSingular,
         objectMetadataMaps: existingFlatObjectMetadataMaps,
+        existingObjectMetadataId: flatObjectMetadataToValidate.id,
       })
     ) {
       errors.push(

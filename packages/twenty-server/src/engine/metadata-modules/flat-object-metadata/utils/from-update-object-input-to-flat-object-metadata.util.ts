@@ -70,7 +70,7 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
     const invalidUpdatedProperties = Object.keys(
       updatedEditableObjectProperties,
     ).filter((property) =>
-      objectMetadataStandardOverridesProperties.includes(
+      !objectMetadataStandardOverridesProperties.includes(
         property as ObjectMetadataStandardOverridesProperties,
       ),
     );
