@@ -13,8 +13,8 @@ jest.mock(
   }),
 );
 
-jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersion', () => ({
-  useGetUpdatableWorkflowVersion: () => ({
+jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
+  useGetUpdatableWorkflowVersionOrThrow: () => ({
     getUpdatableWorkflowVersion: mockGetUpdatableWorkflowVersion,
   }),
 }));
@@ -59,32 +59,5 @@ describe('useUpdateStep', () => {
       workflowVersionId: mockWorkflowVersionId,
       step: mockStep,
     });
-  });
-
-  it('should throw error when workflow version is not found', async () => {
-    mockGetUpdatableWorkflowVersion.mockResolvedValue(undefined);
-
-    const { result } = renderHook(() => useUpdateStep());
-
-    await expect(
-      result.current.updateStep({
-        id: '1',
-        name: 'test',
-        valid: true,
-        type: 'CODE' as const,
-        settings: {
-          input: {
-            serverlessFunctionId: 'test',
-            serverlessFunctionVersion: '1',
-            serverlessFunctionInput: {},
-          },
-          outputSchema: {},
-          errorHandlingOptions: {
-            retryOnFailure: { value: false },
-            continueOnFailure: { value: false },
-          },
-        },
-      }),
-    ).rejects.toThrow('Workflow version not found');
   });
 });

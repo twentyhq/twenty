@@ -1,5 +1,5 @@
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
 import {
   type WorkflowStepType,
@@ -24,7 +24,8 @@ export const useCreateStep = ({
     workflowLastCreatedStepIdComponentState,
   );
 
-  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
+  const { getUpdatableWorkflowVersion } =
+    useGetUpdatableWorkflowVersionOrThrow();
 
   if (!isDefined(workflow)) {
     return {

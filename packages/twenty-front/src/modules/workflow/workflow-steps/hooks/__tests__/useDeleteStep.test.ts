@@ -12,8 +12,8 @@ jest.mock('@/workflow/hooks/useDeleteWorkflowVersionStep', () => ({
   }),
 }));
 
-jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersion', () => ({
-  useGetUpdatableWorkflowVersion: () => ({
+jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
+  useGetUpdatableWorkflowVersionOrThrow: () => ({
     getUpdatableWorkflowVersion: mockGetUpdatableWorkflowVersion,
   }),
 }));
@@ -58,15 +58,5 @@ describe('useDeleteStep', () => {
       stepIds: mockDeletedStepIds,
       workflowVersionId: mockWorkflowVersionId,
     });
-  });
-
-  it('should throw error when workflow version is not found', async () => {
-    mockGetUpdatableWorkflowVersion.mockResolvedValue(undefined);
-
-    const { result } = renderHook(() => useDeleteStep());
-
-    await expect(result.current.deleteStep('step-1')).rejects.toThrow(
-      'Could not find workflow version',
-    );
   });
 });

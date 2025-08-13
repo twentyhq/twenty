@@ -1,4 +1,4 @@
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { useMutation } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
@@ -42,7 +42,8 @@ export const useTidyUpWorkflowVersion = () => {
     UpdateWorkflowVersionPositionsMutationVariables
   >(UPDATE_WORKFLOW_VERSION_POSITIONS, { client: apolloCoreClient });
 
-  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
+  const { getUpdatableWorkflowVersion } =
+    useGetUpdatableWorkflowVersionOrThrow();
 
   const updateWorkflowVersionPosition = async (
     positions: { id: string; position: { x: number; y: number } }[],

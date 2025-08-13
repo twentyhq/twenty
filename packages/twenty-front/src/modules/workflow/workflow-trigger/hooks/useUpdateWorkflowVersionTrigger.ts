@@ -1,7 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import {
   type WorkflowTrigger,
   type WorkflowVersion,
@@ -13,7 +13,8 @@ export const useUpdateWorkflowVersionTrigger = () => {
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
-  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
+  const { getUpdatableWorkflowVersion } =
+    useGetUpdatableWorkflowVersionOrThrow();
 
   const { computeStepOutputSchema } = useComputeStepOutputSchema();
 

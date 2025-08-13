@@ -1,4 +1,4 @@
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { renderHook } from '@testing-library/react';
 
@@ -31,13 +31,15 @@ jest.mock('@/workflow/hooks/useWorkflowWithCurrentVersion', () => ({
   ),
 }));
 
-describe('useGetUpdatableWorkflowVersion', () => {
+describe('useGetUpdatableWorkflowVersionOrThrow', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('should return draft version id when current version is draft', async () => {
-    const { result } = renderHook(() => useGetUpdatableWorkflowVersion());
+    const { result } = renderHook(() =>
+      useGetUpdatableWorkflowVersionOrThrow(),
+    );
     const workflowVersionId =
       await result.current.getUpdatableWorkflowVersion();
 
@@ -60,7 +62,9 @@ describe('useGetUpdatableWorkflowVersion', () => {
     } = require('@/workflow/hooks/useWorkflowWithCurrentVersion');
     useWorkflowWithCurrentVersion.mockReturnValue(mockActiveWorkflow);
 
-    const { result } = renderHook(() => useGetUpdatableWorkflowVersion());
+    const { result } = renderHook(() =>
+      useGetUpdatableWorkflowVersionOrThrow(),
+    );
     const workflowVersionId =
       await result.current.getUpdatableWorkflowVersion();
 
@@ -77,7 +81,9 @@ describe('useGetUpdatableWorkflowVersion', () => {
     } = require('@/workflow/hooks/useWorkflowWithCurrentVersion');
     useWorkflowWithCurrentVersion.mockReturnValue(undefined);
 
-    const { result } = renderHook(() => useGetUpdatableWorkflowVersion());
+    const { result } = renderHook(() =>
+      useGetUpdatableWorkflowVersionOrThrow(),
+    );
 
     await expect(result.current.getUpdatableWorkflowVersion()).rejects.toThrow(
       'Failed to get updatable workflow version',

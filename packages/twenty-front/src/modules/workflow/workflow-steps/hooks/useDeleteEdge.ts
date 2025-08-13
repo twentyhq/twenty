@@ -1,4 +1,4 @@
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagramEdge';
 import { useDeleteWorkflowVersionEdge } from '@/workflow/workflow-steps/hooks/useDeleteWorkflowVersionEdge';
 import { useState } from 'react';
@@ -8,7 +8,8 @@ export const useDeleteEdge = () => {
 
   const { deleteWorkflowVersionEdge } = useDeleteWorkflowVersionEdge();
 
-  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
+  const { getUpdatableWorkflowVersion } =
+    useGetUpdatableWorkflowVersionOrThrow();
 
   const deleteEdge = async ({ source, target }: WorkflowDiagramEdge) => {
     if (isLoading) {

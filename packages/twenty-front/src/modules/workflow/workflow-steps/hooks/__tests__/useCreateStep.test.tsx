@@ -20,8 +20,8 @@ jest.mock(
   }),
 );
 
-jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersion', () => ({
-  useGetUpdatableWorkflowVersion: () => ({
+jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
+  useGetUpdatableWorkflowVersionOrThrow: () => ({
     getUpdatableWorkflowVersion: mockGetUpdatableWorkflowVersion,
   }),
 }));
@@ -88,30 +88,6 @@ describe('useCreateStep', () => {
       parentStepId: 'parent-step-id',
       nextStepId: undefined,
       position: undefined,
-    });
-  });
-
-  it('should throw error when workflow version is not found', async () => {
-    mockGetUpdatableWorkflowVersion.mockResolvedValue(undefined);
-
-    const { result } = renderHook(
-      () =>
-        useCreateStep({
-          workflow: mockWorkflow as unknown as WorkflowWithCurrentVersion,
-        }),
-      {
-        wrapper,
-      },
-    );
-
-    await act(async () => {
-      await expect(
-        result.current.createStep({
-          newStepType: 'CODE',
-          parentStepId: 'parent-step-id',
-          nextStepId: undefined,
-        }),
-      ).rejects.toThrow("Couldn't get updatable workflow version");
     });
   });
 });

@@ -12,8 +12,8 @@ jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
   })),
 }));
 
-jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersion', () => ({
-  useGetUpdatableWorkflowVersion: jest.fn(() => ({
+jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
+  useGetUpdatableWorkflowVersionOrThrow: jest.fn(() => ({
     getUpdatableWorkflowVersion: mockGetUpdatableWorkflowVersion,
   })),
 }));
