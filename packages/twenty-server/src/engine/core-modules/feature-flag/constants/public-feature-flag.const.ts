@@ -27,7 +27,8 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     metadata: {
       label: 'Two Factor Authentication',
       description: 'Enable two-factor authentication for your workspace',
-      imagePath: '',
+      imagePath:
+        'https://twenty.com/images/lab/is-two-factors-auth-enabled.png',
     },
   },
   {

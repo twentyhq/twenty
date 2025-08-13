@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { type WorkflowStepPositionUpdateInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-update-input.dto';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   WorkflowVersionStepException,
@@ -17,7 +19,6 @@ import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { type WorkflowStepPositionUpdateInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-update-input.dto';
 
 @Injectable()
 export class WorkflowVersionWorkspaceService {
@@ -139,7 +140,7 @@ export class WorkflowVersionWorkspaceService {
     assertWorkflowVersionIsDraft(workflowVersion);
 
     const triggerPosition = positions.find(
-      (position) => position.id === 'trigger',
+      (position) => position.id === TRIGGER_STEP_ID,
     );
 
     const updatedTrigger =

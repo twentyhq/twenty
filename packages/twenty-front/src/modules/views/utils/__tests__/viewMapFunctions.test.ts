@@ -1,4 +1,4 @@
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -9,7 +9,7 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

@@ -11,9 +11,9 @@ import { wrapJsonRpcResponse } from 'src/engine/core-modules/ai/utils/wrap-jsonr
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 
 @Injectable()
 export class McpService {
@@ -60,7 +60,7 @@ export class McpService {
       const roles = await this.roleRepository.find({
         where: {
           workspaceId,
-          label: ADMIN_ROLE_LABEL,
+          standardId: ADMIN_ROLE.standardId,
         },
       });
 

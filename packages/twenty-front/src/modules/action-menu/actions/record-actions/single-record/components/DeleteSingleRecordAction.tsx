@@ -1,21 +1,20 @@
 import { ActionModal } from '@/action-menu/actions/components/ActionModal';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 export const DeleteSingleRecordAction = () => {
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const { recordIndexId, objectMetadataItem } =
+    useRecordIndexIdFromCurrentContextStore();
 
   const recordId = useSelectedRecordIdOrThrow();
 
-  const { resetTableRowSelection } = useRecordTable({
-    recordTableId: objectMetadataItem.namePlural,
-  });
+  const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
 
   const { deleteOneRecord } = useDeleteOneRecord({
     objectNameSingular: objectMetadataItem.nameSingular,

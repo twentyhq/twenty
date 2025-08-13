@@ -8,11 +8,11 @@ import {
   FieldContext,
   type RecordUpdateHook,
   type RecordUpdateHookParams,
-} from '@/object-record/record-field/contexts/FieldContext';
-import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
+} from '@/object-record/record-field/ui/contexts/FieldContext';
+import { isRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isRecordFieldReadOnly';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { getFieldButtonIcon } from '@/object-record/record-field/ui/utils/getFieldButtonIcon';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useContext } from 'react';

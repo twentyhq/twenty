@@ -1,5 +1,5 @@
 // Add Jest matchers for toThrowError and other missing methods
-export { };
+export {};
 
 declare global {
   namespace jest {

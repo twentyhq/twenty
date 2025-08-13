@@ -29,7 +29,6 @@ export function Processor(
       ? queueNameOrOptions
       : { queueName: queueNameOrOptions };
 
-   
   return (target: Function) => {
     SetMetadata(SCOPE_OPTIONS_METADATA, options)(target);
     SetMetadata(PROCESSOR_METADATA, options)(target);

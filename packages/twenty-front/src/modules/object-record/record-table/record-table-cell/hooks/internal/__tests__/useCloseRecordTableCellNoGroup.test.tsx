@@ -3,8 +3,8 @@ import { RecoilRoot } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { textfieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { textfieldDefinition } from '@/object-record/record-field/ui/__mocks__/fieldDefinitions';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
@@ -21,7 +21,6 @@ import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
-const onColumnsChange = jest.fn();
 const recordTableId = 'record-table-id';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -30,10 +29,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
       snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
     }}
   >
-    <RecordTableComponentInstance
-      recordTableId={recordTableId}
-      onColumnsChange={onColumnsChange}
-    >
+    <RecordTableComponentInstance recordTableId={recordTableId}>
       <RecordTableContextProvider
         recordTableId={recordTableId}
         viewBarId="viewBarId"

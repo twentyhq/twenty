@@ -3,7 +3,10 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type ReactNode } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { type FeatureFlagKey, type PermissionFlagType } from '~/generated/graphql';
+import {
+  type FeatureFlagKey,
+  type PermissionFlagType,
+} from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsProtectedRouteWrapperProps = {

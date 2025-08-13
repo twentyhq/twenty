@@ -3,7 +3,11 @@ import { type ComponentReadOnlySelector } from '@/ui/utilities/state/component-s
 import { type ComponentSelector } from '@/ui/utilities/state/component-state/types/ComponentSelector';
 import { type ComponentState } from '@/ui/utilities/state/component-state/types/ComponentState';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { type RecoilState, type RecoilValueReadOnly, useRecoilValue } from 'recoil';
+import {
+  type RecoilState,
+  type RecoilValueReadOnly,
+  useRecoilValue,
+} from 'recoil';
 
 export const useRecoilComponentValue = <StateType>(
   componentState:

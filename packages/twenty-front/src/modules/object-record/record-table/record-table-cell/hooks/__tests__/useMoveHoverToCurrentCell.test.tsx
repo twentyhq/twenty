@@ -16,10 +16,7 @@ import { recordTableHoverPositionComponentState } from '@/object-record/record-t
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
-    <RecordTableComponentInstance
-      recordTableId="test-record-table-instance-id"
-      onColumnsChange={jest.fn()}
-    >
+    <RecordTableComponentInstance recordTableId="test-record-table-instance-id">
       <RecordTableRowContextProvider value={recordTableRowContextValue}>
         <RecordTableRowDraggableContextProvider
           value={recordTableRowDraggableContextValue}

@@ -19,6 +19,8 @@ export const getDefaultFlatFieldMetadata = ({
     ['defaultValue', 'settings'],
   );
 
+  const createdAt = new Date();
+
   return {
     description: createFieldInput.description ?? null,
     id: fieldMetadataId,
@@ -48,5 +50,7 @@ export const getDefaultFlatFieldMetadata = ({
     options: null,
     defaultValue: defaultValue ?? null,
     settings: settings ?? null,
+    createdAt,
+    updatedAt: createdAt,
   } as const satisfies FlatFieldMetadata;
 };

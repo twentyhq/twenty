@@ -1,9 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 import { HttpResponse, graphql } from 'msw';
 
-import {
-  type PageDecoratorArgs
-} from '~/testing/decorators/PageDecorator';
+import { type PageDecoratorArgs } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
   allMockPersonRecords,

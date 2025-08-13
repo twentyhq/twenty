@@ -2,7 +2,10 @@ import { type WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
 import { useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import { type HttpRequestBody, type HttpRequestFormData } from '../constants/HttpRequest';
+import {
+  type HttpRequestBody,
+  type HttpRequestFormData,
+} from '../constants/HttpRequest';
 
 export type UseHttpRequestFormParams = {
   action: WorkflowHttpRequestAction;

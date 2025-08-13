@@ -23,7 +23,6 @@ const StyledAddAccountSection = styled(Section)`
   display: flex;
   justify-content: flex-end;
   padding-top: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsAccountsConnectedAccountsListCard = ({

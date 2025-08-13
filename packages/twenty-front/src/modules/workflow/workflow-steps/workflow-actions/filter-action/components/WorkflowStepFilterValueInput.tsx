@@ -1,9 +1,9 @@
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
-import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
-import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
-import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
-import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
+import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { WorkflowStepFilterValueCompositeInput } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueCompositeInput';
 import { useGetFilterFieldMetadataItem } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useGetFilterFieldMetadataItem';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
@@ -12,7 +12,7 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { useLingui } from '@lingui/react/macro';
 import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { FieldMetadataType, type StepFilter } from 'twenty-shared/src/types';
+import { FieldMetadataType, type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
 

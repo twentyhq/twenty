@@ -11,7 +11,10 @@ import { getTimelineThreadsFromOpportunityId } from '@/activities/emails/graphql
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { type TimelineThread, type TimelineThreadsWithTotal } from '~/generated/graphql';
+import {
+  type TimelineThread,
+  type TimelineThreadsWithTotal,
+} from '~/generated/graphql';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,

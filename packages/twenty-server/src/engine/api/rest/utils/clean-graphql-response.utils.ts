@@ -54,9 +54,7 @@ export const cleanGraphQLResponse = (input: any) => {
       // @ts-expect-error legacy noImplicitAny
       output.data[key] = cleanObject(input[key]);
     } else if (Array.isArray(input[key])) {
-      // @ts-expect-error legacy noImplicitAny
       const itemsWithEdges = input[key].filter((item) => item.edges);
-      // @ts-expect-error legacy noImplicitAny
       const cleanedObjArray = itemsWithEdges.map(({ edges, ...item }) => {
         return {
           ...item,

@@ -55,6 +55,7 @@ export const SettingsNavigationDrawerItems = () => {
               if (Array.isArray(subItems) && subItems.length > 0) {
                 const selectedSubItemIndex =
                   getSelectedIndexForSubItems(subItems);
+                const hasActiveSubItem = selectedSubItemIndex !== -1;
 
                 return (
                   <NavigationDrawerItemGroup
@@ -62,6 +63,7 @@ export const SettingsNavigationDrawerItems = () => {
                   >
                     <SettingsNavigationDrawerItem
                       item={item}
+                      hasActiveSubItem={hasActiveSubItem}
                       subItemState={
                         item.indentationLevel
                           ? getNavigationSubItemLeftAdornment({

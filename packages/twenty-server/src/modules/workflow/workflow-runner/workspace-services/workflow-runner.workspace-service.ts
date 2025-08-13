@@ -9,7 +9,7 @@ import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   RunWorkflowJob,
-  type RunWorkflowJobData,
+  RunWorkflowJobData,
 } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
@@ -56,7 +56,7 @@ export class WorkflowRunnerWorkspaceService {
       });
 
     const remainingRunsToEnqueueCount =
-      await this.workflowRunQueueWorkspaceService.getRemainingRunsToEnqueueCount(
+      await this.workflowRunQueueWorkspaceService.getRemainingRunsToEnqueueCountFromCache(
         workspaceId,
       );
 

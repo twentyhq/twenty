@@ -8,7 +8,10 @@ import { type WatchQueryFetchPolicy } from '@apollo/client';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { type ObjectRecordFilterInput, useSearchQuery } from '~/generated/graphql';
+import {
+  type ObjectRecordFilterInput,
+  useSearchQuery,
+} from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
 export type UseSearchRecordsParams = ObjectMetadataItemIdentifier & {

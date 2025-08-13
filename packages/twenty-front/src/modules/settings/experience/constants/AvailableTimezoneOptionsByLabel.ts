@@ -19,9 +19,9 @@ const { AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL } = {
 
     return {
       ...result,
-      [formatTimeZoneLabel(ianaTimeZone)]: { 
-        label: formatTimeZoneLabel(ianaTimeZone), 
-        value: ianaTimeZone 
+      [formatTimeZoneLabel(ianaTimeZone)]: {
+        label: formatTimeZoneLabel(ianaTimeZone),
+        value: ianaTimeZone,
       },
     };
   }, {}),

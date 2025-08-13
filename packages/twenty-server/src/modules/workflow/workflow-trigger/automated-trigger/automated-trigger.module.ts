@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
-import { CronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/cron-trigger.cron.command';
+import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
 import { CronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/cron-trigger.cron.job';
 import { DatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/database-event-trigger.listener';
-import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 
 @Module({
   imports: [
@@ -19,8 +19,8 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     AutomatedTriggerWorkspaceService,
     DatabaseEventTriggerListener,
     CronTriggerCronJob,
-    CronTriggerCronCommand,
+    WorkflowCronTriggerCronCommand,
   ],
-  exports: [AutomatedTriggerWorkspaceService, CronTriggerCronCommand],
+  exports: [AutomatedTriggerWorkspaceService, WorkflowCronTriggerCronCommand],
 })
 export class AutomatedTriggerModule {}

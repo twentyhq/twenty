@@ -1,13 +1,13 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
-import { type FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldActorForInputValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getCompositeSubFieldKey } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetCompositeSubFieldKey';
 import {
   type ImportedStructuredRow,
   type SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type CountryCode, parsePhoneNumberWithError } from 'libphonenumber-js';
+import { parsePhoneNumberWithError, type CountryCode } from 'libphonenumber-js';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
