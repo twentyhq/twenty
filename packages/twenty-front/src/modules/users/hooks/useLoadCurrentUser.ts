@@ -14,9 +14,7 @@ import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { FIND_MANY_CORE_VIEWS } from '@/views/graphql/queries/findManyCoreViews';
-import { coreViewsState } from '@/views/states/coreViewsState';
+// Core views are now loaded in UserProviderEffect
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
@@ -24,7 +22,7 @@ import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ColorScheme } from 'twenty-ui/input';
 import { useGetCurrentUserLazyQuery } from '~/generated-metadata/graphql';
-import { FeatureFlagKey } from '~/generated/graphql';
+// import { FeatureFlagKey } from '~/generated/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
@@ -42,12 +40,10 @@ export const useLoadCurrentUser = () => {
   );
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
-  const setCoreViews = useSetRecoilState(coreViewsState);
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
   const [getCurrentUser] = useGetCurrentUserLazyQuery();
-  const apolloCoreClient = useApolloCoreClient();
 
   const loadCurrentUser = useCallback(async () => {
     const currentUserResult = await getCurrentUser({
@@ -127,25 +123,6 @@ export const useLoadCurrentUser = () => {
 
     setCurrentWorkspace(workspace);
 
-    if (isDefined(workspace)) {
-      const isCoreViewEnabled = !!workspace.featureFlags?.find(
-        (flag) =>
-          flag.key === FeatureFlagKey.IS_CORE_VIEW_ENABLED &&
-          flag.value === true,
-      );
-
-      if (isCoreViewEnabled) {
-        const { data } = await apolloCoreClient.query({
-          query: FIND_MANY_CORE_VIEWS,
-          fetchPolicy: 'network-only',
-        });
-
-        if (isDefined(data?.getCoreViews)) {
-          setCoreViews(data.getCoreViews);
-        }
-      }
-    }
-
     if (isDefined(workspace) && isOnAWorkspace) {
       setLastAuthenticateWorkspaceDomain({
         workspaceId: workspace.id,
@@ -159,11 +136,9 @@ export const useLoadCurrentUser = () => {
       workspace,
     };
   }, [
-    apolloCoreClient,
     getCurrentUser,
     isOnAWorkspace,
     setAvailableWorkspaces,
-    setCoreViews,
     setCurrentUser,
     setCurrentUserWorkspace,
     setCurrentWorkspace,
