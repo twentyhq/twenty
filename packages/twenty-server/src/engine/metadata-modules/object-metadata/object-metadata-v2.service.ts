@@ -55,6 +55,19 @@ export class ObjectMetadataServiceV2 {
         updateObjectInput,
       });
 
+    const validationErrors =
+      this.flatObjectMetadataValidatorService.validateFlatObjectMetadataUpdate({
+        existingFlatObjectMetadataMaps,
+        updatedFlatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
+      });
+
+    if (validationErrors.length > 0) {
+      throw new MultipleMetadataValidationErrors(
+        validationErrors,
+        'Multiple validation errors occurred while updating object',
+      );
+    }
+
     return fromFlatObjectMetadataToObjectMetadataDto(
       optimisticallyUpdatedFlatObjectMetadata,
     );
