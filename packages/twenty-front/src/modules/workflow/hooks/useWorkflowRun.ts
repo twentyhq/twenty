@@ -1,9 +1,9 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type WorkflowRun } from '@/workflow/types/Workflow';
-import { workflowRunSchema } from '@/workflow/validation-schemas/workflowSchema';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { workflowRunSchema } from 'twenty-shared/workflow';
 
 export const useWorkflowRun = ({
   workflowRunId,

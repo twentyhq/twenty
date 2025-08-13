@@ -1,6 +1,6 @@
 import { type WorkflowRunState } from '@/workflow/types/Workflow';
-import { workflowRunStateSchema } from '@/workflow/validation-schemas/workflowSchema';
 import { isDefined } from 'twenty-shared/utils';
+import { workflowRunStateSchema } from 'twenty-shared/workflow';
 import { type JsonValue } from 'type-fest';
 
 export const orderWorkflowRunState = (value: JsonValue) => {
