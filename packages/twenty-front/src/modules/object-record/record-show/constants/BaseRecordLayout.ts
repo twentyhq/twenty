@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { CardType } from '@/object-record/record-show/types/CardType';
-import { RecordLayout } from '@/object-record/record-show/types/RecordLayout';
+import { type RecordLayout } from '@/object-record/record-show/types/RecordLayout';
 import {
   IconCheckbox,
   IconList,

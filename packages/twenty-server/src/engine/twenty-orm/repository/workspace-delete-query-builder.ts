@@ -1,18 +1,19 @@
-import { ObjectRecordsPermissions } from 'twenty-shared/types';
+import { type ObjectsPermissionsDeprecated } from 'twenty-shared/types';
 import {
   DeleteQueryBuilder,
-  DeleteResult,
-  EntityTarget,
-  InsertQueryBuilder,
-  ObjectLiteral,
+  type DeleteResult,
+  type EntityTarget,
+  type InsertQueryBuilder,
+  type ObjectLiteral,
 } from 'typeorm';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { type WhereClause } from 'typeorm/query-builder/WhereClause';
 
-import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
-import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
+import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import {
@@ -21,22 +22,24 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { validateQueryIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
-import { WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
-import { WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
+import { type WorkspaceSoftDeleteQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-soft-delete-query-builder';
+import { type WorkspaceUpdateQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-update-query-builder';
+import { applyTableAliasOnWhereCondition } from 'src/engine/twenty-orm/utils/apply-table-alias-on-where-condition';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 export class WorkspaceDeleteQueryBuilder<
   T extends ObjectLiteral,
 > extends DeleteQueryBuilder<T> {
-  private objectRecordsPermissions: ObjectRecordsPermissions;
+  private objectRecordsPermissions: ObjectsPermissionsDeprecated;
   private shouldBypassPermissionChecks: boolean;
   private internalContext: WorkspaceInternalContext;
   private authContext?: AuthContext;
   private featureFlagMap?: FeatureFlagMap;
   constructor(
     queryBuilder: DeleteQueryBuilder<T>,
-    objectRecordsPermissions: ObjectRecordsPermissions,
+    objectRecordsPermissions: ObjectsPermissionsDeprecated,
     internalContext: WorkspaceInternalContext,
     shouldBypassPermissionChecks: boolean,
     authContext?: AuthContext,
@@ -66,7 +69,7 @@ export class WorkspaceDeleteQueryBuilder<
     try {
       validateQueryIsPermittedOrThrow({
         expressionMap: this.expressionMap,
-        objectRecordsPermissions: this.objectRecordsPermissions,
+        objectsPermissions: this.objectRecordsPermissions,
         objectMetadataMaps: this.internalContext.objectMetadataMaps,
         shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
         isFieldPermissionsEnabled:
@@ -89,12 +92,24 @@ export class WorkspaceDeleteQueryBuilder<
         this.featureFlagMap,
       );
 
+      const tableName = computeTableName(
+        objectMetadata.nameSingular,
+        objectMetadata.isCustom,
+      );
+
       eventSelectQueryBuilder.expressionMap.wheres = this.expressionMap.wheres;
+
       eventSelectQueryBuilder.expressionMap.aliases =
         this.expressionMap.aliases;
       eventSelectQueryBuilder.setParameters(this.getParameters());
 
       const before = await eventSelectQueryBuilder.getOne();
+
+      this.expressionMap.wheres = applyTableAliasOnWhereCondition({
+        condition: this.expressionMap.wheres,
+        tableName,
+        aliasName: objectMetadata.nameSingular,
+      }) as WhereClause[];
 
       const result = await super.execute();
 

@@ -31,7 +31,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { AnimatedEaseIn } from 'twenty-ui/utilities';
-import { PublicWorkspaceDataOutput } from '~/generated/graphql';
+import { type PublicWorkspaceDataOutput } from '~/generated/graphql';
 
 const StandardContent = ({
   workspacePublicData,

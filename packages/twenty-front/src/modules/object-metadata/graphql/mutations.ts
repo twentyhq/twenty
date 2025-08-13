@@ -4,7 +4,6 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
   mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {
     createOneObject(input: $input) {
       id
-      dataSourceId
       nameSingular
       namePlural
       labelSingular
@@ -34,6 +33,7 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
       icon
       isCustom
       isActive
+      isUnique
       isNullable
       createdAt
       updatedAt
@@ -59,6 +59,7 @@ export const UPDATE_ONE_FIELD_METADATA_ITEM = gql`
       icon
       isCustom
       isActive
+      isUnique
       isNullable
       createdAt
       updatedAt
@@ -75,7 +76,6 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
   ) {
     updateOneObject(input: { id: $idToUpdate, update: $updatePayload }) {
       id
-      dataSourceId
       nameSingular
       namePlural
       labelSingular
@@ -98,7 +98,6 @@ export const DELETE_ONE_OBJECT_METADATA_ITEM = gql`
   mutation DeleteOneObjectMetadataItem($idToDelete: UUID!) {
     deleteOneObject(input: { id: $idToDelete }) {
       id
-      dataSourceId
       nameSingular
       namePlural
       labelSingular
@@ -128,6 +127,7 @@ export const DELETE_ONE_FIELD_METADATA_ITEM = gql`
       icon
       isCustom
       isActive
+      isUnique
       isNullable
       createdAt
       updatedAt

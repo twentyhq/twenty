@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 
-import { Request } from 'express';
+import { type Request } from 'express';
 import { isValidUuid } from 'twenty-shared/utils';
 
 export const parseCorePath = (

@@ -1,11 +1,11 @@
 import {
-  ArgumentsHost,
+  type ArgumentsHost,
   Catch,
-  ExceptionFilter,
+  type ExceptionFilter,
   HttpException,
 } from '@nestjs/common';
 
-import { Request, Response } from 'express';
+import { type Request, type Response } from 'express';
 
 import { getCorsOriginPattern } from 'src/utils/cors-origin-pattern';
 

@@ -1,6 +1,10 @@
 /* @license Enterprise */
 
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  type CanActivate,
+  type ExecutionContext,
+  Injectable,
+} from '@nestjs/common';
 
 import { timingSafeEqual } from 'crypto';
 
@@ -33,7 +37,7 @@ export class CloudflareSecretMatchGuard implements CanActivate {
       }
 
       return false;
-    } catch (err) {
+    } catch {
       return false;
     }
   }

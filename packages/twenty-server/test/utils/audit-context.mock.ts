@@ -1,4 +1,4 @@
-import { TrackEventName } from 'src/engine/core-modules/audit/types/events.type';
+import { type TrackEventName } from 'src/engine/core-modules/audit/types/events.type';
 
 export const AuditContextMock = (params?: {
   insertWorkspaceEvent?:

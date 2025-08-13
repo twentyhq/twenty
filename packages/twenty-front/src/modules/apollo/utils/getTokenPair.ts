@@ -1,5 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
-import { AuthTokenPair } from '~/generated/graphql';
+import { type AuthTokenPair } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 
 const isValidAuthTokenPair = (tokenPair: any): tokenPair is AuthTokenPair => {
@@ -28,7 +28,7 @@ export const getTokenPair = (): AuthTokenPair | undefined => {
     }
 
     return parsedTokenPair;
-  } catch (error) {
+  } catch {
     cookieStorage.removeItem('tokenPair');
     return undefined;
   }

@@ -1,4 +1,4 @@
-import { WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { type WorkflowDiagram } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { transformFilterNodesAsEdges } from '../transformFilterNodesAsEdges';
 
 describe('transformFilterNodesAsEdges', () => {
@@ -46,6 +46,7 @@ describe('transformFilterNodesAsEdges', () => {
       nodes: diagram.nodes,
       edges: diagram.edges,
       defaultFilterEdgeType: 'filter--editable',
+      isWorkflowBranchEnabled: true,
     });
 
     expect(result.nodes).toEqual(diagram.nodes);
@@ -112,6 +113,7 @@ describe('transformFilterNodesAsEdges', () => {
       nodes: diagram.nodes,
       edges: diagram.edges,
       defaultFilterEdgeType: 'filter--editable',
+      isWorkflowBranchEnabled: true,
     });
 
     // Should only have nodes A and C
@@ -149,7 +151,8 @@ describe('transformFilterNodesAsEdges', () => {
       type: 'filter--editable',
       source: 'A',
       target: 'C',
-      deletable: false,
+      selectable: true,
+      deletable: true,
       data: {
         edgeType: 'filter',
         stepId: 'B',
@@ -256,6 +259,7 @@ describe('transformFilterNodesAsEdges', () => {
       nodes: diagram.nodes,
       edges: diagram.edges,
       defaultFilterEdgeType: 'filter--editable',
+      isWorkflowBranchEnabled: true,
     });
 
     // Should only have nodes A, C, and D
@@ -275,7 +279,8 @@ describe('transformFilterNodesAsEdges', () => {
       type: 'filter--editable',
       source: 'A',
       target: 'C',
-      deletable: false,
+      selectable: true,
+      deletable: true,
       data: {
         edgeType: 'filter',
         name: 'Filter B1',
@@ -293,7 +298,8 @@ describe('transformFilterNodesAsEdges', () => {
       type: 'filter--editable',
       source: 'C',
       target: 'D',
-      deletable: false,
+      selectable: true,
+      deletable: true,
       data: {
         edgeType: 'filter',
         name: 'Filter B2',
@@ -346,6 +352,7 @@ describe('transformFilterNodesAsEdges', () => {
       nodes: diagram.nodes,
       edges: diagram.edges,
       defaultFilterEdgeType: 'filter--editable',
+      isWorkflowBranchEnabled: true,
     });
 
     // Should only have node A (filter node B is removed)
@@ -428,6 +435,7 @@ describe('transformFilterNodesAsEdges', () => {
       nodes: diagram.nodes,
       edges: diagram.edges,
       defaultFilterEdgeType: 'filter--editable',
+      isWorkflowBranchEnabled: true,
     });
 
     // Should have trigger and C nodes
@@ -465,7 +473,8 @@ describe('transformFilterNodesAsEdges', () => {
         type: 'filter--editable',
         source: 'trigger',
         target: 'C',
-        deletable: false,
+        selectable: true,
+        deletable: true,
         data: {
           edgeType: 'filter',
           name: 'Filter B',
@@ -475,5 +484,87 @@ describe('transformFilterNodesAsEdges', () => {
         },
       },
     ]);
+  });
+
+  it('should set selectable and deletable to false when isWorkflowBranchEnabled is false', () => {
+    const diagram: WorkflowDiagram = {
+      nodes: [
+        {
+          id: 'A',
+          data: {
+            nodeType: 'action',
+            actionType: 'CODE',
+            name: 'Step A',
+            hasNextStepIds: true,
+            position: { x: 0, y: 0 },
+            stepId: 'A',
+          },
+          position: { x: 0, y: 0 },
+        },
+        {
+          id: 'B',
+          data: {
+            nodeType: 'action',
+            actionType: 'FILTER',
+            name: 'Filter B',
+            hasNextStepIds: true,
+            position: { x: 0, y: 150 },
+            stepId: 'B',
+          },
+          position: { x: 0, y: 150 },
+        },
+        {
+          id: 'C',
+          data: {
+            nodeType: 'action',
+            actionType: 'SEND_EMAIL',
+            name: 'Step C',
+            hasNextStepIds: false,
+            position: { x: 0, y: 300 },
+            stepId: 'C',
+          },
+          position: { x: 0, y: 300 },
+        },
+      ],
+      edges: [
+        {
+          id: 'A-B',
+          source: 'A',
+          target: 'B',
+          data: { edgeType: 'default' },
+        },
+        {
+          id: 'B-C',
+          source: 'B',
+          target: 'C',
+          data: { edgeType: 'default' },
+        },
+      ],
+    };
+
+    const result = transformFilterNodesAsEdges({
+      nodes: diagram.nodes,
+      edges: diagram.edges,
+      defaultFilterEdgeType: 'filter--editable',
+      isWorkflowBranchEnabled: false,
+    });
+
+    // Should have one edge with filter data
+    expect(result.edges).toHaveLength(1);
+    expect(result.edges[0]).toEqual({
+      id: 'A-C-filter-B',
+      type: 'filter--editable',
+      source: 'A',
+      target: 'C',
+      selectable: false,
+      deletable: false,
+      data: {
+        edgeType: 'filter',
+        stepId: 'B',
+        name: 'Filter B',
+        runStatus: undefined,
+        filterSettings: {},
+      },
+    });
   });
 });

@@ -1,11 +1,11 @@
-import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
-import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/components/FormRawJsonFieldInput';
+import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
+import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
 
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Select } from '@/ui/input/components/Select';
 import {
   DEFAULT_JSON_BODY_PLACEHOLDER,
-  HttpRequestBody,
+  type HttpRequestBody,
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { parseHttpJsonBodyWithoutVariablesOrThrow } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/parseHttpJsonBodyWithoutVariablesOrThrow';
 import { shouldDisplayRawJsonByDefault } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/shouldDisplayRawJsonByDefault';
@@ -15,7 +15,7 @@ import { isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { parseJson } from 'twenty-shared/utils';
 import { IconFileText, IconKey } from 'twenty-ui/display';
-import { JsonValue } from 'type-fest';
+import { type JsonValue } from 'type-fest';
 import { KeyValuePairInput } from './KeyValuePairInput';
 
 const StyledContainer = styled.div`

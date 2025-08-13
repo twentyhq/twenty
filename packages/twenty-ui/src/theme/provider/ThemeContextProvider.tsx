@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { ThemeType } from '@ui/theme/types/ThemeType';
+import { type ThemeType } from '@ui/theme/types/ThemeType';
 
 export type ThemeContextType = {
   theme: ThemeType;

@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { basename, dirname, extname } from 'path';
-import { Stream } from 'stream';
+import { type Stream } from 'stream';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { buildSignedPath } from 'twenty-shared/utils';
 import { v4 as uuidV4 } from 'uuid';
 
 import {
-  FileTokenJwtPayload,
+  type FileTokenJwtPayload,
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';

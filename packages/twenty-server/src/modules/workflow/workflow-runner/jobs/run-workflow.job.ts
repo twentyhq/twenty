@@ -2,6 +2,8 @@ import { Scope } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -37,6 +39,7 @@ export class RunWorkflowJob {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly metricsService: MetricsService,
     private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Process(RunWorkflowJob.name)
@@ -98,6 +101,8 @@ export class RunWorkflowJob {
       );
     }
 
+    await this.throttleExecution(workflowVersion.workflowId);
+
     await this.incrementTriggerMetrics({
       workflowRunId,
       triggerType: workflowVersion.trigger.type,
@@ -108,13 +113,20 @@ export class RunWorkflowJob {
       workspaceId,
     });
 
-    await this.throttleExecution(workflowVersion.workflowId);
-
     const rootSteps = getRootSteps(workflowVersion.steps);
 
+    const isWorkflowBranchEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
+        workspaceId,
+      );
+
+    const stepIds = isWorkflowBranchEnabled
+      ? (workflowVersion.trigger.nextStepIds ?? [])
+      : (rootSteps.map((step) => step.id) ?? []);
+
     await this.workflowExecutorWorkspaceService.executeFromSteps({
-      stepIds:
-        workflowVersion.trigger.nextStepIds ?? rootSteps.map((step) => step.id),
+      stepIds,
       workflowRunId,
       workspaceId,
     });
@@ -136,10 +148,7 @@ export class RunWorkflowJob {
       });
 
     if (workflowRun.status !== WorkflowRunStatus.RUNNING) {
-      throw new WorkflowRunException(
-        'Workflow is not running',
-        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
-      );
+      return;
     }
 
     const lastExecutedStep = workflowRun.state?.flow?.steps?.find(
@@ -180,7 +189,7 @@ export class RunWorkflowJob {
         this.twentyConfigService.get('WORKFLOW_EXEC_THROTTLE_LIMIT'),
         this.twentyConfigService.get('WORKFLOW_EXEC_THROTTLE_TTL'),
       );
-    } catch (error) {
+    } catch {
       await this.metricsService.incrementCounter({
         key: MetricsKeys.WorkflowRunFailedThrottled,
         eventId: workflowId,

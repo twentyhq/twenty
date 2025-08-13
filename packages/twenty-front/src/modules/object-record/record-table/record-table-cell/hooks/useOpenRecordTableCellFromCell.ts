@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';

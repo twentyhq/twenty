@@ -1,7 +1,7 @@
 import {
-  ObjectRecordCursorLeafCompositeValue,
-  ObjectRecordCursorLeafScalarValue,
-  ObjectRecordFilter,
+  type ObjectRecordCursorLeafCompositeValue,
+  type ObjectRecordCursorLeafScalarValue,
+  type ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 type BuildCursorConditionParams<CursorValue> = {

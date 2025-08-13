@@ -1,4 +1,4 @@
-import { ViewSort } from '@/views/types/ViewSort';
+import { type ViewSort } from '@/views/types/ViewSort';
 import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
 
 export const areViewSortsEqual = (viewSortA: ViewSort, viewSortB: ViewSort) => {

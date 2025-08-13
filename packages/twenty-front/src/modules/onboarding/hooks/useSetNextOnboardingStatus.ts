@@ -1,8 +1,11 @@
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
-import { CurrentUser, currentUserState } from '@/auth/states/currentUserState';
 import {
-  CurrentWorkspace,
+  type CurrentUser,
+  currentUserState,
+} from '@/auth/states/currentUserState';
+import {
+  type CurrentWorkspace,
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';

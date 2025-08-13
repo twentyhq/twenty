@@ -1,5 +1,5 @@
 import { Text } from '@react-email/components';
-import { JSX } from 'react';
+import { type JSX } from 'react';
 
 import { emailTheme } from 'src/common-style';
 

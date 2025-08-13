@@ -1,13 +1,13 @@
-import { DateFormat } from '@/localization/constants/DateFormat';
-import { TimeFormat } from '@/localization/constants/TimeFormat';
+import { type DateFormat } from '@/localization/constants/DateFormat';
+import { type TimeFormat } from '@/localization/constants/TimeFormat';
 import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/formatDateISOStringToCustomUnicodeFormat';
 import { formatDateISOStringToDateTime } from '@/localization/utils/formatDateISOStringToDateTime';
 import { formatDateISOStringToRelativeDate } from '@/localization/utils/formatDateISOStringToRelativeDate';
 import {
   FieldDateDisplayFormat,
-  FieldDateMetadataSettings,
-} from '@/object-record/record-field/types/FieldMetadata';
-import { Locale } from 'date-fns';
+  type FieldDateMetadataSettings,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type Locale } from 'date-fns';
 
 export const formatDateTimeString = ({
   value,

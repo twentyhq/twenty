@@ -1,13 +1,13 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { AnimationDimension } from '@ui/layout/animated-expandable-container/types/AnimationDimension';
-import { AnimationDurationObject } from '@ui/layout/animated-expandable-container/types/AnimationDurationObject';
-import { AnimationDurations } from '@ui/layout/animated-expandable-container/types/AnimationDurations';
-import { AnimationMode } from '@ui/layout/animated-expandable-container/types/AnimationMode';
-import { AnimationSize } from '@ui/layout/animated-expandable-container/types/AnimationSize';
+import { type AnimationDimension } from '@ui/layout/animated-expandable-container/types/AnimationDimension';
+import { type AnimationDurationObject } from '@ui/layout/animated-expandable-container/types/AnimationDurationObject';
+import { type AnimationDurations } from '@ui/layout/animated-expandable-container/types/AnimationDurations';
+import { type AnimationMode } from '@ui/layout/animated-expandable-container/types/AnimationMode';
+import { type AnimationSize } from '@ui/layout/animated-expandable-container/types/AnimationSize';
 import { getExpandableAnimationConfig } from '@ui/layout/animated-expandable-container/utils/getExpandableAnimationConfig';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ReactNode, useRef, useState } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledMotionContainer = styled(motion.div)<{

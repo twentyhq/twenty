@@ -1,4 +1,4 @@
-import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import {
   BillingPlanKey,
   SubscriptionInterval,

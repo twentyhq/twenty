@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 
-import { BlocklistItem } from '@/accounts/types/BlocklistItem';
+import { type BlocklistItem } from '@/accounts/types/BlocklistItem';
 
 export const mockedBlocklist: BlocklistItem[] = [
   {

@@ -1,5 +1,5 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
-import { Theme } from '@emotion/react';
+import { type Theme } from '@emotion/react';
 import { getTriggerIconColor } from '../getTriggerIconColor';
 
 describe('getTriggerIconColor', () => {

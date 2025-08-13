@@ -1,7 +1,7 @@
 import { getYear, startOfDay, startOfMonth } from 'date-fns';
 
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
-import { TimelineCalendarEvent } from '~/generated/graphql';
+import { type TimelineCalendarEvent } from '~/generated/graphql';
 import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
 import { sortDesc } from '~/utils/sort';
 

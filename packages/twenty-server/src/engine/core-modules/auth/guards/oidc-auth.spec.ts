@@ -1,14 +1,14 @@
-import { ExecutionContext } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
+import { type ExecutionContext } from '@nestjs/common';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@nestjs/passport';
 
-import { Issuer } from 'openid-client';
+import { type Issuer } from 'openid-client';
 
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { OIDCAuthGuard } from 'src/engine/core-modules/auth/guards/oidc-auth.guard';
-import { SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
-import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { type SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
+import { type WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 const createMockExecutionContext = (mockedRequest: any): ExecutionContext => {

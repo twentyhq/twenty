@@ -1,8 +1,8 @@
-import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
-import { ComponentState } from '@/ui/utilities/state/component-state/types/ComponentState';
-import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
+import { type ComponentState } from '@/ui/utilities/state/component-state/types/ComponentState';
+import { type ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { AtomEffect, atomFamily } from 'recoil';
+import { type AtomEffect, atomFamily } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 type CreateComponentInstanceStateArgs<ValueType> = {

@@ -2,9 +2,9 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { validateCustomDateFormat } from '@/localization/utils/validateCustomDateFormat';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
-import { isDateFieldCustomDisplayFormat } from '@/object-record/record-field/types/guards/isDateFIeldCustomDisplayFormat';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isDateFieldCustomDisplayFormat } from '@/object-record/record-field/ui/types/guards/isDateFIeldCustomDisplayFormat';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/AdvancedSettingsAnimationDurations';
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';

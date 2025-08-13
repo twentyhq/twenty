@@ -1,4 +1,4 @@
-import { BooleanFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { type BooleanFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 
 export const isMatchingBooleanFilter = ({
   booleanFilter,

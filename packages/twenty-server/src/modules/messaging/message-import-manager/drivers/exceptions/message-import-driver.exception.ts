@@ -1,5 +1,5 @@
 import { CustomException } from 'src/utils/custom-exception';
-import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
+import { type MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
 
 export class MessageImportDriverException extends CustomException<
   MessageImportDriverExceptionCode | MessageNetworkExceptionCode

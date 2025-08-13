@@ -7,7 +7,7 @@ import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthPro
 import { useApolloClient } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { expect } from '@storybook/test';
-import { ReactNode, act } from 'react';
+import { type ReactNode, act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
@@ -26,7 +26,7 @@ jest.mock('@/domain-manager/hooks/useRedirect', () => ({
   })),
 }));
 
-jest.mock('@/object-metadata/hooks/useRefreshObjectMetadataItem', () => ({
+jest.mock('@/object-metadata/hooks/useRefreshObjectMetadataItems', () => ({
   useRefreshObjectMetadataItems: jest.fn().mockImplementation(() => ({
     refreshObjectMetadataItems: jest.fn(),
   })),

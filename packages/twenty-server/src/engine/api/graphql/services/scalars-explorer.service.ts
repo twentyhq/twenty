@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { GraphQLScalarType, GraphQLSchema, isScalarType } from 'graphql';
+import {
+  type GraphQLScalarType,
+  type GraphQLSchema,
+  isScalarType,
+} from 'graphql';
 
 import { scalars } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 

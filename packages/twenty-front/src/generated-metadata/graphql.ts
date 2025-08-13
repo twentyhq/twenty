@@ -18,6 +18,7 @@ export type Scalars = {
   DateTime: string;
   JSON: any;
   JSONObject: any;
+  RawJSONScalar: any;
   UUID: string;
   Upload: any;
 };
@@ -95,6 +96,21 @@ export type AgentIdInput = {
   /** The id of the agent. */
   id: Scalars['UUID'];
 };
+
+export enum AggregateOperations {
+  AVG = 'AVG',
+  COUNT = 'COUNT',
+  COUNT_EMPTY = 'COUNT_EMPTY',
+  COUNT_FALSE = 'COUNT_FALSE',
+  COUNT_NOT_EMPTY = 'COUNT_NOT_EMPTY',
+  COUNT_TRUE = 'COUNT_TRUE',
+  COUNT_UNIQUE_VALUES = 'COUNT_UNIQUE_VALUES',
+  MAX = 'MAX',
+  MIN = 'MIN',
+  PERCENTAGE_EMPTY = 'PERCENTAGE_EMPTY',
+  PERCENTAGE_NOT_EMPTY = 'PERCENTAGE_NOT_EMPTY',
+  SUM = 'SUM'
+}
 
 export type Analytics = {
   __typename?: 'Analytics';
@@ -480,6 +496,96 @@ export type ConnectionParametersOutput = {
   username?: Maybe<Scalars['String']>;
 };
 
+export type CoreView = {
+  __typename?: 'CoreView';
+  anyFieldFilterValue?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  icon: Scalars['String'];
+  id: Scalars['UUID'];
+  isCompact: Scalars['Boolean'];
+  kanbanAggregateOperation?: Maybe<AggregateOperations>;
+  kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']>;
+  key?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
+  openRecordIn: ViewOpenRecordIn;
+  position: Scalars['Float'];
+  type: ViewType;
+  updatedAt: Scalars['DateTime'];
+  workspaceId: Scalars['UUID'];
+};
+
+export type CoreViewField = {
+  __typename?: 'CoreViewField';
+  aggregateOperation?: Maybe<AggregateOperations>;
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  isVisible: Scalars['Boolean'];
+  position: Scalars['Float'];
+  size: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
+
+export type CoreViewFilter = {
+  __typename?: 'CoreViewFilter';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  operand: ViewFilterOperand;
+  positionInViewFilterGroup?: Maybe<Scalars['Float']>;
+  subFieldName?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+  value: Scalars['RawJSONScalar'];
+  viewFilterGroupId?: Maybe<Scalars['UUID']>;
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
+
+export type CoreViewFilterGroup = {
+  __typename?: 'CoreViewFilterGroup';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['UUID'];
+  logicalOperator: ViewFilterGroupLogicalOperator;
+  parentViewFilterGroupId?: Maybe<Scalars['UUID']>;
+  positionInViewFilterGroup?: Maybe<Scalars['Float']>;
+  updatedAt: Scalars['DateTime'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
+
+export type CoreViewGroup = {
+  __typename?: 'CoreViewGroup';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  fieldMetadataId: Scalars['UUID'];
+  fieldValue: Scalars['String'];
+  id: Scalars['UUID'];
+  isVisible: Scalars['Boolean'];
+  position: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
+
+export type CoreViewSort = {
+  __typename?: 'CoreViewSort';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  direction: ViewSortDirection;
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  updatedAt: Scalars['DateTime'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
+
 export type CreateAgentChatThreadInput = {
   agentId: Scalars['UUID'];
 };
@@ -599,6 +705,60 @@ export type CreateServerlessFunctionInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
+};
+
+export type CreateViewFieldInput = {
+  aggregateOperation?: InputMaybe<AggregateOperations>;
+  fieldMetadataId: Scalars['UUID'];
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  position?: InputMaybe<Scalars['Float']>;
+  size?: InputMaybe<Scalars['Float']>;
+  viewId: Scalars['UUID'];
+};
+
+export type CreateViewFilterGroupInput = {
+  logicalOperator?: InputMaybe<ViewFilterGroupLogicalOperator>;
+  parentViewFilterGroupId?: InputMaybe<Scalars['UUID']>;
+  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
+  viewId: Scalars['UUID'];
+};
+
+export type CreateViewFilterInput = {
+  fieldMetadataId: Scalars['UUID'];
+  operand?: InputMaybe<ViewFilterOperand>;
+  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
+  subFieldName?: InputMaybe<Scalars['String']>;
+  value: Scalars['RawJSONScalar'];
+  viewFilterGroupId?: InputMaybe<Scalars['UUID']>;
+  viewId: Scalars['UUID'];
+};
+
+export type CreateViewGroupInput = {
+  fieldMetadataId: Scalars['UUID'];
+  fieldValue: Scalars['String'];
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  position?: InputMaybe<Scalars['Float']>;
+  viewId: Scalars['UUID'];
+};
+
+export type CreateViewInput = {
+  anyFieldFilterValue?: InputMaybe<Scalars['String']>;
+  icon: Scalars['String'];
+  isCompact?: InputMaybe<Scalars['Boolean']>;
+  kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
+  kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  key?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
+  openRecordIn?: InputMaybe<ViewOpenRecordIn>;
+  position?: InputMaybe<Scalars['Float']>;
+  type?: InputMaybe<ViewType>;
+};
+
+export type CreateViewSortInput = {
+  direction?: InputMaybe<ViewSortDirection>;
+  fieldMetadataId: Scalars['UUID'];
+  viewId: Scalars['UUID'];
 };
 
 export type CreateWebhookDto = {
@@ -787,6 +947,7 @@ export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
   IS_API_KEY_ROLES_ENABLED = 'IS_API_KEY_ROLES_ENABLED',
+  IS_CORE_VIEW_ENABLED = 'IS_CORE_VIEW_ENABLED',
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
   IS_FIELDS_PERMISSIONS_ENABLED = 'IS_FIELDS_PERMISSIONS_ENABLED',
   IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
@@ -1168,6 +1329,12 @@ export type Mutation = {
   createAgentHandoff: Scalars['Boolean'];
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
+  createCoreView: CoreView;
+  createCoreViewField: CoreViewField;
+  createCoreViewFilter: CoreViewFilter;
+  createCoreViewFilterGroup: CoreViewFilterGroup;
+  createCoreViewGroup: CoreViewGroup;
+  createCoreViewSort: CoreViewSort;
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
   createFile: File;
@@ -1186,6 +1353,12 @@ export type Mutation = {
   createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
+  deleteCoreView: Scalars['Boolean'];
+  deleteCoreViewField: Scalars['Boolean'];
+  deleteCoreViewFilter: Scalars['Boolean'];
+  deleteCoreViewFilterGroup: Scalars['Boolean'];
+  deleteCoreViewGroup: Scalars['Boolean'];
+  deleteCoreViewSort: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteFile: File;
@@ -1202,6 +1375,12 @@ export type Mutation = {
   deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
   deleteWorkflowVersionStep: WorkflowVersionStepChanges;
   deleteWorkspaceInvitation: Scalars['String'];
+  destroyCoreView: Scalars['Boolean'];
+  destroyCoreViewField: Scalars['Boolean'];
+  destroyCoreViewFilter: Scalars['Boolean'];
+  destroyCoreViewFilterGroup: Scalars['Boolean'];
+  destroyCoreViewGroup: Scalars['Boolean'];
+  destroyCoreViewSort: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -1243,6 +1422,12 @@ export type Mutation = {
   trackAnalytics: Analytics;
   unsyncRemoteTable: RemoteTable;
   updateApiKey?: Maybe<ApiKey>;
+  updateCoreView: CoreView;
+  updateCoreViewField: CoreViewField;
+  updateCoreViewFilter: CoreViewFilter;
+  updateCoreViewFilterGroup: CoreViewFilterGroup;
+  updateCoreViewGroup: CoreViewGroup;
+  updateCoreViewSort: CoreViewSort;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
@@ -1331,6 +1516,36 @@ export type MutationCreateApiKeyArgs = {
 
 export type MutationCreateApprovedAccessDomainArgs = {
   input: CreateApprovedAccessDomainInput;
+};
+
+
+export type MutationCreateCoreViewArgs = {
+  input: CreateViewInput;
+};
+
+
+export type MutationCreateCoreViewFieldArgs = {
+  input: CreateViewFieldInput;
+};
+
+
+export type MutationCreateCoreViewFilterArgs = {
+  input: CreateViewFilterInput;
+};
+
+
+export type MutationCreateCoreViewFilterGroupArgs = {
+  input: CreateViewFilterGroupInput;
+};
+
+
+export type MutationCreateCoreViewGroupArgs = {
+  input: CreateViewGroupInput;
+};
+
+
+export type MutationCreateCoreViewSortArgs = {
+  input: CreateViewSortInput;
 };
 
 
@@ -1428,6 +1643,36 @@ export type MutationDeleteApprovedAccessDomainArgs = {
 };
 
 
+export type MutationDeleteCoreViewArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteCoreViewFieldArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteCoreViewFilterArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteCoreViewFilterGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteCoreViewGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteCoreViewSortArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationDeleteDatabaseConfigVariableArgs = {
   key: Scalars['String'];
 };
@@ -1495,6 +1740,36 @@ export type MutationDeleteWorkflowVersionStepArgs = {
 
 export type MutationDeleteWorkspaceInvitationArgs = {
   appTokenId: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewFieldArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewFilterArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewFilterGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewSortArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -1693,6 +1968,42 @@ export type MutationUpdateApiKeyArgs = {
 };
 
 
+export type MutationUpdateCoreViewArgs = {
+  id: Scalars['String'];
+  input: UpdateViewInput;
+};
+
+
+export type MutationUpdateCoreViewFieldArgs = {
+  id: Scalars['String'];
+  input: UpdateViewFieldInput;
+};
+
+
+export type MutationUpdateCoreViewFilterArgs = {
+  id: Scalars['String'];
+  input: UpdateViewFilterInput;
+};
+
+
+export type MutationUpdateCoreViewFilterGroupArgs = {
+  id: Scalars['String'];
+  input: UpdateViewFilterGroupInput;
+};
+
+
+export type MutationUpdateCoreViewGroupArgs = {
+  id: Scalars['String'];
+  input: UpdateViewGroupInput;
+};
+
+
+export type MutationUpdateCoreViewSortArgs = {
+  id: Scalars['String'];
+  input: UpdateViewSortInput;
+};
+
+
 export type MutationUpdateDatabaseConfigVariableArgs = {
   key: Scalars['String'];
   value: Scalars['JSON'];
@@ -1832,7 +2143,6 @@ export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs 
 export type Object = {
   __typename?: 'Object';
   createdAt: Scalars['DateTime'];
-  dataSourceId: Scalars['UUID'];
   description?: Maybe<Scalars['String']>;
   duplicateCriteria?: Maybe<Array<Array<Scalars['String']>>>;
   fields: ObjectFieldsConnection;
@@ -2097,6 +2407,18 @@ export type Query = {
   getAvailablePackages: Scalars['JSON'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
+  getCoreView?: Maybe<CoreView>;
+  getCoreViewField?: Maybe<CoreViewField>;
+  getCoreViewFields: Array<CoreViewField>;
+  getCoreViewFilter?: Maybe<CoreViewFilter>;
+  getCoreViewFilterGroup?: Maybe<CoreViewFilterGroup>;
+  getCoreViewFilterGroups: Array<CoreViewFilterGroup>;
+  getCoreViewFilters: Array<CoreViewFilter>;
+  getCoreViewGroup?: Maybe<CoreViewGroup>;
+  getCoreViewGroups: Array<CoreViewGroup>;
+  getCoreViewSort?: Maybe<CoreViewSort>;
+  getCoreViewSorts: Array<CoreViewSort>;
+  getCoreViews: Array<CoreView>;
   getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -2234,6 +2556,66 @@ export type QueryGetAvailablePackagesArgs = {
 
 export type QueryGetConnectedImapSmtpCaldavAccountArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type QueryGetCoreViewArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewFieldArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewFieldsArgs = {
+  viewId: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewFilterArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewFilterGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewFilterGroupsArgs = {
+  viewId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryGetCoreViewFiltersArgs = {
+  viewId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryGetCoreViewGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewGroupsArgs = {
+  viewId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryGetCoreViewSortArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewSortsArgs = {
+  viewId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryGetCoreViewsArgs = {
+  objectMetadataId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -2462,6 +2844,7 @@ export type Role = {
   label: Scalars['String'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   permissionFlags?: Maybe<Array<PermissionFlag>>;
+  standardId?: Maybe<Scalars['UUID']>;
   workspaceMembers: Array<WorkspaceMember>;
 };
 
@@ -2891,6 +3274,58 @@ export type UpdateServerlessFunctionInput = {
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };
 
+export type UpdateViewFieldInput = {
+  aggregateOperation?: InputMaybe<AggregateOperations>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  position?: InputMaybe<Scalars['Float']>;
+  size?: InputMaybe<Scalars['Float']>;
+};
+
+export type UpdateViewFilterGroupInput = {
+  logicalOperator?: InputMaybe<ViewFilterGroupLogicalOperator>;
+  parentViewFilterGroupId?: InputMaybe<Scalars['UUID']>;
+  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
+  viewId?: InputMaybe<Scalars['UUID']>;
+};
+
+export type UpdateViewFilterInput = {
+  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  operand?: InputMaybe<ViewFilterOperand>;
+  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
+  subFieldName?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['RawJSONScalar']>;
+  viewFilterGroupId?: InputMaybe<Scalars['UUID']>;
+  viewId?: InputMaybe<Scalars['UUID']>;
+};
+
+export type UpdateViewGroupInput = {
+  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  fieldValue?: InputMaybe<Scalars['String']>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  position?: InputMaybe<Scalars['Float']>;
+  viewId?: InputMaybe<Scalars['UUID']>;
+};
+
+export type UpdateViewInput = {
+  anyFieldFilterValue?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isCompact?: InputMaybe<Scalars['Boolean']>;
+  kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
+  kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  key?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  openRecordIn?: InputMaybe<ViewOpenRecordIn>;
+  position?: InputMaybe<Scalars['Float']>;
+  type?: InputMaybe<ViewType>;
+};
+
+export type UpdateViewSortInput = {
+  direction?: InputMaybe<ViewSortDirection>;
+  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  viewId?: InputMaybe<Scalars['UUID']>;
+};
+
 export type UpdateWebhookDto = {
   description?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
@@ -3055,6 +3490,46 @@ export type VersionInfo = {
   currentVersion?: Maybe<Scalars['String']>;
   latestVersion: Scalars['String'];
 };
+
+export enum ViewFilterGroupLogicalOperator {
+  AND = 'AND',
+  NOT = 'NOT',
+  OR = 'OR'
+}
+
+export enum ViewFilterOperand {
+  CONTAINS = 'CONTAINS',
+  DOES_NOT_CONTAIN = 'DOES_NOT_CONTAIN',
+  GREATER_THAN_OR_EQUAL = 'GREATER_THAN_OR_EQUAL',
+  IS = 'IS',
+  IS_AFTER = 'IS_AFTER',
+  IS_BEFORE = 'IS_BEFORE',
+  IS_EMPTY = 'IS_EMPTY',
+  IS_IN_FUTURE = 'IS_IN_FUTURE',
+  IS_IN_PAST = 'IS_IN_PAST',
+  IS_NOT = 'IS_NOT',
+  IS_NOT_EMPTY = 'IS_NOT_EMPTY',
+  IS_NOT_NULL = 'IS_NOT_NULL',
+  IS_RELATIVE = 'IS_RELATIVE',
+  IS_TODAY = 'IS_TODAY',
+  LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL',
+  VECTOR_SEARCH = 'VECTOR_SEARCH'
+}
+
+export enum ViewOpenRecordIn {
+  RECORD_PAGE = 'RECORD_PAGE',
+  SIDE_PANEL = 'SIDE_PANEL'
+}
+
+export enum ViewSortDirection {
+  ASC = 'ASC',
+  DESC = 'DESC'
+}
+
+export enum ViewType {
+  KANBAN = 'KANBAN',
+  TABLE = 'TABLE'
+}
 
 export type Webhook = {
   __typename?: 'Webhook';
@@ -3709,14 +4184,14 @@ export type CreateOneObjectMetadataItemMutationVariables = Exact<{
 }>;
 
 
-export type CreateOneObjectMetadataItemMutation = { __typename?: 'Mutation', createOneObject: { __typename?: 'Object', id: string, dataSourceId: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isActive: boolean, isSearchable: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, isLabelSyncedWithName: boolean } };
+export type CreateOneObjectMetadataItemMutation = { __typename?: 'Mutation', createOneObject: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isActive: boolean, isSearchable: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, isLabelSyncedWithName: boolean } };
 
 export type CreateOneFieldMetadataItemMutationVariables = Exact<{
   input: CreateOneFieldMetadataInput;
 }>;
 
 
-export type CreateOneFieldMetadataItemMutation = { __typename?: 'Mutation', createOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null, defaultValue?: any | null, options?: any | null, isLabelSyncedWithName?: boolean | null } };
+export type CreateOneFieldMetadataItemMutation = { __typename?: 'Mutation', createOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isUnique?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null, defaultValue?: any | null, options?: any | null, isLabelSyncedWithName?: boolean | null } };
 
 export type UpdateOneFieldMetadataItemMutationVariables = Exact<{
   idToUpdate: Scalars['UUID'];
@@ -3724,7 +4199,7 @@ export type UpdateOneFieldMetadataItemMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOneFieldMetadataItemMutation = { __typename?: 'Mutation', updateOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null, isLabelSyncedWithName?: boolean | null } };
+export type UpdateOneFieldMetadataItemMutation = { __typename?: 'Mutation', updateOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isUnique?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null, isLabelSyncedWithName?: boolean | null } };
 
 export type UpdateOneObjectMetadataItemMutationVariables = Exact<{
   idToUpdate: Scalars['UUID'];
@@ -3732,26 +4207,26 @@ export type UpdateOneObjectMetadataItemMutationVariables = Exact<{
 }>;
 
 
-export type UpdateOneObjectMetadataItemMutation = { __typename?: 'Mutation', updateOneObject: { __typename?: 'Object', id: string, dataSourceId: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isActive: boolean, isSearchable: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, isLabelSyncedWithName: boolean } };
+export type UpdateOneObjectMetadataItemMutation = { __typename?: 'Mutation', updateOneObject: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isActive: boolean, isSearchable: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, isLabelSyncedWithName: boolean } };
 
 export type DeleteOneObjectMetadataItemMutationVariables = Exact<{
   idToDelete: Scalars['UUID'];
 }>;
 
 
-export type DeleteOneObjectMetadataItemMutation = { __typename?: 'Mutation', deleteOneObject: { __typename?: 'Object', id: string, dataSourceId: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isActive: boolean, isSearchable: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, isLabelSyncedWithName: boolean } };
+export type DeleteOneObjectMetadataItemMutation = { __typename?: 'Mutation', deleteOneObject: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isActive: boolean, isSearchable: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, isLabelSyncedWithName: boolean } };
 
 export type DeleteOneFieldMetadataItemMutationVariables = Exact<{
   idToDelete: Scalars['UUID'];
 }>;
 
 
-export type DeleteOneFieldMetadataItemMutation = { __typename?: 'Mutation', deleteOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null } };
+export type DeleteOneFieldMetadataItemMutation = { __typename?: 'Mutation', deleteOneField: { __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isUnique?: boolean | null, isNullable?: boolean | null, createdAt: string, updatedAt: string, settings?: any | null } };
 
 export type ObjectMetadataItemsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ObjectMetadataItemsQuery = { __typename?: 'Query', objects: { __typename?: 'ObjectConnection', edges: Array<{ __typename?: 'ObjectEdge', node: { __typename?: 'Object', id: string, dataSourceId: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } };
+export type ObjectMetadataItemsQuery = { __typename?: 'Query', objects: { __typename?: 'ObjectConnection', edges: Array<{ __typename?: 'ObjectEdge', node: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } };
 
 export type SkipBookOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -6832,7 +7307,6 @@ export const CreateOneObjectMetadataItemDocument = gql`
     mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {
   createOneObject(input: $input) {
     id
-    dataSourceId
     nameSingular
     namePlural
     labelSingular
@@ -6887,6 +7361,7 @@ export const CreateOneFieldMetadataItemDocument = gql`
     icon
     isCustom
     isActive
+    isUnique
     isNullable
     createdAt
     updatedAt
@@ -6934,6 +7409,7 @@ export const UpdateOneFieldMetadataItemDocument = gql`
     icon
     isCustom
     isActive
+    isUnique
     isNullable
     createdAt
     updatedAt
@@ -6973,7 +7449,6 @@ export const UpdateOneObjectMetadataItemDocument = gql`
     mutation UpdateOneObjectMetadataItem($idToUpdate: UUID!, $updatePayload: UpdateObjectPayload!) {
   updateOneObject(input: {id: $idToUpdate, update: $updatePayload}) {
     id
-    dataSourceId
     nameSingular
     namePlural
     labelSingular
@@ -7022,7 +7497,6 @@ export const DeleteOneObjectMetadataItemDocument = gql`
     mutation DeleteOneObjectMetadataItem($idToDelete: UUID!) {
   deleteOneObject(input: {id: $idToDelete}) {
     id
-    dataSourceId
     nameSingular
     namePlural
     labelSingular
@@ -7077,6 +7551,7 @@ export const DeleteOneFieldMetadataItemDocument = gql`
     icon
     isCustom
     isActive
+    isUnique
     isNullable
     createdAt
     updatedAt
@@ -7116,7 +7591,6 @@ export const ObjectMetadataItemsDocument = gql`
     edges {
       node {
         id
-        dataSourceId
         nameSingular
         namePlural
         labelSingular
@@ -7143,6 +7617,7 @@ export const ObjectMetadataItemsDocument = gql`
           indexWhereClause
           indexType
           isUnique
+          isCustom
           indexFieldMetadataList {
             id
             fieldMetadataId
@@ -7170,6 +7645,27 @@ export const ObjectMetadataItemsDocument = gql`
           settings
           isLabelSyncedWithName
           relation {
+            type
+            sourceObjectMetadata {
+              id
+              nameSingular
+              namePlural
+            }
+            targetObjectMetadata {
+              id
+              nameSingular
+              namePlural
+            }
+            sourceFieldMetadata {
+              id
+              name
+            }
+            targetFieldMetadata {
+              id
+              name
+            }
+          }
+          morphRelations {
             type
             sourceObjectMetadata {
               id

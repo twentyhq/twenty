@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
-import { QueryFailedError } from 'typeorm';
+import { type QueryFailedError } from 'typeorm';
 
-import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
+import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 

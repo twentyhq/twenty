@@ -6,9 +6,9 @@ import { modifyRemoteTableFromCache } from '@/databases/utils/modifyRemoteTableF
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import {
-  RemoteTableInput,
-  UnsyncRemoteTableMutation,
-  UnsyncRemoteTableMutationVariables,
+  type RemoteTableInput,
+  type UnsyncRemoteTableMutation,
+  type UnsyncRemoteTableMutationVariables,
 } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
 

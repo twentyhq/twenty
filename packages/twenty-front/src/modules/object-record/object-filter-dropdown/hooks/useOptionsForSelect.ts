@@ -16,7 +16,7 @@ export const useOptionsForSelect = (fieldMetadataId: string) => {
     objectNameSingular,
   });
 
-  const fieldMetadataItem = objectMetadataItem.fields.find(
+  const fieldMetadataItem = objectMetadataItem.readableFields.find(
     (field) => field.id === fieldMetadataId,
   );
 

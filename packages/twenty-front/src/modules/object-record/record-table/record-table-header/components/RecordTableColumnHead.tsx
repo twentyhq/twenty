@@ -1,13 +1,13 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useIcons } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
-import { ColumnDefinition } from '../../types/ColumnDefinition';
+import { type ColumnDefinition } from '../../types/ColumnDefinition';
 
 type RecordTableColumnHeadProps = {
   column: ColumnDefinition<FieldMetadata>;

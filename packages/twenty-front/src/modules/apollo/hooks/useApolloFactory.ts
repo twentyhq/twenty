@@ -1,4 +1,4 @@
-import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
+import { InMemoryCache, type NormalizedCacheObject } from '@apollo/client';
 import { useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -18,7 +18,7 @@ import { clientConfigApiStatusState } from '@/client-config/states/clientConfigA
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-shared/utils';
-import { ApolloFactory, Options } from '../services/apollo.factory';
+import { ApolloFactory, type Options } from '../services/apollo.factory';
 
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   // eslint-disable-next-line @nx/workspace-no-state-useref

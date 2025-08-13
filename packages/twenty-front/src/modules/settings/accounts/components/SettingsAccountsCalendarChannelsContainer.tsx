@@ -1,13 +1,12 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { CalendarChannel } from '@/accounts/types/CalendarChannel';
-import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
+import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
-import { SettingsAccountsCalendarChannelsGeneral } from '@/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountCalendarChannelsTabListComponentId';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -82,9 +81,10 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
           )}
         </React.Fragment>
       ))}
-      {false && activeTabId === 'general' && (
+      {/* TODO: remove or keep? */}
+      {/* {activeTabId === 'general' && (
         <SettingsAccountsCalendarChannelsGeneral />
-      )}
+      )} */}
     </>
   );
 };

@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   InvalidMetadataException,
   InvalidMetadataExceptionCode,
@@ -37,16 +37,16 @@ const getReservedCompositeFieldNames = (
 
 export const validateFlatFieldMetadataNameAvailability = ({
   name,
-  objectMetadata,
+  flatObjectMetadata,
 }: {
   name: string;
-  objectMetadata: FlatObjectMetadata;
+  flatObjectMetadata: FlatObjectMetadata;
 }): FailedFlatFieldMetadataValidationExceptions | undefined => {
   const reservedCompositeFieldsNames =
-    getReservedCompositeFieldNames(objectMetadata);
+    getReservedCompositeFieldNames(flatObjectMetadata);
 
   if (
-    objectMetadata.flatFieldMetadatas.some(
+    flatObjectMetadata.flatFieldMetadatas.some(
       (field) =>
         field.name === name ||
         (field.type === FieldMetadataType.RELATION && // Question: Should we also look for MORPH_RELATION field types ?

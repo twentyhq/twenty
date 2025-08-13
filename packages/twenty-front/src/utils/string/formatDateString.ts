@@ -1,11 +1,11 @@
-import { DateFormat } from '@/localization/constants/DateFormat';
+import { type DateFormat } from '@/localization/constants/DateFormat';
 import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/formatDateISOStringToCustomUnicodeFormat';
 import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';
 import { formatDateISOStringToRelativeDate } from '@/localization/utils/formatDateISOStringToRelativeDate';
 import {
   FieldDateDisplayFormat,
-  FieldDateMetadataSettings,
-} from '@/object-record/record-field/types/FieldMetadata';
+  type FieldDateMetadataSettings,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isDefined } from 'twenty-shared/utils';
 
 export const formatDateString = ({

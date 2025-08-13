@@ -1,5 +1,5 @@
 import {
-  ExecutionContext,
+  type ExecutionContext,
   InternalServerErrorException,
   createParamDecorator,
 } from '@nestjs/common';

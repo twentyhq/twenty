@@ -1,7 +1,7 @@
 import { getWorkflowRunContext } from '@/workflow/utils/getWorkflowRunContext';
 import {
   StepStatus,
-  WorkflowRunStepInfos,
+  type WorkflowRunStepInfos,
 } from '@/workflow/types/WorkflowRunStateStepInfos';
 
 describe('getWorkflowRunContext', () => {

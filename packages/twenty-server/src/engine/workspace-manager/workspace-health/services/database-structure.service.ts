@@ -1,22 +1,22 @@
 import { Injectable } from '@nestjs/common';
 
-import { ColumnType } from 'typeorm';
-import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
+import { type ColumnType } from 'typeorm';
+import { type ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
-  FieldMetadataDefaultValue,
-  FieldMetadataFunctionDefaultValue,
+  type FieldMetadataDefaultValue,
+  type FieldMetadataFunctionDefaultValue,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import {
-  WorkspaceTableStructure,
-  WorkspaceTableStructureResult,
+  type WorkspaceTableStructure,
+  type WorkspaceTableStructureResult,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-table-definition.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import { FieldMetadataDefaultValueFunctionNames } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FieldMetadataDefaultValueFunctionNames } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/is-function-default-value.util';
 import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-function-default-value.util';

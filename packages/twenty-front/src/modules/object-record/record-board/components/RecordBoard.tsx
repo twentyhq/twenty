@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import {
   DragDropContext,
-  DragStart,
-  OnDragEndResponder,
+  type DragStart,
+  type OnDragEndResponder,
 } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useContext, useRef } from 'react';
 import { useRecoilCallback } from 'recoil';

@@ -1,5 +1,5 @@
-import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/testing-library';
+import { type Meta, type StoryObj } from '@storybook/react';
+import { within } from '@storybook/test';
 import { HttpResponse, graphql } from 'msw';
 
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';

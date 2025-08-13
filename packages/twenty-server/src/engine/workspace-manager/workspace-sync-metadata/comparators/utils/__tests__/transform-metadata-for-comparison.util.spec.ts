@@ -40,7 +40,10 @@ describe('transformMetadataForComparison', () => {
     });
 
     expect(result).toHaveProperty('key-123');
-    expect(result['key-123']).toEqual({ id: 123, name: 'Test' });
+    expect((result as Record<string, any>)['key-123']).toEqual({
+      id: 123,
+      name: 'Test',
+    });
   });
 
   // Test with an empty array

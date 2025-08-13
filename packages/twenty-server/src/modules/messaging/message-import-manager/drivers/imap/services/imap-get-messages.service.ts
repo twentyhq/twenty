@@ -1,16 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { AddressObject, ParsedMail } from 'mailparser';
+import { type AddressObject, type ParsedMail } from 'mailparser';
 // @ts-expect-error legacy noImplicitAny
 import planer from 'planer';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { ImapFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-fetch-by-batch.service';
-import { MessageFetchResult } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-processor.service';
-import { EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
-import { MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageFetchResult } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-processor.service';
+import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
+import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
 

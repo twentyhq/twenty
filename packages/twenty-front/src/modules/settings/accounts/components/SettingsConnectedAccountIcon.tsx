@@ -1,12 +1,12 @@
-import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { useTheme } from '@emotion/react';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconAt,
   IconCalendarEvent,
-  IconComponent,
-  IconComponentProps,
+  type IconComponent,
+  type IconComponentProps,
   IconGoogle,
   IconMail,
   IconMicrosoft,

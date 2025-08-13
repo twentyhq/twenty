@@ -1,7 +1,7 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
-import { FieldActorForInputValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldActorForInputValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { InMemoryCache } from '@apollo/client';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';

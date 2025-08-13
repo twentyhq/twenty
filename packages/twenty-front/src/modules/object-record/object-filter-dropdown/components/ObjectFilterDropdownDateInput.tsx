@@ -8,11 +8,11 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/utils/computeVariableDateViewFilterValue';
 import {
   resolveDateViewFilterValue,
-  VariableDateViewFilterValueDirection,
-  VariableDateViewFilterValueUnit,
+  type VariableDateViewFilterValueDirection,
+  type VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { useState } from 'react';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

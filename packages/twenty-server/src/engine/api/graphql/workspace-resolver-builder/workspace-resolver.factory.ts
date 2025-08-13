@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { IResolvers } from '@graphql-tools/utils';
+import { type IResolvers } from '@graphql-tools/utils';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/delete-many-resolver.factory';
@@ -15,9 +15,9 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
 import { shouldExcludeFromWorkspaceApi } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/should-exclude-from-workspace-api.util';
@@ -29,10 +29,10 @@ import { FindDuplicatesResolverFactory } from './factories/find-duplicates-resol
 import { FindManyResolverFactory } from './factories/find-many-resolver.factory';
 import { FindOneResolverFactory } from './factories/find-one-resolver.factory';
 import { UpdateOneResolverFactory } from './factories/update-one-resolver.factory';
-import { WorkspaceResolverBuilderFactoryInterface } from './interfaces/workspace-resolver-builder-factory.interface';
+import { type WorkspaceResolverBuilderFactoryInterface } from './interfaces/workspace-resolver-builder-factory.interface';
 import {
-  WorkspaceResolverBuilderMethodNames,
-  WorkspaceResolverBuilderMethods,
+  type WorkspaceResolverBuilderMethodNames,
+  type WorkspaceResolverBuilderMethods,
 } from './interfaces/workspace-resolvers-builder.interface';
 
 @Injectable()

@@ -1,4 +1,4 @@
-import { Settings } from './interfaces/settings.interface';
+import { type Settings } from './interfaces/settings.interface';
 
 export const settings: Settings = {
   storage: {

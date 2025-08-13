@@ -5,9 +5,9 @@ import { DELETE_ONE_DATABASE_CONNECTION } from '@/databases/graphql/mutations/de
 import { GET_MANY_DATABASE_CONNECTIONS } from '@/databases/graphql/queries/findManyDatabaseConnections';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import {
-  DeleteServerMutation,
-  DeleteServerMutationVariables,
-  RemoteServerIdInput,
+  type DeleteServerMutation,
+  type DeleteServerMutationVariables,
+  type RemoteServerIdInput,
 } from '~/generated-metadata/graphql';
 
 export const useDeleteOneDatabaseConnection = () => {

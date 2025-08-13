@@ -1,18 +1,20 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import {
-  WorkflowAction,
+  type WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
@@ -135,7 +137,7 @@ describe('WorkflowVersionStepWorkspaceService', () => {
       const result = await service.createWorkflowVersionStep({
         input: {
           stepType: WorkflowActionType.FORM,
-          parentStepId: 'trigger',
+          parentStepId: TRIGGER_STEP_ID,
           nextStepId: undefined,
           workflowVersionId: mockWorkflowVersionId,
         },
@@ -160,7 +162,7 @@ describe('WorkflowVersionStepWorkspaceService', () => {
       const result = await service.createWorkflowVersionStep({
         input: {
           stepType: WorkflowActionType.FORM,
-          parentStepId: 'trigger',
+          parentStepId: TRIGGER_STEP_ID,
           nextStepId: 'step-1',
           workflowVersionId: mockWorkflowVersionId,
         },
@@ -259,7 +261,7 @@ describe('WorkflowVersionStepWorkspaceService', () => {
 
     it('should delete trigger', async () => {
       const result = await service.deleteWorkflowVersionStep({
-        stepIdToDelete: 'trigger',
+        stepIdToDelete: TRIGGER_STEP_ID,
         workflowVersionId: mockWorkflowVersionId,
         workspaceId: mockWorkspaceId,
       });
@@ -277,7 +279,7 @@ describe('WorkflowVersionStepWorkspaceService', () => {
           'step-2': [],
           'step-3': [],
         },
-        deletedStepIds: ['trigger'],
+        deletedStepIds: [TRIGGER_STEP_ID],
       });
     });
   });

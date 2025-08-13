@@ -1,12 +1,12 @@
 import isEmpty from 'lodash.isempty';
 
 import {
-  ObjectRecord,
-  ObjectRecordFilter,
+  type ObjectRecord,
+  type ObjectRecordFilter,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { settings } from 'src/engine/constants/settings';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { getCompositeFieldMetadataMap } from 'src/engine/twenty-orm/utils/format-result.util';
 

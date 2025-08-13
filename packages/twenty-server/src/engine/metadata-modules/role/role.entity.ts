@@ -20,6 +20,9 @@ export class RoleEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ nullable: true, type: 'uuid' })
+  standardId?: string;
+
   @Column({ nullable: false })
   label: string;
 

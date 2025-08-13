@@ -1,4 +1,4 @@
-import { ViewFilterOperand } from 'twenty-shared/src/types';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 const emptyOperands = [
   ViewFilterOperand.IsEmpty,

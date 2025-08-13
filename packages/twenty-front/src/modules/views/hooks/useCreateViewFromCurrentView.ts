@@ -17,10 +17,10 @@ import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistVi
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
-import { GraphQLView } from '@/views/types/GraphQLView';
-import { View } from '@/views/types/View';
-import { ViewGroup } from '@/views/types/ViewGroup';
-import { ViewSort } from '@/views/types/ViewSort';
+import { type GraphQLView } from '@/views/types/GraphQLView';
+import { type View } from '@/views/types/View';
+import { type ViewGroup } from '@/views/types/ViewGroup';
+import { type ViewSort } from '@/views/types/ViewSort';
 import { ViewType } from '@/views/types/ViewType';
 import { duplicateViewFiltersAndViewFilterGroups } from '@/views/utils/duplicateViewFiltersAndViewFilterGroups';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';

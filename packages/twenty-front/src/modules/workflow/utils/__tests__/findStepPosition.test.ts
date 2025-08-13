@@ -1,5 +1,5 @@
-import { WorkflowStep } from '@/workflow/types/Workflow';
-import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
+import { type WorkflowStep } from '@/workflow/types/Workflow';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { findStepPosition } from '../findStepPosition';
 
 describe('findStepPosition', () => {

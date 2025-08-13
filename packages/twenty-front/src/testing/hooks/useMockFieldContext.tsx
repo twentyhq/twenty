@@ -1,11 +1,11 @@
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import {
   FieldContext,
-  RecordUpdateHook,
-} from '@/object-record/record-field/contexts/FieldContext';
+  type RecordUpdateHook,
+} from '@/object-record/record-field/ui/contexts/FieldContext';
 
 export const useMockFieldContext = ({
   clearable,

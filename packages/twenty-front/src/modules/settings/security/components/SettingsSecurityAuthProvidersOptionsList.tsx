@@ -17,7 +17,7 @@ import {
 } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
 import {
-  AuthProviders,
+  type AuthProviders,
   FeatureFlagKey,
   useUpdateWorkspaceMutation,
 } from '~/generated-metadata/graphql';

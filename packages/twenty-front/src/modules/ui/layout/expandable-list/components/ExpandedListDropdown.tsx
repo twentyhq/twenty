@@ -4,7 +4,7 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import styled from '@emotion/styled';
 import { FloatingPortal, offset, shift, useFloating } from '@floating-ui/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 type ExpandedListDropdownProps = {
   anchorElement?: HTMLElement;

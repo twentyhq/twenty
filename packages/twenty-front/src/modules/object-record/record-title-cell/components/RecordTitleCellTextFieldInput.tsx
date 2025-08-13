@@ -1,33 +1,20 @@
-import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
-import { useTextField } from '@/object-record/record-field/meta-types/hooks/useTextField';
-import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import {
-  FieldInputClickOutsideEvent,
-  FieldInputEvent,
-} from '@/object-record/record-field/types/FieldInputEvent';
+import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import { useTextField } from '@/object-record/record-field/ui/meta-types/hooks/useTextField';
+import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
+
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 
 type RecordTitleCellTextFieldInputProps = {
   instanceId: string;
-  onClickOutside?: FieldInputClickOutsideEvent;
-  onEnter?: FieldInputEvent;
-  onEscape?: FieldInputEvent;
-  onTab?: FieldInputEvent;
-  onShiftTab?: FieldInputEvent;
   sizeVariant?: 'xs' | 'md';
 };
 
 export const RecordTitleCellTextFieldInput = ({
   instanceId,
   sizeVariant,
-  onEnter,
-  onEscape,
-  onClickOutside,
-  onTab,
-  onShiftTab,
 }: RecordTitleCellTextFieldInputProps) => {
   const { fieldDefinition, draftValue, setDraftValue } = useTextField();
 
@@ -37,26 +24,28 @@ export const RecordTitleCellTextFieldInput = ({
     setDraftValue(turnIntoUndefinedIfWhitespacesOnly(newText));
   };
 
-  const persistField = usePersistField();
+  const { onEnter, onEscape, onClickOutside, onTab, onShiftTab } = useContext(
+    FieldInputEventContext,
+  );
 
   useRegisterInputEvents<string>({
     focusId: instanceId,
     inputRef: wrapperRef,
     inputValue: draftValue ?? '',
     onEnter: (inputValue) => {
-      onEnter?.(() => persistField(inputValue));
+      onEnter?.({ newValue: inputValue });
     },
     onEscape: (inputValue) => {
-      onEscape?.(() => persistField(inputValue));
+      onEscape?.({ newValue: inputValue });
     },
     onClickOutside: (event, inputValue) => {
-      onClickOutside?.(() => persistField(inputValue), event);
+      onClickOutside?.({ newValue: inputValue, event });
     },
     onTab: (inputValue) => {
-      onTab?.(() => persistField(inputValue));
+      onTab?.({ newValue: inputValue });
     },
     onShiftTab: (inputValue) => {
-      onShiftTab?.(() => persistField(inputValue));
+      onShiftTab?.({ newValue: inputValue });
     },
   });
 

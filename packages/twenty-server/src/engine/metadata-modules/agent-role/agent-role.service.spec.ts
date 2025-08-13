@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type Repository } from 'typeorm';
 
-import { ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import { type ModelId } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import {
   AgentException,

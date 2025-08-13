@@ -1,5 +1,5 @@
-import { DragDropContext, DropResult } from '@hello-pangea/dnd';
-import { ReactNode } from 'react';
+import { DragDropContext, type DropResult } from '@hello-pangea/dnd';
+import { type ReactNode } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';

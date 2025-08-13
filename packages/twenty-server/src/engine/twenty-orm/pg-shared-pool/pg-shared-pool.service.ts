@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import pg, { Pool, PoolConfig } from 'pg';
+import pg, { type Pool, type PoolConfig } from 'pg';
 import { isDefined } from 'twenty-shared/utils';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -347,7 +347,6 @@ export class PgPoolSharedService {
     function SharedPool(this: Pool, config?: PoolConfig): Pool {
       // When called as a function (without new), make sure to return a new instance
       if (!(this instanceof SharedPool)) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error We know this works at runtime
         return new SharedPool(config);
       }

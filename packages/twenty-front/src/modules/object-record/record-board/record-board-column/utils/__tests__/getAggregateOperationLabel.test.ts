@@ -1,7 +1,6 @@
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
-import { expect } from '@storybook/test';
 
 describe('getAggregateOperationLabel', () => {
   it('should return correct labels for each operation', () => {

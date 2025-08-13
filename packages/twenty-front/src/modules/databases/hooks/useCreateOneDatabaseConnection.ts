@@ -4,9 +4,9 @@ import { CREATE_ONE_DATABASE_CONNECTION } from '@/databases/graphql/mutations/cr
 import { GET_MANY_DATABASE_CONNECTIONS } from '@/databases/graphql/queries/findManyDatabaseConnections';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import {
-  CreateRemoteServerInput,
-  CreateServerMutation,
-  CreateServerMutationVariables,
+  type CreateRemoteServerInput,
+  type CreateServerMutation,
+  type CreateServerMutationVariables,
 } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
 

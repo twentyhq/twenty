@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddIsUniqueToFields1728563893694 implements MigrationInterface {
   name = 'AddIsUniqueToFields1728563893694';

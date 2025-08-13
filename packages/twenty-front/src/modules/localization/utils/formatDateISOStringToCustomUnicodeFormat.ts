@@ -15,7 +15,7 @@ export const formatDateISOStringToCustomUnicodeFormat = ({
     return formatInTimeZone(new Date(date), timeZone, dateFormat, {
       locale: localeCatalog,
     });
-  } catch (e) {
+  } catch {
     return 'Invalid format string';
   }
 };

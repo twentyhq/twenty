@@ -1,7 +1,7 @@
-import { ApolloCache } from '@apollo/client';
-import { Modifiers } from '@apollo/client/cache';
+import { type ApolloCache } from '@apollo/client';
+import { type Modifiers } from '@apollo/client/cache';
 
-import { RemoteTable } from '~/generated-metadata/graphql';
+import { type RemoteTable } from '~/generated-metadata/graphql';
 
 export const modifyRemoteTableFromCache = ({
   cache,

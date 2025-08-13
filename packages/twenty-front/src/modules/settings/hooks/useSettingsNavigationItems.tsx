@@ -5,7 +5,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { type NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
@@ -15,7 +15,7 @@ import {
   IconAt,
   IconCalendarEvent,
   IconColorSwatch,
-  IconComponent,
+  type IconComponent,
   IconCurrencyDollar,
   IconDoorEnter,
   IconFlask,
@@ -86,7 +86,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Accounts`,
           path: SettingsPath.Accounts,
           Icon: IconAt,
-          matchSubPages: false,
           subItems: [
             {
               label: t`Emails`,

@@ -1,11 +1,11 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { IconSearch } from '@ui/display';
 import {
   CatalogDecorator,
-  CatalogStory,
+  type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { LightButton, LightButtonAccent } from '../LightButton';
+import { LightButton, type LightButtonAccent } from '../LightButton';
 
 const meta: Meta<typeof LightButton> = {
   title: 'UI/Input/Button/LightButton',

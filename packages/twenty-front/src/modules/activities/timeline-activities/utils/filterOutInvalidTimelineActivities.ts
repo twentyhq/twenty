@@ -1,6 +1,6 @@
-import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const filterOutInvalidTimelineActivities = (
   timelineActivities: TimelineActivity[],
@@ -22,11 +22,11 @@ export const filterOutInvalidTimelineActivities = (
   }
 
   const fieldMetadataItemMap = new Map(
-    mainObjectMetadataItem.fields.map((field) => [field.name, field]),
+    mainObjectMetadataItem.readableFields.map((field) => [field.name, field]),
   );
 
   const noteFieldMetadataItemMap = new Map(
-    noteObjectMetadataItem.fields.map((field) => [field.name, field]),
+    noteObjectMetadataItem.readableFields.map((field) => [field.name, field]),
   );
 
   return timelineActivities.filter((timelineActivity) => {

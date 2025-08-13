@@ -1,9 +1,13 @@
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { ComponentReadOnlySelector } from '@/ui/utilities/state/component-state/types/ComponentReadOnlySelector';
-import { ComponentSelector } from '@/ui/utilities/state/component-state/types/ComponentSelector';
-import { ComponentState } from '@/ui/utilities/state/component-state/types/ComponentState';
+import { type ComponentReadOnlySelector } from '@/ui/utilities/state/component-state/types/ComponentReadOnlySelector';
+import { type ComponentSelector } from '@/ui/utilities/state/component-state/types/ComponentSelector';
+import { type ComponentState } from '@/ui/utilities/state/component-state/types/ComponentState';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { RecoilState, RecoilValueReadOnly, useRecoilValue } from 'recoil';
+import {
+  type RecoilState,
+  type RecoilValueReadOnly,
+  useRecoilValue,
+} from 'recoil';
 
 export const useRecoilComponentValue = <StateType>(
   componentState:

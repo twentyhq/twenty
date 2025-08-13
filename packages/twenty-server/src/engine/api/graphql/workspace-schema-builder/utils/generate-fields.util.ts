@@ -1,23 +1,23 @@
 import {
-  GraphQLFieldConfigMap,
-  GraphQLInputFieldConfigMap,
-  GraphQLInputType,
-  GraphQLOutputType,
+  type GraphQLFieldConfigMap,
+  type GraphQLInputFieldConfigMap,
+  type GraphQLInputType,
+  type GraphQLOutputType,
 } from 'graphql';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
+import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
-import { ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/object-type-definition.factory';
+import { type ObjectTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/object-type-definition.factory';
 import { formatRelationConnectInputTarget } from 'src/engine/api/graphql/workspace-schema-builder/factories/relation-connect-input-type-definition.factory';
 import { extractGraphQLRelationFieldNames } from 'src/engine/api/graphql/workspace-schema-builder/utils/extract-graphql-relation-field-names.util';
 import { isFieldMetadataRelationOrMorphRelation } from 'src/engine/api/graphql/workspace-schema-builder/utils/is-field-metadata-relation-or-morph-relation.utils';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 type TypeFactory<T extends InputTypeDefinitionKind | ObjectTypeDefinitionKind> =
   {
@@ -167,10 +167,10 @@ const generateRelationField = <
   options: WorkspaceBuildSchemaOptions;
   typeFactory: TypeFactory<T>;
 }) => {
-  const relationField = {};
+  const relationFields = {};
 
   if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
-    return relationField;
+    return relationFields;
   }
 
   const { joinColumnName, fieldMetadataName } =
@@ -188,14 +188,14 @@ const generateRelationField = <
   );
 
   // @ts-expect-error legacy noImplicitAny
-  relationField[joinColumnName] = {
+  relationFields[joinColumnName] = {
     type,
     description: fieldMetadata.description,
   };
 
   //TODO : temporary - continue ej/1278 branch (https://github.com/twentyhq/core-team-issues/issues/1278 issue) before removing this
   if (fieldMetadata.type === FieldMetadataType.MORPH_RELATION)
-    return relationField;
+    return relationFields;
 
   if (
     [InputTypeDefinitionKind.Create, InputTypeDefinitionKind.Update].includes(
@@ -215,15 +215,16 @@ const generateRelationField = <
         isRelationConnectField: true,
       },
     );
+
+    // todo @guillim
+    // @ts-expect-error legacy noImplicitAny
+    relationFields[fieldMetadataName] = {
+      type: type,
+      description: fieldMetadata.description,
+    };
   }
 
-  // @ts-expect-error legacy noImplicitAny
-  relationField[fieldMetadataName] = {
-    type: type,
-    description: fieldMetadata.description,
-  };
-
-  return relationField;
+  return relationFields;
 };
 
 // Type guard

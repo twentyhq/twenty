@@ -6,11 +6,11 @@ import { WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES } from 'src/engine/workspa
 import { WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-index-test-case';
 import { WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-object-test-case';
 import {
-  CamelCasedWorkspaceMigrationActionsType,
-  ExpectedActionCounters,
-  WorkspaceMigrationBuilderTestCase,
+  type CamelCasedWorkspaceMigrationActionsType,
+  type ExpectedActionCounters,
+  type WorkspaceMigrationBuilderTestCase,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
-import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
+import { type WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 
 const allWorkspaceBuilderTestCases: {
@@ -31,6 +31,7 @@ const allWorkspaceBuilderTestCases: {
   },
 ];
 
+// TODO prastoin add coverage to infer deletion from missing entities
 const expectedActionsTypeCounterChecker = ({
   expectedActionsTypeCounter,
   workspaceMigration,
@@ -81,12 +82,15 @@ describe.each(allWorkspaceBuilderTestCases)(
     it.each(eachTestingContextFilter(testCases))(
       '$title',
       ({ context: { input, expectedActionsTypeCounter } }) => {
-        const { from, to } = typeof input === 'function' ? input() : input;
+        const {
+          fromFlatObjectMetadataMaps,
+          toFlatObjectMetadataMaps,
+          inferDeletionFromMissingObjectFieldIndex,
+        } = typeof input === 'function' ? input() : input;
         const workspaceMigration = service.build({
-          objectMetadataFromToInputs: {
-            from,
-            to,
-          },
+          fromFlatObjectMetadataMaps,
+          toFlatObjectMetadataMaps,
+          inferDeletionFromMissingObjectFieldIndex,
           workspaceId: '20202020-52cc-4c64-ad63-76c26fc3a1e1',
         });
 

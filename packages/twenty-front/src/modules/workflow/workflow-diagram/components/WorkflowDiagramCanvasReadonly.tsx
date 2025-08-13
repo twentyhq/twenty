@@ -1,4 +1,4 @@
-import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
+import { type WorkflowVersionStatus } from '@/workflow/types/Workflow';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
 import { WorkflowDiagramDefaultEdgeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdgeReadonly';
 import { WorkflowDiagramEmptyTriggerReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerReadonly';

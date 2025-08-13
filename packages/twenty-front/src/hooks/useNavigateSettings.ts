@@ -1,4 +1,4 @@
-import { SettingsPath } from '@/types/SettingsPath';
+import { type SettingsPath } from '@/types/SettingsPath';
 import { useNavigate } from 'react-router-dom';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 

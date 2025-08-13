@@ -1,14 +1,14 @@
-import { Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react';
 import { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { CustomError } from '@/error-handler/CustomError';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';

@@ -1,12 +1,13 @@
 import { useCallback } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
+import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import {
-  IconComponent,
+  type IconComponent,
   IconMoon,
   IconSun,
   IconSunMoon,
@@ -20,6 +21,7 @@ export const useColorScheme = () => {
   const { updateOneRecord: updateOneWorkspaceMember } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
+  const setPersistedColorScheme = useSetRecoilState(persistedColorSchemeState);
 
   const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
 
@@ -28,6 +30,7 @@ export const useColorScheme = () => {
       if (!currentWorkspaceMember) {
         return;
       }
+      setPersistedColorScheme(value);
       setCurrentWorkspaceMember((current) => {
         if (!current) {
           return current;
@@ -47,6 +50,7 @@ export const useColorScheme = () => {
     [
       currentWorkspaceMember,
       setCurrentWorkspaceMember,
+      setPersistedColorScheme,
       updateOneWorkspaceMember,
     ],
   );

@@ -3,8 +3,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import Stripe from 'stripe';
 import { Repository } from 'typeorm';
+
+import type Stripe from 'stripe';
 
 import {
   BillingException,

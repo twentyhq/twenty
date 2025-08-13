@@ -100,7 +100,7 @@ const evalFromContext = (input: string, context: Record<string, unknown>) => {
     });
 
     return JSON.parse(inferredInput) ?? '';
-  } catch (exception) {
+  } catch {
     return undefined;
   }
 };

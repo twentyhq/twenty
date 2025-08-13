@@ -44,7 +44,7 @@ export const AgentChatContextPreview = ({ agentId }: { agentId: string }) => {
 
     try {
       await deleteFile({ variables: { fileId } });
-    } catch (error) {
+    } catch {
       setAgentChatUploadedFiles(originalFiles);
       enqueueErrorSnackBar({
         message: t`Failed to remove file`,

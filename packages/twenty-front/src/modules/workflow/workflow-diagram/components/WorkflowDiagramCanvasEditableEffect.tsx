@@ -1,6 +1,9 @@
 import { useEdgeSelected } from '@/workflow/workflow-diagram/hooks/useEdgeSelected';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { OnSelectionChangeParams, useOnSelectionChange } from '@xyflow/react';
+import {
+  type OnSelectionChangeParams,
+  useOnSelectionChange,
+} from '@xyflow/react';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated/graphql';

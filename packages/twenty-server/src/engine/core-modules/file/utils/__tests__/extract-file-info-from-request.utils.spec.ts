@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { type Request } from 'express';
 
 import { checkFilename } from 'src/engine/core-modules/file/utils/check-file-name.utils';
 import { checkFileFolder } from 'src/engine/core-modules/file/utils/check-file-folder.utils';

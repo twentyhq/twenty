@@ -6,7 +6,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { IconPlus } from 'twenty-ui/display';
-import { Button, SelectOption } from 'twenty-ui/input';
+import { Button, type SelectOption } from 'twenty-ui/input';
 import { useCreateAgentHandoffMutation } from '~/generated-metadata/graphql';
 
 const StyledAddHandoffForm = styled.div`
@@ -79,7 +79,7 @@ export const SettingsAgentHandoffForm = ({
       enqueueSuccessSnackBar({
         message: t`Handoff created successfully`,
       });
-    } catch (error) {
+    } catch {
       enqueueErrorSnackBar({
         message: t`Failed to create handoff`,
       });

@@ -5,8 +5,8 @@ import {
 } from '@nestjs/common';
 
 import {
-  BeforeDeleteOneHook,
-  DeleteOneInputType,
+  type BeforeDeleteOneHook,
+  type DeleteOneInputType,
 } from '@ptc-org/nestjs-query-graphql';
 
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';

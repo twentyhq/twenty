@@ -1,4 +1,4 @@
-import { FieldPermission, Role } from '~/generated-metadata/graphql';
+import { type FieldPermission, type Role } from '~/generated-metadata/graphql';
 import { getRoleWithRemovedFieldPermission } from '../getRoleWithRemovedFieldPermission';
 
 const BASE_FIELD_PERMISSION: FieldPermission = {

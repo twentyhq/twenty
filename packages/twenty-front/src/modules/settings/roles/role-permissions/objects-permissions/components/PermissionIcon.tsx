@@ -1,7 +1,7 @@
 import {
   SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG,
-  SettingsRoleObjectPermissionKey,
-} from '@/settings/roles/role-permissions/objects-permissions/constants/settingsRoleObjectPermissionIconConfig';
+  type SettingsRoleObjectPermissionKey,
+} from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 

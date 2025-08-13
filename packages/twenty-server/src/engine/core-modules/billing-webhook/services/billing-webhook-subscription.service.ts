@@ -3,10 +3,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import Stripe from 'stripe';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
+
+import type Stripe from 'stripe';
 
 import { getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent } from 'src/engine/core-modules/billing-webhook/utils/get-deleted-stripe-subscription-item-ids-from-stripe-subscription-event.util';
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-customer.util';
@@ -26,7 +27,7 @@ import { WorkspaceService } from 'src/engine/core-modules/workspace/services/wor
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   CleanWorkspaceDeletionWarningUserVarsJob,
-  CleanWorkspaceDeletionWarningUserVarsJobData,
+  type CleanWorkspaceDeletionWarningUserVarsJobData,
 } from 'src/engine/workspace-manager/workspace-cleaner/jobs/clean-workspace-deletion-warning-user-vars.job';
 
 @Injectable()

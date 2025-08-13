@@ -3,9 +3,8 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource, QueryFailedError } from 'typeorm';
 
-import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
+import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import {
   WorkspaceMigrationEntity,
@@ -17,6 +16,7 @@ import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
 import { WorkspaceSyncObjectMetadataIdentifiersService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata-identifiers.service';
 import { WorkspaceSyncObjectMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
+import { WorkspaceSyncRoleService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-role.service';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 
 interface SynchronizeOptions {
@@ -37,7 +37,7 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceSyncIndexMetadataService: WorkspaceSyncIndexMetadataService,
     private readonly workspaceSyncObjectMetadataIdentifiersService: WorkspaceSyncObjectMetadataIdentifiersService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
-    private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceSyncRoleService: WorkspaceSyncRoleService,
   ) {}
 
   /**
@@ -159,6 +159,17 @@ export class WorkspaceSyncMetadataService {
 
       this.logger.log(
         `Workspace object metadata identifiers took ${workspaceObjectMetadataIdentifiersEnd - workspaceObjectMetadataIdentifiersStart}ms`,
+      );
+
+      // 6 - Sync standard roles
+      const workspaceRoleMigrationsStart = performance.now();
+
+      await this.workspaceSyncRoleService.synchronize(context, manager);
+
+      const workspaceRoleMigrationsEnd = performance.now();
+
+      this.logger.log(
+        `Workspace role migrations took ${workspaceRoleMigrationsEnd - workspaceRoleMigrationsStart}ms`,
       );
 
       const workspaceMigrationsSaveStart = performance.now();

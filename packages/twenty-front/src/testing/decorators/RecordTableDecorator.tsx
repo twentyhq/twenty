@@ -1,10 +1,10 @@
-import { Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react';
 import { useRecoilValue } from 'recoil';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
@@ -20,9 +20,10 @@ import { useSetRecordTableData } from '@/object-record/record-table/hooks/intern
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { View } from '@/views/types/View';
+import { type View } from '@/views/types/View';
 import { useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
@@ -92,8 +93,10 @@ const InternalTableContextProviders = ({
           recordTableId: objectMetadataItem.namePlural,
           viewBarId: 'view-bar',
           visibleTableColumns: visibleTableColumns,
-          objectPermissions:
-            objectPermissionsByObjectMetadataId[objectMetadataItem.id],
+          objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
+            objectPermissionsByObjectMetadataId,
+            objectMetadataId: objectMetadataItem.id,
+          }),
         }}
       >
         <RecordTableBodyContextProvider
@@ -137,7 +140,7 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
 
   return (
     <RecordTableComponentInstanceContext.Provider
-      value={{ instanceId: recordIndexId, onColumnsChange: () => {} }}
+      value={{ instanceId: recordIndexId }}
     >
       <ViewComponentInstanceContext.Provider
         value={{ instanceId: recordIndexId }}

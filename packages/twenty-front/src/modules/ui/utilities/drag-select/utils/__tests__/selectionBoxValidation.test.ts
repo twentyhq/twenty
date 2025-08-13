@@ -1,4 +1,4 @@
-import { SelectionBox } from '../../types/SelectionBox';
+import { type SelectionBox } from '../../types/SelectionBox';
 import { isValidSelectionStart } from '../selectionBoxValidation';
 
 describe('selectionBoxValidation', () => {

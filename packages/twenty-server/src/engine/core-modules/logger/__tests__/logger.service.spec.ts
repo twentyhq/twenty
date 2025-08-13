@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { LOGGER_DRIVER } from 'src/engine/core-modules/logger/logger.constants';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';

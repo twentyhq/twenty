@@ -17,7 +17,7 @@ import { H2Title, IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
-  CreateAgentInput,
+  type CreateAgentInput,
   useCreateOneAgentMutation,
   useFindOneAgentQuery,
   useUpdateOneAgentMutation,

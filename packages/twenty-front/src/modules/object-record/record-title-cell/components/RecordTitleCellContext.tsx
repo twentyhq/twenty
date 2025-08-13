@@ -1,5 +1,5 @@
-import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
-import { createContext, ReactElement } from 'react';
+import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
+import { createContext, type ReactElement } from 'react';
 
 export type RecordTitleCellContextProps = {
   editModeContent?: ReactElement;

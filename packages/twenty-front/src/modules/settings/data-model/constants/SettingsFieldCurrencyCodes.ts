@@ -1,11 +1,9 @@
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { type CurrencyCode } from '@/object-record/record-field/ui/types/CurrencyCode';
 import {
   IconCoins,
-  IconComponent,
   IconCurrencyAfghani,
   IconCurrencyBahraini,
   IconCurrencyBaht,
-  IconCurrencyForint,
   IconCurrencyDinar,
   IconCurrencyDirham,
   IconCurrencyDollar,
@@ -18,6 +16,7 @@ import {
   IconCurrencyDram,
   IconCurrencyEuro,
   IconCurrencyFlorin,
+  IconCurrencyForint,
   IconCurrencyFrank,
   IconCurrencyGuarani,
   IconCurrencyHryvnia,
@@ -43,15 +42,16 @@ import {
   IconCurrencyRufiyaa,
   IconCurrencyRupee,
   IconCurrencyRupeeNepalese,
+  IconCurrencyShekel,
+  IconCurrencySom,
   IconCurrencyTaka,
   IconCurrencyTenge,
   IconCurrencyTugrik,
-  IconCurrencySom,
-  IconCurrencyShekel,
   IconCurrencyWon,
   IconCurrencyYen,
   IconCurrencyYuan,
   IconCurrencyZloty,
+  type IconComponent,
 } from 'twenty-ui/display';
 
 export const SETTINGS_FIELD_CURRENCY_CODES: Record<

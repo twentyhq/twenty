@@ -1,8 +1,8 @@
 /* @license Enterprise */
 
-import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
+import { type SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
 import { v4 } from 'uuid';
-import { IdentityProviderType } from '~/generated/graphql';
+import { type IdentityProviderType } from '~/generated/graphql';
 
 export const sSOIdentityProviderDefaultValues: Record<
   IdentityProviderType,

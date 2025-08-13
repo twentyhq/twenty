@@ -1,19 +1,19 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ToolSet } from 'ai';
+import { type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
+import { type JsonRpc } from 'src/engine/core-modules/ai/dtos/json-rpc';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { wrapJsonRpcResponse } from 'src/engine/core-modules/ai/utils/wrap-jsonrpc-response.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 
 @Injectable()
 export class McpService {
@@ -60,7 +60,7 @@ export class McpService {
       const roles = await this.roleRepository.find({
         where: {
           workspaceId,
-          label: ADMIN_ROLE_LABEL,
+          standardId: ADMIN_ROLE.standardId,
         },
       });
 

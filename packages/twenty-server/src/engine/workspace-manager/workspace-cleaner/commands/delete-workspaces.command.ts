@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { In, Repository } from 'typeorm';
 
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { getDryRunLogHeader } from 'src/utils/get-dry-run-log-header';
@@ -22,7 +21,6 @@ export class DeleteWorkspacesCommand extends CommandRunner {
   private readonly logger = new Logger(DeleteWorkspacesCommand.name);
 
   constructor(
-    private readonly workspaceService: WorkspaceService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly dataSourceService: DataSourceService,

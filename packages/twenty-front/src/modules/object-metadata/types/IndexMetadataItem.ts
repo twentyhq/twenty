@@ -1,5 +1,5 @@
-import { IndexFieldMetadataItem } from '@/object-metadata/types/IndexFieldMetadataItem';
-import { Index as GeneratedIndex } from '~/generated-metadata/graphql';
+import { type IndexFieldMetadataItem } from '@/object-metadata/types/IndexFieldMetadataItem';
+import { type Index as GeneratedIndex } from '~/generated-metadata/graphql';
 
 export type IndexMetadataItem = Omit<
   GeneratedIndex,

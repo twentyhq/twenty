@@ -1,6 +1,6 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 import { produce } from 'immer';
-import { ObjectPermission, Role } from '~/generated/graphql';
+import { type ObjectPermission, type Role } from '~/generated/graphql';
 
 export const getRoleWithUpsertedObjectPermission = (
   role: Role,

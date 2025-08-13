@@ -26,7 +26,7 @@ export const useGetAvailableFieldsForKanban = () => {
   );
 
   const availableFieldsForKanban =
-    objectMetadataItem?.fields.filter(
+    objectMetadataItem?.readableFields.filter(
       (field) => field.type === FieldMetadataType.SELECT,
     ) ?? [];
 

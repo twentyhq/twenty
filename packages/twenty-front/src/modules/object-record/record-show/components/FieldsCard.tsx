@@ -7,10 +7,10 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordReadOnly';
-import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { useIsRecordReadOnly } from '@/object-record/record-field/ui/hooks/read-only/useIsRecordReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isRecordFieldReadOnly';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { PropertyBoxSkeletonLoader } from '@/object-record/record-inline-cell/property-box/components/PropertyBoxSkeletonLoader';
@@ -20,9 +20,10 @@ import { RecordDetailDuplicatesSection } from '@/object-record/record-show/recor
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
+import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type FieldsCardProps = {
   objectNameSingular: string;
@@ -56,7 +57,7 @@ export const FieldsCard = ({
 
   const { isInRightDrawer } = useIsInRightDrawerOrThrow();
 
-  const availableFieldMetadataItems = objectMetadataItem.fields
+  const availableFieldMetadataItems = objectMetadataItem.readableFields
     .filter(
       (fieldMetadataItem) =>
         isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
@@ -138,9 +139,10 @@ export const FieldsCard = ({
                     isRecordFieldReadOnly: isRecordFieldReadOnly({
                       isRecordReadOnly,
                       objectPermissions:
-                        objectPermissionsByObjectMetadataId[
-                          objectMetadataItem.id
-                        ],
+                        getObjectPermissionsFromMapByObjectMetadataId({
+                          objectPermissionsByObjectMetadataId,
+                          objectMetadataId: objectMetadataItem.id,
+                        }),
                       fieldMetadataId: fieldMetadataItem.id,
                       objectNameSingular,
                       fieldName: fieldMetadataItem.name,
@@ -188,9 +190,10 @@ export const FieldsCard = ({
                   isRecordFieldReadOnly: isRecordFieldReadOnly({
                     isRecordReadOnly,
                     objectPermissions:
-                      objectPermissionsByObjectMetadataId[
-                        objectMetadataItem.id
-                      ],
+                      getObjectPermissionsFromMapByObjectMetadataId({
+                        objectPermissionsByObjectMetadataId,
+                        objectMetadataId: objectMetadataItem.id,
+                      }),
                     fieldMetadataId: fieldMetadataItem.id,
                     objectNameSingular,
                     fieldName: fieldMetadataItem.name,
@@ -239,8 +242,10 @@ export const FieldsCard = ({
             isDisplayModeFixHeight: true,
             isRecordFieldReadOnly: isRecordFieldReadOnly({
               isRecordReadOnly,
-              objectPermissions:
-                objectPermissionsByObjectMetadataId[objectMetadataItem.id],
+              objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
+                objectPermissionsByObjectMetadataId,
+                objectMetadataId: objectMetadataItem.id,
+              }),
               fieldMetadataId: fieldMetadataItem.id,
               objectNameSingular,
               fieldName: fieldMetadataItem.name,

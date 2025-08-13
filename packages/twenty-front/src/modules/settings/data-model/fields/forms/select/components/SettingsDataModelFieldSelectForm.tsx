@@ -1,15 +1,15 @@
 import styled from '@emotion/styled';
-import { DropResult } from '@hello-pangea/dnd';
+import { type DropResult } from '@hello-pangea/dnd';
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import {
-  FieldMetadataItem,
-  FieldMetadataItemOption,
+  type FieldMetadataItem,
+  type FieldMetadataItemOption,
 } from '@/object-metadata/types/FieldMetadataItem';
 import { selectOptionsSchema } from '@/object-metadata/validation-schemas/selectOptionsSchema';
-import { multiSelectFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/multiSelectFieldDefaultValueSchema';
-import { selectFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/selectFieldDefaultValueSchema';
+import { multiSelectFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/multiSelectFieldDefaultValueSchema';
+import { selectFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/selectFieldDefaultValueSchema';
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import { generateNewSelectOption } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOption';
 import { isSelectOptionDefaultValue } from '@/settings/data-model/utils/isSelectOptionDefaultValue';
@@ -24,11 +24,11 @@ import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsW
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
-import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
-import { CardContent, CardFooter } from 'twenty-ui/layout';
 import { IconPlus, IconPoint } from 'twenty-ui/display';
 import { LightButton } from 'twenty-ui/input';
+import { CardContent, CardFooter } from 'twenty-ui/layout';
 import { MAIN_COLORS } from 'twenty-ui/theme';
+import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
   defaultValue: selectFieldDefaultValueSchema(),
@@ -40,13 +40,9 @@ export const settingsDataModelFieldMultiSelectFormSchema = z.object({
   options: selectOptionsSchema,
 });
 
-const selectOrMultiSelectFormSchema = z.union([
-  settingsDataModelFieldSelectFormSchema,
-  settingsDataModelFieldMultiSelectFormSchema,
-]);
-
 export type SettingsDataModelFieldSelectFormValues = z.infer<
-  typeof selectOrMultiSelectFormSchema
+  | typeof settingsDataModelFieldSelectFormSchema
+  | typeof settingsDataModelFieldMultiSelectFormSchema
 >;
 
 type SettingsDataModelFieldSelectFormProps = {

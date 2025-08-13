@@ -1,4 +1,4 @@
-import { TableMetadata } from '@/ui/layout/table/types/TableMetadata';
+import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 import { msg } from '@lingui/core/macro';
 
 export type MockedTableType = {

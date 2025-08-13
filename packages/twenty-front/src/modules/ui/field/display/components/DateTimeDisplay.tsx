@@ -1,4 +1,4 @@
-import { FieldDateMetadataSettings } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldDateMetadataSettings } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';

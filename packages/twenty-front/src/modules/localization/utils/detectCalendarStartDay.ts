@@ -1,4 +1,4 @@
-import { CalendarStartDay } from '@/localization/constants/CalendarStartDay';
+import { type CalendarStartDay } from '@/localization/constants/CalendarStartDay';
 
 const MONDAY_KEY: keyof typeof CalendarStartDay = 'MONDAY';
 const SATURDAY_KEY: keyof typeof CalendarStartDay = 'SATURDAY';
@@ -32,7 +32,7 @@ export const detectCalendarStartDay = (): keyof typeof CalendarStartDay => {
           return SUNDAY_KEY;
       }
     }
-  } catch (error) {
+  } catch {
     // Fallback if Intl.Locale is not supported or fails
   }
 

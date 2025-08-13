@@ -2,8 +2,8 @@ import {
   Global,
   Logger,
   Module,
-  OnApplicationShutdown,
-  OnModuleInit,
+  type OnApplicationShutdown,
+  type OnModuleInit,
 } from '@nestjs/common';
 
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';

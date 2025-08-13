@@ -7,11 +7,11 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useChildStepFiltersAndChildStepFilterGroups } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useChildStepFiltersAndChildStepFilterGroups';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import {
-  StepFilter,
-  StepFilterGroup,
   StepLogicalOperator,
   ViewFilterOperand,
-} from 'twenty-shared/src/types';
+  type StepFilter,
+  type StepFilterGroup,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';

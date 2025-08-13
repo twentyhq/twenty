@@ -1,4 +1,4 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
@@ -16,6 +16,8 @@ export const generatedMockObjectMetadataItems: ObjectMetadataItem[] =
     return {
       ...objectWithoutFieldsList,
       fields: fieldsList,
+      readableFields: fieldsList,
+      updatableFields: fieldsList,
       labelIdentifierFieldMetadataId,
       indexMetadatas: indexMetadataList.map((index) => ({
         ...index,

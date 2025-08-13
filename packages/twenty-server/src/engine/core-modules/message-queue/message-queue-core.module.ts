@@ -1,12 +1,12 @@
 import {
-  DynamicModule,
+  type DynamicModule,
   Global,
   Logger,
   Module,
-  Provider,
+  type Provider,
 } from '@nestjs/common';
 
-import { MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
+import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 
 import { MessageQueueDriverType } from 'src/engine/core-modules/message-queue/interfaces';
 import {
@@ -19,9 +19,9 @@ import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bull
 import { SyncDriver } from 'src/engine/core-modules/message-queue/drivers/sync.driver';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import {
-  ASYNC_OPTIONS_TYPE,
+  type ASYNC_OPTIONS_TYPE,
   ConfigurableModuleClass,
-  OPTIONS_TYPE,
+  type OPTIONS_TYPE,
 } from 'src/engine/core-modules/message-queue/message-queue.module-definition';
 
 @Global()

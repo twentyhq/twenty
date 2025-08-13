@@ -1,10 +1,12 @@
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
 import {
-  WorkflowAction,
+  type WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
-  WorkflowTrigger,
+  type WorkflowTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -146,7 +148,7 @@ describe('insertStep', () => {
       existingTrigger,
       existingSteps: [step1],
       insertedStep: newStep,
-      parentStepId: 'trigger',
+      parentStepId: TRIGGER_STEP_ID,
       nextStepId: undefined,
     });
 

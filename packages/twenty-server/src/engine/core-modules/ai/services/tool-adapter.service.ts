@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { ToolSet } from 'ai';
+import { type ToolSet } from 'ai';
 
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
-import { ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
-import { Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
+import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import { type PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()

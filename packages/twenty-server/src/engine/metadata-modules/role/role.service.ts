@@ -5,19 +5,17 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
+import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
 import {
-  UpdateRoleInput,
-  UpdateRolePayload,
+  type UpdateRoleInput,
+  type UpdateRolePayload,
 } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { isArgDefinedIfProvidedOrThrow } from 'src/engine/metadata-modules/utils/is-arg-defined-if-provided-or-throw.util';
@@ -29,8 +27,6 @@ export class RoleService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetsEntity, 'core')
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
@@ -148,26 +144,6 @@ export class RoleService {
     return { ...existingRole, ...updatedRole };
   }
 
-  public async createAdminRole({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<RoleEntity> {
-    return this.roleRepository.save({
-      label: ADMIN_ROLE_LABEL,
-      description: 'Admin role',
-      icon: 'IconUserCog',
-      canUpdateAllSettings: true,
-      canAccessAllTools: true,
-      canReadAllObjectRecords: true,
-      canUpdateAllObjectRecords: true,
-      canSoftDeleteAllObjectRecords: true,
-      canDestroyAllObjectRecords: true,
-      isEditable: false,
-      workspaceId,
-    });
-  }
-
   public async deleteRole(
     roleId: string,
     workspaceId: string,
@@ -229,7 +205,7 @@ export class RoleService {
       description: 'Member role',
       icon: 'IconUser',
       canUpdateAllSettings: false,
-      canAccessAllTools: false,
+      canAccessAllTools: true,
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: true,
       canSoftDeleteAllObjectRecords: true,

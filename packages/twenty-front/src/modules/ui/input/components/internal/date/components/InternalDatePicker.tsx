@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
-import { lazy, Suspense, useContext } from 'react';
+import { lazy, Suspense, useContext, type ComponentType } from 'react';
+import type { ReactDatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
@@ -14,8 +15,8 @@ import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/g
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { UserContext } from '@/users/contexts/UserContext';
 import {
-  VariableDateViewFilterValueDirection,
-  VariableDateViewFilterValueUnit,
+  type VariableDateViewFilterValueDirection,
+  type VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
@@ -325,7 +326,16 @@ type DateTimePickerProps = {
   onClear?: () => void;
 };
 
-const ReactDatePicker = lazy(() => import('react-datepicker'));
+type DatePickerPropsType = ReactDatePickerLibProps<
+  boolean | undefined,
+  boolean | undefined
+>;
+
+const ReactDatePicker = lazy<ComponentType<DatePickerPropsType>>(() =>
+  import('react-datepicker').then((mod) => ({
+    default: mod.default as unknown as ComponentType<DatePickerPropsType>,
+  })),
+);
 
 export const DateTimePicker = ({
   date,

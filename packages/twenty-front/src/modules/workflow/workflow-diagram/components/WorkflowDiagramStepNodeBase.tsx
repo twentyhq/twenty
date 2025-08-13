@@ -1,11 +1,11 @@
 import { NODE_BORDER_WIDTH } from '@/workflow/workflow-diagram/constants/NodeBorderWidth';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
-import { WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
+import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { type WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
 import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import React, { MouseEvent } from 'react';
+import React, { type MouseEvent } from 'react';
 import { capitalize } from 'twenty-shared/utils';
 import { Label, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
@@ -146,6 +146,7 @@ export const WorkflowDiagramStepNodeBase = ({
   nodeType,
   name,
   variant,
+  selected,
   Icon,
   RightFloatingElement,
   BottomHoverFloatingElement,
@@ -158,6 +159,7 @@ export const WorkflowDiagramStepNodeBase = ({
   nodeType: WorkflowDiagramStepNodeData['nodeType'];
   name: string;
   variant: WorkflowDiagramNodeVariant;
+  selected?: boolean;
   Icon?: React.ReactNode;
   RightFloatingElement?: React.ReactNode;
   BottomHoverFloatingElement?: React.ReactNode;
@@ -207,7 +209,7 @@ export const WorkflowDiagramStepNodeBase = ({
         type="source"
         position={Position.Bottom}
         isVisible={displayHandle}
-        selected={handlesSelectedState.sourceHandle}
+        selected={handlesSelectedState.sourceHandle || selected}
       />
     </StyledStepNodeContainer>
   );

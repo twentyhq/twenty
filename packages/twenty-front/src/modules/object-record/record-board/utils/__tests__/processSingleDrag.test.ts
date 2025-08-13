@@ -1,4 +1,4 @@
-import { DropResult } from '@hello-pangea/dnd';
+import { type DropResult } from '@hello-pangea/dnd';
 import { processSingleDrag } from '../processSingleDrag';
 
 import { calculateRecordPositions } from '../calculateRecordPositions';

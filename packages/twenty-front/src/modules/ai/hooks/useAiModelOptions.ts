@@ -1,6 +1,6 @@
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useRecoilValue } from 'recoil';
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 
 export const useAiModelOptions = (): SelectOption<string>[] => {
   const aiModels = useRecoilValue(aiModelsState);

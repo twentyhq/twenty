@@ -1,5 +1,5 @@
 import { GraphQLScalarType } from 'graphql';
-import { IntValueNode, Kind } from 'graphql/language';
+import { type IntValueNode, Kind } from 'graphql/language';
 
 import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 

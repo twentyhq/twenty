@@ -4,14 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { StepStatus } from 'twenty-shared/workflow';
+import { StepStatus, TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
-import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
-import { WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
-import { WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
+import { type CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
+import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
+import { type WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
@@ -20,18 +20,18 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
-import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
+import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
-  WorkflowAction,
+  type WorkflowAction,
   WorkflowActionType,
-  WorkflowFormAction,
+  type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
@@ -218,22 +218,23 @@ export class WorkflowVersionStepWorkspaceService {
 
     assertWorkflowVersionIsDraft(workflowVersion);
 
-    if (!isDefined(workflowVersion.steps)) {
+    const existingTrigger = workflowVersion.trigger;
+
+    const isDeletingTrigger =
+      stepIdToDelete === TRIGGER_STEP_ID && isDefined(existingTrigger);
+
+    if (!isDeletingTrigger && !isDefined(workflowVersion.steps)) {
       throw new WorkflowVersionStepException(
         "Can't delete step from undefined steps",
         WorkflowVersionStepExceptionCode.UNDEFINED,
       );
     }
 
-    const existingTrigger = workflowVersion.trigger;
-    const isDeletingTrigger =
-      stepIdToDelete === 'trigger' && isDefined(existingTrigger);
-
-    const stepToDelete = workflowVersion.steps.find(
+    const stepToDelete = workflowVersion.steps?.find(
       (step) => step.id === stepIdToDelete,
     );
 
-    if (!isDefined(stepToDelete) && !isDeletingTrigger) {
+    if (!isDeletingTrigger && !isDefined(stepToDelete)) {
       throw new WorkflowVersionStepException(
         "Can't delete not existing step",
         WorkflowVersionStepExceptionCode.NOT_FOUND,
@@ -256,9 +257,10 @@ export class WorkflowVersionStepWorkspaceService {
       trigger: updatedTrigger,
     });
 
-    const removedSteps = workflowVersion.steps.filter((step) =>
-      removedStepIds.includes(step.id),
-    );
+    const removedSteps =
+      workflowVersion.steps?.filter((step) =>
+        removedStepIds.includes(step.id),
+      ) ?? [];
 
     await Promise.all(
       removedSteps.map((step) =>

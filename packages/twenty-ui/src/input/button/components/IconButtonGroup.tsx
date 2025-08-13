@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { IconComponent } from '@ui/display';
-import { MouseEvent } from 'react';
+import { type IconComponent } from '@ui/display';
+import { type MouseEvent } from 'react';
 
 import { InsideButton } from '@ui/input/button/components/InsideButton';
 

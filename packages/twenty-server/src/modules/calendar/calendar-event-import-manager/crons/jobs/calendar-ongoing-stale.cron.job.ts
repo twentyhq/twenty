@@ -13,7 +13,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   CalendarOngoingStaleJob,
-  CalendarOngoingStaleJobData,
+  type CalendarOngoingStaleJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-ongoing-stale.job';
 
 export const CALENDAR_ONGOING_STALE_CRON_PATTERN = '0 * * * *';

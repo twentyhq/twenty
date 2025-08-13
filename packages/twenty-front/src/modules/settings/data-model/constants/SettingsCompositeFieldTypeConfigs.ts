@@ -1,17 +1,17 @@
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { CurrencyCode } from '@/object-record/record-field/ui/types/CurrencyCode';
 import {
-  FieldActorValue,
-  FieldAddressValue,
-  FieldCurrencyValue,
-  FieldEmailsValue,
-  FieldFullNameValue,
-  FieldLinksValue,
-  FieldPhonesValue,
-  FieldRichTextV2Value,
-} from '@/object-record/record-field/types/FieldMetadata';
+  type FieldActorValue,
+  type FieldAddressValue,
+  type FieldCurrencyValue,
+  type FieldEmailsValue,
+  type FieldFullNameValue,
+  type FieldLinksValue,
+  type FieldPhonesValue,
+  type FieldRichTextV2Value,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
-import { SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
-import { CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
+import { type SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
+import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import {
   IllustrationIconCurrency,
