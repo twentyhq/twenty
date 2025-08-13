@@ -529,9 +529,9 @@ msgstr "Impossible de supprimer, veuillez d'abord mettre à jour le champ de l'i
 msgid "Cannot disable non-active workflow version"
 msgstr "Impossible de désactiver une version de flux de travail non-active"
 
-#. js-lingui-id: RATxdO
+#. js-lingui-id: otFZos
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
-msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first."
+msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr ""
 
 #. js-lingui-id: IDMgr/

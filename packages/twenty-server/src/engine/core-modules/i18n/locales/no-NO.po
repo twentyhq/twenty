@@ -529,9 +529,9 @@ msgstr "Kan ikke slette, vennligst oppdater etikettfeltet først"
 msgid "Cannot disable non-active workflow version"
 msgstr "Kan ikke deaktivere ikke-aktive arbeidsflytversjoner"
 
-#. js-lingui-id: RATxdO
+#. js-lingui-id: otFZos
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
-msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first."
+msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr ""
 
 #. js-lingui-id: IDMgr/

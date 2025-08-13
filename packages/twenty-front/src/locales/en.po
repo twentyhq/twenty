@@ -4612,10 +4612,10 @@ msgstr "Postcode"
 msgid "Prefilling your workspace data..."
 msgstr "Prefilling your workspace data..."
 
-#. js-lingui-id: koeh2Y
+#. js-lingui-id: ut1ZY+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
-msgid "Prevent from assigining the same value to different records"
-msgstr "Prevent from assigining the same value to different records"
+msgid "Prevent from assigning the same value to different records"
+msgstr "Prevent from assigning the same value to different records"
 
 #. js-lingui-id: rdUucN
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx

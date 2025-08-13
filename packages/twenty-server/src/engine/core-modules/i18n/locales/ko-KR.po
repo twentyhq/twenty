@@ -529,9 +529,9 @@ msgstr "삭제할 수 없습니다. 먼저 레이블 식별자 필드를 업데�
 msgid "Cannot disable non-active workflow version"
 msgstr "활성화되지 않은 워크플로우 버전을 비활성화할 수 없습니다"
 
-#. js-lingui-id: RATxdO
+#. js-lingui-id: otFZos
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
-msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first."
+msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 msgstr ""
 
 #. js-lingui-id: IDMgr/
