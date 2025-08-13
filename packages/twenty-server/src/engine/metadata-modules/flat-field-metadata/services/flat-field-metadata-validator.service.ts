@@ -15,6 +15,7 @@ import {
   compareTwoFlatFieldMetadata,
   type FlatFieldMetadataPropertiesToCompare,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
+import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name-availability.validator';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name.validator';
@@ -28,7 +29,6 @@ import {
   InvalidMetadataException,
   InvalidMetadataExceptionCode,
 } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 
 export type ValidateOneFieldMetadataArgs<
   T extends FieldMetadataType = FieldMetadataType,
@@ -155,19 +155,16 @@ export class FlatFieldMetadataValidatorService {
       }
     }
 
-    if (updatedFlatFieldMetadata.isLabelSyncedWithName) {
-      const computedName = computeMetadataNameFromLabel(
-        updatedFlatFieldMetadata.label,
+    if (
+      updatedFlatFieldMetadata.isLabelSyncedWithName &&
+      !isFlatFieldMetadataNameSyncedWithLabel(updatedFlatFieldMetadata)
+    ) {
+      errors.push(
+        new InvalidMetadataException(
+          t`Name is not synced with label.`,
+          InvalidMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,
+        ),
       );
-
-      if (updatedFlatFieldMetadata.name !== computedName) {
-        errors.push(
-          new InvalidMetadataException(
-            `Name is not synced with label. Expected name: "${computedName}", got ${updatedFlatFieldMetadata.name}`,
-            InvalidMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,
-          ),
-        );
-      }
     }
 
     const fieldMetadataTypeValidationErrors =
@@ -295,19 +292,16 @@ export class FlatFieldMetadataValidatorService {
       }
     }
 
-    if (flatFieldMetadataToValidate.isLabelSyncedWithName) {
-      const computedName = computeMetadataNameFromLabel(
-        flatFieldMetadataToValidate.label,
+    if (
+      flatFieldMetadataToValidate.isLabelSyncedWithName &&
+      !isFlatFieldMetadataNameSyncedWithLabel(flatFieldMetadataToValidate)
+    ) {
+      errors.push(
+        new InvalidMetadataException(
+          t`Name is not synced with label.`,
+          InvalidMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,
+        ),
       );
-
-      if (flatFieldMetadataToValidate.name !== computedName) {
-        errors.push(
-          new InvalidMetadataException(
-            `Name is not synced with label. Expected name: "${computedName}", got ${flatFieldMetadataToValidate.name}`,
-            InvalidMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,
-          ),
-        );
-      }
     }
 
     errors.push(
