@@ -123,7 +123,7 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
     },
   },
   {
-    title: 'It should build an update_field action',
+    title: 'It should build an update_field action for standard field',
     context: {
       input: {
         fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
@@ -132,9 +132,29 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
             flatFieldMetadata: getFlatFieldMetadataMock({
               ...OPPORTUNITY_FLAT_FIELDS_MOCK.stage,
+              standardOverrides: {
+                description: 'new description',
+                icon: 'new icon',
+              },
+            }),
+          }),
+      },
+      expectedActionsTypeCounter: {
+        updateField: 1,
+      },
+    },
+  },
+  {
+    title: 'It should build an update_field action for custom fields',
+    context: {
+      input: {
+        fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+        toFlatObjectMetadataMaps:
+          replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+            flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+            flatFieldMetadata: getFlatFieldMetadataMock({
+              ...PET_FLAT_FIELDS_MOCK.species,
               description: 'new description',
-              name: 'new name',
-              isActive: false,
               icon: 'new icon',
             }),
           }),

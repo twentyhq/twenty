@@ -35,12 +35,32 @@ export const compareTwoFlatObjectMetadata = ({
   from,
   to,
 }: FromTo<FlatObjectMetadata>) => {
-  const fromCompare = transformMetadataForComparison(from, {
-    propertiesToStringify: ['standardOverrides'],
-  });
-  const toCompare = transformMetadataForComparison(to, {
-    propertiesToStringify: ['standardOverrides'],
-  });
+  const options = {
+    propertiesToStringify: flatObjectMetadataEntityJsonbProperties,
+    shouldIgnoreProperty: (
+      property: string,
+      flatObjectMetadata: FlatObjectMetadata,
+    ) => {
+      if (
+        !flatObjectMetadataPropertiesToCompare.includes(
+          property as FlatObjectMetadataPropertiesToCompare,
+        )
+      ) {
+        return true;
+      }
+
+      const isStandardObject =
+        !flatObjectMetadata.isCustom && flatObjectMetadata.standardId !== null;
+
+      if (isStandardObject && property !== 'standardOverrides') {
+        return true;
+      }
+
+      return false;
+    },
+  };
+  const fromCompare = transformMetadataForComparison(from, options);
+  const toCompare = transformMetadataForComparison(to, options);
   const objectMetadataDifference = diff(fromCompare, omit(toCompare, 'fields'));
 
   return objectMetadataDifference.flatMap<

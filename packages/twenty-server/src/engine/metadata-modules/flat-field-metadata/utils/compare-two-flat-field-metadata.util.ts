@@ -32,6 +32,15 @@ export const flatFieldMetadataEntityJsonbProperties = [
 export type FlatFieldMetadataEntityJsonbProperties =
   (typeof flatFieldMetadataEntityJsonbProperties)[number];
 
+export const relationFlatFieldMetadataPropertiesToCompare = [
+  'label',
+  'description',
+  'isActive',
+] as const satisfies FlatFieldMetadataPropertiesToCompare[];
+
+export type RelationFlatFieldMetadataPropertiesToCompare =
+  (typeof relationFlatFieldMetadataPropertiesToCompare)[number];
+
 const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
   return [
     FieldMetadataType.BOOLEAN,
@@ -73,12 +82,24 @@ export const compareTwoFlatFieldMetadata = ({
       }
 
       // Remove below assertion when we authorize relation edition, see https://github.com/twentyhq/twenty/commit/39f6f3c4bb101272a9014e142a842d0801a3c33b
-      if (
+      const isRelationFieldType =
         isDefined(fieldMetadata.type) &&
         (fieldMetadata.type === FieldMetadataType.RELATION ||
-          fieldMetadata.type === FieldMetadataType.MORPH_RELATION) &&
-        !['label', 'description', 'isActive'].includes(property)
+          fieldMetadata.type === FieldMetadataType.MORPH_RELATION);
+
+      if (
+        isRelationFieldType &&
+        !relationFlatFieldMetadataPropertiesToCompare.includes(
+          property as RelationFlatFieldMetadataPropertiesToCompare,
+        )
       ) {
+        return true;
+      }
+
+      const isStandardField =
+        fieldMetadata.standardId !== null && !fieldMetadata.isCustom;
+
+      if (isStandardField && property !== 'standardOverrides') {
         return true;
       }
 

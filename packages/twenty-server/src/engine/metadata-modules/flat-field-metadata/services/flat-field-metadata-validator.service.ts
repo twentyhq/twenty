@@ -13,7 +13,8 @@ import { type FailedFlatFieldMetadataValidationExceptions } from 'src/engine/met
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
   compareTwoFlatFieldMetadata,
-  type FlatFieldMetadataPropertiesToCompare,
+  relationFlatFieldMetadataPropertiesToCompare,
+  RelationFlatFieldMetadataPropertiesToCompare,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
@@ -110,15 +111,10 @@ export class FlatFieldMetadataValidatorService {
         FieldMetadataType.MORPH_RELATION,
       )
     ) {
-      const relationEditableFields = [
-        'label',
-        'description',
-        'isActive',
-      ] as const satisfies FlatFieldMetadataPropertiesToCompare[];
       const relationNonEditableUpdatedProperties = updates.flatMap(
         ({ property }) =>
-          !relationEditableFields.includes(
-            property as (typeof relationEditableFields)[number],
+          !relationFlatFieldMetadataPropertiesToCompare.includes(
+            property as RelationFlatFieldMetadataPropertiesToCompare,
           )
             ? property
             : [],
