@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -21,7 +21,7 @@ export const useColorScheme = () => {
   const { updateOneRecord: updateOneWorkspaceMember } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
-  const [, setPersistedColorScheme] = useRecoilState(persistedColorSchemeState);
+  const setPersistedColorScheme = useSetRecoilState(persistedColorSchemeState);
 
   const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
 
