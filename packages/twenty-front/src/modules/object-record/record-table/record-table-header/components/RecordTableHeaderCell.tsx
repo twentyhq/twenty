@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 
-import { isObjectReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isObjectReadOnly';
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { isObjectReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isObjectReadOnly';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';

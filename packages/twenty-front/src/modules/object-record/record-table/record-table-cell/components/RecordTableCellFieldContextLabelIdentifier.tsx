@@ -1,6 +1,6 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { isRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isRecordFieldReadOnly';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
@@ -13,7 +13,7 @@ import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/use
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { type ReactNode, useContext } from 'react';
+import { useContext, type ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useIsMobile } from 'twenty-ui/utilities';
 
