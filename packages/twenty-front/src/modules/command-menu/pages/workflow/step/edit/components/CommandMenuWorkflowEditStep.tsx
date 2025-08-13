@@ -25,7 +25,7 @@ export const CommandMenuWorkflowEditStep = () => {
       <WorkflowStepContextProvider
         value={{ workflowVersionId: workflow.currentVersion.id }}
       >
-        <CommandMenuWorkflowEditStepContent workflow={workflow} />
+        <CommandMenuWorkflowEditStepContent />
       </WorkflowStepContextProvider>
     </WorkflowVisualizerComponentInstanceContext.Provider>
   );

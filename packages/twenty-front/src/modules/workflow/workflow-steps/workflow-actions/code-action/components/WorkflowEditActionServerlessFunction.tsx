@@ -5,8 +5,8 @@ import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingC
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import {
-    Breadcrumb,
-    type BreadcrumbProps,
+  Breadcrumb,
+  type BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
@@ -323,7 +323,7 @@ export const WorkflowEditActionServerlessFunction = ({
     if (actionOptions.readonly === true || !isDefined(workflow)) {
       return;
     }
-    await getUpdatableWorkflowVersion(workflow);
+    await getUpdatableWorkflowVersion();
     await onCodeChange(value);
   };
 

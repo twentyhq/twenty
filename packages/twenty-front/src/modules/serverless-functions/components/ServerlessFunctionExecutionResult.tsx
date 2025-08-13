@@ -1,6 +1,6 @@
 import {
-    type ExecutionStatus,
-    WorkflowStepExecutionResult,
+  type ExecutionStatus,
+  WorkflowStepExecutionResult,
 } from '@/workflow/components/WorkflowStepExecutionResult';
 import { type ServerlessFunctionTestData } from '@/workflow/workflow-steps/workflow-actions/code-action/states/serverlessFunctionTestDataFamilyState';
 import { ServerlessFunctionExecutionStatus } from '~/generated-metadata/graphql';

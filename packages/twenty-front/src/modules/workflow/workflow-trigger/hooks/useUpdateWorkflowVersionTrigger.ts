@@ -5,15 +5,10 @@ import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatable
 import {
   type WorkflowTrigger,
   type WorkflowVersion,
-  type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useUpdateWorkflowVersionTrigger = ({
-  workflow,
-}: {
-  workflow: WorkflowWithCurrentVersion;
-}) => {
+export const useUpdateWorkflowVersionTrigger = () => {
   const { updateOneRecord: updateOneWorkflowVersion } =
     useUpdateOneRecord<WorkflowVersion>({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
@@ -27,11 +22,7 @@ export const useUpdateWorkflowVersionTrigger = ({
     updatedTrigger: WorkflowTrigger,
     options: { computeOutputSchema: boolean } = { computeOutputSchema: true },
   ) => {
-    if (!isDefined(workflow.currentVersion)) {
-      throw new Error('Cannot find current workflow version');
-    }
-
-    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
+    const workflowVersionId = await getUpdatableWorkflowVersion();
 
     if (options.computeOutputSchema) {
       const outputSchema = (
