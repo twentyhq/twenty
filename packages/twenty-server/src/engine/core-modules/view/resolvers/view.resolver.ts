@@ -12,8 +12,8 @@ import {
 import { i18n } from '@lingui/core';
 import { isDefined } from 'twenty-shared/utils';
 
-import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
 import { ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
@@ -34,16 +34,13 @@ export class ViewResolver {
     @Parent() view: ViewDTO,
     @Context() _context: I18nContext,
   ): Promise<string> {
-    // Custom views: return as-is
     if (view.isCustom) {
       return view.name;
     }
 
-    // Standard views: translate using the same pattern as objects
     const messageId = generateMessageId(view.name);
     const translatedMessage = i18n._(messageId);
 
-    // Fallback to original if no translation found
     return translatedMessage !== messageId ? translatedMessage : view.name;
   }
 

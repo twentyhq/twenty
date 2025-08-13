@@ -111,7 +111,7 @@ export class ViewService {
 
     const view = this.viewRepository.create({
       ...viewData,
-      isCustom: true, // User-created views are custom
+      isCustom: true,
     });
 
     return this.viewRepository.save(view);
