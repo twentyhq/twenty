@@ -1,8 +1,8 @@
+import { t } from '@lingui/core/macro';
 import {
   isDefined,
   isLabelIdentifierFieldMetadataTypes,
 } from 'twenty-shared/utils';
-import { t } from '@lingui/core/macro';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -39,10 +39,10 @@ export const validateFlatObjectMetadataIdentifiers = (
     ) {
       errors.push(
         new ObjectMetadataException(
-          'labelIdentifierFieldMetadataId validation failed: related field metadata not found',
+          'labelIdentifierFieldMetadataId validation failed: field type not compatible',
           ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           {
-            userFriendlyMessage: t`Field cannot be used as label identifier `,
+            userFriendlyMessage: t`Field cannot be used as label identifier`,
           },
         ),
       );

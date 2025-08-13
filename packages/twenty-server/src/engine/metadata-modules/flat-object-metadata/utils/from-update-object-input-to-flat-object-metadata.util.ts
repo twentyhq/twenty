@@ -63,11 +63,11 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
     );
   }
 
-  const isStandardField =
+  const isStandardObject =
     flatObjectMetadataToUpdate.standardId !== null &&
     !flatObjectMetadataToUpdate.isCustom;
 
-  if (isStandardField) {
+  if (isStandardObject) {
     const invalidUpdatedProperties = Object.keys(
       updatedEditableObjectProperties,
     ).filter(
@@ -84,7 +84,7 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
       );
     }
 
-    const updatedStandardFlatFieldMetadata =
+    const updatedStandardFlatObjectdMetadata =
       objectMetadataStandardOverridesProperties.reduce((acc, property) => {
         const isPropertyUpdated =
           updatedEditableObjectProperties[property] !== undefined;
@@ -100,10 +100,10 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
         };
       }, flatObjectMetadataToUpdate);
 
-    return updatedStandardFlatFieldMetadata;
+    return updatedStandardFlatObjectdMetadata;
   }
 
-  const updatedFlatFieldMetadata = objectMetadataEditableProperties.reduce(
+  const updatedFlatObjectMetadata = objectMetadataEditableProperties.reduce(
     (acc, property) => {
       const isPropertyUpdated =
         updatedEditableObjectProperties[property] !== undefined;
@@ -118,5 +118,5 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
     flatObjectMetadataToUpdate,
   );
 
-  return updatedFlatFieldMetadata;
+  return updatedFlatObjectMetadata;
 };

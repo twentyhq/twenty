@@ -128,10 +128,14 @@ export class ObjectMetadataResolver {
       );
 
     if (isWorkspaceMigrationV2Enabled) {
-      return await this.objectMetadataServiceV2.updateOne({
-        updateObjectInput,
-        workspaceId,
-      });
+      try {
+        return await this.objectMetadataServiceV2.updateOne({
+          updateObjectInput,
+          workspaceId,
+        });
+      } catch (error) {
+        objectMetadataGraphqlApiExceptionHandler(error);
+      }
     }
 
     try {

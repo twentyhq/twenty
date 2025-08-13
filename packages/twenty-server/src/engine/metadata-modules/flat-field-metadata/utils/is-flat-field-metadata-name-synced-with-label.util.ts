@@ -9,5 +9,5 @@ export const isFlatFieldMetadataNameSyncedWithLabel = (
 ) => {
   const computedName = computeMetadataNameFromLabel(flatFieldMetadata.label);
 
-  return flatFieldMetadata.name !== computedName;
+  return flatFieldMetadata.name === computedName;
 };
