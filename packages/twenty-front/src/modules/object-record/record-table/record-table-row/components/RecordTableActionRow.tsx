@@ -10,20 +10,22 @@ const StyledRecordTableDraggableTr = styled.tr`
   cursor: pointer;
   transition: background-color ${({ theme }) => theme.animation.duration.fast}
     ease-in-out;
-  z-index: ${TABLE_Z_INDEX.footer.default};
-  position: sticky;
   border: none;
   background: ${({ theme }) => theme.background.primary};
+  position: relative;
+  z-index: ${TABLE_Z_INDEX.base};
 
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.light};
+    td:not(:first-of-type) {
+      background-color: ${({ theme }) => theme.background.transparent.light};
+    }
   }
 
   td {
     border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
     background-color: ${({ theme }) => theme.background.primary};
-    z-index: ${TABLE_Z_INDEX.footer.default};
-    position: sticky;
+    transition: background-color ${({ theme }) => theme.animation.duration.fast}
+      ease-in-out;
 
     &:first-of-type {
       border-bottom: 1px solid ${({ theme }) => theme.background.primary};
