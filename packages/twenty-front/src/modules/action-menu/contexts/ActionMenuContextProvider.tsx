@@ -1,7 +1,6 @@
 import { type ActionMenuContextType } from '@/action-menu/contexts/ActionMenuContext';
 import { ActionMenuContextProviderWorkflowObjects } from '@/action-menu/contexts/ActionMenuContextProviderWorkflowObjects';
 import { ActionMenuContextProviderWorkflowsEnabled } from '@/action-menu/contexts/ActionMenuContextProviderWorkflowsEnabled';
-import { ActionMenuContextProviderWorkflowsNotEnabled } from '@/action-menu/contexts/ActionMenuContextProviderWorkflowsNotEnabled';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -46,31 +45,18 @@ export const ActionMenuContextProvider = ({
     );
   }
 
-  if (
-    isDefined(objectMetadataItem) &&
-    (actionMenuType === 'command-menu' ||
-      actionMenuType === 'command-menu-show-page-action-menu-dropdown')
-  ) {
-    return (
-      <ActionMenuContextProviderWorkflowsEnabled
-        isInRightDrawer={isInRightDrawer}
-        displayType={displayType}
-        actionMenuType={actionMenuType}
-        objectMetadataItem={objectMetadataItem}
-      >
-        {children}
-      </ActionMenuContextProviderWorkflowsEnabled>
-    );
+  if (!isDefined(objectMetadataItem)) {
+    return null;
   }
 
   return (
-    <ActionMenuContextProviderWorkflowsNotEnabled
+    <ActionMenuContextProviderWorkflowsEnabled
       isInRightDrawer={isInRightDrawer}
       displayType={displayType}
       actionMenuType={actionMenuType}
       objectMetadataItem={objectMetadataItem}
     >
       {children}
-    </ActionMenuContextProviderWorkflowsNotEnabled>
+    </ActionMenuContextProviderWorkflowsEnabled>
   );
 };
