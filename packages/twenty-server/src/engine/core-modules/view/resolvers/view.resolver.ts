@@ -34,10 +34,12 @@ export class ViewResolver {
   async name(
     @Parent() view: ViewDTO,
     @Context() context: I18nContext,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<string> {
     if (view.name.includes('{objectLabelPlural}')) {
       const objectMetadata = await this.viewService.getObjectMetadataByViewId(
         view.id,
+        workspace.id,
       );
 
       if (objectMetadata) {
