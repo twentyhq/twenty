@@ -2,6 +2,12 @@ import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-i
 import { eachTestingContextFilter } from 'twenty-shared/testing';
 import { capitalize } from 'twenty-shared/utils';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
+import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
+import { FlatObjectMetadataValidatorService } from 'src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service';
+import { WorkspaceMigrationV2ObjectActionsBuilder } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
+
 import { WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-field-test-case';
 import { WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-index-test-case';
 import { WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-object-test-case';
@@ -74,9 +80,33 @@ describe.each(allWorkspaceBuilderTestCases)(
   'Workspace migration builder $label actions test suite',
   ({ testCases }) => {
     let service: WorkspaceMigrationBuilderV2Service;
+    let featureFlagService: FeatureFlagService;
+    let flatFieldMetadataTypeValidatorService: FlatFieldMetadataTypeValidatorService;
+    let flatFieldMetadataValidatorService: FlatFieldMetadataValidatorService;
+    let flatObjectMetadataValidatorService: FlatObjectMetadataValidatorService;
+    let objectActionsBuilder: WorkspaceMigrationV2ObjectActionsBuilder;
 
     beforeEach(() => {
-      service = new WorkspaceMigrationBuilderV2Service();
+      featureFlagService = {
+        isFeatureEnabled: jest.fn().mockResolvedValue(true),
+      } as any;
+
+      flatFieldMetadataTypeValidatorService =
+        new FlatFieldMetadataTypeValidatorService(featureFlagService);
+
+      flatFieldMetadataValidatorService = new FlatFieldMetadataValidatorService(
+        flatFieldMetadataTypeValidatorService,
+      );
+
+      flatObjectMetadataValidatorService =
+        new FlatObjectMetadataValidatorService(
+          flatFieldMetadataValidatorService,
+        );
+
+      objectActionsBuilder = new WorkspaceMigrationV2ObjectActionsBuilder(
+        flatObjectMetadataValidatorService,
+      );
+      service = new WorkspaceMigrationBuilderV2Service(objectActionsBuilder);
     });
 
     it.each(eachTestingContextFilter(testCases))(
