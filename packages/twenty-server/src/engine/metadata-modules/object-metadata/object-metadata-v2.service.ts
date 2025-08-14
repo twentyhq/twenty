@@ -83,6 +83,7 @@ export class ObjectMetadataServiceV2 {
         fromFlatObjectMetadataMaps,
         toFlatObjectMetadataMaps,
         buildOptions: {
+          isSystemBuild: false,
           inferDeletionFromMissingObjectFieldIndex: false,
         },
         workspaceId,
@@ -146,6 +147,10 @@ export class ObjectMetadataServiceV2 {
         {
           existingFlatObjectMetadataMaps,
           objectMetadataToDeleteId,
+          buildOptions: {
+            inferDeletionFromMissingObjectFieldIndex: false,
+            isSystemBuild: false,
+          },
         },
       );
 
@@ -192,7 +197,8 @@ export class ObjectMetadataServiceV2 {
         fromFlatObjectMetadataMaps,
         toFlatObjectMetadataMaps,
         buildOptions: {
-          inferDeletionFromMissingObjectFieldIndex: true,
+          inferDeletionFromMissingObjectFieldIndex: false,
+          isSystemBuild: false,
         },
         workspaceId,
       });
@@ -235,7 +241,10 @@ export class ObjectMetadataServiceV2 {
         {
           existingFlatObjectMetadataMaps,
           flatObjectMetadataToValidate: flatObjectMetadataToCreate,
-          workspaceId,
+          buildOptions: {
+            inferDeletionFromMissingObjectFieldIndex: false,
+            isSystemBuild: false,
+          },
         },
       );
 
@@ -255,6 +264,7 @@ export class ObjectMetadataServiceV2 {
             flatObjectMetadata: flatObjectMetadataToCreate,
           }),
         buildOptions: {
+          isSystemBuild: false,
           inferDeletionFromMissingObjectFieldIndex: false,
         },
         workspaceId,

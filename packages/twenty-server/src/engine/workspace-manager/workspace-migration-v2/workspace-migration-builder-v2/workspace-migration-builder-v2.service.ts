@@ -75,15 +75,6 @@ export class WorkspaceMigrationBuilderV2Service {
         buildOptions,
       });
 
-    if (objectWorkspaceMigrationActions.results.failed.length > 0) {
-      console.log(
-        objectWorkspaceMigrationActions.results.failed.forEach((el) =>
-          el.errors.forEach((error) => console.log(error.message)),
-        ),
-      );
-      throw new Error('TMP exit prastoin');
-    }
-
     const createdObjectMetadataCreateIndexActions =
       createdFlatObjectMetadata.flatMap((objectMetadata) =>
         objectMetadata.flatIndexMetadatas.map(
@@ -117,6 +108,7 @@ export class WorkspaceMigrationBuilderV2Service {
     });
     ///
 
+    // TODO refactor signature
     return {
       workspaceId,
       actions: [

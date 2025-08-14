@@ -132,6 +132,7 @@ export class FieldMetadataServiceV2 {
 
       const workspaceMigration = await this.workspaceMigrationBuilderV2.build({
         buildOptions: {
+          isSystemBuild: false,
           inferDeletionFromMissingObjectFieldIndex: true,
         },
         fromFlatObjectMetadataMaps: flatObjectMetadataMapsWithImpactedObject,
@@ -259,6 +260,7 @@ export class FieldMetadataServiceV2 {
         fromFlatObjectMetadataMaps,
         toFlatObjectMetadataMaps,
         buildOptions: {
+          isSystemBuild: false,
           inferDeletionFromMissingObjectFieldIndex: false,
         },
         workspaceId,
@@ -388,6 +390,7 @@ export class FieldMetadataServiceV2 {
         fromFlatObjectMetadataMaps,
         toFlatObjectMetadataMaps,
         buildOptions: {
+          isSystemBuild: false,
           inferDeletionFromMissingObjectFieldIndex: false,
         },
         workspaceId,

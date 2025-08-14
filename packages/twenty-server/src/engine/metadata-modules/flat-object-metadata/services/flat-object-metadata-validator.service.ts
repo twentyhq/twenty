@@ -176,7 +176,8 @@ export class FlatObjectMetadataValidatorService {
     existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
     flatObjectMetadataToValidate: FlatObjectMetadata;
     buildOptions: WorkspaceMigrationV2BuilderOptions;
-    otherFlatObjectMetadataMapsToValidate: FlatObjectMetadataMaps;
+    // TODO rename this keyword
+    otherFlatObjectMetadataMapsToValidate?: FlatObjectMetadataMaps;
   }) {
     const errors: FailedFlatObjectMetadataValidationExceptions[] = [];
 
@@ -215,11 +216,14 @@ export class FlatObjectMetadataValidatorService {
               existingFlatObjectMetadataMapsWithFlatObjectMetadataToBeCreatedWithoutFields,
             flatFieldMetadataToValidate,
             workspaceId: flatObjectMetadataToValidate.workspaceId,
-            otherFlatObjectMetadataMapsToValidate:
-              computeOtherFlatObjectMetadataMapsToValidate({
-                flatFieldMetadata: flatFieldMetadataToValidate,
-                flatObjectMetadataMaps: otherFlatObjectMetadataMapsToValidate,
-              }),
+            otherFlatObjectMetadataMapsToValidate: isDefined(
+              otherFlatObjectMetadataMapsToValidate,
+            )
+              ? computeOtherFlatObjectMetadataMapsToValidate({
+                  flatFieldMetadata: flatFieldMetadataToValidate,
+                  flatObjectMetadataMaps: otherFlatObjectMetadataMapsToValidate,
+                })
+              : undefined,
           },
         );
 
