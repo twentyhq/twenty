@@ -16,7 +16,7 @@ export const compareTwoFlatObjectMetadata = ({
   from,
   to,
 }: FromTo<FlatObjectMetadata>) => {
-  const transformMetadataForComparisonOptions = {
+  const transformMetadataForComparisonParameters = {
     propertiesToStringify: FLAT_OBJECT_METADATA_JSONB_PROPERTIES,
     shouldIgnoreProperty: (
       property: string,
@@ -42,11 +42,11 @@ export const compareTwoFlatObjectMetadata = ({
   };
   const fromCompare = transformMetadataForComparison(
     from,
-    transformMetadataForComparisonOptions,
+    transformMetadataForComparisonParameters,
   );
   const toCompare = transformMetadataForComparison(
     to,
-    transformMetadataForComparisonOptions,
+    transformMetadataForComparisonParameters,
   );
   const objectMetadataDifference = diff(fromCompare, omit(toCompare, 'fields'));
 

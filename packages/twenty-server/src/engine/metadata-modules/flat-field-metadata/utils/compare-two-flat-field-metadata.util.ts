@@ -34,7 +34,7 @@ export const compareTwoFlatFieldMetadata = ({
   from,
   to,
 }: GetWorkspaceMigrationUpdateFieldActionArgs) => {
-  const transformMetadataForComparisonOptions = {
+  const transformMetadataForComparisonParameters = {
     shouldIgnoreProperty: (
       property: string,
       fieldMetadata: FlatFieldMetadata,
@@ -83,11 +83,11 @@ export const compareTwoFlatFieldMetadata = ({
   };
   const fromCompare = transformMetadataForComparison(
     from,
-    transformMetadataForComparisonOptions,
+    transformMetadataForComparisonParameters,
   );
   const toCompare = transformMetadataForComparison(
     to,
-    transformMetadataForComparisonOptions,
+    transformMetadataForComparisonParameters,
   );
 
   const flatFieldMetadataDifferences = diff(fromCompare, toCompare);
