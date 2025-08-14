@@ -1,13 +1,13 @@
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowLastCreatedStepIdComponentState } from '@/workflow/states/workflowLastCreatedStepIdComponentState';
-import {
-  type WorkflowVersion,
-  type WorkflowWithCurrentVersion,
-} from '@/workflow/types/Workflow';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
@@ -18,11 +18,15 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated/graphql';
 
-export const WorkflowDiagramEffect = ({
-  workflowWithCurrentVersion,
-}: {
-  workflowWithCurrentVersion: WorkflowWithCurrentVersion | undefined;
-}) => {
+export const WorkflowDiagramEffect = () => {
+  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+    workflowVisualizerWorkflowIdComponentState,
+  );
+
+  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
+    workflowVisualizerWorkflowId,
+  );
+
   const workflowDiagramState = useRecoilComponentCallbackState(
     workflowDiagramComponentState,
   );

@@ -1,20 +1,35 @@
-import { FieldInput } from '@/object-record/record-field/ui/components/FieldInput';
-
 import { usePersistFieldFromFieldInputContext } from '@/object-record/record-field/ui/hooks/usePersistFieldFromFieldInputContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 
+import { recordFieldListCellEditModePositionComponentState } from '@/object-record/record-field-list/states/recordFieldListCellEditModePositionComponentState';
 import {
   FieldInputEventContext,
   type FieldInputClickOutsideEvent,
   type FieldInputEvent,
 } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
+import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
 
-export const RecordTableCellFieldInput = () => {
-  const { onMoveFocus, onCloseTableCell } = useRecordTableBodyContextOrThrow();
+type RecordFieldListInputContextProviderProps = {
+  children: React.ReactNode;
+};
+
+export const RecordFieldListInputContextProvider = ({
+  children,
+}: RecordFieldListInputContextProviderProps) => {
+  const { closeInlineCell } = useInlineCell();
+  const setRecordFieldListCellEditModePosition = useSetRecoilComponentState(
+    recordFieldListCellEditModePositionComponentState,
+  );
+
+  const closeInlineCellAndResetEditModePosition = useCallback(() => {
+    setRecordFieldListCellEditModePosition(null);
+    closeInlineCell();
+  }, [closeInlineCell, setRecordFieldListCellEditModePosition]);
 
   const instanceId = useAvailableComponentInstanceId(
     RecordFieldComponentInstanceContext,
@@ -28,8 +43,7 @@ export const RecordTableCellFieldInput = () => {
       persistFieldFromFieldInputContext(newValue);
     }
 
-    onCloseTableCell();
-    onMoveFocus('down');
+    closeInlineCellAndResetEditModePosition();
   };
 
   const handleSubmit: FieldInputEvent = ({ newValue, skipPersist }) => {
@@ -37,11 +51,11 @@ export const RecordTableCellFieldInput = () => {
       persistFieldFromFieldInputContext(newValue);
     }
 
-    onCloseTableCell();
+    closeInlineCellAndResetEditModePosition();
   };
 
   const handleCancel = () => {
-    onCloseTableCell();
+    closeInlineCellAndResetEditModePosition();
   };
 
   const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
@@ -61,9 +75,13 @@ export const RecordTableCellFieldInput = () => {
           persistFieldFromFieldInputContext(newValue);
         }
 
-        onCloseTableCell();
+        closeInlineCellAndResetEditModePosition();
       },
-    [onCloseTableCell, instanceId, persistFieldFromFieldInputContext],
+    [
+      closeInlineCellAndResetEditModePosition,
+      instanceId,
+      persistFieldFromFieldInputContext,
+    ],
   );
 
   const handleEscape: FieldInputEvent = ({ newValue, skipPersist }) => {
@@ -71,7 +89,7 @@ export const RecordTableCellFieldInput = () => {
       persistFieldFromFieldInputContext(newValue);
     }
 
-    onCloseTableCell();
+    closeInlineCellAndResetEditModePosition();
   };
 
   const handleTab: FieldInputEvent = ({ newValue, skipPersist }) => {
@@ -79,8 +97,7 @@ export const RecordTableCellFieldInput = () => {
       persistFieldFromFieldInputContext(newValue);
     }
 
-    onCloseTableCell();
-    onMoveFocus('right');
+    closeInlineCellAndResetEditModePosition();
   };
 
   const handleShiftTab: FieldInputEvent = ({ newValue, skipPersist }) => {
@@ -88,8 +105,7 @@ export const RecordTableCellFieldInput = () => {
       persistFieldFromFieldInputContext(newValue);
     }
 
-    onCloseTableCell();
-    onMoveFocus('left');
+    closeInlineCellAndResetEditModePosition();
   };
 
   return (
@@ -104,7 +120,7 @@ export const RecordTableCellFieldInput = () => {
         onTab: handleTab,
       }}
     >
-      <FieldInput />
+      {children}
     </FieldInputEventContext.Provider>
   );
 };

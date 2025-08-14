@@ -47,12 +47,12 @@ const StyledValueContainer = styled.div<{ readonly: boolean }>`
   display: flex;
   min-width: 0;
   position: relative;
+  width: 100%;
 
   &:hover {
     ${({ readonly, theme }) =>
       readonly &&
       `
-      outline: 1px solid ${theme.border.color.medium};
       border-radius: ${theme.border.radius.sm};
       
       ${StyledIconContainer}, ${StyledLabelContainer} {

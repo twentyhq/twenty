@@ -6,11 +6,11 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useInitDraftValue } from '@/object-record/record-field/hooks/useInitDraftValue';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
+import { isInlineCellInEditModeFamilyState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeFamilyState';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { isInlineCellInEditModeFamilyState } from '../states/isInlineCellInEditModeFamilyState';
 
 export const useInlineCell = (
   recordFieldComponentInstanceIdFromProps?: string,

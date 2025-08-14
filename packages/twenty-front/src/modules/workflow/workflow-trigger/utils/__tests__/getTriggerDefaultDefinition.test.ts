@@ -116,6 +116,7 @@ describe('getTriggerDefaultDefinition', () => {
         objectType: generatedMockObjectMetadataItems[0].nameSingular,
         outputSchema: {},
         icon: COMMAND_MENU_DEFAULT_ICON,
+        isPinned: false,
       },
       nextStepIds: [],
       position: {

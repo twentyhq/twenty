@@ -3,6 +3,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { RecordFieldListCellEditModePortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellEditModePortal';
 import { RecordFieldListCellHoveredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortal';
 import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
@@ -60,7 +61,7 @@ export const FieldsCard = ({
 
   const setRecordFieldListHoverPosition = useSetRecoilComponentState(
     recordFieldListHoverPositionComponentState,
-    'fields-card',
+    `fields-list-${objectRecordId}`,
   );
 
   const handleMouseEnter = (index: number) => {
@@ -78,7 +79,7 @@ export const FieldsCard = ({
   return (
     <RecordFieldListComponentInstanceContext.Provider
       value={{
-        instanceId: 'fields-card',
+        instanceId: `fields-list-${objectRecordId}`,
       }}
     >
       <PropertyBox>
@@ -171,7 +172,7 @@ export const FieldsCard = ({
                     handleMouseEnter(
                       index + (inlineRelationFieldMetadataItems?.length ?? 0),
                     ),
-                  anchorId: `record-field-list-cell-${
+                  anchorId: `record-field-list-inline-cell-${
                     index + (inlineRelationFieldMetadataItems?.length ?? 0)
                   }`,
                 }}
@@ -236,6 +237,11 @@ export const FieldsCard = ({
 
       <RecordFieldListCellHoveredPortal
         objectMetadataItem={objectMetadataItem}
+        recordId={objectRecordId}
+      />
+      <RecordFieldListCellEditModePortal
+        objectMetadataItem={objectMetadataItem}
+        recordId={objectRecordId}
       />
     </RecordFieldListComponentInstanceContext.Provider>
   );
