@@ -25,11 +25,13 @@ type StreamDirective = {
 export class StreamingRestLink extends ApolloLink {
   private readonly baseUri: string;
   private readonly defaultHeaders: Record<string, string>;
+  private readonly credentials?: RequestCredentials;
 
   constructor(options: StreamingRestLinkOptions) {
     super();
     this.baseUri = options.uri;
     this.defaultHeaders = options.headers || {};
+    this.credentials = options.credentials;
   }
 
   public request(
@@ -221,6 +223,7 @@ export class StreamingRestLink extends ApolloLink {
       },
       body,
       signal,
+      ...(this.credentials && { credentials: this.credentials }),
     };
   }
 }

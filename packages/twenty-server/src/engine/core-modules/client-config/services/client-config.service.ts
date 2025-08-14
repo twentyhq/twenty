@@ -156,6 +156,9 @@ export class ClientConfigService {
       calendarBookingPageId: this.twentyConfigService.get(
         'CALENDAR_BOOKING_PAGE_ID',
       ),
+      isCorsCredentialsEnabled: !!this.twentyConfigService.get(
+        'ALLOWED_REQUEST_ORIGIN_REGEX',
+      ),
     };
 
     return clientConfig;

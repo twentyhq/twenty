@@ -52,6 +52,7 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   extraLinks?: ApolloLink[];
   isDebugMode?: boolean;
   appVersion?: string;
+  isCorsCredentialsEnabled?: boolean;
 }
 
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
@@ -73,6 +74,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       extraLinks,
       isDebugMode,
       appVersion,
+      isCorsCredentialsEnabled,
       ...options
     } = opts;
 
@@ -81,16 +83,23 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
     this.appVersion = appVersion;
 
     const buildApolloLink = (): ApolloLink => {
+      const credentialsOption = isCorsCredentialsEnabled 
+        ? { credentials: 'include' as RequestCredentials } 
+        : {};
+
       const uploadLink = createUploadLink({
         uri,
+        ...credentialsOption,
       });
 
       const streamingRestLink = new StreamingRestLink({
         uri: REST_API_BASE_URL,
+        ...credentialsOption,
       });
 
       const restLink = new RestLink({
         uri: REST_API_BASE_URL,
+        ...credentialsOption,
       });
 
       const authLink = setContext(async (_, { headers }) => {

@@ -20,10 +20,19 @@ import './instrument';
 
 import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
+import { getCorsOriginPattern } from './utils/cors-origin-pattern';
 
 const bootstrap = async () => {
+  const corsOriginPattern = getCorsOriginPattern();
+  const corsOptions = corsOriginPattern
+    ? {
+        origin: corsOriginPattern,
+        credentials: true,
+      }
+    : true;
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    cors: true,
+    cors: corsOptions,
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     rawBody: true,
     snapshot: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
