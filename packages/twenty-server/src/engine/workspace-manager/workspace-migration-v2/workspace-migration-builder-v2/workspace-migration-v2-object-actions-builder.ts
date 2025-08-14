@@ -12,16 +12,16 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-object-actions';
 
 export type CreatedDeletedUpdatedObjectMetadataInputMatrix =
-  CustomDeletedCreatedUpdatedMatrix<'objectMetadata', FlatObjectMetadata> & {
+  CustomDeletedCreatedUpdatedMatrix<'flatObjectMetadata', FlatObjectMetadata> & {
     inferDeletionFromMissingObjectFieldIndex: boolean;
   };
 export const buildWorkspaceMigrationV2ObjectActions = ({
-  createdObjectMetadata,
-  deletedObjectMetadata,
-  updatedObjectMetadata,
+  createdFlatObjectMetadata,
+  deletedFlatObjectMetadata,
+  updatedFlatObjectMetadata,
   inferDeletionFromMissingObjectFieldIndex,
 }: CreatedDeletedUpdatedObjectMetadataInputMatrix): WorkspaceMigrationObjectActionV2[] => {
-  const createdObjectActions = createdObjectMetadata.map(
+  const createdObjectActions = createdFlatObjectMetadata.map(
     (flatObjectMetadata) => {
       const createFieldActions = flatObjectMetadata.flatFieldMetadatas.map(
         (flatFieldMetadata) =>
@@ -39,11 +39,11 @@ export const buildWorkspaceMigrationV2ObjectActions = ({
   );
 
   const deletedObjectActions = inferDeletionFromMissingObjectFieldIndex
-    ? deletedObjectMetadata.map(getWorkspaceMigrationV2ObjectDeleteAction)
+    ? deletedFlatObjectMetadata.map(getWorkspaceMigrationV2ObjectDeleteAction)
     : [];
 
   const updatedObjectActions =
-    updatedObjectMetadata.flatMap<UpdateObjectAction>(({ from, to }) => {
+    updatedFlatObjectMetadata.flatMap<UpdateObjectAction>(({ from, to }) => {
       const objectUpdatedProperties = compareTwoFlatObjectMetadata({
         from,
         to,

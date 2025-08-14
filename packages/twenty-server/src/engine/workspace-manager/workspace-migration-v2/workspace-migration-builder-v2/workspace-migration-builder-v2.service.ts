@@ -35,9 +35,9 @@ export class WorkspaceMigrationBuilderV2Service {
       fromFlatObjectMetadataMapsToFlatObjectMetadatas(toFlatObjectMetadataMaps);
 
     const {
-      created: createdObjectMetadata,
-      deleted: deletedObjectMetadata,
-      updated: updatedObjectMetadata,
+      created: createdFlatObjectMetadata,
+      deleted: deletedFlatObjectMetadata,
+      updated: updatedFlatObjectMetadata,
     } = deletedCreatedUpdatedMatrixDispatcher({
       from: fromFlatObjectMetadatas,
       to: toFlatObjectMetadatas,
@@ -45,14 +45,14 @@ export class WorkspaceMigrationBuilderV2Service {
 
     const objectWorkspaceMigrationActions =
       buildWorkspaceMigrationV2ObjectActions({
-        createdObjectMetadata,
-        deletedObjectMetadata,
-        updatedObjectMetadata,
+        createdFlatObjectMetadata,
+        deletedFlatObjectMetadata,
+        updatedFlatObjectMetadata,
         inferDeletionFromMissingObjectFieldIndex,
       });
 
     const createdObjectMetadataCreateIndexActions =
-      createdObjectMetadata.flatMap((objectMetadata) =>
+      createdFlatObjectMetadata.flatMap((objectMetadata) =>
         objectMetadata.flatIndexMetadatas.map(
           getWorkspaceMigrationV2CreateIndexAction,
         ),
@@ -60,7 +60,7 @@ export class WorkspaceMigrationBuilderV2Service {
 
     const deletedObjectWorkspaceMigrationDeleteFieldActions =
       inferDeletionFromMissingObjectFieldIndex
-        ? deletedObjectMetadata.flatMap((flatObjectMetadata) =>
+        ? deletedFlatObjectMetadata.flatMap((flatObjectMetadata) =>
             flatObjectMetadata.flatFieldMetadatas.map((flatFieldMetadata) =>
               getWorkspaceMigrationV2FieldDeleteAction({
                 flatFieldMetadata,
@@ -72,7 +72,7 @@ export class WorkspaceMigrationBuilderV2Service {
 
     const objectMetadataDeletedCreatedUpdatedFields =
       computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix(
-        updatedObjectMetadata,
+        updatedFlatObjectMetadata,
       );
 
     const fieldWorkspaceMigrationActions =
@@ -83,7 +83,7 @@ export class WorkspaceMigrationBuilderV2Service {
 
     const objectMetadataDeletedCreatedUpdatedIndex =
       computeUpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix(
-        updatedObjectMetadata,
+        updatedFlatObjectMetadata,
       );
     const indexWorkspaceMigrationActions = buildWorkspaceMigrationIndexActions({
       objectMetadataDeletedCreatedUpdatedIndex,
