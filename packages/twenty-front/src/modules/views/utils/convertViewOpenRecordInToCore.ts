@@ -1,4 +1,4 @@
-import { ViewOpenRecordIn } from '~/generated/graphql';
+import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 
 export const convertViewOpenRecordInToCore = (
   viewOpenRecordIn: string,
