@@ -327,6 +327,8 @@ export {
   IconWebhook,
   IconWorld,
   IconX,
+  IconPinned,
+  IconPinnedOff,
 } from '@tabler/icons-react';
 
 export type { IconProps as TablerIconsProps } from '@tabler/icons-react';

@@ -1,11 +1,10 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellDisplayMode } from '@/object-record/record-inline-cell/components/RecordInlineCellDisplayMode';
-import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { RecordInlineCellSkeletonLoader } from '@/object-record/record-inline-cell/components/RecordInlineCellSkeletonLoader';
-import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 
 const StyledClickableContainer = styled.div<{
   readonly?: boolean;
@@ -30,16 +29,7 @@ const StyledClickableContainer = styled.div<{
 `;
 
 export const RecordInlineCellValue = () => {
-  const {
-    displayModeContent,
-    editModeContent,
-    editModeContentOnly,
-    readonly,
-    loading,
-    isCentered,
-  } = useRecordInlineCellContext();
-
-  const { isInlineCellInEditMode } = useInlineCell();
+  const { readonly, loading, isCentered } = useRecordInlineCellContext();
 
   if (loading === true) {
     return <RecordInlineCellSkeletonLoader />;
@@ -47,12 +37,9 @@ export const RecordInlineCellValue = () => {
 
   return (
     <>
-      {!readonly && isInlineCellInEditMode && (
-        <RecordInlineCellEditMode>{editModeContent}</RecordInlineCellEditMode>
-      )}
       <StyledClickableContainer readonly={readonly} isCentered={isCentered}>
-        <RecordInlineCellDisplayMode>
-          {editModeContentOnly ? editModeContent : displayModeContent}
+        <RecordInlineCellDisplayMode isHovered={false}>
+          <FieldDisplay />
         </RecordInlineCellDisplayMode>
       </StyledClickableContainer>
     </>

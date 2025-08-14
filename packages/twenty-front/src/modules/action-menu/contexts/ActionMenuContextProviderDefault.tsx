@@ -10,7 +10,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
-export const ActionMenuContextProviderWorkflowsEnabled = ({
+export const ActionMenuContextProviderDefault = ({
   objectMetadataItem,
   isInRightDrawer,
   displayType,

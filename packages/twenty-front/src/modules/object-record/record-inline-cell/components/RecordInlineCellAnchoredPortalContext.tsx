@@ -10,13 +10,13 @@ import {
 import { useContext, type ReactNode } from 'react';
 import { useIcons } from 'twenty-ui/display';
 
-type RecordFieldListCellAnchorPortalContextProps = {
+type RecordInlineCellAnchoredPortalContextProps = {
   children: ReactNode;
 };
 
-export const RecordFieldListCellAnchorPortalContext = ({
+export const RecordInlineCellAnchoredPortalContext = ({
   children,
-}: RecordFieldListCellAnchorPortalContextProps) => {
+}: RecordInlineCellAnchoredPortalContextProps) => {
   const {
     isRecordFieldReadOnly,
     fieldDefinition,

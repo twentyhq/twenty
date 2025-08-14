@@ -1,3 +1,4 @@
+import { RecordInlineCellHoveredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellHoveredPortal';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -50,17 +51,19 @@ export const RecordInlineCellHoveredPortalContent = ({
   onMouseLeave,
 }: RecordInlineCellHoveredPortalContentProps) => {
   return (
-    <StyledInlineCellBaseContainer
-      readonly={readonly}
-      onClick={onClick}
-      onMouseLeave={onMouseLeave}
-    >
-      <StyledRecordTableCellHoveredPortalContent
-        isCentered={isCentered}
+    <RecordInlineCellHoveredPortal>
+      <StyledInlineCellBaseContainer
         readonly={readonly}
+        onClick={onClick}
+        onMouseLeave={onMouseLeave}
       >
-        {children}
-      </StyledRecordTableCellHoveredPortalContent>
-    </StyledInlineCellBaseContainer>
+        <StyledRecordTableCellHoveredPortalContent
+          isCentered={isCentered}
+          readonly={readonly}
+        >
+          {children}
+        </StyledRecordTableCellHoveredPortalContent>
+      </StyledInlineCellBaseContainer>
+    </RecordInlineCellHoveredPortal>
   );
 };

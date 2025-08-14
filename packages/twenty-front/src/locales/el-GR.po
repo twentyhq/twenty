@@ -106,6 +106,7 @@ msgstr "{μήνυμα}"
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
 #: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
+#: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
 msgid "{name}"
 msgstr "{name}"
 
@@ -904,10 +905,10 @@ msgstr "Αυτόματη δημιουργία επαφών για άτομα."
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "Δημιουργία αυτόματων εγγραφών Ατόμων κατά την αποστολή ή λήψη email"
 
-#. js-lingui-id: csDS2L
+#. js-lingui-id: lXkUEV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Available"
-msgstr "Διαθέσιμο"
+msgid "Availability"
+msgstr ""
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -1250,10 +1251,10 @@ msgstr "τα δεδομένα της στήλης δεν είναι συμβατ
 msgid "Columns not matched:"
 msgstr "Μη αντιστοιχισμένες στήλες:"
 
-#. js-lingui-id: Icd+JO
+#. js-lingui-id: RyZt4H
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Command menu icon"
-msgstr "Εικονίδιο μενού εντολών"
+msgid "Command Icon"
+msgstr ""
 
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -2080,6 +2081,11 @@ msgstr "Απόρριψη πρόχειρου"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Display"
 msgstr "Εμφάνιση"
+
+#. js-lingui-id: r/aDR/
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Display a button in the top navbar to trigger this workflow"
+msgstr ""
 
 #. js-lingui-id: 8Vg8H7
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
@@ -3944,6 +3950,11 @@ msgstr "Όνομα του API κλειδιού σας"
 msgid "Name of your workspace"
 msgstr "Όνομα του χώρου εργασίας σας"
 
+#. js-lingui-id: JxC/pi
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Navbar"
+msgstr ""
+
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
@@ -4340,6 +4351,11 @@ msgstr "Αντικείμενα"
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
 msgstr "Εκτός της συνηθισμένης πορείας"
+
+#. js-lingui-id: 4e9dd8
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "On which object(s) should this trigger be available"
+msgstr ""
 
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -5225,11 +5241,6 @@ msgstr "Δείτε τις ροές εργασίας"
 msgid "Select a field from a previous step"
 msgstr ""
 
-#. js-lingui-id: 5S/Gqz
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Select a record then open the ⌘K to trigger this workflow"
-msgstr "Επιλέξτε μια εγγραφή και στη συνέχεια ανοίξτε το ⌘K για να ενεργοποιήσετε αυτήν τη ροή εργασιών"
-
 #. js-lingui-id: h4pFju
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "Select a role"
@@ -5878,6 +5889,11 @@ msgstr "Το όνομα της οργάνωσής σας"
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
 msgstr "Η σελίδα που αναζητάτε είτε έχει διαγραφεί είτε ποτέ δεν υπήρχε. Ας σας επαναφέρουμε στον σωστό δρόμο"
 
+#. js-lingui-id: 3lMl10
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "The selected record(s) will be passed to your workflow"
+msgstr ""
+
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field"
@@ -6479,11 +6495,6 @@ msgstr "Πότε θα λήξει το κλειδί API."
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "When the key will be disabled"
 msgstr "Όταν το κλειδί θα απενεργοποιηθεί"
-
-#. js-lingui-id: e9sagb
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Will return one {objectType} to the next step of this workflow"
-msgstr "Θα επιστρέψει ένα {objectType} στο επόμενο βήμα αυτής της ροής εργασίας"
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx

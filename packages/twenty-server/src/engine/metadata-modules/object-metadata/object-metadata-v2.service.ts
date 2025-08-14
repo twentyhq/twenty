@@ -8,14 +8,17 @@ import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
 import { getSubFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-or-throw.util';
+import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { FlatObjectMetadataValidatorService } from 'src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
+import { fromUpdateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-update-object-input-to-flat-object-metadata.util';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -32,6 +35,86 @@ export class ObjectMetadataServiceV2 {
     private readonly workspaceMigrationRunnerV2Service: WorkspaceMigrationRunnerV2Service,
     private readonly flatObjectMetadataValidatorService: FlatObjectMetadataValidatorService,
   ) {}
+
+  async updateOne({
+    updateObjectInput,
+    workspaceId,
+  }: {
+    workspaceId: string;
+    updateObjectInput: UpdateOneObjectInput;
+  }): Promise<ObjectMetadataDTO> {
+    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
+        {
+          workspaceId,
+        },
+      );
+
+    const optimisticallyUpdatedFlatObjectMetadata =
+      fromUpdateObjectInputToFlatObjectMetadata({
+        existingFlatObjectMetadataMaps,
+        updateObjectInput,
+      });
+
+    const validationErrors =
+      this.flatObjectMetadataValidatorService.validateFlatObjectMetadataUpdate({
+        existingFlatObjectMetadataMaps,
+        updatedFlatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
+      });
+
+    if (validationErrors.length > 0) {
+      throw new MultipleMetadataValidationErrors(
+        validationErrors,
+        'Multiple validation errors occurred while updating object',
+      );
+    }
+
+    try {
+      const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        objectMetadataIds: [optimisticallyUpdatedFlatObjectMetadata.id],
+      });
+      const toFlatObjectMetadataMaps =
+        replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
+          flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
+          flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
+        });
+      const workspaceMigration = this.workspaceMigrationBuilderV2.build({
+        fromFlatObjectMetadataMaps,
+        toFlatObjectMetadataMaps,
+        inferDeletionFromMissingObjectFieldIndex: false,
+        workspaceId,
+      });
+
+      await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
+    } catch {
+      throw new ObjectMetadataException(
+        'Workspace migration failed to run',
+        ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    const { flatObjectMetadataMaps: recomputedFlatObjectMetadataMaps } =
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
+        {
+          workspaceId,
+        },
+      );
+
+    const updatedFlatObjectMetadata =
+      recomputedFlatObjectMetadataMaps.byId[
+        optimisticallyUpdatedFlatObjectMetadata.id
+      ];
+
+    if (!isDefined(updatedFlatObjectMetadata)) {
+      throw new ObjectMetadataException(
+        'Updated object metadata not found in recomputed cache',
+        ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return fromFlatObjectMetadataToObjectMetadataDto(updatedFlatObjectMetadata);
+  }
 
   async deleteOne({
     deleteObjectInput,
@@ -189,7 +272,7 @@ export class ObjectMetadataServiceV2 {
 
     if (!isDefined(createdFlatObjectMetadata)) {
       throw new ObjectMetadataException(
-        'Fail to find just created object metadata',
+        'Created object metadata not found in recomputed cache',
         ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
       );
     }
