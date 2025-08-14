@@ -4,15 +4,13 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
-import {
-  fieldMetadataStandardOverridesProperties,
-  type FieldMetadataStandardOverridesProperties,
-} from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
+import { FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-standard-overrides-properties.constant';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FieldMetadataStandardOverridesProperties } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-standard-overrides-properties.type';
 import { FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-properties-to-compare.constant';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-properties-to-compare.type';
@@ -99,7 +97,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     const invalidUpdatedProperties = Object.keys(
       updatedEditableFieldProperties,
     ).filter((property) =>
-      fieldMetadataStandardOverridesProperties.includes(
+      FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.includes(
         property as FieldMetadataStandardOverridesProperties,
       ),
     );
@@ -115,7 +113,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     }
 
     const updatedStandardFlatFieldMetadata =
-      fieldMetadataStandardOverridesProperties.reduce((acc, property) => {
+      FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.reduce((acc, property) => {
         const isPropertyUpdated =
           updatedEditableFieldProperties[property] !== undefined;
 

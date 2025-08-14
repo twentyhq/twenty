@@ -2,18 +2,9 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IsJSON, IsOptional, IsString } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
-import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-properties-to-compare.type';
+import { FieldMetadataStandardOverridesProperties } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-standard-overrides-properties.type';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
-
-export const fieldMetadataStandardOverridesProperties = [
-  'label',
-  'description',
-  'icon',
-] as const satisfies FlatFieldMetadataPropertiesToCompare[];
-
-export type FieldMetadataStandardOverridesProperties =
-  (typeof fieldMetadataStandardOverridesProperties)[number];
 @ObjectType('StandardOverrides')
 export class FieldStandardOverridesDTO
   implements Partial<Record<FieldMetadataStandardOverridesProperties, unknown>>
