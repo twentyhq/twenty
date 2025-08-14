@@ -5,7 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
-import { getRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-relation-flat-field-metadatas-or-throw.util';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { findRelationFlatFieldMetadataTargetFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
@@ -34,6 +35,48 @@ export type ValidateOneFlatObjectMetadataArgs = {
   workspaceId: string;
 };
 ///
+
+const computeOtherFlatObjectMetadataMapsToValidate = ({
+  flatFieldMetadata,
+  flatObjectMetadataMaps,
+}: {
+  flatFieldMetadata: FlatFieldMetadata;
+  flatObjectMetadataMaps: FlatObjectMetadataMaps;
+}): FlatObjectMetadataMaps | undefined => {
+  if (
+    !isFlatFieldMetadataEntityOfType(
+      flatFieldMetadata,
+      FieldMetadataType.RELATION,
+    ) &&
+    !isFlatFieldMetadataEntityOfType(
+      flatFieldMetadata,
+      FieldMetadataType.MORPH_RELATION,
+    )
+  ) {
+    return undefined;
+  }
+
+  const relationTargetFlatFieldMetadata =
+    findRelationFlatFieldMetadataTargetFlatFieldMetadata({
+      // should not throw
+      flatFieldMetadata,
+      flatObjectMetadataMaps,
+    });
+
+  if (!isDefined(relationTargetFlatFieldMetadata)) {
+    return undefined;
+  }
+
+  return getSubFlatObjectMetadataMaps({
+    flatObjectMetadataMaps,
+    objectMetadataAndFieldIds: [
+      {
+        objectMetadataId: relationTargetFlatFieldMetadata.objectMetadataId,
+        fieldMetadataIds: [relationTargetFlatFieldMetadata.id],
+      },
+    ],
+  });
+};
 
 @Injectable()
 export class FlatObjectMetadataValidatorService {
@@ -171,42 +214,6 @@ export class FlatObjectMetadataValidatorService {
       });
 
     for (const flatFieldMetadataToValidate of flatObjectMetadataToValidate.flatFieldMetadatas) {
-      const tmp =
-        isFlatFieldMetadataEntityOfType(
-          flatFieldMetadataToValidate,
-          FieldMetadataType.RELATION,
-        ) ||
-        isFlatFieldMetadataEntityOfType(
-          flatFieldMetadataToValidate,
-          FieldMetadataType.MORPH_RELATION,
-        )
-          ? (() => {
-              const [sourceFlatFieldMetadata, targetFlatFieldMetadata] =
-                getRelationFlatFieldMetadatasOrThrow({
-                  // TODO should not throw
-                  flatFieldMetadata: flatFieldMetadataToValidate,
-                  flatObjectMetadataMaps: otherFlatObjectMetadataMapsToValidate,
-                });
-
-              const objectMetadataAndFieldIds = [
-                sourceFlatFieldMetadata,
-                targetFlatFieldMetadata,
-              ].map(({ objectMetadataId, id }) => ({
-                objectMetadataId,
-                fieldMetadataIds: [id],
-              }));
-
-              const tmp = getSubFlatObjectMetadataMaps({
-                flatObjectMetadataMaps: otherFlatObjectMetadataMapsToValidate,
-                objectMetadataAndFieldIds: objectMetadataAndFieldIds,
-              });
-
-              if (!isDefined(tmp)) {
-                return tmp;
-              }
-            })()
-          : undefined;
-
       const flatFieldValidatorErrors =
         await this.flatFieldMetadataValidatorService.validateFlatFieldMetadataCreation(
           {
@@ -214,7 +221,11 @@ export class FlatObjectMetadataValidatorService {
               existingFlatObjectMetadataMapsWithFlatObjectMetadataToBeCreatedWithoutFields,
             flatFieldMetadataToValidate,
             workspaceId: flatObjectMetadataToValidate.workspaceId,
-            otherFlatObjectMetadataMapsToValidate: tmp,
+            otherFlatObjectMetadataMapsToValidate:
+              computeOtherFlatObjectMetadataMapsToValidate({
+                flatFieldMetadata: flatFieldMetadataToValidate,
+                flatObjectMetadataMaps: otherFlatObjectMetadataMapsToValidate,
+              }),
           },
         );
 
