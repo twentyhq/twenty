@@ -8,7 +8,7 @@ import {
   Breadcrumb,
   type BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
@@ -30,11 +30,11 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowEditActionServerlessFunctionFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunctionFields';
 import { WorkflowServerlessFunctionCodeEditor } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowServerlessFunctionCodeEditor';
 import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowServerlessFunctionTabListComponentId';
+import { serverlessFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/serverlessFunctionTestDataFamilyState';
 import { WorkflowServerlessFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowServerlessFunctionTabId';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
 import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
@@ -140,7 +140,8 @@ export const WorkflowEditActionServerlessFunction = ({
   );
   const { updateOneServerlessFunction } =
     useUpdateOneServerlessFunction(serverlessFunctionId);
-  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
+  const { getUpdatableWorkflowVersion } =
+    useGetUpdatableWorkflowVersionOrThrow();
 
   const workflowVisualizerWorkflowId = useRecoilComponentValue(
     workflowVisualizerWorkflowIdComponentState,
@@ -323,7 +324,7 @@ export const WorkflowEditActionServerlessFunction = ({
     if (actionOptions.readonly === true || !isDefined(workflow)) {
       return;
     }
-    await getUpdatableWorkflowVersion(workflow);
+    await getUpdatableWorkflowVersion();
     await onCodeChange(value);
   };
 

@@ -3,9 +3,7 @@ import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandM
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { assertWorkflowWithCurrentVersionIsDefined } from '@/workflow/utils/assertWorkflowWithCurrentVersionIsDefined';
 import { WorkflowDiagramStepNodeEditableContent } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeEditableContent';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -31,14 +29,7 @@ export const WorkflowDiagramStepNodeEditable = ({
     workflowVisualizerWorkflowIdComponentState,
   );
 
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
-    workflowVisualizerWorkflowId,
-  );
-  assertWorkflowWithCurrentVersionIsDefined(workflowWithCurrentVersion);
-
-  const { deleteStep } = useDeleteStep({
-    workflow: workflowWithCurrentVersion,
-  });
+  const { deleteStep } = useDeleteStep();
 
   const setWorkflowSelectedNode = useSetRecoilComponentState(
     workflowSelectedNodeComponentState,

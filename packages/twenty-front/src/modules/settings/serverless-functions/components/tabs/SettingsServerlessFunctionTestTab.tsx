@@ -1,5 +1,5 @@
 import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
-import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
+import { serverlessFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/serverlessFunctionTestDataFamilyState';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 import { H2Title, IconPlayerPlay } from 'twenty-ui/display';

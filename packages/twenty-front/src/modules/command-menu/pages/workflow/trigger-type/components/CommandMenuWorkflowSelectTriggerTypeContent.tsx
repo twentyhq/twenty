@@ -24,7 +24,7 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
   workflow: WorkflowWithCurrentVersion;
 }) => {
   const { getIcon } = useIcons();
-  const { updateTrigger } = useUpdateWorkflowVersionTrigger({ workflow });
+  const { updateTrigger } = useUpdateWorkflowVersionTrigger();
 
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
