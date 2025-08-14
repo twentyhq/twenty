@@ -8,7 +8,6 @@ import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadat
 import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
 import { getSubFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-or-throw.util';
 import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
-import { FlatObjectMetadataValidatorService } from 'src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
@@ -32,7 +31,6 @@ export class ObjectMetadataServiceV2 {
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly workspaceMigrationBuilderV2: WorkspaceMigrationBuilderV2Service,
     private readonly workspaceMigrationRunnerV2Service: WorkspaceMigrationRunnerV2Service,
-    private readonly flatObjectMetadataValidatorService: FlatObjectMetadataValidatorService,
   ) {}
 
   async updateOne({
