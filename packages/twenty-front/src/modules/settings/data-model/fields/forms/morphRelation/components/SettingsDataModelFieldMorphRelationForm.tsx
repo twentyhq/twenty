@@ -42,7 +42,7 @@ export const settingsDataModelFieldMorphRelationFormSchema = z.object({
       }),
     )
     .min(2),
-  type: z.enum(
+  relationType: z.enum(
     Object.keys(RELATION_TYPES) as [RelationType, ...RelationType[]],
   ),
   fieldOnDestination: z.string().min(1),
@@ -149,7 +149,7 @@ export const SettingsDataModelFieldMorphRelationForm = ({
     <StyledContainer>
       <StyledSelectsContainer isMobile={isMobile}>
         <Controller
-          name="type"
+          name="relationType"
           control={control}
           defaultValue={initialRelationType}
           render={({ field: { onChange, value } }) => (

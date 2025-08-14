@@ -5,14 +5,17 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
-import { SettingsDataModelFieldMorphRelationForm } from '@/settings/data-model/fields/forms/morphRelation/components/SettingsDataModelFieldMorphRelationForm';
+import {
+  SettingsDataModelFieldMorphRelationForm,
+  type SettingsDataModelFieldMorphRelationFormValues,
+} from '@/settings/data-model/fields/forms/morphRelation/components/SettingsDataModelFieldMorphRelationForm';
 import { useMorphRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/morphRelation/hooks/useMorphRelationSettingsFormInitialValues';
-import { type SettingsDataModelFieldRelationFormValues } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
 import {
   SettingsDataModelFieldPreviewCard,
   type SettingsDataModelFieldPreviewCardProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { isDefined } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
   RelationType,
@@ -56,7 +59,7 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
   objectMetadataItem,
 }: SettingsDataModelFieldMorphRelationSettingsFormCardProps) => {
   const { watch: watchFormValue } =
-    useFormContext<SettingsDataModelFieldRelationFormValues>();
+    useFormContext<SettingsDataModelFieldMorphRelationFormValues>();
   const { findObjectMetadataItemById } = useFilteredObjectMetadataItems();
   const isMobile = useIsMobile();
   const { initialRelationObjectMetadataItems, initialRelationType } =
@@ -76,7 +79,7 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
     initialRelationObjectMetadataItems[0];
 
   const relationObjectMetadataId = watchFormValue(
-    'relation.objectMetadataId',
+    'morphRelations.0.objectMetadataId',
     initialRelationObjectMetadataItem?.id,
   );
   const relationObjectMetadataItem = findObjectMetadataItemById(
@@ -86,10 +89,13 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
   if (!relationObjectMetadataItem) return null;
 
   const relationType: RelationType = watchFormValue(
-    'relation.type',
+    'relationType',
     initialRelationType,
   );
+
   const relationTypeConfig = RELATION_TYPES[relationType];
+
+  if (!isDefined(relationTypeConfig)) return null;
 
   const oppositeRelationType =
     relationType === RelationType.MANY_TO_ONE
@@ -111,7 +117,7 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
             objectMetadataItem={objectMetadataItem}
             relationObjectMetadataItem={relationObjectMetadataItem}
             pluralizeLabel={
-              watchFormValue('relation.type') === RelationType.MANY_TO_ONE
+              watchFormValue('relationType') === RelationType.MANY_TO_ONE
             }
           />
           <StyledRelationImage
@@ -124,12 +130,12 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
             fieldMetadataItem={{
               ...initialRelationFieldMetadataItem,
               icon: watchFormValue(
-                'relation.field.icon',
+                'iconOnDestination',
                 initialRelationFieldMetadataItem.icon,
               ),
               label:
                 watchFormValue(
-                  'relation.field.label',
+                  'morphRelations.0.value.label',
                   initialRelationFieldMetadataItem.label,
                 ) || 'Field name',
               type: FieldMetadataType.RELATION,
@@ -141,7 +147,7 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
             objectMetadataItem={relationObjectMetadataItem}
             relationObjectMetadataItem={objectMetadataItem}
             pluralizeLabel={
-              watchFormValue('relation.type') !== RelationType.MANY_TO_ONE
+              watchFormValue('relationType') !== RelationType.MANY_TO_ONE
             }
           />
         </StyledPreviewContent>
