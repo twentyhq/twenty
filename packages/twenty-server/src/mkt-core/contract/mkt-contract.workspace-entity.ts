@@ -26,7 +26,7 @@ import {
 import { MKT_CONTRACT_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+// import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const TABLE_CONTRACT_NAME = 'mktContract';
@@ -142,17 +142,21 @@ export class MktContractWorkspaceEntity extends BaseWorkspaceEntity {
   createdBy: ActorMetadata;
 
   @WorkspaceRelation({
-    standardId: MKT_CONTRACT_FIELD_IDS.mktOrders,
-    type: RelationType.ONE_TO_MANY,
+    standardId: MKT_CONTRACT_FIELD_IDS.mktOrder,
+    type: RelationType.MANY_TO_ONE,
     label: msg`Order`,
-    description: msg`Contract order`,
-    icon: 'IconBox',
+    description: msg`Order that this contract belongs to`,
+    icon: 'IconShoppingCart',
     inverseSideTarget: () => MktOrderWorkspaceEntity,
-    inverseSideFieldKey: 'mktContract',
+    inverseSideFieldKey: 'mktContracts',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
-  mktOrders: Relation<MktOrderWorkspaceEntity[]>;
+  mktOrder: Relation<MktOrderWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('mktOrder')
+  @WorkspaceIsNullable()
+  mktOrderId: string | null;
 
   @WorkspaceRelation({
     standardId: MKT_CONTRACT_FIELD_IDS.accountOwner,
@@ -170,19 +174,20 @@ export class MktContractWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('accountOwner')
   accountOwnerId: string | null;
 
-  @WorkspaceRelation({
-    standardId: MKT_CONTRACT_FIELD_IDS.timelineActivities,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Timeline Activities`,
-    description: msg`Timeline Activities linked to the contract`,
-    icon: 'IconIconTimelineEvent',
-    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    inverseSideFieldKey: 'mktContract',
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+  // Temporarily commented out due to relation conflicts with TimelineActivity
+  // @WorkspaceRelation({
+  //   standardId: MKT_CONTRACT_FIELD_IDS.timelineActivities,
+  //   type: RelationType.ONE_TO_MANY,
+  //   label: msg`Timeline Activities`,
+  //   description: msg`Timeline Activities linked to the contract`,
+  //   icon: 'IconIconTimelineEvent',
+  //   inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+  //   inverseSideFieldKey: 'mktContract',
+  //   onDelete: RelationOnDeleteAction.CASCADE,
+  // })
+  // @WorkspaceIsNullable()
+  // @WorkspaceIsSystem()
+  // timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: MKT_CONTRACT_FIELD_IDS.searchVector,

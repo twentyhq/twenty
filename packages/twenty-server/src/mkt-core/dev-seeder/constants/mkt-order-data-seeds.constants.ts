@@ -1,5 +1,3 @@
-import { MKT_CONTRACT_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-contract-data-seeds.constants';
-
 type MktOrderDataSeed = {
   id: string;
   name: string;
@@ -10,7 +8,6 @@ type MktOrderDataSeed = {
   currency: string;
   note: string;
   requireContract: boolean;
-  mktContractId: string | null;
   createdBySource: string;
   createdByWorkspaceMemberId: string | null;
   createdByName: string;
@@ -35,7 +32,6 @@ export const MKT_ORDER_DATA_SEED_COLUMNS: (keyof MktOrderDataSeed)[] = [
   'currency',
   'note',
   'requireContract',
-  'mktContractId',
   'createdBySource',
   'createdByWorkspaceMemberId',
   'createdByName',
@@ -70,7 +66,6 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Annual license renewal for enterprise software suite',
     requireContract: true,
-    mktContractId: null,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'John Doe',
@@ -85,7 +80,6 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Initial cloud infrastructure setup and configuration',
     requireContract: true,
-    mktContractId: MKT_CONTRACT_DATA_SEEDS_IDS.ID_2,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'Jane Smith',
@@ -100,7 +94,6 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Marketing automation platform subscription',
     requireContract: false,
-    mktContractId: MKT_CONTRACT_DATA_SEEDS_IDS.ID_3,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'Mike Johnson',
@@ -115,7 +108,6 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Customer support ticketing system implementation',
     requireContract: true,
-    mktContractId: MKT_CONTRACT_DATA_SEEDS_IDS.ID_4,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'John Doe',
@@ -130,7 +122,6 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Custom data analytics dashboard development',
     requireContract: true,
-    mktContractId: MKT_CONTRACT_DATA_SEEDS_IDS.ID_5,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'Jane Smith',
@@ -145,7 +136,6 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'E-commerce platform integration and customization',
     requireContract: true,
-    mktContractId: MKT_CONTRACT_DATA_SEEDS_IDS.ID_6,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'Mike Johnson',
@@ -160,7 +150,6 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Cross-platform mobile application development',
     requireContract: true,
-    mktContractId: MKT_CONTRACT_DATA_SEEDS_IDS.ID_7,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'John Doe',
@@ -175,7 +164,6 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Comprehensive security audit and penetration testing',
     requireContract: true,
-    mktContractId: MKT_CONTRACT_DATA_SEEDS_IDS.ID_8,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'Jane Smith',
@@ -190,7 +178,6 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Content management system setup and training',
     requireContract: false,
-    mktContractId: MKT_CONTRACT_DATA_SEEDS_IDS.ID_9,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'Mike Johnson',
@@ -205,7 +192,6 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'API gateway setup and microservices integration',
     requireContract: true,
-    mktContractId: MKT_CONTRACT_DATA_SEEDS_IDS.ID_10,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'John Doe',
@@ -220,7 +206,6 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Business intelligence and reporting tools license',
     requireContract: true,
-    mktContractId: MKT_CONTRACT_DATA_SEEDS_IDS.ID_11,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'Jane Smith',
@@ -235,7 +220,6 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'CI/CD pipeline and DevOps infrastructure setup',
     requireContract: true,
-    mktContractId: null,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'Mike Johnson',
@@ -250,7 +234,6 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Team training and certification program',
     requireContract: false,
-    mktContractId: MKT_CONTRACT_DATA_SEEDS_IDS.ID_13,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'John Doe',

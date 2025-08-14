@@ -63,26 +63,16 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     pgColumns: MKT_VARIANT_ATTRIBUTE_DATA_SEED_COLUMNS,
     recordSeeds: MKT_VARIANT_ATTRIBUTE_DATA_SEEDS,
   },
-  // Order configs
-  {
-    tableName: 'mktContract',
-    pgColumns: MKT_CONTRACT_DATA_SEED_COLUMNS,
-    recordSeeds: MKT_CONTRACT_DATA_SEEDS,
-  },
+  // Order configs (orders must come before contracts)
   {
     tableName: 'mktOrder',
     pgColumns: MKT_ORDER_DATA_SEED_COLUMNS,
     recordSeeds: MKT_ORDER_DATA_SEEDS,
   },
   {
-    tableName: 'mktOrderItem',
-    pgColumns: MKT_ORDER_ITEM_DATA_SEED_COLUMNS,
-    recordSeeds: MKT_ORDER_ITEM_DATA_SEEDS,
-  },
-  {
-    tableName: 'mktLicense',
-    pgColumns: MKT_LICENSE_DATA_SEED_COLUMNS,
-    recordSeeds: MKT_LICENSE_DATA_SEEDS,
+    tableName: 'mktContract',
+    pgColumns: MKT_CONTRACT_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_CONTRACT_DATA_SEEDS,
   },
   {
     tableName: 'mktOrderItem',
@@ -93,10 +83,5 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     tableName: 'mktLicense',
     pgColumns: MKT_LICENSE_DATA_SEED_COLUMNS,
     recordSeeds: MKT_LICENSE_DATA_SEEDS,
-  },
-  {
-    tableName: 'mktOrderItem',
-    pgColumns: MKT_ORDER_ITEM_DATA_SEED_COLUMNS,
-    recordSeeds: MKT_ORDER_ITEM_DATA_SEEDS,
   },
 ];

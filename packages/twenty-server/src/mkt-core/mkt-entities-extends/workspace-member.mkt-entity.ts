@@ -14,7 +14,6 @@ import { MktProductWorkspaceEntity } from 'src/mkt-core/product/standard-objects
 import { MktValueWorkspaceEntity } from 'src/mkt-core/value/mkt-value.workspace-entity';
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
 import { MktVariantAttributeWorkspaceEntity } from 'src/mkt-core/variant_attribute/mkt-variant-attribute.workspace-entity';
-import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
 import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
 
 export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
@@ -81,17 +80,17 @@ export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
     MktVariantAttributeWorkspaceEntity[]
   >;
 
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.accountOwnerForMktOrders,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Account Owner For Orders`,
-    description: msg`Account owner for orders`,
-    icon: 'IconShoppingCart',
-    inverseSideTarget: () => MktOrderWorkspaceEntity,
-    inverseSideFieldKey: 'accountOwner',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  accountOwnerForMktOrders: Relation<MktOrderWorkspaceEntity[]>;
+  // @WorkspaceRelation({
+  //   standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.accountOwnerForMktOrders,
+  //   type: RelationType.ONE_TO_MANY,
+  //   label: msg`Account Owner For Orders`,
+  //   description: msg`Account owner for orders`,
+  //   icon: 'IconShoppingCart',
+  //   inverseSideTarget: () => MktOrderWorkspaceEntity,
+  //   inverseSideFieldKey: 'accountOwner',
+  //   onDelete: RelationOnDeleteAction.SET_NULL,
+  // })
+  // accountOwnerForMktOrders: Relation<MktOrderWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.accountOwnerForMktLicenses,

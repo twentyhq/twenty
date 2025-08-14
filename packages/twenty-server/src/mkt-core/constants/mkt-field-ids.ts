@@ -92,7 +92,7 @@ export const MKT_ORDER_FIELD_IDS = {
   requireContract: '3bc491e5-3e65-44d4-97d5-f71300ab3d41',
 
   // TODO: check if this can be deleted
-  mktContract: '66277a67-41c6-4709-820f-dda8df091ae9',
+  mktContracts: '66277a67-41c6-4709-820f-dda8df091ae9', // ONE_TO_MANY relation with contracts
   mktLicense: '837f7353-df5d-449a-961c-fef566d663b9',
   items: '5c818b2a-bd61-4423-b1bc-ac89781f4324',
   person: '4d6b6ef3-6d6b-4323-9e4f-a7f01d97e68d',
@@ -145,7 +145,8 @@ export const MKT_CONTRACT_FIELD_IDS = {
   startDate: '5cfe9cf4-3f1a-4a9a-bc84-7296da244819',
   endDate: '14548624-e9a4-4203-a1a2-c9b6341a5536',
   // relations
-  mktOrders: '8d607784-4a7f-4b03-b084-ed33561cb830',
+  mktOrder: '8d607784-4a7f-4b03-b084-ed33561cb830',
+  mktOrderId: '9e8ab2f5-3a4c-4d5e-8f1b-7c9d8e0f1a2b',
   // mktTemplate: 'd7eb704c-1c00-4c08-b49d-4e1db26e5472',
   // common relations or fields
   position: '5781e4a6-4a32-46ab-8fe0-f72c6887c83c',

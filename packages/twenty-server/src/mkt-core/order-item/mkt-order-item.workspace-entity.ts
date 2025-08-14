@@ -19,7 +19,6 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
@@ -121,19 +120,23 @@ export class MktOrderItemWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('mktProduct')
   mktProductId?: string;
 
-  @WorkspaceRelation({
-    standardId: MKT_ORDER_ITEM_FIELD_IDS.timelineActivities,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Timeline Activities`,
-    description: msg`Timeline Activities linked to the order item`,
-    icon: 'IconIconTimelineEvent',
-    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-    inverseSideFieldKey: 'mktOrderItem',
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
+  // Temporarily commented out due to relation conflicts with TimelineActivityMktEntity
+  // @WorkspaceRelation({
+  //   standardId: MKT_ORDER_ITEM_FIELD_IDS.timelineActivities,
+  //   type: RelationType.MANY_TO_ONE,
+  //   label: msg`Timeline Activity`,
+  //   description: msg`Timeline Activity that owns this order item`,
+  //   icon: 'IconTimelineEvent',
+  //   inverseSideTarget: () => TimelineActivityWorkspaceEntity,
+  //   inverseSideFieldKey: 'mktOrderItems',
+  //   onDelete: RelationOnDeleteAction.SET_NULL,
+  // })
+  // @WorkspaceIsNullable()
+  // @WorkspaceIsSystem()
+  // timelineActivity: Relation<TimelineActivityWorkspaceEntity> | null;
+
+  // @WorkspaceJoinColumn('timelineActivity')
+  // timelineActivityId: string | null;
 
   @WorkspaceField({
     standardId: MKT_ORDER_ITEM_FIELD_IDS.searchVector,

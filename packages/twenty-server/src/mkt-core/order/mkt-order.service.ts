@@ -255,7 +255,7 @@ export class MktOrderService {
         currency: updateData.currency,
         note: updateData.note,
         requireContract: updateData.requireContract,
-        accountOwnerId: updateData.accountOwnerId,
+        // accountOwnerId: updateData.accountOwnerId,
       };
 
       if (updateData.status) {

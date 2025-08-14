@@ -15,14 +15,12 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { MKT_ORDER_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktContractWorkspaceEntity } from 'src/mkt-core/contract/mkt-contract.workspace-entity';
@@ -156,20 +154,17 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   mktLicense: Relation<MktLicenseWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: MKT_ORDER_FIELD_IDS.mktContract,
-    type: RelationType.MANY_TO_ONE,
+    standardId: MKT_ORDER_FIELD_IDS.mktContracts,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Contracts`,
-    description: msg`Contracts linked to the order`,
+    description: msg`Contracts associated with this order`,
     icon: 'IconBox',
     inverseSideTarget: () => MktContractWorkspaceEntity,
-    inverseSideFieldKey: 'mktOrders',
+    inverseSideFieldKey: 'mktOrder',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
-  mktContract: Relation<MktContractWorkspaceEntity[]>;
-
-  @WorkspaceJoinColumn('mktContract')
-  mktContractId: string | null;
+  mktContracts: Relation<MktContractWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: MKT_ORDER_FIELD_IDS.orderItems,
@@ -215,21 +210,21 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
 
-  @WorkspaceRelation({
-    standardId: MKT_ORDER_FIELD_IDS.accountOwner,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Account Owner`,
-    description: msg`Your team member responsible for managing the order account`,
-    icon: 'IconUserCircle',
-    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
-    inverseSideFieldKey: 'accountOwnerForMktOrders',
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  accountOwner: Relation<WorkspaceMemberWorkspaceEntity> | null;
+  // @WorkspaceRelation({
+  //   standardId: MKT_ORDER_FIELD_IDS.accountOwner,
+  //   type: RelationType.MANY_TO_ONE,
+  //   label: msg`Account Owner`,
+  //   description: msg`Your team member responsible for managing the order account`,
+  //   icon: 'IconUserCircle',
+  //   inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
+  //   inverseSideFieldKey: 'accountOwnerForMktOrders',
+  //   onDelete: RelationOnDeleteAction.CASCADE,
+  // })
+  // @WorkspaceIsNullable()
+  // accountOwner: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('accountOwner')
-  accountOwnerId: string | null;
+  // @WorkspaceJoinColumn('accountOwner')
+  // accountOwnerId: string | null;
 
   @WorkspaceField({
     standardId: MKT_ORDER_FIELD_IDS.createdBy,
