@@ -111,7 +111,7 @@ export const RecordFieldList = ({
                     useUpdateRecord: useUpdateOneObjectRecordMutation,
                     isDisplayModeFixHeight: true,
                     onMouseEnter: () => handleMouseEnter(index),
-                    anchorId: `record-field-list-inline-cell-${index}`,
+                    anchorId: `${instanceId}-${index}`,
                     isRecordFieldReadOnly: isRecordFieldReadOnly({
                       isRecordReadOnly,
                       objectPermissions:
