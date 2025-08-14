@@ -2,45 +2,18 @@ import diff from 'microdiff';
 import { FieldMetadataType, type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FLAT_FIELD_METADATA_JSONB_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-jsonb-properties.constant';
+import { FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-properties-to-compare.constant';
+import { FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-relation-properties-to-compare.constant';
+import { FlatFieldMetadataEntityJsonbProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-jsonb-properties.type';
+import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-properties-to-compare.type';
+import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
-export const flatFieldMetadataPropertiesToCompare = [
-  'defaultValue',
-  'description',
-  'icon',
-  'isActive',
-  'isLabelSyncedWithName',
-  'isUnique',
-  'label',
-  'name',
-  'options',
-  'standardOverrides',
-  'settings',
-] as const satisfies (keyof FlatFieldMetadata)[];
 
-export type FlatFieldMetadataPropertiesToCompare =
-  (typeof flatFieldMetadataPropertiesToCompare)[number];
-
-export const flatFieldMetadataEntityJsonbProperties = [
-  'defaultValue',
-  'options',
-  'settings',
-  'standardOverrides',
-] as const satisfies (keyof FlatFieldMetadata)[];
-export type FlatFieldMetadataEntityJsonbProperties =
-  (typeof flatFieldMetadataEntityJsonbProperties)[number];
-
-export const relationFlatFieldMetadataPropertiesToCompare = [
-  'label',
-  'description',
-  'isActive',
-] as const satisfies FlatFieldMetadataPropertiesToCompare[];
-
-export type RelationFlatFieldMetadataPropertiesToCompare =
-  (typeof relationFlatFieldMetadataPropertiesToCompare)[number];
 
 const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
   return [
@@ -67,7 +40,7 @@ export const compareTwoFlatFieldMetadata = ({
       fieldMetadata: FlatFieldMetadata,
     ) => {
       if (
-        !flatFieldMetadataPropertiesToCompare.includes(
+        !FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE.includes(
           property as FlatFieldMetadataPropertiesToCompare,
         )
       ) {
@@ -90,8 +63,8 @@ export const compareTwoFlatFieldMetadata = ({
 
       if (
         isRelationFieldType &&
-        !relationFlatFieldMetadataPropertiesToCompare.includes(
-          property as RelationFlatFieldMetadataPropertiesToCompare,
+        !FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE.includes(
+          property as FlatFieldMetadataRelationPropertiesToCompare,
         )
       ) {
         return true;
@@ -106,7 +79,7 @@ export const compareTwoFlatFieldMetadata = ({
 
       return false;
     },
-    propertiesToStringify: flatFieldMetadataEntityJsonbProperties,
+    propertiesToStringify: FLAT_FIELD_METADATA_JSONB_PROPERTIES,
   };
   const fromCompare = transformMetadataForComparison(
     from,
@@ -126,7 +99,7 @@ export const compareTwoFlatFieldMetadata = ({
       case 'CHANGE': {
         const { oldValue, path, value } = difference;
         const property = path[0] as FlatFieldMetadataPropertiesToCompare;
-        const isJsonb = flatFieldMetadataEntityJsonbProperties.includes(
+        const isJsonb = FLAT_FIELD_METADATA_JSONB_PROPERTIES.includes(
           property as FlatFieldMetadataEntityJsonbProperties,
         );
 

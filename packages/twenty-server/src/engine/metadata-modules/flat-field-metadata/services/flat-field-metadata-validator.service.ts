@@ -8,13 +8,13 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-relation-properties-to-compare.constant';
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { type FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
   compareTwoFlatFieldMetadata,
-  relationFlatFieldMetadataPropertiesToCompare,
-  RelationFlatFieldMetadataPropertiesToCompare,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
@@ -113,8 +113,8 @@ export class FlatFieldMetadataValidatorService {
     ) {
       const relationNonEditableUpdatedProperties = updates.flatMap(
         ({ property }) =>
-          !relationFlatFieldMetadataPropertiesToCompare.includes(
-            property as RelationFlatFieldMetadataPropertiesToCompare,
+          !FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE.includes(
+            property as FlatFieldMetadataRelationPropertiesToCompare,
           )
             ? property
             : [],

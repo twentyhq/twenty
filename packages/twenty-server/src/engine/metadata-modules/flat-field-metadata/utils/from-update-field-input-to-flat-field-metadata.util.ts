@@ -13,12 +13,11 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-properties-to-compare.constant';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
+import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-properties-to-compare.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import {
-  flatFieldMetadataPropertiesToCompare,
-  type FlatFieldMetadataPropertiesToCompare,
-} from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
+import { } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
 import {
@@ -28,7 +27,7 @@ import {
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 
 const fieldMetadataEditableProperties =
-  flatFieldMetadataPropertiesToCompare.filter(
+  FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE.filter(
     (
       property,
     ): property is Exclude<
