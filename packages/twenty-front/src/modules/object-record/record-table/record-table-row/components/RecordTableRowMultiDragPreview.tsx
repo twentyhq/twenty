@@ -25,7 +25,7 @@ export const RecordTableRowMultiDragPreview = ({
 
   const isCurrentRowSelected =
     multiDragState?.originalSelection.includes(recordId) || false;
-  const selectedCount = multiDragState?.originalSelection.length || 0;
+  const selectedCount = multiDragState?.originalSelection.length ?? 0;
 
   const shouldShow = isDragging && isCurrentRowSelected && selectedCount > 1;
 

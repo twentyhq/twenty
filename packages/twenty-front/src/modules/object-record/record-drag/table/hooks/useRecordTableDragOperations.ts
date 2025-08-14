@@ -13,7 +13,7 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
-import { getRecordPositionDataFromSnapshot } from '@/object-record/record-drag/shared/utils/getRecordPositionDataFromSnapshot';
+import { extractRecordPositions } from '@/object-record/record-drag/shared/utils/extractRecordPositions';
 import { processSingleDrag } from '@/object-record/record-drag/shared/utils/processSingleDrag';
 import { processMultiDrag } from '@/object-record/record-drag/shared/utils/processMultiDrag';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
@@ -63,10 +63,10 @@ export const useRecordTableDragOperations = () => {
           selectedRowIdsSelector,
         );
 
-        const recordPositionData = getRecordPositionDataFromSnapshot({
+        const recordPositionData = extractRecordPositions(
           allRecordIds,
           snapshot,
-        });
+        );
 
         const dragOperationType = getDragOperationType({
           draggedRecordId,

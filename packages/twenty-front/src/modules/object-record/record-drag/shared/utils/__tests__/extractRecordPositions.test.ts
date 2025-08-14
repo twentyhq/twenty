@@ -1,9 +1,9 @@
 import { type Snapshot } from 'recoil';
 
-import { getRecordPositionDataFromSnapshot } from '@/object-record/record-drag/shared/utils/getRecordPositionDataFromSnapshot';
+import { extractRecordPositions } from '@/object-record/record-drag/shared/utils/extractRecordPositions';
 import { isDefined } from 'twenty-shared/utils';
 
-describe('getRecordPositionDataFromSnapshot', () => {
+describe('extractRecordPositions', () => {
   const createMockSnapshot = (recordData: Record<string, any>): Snapshot => {
     return {
       getLoadable: (atom: any) => {
@@ -33,10 +33,7 @@ describe('getRecordPositionDataFromSnapshot', () => {
     const snapshot = createMockSnapshot(mockRecordData);
     const allRecordIds = ['record-1', 'record-2', 'record-3'];
 
-    const result = getRecordPositionDataFromSnapshot({
-      allRecordIds,
-      snapshot,
-    });
+    const result = extractRecordPositions(allRecordIds, snapshot);
 
     expect(result).toEqual([
       { recordId: 'record-1', position: 1 },
@@ -55,10 +52,7 @@ describe('getRecordPositionDataFromSnapshot', () => {
     const snapshot = createMockSnapshot(mockRecordData);
     const allRecordIds = ['record-1', 'record-2', 'record-3'];
 
-    const result = getRecordPositionDataFromSnapshot({
-      allRecordIds,
-      snapshot,
-    });
+    const result = extractRecordPositions(allRecordIds, snapshot);
 
     expect(result).toEqual([
       { recordId: 'record-1', position: 1 },
@@ -75,10 +69,7 @@ describe('getRecordPositionDataFromSnapshot', () => {
     const snapshot = createMockSnapshot(mockRecordData);
     const allRecordIds = ['record-1', 'record-2', 'non-existent'];
 
-    const result = getRecordPositionDataFromSnapshot({
-      allRecordIds,
-      snapshot,
-    });
+    const result = extractRecordPositions(allRecordIds, snapshot);
 
     expect(result).toEqual([
       { recordId: 'record-1', position: 1 },
@@ -91,10 +82,7 @@ describe('getRecordPositionDataFromSnapshot', () => {
     const snapshot = createMockSnapshot({});
     const allRecordIds: string[] = [];
 
-    const result = getRecordPositionDataFromSnapshot({
-      allRecordIds,
-      snapshot,
-    });
+    const result = extractRecordPositions(allRecordIds, snapshot);
 
     expect(result).toEqual([]);
   });
@@ -109,10 +97,7 @@ describe('getRecordPositionDataFromSnapshot', () => {
     const snapshot = createMockSnapshot(mockRecordData);
     const allRecordIds = ['record-3', 'record-1', 'record-2'];
 
-    const result = getRecordPositionDataFromSnapshot({
-      allRecordIds,
-      snapshot,
-    });
+    const result = extractRecordPositions(allRecordIds, snapshot);
 
     expect(result).toEqual([
       { recordId: 'record-3', position: 75 },
@@ -130,10 +115,7 @@ describe('getRecordPositionDataFromSnapshot', () => {
     const snapshot = createMockSnapshot(mockRecordData);
     const allRecordIds = ['record-1', 'record-2'];
 
-    const result = getRecordPositionDataFromSnapshot({
-      allRecordIds,
-      snapshot,
-    });
+    const result = extractRecordPositions(allRecordIds, snapshot);
 
     expect(result).toEqual([
       { recordId: 'record-1', position: null },
@@ -150,10 +132,7 @@ describe('getRecordPositionDataFromSnapshot', () => {
     const snapshot = createMockSnapshot(mockRecordData);
     const allRecordIds = ['record-1', 'record-2'];
 
-    const result = getRecordPositionDataFromSnapshot({
-      allRecordIds,
-      snapshot,
-    });
+    const result = extractRecordPositions(allRecordIds, snapshot);
 
     expect(result).toEqual([
       { recordId: 'record-1', position: -5 },
@@ -170,10 +149,7 @@ describe('getRecordPositionDataFromSnapshot', () => {
     const snapshot = createMockSnapshot(mockRecordData);
     const allRecordIds = ['record-1', 'record-2'];
 
-    const result = getRecordPositionDataFromSnapshot({
-      allRecordIds,
-      snapshot,
-    });
+    const result = extractRecordPositions(allRecordIds, snapshot);
 
     expect(result).toEqual([
       { recordId: 'record-1', position: 1.5 },

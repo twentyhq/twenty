@@ -5,8 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
+import { extractRecordPositions } from './extractRecordPositions';
 import { getDragOperationType } from './getDragOperationType';
-import { getRecordPositionDataFromSnapshot } from './getRecordPositionDataFromSnapshot';
 import { processMultiDrag } from './processMultiDrag';
 import { processSingleDrag } from './processSingleDrag';
 
@@ -51,10 +51,10 @@ export const processGroupDragOperation = ({
     recordIdsByGroupFamilyState(destinationGroupId),
   ) as string[];
 
-  const recordPositionData = getRecordPositionDataFromSnapshot({
-    allRecordIds: destinationRecordIds,
+  const recordPositionData = extractRecordPositions(
+    destinationRecordIds,
     snapshot,
-  });
+  );
 
   const draggedRecordId = result.draggableId;
   const dragOperationType = getDragOperationType({

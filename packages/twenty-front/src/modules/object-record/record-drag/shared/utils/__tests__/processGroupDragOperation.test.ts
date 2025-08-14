@@ -3,22 +3,20 @@ import { type Snapshot } from 'recoil';
 
 import { processGroupDragOperation } from '../processGroupDragOperation';
 
-// Mock dependencies
 jest.mock('../getDragOperationType');
-jest.mock('../getRecordPositionDataFromSnapshot');
+jest.mock('../extractRecordPositions');
 jest.mock('../processSingleDrag');
 jest.mock('../processMultiDrag');
 jest.mock('@/ui/utilities/state/utils/getSnapshotValue');
 
 import { getDragOperationType } from '../getDragOperationType';
-import { getRecordPositionDataFromSnapshot } from '../getRecordPositionDataFromSnapshot';
+import { extractRecordPositions } from '../extractRecordPositions';
 import { processSingleDrag } from '../processSingleDrag';
 import { processMultiDrag } from '../processMultiDrag';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 const mockGetDragOperationType = getDragOperationType as jest.Mock;
-const mockGetRecordPositionDataFromSnapshot =
-  getRecordPositionDataFromSnapshot as jest.Mock;
+const mockExtractRecordPositions = extractRecordPositions as jest.Mock;
 const mockProcessSingleDrag = processSingleDrag as jest.Mock;
 const mockProcessMultiDrag = processMultiDrag as jest.Mock;
 const mockGetSnapshotValue = getSnapshotValue as jest.Mock;
@@ -100,9 +98,7 @@ describe('processGroupDragOperation', () => {
         .mockReturnValueOnce(mockRecordGroup)
         .mockReturnValueOnce(mockDestinationRecordIds);
 
-      mockGetRecordPositionDataFromSnapshot.mockReturnValue(
-        mockRecordPositionData,
-      );
+      mockExtractRecordPositions.mockReturnValue(mockRecordPositionData);
       mockGetDragOperationType.mockReturnValue('single');
       mockProcessSingleDrag.mockReturnValue({
         recordId: 'record-1',
@@ -149,7 +145,7 @@ describe('processGroupDragOperation', () => {
         .mockReturnValueOnce(mockRecordGroup)
         .mockReturnValueOnce(mockDestinationRecordIds);
 
-      mockGetRecordPositionDataFromSnapshot.mockReturnValue([]);
+      mockExtractRecordPositions.mockReturnValue([]);
       mockGetDragOperationType.mockReturnValue('single');
       mockProcessSingleDrag.mockReturnValue({
         recordId: 'record-1',
@@ -188,9 +184,7 @@ describe('processGroupDragOperation', () => {
         .mockReturnValueOnce(mockRecordGroup)
         .mockReturnValueOnce(mockDestinationRecordIds);
 
-      mockGetRecordPositionDataFromSnapshot.mockReturnValue(
-        mockRecordPositionData,
-      );
+      mockExtractRecordPositions.mockReturnValue(mockRecordPositionData);
       mockGetDragOperationType.mockReturnValue('multi');
       mockProcessMultiDrag.mockReturnValue({
         recordUpdates: [
@@ -253,7 +247,7 @@ describe('processGroupDragOperation', () => {
         .mockReturnValueOnce(mockRecordGroup)
         .mockReturnValueOnce(mockDestinationRecordIds);
 
-      mockGetRecordPositionDataFromSnapshot.mockReturnValue([]);
+      mockExtractRecordPositions.mockReturnValue([]);
       mockGetDragOperationType.mockReturnValue('multi');
       mockProcessMultiDrag.mockReturnValue({
         recordUpdates: [],
@@ -282,7 +276,7 @@ describe('processGroupDragOperation', () => {
         .mockReturnValueOnce(mockRecordGroup)
         .mockReturnValueOnce(mockDestinationRecordIds);
 
-      mockGetRecordPositionDataFromSnapshot.mockReturnValue([]);
+      mockExtractRecordPositions.mockReturnValue([]);
       mockGetDragOperationType.mockReturnValue('single');
       mockProcessSingleDrag.mockReturnValue({
         recordId: 'record-1',
@@ -322,7 +316,7 @@ describe('processGroupDragOperation', () => {
         .mockReturnValueOnce(mockRecordGroup)
         .mockReturnValueOnce(mockDestinationRecordIds);
 
-      mockGetRecordPositionDataFromSnapshot.mockReturnValue([]);
+      mockExtractRecordPositions.mockReturnValue([]);
       mockGetDragOperationType.mockReturnValue('single');
       mockProcessSingleDrag.mockReturnValue({
         recordId: 'record-1',
