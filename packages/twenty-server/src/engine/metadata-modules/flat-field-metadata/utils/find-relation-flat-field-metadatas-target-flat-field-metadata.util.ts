@@ -8,7 +8,7 @@ export const findRelationFlatFieldMetadataTargetFlatFieldMetadata = (
   args: GetRelationFlatFieldMetadatasUtilArgs,
 ): FlatFieldMetadata | undefined => {
   try {
-    findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow(args);
+    return findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow(args);
   } catch {
     return undefined;
   }

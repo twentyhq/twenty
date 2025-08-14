@@ -1,5 +1,7 @@
 import { ATTACHMENT_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/attachment-flat-object.mock';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
+import { FAVORITE_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/favorite-flat-object.mock';
+import { FAVORITE_FOLDER_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/favorite-folder-flat-object.mock';
 import { NOTE_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/note-flat-object.mock';
 import { NOTE_TARGET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/note-target-flat-object.mock';
 import { OPPORTUNITY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/opportunity-flat-object.mock';
@@ -22,4 +24,6 @@ export const ALL_FLAT_OBJECT_METADATA_MOCKS = [
   NOTE_FLAT_OBJECT_MOCK,
   COMPANY_FLAT_OBJECT_MOCK,
   ATTACHMENT_FLAT_OBJECT_MOCK,
+  FAVORITE_FLAT_OBJECT_MOCK,
+  FAVORITE_FOLDER_FLAT_OBJECT_MOCK,
 ] as const;

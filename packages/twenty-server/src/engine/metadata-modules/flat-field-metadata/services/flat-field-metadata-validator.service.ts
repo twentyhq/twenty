@@ -250,6 +250,7 @@ export class FlatFieldMetadataValidatorService {
     console.log(
       'toto',
       flatFieldMetadataToValidate.type,
+      flatFieldMetadataToValidate.name,
       otherFlatObjectMetadataMapsToValidate,
     );
     const parentFlatObjectMetadata =

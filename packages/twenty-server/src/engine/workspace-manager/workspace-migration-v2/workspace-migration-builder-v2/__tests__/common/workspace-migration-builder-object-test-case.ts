@@ -4,11 +4,14 @@ import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/fla
 import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
 import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
+import { FAVORITE_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/favorite-flat-object.mock';
+import { FAVORITE_FOLDER_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/favorite-folder-flat-object.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { NOTE_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/note-flat-object.mock';
 import { NOTE_TARGET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/note-target-flat-object.mock';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';
 import { ROCKET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/rocket-flat-object.mock';
+import { TASK_TARGET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/task-target-flat-object.mock';
 import { TIMELINE_ACTIVITY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/timeline-activity-flat-object.mock';
 import { fromFlatObjectMetadatasToFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadatas-to-flat-object-metadata-maps.util';
 import { type WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
@@ -76,12 +79,20 @@ const CREATE_OBJECT_TESTS_CASES: WorkspaceMigrationBuilderTestCase[] = [
             PET_FLAT_OBJECT_MOCK,
             NOTE_FLAT_OBJECT_MOCK,
             TIMELINE_ACTIVITY_FLAT_OBJECT_MOCK,
-            NOTE_TARGET_FLAT_OBJECT_MOCK, // does not exist yet :)
-            FAVORITE_FL, // does not exist neither
+            NOTE_TARGET_FLAT_OBJECT_MOCK,
+            FAVORITE_FLAT_OBJECT_MOCK,
+            TASK_TARGET_FLAT_OBJECT_MOCK,
+            FAVORITE_FOLDER_FLAT_OBJECT_MOCK,
           ]),
         toFlatObjectMetadataMaps:
           fromFlatObjectMetadatasToFlatObjectMetadataMaps([
             PET_FLAT_OBJECT_MOCK,
+            NOTE_FLAT_OBJECT_MOCK,
+            TIMELINE_ACTIVITY_FLAT_OBJECT_MOCK,
+            NOTE_TARGET_FLAT_OBJECT_MOCK,
+            FAVORITE_FLAT_OBJECT_MOCK,
+            TASK_TARGET_FLAT_OBJECT_MOCK,
+            FAVORITE_FOLDER_FLAT_OBJECT_MOCK,
             ROCKET_FLAT_OBJECT_MOCK,
           ]),
       },
