@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { useCallback, useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
@@ -12,6 +11,8 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { RecordFieldListCellEditModePortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellEditModePortal';
+import { RecordFieldListCellHoveredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortal';
 import {
   FieldContext,
   type RecordUpdateHook,
@@ -26,11 +27,11 @@ import { RecordInlineCell } from '@/object-record/record-inline-cell/components/
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
 import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsListItem';
+import { useRecordDetailSectionFieldMetadataItems } from '@/object-record/record-show/record-detail-section/hooks/useRecordDetailSectionFieldMetadataItems';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -133,7 +134,10 @@ export const RecordDetailRelationRecordsListItem = ({
     relationObjectMetadataNameSingular,
   );
 
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const { fieldMetadataItems } = useRecordDetailSectionFieldMetadataItems({
+    objectNameSingular: relationObjectMetadataNameSingular,
+    excludeFieldMetadataIds: [relationFieldMetadataId],
+  });
 
   const relationObjectPermissions = useObjectPermissionsForObject(
     relationObjectMetadataItem.id,
@@ -149,18 +153,6 @@ export const RecordDetailRelationRecordsListItem = ({
   const isAccountOwnerRelation =
     relationObjectMetadataNameSingular ===
     CoreObjectNameSingular.WorkspaceMember;
-
-  const availableRelationFieldMetadataItems = relationObjectMetadataItem.fields
-    .filter(
-      (fieldMetadataItem) =>
-        isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
-        fieldMetadataItem.id !==
-          relationObjectMetadataItem.labelIdentifierFieldMetadataId &&
-        fieldMetadataItem.id !== relationFieldMetadataId &&
-        fieldMetadataItem.name !== 'createdAt' &&
-        fieldMetadataItem.name !== 'deletedAt',
-    )
-    .sort();
 
   const dropdownInstanceId = `record-field-card-menu-${relationFieldMetadataId}-${relationRecord.id}`;
 
@@ -336,6 +328,14 @@ export const RecordDetailRelationRecordsListItem = ({
               </FieldContext.Provider>
             ),
           )}
+          <RecordFieldListCellHoveredPortal
+            objectMetadataItem={relationObjectMetadataItem}
+            recordId={relationRecord.id}
+          />
+          <RecordFieldListCellEditModePortal
+            objectMetadataItem={relationObjectMetadataItem}
+            recordId={relationRecord.id}
+          />
         </StyledPropertyBox>
       </AnimatedEaseInOut>
       {createPortal(
