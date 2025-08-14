@@ -1,9 +1,9 @@
 import { recordFieldListCellEditModePositionComponentState } from '@/object-record/record-field-list/states/recordFieldListCellEditModePositionComponentState';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
-import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
-import { FieldInput } from '@/object-record/record-field/ui/components/FieldInput';
-import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
+import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
+import { FieldInput } from '@/object-record/record-field/components/FieldInput';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
 import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellDisplayMode } from '@/object-record/record-inline-cell/components/RecordInlineCellDisplayMode';
 import { RecordInlineCellHoveredPortalContent } from '@/object-record/record-inline-cell/components/RecordInlineCellHoveredPortalContent';

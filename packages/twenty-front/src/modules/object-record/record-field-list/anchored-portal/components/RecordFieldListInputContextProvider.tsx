@@ -1,12 +1,12 @@
-import { usePersistFieldFromFieldInputContext } from '@/object-record/record-field/ui/hooks/usePersistFieldFromFieldInputContext';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-
 import { recordFieldListCellEditModePositionComponentState } from '@/object-record/record-field-list/states/recordFieldListCellEditModePositionComponentState';
 import {
-  FieldInputEventContext,
   type FieldInputClickOutsideEvent,
   type FieldInputEvent,
-} from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+  FieldInputEventContext,
+} from '@/object-record/record-field/contexts/FieldInputEventContext';
+import { usePersistFieldFromFieldInputContext } from '@/object-record/record-field/hooks/usePersistFieldFromFieldInputContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
