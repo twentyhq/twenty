@@ -10,7 +10,6 @@ import {
   type IconComponent,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
-import { type MultiSelectOption } from 'twenty-ui/input';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';
 
@@ -66,17 +65,22 @@ const StyledIconChevronDown = styled(IconChevronDown)<{
     disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
 `;
 
-type MultiSelectControlProps<T> = {
+type MultiSelectOptionType = {
+  label: string;
+  Icon: IconComponent;
+};
+
+type MultiSelectControlProps = {
   fixedIcon?: IconComponent;
   fixedText?: string;
-  selectedOptions: MultiSelectOption<T>[];
+  selectedOptions: MultiSelectOptionType[];
   isDisabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
   textAccent?: SelectControlTextAccent;
   hasRightElement?: boolean;
 };
 
-export const MultiSelectControl = <T,>({
+export const MultiSelectControl = ({
   fixedIcon,
   fixedText,
   selectedOptions,
@@ -84,7 +88,7 @@ export const MultiSelectControl = <T,>({
   selectSizeVariant,
   textAccent = 'default',
   hasRightElement,
-}: MultiSelectControlProps<T>) => {
+}: MultiSelectControlProps) => {
   const theme = useTheme();
 
   const firstSelectedOption = selectedOptions[0];

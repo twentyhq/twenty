@@ -79,7 +79,7 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
     initialRelationObjectMetadataItems[0];
 
   const relationObjectMetadataId = watchFormValue(
-    'morphRelations.0.objectMetadataId',
+    'morphRelationObjectMetadataIds.0',
     initialRelationObjectMetadataItem?.id,
   );
   const relationObjectMetadataItem = findObjectMetadataItemById(

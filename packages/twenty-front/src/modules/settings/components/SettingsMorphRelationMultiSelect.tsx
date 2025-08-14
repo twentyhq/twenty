@@ -6,6 +6,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { MultiSelectControl } from '@/ui/input/components/MultiSelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -17,8 +18,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBox, type IconComponent } from 'twenty-ui/display';
-import { type MultiSelectOption } from 'twenty-ui/input';
+import { IconBox, useIcons, type IconComponent } from 'twenty-ui/display';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
 
 export type SelectSizeVariant = 'small' | 'default';
@@ -29,26 +29,19 @@ type CallToActionButton = {
   Icon?: IconComponent;
 };
 
-type MorphRelationOptionType = {
-  objectMetadataId: string;
-  objectMetadataNameSingular: string;
-};
-
-export type SettingsMorphRelationMultiSelectProps<T> = {
+export type SettingsMorphRelationMultiSelectProps = {
   className?: string;
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
   dropdownId: string;
   dropdownWidth?: number;
   dropdownWidthAuto?: boolean;
-
   fullWidth?: boolean;
   label?: string;
   description?: string;
-  onChange?: (value: T[]) => void;
+  onChange?: (value: string[]) => void;
   onBlur?: () => void;
-  options: MultiSelectOption<T>[];
-  value: T[];
+  selectedObjectMetadataIds: string[];
   withSearchInput?: boolean;
   needIconCheck?: boolean;
   callToActionButton?: CallToActionButton;
@@ -85,26 +78,28 @@ export const SettingsMorphRelationMultiSelect = ({
   description,
   onChange,
   onBlur,
-  options,
-  value,
+  selectedObjectMetadataIds,
   withSearchInput,
   callToActionButton,
   dropdownOffset,
   hasRightElement,
-}: SettingsMorphRelationMultiSelectProps<MorphRelationOptionType>) => {
+}: SettingsMorphRelationMultiSelectProps) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState('');
 
-  const morphRelations = value;
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
-  const selectedOptions =
-    options.filter(({ value: key }) =>
-      morphRelations.find(
-        (morphRelation) =>
-          morphRelation.objectMetadataId === key.objectMetadataId,
-      ),
-    ) || options[0];
+  const { getIcon } = useIcons();
+  const options = activeObjectMetadataItems.map((objectMetadataItem) => ({
+    label: objectMetadataItem.labelSingular,
+    Icon: getIcon(objectMetadataItem.icon),
+    objectMetadataId: objectMetadataItem.id,
+  }));
+
+  const selectedOptions = options.filter((option) =>
+    selectedObjectMetadataIds.includes(option.objectMetadataId),
+  );
 
   const filteredOptions = useMemo(
     () =>
@@ -152,7 +147,7 @@ export const SettingsMorphRelationMultiSelect = ({
     >
       {!!label && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
-        <MultiSelectControl<MorphRelationOptionType>
+        <MultiSelectControl
           selectedOptions={selectedOptions}
           fixedIcon={IconBox}
           fixedText="Object"
@@ -167,7 +162,7 @@ export const SettingsMorphRelationMultiSelect = ({
           dropdownOffset={dropdownOffset}
           onOpen={handleDropdownOpen}
           clickableComponent={
-            <MultiSelectControl<MorphRelationOptionType>
+            <MultiSelectControl
               selectedOptions={selectedOptions}
               fixedIcon={IconBox}
               fixedText="Object"
@@ -197,10 +192,10 @@ export const SettingsMorphRelationMultiSelect = ({
                   >
                     {filteredOptions.map((option) => (
                       <SelectableListItem
-                        key={`${option.value}-${option.label}`}
+                        key={`${option.objectMetadataId}-${option.label}`}
                         itemId={option.label}
                         onEnter={() => {
-                          onChange?.([option.value]);
+                          onChange?.([option.objectMetadataId]);
                           onBlur?.();
                           closeDropdown(dropdownId);
                         }}
@@ -209,29 +204,33 @@ export const SettingsMorphRelationMultiSelect = ({
                           className=""
                           LeftIcon={option.Icon ?? undefined}
                           text={option.label}
-                          selected={selectedOptions.some(
-                            (selectedOption) =>
-                              selectedOption.value.objectMetadataId ===
-                              option.value.objectMetadataId,
+                          selected={selectedObjectMetadataIds.some(
+                            (selectedObjectMetadataId) =>
+                              selectedObjectMetadataId ===
+                              option.objectMetadataId,
                           )}
                           isKeySelected={selectedItemId === option.label}
                           onSelectChange={() => {
-                            let newMorphRelations = [...morphRelations];
-                            const alreadySelected = newMorphRelations.find(
-                              (morphRelation) =>
-                                morphRelation.objectMetadataId ===
-                                option.value.objectMetadataId,
-                            );
-                            if (isDefined(alreadySelected)) {
-                              newMorphRelations = newMorphRelations.filter(
-                                (newMorphRelation) =>
-                                  newMorphRelation !== alreadySelected,
+                            let newSelectedObjectMetadataIds = [
+                              ...selectedObjectMetadataIds,
+                            ];
+                            const alreadySelectedIndex =
+                              newSelectedObjectMetadataIds.indexOf(
+                                option.objectMetadataId,
                               );
+                            if (alreadySelectedIndex !== -1) {
+                              newSelectedObjectMetadataIds =
+                                newSelectedObjectMetadataIds.splice(
+                                  alreadySelectedIndex,
+                                  1,
+                                );
                             } else {
-                              newMorphRelations.push(option.value);
+                              newSelectedObjectMetadataIds.push(
+                                option.objectMetadataId,
+                              );
                             }
 
-                            onChange?.(newMorphRelations);
+                            onChange?.(newSelectedObjectMetadataIds);
                             onBlur?.();
                           }}
                         />{' '}

@@ -95,5 +95,4 @@ export { RadioGroup } from './components/RadioGroup';
 export type { ToggleSize, ToggleProps } from './components/Toggle';
 export { Toggle } from './components/Toggle';
 export type { ColorScheme } from './types/ColorScheme';
-export type { MultiSelectOption } from './types/MultiSelectOption';
 export type { SelectOption } from './types/SelectOption';

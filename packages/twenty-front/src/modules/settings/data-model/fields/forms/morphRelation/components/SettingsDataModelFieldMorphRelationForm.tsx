@@ -5,8 +5,6 @@ import { z } from 'zod';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
-import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { SettingsMorphRelationMultiSelect } from '@/settings/components/SettingsMorphRelationMultiSelect';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
@@ -21,27 +19,7 @@ import { RelationType } from '~/generated-metadata/graphql';
 
 // todo @guillim : this is a copy of the relation form, we need to refactor it to be more morphspecific
 export const settingsDataModelFieldMorphRelationFormSchema = z.object({
-  morphRelations: z
-    .array(
-      z.object({
-        value: fieldMetadataItemSchema()
-          .pick({
-            icon: true,
-            label: true,
-          })
-          .merge(
-            fieldMetadataItemSchema()
-              .pick({
-                name: true,
-                isLabelSyncedWithName: true,
-              })
-              .partial(),
-          ),
-        objectMetadataId: z.string().uuid(),
-        objectMetadataNameSingular: z.string().min(1),
-      }),
-    )
-    .min(2),
+  morphRelationObjectMetadataIds: z.array(z.string().uuid()).min(2),
   relationType: z.enum(
     Object.keys(RELATION_TYPES) as [RelationType, ...RelationType[]],
   ),
@@ -124,24 +102,10 @@ export const SettingsDataModelFieldMorphRelationForm = ({
 
   const secondInitialRelationObjectMetadataItem =
     initialRelationObjectMetadataItems[1];
-  const secondInitialRelationFieldMetadataItem = {
-    icon: secondInitialRelationObjectMetadataItem.icon ?? 'IconUsers',
-    label: secondInitialRelationObjectMetadataItem.labelPlural,
-  };
 
-  const initialMorphRelations = [
-    {
-      objectMetadataId: firstInitialRelationObjectMetadataItem.id,
-      objectMetadataNameSingular:
-        firstInitialRelationObjectMetadataItem.labelSingular,
-      value: firstInitialRelationFieldMetadataItem,
-    },
-    {
-      objectMetadataId: secondInitialRelationObjectMetadataItem.id,
-      objectMetadataNameSingular:
-        secondInitialRelationObjectMetadataItem.labelSingular,
-      value: secondInitialRelationFieldMetadataItem,
-    },
+  const initialMorphRelationsObjectMetadataIds = [
+    firstInitialRelationObjectMetadataItem.id,
+    secondInitialRelationObjectMetadataItem.id,
   ];
   const isMobile = useIsMobile();
 
@@ -166,32 +130,17 @@ export const SettingsDataModelFieldMorphRelationForm = ({
         />
 
         <Controller
-          name="morphRelations"
+          name="morphRelationObjectMetadataIds"
           control={control}
-          defaultValue={initialMorphRelations}
+          defaultValue={initialMorphRelationsObjectMetadataIds}
           render={({ field: { onChange, value } }) => (
             <SettingsMorphRelationMultiSelect
               label={t`Object destination`}
               dropdownId="object-destination-select"
               fullWidth
               disabled={disableRelationEdition}
-              value={value}
+              selectedObjectMetadataIds={value}
               withSearchInput={true}
-              options={activeObjectMetadataItems
-                .filter(isObjectMetadataAvailableForRelation)
-                .sort((item1, item2) =>
-                  item1.labelPlural.localeCompare(item2.labelPlural),
-                )
-                .map((objectMetadataItem) => ({
-                  label: objectMetadataItem.labelSingular,
-                  Icon: getIcon(objectMetadataItem.icon),
-                  value: {
-                    objectMetadataId: objectMetadataItem.id,
-                    objectMetadataNameSingular:
-                      objectMetadataItem.labelSingular,
-                    icon: getIcon(objectMetadataItem.icon),
-                  },
-                }))}
               onChange={onChange}
             />
           )}
