@@ -109,7 +109,6 @@ export const WorkflowEditTriggerManualForm = ({
         disabled={triggerOptions.readonly}
       />
       <WorkflowStepBody>
-
         <IconPicker
           dropdownId={'workflow-edit-manual-trigger-icon'}
           selectedIconKey={trigger.settings.icon}
@@ -152,7 +151,6 @@ export const WorkflowEditTriggerManualForm = ({
             });
           }}
         />
-
 
         <Select
           dropdownId={'workflow-edit-manual-trigger-availability'}
@@ -208,7 +206,8 @@ export const WorkflowEditTriggerManualForm = ({
           />
         ) : null}
 
-        <Select
+        {manualTriggerAvailability === 'WHEN_RECORD_SELECTED' ? (
+          <Select
             dropdownId={'workflow-edit-manual-trigger-navbar'}
             label={t`Navbar`}
             description={t`Display a button in the top navbar to trigger this workflow`}
@@ -233,7 +232,7 @@ export const WorkflowEditTriggerManualForm = ({
             dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
-        
+        ) : null}
       </WorkflowStepBody>
     </>
   );
