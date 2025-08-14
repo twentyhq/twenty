@@ -1,9 +1,11 @@
+import { Injectable } from '@nestjs/common';
+
 import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
 import {
-  type WorkspaceMigrationBuildArgs,
-  type WorkspaceMigrationBuilderV2Service,
+  WorkspaceMigrationBuildArgs,
+  WorkspaceMigrationBuilderV2Service,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
-import { type WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
+import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
 import {
   WorkspaceMigrationV2Exception,
   WorkspaceMigrationV2ExceptionCode,
