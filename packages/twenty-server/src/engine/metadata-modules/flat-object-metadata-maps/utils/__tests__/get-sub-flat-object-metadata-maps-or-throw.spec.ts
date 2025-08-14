@@ -102,7 +102,6 @@ describe('getSubFlatObjectMetadataMapsOrThrow', () => {
         },
       },
       {
-        only: true,
         title:
           'should extract object metadata from maps without provided fields',
         context: {
@@ -115,6 +114,9 @@ describe('getSubFlatObjectMetadataMapsOrThrow', () => {
                   PET_FLAT_FIELDS_MOCK.name.id,
                 ],
               },
+              {
+                objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
+              },
             ],
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           },
@@ -122,10 +124,11 @@ describe('getSubFlatObjectMetadataMapsOrThrow', () => {
             {
               ...PET_FLAT_OBJECT_MOCK,
               flatFieldMetadatas: [
-                PET_FLAT_FIELDS_MOCK.species,
                 PET_FLAT_FIELDS_MOCK.name,
+                PET_FLAT_FIELDS_MOCK.species,
               ],
             },
+            ROCKET_FLAT_OBJECT_MOCK,
           ]),
         },
       },
