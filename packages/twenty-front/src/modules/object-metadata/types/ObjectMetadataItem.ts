@@ -7,7 +7,6 @@ export type ObjectMetadataItem = Omit<
   GeneratedObject,
   | '__typename'
   | 'fields'
-  | 'dataSourceId'
   | 'indexMetadatas'
   | 'labelIdentifierFieldMetadataId'
   | 'fieldsList'

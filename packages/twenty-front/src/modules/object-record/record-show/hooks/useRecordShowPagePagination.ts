@@ -5,7 +5,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
+import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
 import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-show/hooks/useRecordIdsFromFindManyCacheRootQuery';
 import { AppPath } from '@/types/AppPath';
 import { useQueryVariablesFromParentView } from '@/views/hooks/useQueryVariablesFromParentView';

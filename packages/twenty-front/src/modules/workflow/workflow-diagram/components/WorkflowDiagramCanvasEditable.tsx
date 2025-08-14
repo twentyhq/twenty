@@ -1,5 +1,7 @@
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramBlankEdge';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
 import { WorkflowDiagramCanvasEditableEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditableEffect';
@@ -10,23 +12,27 @@ import { WorkflowDiagramFilteringDisabledEdgeEditable } from '@/workflow/workflo
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeEditable';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-diagram/states/workflowDiagramRightClickMenuPositionState';
-import { type WorkflowDiagramNode } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import {
+  type WorkflowDiagramEdge,
+  type WorkflowDiagramNode,
+} from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
 import { useCreateEdge } from '@/workflow/workflow-steps/hooks/useCreateEdge';
+import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { addEdge, type Connection, ReactFlowProvider } from '@xyflow/react';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const WorkflowDiagramCanvasEditable = ({
-  workflowWithCurrentVersion,
-}: {
-  workflowWithCurrentVersion: WorkflowWithCurrentVersion;
-}) => {
-  const tagProps = getWorkflowVersionStatusTagProps({
-    workflowVersionStatus: workflowWithCurrentVersion.currentVersion.status,
-  });
+export const WorkflowDiagramCanvasEditable = () => {
+  const workflowVisualizerWorkflowId = useRecoilComponentValue(
+    workflowVisualizerWorkflowIdComponentState,
+  );
+
+  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
+    workflowVisualizerWorkflowId,
+  );
 
   const setWorkflowDiagram = useSetRecoilComponentState(
     workflowDiagramComponentState,
@@ -36,17 +42,13 @@ export const WorkflowDiagramCanvasEditable = ({
     workflowDiagramRightClickMenuPositionState,
   );
 
-  const { createEdge } = useCreateEdge({
-    workflow: workflowWithCurrentVersion,
-  });
+  const { createEdge } = useCreateEdge();
 
-  const { updateStep } = useUpdateStep({
-    workflow: workflowWithCurrentVersion,
-  });
+  const { deleteEdge } = useDeleteEdge();
 
-  const { updateTrigger } = useUpdateWorkflowVersionTrigger({
-    workflow: workflowWithCurrentVersion,
-  });
+  const { updateStep } = useUpdateStep();
+
+  const { updateTrigger } = useUpdateWorkflowVersionTrigger();
 
   const onConnect = (edgeConnect: Connection) => {
     setWorkflowDiagram((diagram) => {
@@ -63,6 +65,10 @@ export const WorkflowDiagramCanvasEditable = ({
     });
 
     createEdge(edgeConnect);
+  };
+
+  const onDeleteEdge = async (edge: WorkflowDiagramEdge) => {
+    await deleteEdge(edge);
   };
 
   const onNodeDragStop = async (
@@ -95,6 +101,14 @@ export const WorkflowDiagramCanvasEditable = ({
     }
   };
 
+  if (!isDefined(workflowWithCurrentVersion)) {
+    return null;
+  }
+
+  const tagProps = getWorkflowVersionStatusTagProps({
+    workflowVersionStatus: workflowWithCurrentVersion.currentVersion.status,
+  });
+
   const handlePaneContextMenu = ({ x, y }: { x: number; y: number }) => {
     setWorkflowDiagramRightClickMenuPosition({
       x,
@@ -124,6 +138,7 @@ export const WorkflowDiagramCanvasEditable = ({
         handlePaneContextMenu={handlePaneContextMenu}
         nodesConnectable
         nodesDraggable
+        onDeleteEdge={onDeleteEdge}
       />
 
       <WorkflowDiagramCanvasEditableEffect />

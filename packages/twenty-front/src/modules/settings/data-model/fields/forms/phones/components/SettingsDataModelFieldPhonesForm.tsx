@@ -1,7 +1,7 @@
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { phonesSchema as phonesFieldDefaultValueSchema } from '@/object-record/record-field/types/guards/isFieldPhonesValue';
+import { phonesSchema as phonesFieldDefaultValueSchema } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { countryCodeToCallingCode } from '@/settings/data-model/fields/preview/utils/getPhonesFieldPreviewValue';
 import { Select } from '@/ui/input/components/Select';
@@ -10,8 +10,8 @@ import { useLingui } from '@lingui/react/macro';
 import type { CountryCode } from 'libphonenumber-js';
 import {
   IconCircleOff,
-  type IconComponentProps,
   IconMap,
+  type IconComponentProps,
 } from 'twenty-ui/display';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';

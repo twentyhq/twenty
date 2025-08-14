@@ -13,7 +13,11 @@ type FlatFieldMetadataOverrides<
 export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
   overrides: FlatFieldMetadataOverrides<T>,
 ): FlatFieldMetadata => {
+  const createdAt = new Date();
+
   return {
+    createdAt,
+    updatedAt: createdAt,
     defaultValue: null,
     options: null,
     settings: null,

@@ -2,13 +2,13 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { RecordInlineCellValue } from '@/object-record/record-inline-cell/components/RecordInlineCellValue';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 
-import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
-import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
+import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
+import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { RecordInlineCellCloseOnCommandMenuOpeningEffect } from '@/object-record/record-inline-cell/components/RecordInlineCellCloseOnCommandMenuOpeningEffect';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import {
@@ -99,7 +99,8 @@ export const RecordInlineCellContainer = () => {
 
   const { isInlineCellInEditMode, openInlineCell } = useInlineCell();
 
-  const { recordId, fieldDefinition } = useContext(FieldContext);
+  const { recordId, fieldDefinition, onMouseEnter, onMouseLeave, anchorId } =
+    useContext(FieldContext);
 
   const shouldContainerBeClickable =
     !readonly && !editModeContentOnly && !isInlineCellInEditMode;
@@ -114,12 +115,14 @@ export const RecordInlineCellContainer = () => {
     if (!readonly) {
       setIsFocused(true);
     }
+    onMouseEnter?.();
   };
 
   const handleContainerMouseLeave = () => {
     if (!readonly) {
       setIsFocused(false);
     }
+    onMouseLeave?.();
   };
 
   const theme = useTheme();
@@ -164,7 +167,7 @@ export const RecordInlineCellContainer = () => {
       {isInlineCellInEditMode && (
         <RecordInlineCellCloseOnCommandMenuOpeningEffect />
       )}
-      <StyledValueContainer readonly={readonly ?? false}>
+      <StyledValueContainer readonly={readonly ?? false} id={anchorId}>
         <RecordInlineCellValue />
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>

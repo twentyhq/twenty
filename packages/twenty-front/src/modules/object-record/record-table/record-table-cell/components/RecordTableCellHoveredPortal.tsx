@@ -3,9 +3,9 @@ import { recordTableHoverPositionComponentState } from '@/object-record/record-t
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 
-import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellDisplayMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellDisplayMode';
 import { RecordTableCellEditButton } from '@/object-record/record-table/record-table-cell/components/RecordTableCellEditButton';

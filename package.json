@@ -66,9 +66,9 @@
     "slash": "^5.1.0",
     "storybook-addon-mock-date": "^0.6.0",
     "ts-key-enum": "^2.0.12",
-    "tslib": "^2.3.0",
+    "tslib": "^2.8.1",
     "type-fest": "4.10.1",
-    "typescript": "5.3.3",
+    "typescript": "5.9.2",
     "uuid": "^9.0.0",
     "vite-tsconfig-paths": "^4.2.1",
     "xlsx-ugnis": "^0.19.3",
@@ -221,7 +221,7 @@
   "resolutions": {
     "graphql": "16.8.0",
     "type-fest": "4.10.1",
-    "typescript": "5.3.3",
+    "typescript": "5.9.2",
     "graphql-redis-subscriptions/ioredis": "^5.6.0",
     "prosemirror-view": "1.40.0",
     "prosemirror-transform": "1.10.4"

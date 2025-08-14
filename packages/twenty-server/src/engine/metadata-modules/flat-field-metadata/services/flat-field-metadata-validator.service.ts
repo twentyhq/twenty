@@ -17,6 +17,7 @@ import {
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name-availability.validator';
+import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name.validator';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
 import {
@@ -27,7 +28,6 @@ import {
   InvalidMetadataException,
   InvalidMetadataExceptionCode,
 } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
-import { validateMetadataName } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 
 export type ValidateOneFieldMetadataArgs<
@@ -141,14 +141,18 @@ export class FlatFieldMetadataValidatorService {
 
     if (updates.some((update) => update.property === 'name')) {
       errors.push(
-        ...[
-          validateMetadataName(updatedFlatFieldMetadata.name),
-          validateFlatFieldMetadataNameAvailability({
-            name: updatedFlatFieldMetadata.name,
-            flatObjectMetadata: flatObjectMetadata,
-          }),
-        ].filter(isDefined),
+        ...validateFlatFieldMetadataName(updatedFlatFieldMetadata.name),
       );
+
+      const nameAvailabilityValidationError =
+        validateFlatFieldMetadataNameAvailability({
+          name: updatedFlatFieldMetadata.name,
+          flatObjectMetadata: flatObjectMetadata,
+        });
+
+      if (isDefined(nameAvailabilityValidationError)) {
+        errors.push(nameAvailabilityValidationError);
+      }
     }
 
     if (updatedFlatFieldMetadata.isLabelSyncedWithName) {
@@ -241,7 +245,7 @@ export class FlatFieldMetadataValidatorService {
     return errors;
   }
 
-  async validateOneFlatFieldMetadataCreation<
+  async validateFlatFieldMetadataCreation<
     T extends FieldMetadataType = FieldMetadataType,
   >({
     existingFlatObjectMetadataMaps,
@@ -306,27 +310,20 @@ export class FlatFieldMetadataValidatorService {
       }
     }
 
-    const nameValidationResult = validateMetadataName(
-      flatFieldMetadataToValidate.name,
+    errors.push(
+      ...validateFlatFieldMetadataName(flatFieldMetadataToValidate.name),
     );
 
-    if (isDefined(nameValidationResult)) {
-      errors.push(nameValidationResult);
-    }
-
-    const fieldMetadataTypeValidationErrors =
-      await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
+    errors.push(
+      ...(await this.flatFieldMetadataTypeValidatorService.validateFlatFieldMetadataTypeSpecificities(
         {
           existingFlatObjectMetadataMaps,
           flatFieldMetadataToValidate,
           workspaceId,
           otherFlatObjectMetadataMapsToValidate,
         },
-      );
-
-    if (fieldMetadataTypeValidationErrors.length > 0) {
-      errors.push(...fieldMetadataTypeValidationErrors);
-    }
+      )),
+    );
 
     return errors;
   }

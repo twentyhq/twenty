@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
@@ -11,18 +12,18 @@ type ValidateNoOtherObjectWithSameNameExistsOrThrowsParams = {
   objectMetadataNameSingular: string;
   objectMetadataNamePlural: string;
   existingObjectMetadataId?: string;
-  objectMetadataMaps: ObjectMetadataMaps;
+  objectMetadataMaps: ObjectMetadataMaps | FlatObjectMetadataMaps;
 };
 
-export const validatesNoOtherObjectWithSameNameExistsOrThrows = ({
-  objectMetadataNameSingular,
-  objectMetadataNamePlural,
-  existingObjectMetadataId,
+export const doesOtherObjectWithSameNameExists = ({
   objectMetadataMaps,
-}: ValidateNoOtherObjectWithSameNameExistsOrThrowsParams) => {
-  const objectAlreadyExists = Object.values(objectMetadataMaps.byId)
+  objectMetadataNamePlural,
+  objectMetadataNameSingular,
+  existingObjectMetadataId,
+}: ValidateNoOtherObjectWithSameNameExistsOrThrowsParams) =>
+  Object.values(objectMetadataMaps.byId)
     .filter(isDefined)
-    .find(
+    .some(
       (objectMetadata) =>
         (objectMetadata.nameSingular === objectMetadataNameSingular ||
           objectMetadata.namePlural === objectMetadataNamePlural ||
@@ -30,6 +31,11 @@ export const validatesNoOtherObjectWithSameNameExistsOrThrows = ({
           objectMetadata.namePlural === objectMetadataNameSingular) &&
         objectMetadata.id !== existingObjectMetadataId,
     );
+
+export const validatesNoOtherObjectWithSameNameExistsOrThrows = (
+  args: ValidateNoOtherObjectWithSameNameExistsOrThrowsParams,
+) => {
+  const objectAlreadyExists = doesOtherObjectWithSameNameExists(args);
 
   if (objectAlreadyExists) {
     throw new ObjectMetadataException(
