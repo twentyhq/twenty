@@ -43,5 +43,8 @@ describe('mapBoardFieldDefinitionsToViewFields', () => {
     expect(viewFields[0]).toHaveProperty('size');
     expect(viewFields[0]).toHaveProperty('position');
     expect(viewFields[0]).toHaveProperty('isVisible');
+
+    expect(viewFields[0].definition).toEqual(fieldDefinitions[0]);
+    expect(viewFields[1].definition).toEqual(fieldDefinitions[1]);
   });
 });

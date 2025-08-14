@@ -3,8 +3,8 @@ import { type CoreViewField } from '~/generated/graphql';
 
 export const convertCoreViewFieldToViewField = (
   coreViewField: Omit<CoreViewField, 'workspaceId'>,
-): Omit<ViewField, 'definition'> => {
-  const viewField: Omit<ViewField, 'definition'> = {
+): ViewField => {
+  const partial: ViewField = {
     __typename: 'ViewField',
     id: coreViewField.id,
     fieldMetadataId: coreViewField.fieldMetadataId,
@@ -12,7 +12,8 @@ export const convertCoreViewFieldToViewField = (
     isVisible: coreViewField.isVisible,
     size: coreViewField.size,
     aggregateOperation: coreViewField.aggregateOperation ?? null,
+    definition: undefined,
   };
 
-  return viewField;
+  return partial;
 };
