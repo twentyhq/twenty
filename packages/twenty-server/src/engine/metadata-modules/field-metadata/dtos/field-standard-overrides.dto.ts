@@ -4,16 +4,8 @@ import { IsJSON, IsOptional, IsString } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
-import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
+import { FieldMetadataStandardOverridesProperties } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-standard-overrides-properties.type';
 
-export const fieldMetadataStandardOverridesProperties = [
-  'label',
-  'description',
-  'icon',
-] as const satisfies FlatFieldMetadataPropertiesToCompare[];
-
-export type FieldMetadataStandardOverridesProperties =
-  (typeof fieldMetadataStandardOverridesProperties)[number];
 @ObjectType('StandardOverrides')
 export class FieldStandardOverridesDTO
   implements Partial<Record<FieldMetadataStandardOverridesProperties, unknown>>
