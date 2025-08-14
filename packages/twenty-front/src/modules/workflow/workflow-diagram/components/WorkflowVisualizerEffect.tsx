@@ -27,12 +27,7 @@ export const WorkflowVisualizerEffect = ({
     if (isDefined(workflow)) {
       setWorkflowVisualizerWorkflowVersionId(workflow.currentVersion.id);
     }
-  }, [
-    setWorkflowVisualizerWorkflowId,
-    setWorkflowVisualizerWorkflowVersionId,
-    workflowId,
-    workflow,
-  ]);
+  }, [setWorkflowVisualizerWorkflowVersionId, workflow]);
 
   return null;
 };

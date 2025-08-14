@@ -1,6 +1,8 @@
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
+import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
+import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
@@ -28,6 +30,18 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
             instanceId: workflowVisualizerComponentInstanceId,
           }),
           getWorkflowMock().id,
+        );
+        set(
+          workflowVisualizerWorkflowVersionIdComponentState.atomFamily({
+            instanceId: workflowVisualizerComponentInstanceId,
+          }),
+          workflowVersion.id,
+        );
+        set(
+          workflowVisualizerWorkflowRunIdComponentState.atomFamily({
+            instanceId: workflowVisualizerComponentInstanceId,
+          }),
+          '123',
         );
         set(
           workflowSelectedNodeComponentState.atomFamily({
