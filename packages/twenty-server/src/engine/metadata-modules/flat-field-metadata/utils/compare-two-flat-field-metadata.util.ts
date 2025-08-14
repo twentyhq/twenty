@@ -3,6 +3,7 @@ import { FieldMetadataType, type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
@@ -60,7 +61,7 @@ export const compareTwoFlatFieldMetadata = ({
   from,
   to,
 }: GetWorkspaceMigrationUpdateFieldActionArgs) => {
-  const compareFieldMetadataOptions = {
+  const transformMetadataForComparisonOptions = {
     shouldIgnoreProperty: (
       property: string,
       fieldMetadata: FlatFieldMetadata,
@@ -96,10 +97,10 @@ export const compareTwoFlatFieldMetadata = ({
         return true;
       }
 
-      const isStandardField =
-        fieldMetadata.standardId !== null && !fieldMetadata.isCustom;
-
-      if (isStandardField && property !== 'standardOverrides') {
+      if (
+        isStandardMetadata(fieldMetadata) &&
+        property !== 'standardOverrides'
+      ) {
         return true;
       }
 
@@ -109,11 +110,11 @@ export const compareTwoFlatFieldMetadata = ({
   };
   const fromCompare = transformMetadataForComparison(
     from,
-    compareFieldMetadataOptions,
+    transformMetadataForComparisonOptions,
   );
   const toCompare = transformMetadataForComparison(
     to,
-    compareFieldMetadataOptions,
+    transformMetadataForComparisonOptions,
   );
 
   const flatFieldMetadataDifferences = diff(fromCompare, toCompare);

@@ -4,6 +4,7 @@ import { type FromTo } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { type UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
@@ -35,7 +36,7 @@ export const compareTwoFlatObjectMetadata = ({
   from,
   to,
 }: FromTo<FlatObjectMetadata>) => {
-  const options = {
+  const transformMetadataForComparisonOptions = {
     propertiesToStringify: flatObjectMetadataEntityJsonbProperties,
     shouldIgnoreProperty: (
       property: string,
@@ -49,18 +50,24 @@ export const compareTwoFlatObjectMetadata = ({
         return true;
       }
 
-      const isStandardObject =
-        !flatObjectMetadata.isCustom && flatObjectMetadata.standardId !== null;
-
-      if (isStandardObject && property !== 'standardOverrides') {
+      if (
+        isStandardMetadata(flatObjectMetadata) &&
+        property !== 'standardOverrides'
+      ) {
         return true;
       }
 
       return false;
     },
   };
-  const fromCompare = transformMetadataForComparison(from, options);
-  const toCompare = transformMetadataForComparison(to, options);
+  const fromCompare = transformMetadataForComparison(
+    from,
+    transformMetadataForComparisonOptions,
+  );
+  const toCompare = transformMetadataForComparison(
+    to,
+    transformMetadataForComparisonOptions,
+  );
   const objectMetadataDifference = diff(fromCompare, omit(toCompare, 'fields'));
 
   return objectMetadataDifference.flatMap<

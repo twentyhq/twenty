@@ -20,6 +20,7 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 
 type FromUpdateObjectInputToFlatObjectMetadataArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
@@ -63,11 +64,7 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
     );
   }
 
-  const isStandardObject =
-    flatObjectMetadataToUpdate.standardId !== null &&
-    !flatObjectMetadataToUpdate.isCustom;
-
-  if (isStandardObject) {
+  if (isStandardMetadata(flatObjectMetadataToUpdate)) {
     const invalidUpdatedProperties = Object.keys(
       updatedEditableObjectProperties,
     ).filter(

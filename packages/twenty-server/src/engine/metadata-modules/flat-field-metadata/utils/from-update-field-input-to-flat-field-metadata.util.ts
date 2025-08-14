@@ -25,6 +25,7 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 
 const fieldMetadataEditableProperties =
   flatFieldMetadataPropertiesToCompare.filter(
@@ -94,11 +95,8 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       ),
     };
   }
-  const isStandardField =
-    relatedFlatFieldMetadata.standardId !== null &&
-    !relatedFlatFieldMetadata.isCustom;
 
-  if (isStandardField) {
+  if (isStandardMetadata(relatedFlatFieldMetadata)) {
     const invalidUpdatedProperties = Object.keys(
       updatedEditableFieldProperties,
     ).filter((property) =>
