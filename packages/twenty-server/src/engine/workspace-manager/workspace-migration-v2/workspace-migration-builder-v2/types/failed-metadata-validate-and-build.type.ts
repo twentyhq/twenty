@@ -2,7 +2,7 @@ import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata
 import { FailedFlatObjectMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
 
 export type FailedMetadataValidateAndBuild = {
-  status: 'failed';
+  status: 'fail';
   errors: (
     | FailedFlatFieldMetadataValidationExceptions
     | FailedFlatObjectMetadataValidationExceptions

@@ -120,18 +120,23 @@ describe.each(allWorkspaceBuilderTestCases)(
             isSystemBuild: false,
           },
         } = typeof input === 'function' ? input() : input;
-        const workspaceMigration = await service.validateAndBuild({
+        const validateAndBuildResult = await service.validateAndBuild({
           buildOptions,
           fromFlatObjectMetadataMaps,
           toFlatObjectMetadataMaps,
           workspaceId: '20202020-52cc-4c64-ad63-76c26fc3a1e1',
         });
 
+        expect(validateAndBuildResult.status).toBe('success');
+        if (validateAndBuildResult.status !== 'success') {
+          throw new Error('Should never occur');
+        }
+
         expectedActionsTypeCounterChecker({
           expectedActionsTypeCounter,
-          workspaceMigration,
+          workspaceMigration: validateAndBuildResult.workspaceMigration,
         });
-        const { actions } = workspaceMigration;
+        const { actions } = validateAndBuildResult.workspaceMigration;
 
         expect(actions).toMatchSnapshot(
           actions.map(extractRecordIdsAndDatesAsExpectAny),

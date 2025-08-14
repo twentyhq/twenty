@@ -202,7 +202,7 @@ export class ObjectMetadataServiceV2 {
       });
 
     try {
-      const workspaceMigration =
+      const validateAndBuildResult =
         await this.workspaceMigrationBuilderV2.validateAndBuild({
           fromFlatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
           toFlatObjectMetadataMaps:
@@ -216,6 +216,10 @@ export class ObjectMetadataServiceV2 {
           },
           workspaceId,
         });
+
+      if (validateAndBuildResult.status === 'failed') {
+        return;
+      }
 
       await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
     } catch {

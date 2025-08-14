@@ -74,7 +74,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilder {
 
           if (validationErrors.length > 0) {
             return {
-              status: 'failed',
+              status: 'fail',
               errors: validationErrors,
             };
           }
@@ -125,7 +125,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilder {
 
             if (validationErrors.length > 0) {
               return {
-                status: 'failed',
+                status: 'fail',
                 errors: validationErrors,
               };
             }
@@ -170,7 +170,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilder {
 
       if (validationErrors.length > 0) {
         return {
-          status: 'failed',
+          status: 'fail',
           errors: validationErrors,
         };
       }

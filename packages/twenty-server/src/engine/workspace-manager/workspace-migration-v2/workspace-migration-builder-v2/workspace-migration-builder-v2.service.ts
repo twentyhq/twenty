@@ -119,7 +119,7 @@ export class WorkspaceMigrationBuilderV2Service {
 
     if (objectWorkspaceMigrationActions.results.failed.length > 0) {
       return {
-        status: 'failed',
+        status: 'fail',
         errors: objectWorkspaceMigrationActions.results.failed.flatMap(
           (el) => el.errors,
         ),
