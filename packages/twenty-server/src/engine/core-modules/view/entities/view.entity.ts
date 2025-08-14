@@ -53,7 +53,7 @@ export class View {
     type: 'enum',
     enum: Object.values(ViewKey),
     nullable: true,
-    default: ViewKey.INDEX,
+    default: null,
   })
   key: ViewKey | null;
 
