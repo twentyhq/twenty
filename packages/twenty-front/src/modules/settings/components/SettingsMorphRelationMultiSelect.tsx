@@ -223,11 +223,10 @@ export const SettingsMorphRelationMultiSelect = ({
                                 option.objectMetadataId,
                               );
                             if (alreadySelectedIndex !== -1) {
-                              newSelectedObjectMetadataIds =
-                                newSelectedObjectMetadataIds.splice(
-                                  alreadySelectedIndex,
-                                  1,
-                                );
+                              newSelectedObjectMetadataIds.splice(
+                                alreadySelectedIndex,
+                                1,
+                              );
                             } else {
                               newSelectedObjectMetadataIds.push(
                                 option.objectMetadataId,

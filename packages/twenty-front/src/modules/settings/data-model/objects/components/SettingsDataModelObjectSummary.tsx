@@ -61,7 +61,7 @@ export const SettingsDataModelObjectSummary = ({
 
   const { getIcon } = useIcons();
   let selected = 0;
-  const R = objectMetadataItems.map((objectMetadataItem, index) => {
+  const Components = objectMetadataItems.map((objectMetadataItem, index) => {
     const ObjectIcon = getIcon(objectMetadataItem.icon);
     const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
     selected++;
@@ -71,7 +71,7 @@ export const SettingsDataModelObjectSummary = ({
         {index > 0 && <StyledSeperator />}
         <StyledObjectSummary
           className={className}
-          key={objectMetadataItem.labelSingular}
+          key={`${objectMetadataItem.labelSingular}-${index}`}
         >
           <StyledObjectName>
             <StyledIconContainer>
@@ -94,7 +94,7 @@ export const SettingsDataModelObjectSummary = ({
     ) : null;
   });
   if (selected > 3) {
-    R.push(
+    Components.push(
       <>
         <StyledSeperator />
         <StyledObjectSummary className={className} key={`other-objects`}>
@@ -117,5 +117,5 @@ export const SettingsDataModelObjectSummary = ({
       </>,
     );
   }
-  return R;
+  return Components;
 };
