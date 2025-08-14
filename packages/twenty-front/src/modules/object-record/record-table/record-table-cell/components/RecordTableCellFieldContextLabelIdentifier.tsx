@@ -43,6 +43,12 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
     objectPermissionsByObjectMetadataId,
     objectMetadataItem.id,
   );
+  const fieldMetadataItem = objectMetadataItem.fields.find(
+    (field) => field.id === columnDefinition.fieldMetadataId,
+  );
+  if (!fieldMetadataItem) {
+    throw new Error('Field metadata item not found');
+  }
 
   const hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
 
@@ -70,13 +76,10 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
         isLabelIdentifierCompact,
         displayedMaxRows: 1,
         isRecordFieldReadOnly: isRecordFieldReadOnly({
-          objectPermissions,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          fieldName: columnDefinition.metadata.fieldName,
-          fieldType: columnDefinition.type,
-          isCustom: objectMetadataItem.isCustom,
-          fieldMetadataId: columnDefinition.fieldMetadataId,
           isRecordReadOnly: isRecordReadOnly ?? false,
+          objectPermissions,
+          objectMetadataItem,
+          fieldMetadataItem: fieldMetadataItem,
         }),
         maxWidth: columnDefinition.size,
         onRecordChipClick: () => {

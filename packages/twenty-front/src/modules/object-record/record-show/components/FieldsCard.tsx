@@ -110,11 +110,8 @@ export const FieldsCard = ({
                           objectPermissionsByObjectMetadataId,
                           objectMetadataId: objectMetadataItem.id,
                         }),
-                      fieldMetadataId: fieldMetadataItem.id,
-                      objectNameSingular,
-                      fieldName: fieldMetadataItem.name,
-                      fieldType: fieldMetadataItem.type,
-                      isCustom: fieldMetadataItem.isCustom ?? false,
+                      fieldMetadataItem,
+                      objectMetadataItem,
                     }),
                   }}
                 >
@@ -161,11 +158,8 @@ export const FieldsCard = ({
                         objectPermissionsByObjectMetadataId,
                         objectMetadataId: objectMetadataItem.id,
                       }),
-                    fieldMetadataId: fieldMetadataItem.id,
-                    objectNameSingular,
-                    fieldName: fieldMetadataItem.name,
-                    fieldType: fieldMetadataItem.type,
-                    isCustom: fieldMetadataItem.isCustom ?? false,
+                    fieldMetadataItem,
+                    objectMetadataItem,
                   }),
                   onMouseEnter: () =>
                     handleMouseEnter(
@@ -220,11 +214,8 @@ export const FieldsCard = ({
                 objectPermissionsByObjectMetadataId,
                 objectMetadataId: objectMetadataItem.id,
               }),
-              fieldMetadataId: fieldMetadataItem.id,
-              objectNameSingular,
-              fieldName: fieldMetadataItem.name,
-              fieldType: fieldMetadataItem.type,
-              isCustom: fieldMetadataItem.isCustom ?? false,
+              fieldMetadataItem,
+              objectMetadataItem,
             }),
           }}
         >

@@ -1,21 +1,26 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isObjectReadOnly';
 import { type ObjectPermission } from '~/generated/graphql';
 
 export type IsFieldReadOnlyByPermissionParams = {
   objectPermissions: ObjectPermission;
-  fieldMetadataId: string;
+  objectMetadataItem: ObjectMetadataItem;
+  fieldMetadataItem: FieldMetadataItem;
 };
 
 export const isFieldReadOnlyByPermissions = ({
   objectPermissions,
-  fieldMetadataId,
+  objectMetadataItem,
+  fieldMetadataItem,
 }: IsFieldReadOnlyByPermissionParams) => {
-  if (isObjectReadOnly({ objectPermissions }) === true) {
+  if (isObjectReadOnly({ objectPermissions, objectMetadataItem }) === true) {
     return true;
   }
 
   const fieldMetadataIsRestrictedForUpdate =
-    objectPermissions.restrictedFields[fieldMetadataId]?.canUpdate === false;
+    objectPermissions.restrictedFields[fieldMetadataItem?.id]?.canUpdate ===
+    false;
 
   return fieldMetadataIsRestrictedForUpdate;
 };

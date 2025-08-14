@@ -22,6 +22,7 @@ export const objectMetadataItemSchema = z.object({
   isCustom: z.boolean(),
   isRemote: z.boolean(),
   isSystem: z.boolean(),
+  isUIReadOnly: z.boolean(),
   isSearchable: z.boolean(),
   labelIdentifierFieldMetadataId: z.string().uuid(),
   labelPlural: metadataLabelSchema(),

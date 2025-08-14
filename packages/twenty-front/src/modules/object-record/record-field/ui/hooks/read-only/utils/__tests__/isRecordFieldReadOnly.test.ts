@@ -8,14 +8,48 @@ describe('isRecordFieldReadOnly', () => {
     restrictedFields: {},
   };
 
+  const mockFieldMetadataItem = {
+    id: 'field-123',
+    name: 'firstName',
+    type: FieldMetadataType.TEXT,
+    isCustom: false,
+    label: 'First Name',
+    createdAt: '2023-01-01T00:00:00Z',
+    updatedAt: '2023-01-01T00:00:00Z',
+    isActive: true,
+    isNullable: true,
+    isSystem: false,
+    isUnique: false,
+    isUIReadOnly: false,
+  };
+
+  const mockObjectMetadataItem = {
+    id: '123',
+    nameSingular: 'person',
+    namePlural: 'people',
+    labelSingular: 'Person',
+    labelPlural: 'People',
+    fields: [],
+    readableFields: [],
+    updatableFields: [],
+    labelIdentifierFieldMetadataId: 'name-field-id',
+    indexMetadatas: [],
+    isActive: true,
+    isCustom: false,
+    isSystem: false,
+    isRemote: false,
+    createdAt: '2023-01-01T00:00:00Z',
+    updatedAt: '2023-01-01T00:00:00Z',
+    isLabelSyncedWithName: true,
+    isSearchable: true,
+    isUIReadOnly: false,
+  };
+
   const mockParams = {
     isRecordReadOnly: false,
     objectPermissions: mockObjectPermissions,
-    fieldMetadataId: 'field-123',
-    objectNameSingular: 'person',
-    fieldName: 'firstName',
-    fieldType: FieldMetadataType.TEXT,
-    isCustom: false,
+    objectMetadataItem: mockObjectMetadataItem,
+    fieldMetadataItem: mockFieldMetadataItem,
   };
 
   it('should return true when record is read-only', () => {
@@ -56,8 +90,11 @@ describe('isRecordFieldReadOnly', () => {
   it('should return true for system read-only fields like createdAt', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
-      fieldName: 'createdAt',
-      fieldType: FieldMetadataType.DATE_TIME,
+      fieldMetadataItem: {
+        ...mockFieldMetadataItem,
+        name: 'createdAt',
+        type: FieldMetadataType.DATE_TIME,
+      },
     });
 
     expect(result).toBe(true);
@@ -66,7 +103,10 @@ describe('isRecordFieldReadOnly', () => {
   it('should return true for calendar event objects (system read-only)', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
-      objectNameSingular: 'calendarEvent',
+      objectMetadataItem: {
+        ...mockObjectMetadataItem,
+        nameSingular: 'calendarEvent',
+      },
     });
 
     expect(result).toBe(true);
@@ -75,9 +115,15 @@ describe('isRecordFieldReadOnly', () => {
   it('should return true for workflow non-name fields (system read-only)', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
-      objectNameSingular: 'workflow',
-      fieldName: 'status',
-      isCustom: false,
+      objectMetadataItem: {
+        ...mockObjectMetadataItem,
+        nameSingular: 'workflow',
+      },
+      fieldMetadataItem: {
+        ...mockFieldMetadataItem,
+        name: 'status',
+        isCustom: false,
+      },
     });
 
     expect(result).toBe(true);

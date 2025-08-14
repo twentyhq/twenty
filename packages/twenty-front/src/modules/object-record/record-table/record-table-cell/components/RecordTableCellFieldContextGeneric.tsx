@@ -26,6 +26,13 @@ export const RecordTableCellFieldContextGeneric = ({
     useRecordIndexContextOrThrow();
   const { columnDefinition } = useContext(RecordTableCellContext);
 
+  const fieldMetadataItem = objectMetadataItem.fields.find(
+    (field) => field.id === columnDefinition.fieldMetadataId,
+  );
+  if (!fieldMetadataItem) {
+    throw new Error('Field metadata item not found');
+  }
+
   const updateRecord = useContext(RecordUpdateContext);
 
   let hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
@@ -63,11 +70,8 @@ export const RecordTableCellFieldContextGeneric = ({
         isRecordFieldReadOnly: isRecordFieldReadOnly({
           isRecordReadOnly: isRecordReadOnly ?? false,
           objectPermissions,
-          fieldMetadataId: columnDefinition.fieldMetadataId,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          fieldName: columnDefinition.metadata.fieldName,
-          fieldType: columnDefinition.type,
-          isCustom: objectMetadataItem.isCustom,
+          objectMetadataItem,
+          fieldMetadataItem,
         }),
         isForbidden: !hasObjectReadPermissions,
       }}

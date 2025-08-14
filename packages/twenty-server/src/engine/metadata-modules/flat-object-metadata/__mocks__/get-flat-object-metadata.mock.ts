@@ -25,6 +25,7 @@ export const getFlatObjectMetadataMock = (
     isRemote: false,
     isSearchable: true,
     isSystem: false,
+    isUIReadOnly: false,
     labelIdentifierFieldMetadataId: faker.string.uuid(),
     labelPlural: 'default flat object metadata label plural',
     labelSingular: 'default flat object metadata label singular',

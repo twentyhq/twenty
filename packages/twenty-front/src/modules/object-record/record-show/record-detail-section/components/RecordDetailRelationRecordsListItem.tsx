@@ -314,11 +314,8 @@ export const RecordDetailRelationRecordsListItem = ({
                   isRecordFieldReadOnly: isRecordFieldReadOnly({
                     isRecordReadOnly: isRelationRecordReadOnly,
                     objectPermissions: relationObjectPermissions,
-                    fieldMetadataId: fieldMetadataItem.id,
-                    objectNameSingular: relationObjectMetadataNameSingular,
-                    fieldName: fieldMetadataItem.name,
-                    fieldType: fieldMetadataItem.type,
-                    isCustom: relationObjectMetadataItem.isCustom,
+                    fieldMetadataItem,
+                    objectMetadataItem: relationObjectMetadataItem,
                   }),
                 }}
               >
