@@ -38,6 +38,14 @@ export const computeTwentyORMException = (
     ) {
       return handleDuplicateKeyError(error, objectMetadata);
     }
+
+    if (error.message.includes('invalid input value for')) {
+      return new TwentyORMException(
+        error.message,
+        TwentyORMExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const errorCode = (error as QueryFailedErrorWithCode).code;
 
     if (isDefined(errorCode) && POSTGRESQL_ERROR_CODES.includes(errorCode)) {
