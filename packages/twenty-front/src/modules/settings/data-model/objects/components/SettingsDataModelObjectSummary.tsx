@@ -4,11 +4,18 @@ import styled from '@emotion/styled';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/components/SettingsDataModelObjectTypeTag';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
-import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
+import {
+  IconBox,
+  OverflowingTextWithTooltip,
+  useIcons,
+} from 'twenty-ui/display';
 
 export type SettingsDataModelObjectSummaryProps = {
   className?: string;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItems: Pick<
+    ObjectMetadataItem,
+    'icon' | 'labelSingular' | 'labelPlural' | 'isCustom' | 'isRemote'
+  >[];
   pluralizeLabel?: boolean;
 };
 
@@ -24,36 +31,91 @@ const StyledObjectName = styled.div`
   max-width: 60%;
 `;
 
+const StyledOverflowingTextWithTooltip = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+`;
+
+const StyledNumber = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+`;
+
 const StyledIconContainer = styled.div`
   flex-shrink: 0;
 `;
 
+const StyledSeperator = styled.div`
+  align-self: stretch;
+  background: ${({ theme }) => theme.background.quaternary};
+  height: 1px;
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const SettingsDataModelObjectSummary = ({
   className,
-  objectMetadataItem,
+  objectMetadataItems,
   pluralizeLabel = true,
 }: SettingsDataModelObjectSummaryProps) => {
   const theme = useTheme();
 
   const { getIcon } = useIcons();
-  const ObjectIcon = getIcon(objectMetadataItem.icon);
-  const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
+  let selected = 0;
+  const R = objectMetadataItems.map((objectMetadataItem, index) => {
+    const ObjectIcon = getIcon(objectMetadataItem.icon);
+    const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
+    selected++;
 
-  return (
-    <StyledObjectSummary className={className}>
-      <StyledObjectName>
-        <StyledIconContainer>
-          <ObjectIcon size={theme.icon.size.sm} stroke={theme.icon.stroke.md} />
-        </StyledIconContainer>
-        <OverflowingTextWithTooltip
-          text={
-            pluralizeLabel
-              ? objectMetadataItem.labelPlural
-              : objectMetadataItem.labelSingular
-          }
-        />
-      </StyledObjectName>
-      <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
-    </StyledObjectSummary>
-  );
+    return index < 3 ? (
+      <>
+        {index > 0 && <StyledSeperator />}
+        <StyledObjectSummary
+          className={className}
+          key={objectMetadataItem.labelSingular}
+        >
+          <StyledObjectName>
+            <StyledIconContainer>
+              <ObjectIcon
+                size={theme.icon.size.sm}
+                stroke={theme.icon.stroke.md}
+              />
+            </StyledIconContainer>
+            <OverflowingTextWithTooltip
+              text={
+                pluralizeLabel
+                  ? objectMetadataItem.labelPlural
+                  : objectMetadataItem.labelSingular
+              }
+            />
+          </StyledObjectName>
+          <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
+        </StyledObjectSummary>
+      </>
+    ) : null;
+  });
+  if (selected > 3) {
+    R.push(
+      <>
+        <StyledSeperator />
+        <StyledObjectSummary className={className} key={`other-objects`}>
+          <StyledObjectName>
+            <StyledIconContainer>
+              <IconBox
+                size={theme.icon.size.sm}
+                stroke={theme.icon.stroke.md}
+                color={theme.font.color.tertiary}
+              />
+            </StyledIconContainer>
+            <StyledOverflowingTextWithTooltip>
+              <OverflowingTextWithTooltip text={`Other objects`} />
+            </StyledOverflowingTextWithTooltip>
+          </StyledObjectName>
+          <StyledNumber>
+            <OverflowingTextWithTooltip text={`${selected - 3}`} />
+          </StyledNumber>
+        </StyledObjectSummary>
+      </>,
+    );
+  }
+  return R;
 };

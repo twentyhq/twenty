@@ -14,6 +14,7 @@ import {
   SettingsDataModelFieldPreviewCard,
   type SettingsDataModelFieldPreviewCardProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelMorphRelationFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelMorphRelationFieldPreviewCard';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -26,10 +27,14 @@ import {
 type SettingsDataModelFieldMorphRelationSettingsFormCardProps = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> &
     Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
-  relationFieldMetadataItem?: FieldMetadataItem;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
+  flex: 1 1 100%;
+`;
+const StyledMorphRelationFieldPreviewCard = styled(
+  SettingsDataModelMorphRelationFieldPreviewCard,
+)`
   flex: 1 1 100%;
 `;
 
@@ -65,10 +70,8 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
   const { initialRelationObjectMetadataItems, initialRelationType } =
     useMorphRelationSettingsFormInitialValues({
       fieldMetadataItem,
-      objectMetadataItem,
     });
 
-  // todo tmp @guillim remove this when ready
   const initialRelationFieldMetadataItem = {
     icon: initialRelationObjectMetadataItems[0].icon ?? 'IconUsers',
     label: [RelationType.MANY_TO_ONE].includes(initialRelationType)
@@ -102,6 +105,27 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
       ? RelationType.ONE_TO_MANY
       : RelationType.MANY_TO_ONE;
 
+  const morphRelationsForStyledFieldPreviewCard = watchFormValue(
+    'morphRelationObjectMetadataIds',
+  )?.map((morphRelationObjectMetadataId) => {
+    const relationObjectMetadataItem = findObjectMetadataItemById(
+      morphRelationObjectMetadataId,
+    );
+    if (!relationObjectMetadataItem)
+      throw new Error('Relation object metadata item not found');
+    return {
+      targetObjectMetadata: {
+        id: relationObjectMetadataItem.id,
+        nameSingular: relationObjectMetadataItem.labelSingular,
+        labelSingular: relationObjectMetadataItem.labelSingular,
+        labelPlural: relationObjectMetadataItem.labelPlural,
+        icon: relationObjectMetadataItem.icon,
+        isCustom: relationObjectMetadataItem.isCustom,
+        isRemote: relationObjectMetadataItem.isRemote,
+      },
+    };
+  });
+
   return (
     <SettingsDataModelPreviewFormCard
       preview={
@@ -126,36 +150,38 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
             alt={relationTypeConfig.label}
             isMobile={isMobile}
           />
-          <StyledFieldPreviewCard
-            fieldMetadataItem={{
-              ...initialRelationFieldMetadataItem,
-              icon: watchFormValue(
-                'iconOnDestination',
-                initialRelationFieldMetadataItem.icon,
-              ),
-              label:
-                watchFormValue(
-                  'fieldOnDestination',
-                  initialRelationFieldMetadataItem.label,
-                ) || 'Field name',
-              type: FieldMetadataType.RELATION,
-              relation: {
-                type: oppositeRelationType,
-              } as Relation,
-            }}
-            shrink
-            objectMetadataItem={relationObjectMetadataItem}
-            relationObjectMetadataItem={objectMetadataItem}
-            pluralizeLabel={
-              watchFormValue('relationType') !== RelationType.MANY_TO_ONE
-            }
-          />
+          {morphRelationsForStyledFieldPreviewCard && (
+            <StyledMorphRelationFieldPreviewCard
+              fieldMetadataItem={{
+                ...initialRelationFieldMetadataItem,
+                icon: watchFormValue(
+                  'iconOnDestination',
+                  initialRelationFieldMetadataItem.icon,
+                ),
+                label:
+                  watchFormValue(
+                    'fieldOnDestination',
+                    initialRelationFieldMetadataItem.label,
+                  ) || 'Field name',
+                type: FieldMetadataType.RELATION,
+                relation: {
+                  type: oppositeRelationType,
+                } as Relation,
+                morphRelations: morphRelationsForStyledFieldPreviewCard,
+              }}
+              shrink
+              objectMetadataItem={relationObjectMetadataItem}
+              relationObjectMetadataItem={objectMetadataItem}
+              pluralizeLabel={
+                watchFormValue('relationType') !== RelationType.MANY_TO_ONE
+              }
+            />
+          )}
         </StyledPreviewContent>
       }
       form={
         <SettingsDataModelFieldMorphRelationForm
           fieldMetadataItem={fieldMetadataItem}
-          objectMetadataItem={objectMetadataItem}
         />
       }
     />

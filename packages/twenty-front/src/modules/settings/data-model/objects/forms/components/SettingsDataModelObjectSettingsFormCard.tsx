@@ -59,7 +59,7 @@ export const SettingsDataModelObjectSettingsFormCard = ({
           <StyledObjectSummaryCard>
             <StyledObjectSummaryCardContent>
               <SettingsDataModelObjectSummary
-                objectMetadataItem={objectMetadataItem}
+                objectMetadataItems={[objectMetadataItem]}
               />
             </StyledObjectSummaryCardContent>
           </StyledObjectSummaryCard>

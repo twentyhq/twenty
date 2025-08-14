@@ -35,7 +35,7 @@ export const SettingsDataModelFieldPreviewCard = ({
     <StyledCard className={className} fullWidth>
       <StyledCardContent>
         <SettingsDataModelObjectSummary
-          objectMetadataItem={objectMetadataItem}
+          objectMetadataItems={[objectMetadataItem]}
           pluralizeLabel={pluralizeLabel}
         />
         <SettingsDataModelFieldPreview

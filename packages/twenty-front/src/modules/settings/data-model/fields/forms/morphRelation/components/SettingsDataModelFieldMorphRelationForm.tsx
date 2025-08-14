@@ -2,9 +2,7 @@ import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsMorphRelationMultiSelect } from '@/settings/components/SettingsMorphRelationMultiSelect';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
@@ -14,10 +12,8 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useLingui } from '@lingui/react/macro';
-import { useIcons } from 'twenty-ui/display';
 import { RelationType } from '~/generated-metadata/graphql';
 
-// todo @guillim : this is a copy of the relation form, we need to refactor it to be more morphspecific
 export const settingsDataModelFieldMorphRelationFormSchema = z.object({
   morphRelationObjectMetadataIds: z.array(z.string().uuid()).min(2),
   relationType: z.enum(
@@ -32,8 +28,7 @@ export type SettingsDataModelFieldMorphRelationFormValues = z.infer<
 >;
 
 type SettingsDataModelFieldMorphRelationFormProps = {
-  fieldMetadataItem: Pick<FieldMetadataItem, 'type'>;
-  objectMetadataItem: ObjectMetadataItem;
+  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'morphRelations'>;
 };
 
 const StyledContainer = styled.div`
@@ -70,16 +65,11 @@ const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES).map(
 
 export const SettingsDataModelFieldMorphRelationForm = ({
   fieldMetadataItem,
-  objectMetadataItem,
 }: SettingsDataModelFieldMorphRelationFormProps) => {
   const { t } = useLingui();
-  const { control, watch: watchFormValue } =
+  const { control } =
     useFormContext<SettingsDataModelFieldMorphRelationFormValues>();
-  const { getIcon } = useIcons();
-  const { activeObjectMetadataItems, findObjectMetadataItemById } =
-    useFilteredObjectMetadataItems();
 
-  // we should see if we authorize or not the edition of these fields for moprh
   const {
     disableFieldEdition,
     disableRelationEdition,
@@ -87,10 +77,8 @@ export const SettingsDataModelFieldMorphRelationForm = ({
     initialRelationType,
   } = useMorphRelationSettingsFormInitialValues({
     fieldMetadataItem,
-    objectMetadataItem,
   });
 
-  // todo tmp @guillim remove this when ready
   const firstInitialRelationObjectMetadataItem =
     initialRelationObjectMetadataItems[0];
   const firstInitialRelationFieldMetadataItem = {
@@ -124,7 +112,7 @@ export const SettingsDataModelFieldMorphRelationForm = ({
               disabled={disableRelationEdition}
               value={value}
               options={RELATION_TYPE_OPTIONS}
-              onChange={onChange} //todo @guillim: this is not working
+              onChange={onChange}
             />
           )}
         />
