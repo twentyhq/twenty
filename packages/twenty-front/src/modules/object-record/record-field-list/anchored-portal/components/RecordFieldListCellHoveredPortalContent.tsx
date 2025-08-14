@@ -51,10 +51,9 @@ export const RecordFieldListCellHoveredPortalContent = () => {
     <RecordInlineCellHoveredPortalContent
       readonly={isRecordFieldReadOnly}
       isCentered={isCentered}
-      onClick={handleClick}
       onMouseLeave={handleMouseLeave}
     >
-      <RecordInlineCellDisplayMode isHovered={true}>
+      <RecordInlineCellDisplayMode isHovered={true} onClick={handleClick}>
         {editModeContentOnly ? <FieldInput /> : <FieldDisplay />}
       </RecordInlineCellDisplayMode>
     </RecordInlineCellHoveredPortalContent>

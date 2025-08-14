@@ -104,6 +104,8 @@ export const FieldsCard = ({
                     }),
                     useUpdateRecord: useUpdateOneObjectRecordMutation,
                     isDisplayModeFixHeight: true,
+                    onMouseEnter: () => handleMouseEnter(index),
+                    anchorId: `record-field-list-inline-cell-${index}`,
                     isRecordFieldReadOnly: isRecordFieldReadOnly({
                       isRecordReadOnly,
                       objectPermissions:
