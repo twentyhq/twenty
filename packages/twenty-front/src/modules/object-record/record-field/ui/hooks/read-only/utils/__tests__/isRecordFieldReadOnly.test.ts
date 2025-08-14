@@ -87,13 +87,14 @@ describe('isRecordFieldReadOnly', () => {
     expect(result).toBe(true);
   });
 
-  it('should return true for system read-only fields like createdAt', () => {
+  it('should return true when field is system read-only (e.g., createdAt)', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
       fieldMetadataItem: {
         ...mockFieldMetadataItem,
         name: 'createdAt',
         type: FieldMetadataType.DATE_TIME,
+        isUIReadOnly: true,
       },
     });
 
