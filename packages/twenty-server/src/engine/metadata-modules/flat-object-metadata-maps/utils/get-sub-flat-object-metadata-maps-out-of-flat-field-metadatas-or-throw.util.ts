@@ -1,6 +1,6 @@
 import { fromArrayToValuesByKeyRecord, isDefined } from 'twenty-shared/utils';
 
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { EMPTY_FLAT_OBJECT_METADATA_MAPS } from 'src/engine/metadata-modules/flat-object-metadata-maps/constant/empty-flat-object-metadata-maps.constant';
 import {
   FlatObjectMetadataMapsException,
@@ -28,6 +28,7 @@ export const getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatasOrThrow = ({
       let flatObjectMetadataWithFlatFieldMaps = structuredClone(
         sourceFlatObjectMetadataMaps.byId[objectMetadataId],
       );
+
       if (!isDefined(flatObjectMetadataWithFlatFieldMaps)) {
         throw new FlatObjectMetadataMapsException(
           'getSubFlatObjectMetadataMapsOfSpecificFieldsOrThrow object metadata not found',

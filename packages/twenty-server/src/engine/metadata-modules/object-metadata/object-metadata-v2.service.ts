@@ -8,6 +8,7 @@ import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
 import { getSubFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-or-throw.util';
+import { getSubFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps.util';
 import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata.util';
@@ -220,10 +221,16 @@ export class ObjectMetadataServiceV2 {
         workspaceId,
       });
 
+    const fromFlatObjectMetadataMaps =
+      getSubFlatObjectMetadataMaps({
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        objectMetadataIds: [flatObjectMetadataToCreate.id],
+      }) ?? EMPTY_FLAT_OBJECT_METADATA_MAPS;
+
     try {
       const validateAndBuildResult =
         await this.workspaceMigrationBuilderV2.validateAndBuild({
-          fromFlatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+          fromFlatObjectMetadataMaps,
           toFlatObjectMetadataMaps:
             addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
               flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,

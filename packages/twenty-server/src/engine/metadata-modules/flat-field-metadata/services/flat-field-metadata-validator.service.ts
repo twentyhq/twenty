@@ -247,12 +247,7 @@ export class FlatFieldMetadataValidatorService {
     FailedFlatFieldMetadataValidationExceptions[]
   > {
     const errors: FailedFlatFieldMetadataValidationExceptions[] = [];
-    console.log(
-      'toto',
-      flatFieldMetadataToValidate.type,
-      flatFieldMetadataToValidate.name,
-      otherFlatObjectMetadataMapsToValidate,
-    );
+
     const parentFlatObjectMetadata =
       otherFlatObjectMetadataMapsToValidate?.byId[
         flatFieldMetadataToValidate.objectMetadataId
@@ -271,6 +266,19 @@ export class FlatFieldMetadataValidatorService {
         ),
       );
     } else {
+      if (
+        isDefined(
+          parentFlatObjectMetadata.fieldsById[flatFieldMetadataToValidate.id],
+        )
+      ) {
+        errors.push(
+          new ObjectMetadataException(
+            'Field with same id already exists in object',
+            ObjectMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED,
+          ),
+        );
+      }
+
       if (parentFlatObjectMetadata.isRemote === true) {
         errors.push(
           new ObjectMetadataException(

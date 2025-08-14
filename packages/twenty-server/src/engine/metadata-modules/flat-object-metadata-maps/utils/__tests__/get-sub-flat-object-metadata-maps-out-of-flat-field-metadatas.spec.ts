@@ -2,12 +2,12 @@ import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
-import { GetSubFlatObjectMetadataMapsOfSpecificFieldsOrThrowArgs } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-out-of-flat-field-metadatas-or-throw.util';
+import { type GetSubFlatObjectMetadataMapsOfSpecificFieldsOrThrowArgs } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-out-of-flat-field-metadatas-or-throw.util';
 import { getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-out-of-flat-field-metadatas.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 type GetSubFlatObjectMetadataMapsTestCase = {
   input: GetSubFlatObjectMetadataMapsOfSpecificFieldsOrThrowArgs;
