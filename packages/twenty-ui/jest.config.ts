@@ -1,5 +1,6 @@
-import { type JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
+import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const tsConfig = require('./tsconfig.json');
 
 const jestConfig: JestConfigWithTsJest = {
