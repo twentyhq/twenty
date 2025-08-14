@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -52,7 +52,7 @@ export class WorkspaceSchemaObjectActionRunnerService
       flatObjectMetadataWithFlatFieldMaps.fieldsById,
     )
       .filter((field): field is FlatFieldMetadata => field != null)
-      .filter((field) => isEnumFieldMetadataType(field.type));
+      .filter((field) => isEnumFlatFieldMetadata(field));
 
     const enumOperations = collectEnumOperationsForObject({
       enumFlatFieldMetadatas,
@@ -85,7 +85,7 @@ export class WorkspaceSchemaObjectActionRunnerService
     const enumFlatFieldMetadatas = createFieldActions
       .map((createFieldAction) => createFieldAction.flatFieldMetadata)
       .filter((field): field is FlatFieldMetadata => field != null)
-      .filter((field) => isEnumFieldMetadataType(field.type));
+      .filter((field) => isEnumFlatFieldMetadata(field));
 
     const enumOperations = collectEnumOperationsForObject({
       enumFlatFieldMetadatas,
@@ -147,7 +147,7 @@ export class WorkspaceSchemaObjectActionRunnerService
           flatObjectMetadataWithFlatFieldMaps.fieldsById,
         )
           .filter((field): field is FlatFieldMetadata => field != null)
-          .filter((field) => isEnumFieldMetadataType(field.type));
+          .filter((field) => isEnumFlatFieldMetadata(field));
 
         const enumOperations = collectEnumOperationsForObject({
           enumFlatFieldMetadatas,

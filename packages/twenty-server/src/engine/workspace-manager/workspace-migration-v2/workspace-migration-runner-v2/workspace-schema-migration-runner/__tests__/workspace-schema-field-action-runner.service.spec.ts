@@ -575,8 +575,8 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         type: FieldMetadataType.CURRENCY,
         name: 'price',
         defaultValue: {
-          amountMicros: '0',
-          currencyCode: 'USD',
+          amountMicros: "'0'",
+          currencyCode: "'USD'",
         },
         uniqueIdentifier: 'price',
       });
@@ -603,12 +603,12 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
             {
               property: 'defaultValue',
               from: {
-                amountMicros: '0',
-                currencyCode: 'USD',
+                amountMicros: "'0'",
+                currencyCode: "'USD'",
               },
               to: {
-                amountMicros: '100000000',
-                currencyCode: 'EUR',
+                amountMicros: "'100000000'",
+                currencyCode: "'EUR'",
               },
             },
           ],
@@ -625,7 +625,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
         tableName: '_product',
         columnName: 'priceAmountMicros',
-        defaultValue: "'100000000'",
+        defaultValue: '100000000',
       });
 
       expect(
@@ -635,7 +635,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
         tableName: '_product',
         columnName: 'priceCurrencyCode',
-        defaultValue: "'EUR'",
+        defaultValue: 'EUR',
       });
     });
   });

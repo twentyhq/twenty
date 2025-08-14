@@ -1,14 +1,17 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  type EnumFieldMetadataType,
+  type FieldMetadataType,
+} from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
+import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
-import { isFlatFieldMetadataEntityOfTypes } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
+import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-runner/utils/compute-postgres-enum-name.util';
 import {
@@ -168,13 +171,7 @@ export const collectEnumOperationsForField = ({
       options,
     });
   }
-  if (
-    isFlatFieldMetadataEntityOfTypes(flatFieldMetadata, [
-      FieldMetadataType.SELECT,
-      FieldMetadataType.MULTI_SELECT,
-      FieldMetadataType.RATING,
-    ])
-  ) {
+  if (isEnumFlatFieldMetadata(flatFieldMetadata)) {
     return collectEnumOperationsForBasicEnumField({
       flatFieldMetadata,
       tableName,
@@ -194,7 +191,7 @@ export const collectEnumOperationsForObject = ({
 }: {
   tableName: string;
   operation: EnumOperation;
-  enumFlatFieldMetadatas: FlatFieldMetadata[];
+  enumFlatFieldMetadatas: FlatFieldMetadata<EnumFieldMetadataType>[];
   options?: { newTableName?: string; newFieldName?: string };
 }): EnumOperationSpec[] => {
   return enumFlatFieldMetadatas.flatMap((enumFlatFieldMetadata) =>

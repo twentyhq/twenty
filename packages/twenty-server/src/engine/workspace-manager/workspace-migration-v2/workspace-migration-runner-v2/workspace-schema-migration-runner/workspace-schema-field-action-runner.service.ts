@@ -6,15 +6,17 @@ import { type QueryRunner } from 'typeorm';
 import { type FieldMetadataDefaultValueForAnyType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import {
+  FieldMetadataDefaultOption,
   type FieldMetadataComplexOption,
-  type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { EnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/enum-field-metadata-type.type';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
+import { unserializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/unserialize-default-value';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
+import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
@@ -26,10 +28,6 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { type RunnerMethodForActionType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/runner-method-for-action-type';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
-import {
-  WorkspaceSchemaMigrationException,
-  WorkspaceSchemaMigrationExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/exceptions/workspace-schema-migration.exception';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/generate-column-definitions.util';
 
 import {
@@ -184,7 +182,7 @@ export class WorkspaceSchemaFieldActionRunnerService
       }
       if (
         update.property === 'options' &&
-        isEnumFieldMetadataType(optimisticFlatFieldMetadata.type)
+        isEnumFlatFieldMetadata(optimisticFlatFieldMetadata)
       ) {
         await this.handleFieldOptionsUpdate(
           queryRunner,
@@ -205,16 +203,19 @@ export class WorkspaceSchemaFieldActionRunnerService
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    fieldMetadata: FlatFieldMetadata,
+    flatFieldMetadata: FlatFieldMetadata,
     update: {
       property: 'name';
     } & FromTo<string>,
   ) {
-    if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-      const compositeType = getCompositeTypeOrThrow(fieldMetadata.type);
+    if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
+      const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
 
       for (const property of compositeType.properties) {
-        if (property.type === FieldMetadataType.RELATION) {
+        if (
+          property.type === FieldMetadataType.RELATION ||
+          property.type === FieldMetadataType.MORPH_RELATION
+        ) {
           continue;
         }
 
@@ -246,7 +247,7 @@ export class WorkspaceSchemaFieldActionRunnerService
     }
 
     const enumOperations = collectEnumOperationsForField({
-      flatFieldMetadata: fieldMetadata,
+      flatFieldMetadata: flatFieldMetadata,
       tableName,
       operation: EnumOperation.RENAME,
       options: {
@@ -266,13 +267,13 @@ export class WorkspaceSchemaFieldActionRunnerService
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    fieldMetadata: FlatFieldMetadata,
+    flatFieldMetadata: FlatFieldMetadata,
     update: {
       property: 'defaultValue';
     } & FromTo<FieldMetadataDefaultValueForAnyType>,
   ) {
-    if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-      const compositeType = getCompositeTypeOrThrow(fieldMetadata.type);
+    if (isCompositeFieldMetadataType(flatFieldMetadata.type)) {
+      const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
 
       for (const property of compositeType.properties) {
         if (property.type === FieldMetadataType.RELATION) {
@@ -280,21 +281,13 @@ export class WorkspaceSchemaFieldActionRunnerService
         }
 
         const compositeColumnName = computeCompositeColumnName(
-          fieldMetadata.name,
+          flatFieldMetadata.name,
           property,
         );
         // @ts-expect-error - TODO: fix this
         let compositeDefaultValue = update.to?.[property.name];
 
-        // Ensure string defaults for composite properties are properly quoted
-        if (
-          typeof compositeDefaultValue === 'string' &&
-          !compositeDefaultValue.startsWith("'")
-        ) {
-          compositeDefaultValue = `'${compositeDefaultValue}'`;
-        }
-
-        const serializedNewDefaultValue = serializeDefaultValue(
+        const serializedNewDefaultValue = unserializeDefaultValue(
           compositeDefaultValue,
         );
 
@@ -309,14 +302,14 @@ export class WorkspaceSchemaFieldActionRunnerService
         );
       }
     } else {
-      const serializedNewDefaultValue = serializeDefaultValue(update.to);
+      const serializedNewDefaultValue = unserializeDefaultValue(update.to);
 
       await this.workspaceSchemaManagerService.columnManager.alterColumnDefault(
         {
           queryRunner,
           schemaName,
           tableName,
-          columnName: fieldMetadata.name,
+          columnName: flatFieldMetadata.name,
           defaultValue: serializedNewDefaultValue,
         },
       );
@@ -328,7 +321,7 @@ export class WorkspaceSchemaFieldActionRunnerService
     schemaName: string,
     tableName: string,
     flatObjectMetadata: FlatObjectMetadata,
-    fieldMetadata: FlatFieldMetadata,
+    flatFieldMetadata: FlatFieldMetadata<EnumFieldMetadataType>,
     update: {
       property: 'options';
     } & FromTo<
@@ -349,55 +342,31 @@ export class WorkspaceSchemaFieldActionRunnerService
 
     const valueMapping: Record<string, string> = {};
 
-    for (const toOption of fieldMetadata.options ?? []) {
+    for (const toOption of flatFieldMetadata.options ?? []) {
       if (!toOption.id) {
         continue;
       }
 
       const fromOption = fromOptionsById.get(toOption.id);
 
-      if (
-        fromOption &&
-        (fromOption as FieldMetadataDefaultOption | FieldMetadataComplexOption)
-          .value !==
-          (toOption as FieldMetadataDefaultOption | FieldMetadataComplexOption)
-            .value
-      ) {
-        valueMapping[
-          (
-            fromOption as
-              | FieldMetadataDefaultOption
-              | FieldMetadataComplexOption
-          ).value
-        ] = (
-          toOption as FieldMetadataDefaultOption | FieldMetadataComplexOption
-        ).value;
+      if (fromOption && fromOption.value !== toOption.value) {
+        valueMapping[fromOption.value] = toOption.value;
       }
     }
 
-    const optimisticColumnDefinitions = generateColumnDefinitions({
-      fieldMetadata,
+    const enumColumnDefinitions = generateColumnDefinitions({
+      fieldMetadata: flatFieldMetadata,
       flatObjectMetadataWithoutFields: flatObjectMetadata,
     });
 
-    const enumColumnDefinition =
-      optimisticColumnDefinitions.length > 0
-        ? optimisticColumnDefinitions[0]
-        : undefined;
-
-    if (!enumColumnDefinition) {
-      throw new WorkspaceSchemaMigrationException(
-        'No column definition found for enum field',
-        WorkspaceSchemaMigrationExceptionCode.ENUM_OPERATION_FAILED,
-      );
+    for (const enumColumnDefinition of enumColumnDefinitions) {
+      await this.workspaceSchemaManagerService.enumManager.alterEnumValues({
+        queryRunner,
+        schemaName,
+        tableName,
+        columnDefinition: enumColumnDefinition,
+        oldToNewEnumOptionMap: valueMapping,
+      });
     }
-
-    await this.workspaceSchemaManagerService.enumManager.alterEnumValues({
-      queryRunner,
-      schemaName,
-      tableName,
-      columnDefinition: enumColumnDefinition,
-      oldToNewEnumOptionMap: valueMapping,
-    });
   }
 }
