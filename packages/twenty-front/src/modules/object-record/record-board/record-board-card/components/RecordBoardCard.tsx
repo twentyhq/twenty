@@ -128,8 +128,7 @@ export const RecordBoardCard = () => {
   const multiDragState = useRecordDragState('board', recordBoardId);
 
   const isPrimaryMultiDrag =
-    multiDragState &&
-    multiDragState.isDragging &&
+    multiDragState?.isDragging &&
     recordId === multiDragState.primaryDraggedRecordId &&
     multiDragState.originalSelection.length > 1;
 
