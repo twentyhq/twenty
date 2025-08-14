@@ -135,7 +135,7 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
               ),
               label:
                 watchFormValue(
-                  'morphRelations.0.value.label',
+                  'fieldOnDestination',
                   initialRelationFieldMetadataItem.label,
                 ) || 'Field name',
               type: FieldMetadataType.RELATION,
