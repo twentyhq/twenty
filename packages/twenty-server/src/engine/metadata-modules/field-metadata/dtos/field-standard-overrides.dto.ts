@@ -2,8 +2,9 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IsJSON, IsOptional, IsString } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
-import { FieldMetadataStandardOverridesProperties } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-standard-overrides-properties.type';
 import { type APP_LOCALES } from 'twenty-shared/translations';
+
+import { FieldMetadataStandardOverridesProperties } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-standard-overrides-properties.type';
 
 @ObjectType('StandardOverrides')
 export class FieldStandardOverridesDTO
