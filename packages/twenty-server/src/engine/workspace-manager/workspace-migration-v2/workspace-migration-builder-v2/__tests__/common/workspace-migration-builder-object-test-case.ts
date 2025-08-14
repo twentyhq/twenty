@@ -5,6 +5,7 @@ import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metada
 import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { OPPORTUNITY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/opportunity-flat-object.mock';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';
 import { ROCKET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/rocket-flat-object.mock';
 import { fromFlatObjectMetadatasToFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadatas-to-flat-object-metadata-maps.util';
@@ -13,8 +14,7 @@ import { type WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-man
 export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBuilderTestCase[] =
   [
     {
-      title:
-        'It should build an update_object action with all object updated fields',
+      title: 'It should build an update_object for custom object',
       context: {
         input: {
           fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
@@ -26,6 +26,27 @@ export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBu
                 nameSingular: 'prastouin',
                 namePlural: 'prastoins',
                 isLabelSyncedWithName: false,
+              }),
+            }),
+        },
+        expectedActionsTypeCounter: {
+          updateObject: 1,
+        },
+      },
+    },
+    {
+      title: 'It should build an update_object for standard object',
+      context: {
+        input: {
+          fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+          toFlatObjectMetadataMaps:
+            replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
+              flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+              flatObjectMetadata: getFlatObjectMetadataMock({
+                ...OPPORTUNITY_FLAT_OBJECT_MOCK,
+                standardOverrides: {
+                  description: 'Updated description',
+                },
               }),
             }),
         },
