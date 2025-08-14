@@ -19,6 +19,7 @@ import {
 import { RecordTitleCellFieldDisplay } from '@/object-record/record-title-cell/components/RecordTitleCellFieldDisplay';
 import { RecordTitleCellFieldInput } from '@/object-record/record-title-cell/components/RecordTitleCellFieldInput';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
+import { RecordTitleCellComponentInstanceContext } from '@/object-record/record-title-cell/states/contexts/RecordTitleCellComponentInstanceContext';
 import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useRecoilCallback } from 'recoil';
@@ -128,11 +129,21 @@ export const RecordTitleCell = ({
         }),
       }}
     >
-      <FieldFocusContextProvider>
-        <RecordTitleCellContext.Provider value={recordTitleCellContextValue}>
-          <RecordTitleCellContainer />
-        </RecordTitleCellContext.Provider>
-      </FieldFocusContextProvider>
+      <RecordTitleCellComponentInstanceContext.Provider
+        value={{
+          instanceId: getRecordFieldInputInstanceId({
+            recordId,
+            fieldName: fieldDefinition.metadata.fieldName,
+            prefix: containerType,
+          }),
+        }}
+      >
+        <FieldFocusContextProvider>
+          <RecordTitleCellContext.Provider value={recordTitleCellContextValue}>
+            <RecordTitleCellContainer />
+          </RecordTitleCellContext.Provider>
+        </FieldFocusContextProvider>
+      </RecordTitleCellComponentInstanceContext.Provider>
     </RecordFieldComponentInstanceContext.Provider>
   );
 };

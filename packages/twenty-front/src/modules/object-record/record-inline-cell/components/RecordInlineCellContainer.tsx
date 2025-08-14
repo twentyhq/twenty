@@ -9,7 +9,6 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
-import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import {
   AppTooltip,
   OverflowingTextWithTooltip,
@@ -89,8 +88,6 @@ export const StyledSkeletonDiv = styled.div`
 export const RecordInlineCellContainer = () => {
   const { readonly, IconLabel, label, labelWidth, showLabel } =
     useRecordInlineCellContext();
-
-  const { openInlineCell } = useInlineCell();
 
   const { recordId, fieldDefinition, onMouseEnter, onMouseLeave, anchorId } =
     useContext(FieldContext);
