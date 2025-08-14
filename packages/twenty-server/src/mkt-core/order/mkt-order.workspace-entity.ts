@@ -155,20 +155,17 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   mktLicense: Relation<MktLicenseWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: MKT_ORDER_FIELD_IDS.mktContract,
-    type: RelationType.MANY_TO_ONE,
+    standardId: MKT_ORDER_FIELD_IDS.mktContracts,
+    type: RelationType.ONE_TO_MANY,
     label: msg`Contracts`,
-    description: msg`Contracts linked to the order`,
+    description: msg`Contracts associated with this order`,
     icon: 'IconBox',
     inverseSideTarget: () => MktContractWorkspaceEntity,
-    inverseSideFieldKey: 'mktOrders',
+    inverseSideFieldKey: 'mktOrder',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
-  mktContract: Relation<MktContractWorkspaceEntity[]>;
-
-  @WorkspaceJoinColumn('mktContract')
-  mktContractId: string | null;
+  mktContracts: Relation<MktContractWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: MKT_ORDER_FIELD_IDS.timelineActivities,
