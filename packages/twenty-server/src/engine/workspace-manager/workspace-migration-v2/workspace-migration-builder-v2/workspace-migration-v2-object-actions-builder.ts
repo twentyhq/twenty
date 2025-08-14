@@ -111,15 +111,13 @@ export class WorkspaceMigrationV2ObjectActionsBuilder {
         ? deletedFlatObjectMetadata.map<
             MetadataValidateAndBuildResult<WorkspaceMigrationObjectActionV2>
           >((flatObjectMetadataToDelete) => {
-            // Shouldn't we validate the flatFieldMetadatasToDelete here too or within the validateFlatObjectMetadataDeletion directly ?
-            // Standard fields of a custom object cannot be deleted unless we delete the parent custom objects
             const validationErrors =
               this.flatObjectMetadataValidatorService.validateFlatObjectMetadataDeletion(
                 {
                   buildOptions,
                   existingFlatObjectMetadataMaps:
                     optimisticFlatObjectMetadataMaps,
-                  objectMetadataToDeleteId: flatObjectMetadataToDelete.id, // does this makes sense that it's only the id ? we already retrieved the flat
+                  objectMetadataToDeleteId: flatObjectMetadataToDelete.id,
                 },
               );
 
