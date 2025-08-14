@@ -1644,6 +1644,224 @@ exports[`Workspace migration builder object actions test suite It should build a
 ]
 `;
 
+exports[`Workspace migration builder object actions test suite It should build a delete_object action with custom deactivated object 1`] = `
+[
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "objectMetadataId": Any<String>,
+    "type": "delete_object",
+  },
+]
+`;
+
+exports[`Workspace migration builder object actions test suite It should build a delete_object action with standard activated object 1`] = `
+[
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "delete_field",
+  },
+  {
+    "objectMetadataId": Any<String>,
+    "type": "delete_object",
+  },
+]
+`;
+
 exports[`Workspace migration builder object actions test suite It should build an update_object for custom object 1`] = `
 [
   {

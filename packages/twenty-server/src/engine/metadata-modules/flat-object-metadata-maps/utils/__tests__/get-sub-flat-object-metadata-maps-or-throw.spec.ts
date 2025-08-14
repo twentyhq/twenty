@@ -4,6 +4,7 @@ import {
   type EachTestingContext,
 } from 'twenty-shared/testing';
 
+import { PET_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/pet-flat-fields.mock';
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import {
@@ -27,7 +28,9 @@ describe('getSubFlatObjectMetadataMapsOrThrow', () => {
         title: 'should throw when object metadata id is not found',
         context: {
           input: {
-            objectMetadataIds: ['non-existent-id'],
+            objectMetadataAndFieldIds: [
+              { objectMetadataId: 'non-existent-id' },
+            ],
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           },
           shouldThrow: true,
@@ -37,9 +40,9 @@ describe('getSubFlatObjectMetadataMapsOrThrow', () => {
         title: 'should throw when extracting twice the same object',
         context: {
           input: {
-            objectMetadataIds: [
-              PET_FLAT_OBJECT_MOCK.id,
-              PET_FLAT_OBJECT_MOCK.id,
+            objectMetadataAndFieldIds: [
+              { objectMetadataId: PET_FLAT_OBJECT_MOCK.id },
+              { objectMetadataId: PET_FLAT_OBJECT_MOCK.id },
             ],
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           },
@@ -50,7 +53,9 @@ describe('getSubFlatObjectMetadataMapsOrThrow', () => {
         title: 'should extract single object metadata from maps',
         context: {
           input: {
-            objectMetadataIds: [PET_FLAT_OBJECT_MOCK.id],
+            objectMetadataAndFieldIds: [
+              { objectMetadataId: PET_FLAT_OBJECT_MOCK.id },
+            ],
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           },
           expected: fromFlatObjectMetadatasToFlatObjectMetadataMaps([
@@ -62,15 +67,65 @@ describe('getSubFlatObjectMetadataMapsOrThrow', () => {
         title: 'should extract multiple object metadata from maps',
         context: {
           input: {
-            objectMetadataIds: [
-              PET_FLAT_OBJECT_MOCK.id,
-              ROCKET_FLAT_OBJECT_MOCK.id,
+            objectMetadataAndFieldIds: [
+              { objectMetadataId: PET_FLAT_OBJECT_MOCK.id },
+              { objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id },
             ],
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           },
           expected: fromFlatObjectMetadatasToFlatObjectMetadataMaps([
             PET_FLAT_OBJECT_MOCK,
             ROCKET_FLAT_OBJECT_MOCK,
+          ]),
+        },
+      },
+      {
+        title: 'should extract object metadata from maps without any fields',
+        context: {
+          input: {
+            objectMetadataAndFieldIds: [
+              {
+                objectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+                fieldMetadataIds: [],
+              },
+              {
+                objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
+                fieldMetadataIds: [],
+              },
+            ],
+            flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+          },
+          expected: fromFlatObjectMetadatasToFlatObjectMetadataMaps([
+            { ...PET_FLAT_OBJECT_MOCK, flatFieldMetadatas: [] },
+            { ...ROCKET_FLAT_OBJECT_MOCK, flatFieldMetadatas: [] },
+          ]),
+        },
+      },
+      {
+        only: true,
+        title:
+          'should extract object metadata from maps without provided fields',
+        context: {
+          input: {
+            objectMetadataAndFieldIds: [
+              {
+                objectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+                fieldMetadataIds: [
+                  PET_FLAT_FIELDS_MOCK.species.id,
+                  PET_FLAT_FIELDS_MOCK.name.id,
+                ],
+              },
+            ],
+            flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+          },
+          expected: fromFlatObjectMetadatasToFlatObjectMetadataMaps([
+            {
+              ...PET_FLAT_OBJECT_MOCK,
+              flatFieldMetadatas: [
+                PET_FLAT_FIELDS_MOCK.species,
+                PET_FLAT_FIELDS_MOCK.name,
+              ],
+            },
           ]),
         },
       },
@@ -82,7 +137,10 @@ describe('getSubFlatObjectMetadataMapsOrThrow', () => {
     '$title',
     ({
       context: {
-        input: { objectMetadataIds, flatObjectMetadataMaps },
+        input: {
+          objectMetadataAndFieldIds: objectMetadataIds,
+          flatObjectMetadataMaps,
+        },
         shouldThrow = false,
         expected,
       },
@@ -90,14 +148,14 @@ describe('getSubFlatObjectMetadataMapsOrThrow', () => {
       if (shouldThrow) {
         expect(() =>
           getSubFlatObjectMetadataMapsOrThrow({
-            objectMetadataIds,
+            objectMetadataAndFieldIds: objectMetadataIds,
             flatObjectMetadataMaps,
           }),
         ).toThrowErrorMatchingSnapshot();
       } else {
         jestExpectToBeDefined(expected);
         const result = getSubFlatObjectMetadataMapsOrThrow({
-          objectMetadataIds,
+          objectMetadataAndFieldIds: objectMetadataIds,
           flatObjectMetadataMaps,
         });
 

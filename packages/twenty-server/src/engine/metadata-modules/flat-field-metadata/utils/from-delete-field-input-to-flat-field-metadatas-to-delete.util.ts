@@ -53,7 +53,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
     )
   ) {
     return getRelationFlatFieldMetadatasOrThrow({
-      existingFlatObjectMetadataMaps,
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatFieldMetadata: flatFieldMetadataToDelete,
     });
   }

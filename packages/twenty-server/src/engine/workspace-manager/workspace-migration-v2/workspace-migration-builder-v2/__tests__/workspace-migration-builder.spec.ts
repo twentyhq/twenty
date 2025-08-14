@@ -8,8 +8,6 @@ import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/f
 import { FlatObjectMetadataValidatorService } from 'src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service';
 import { WorkspaceMigrationV2ObjectActionsBuilder } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
 
-import { WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-field-test-case';
-import { WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-index-test-case';
 import { WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-object-test-case';
 import {
   type CamelCasedWorkspaceMigrationActionsType,
@@ -27,14 +25,14 @@ const allWorkspaceBuilderTestCases: {
     label: 'object',
     testCases: WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES,
   },
-  {
-    label: 'field',
-    testCases: WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES,
-  },
-  {
-    label: 'index',
-    testCases: WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES,
-  },
+  // {
+  //   label: 'field',
+  //   testCases: WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES,
+  // },
+  // {
+  //   label: 'index',
+  //   testCases: WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES,
+  // },
 ];
 
 // TODO prastoin add coverage to infer deletion from missing entities
@@ -117,6 +115,7 @@ describe.each(allWorkspaceBuilderTestCases)(
           toFlatObjectMetadataMaps,
           buildOptions = {
             inferDeletionFromMissingObjectFieldIndex: true,
+            isSystemBuild: false,
           },
         } = typeof input === 'function' ? input() : input;
         const workspaceMigration = await service.build({

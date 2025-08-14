@@ -9,21 +9,21 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 
 type GetRelationFlatFieldMetadatasUtilArgs = {
-  existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+  flatObjectMetadataMaps: FlatObjectMetadataMaps;
   flatFieldMetadata: FlatFieldMetadata<
     FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
   >;
 };
 // TODO prastoin handle morph relation
 export const getRelationFlatFieldMetadatasOrThrow = ({
-  existingFlatObjectMetadataMaps,
+  flatObjectMetadataMaps,
   flatFieldMetadata,
 }: GetRelationFlatFieldMetadatasUtilArgs): FlatFieldMetadata[] => {
   const { relationTargetFieldMetadataId, relationTargetObjectMetadataId } =
     flatFieldMetadata;
 
   const relatedFlatObjectMetadata =
-    existingFlatObjectMetadataMaps.byId[relationTargetObjectMetadataId];
+    flatObjectMetadataMaps.byId[relationTargetObjectMetadataId];
 
   if (!isDefined(relatedFlatObjectMetadata)) {
     throw new FieldMetadataException(

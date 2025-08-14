@@ -70,11 +70,17 @@ export class WorkspaceMigrationBuilderV2Service {
         fromFlatObjectMetadataMaps: fromFlatObjectMetadataMaps,
         createdFlatObjectMetadata,
         deletedFlatObjectMetadata,
+        toFlatObjectMetadataMaps,
         updatedFlatObjectMetadata,
         buildOptions,
       });
 
     if (objectWorkspaceMigrationActions.results.failed.length > 0) {
+      console.log(
+        objectWorkspaceMigrationActions.results.failed.forEach((el) =>
+          el.errors.forEach((error) => console.log(error.message)),
+        ),
+      );
       throw new Error('TMP exit prastoin');
     }
 

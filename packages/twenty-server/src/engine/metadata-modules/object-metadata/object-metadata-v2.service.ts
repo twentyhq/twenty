@@ -72,7 +72,7 @@ export class ObjectMetadataServiceV2 {
     try {
       const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        objectMetadataIds: [optimisticallyUpdatedFlatObjectMetadata.id],
+        objectMetadataAndFieldIds: [optimisticallyUpdatedFlatObjectMetadata.id],
       });
       const toFlatObjectMetadataMaps =
         replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
@@ -167,7 +167,7 @@ export class ObjectMetadataServiceV2 {
 
       const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        objectMetadataIds: impactedObjectMetadataIds,
+        objectMetadataAndFieldIds: impactedObjectMetadataIds,
       });
 
       const toFlatObjectMetadataMaps = flatFieldMetadatasToDelete

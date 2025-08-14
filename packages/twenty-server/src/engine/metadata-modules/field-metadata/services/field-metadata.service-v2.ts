@@ -114,7 +114,7 @@ export class FieldMetadataServiceV2 {
       const flatObjectMetadataMapsWithImpactedObject =
         getSubFlatObjectMetadataMapsOrThrow({
           flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-          objectMetadataIds: flatFieldMetadatasToDelete.map(
+          objectMetadataAndFieldIds: flatFieldMetadatasToDelete.map(
             (flatFieldMetadataToDelete) =>
               flatFieldMetadataToDelete.objectMetadataId,
           ),
@@ -190,7 +190,9 @@ export class FieldMetadataServiceV2 {
     const flatObjectMetadataMapsWithRelatedObjectMetadata =
       getSubFlatObjectMetadataMaps({
         flatObjectMetadataMaps,
-        objectMetadataIds: [relatedFlatFieldMetadataToCreate.objectMetadataId],
+        objectMetadataAndFieldIds: [
+          relatedFlatFieldMetadataToCreate.objectMetadataId,
+        ],
       });
 
     if (!isDefined(flatObjectMetadataMapsWithRelatedObjectMetadata)) {
@@ -246,7 +248,7 @@ export class FieldMetadataServiceV2 {
     try {
       const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        objectMetadataIds: [
+        objectMetadataAndFieldIds: [
           optimisticiallyUpdatedFlatFieldMetadata.objectMetadataId,
         ],
       });
@@ -378,11 +380,11 @@ export class FieldMetadataServiceV2 {
     try {
       const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        objectMetadataIds: impactedObjectMetadataIds,
+        objectMetadataAndFieldIds: impactedObjectMetadataIds,
       });
       const toFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
         flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-        objectMetadataIds: impactedObjectMetadataIds,
+        objectMetadataAndFieldIds: impactedObjectMetadataIds,
       });
       const workspaceMigration = await this.workspaceMigrationBuilderV2.build({
         fromFlatObjectMetadataMaps,

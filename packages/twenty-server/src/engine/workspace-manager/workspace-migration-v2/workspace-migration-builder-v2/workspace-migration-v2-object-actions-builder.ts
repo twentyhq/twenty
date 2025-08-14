@@ -21,8 +21,12 @@ import {
   getWorkspaceMigrationV2ObjectDeleteAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-object-actions';
 import { WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
+import { FromTo } from 'twenty-shared/types';
 
-export type CreatedDeletedUpdatedObjectMetadataInputMatrix =
+export type CreatedDeletedUpdatedObjectMetadataInputMatrix = FromTo<
+  FlatObjectMetadataMaps,
+  'FlatObjectMetadataMaps'
+> &
   CustomDeletedCreatedUpdatedMatrix<
     'flatObjectMetadata',
     FlatObjectMetadata
@@ -41,8 +45,9 @@ export class WorkspaceMigrationV2ObjectActionsBuilder {
     createdFlatObjectMetadata,
     deletedFlatObjectMetadata,
     updatedFlatObjectMetadata,
-    fromFlatObjectMetadataMaps,
     buildOptions,
+    fromFlatObjectMetadataMaps,
+    toFlatObjectMetadataMaps,
   }: CreatedDeletedUpdatedObjectMetadataInputMatrix): Promise<{
     results: FailedAndSuccessfulMetadataBuildRecord<WorkspaceMigrationObjectActionV2>;
     optimisticFlatObjectMetadataMaps: FlatObjectMetadataMaps;
@@ -56,7 +61,6 @@ export class WorkspaceMigrationV2ObjectActionsBuilder {
           Promise<MetadataBuildResult<WorkspaceMigrationObjectActionV2>>
         >(async (flatObjectMetadata) => {
           // Won't work for object that contains relations we need to compute
-          const otherFlatObjectMetadataMapsToValidate = undefined; // TODO prastoin
           const validationErrors =
             await this.flatObjectMetadataValidatorService.validateFlatObjectMetadataCreation(
               {
@@ -64,7 +68,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilder {
                 existingFlatObjectMetadataMaps:
                   optimisticFlatObjectMetadataMaps,
                 flatObjectMetadataToValidate: flatObjectMetadata,
-                // otherFlatObjectMetadataMapsToValidate,
+                otherFlatObjectMetadataMapsToValidate: toFlatObjectMetadataMaps,
               },
             );
 
