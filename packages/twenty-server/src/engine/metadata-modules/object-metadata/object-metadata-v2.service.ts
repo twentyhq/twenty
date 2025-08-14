@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
 import { EMPTY_FLAT_OBJECT_METADATA_MAPS } from 'src/engine/metadata-modules/flat-object-metadata-maps/constant/empty-flat-object-metadata-maps.constant';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
@@ -55,19 +54,6 @@ export class ObjectMetadataServiceV2 {
         existingFlatObjectMetadataMaps,
         updateObjectInput,
       });
-
-    const validationErrors =
-      this.flatObjectMetadataValidatorService.validateFlatObjectMetadataUpdate({
-        existingFlatObjectMetadataMaps,
-        updatedFlatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
-      });
-
-    if (validationErrors.length > 0) {
-      throw new MultipleMetadataValidationErrors(
-        validationErrors,
-        'Multiple validation errors occurred while updating object',
-      );
-    }
 
     try {
       const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
@@ -139,27 +125,6 @@ export class ObjectMetadataServiceV2 {
         existingFlatObjectMetadataMaps,
       });
     const { id: objectMetadataToDeleteId } = flatObjectMetadataToDelete;
-
-    // Shouldn't we validate the flatFieldMetadatasToDelete here too or within the validateFlatObjectMetadataDeletion directly ?
-    // Standard fields of a custom object cannot be deleted unless we delete the parent custom objects
-    const flatObjectDeleteValidationErrors =
-      this.flatObjectMetadataValidatorService.validateFlatObjectMetadataDeletion(
-        {
-          existingFlatObjectMetadataMaps,
-          objectMetadataToDeleteId,
-          buildOptions: {
-            inferDeletionFromMissingObjectFieldIndex: false,
-            isSystemBuild: false,
-          },
-        },
-      );
-
-    if (flatObjectDeleteValidationErrors.length > 0) {
-      throw new MultipleMetadataValidationErrors(
-        flatObjectDeleteValidationErrors,
-        'Multiple validation errors occurred while deleting object',
-      );
-    }
 
     try {
       const impactedObjectMetadataIds = Array.from(
@@ -235,25 +200,6 @@ export class ObjectMetadataServiceV2 {
         createObjectInput,
         workspaceId,
       });
-
-    const validationErrors =
-      await this.flatObjectMetadataValidatorService.validateFlatObjectMetadataCreation(
-        {
-          existingFlatObjectMetadataMaps,
-          flatObjectMetadataToValidate: flatObjectMetadataToCreate,
-          buildOptions: {
-            inferDeletionFromMissingObjectFieldIndex: false,
-            isSystemBuild: false,
-          },
-        },
-      );
-
-    if (validationErrors.length > 0) {
-      throw new MultipleMetadataValidationErrors(
-        validationErrors,
-        'Multiple validation errors occurred while creating object',
-      );
-    }
 
     try {
       const workspaceMigration = await this.workspaceMigrationBuilderV2.build({

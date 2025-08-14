@@ -36,11 +36,13 @@ export type CreatedDeletedUpdatedObjectMetadataInputMatrix = FromTo<
   };
 
 @Injectable()
+// TODO rename class
 export class WorkspaceMigrationV2ObjectActionsBuilder {
   constructor(
     private readonly flatObjectMetadataValidatorService: FlatObjectMetadataValidatorService,
   ) {}
 
+  // TODO rename validateAndBuild
   public async build({
     createdFlatObjectMetadata,
     deletedFlatObjectMetadata,
@@ -110,6 +112,8 @@ export class WorkspaceMigrationV2ObjectActionsBuilder {
         ? deletedFlatObjectMetadata.map<
             MetadataBuildResult<WorkspaceMigrationObjectActionV2>
           >((flatObjectMetadataToDelete) => {
+            // Shouldn't we validate the flatFieldMetadatasToDelete here too or within the validateFlatObjectMetadataDeletion directly ?
+            // Standard fields of a custom object cannot be deleted unless we delete the parent custom objects
             const validationErrors =
               this.flatObjectMetadataValidatorService.validateFlatObjectMetadataDeletion(
                 {
