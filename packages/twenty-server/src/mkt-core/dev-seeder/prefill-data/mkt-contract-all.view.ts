@@ -64,7 +64,7 @@ export const mktContractsAllView = (
       {
         fieldMetadataId:
           itemObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_CONTRACT_FIELD_IDS.mktOrders,
+            (field) => field.standardId === MKT_CONTRACT_FIELD_IDS.mktOrder,
           )?.id ?? '',
         position: 4,
         isVisible: true,
