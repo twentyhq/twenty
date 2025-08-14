@@ -138,19 +138,23 @@ export const SettingsObjectNewFieldConfigure = () => {
         });
       } else if (
         formValues.type === FieldMetadataType.MORPH_RELATION &&
-        'morphRelation' in formValues
+        'morphRelationObjectMetadataIds' in formValues
       ) {
-        const { morphRelations: morphRelationsFormValues, ...fieldFormValues } =
-          formValues;
+        const {
+          morphRelationObjectMetadataIds,
+          fieldOnDestination,
+          iconOnDestination,
+          relationType,
+        } = formValues;
         await createMetadataField({
-          ...fieldFormValues,
+          ...formValues,
           objectMetadataId: activeObjectMetadataItem.id,
-          morphRelationsCreationPayload: morphRelationsFormValues.map(
-            (morphRelationFormValues: any) => ({
-              type: morphRelationFormValues.type,
-              targetObjectMetadataId: morphRelationFormValues.objectMetadataId,
-              targetFieldLabel: morphRelationFormValues.field.label,
-              targetFieldIcon: morphRelationFormValues.field.icon,
+          morphRelationsCreationPayload: morphRelationObjectMetadataIds.map(
+            (morphRelationObjectMetadataId: string) => ({
+              type: relationType,
+              targetObjectMetadataId: morphRelationObjectMetadataId,
+              targetFieldLabel: fieldOnDestination,
+              targetFieldIcon: iconOnDestination,
             }),
           ),
         });

@@ -7,6 +7,13 @@ import { useCreateOneFieldMetadataItem } from './useCreateOneFieldMetadataItem';
 import { useDeleteOneFieldMetadataItem } from './useDeleteOneFieldMetadataItem';
 import { useUpdateOneFieldMetadataItem } from './useUpdateOneFieldMetadataItem';
 
+type RelationCreationPayload = {
+  type: RelationType;
+  targetObjectMetadataId: string;
+  targetFieldLabel: string;
+  targetFieldIcon: string;
+};
+
 export const useFieldMetadataItem = () => {
   const { createOneFieldMetadataItem } = useCreateOneFieldMetadataItem();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
@@ -26,12 +33,8 @@ export const useFieldMetadataItem = () => {
       | 'isLabelSyncedWithName'
     > & {
       objectMetadataId: string;
-      relationCreationPayload?: {
-        type: RelationType;
-        targetObjectMetadataId: string;
-        targetFieldLabel: string;
-        targetFieldIcon: string;
-      };
+      relationCreationPayload?: RelationCreationPayload;
+      morphRelationsCreationPayload?: RelationCreationPayload[];
     },
   ) => {
     const formattedInput = formatFieldMetadataItemInput(input);
@@ -44,6 +47,7 @@ export const useFieldMetadataItem = () => {
       name: formattedInput.name ?? '',
       isLabelSyncedWithName: formattedInput.isLabelSyncedWithName ?? true,
       relationCreationPayload: input.relationCreationPayload,
+      morphRelationsCreationPayload: input.morphRelationsCreationPayload,
     });
   };
 
