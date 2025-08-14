@@ -390,9 +390,13 @@ msgstr "أضف المدخلات إلى النموذج الخاص بك"
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
-#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
 msgid "Add new"
 msgstr "إضافة جديد"
+
+#. js-lingui-id: ApsD9J
+#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
+msgid "Add New"
+msgstr ""
 
 #. js-lingui-id: erHjaG
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx

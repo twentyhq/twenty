@@ -390,9 +390,13 @@ msgstr "Aggiungi ingressi al tuo modulo"
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
-#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
 msgid "Add new"
 msgstr "Aggiungi nuovo"
+
+#. js-lingui-id: ApsD9J
+#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
+msgid "Add New"
+msgstr ""
 
 #. js-lingui-id: erHjaG
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
