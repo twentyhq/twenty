@@ -11,12 +11,12 @@ export const MANUAL_TRIGGER_AVAILABILITY_OPTIONS: Array<{
   Icon: IconComponent;
 }> = [
   {
-    label: 'When record is selected',
+    label: 'When records are selected',
     value: 'WHEN_RECORD_SELECTED',
     Icon: IconCheckbox,
   },
   {
-    label: 'When no record is selected',
+    label: 'When no records are selected',
     value: 'EVERYWHERE',
     Icon: IconSquare,
   },

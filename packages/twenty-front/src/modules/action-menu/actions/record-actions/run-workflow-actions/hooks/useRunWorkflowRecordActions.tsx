@@ -82,8 +82,10 @@ export const useRunWorkflowRecordActions = ({
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionScope.RecordSelection,
         label: msg`${name}`,
+        shortLabel: msg`${name}`,
         position: index,
         Icon,
+        isPinned: activeWorkflowVersion.trigger?.settings?.isPinned,
         shouldBeRegistered: () => true,
         component: (
           <Action

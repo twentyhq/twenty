@@ -785,7 +785,7 @@ msgid "Due Date"
 msgstr "Термін виконання"
 
 #. js-lingui-id: BXtAxc
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
 msgstr ""
 
@@ -1104,6 +1104,21 @@ msgstr "Обрані, пов'язані з учасником робочого �
 msgid "Favorites tied to the {label}"
 msgstr "Обрані, пов'язані з {label}"
 
+#. js-lingui-id: Hg95ys
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
+msgid "Field cannot be used as label identifier"
+msgstr ""
+
+#. js-lingui-id: F6OLoA
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
+msgid "Field declared as image identifier not found"
+msgstr ""
+
+#. js-lingui-id: 75hHpn
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
+msgid "Field declared as label identifier not found"
+msgstr ""
+
 #. js-lingui-id: nSFFML
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -1393,13 +1408,13 @@ msgid "Label is required"
 msgstr "Мітка обов'язкова"
 
 #. js-lingui-id: 4EGmy6
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not be empty"
 msgstr "Мітка не повинна бути порожньою"
 
 #. js-lingui-id: k731jp
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not contain a comma"
 msgstr "Мітка не повинна містити кому"
@@ -1673,6 +1688,12 @@ msgstr "Ім'я \"{computedMetadataNameFromLabel}\" не може бути од�
 msgid "Name is not available, it may be duplicating another field's name."
 msgstr "Назва недоступна, може дублювати назву іншого поля."
 
+#. js-lingui-id: Aam+mb
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Name is not synced with label."
+msgstr ""
+
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
@@ -1706,6 +1727,11 @@ msgstr "Назва запуску робочого процесу"
 #. js-lingui-id: P+jdmX
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name should be in camelCase"
+msgstr ""
+
+#. js-lingui-id: Dr0xtb
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Names are not synced with labels"
 msgstr ""
 
 #. js-lingui-id: hQQZse
@@ -1847,18 +1873,13 @@ msgstr "Кількість працівників у компанії"
 msgid "Object already exists"
 msgstr "Об'єкт вже існує"
 
-#. js-lingui-id: O77HIc
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-msgid "Object does not exist"
-msgstr ""
-
 #. js-lingui-id: wLX74t
-#: src/engine/metadata-modules/flat-object-metadata/validators/validate-flat-object-metadata-label.validator.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "Object label is too long"
 msgstr ""
 
 #. js-lingui-id: nmhjwk
-#: src/engine/metadata-modules/flat-object-metadata/validators/validate-flat-object-metadata-label.validator.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "Object label is too short"
 msgstr ""
 
@@ -1866,6 +1887,16 @@ msgstr ""
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Object Metadata Id"
 msgstr "ID метаданих об'єкту"
+
+#. js-lingui-id: bMeJkW
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Object to delete not found"
+msgstr ""
+
+#. js-lingui-id: pQ5dZU
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Object to update not found"
+msgstr ""
 
 #. js-lingui-id: 53pIyA
 #: src/engine/core-modules/view/exceptions/view.exception.ts
@@ -1940,47 +1971,47 @@ msgid "Opportunity stage"
 msgstr "Стадія можливості"
 
 #. js-lingui-id: 2mFkfl
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is invalid"
 msgstr ""
 
 #. js-lingui-id: MniXaX
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is required"
 msgstr ""
 
 #. js-lingui-id: //eyK1
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "Мітка опції \"{sanitizedLabel}\" містить менше 1 символу"
 
 #. js-lingui-id: mTFS0z
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label exceeds 63 characters"
 msgstr "Мітка опції перевищує 63 символи"
 
 #. js-lingui-id: +E9N4m
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label is required"
 msgstr "Мітка опції є обов'язковою"
 
 #. js-lingui-id: nQqNzE
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Значення опції \"{sanitizedValue}\" містить менше 1 символу"
 
 #. js-lingui-id: 5m/1Hh
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value exceeds 63 characters"
 msgstr "Значення опції перевищує 63 символи"
 
 #. js-lingui-id: /wsRPd
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value is required"
 msgstr "Значення опції є обов'язковим"
@@ -2045,11 +2076,6 @@ msgstr "Телефон"
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 msgid "Phones"
 msgstr "Телефони"
-
-#. js-lingui-id: euNBsm
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-msgid "Plural name is not synced with plural label"
-msgstr ""
 
 #. js-lingui-id: P04j61
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -2203,11 +2229,6 @@ msgstr "Вектор пошуку"
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "Settings"
 msgstr "Налаштування"
-
-#. js-lingui-id: Uu4yF7
-#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
-msgid "Singular name is not synced with singular label"
-msgstr ""
 
 #. js-lingui-id: Cj2Gtd
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
@@ -2519,12 +2540,12 @@ msgid "The opportunity name"
 msgstr "\\"
 
 #. js-lingui-id: H1tAJD
-#: src/engine/metadata-modules/flat-object-metadata/validators/validate-flat-object-metadata-label.validator.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "The singular and plural labels cannot be the same for an object"
 msgstr ""
 
 #. js-lingui-id: FOEWHl
-#: src/engine/metadata-modules/flat-object-metadata/validators/validate-flat-object-metadata-name.validator.ts
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"
 msgstr ""
 
@@ -2560,14 +2581,14 @@ msgstr "Статус версії робочого процесу"
 
 #. js-lingui-id: NbABJb
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name-availability.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "This name is not available as it is already used by another field"
 msgstr "Це ім'я недоступне, оскільки вже використовується іншим полем"
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-flat-field-metadata-name-availability.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "This name is not available."
 msgstr "Це ім'я недоступне."
 
@@ -2740,7 +2761,7 @@ msgid "Value"
 msgstr "Значення"
 
 #. js-lingui-id: UBPzFQ
-#: src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr ""
 

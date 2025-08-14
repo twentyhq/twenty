@@ -1,4 +1,4 @@
-import { useWorkflowStepContextOrThrow } from '@/workflow/states/context/WorkflowStepContext';
+import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
 import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
 import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
@@ -82,7 +82,7 @@ export const VariableChip = ({
 }: VariableChipProps) => {
   const theme = useTheme();
   const { t } = useLingui();
-  const { workflowVersionId } = useWorkflowStepContextOrThrow();
+  const workflowVersionId = useWorkflowVersionIdOrThrow();
 
   const stepId = extractRawVariableNamePart({
     rawVariableName,

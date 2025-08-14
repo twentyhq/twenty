@@ -10,13 +10,14 @@ import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
 import { FailedFlatObjectMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { validateFlatObjectMetadataLabel } from 'src/engine/metadata-modules/flat-object-metadata/validators/validate-flat-object-metadata-label.validator';
-import { validateFlatObjectMetadataNames } from 'src/engine/metadata-modules/flat-object-metadata/validators/validate-flat-object-metadata-name.validator';
+import { areFlatObjectMetadataNamesSyncedWithLabels } from 'src/engine/metadata-modules/flat-object-metadata/utils/are-flat-object-metadata-names-synced-with-labels.util';
+import { validateFlatObjectMetadataIdentifiers } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util';
+import { validateFlatObjectMetadataLabel } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util';
+import { validateFlatObjectMetadataNames } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
 import { doesOtherObjectWithSameNameExists } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
 
 export type ValidateOneFlatObjectMetadataArgs = {
@@ -31,6 +32,40 @@ export class FlatObjectMetadataValidatorService {
   constructor(
     private readonly flatFieldMetadataValidatorService: FlatFieldMetadataValidatorService,
   ) {}
+
+  public validateFlatObjectMetadataUpdate({
+    existingFlatObjectMetadataMaps,
+    updatedFlatObjectMetadata,
+  }: {
+    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+    updatedFlatObjectMetadata: FlatObjectMetadata;
+  }) {
+    const existingFlatObjectMetadata =
+      existingFlatObjectMetadataMaps.byId[updatedFlatObjectMetadata.id];
+
+    if (!isDefined(existingFlatObjectMetadata)) {
+      return [
+        new ObjectMetadataException(
+          t`Object to update not found`,
+          ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        ),
+      ];
+    }
+    const errors: FailedFlatObjectMetadataValidationExceptions[] = [];
+
+    errors.push(
+      ...this.validateFlatObjectMetadataNameAndLabels({
+        existingFlatObjectMetadataMaps,
+        flatObjectMetadataToValidate: updatedFlatObjectMetadata,
+      }),
+    );
+
+    errors.push(
+      ...validateFlatObjectMetadataIdentifiers(existingFlatObjectMetadata),
+    );
+
+    return errors;
+  }
 
   public validateFlatObjectMetadataDeletion({
     existingFlatObjectMetadataMaps,
@@ -47,7 +82,7 @@ export class FlatObjectMetadataValidatorService {
     if (!isDefined(flatObjectMetadataToDelete)) {
       errors.push(
         new ObjectMetadataException(
-          t`Object does not exist`,
+          t`Object to delete not found`,
           ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         ),
       );
@@ -93,20 +128,6 @@ export class FlatObjectMetadataValidatorService {
   }: ValidateOneFlatObjectMetadataArgs) {
     const errors: FailedFlatObjectMetadataValidationExceptions[] = [];
 
-    errors.push(
-      ...validateFlatObjectMetadataNames({
-        namePlural: flatObjectMetadataToValidate.namePlural,
-        nameSingular: flatObjectMetadataToValidate.nameSingular,
-      }),
-    );
-
-    errors.push(
-      ...validateFlatObjectMetadataLabel({
-        labelPlural: flatObjectMetadataToValidate.labelPlural,
-        labelSingular: flatObjectMetadataToValidate.labelSingular,
-      }),
-    );
-
     if (flatObjectMetadataToValidate.isRemote) {
       errors.push(
         new ObjectMetadataException(
@@ -116,51 +137,12 @@ export class FlatObjectMetadataValidatorService {
       );
     }
 
-    if (flatObjectMetadataToValidate.isLabelSyncedWithName === true) {
-      const computedNameSingular = computeMetadataNameFromLabel(
-        flatObjectMetadataToValidate.labelSingular,
-      );
-
-      if (computedNameSingular !== flatObjectMetadataToValidate.nameSingular) {
-        errors.push(
-          new ObjectMetadataException(
-            t`Singular name is not synced with singular label`,
-            ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-          ),
-        );
-      }
-
-      const computedNamePlural = computeMetadataNameFromLabel(
-        flatObjectMetadataToValidate.labelPlural,
-      );
-
-      if (computedNamePlural !== flatObjectMetadataToValidate.namePlural) {
-        errors.push(
-          new ObjectMetadataException(
-            t`Plural name is not synced with plural label`,
-            ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-          ),
-        );
-      }
-    }
-
-    if (
-      doesOtherObjectWithSameNameExists({
-        objectMetadataNamePlural: flatObjectMetadataToValidate.namePlural,
-        objectMetadataNameSingular: flatObjectMetadataToValidate.nameSingular,
-        objectMetadataMaps: existingFlatObjectMetadataMaps,
-      })
-    ) {
-      errors.push(
-        new ObjectMetadataException(
-          'Object already exists',
-          ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,
-          {
-            userFriendlyMessage: t`Object already exists`,
-          },
-        ),
-      );
-    }
+    errors.push(
+      ...this.validateFlatObjectMetadataNameAndLabels({
+        existingFlatObjectMetadataMaps,
+        flatObjectMetadataToValidate,
+      }),
+    );
 
     const allFlatFieldMetadatasValidationErrors: FailedFlatFieldMetadataValidationExceptions[] =
       [];
@@ -202,6 +184,63 @@ export class FlatObjectMetadataValidatorService {
 
     if (allFlatFieldMetadatasValidationErrors.length > 0) {
       errors.push(...allFlatFieldMetadatasValidationErrors);
+    }
+
+    return errors;
+  }
+
+  private validateFlatObjectMetadataNameAndLabels({
+    existingFlatObjectMetadataMaps,
+    flatObjectMetadataToValidate,
+  }: {
+    flatObjectMetadataToValidate: FlatObjectMetadata;
+    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+  }) {
+    const errors: FailedFlatObjectMetadataValidationExceptions[] = [];
+
+    errors.push(
+      ...validateFlatObjectMetadataNames({
+        namePlural: flatObjectMetadataToValidate.namePlural,
+        nameSingular: flatObjectMetadataToValidate.nameSingular,
+      }),
+    );
+
+    errors.push(
+      ...validateFlatObjectMetadataLabel({
+        labelPlural: flatObjectMetadataToValidate.labelPlural,
+        labelSingular: flatObjectMetadataToValidate.labelSingular,
+      }),
+    );
+
+    if (
+      flatObjectMetadataToValidate.isLabelSyncedWithName &&
+      !areFlatObjectMetadataNamesSyncedWithLabels(flatObjectMetadataToValidate)
+    ) {
+      errors.push(
+        new ObjectMetadataException(
+          t`Names are not synced with labels`,
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        ),
+      );
+    }
+
+    if (
+      doesOtherObjectWithSameNameExists({
+        objectMetadataNamePlural: flatObjectMetadataToValidate.namePlural,
+        objectMetadataNameSingular: flatObjectMetadataToValidate.nameSingular,
+        objectMetadataMaps: existingFlatObjectMetadataMaps,
+        existingObjectMetadataId: flatObjectMetadataToValidate.id,
+      })
+    ) {
+      errors.push(
+        new ObjectMetadataException(
+          'Object already exists',
+          ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,
+          {
+            userFriendlyMessage: t`Object already exists`,
+          },
+        ),
+      );
     }
 
     return errors;

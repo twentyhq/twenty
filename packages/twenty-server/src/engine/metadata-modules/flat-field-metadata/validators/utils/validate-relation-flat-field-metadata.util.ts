@@ -8,8 +8,6 @@ import {
 import { type ValidateOneFieldMetadataArgs } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { type FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 
-// Remark: This is duplicated with api metadata transpilers exceptions handlers
-// We might wanna have an NotValidatedFlatFieldMetadata and NotValidatedFlatObjectMetadata, in order to avoid
 export const validateRelationFlatFieldMetadata = async ({
   existingFlatObjectMetadataMaps,
   flatFieldMetadataToValidate: {

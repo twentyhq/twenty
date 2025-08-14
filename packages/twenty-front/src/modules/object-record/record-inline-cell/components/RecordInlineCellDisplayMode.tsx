@@ -1,7 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useIsFieldEmpty } from '@/object-record/record-field/ui/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import {
@@ -17,6 +16,9 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
     'isDisplayModeFixHeight' | 'disableHoverEffect'
   > & { isHovered?: boolean }
 >`
+  outline: 1px solid
+    ${({ theme, isHovered }) =>
+      isHovered ? theme.border.color.medium : 'transparent'};
   align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
@@ -54,17 +56,16 @@ const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
 `;
 
 const StyledEmptyField = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  height: 20px;
-  display: flex;
   align-items: center;
+  color: ${({ theme }) => theme.font.color.light};
+  display: flex;
+  height: 20px;
 `;
 
 export const RecordInlineCellDisplayMode = ({
   children,
-}: React.PropsWithChildren<unknown>) => {
-  const { isFocused } = useFieldFocus();
-
+  isHovered,
+}: React.PropsWithChildren<{ isHovered: boolean }>) => {
   const { t } = useLingui();
 
   const { editModeContentOnly, showLabel, label, buttonIcon } =
@@ -73,19 +74,19 @@ export const RecordInlineCellDisplayMode = ({
   const isDisplayModeContentEmpty = useIsFieldEmpty();
   const showEditButton =
     buttonIcon &&
-    isFocused &&
+    isHovered &&
     !isDisplayModeContentEmpty &&
     !editModeContentOnly;
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const shouldDisplayEditModeOnFocus = isFocused && isFieldInputOnly;
+  const shouldDisplayEditModeOnFocus = isHovered && isFieldInputOnly;
 
   const emptyPlaceHolder = showLabel ? t`Empty` : label;
 
   return (
     <>
-      <StyledRecordInlineCellNormalModeOuterContainer isHovered={isFocused}>
+      <StyledRecordInlineCellNormalModeOuterContainer isHovered={isHovered}>
         <StyledRecordInlineCellNormalModeInnerContainer>
           {(isDisplayModeContentEmpty && !shouldDisplayEditModeOnFocus) ||
           !children ? (
