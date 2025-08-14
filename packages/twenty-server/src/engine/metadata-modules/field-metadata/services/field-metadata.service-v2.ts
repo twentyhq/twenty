@@ -35,8 +35,7 @@ import { getSubFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules
 import { getSubFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps.util';
 import { replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
-import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
-import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class FieldMetadataServiceV2 {
@@ -44,9 +43,8 @@ export class FieldMetadataServiceV2 {
     @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
-    private readonly workspaceMigrationBuilderV2: WorkspaceMigrationBuilderV2Service,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatFieldMetadataValidatorService: FlatFieldMetadataValidatorService,
-    private readonly workspaceMigrationRunnerV2Service: WorkspaceMigrationRunnerV2Service,
   ) {}
 
   async createOne({
@@ -108,53 +106,38 @@ export class FieldMetadataServiceV2 {
       );
     }
 
-    try {
-      const flatObjectMetadataMapsWithImpactedObject =
-        getSubFlatObjectMetadataMapsOrThrow({
-          flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-          objectMetadataIds: flatFieldMetadatasToDelete.map(
-            (flatFieldMetadataToDelete) =>
-              flatFieldMetadataToDelete.objectMetadataId,
-          ),
-        });
+    const flatObjectMetadataMapsWithImpactedObject =
+      getSubFlatObjectMetadataMapsOrThrow({
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        objectMetadataIds: flatFieldMetadatasToDelete.map(
+          (flatFieldMetadataToDelete) =>
+            flatFieldMetadataToDelete.objectMetadataId,
+        ),
+      });
 
-      const toFlatObjectMetadataMaps = flatFieldMetadatasToDelete.reduce(
-        (flatObjectMetadataMaps, flatFieldMetadataToDelete) =>
-          deleteFieldFromFlatObjectMetadataMapsOrThrow({
-            fieldMetadataId: flatFieldMetadataToDelete.id,
-            flatObjectMetadataMaps,
-            objectMetadataId: flatFieldMetadataToDelete.objectMetadataId,
-          }),
-        flatObjectMetadataMapsWithImpactedObject,
-      );
+    const toFlatObjectMetadataMaps = flatFieldMetadatasToDelete.reduce(
+      (flatObjectMetadataMaps, flatFieldMetadataToDelete) =>
+        deleteFieldFromFlatObjectMetadataMapsOrThrow({
+          fieldMetadataId: flatFieldMetadataToDelete.id,
+          flatObjectMetadataMaps,
+          objectMetadataId: flatFieldMetadataToDelete.objectMetadataId,
+        }),
+      flatObjectMetadataMapsWithImpactedObject,
+    );
 
-      const validateAndBuildResult =
-        await this.workspaceMigrationBuilderV2.validateAndBuild({
-          buildOptions: {
-            isSystemBuild: false,
-            inferDeletionFromMissingObjectFieldIndex: true,
-          },
-          fromFlatObjectMetadataMaps: flatObjectMetadataMapsWithImpactedObject,
-          toFlatObjectMetadataMaps,
-          workspaceId,
-        });
-
-      if (validateAndBuildResult.status === 'fail') {
-        throw new MultipleMetadataValidationErrors(
-          validateAndBuildResult.errors,
+    await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      {
+        buildOptions: {
+          isSystemBuild: false,
+          inferDeletionFromMissingObjectFieldIndex: true,
+        },
+        fromFlatObjectMetadataMaps: flatObjectMetadataMapsWithImpactedObject,
+        toFlatObjectMetadataMaps,
+        workspaceId,
+        errorMessage:
           'Multiple validation errors occurred while deleting field',
-        );
-      }
-
-      await this.workspaceMigrationRunnerV2Service.run(
-        validateAndBuildResult.workspaceMigration,
-      );
-    } catch {
-      throw new FieldMetadataException(
-        'Workspace migration failed to run',
-        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
+      },
+    );
 
     return fromFlatFieldMetadataToFieldMetadataDto(
       flatFieldMetadatasToDelete[0],
@@ -252,52 +235,38 @@ export class FieldMetadataServiceV2 {
       );
     }
 
-    try {
-      const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
-        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        objectMetadataIds: [
-          optimisticiallyUpdatedFlatFieldMetadata.objectMetadataId,
-        ],
+    const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      objectMetadataIds: [
+        optimisticiallyUpdatedFlatFieldMetadata.objectMetadataId,
+      ],
+    });
+    const toFlatObjectMetadataMaps =
+      replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+        flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
+        flatFieldMetadata: optimisticiallyUpdatedFlatFieldMetadata,
       });
-      const toFlatObjectMetadataMaps =
-        replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
-          flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
-          flatFieldMetadata: optimisticiallyUpdatedFlatFieldMetadata,
-        });
-      const validateAndBuildResult =
-        await this.workspaceMigrationBuilderV2.validateAndBuild({
-          fromFlatObjectMetadataMaps,
-          toFlatObjectMetadataMaps,
-          buildOptions: {
-            isSystemBuild: false,
-            inferDeletionFromMissingObjectFieldIndex: false,
-          },
-          workspaceId,
-        });
 
-      if (validateAndBuildResult.status === 'fail') {
-        throw new MultipleMetadataValidationErrors(
-          validateAndBuildResult.errors,
-          'Multiple validation errors occurred while updating field',
-        );
-      }
-
-      await this.workspaceMigrationRunnerV2Service.run(
-        validateAndBuildResult.workspaceMigration,
-      );
-
-      return this.fieldMetadataRepository.findOneOrFail({
-        where: {
-          id: optimisticiallyUpdatedFlatFieldMetadata.id,
-          workspaceId,
+    await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      {
+        fromFlatObjectMetadataMaps,
+        toFlatObjectMetadataMaps,
+        buildOptions: {
+          isSystemBuild: false,
+          inferDeletionFromMissingObjectFieldIndex: false,
         },
-      });
-    } catch {
-      throw new FieldMetadataException(
-        'Workspace migration failed to run',
-        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
+        workspaceId,
+        errorMessage:
+          'Multiple validation errors occurred while updating field',
+      },
+    );
+
+    return this.fieldMetadataRepository.findOneOrFail({
+      where: {
+        id: optimisticiallyUpdatedFlatFieldMetadata.id,
+        workspaceId,
+      },
+    });
   }
 
   async createMany({
@@ -395,56 +364,41 @@ export class FieldMetadataServiceV2 {
       ),
     );
 
-    try {
-      const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
-        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        objectMetadataIds: impactedObjectMetadataIds,
-      });
-      const toFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
-        flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-        objectMetadataIds: impactedObjectMetadataIds,
-      });
-      const validateAndBuildResult =
-        await this.workspaceMigrationBuilderV2.validateAndBuild({
-          fromFlatObjectMetadataMaps,
-          toFlatObjectMetadataMaps,
-          buildOptions: {
-            isSystemBuild: false,
-            inferDeletionFromMissingObjectFieldIndex: false,
-          },
-          workspaceId,
-        });
+    const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      objectMetadataIds: impactedObjectMetadataIds,
+    });
+    const toFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
+      flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+      objectMetadataIds: impactedObjectMetadataIds,
+    });
 
-      if (validateAndBuildResult.status === 'fail') {
-        throw new MultipleMetadataValidationErrors(
-          validateAndBuildResult.errors,
+    await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      {
+        fromFlatObjectMetadataMaps,
+        toFlatObjectMetadataMaps,
+        buildOptions: {
+          isSystemBuild: false,
+          inferDeletionFromMissingObjectFieldIndex: false,
+        },
+        workspaceId,
+        errorMessage:
           'Multiple validation errors occurred while updating field',
-        );
-      }
+      },
+    );
 
-      await this.workspaceMigrationRunnerV2Service.run(
-        validateAndBuildResult.workspaceMigration,
-      );
-
-      // In the best of the world could consume runner returned value instead of searching in db here
-      return this.fieldMetadataRepository.find({
-        where: {
-          name: In(
-            fieldMetadataInputs.map((flatFieldMetadata) =>
-              trimAndRemoveDuplicatedWhitespacesFromString(
-                flatFieldMetadata.name,
-              ),
+    // In the best of the world could consume runner returned value instead of searching in db here
+    return this.fieldMetadataRepository.find({
+      where: {
+        name: In(
+          fieldMetadataInputs.map((flatFieldMetadata) =>
+            trimAndRemoveDuplicatedWhitespacesFromString(
+              flatFieldMetadata.name,
             ),
           ),
-          workspaceId,
-        },
-      });
-    } catch {
-      // TODO prastoin We should pass the internal error here
-      throw new FieldMetadataException(
-        'Workspace migration failed to run',
-        FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
+        ),
+        workspaceId,
+      },
+    });
   }
 }

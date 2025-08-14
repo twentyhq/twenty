@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
 import { EMPTY_FLAT_OBJECT_METADATA_MAPS } from 'src/engine/metadata-modules/flat-object-metadata-maps/constant/empty-flat-object-metadata-maps.constant';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
@@ -24,15 +23,13 @@ import {
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
-import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
-import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ObjectMetadataServiceV2 {
   constructor(
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
-    private readonly workspaceMigrationBuilderV2: WorkspaceMigrationBuilderV2Service,
-    private readonly workspaceMigrationRunnerV2Service: WorkspaceMigrationRunnerV2Service,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {}
 
   async updateOne({
@@ -55,43 +52,28 @@ export class ObjectMetadataServiceV2 {
         updateObjectInput,
       });
 
-    try {
-      const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
-        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        objectMetadataIds: [optimisticallyUpdatedFlatObjectMetadata.id],
+    const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      objectMetadataIds: [optimisticallyUpdatedFlatObjectMetadata.id],
+    });
+    const toFlatObjectMetadataMaps =
+      replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
+        flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
+        flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
       });
-      const toFlatObjectMetadataMaps =
-        replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
-          flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
-          flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
-        });
-      const validateAndBuildResult =
-        await this.workspaceMigrationBuilderV2.validateAndBuild({
-          fromFlatObjectMetadataMaps,
-          toFlatObjectMetadataMaps,
-          buildOptions: {
-            isSystemBuild: false,
-            inferDeletionFromMissingObjectFieldIndex: false,
-          },
-          workspaceId,
-        });
-
-      if (validateAndBuildResult.status === 'fail') {
-        throw new MultipleMetadataValidationErrors(
-          validateAndBuildResult.errors,
+    await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      {
+        fromFlatObjectMetadataMaps,
+        toFlatObjectMetadataMaps,
+        buildOptions: {
+          isSystemBuild: false,
+          inferDeletionFromMissingObjectFieldIndex: false,
+        },
+        workspaceId,
+        errorMessage:
           'Multiple validation errors occurred while deleting object',
-        );
-      }
-
-      await this.workspaceMigrationRunnerV2Service.run(
-        validateAndBuildResult.workspaceMigration,
-      );
-    } catch {
-      throw new ObjectMetadataException(
-        'Workspace migration fail to run',
-        ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
+      },
+    );
 
     const { flatObjectMetadataMaps: recomputedFlatObjectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
@@ -136,65 +118,51 @@ export class ObjectMetadataServiceV2 {
       });
     const { id: objectMetadataToDeleteId } = flatObjectMetadataToDelete;
 
-    try {
-      const impactedObjectMetadataIds = Array.from(
-        new Set(
-          flatFieldMetadatasToDelete.map(
-            (flatFieldMetadata) => flatFieldMetadata.objectMetadataId,
-          ),
+    const impactedObjectMetadataIds = Array.from(
+      new Set(
+        flatFieldMetadatasToDelete.map(
+          (flatFieldMetadata) => flatFieldMetadata.objectMetadataId,
         ),
-      );
+      ),
+    );
 
-      const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
-        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        objectMetadataIds: impactedObjectMetadataIds,
-      });
+    const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      objectMetadataIds: impactedObjectMetadataIds,
+    });
 
-      const toFlatObjectMetadataMaps = flatFieldMetadatasToDelete
-        .filter(
-          (flatFieldMetadataToDelete) =>
-            flatFieldMetadataToDelete.objectMetadataId !==
-            objectMetadataToDeleteId,
-        )
-        .reduce(
-          (flatObjectMetadataMaps, flatFieldMetadata) =>
-            deleteFieldFromFlatObjectMetadataMapsOrThrow({
-              fieldMetadataId: flatFieldMetadata.id,
-              objectMetadataId: flatFieldMetadata.objectMetadataId,
-              flatObjectMetadataMaps,
-            }),
-          deleteObjectFromFlatObjectMetadataMapsOrThrow({
-            flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
-            objectMetadataId: objectMetadataToDeleteId,
+    const toFlatObjectMetadataMaps = flatFieldMetadatasToDelete
+      .filter(
+        (flatFieldMetadataToDelete) =>
+          flatFieldMetadataToDelete.objectMetadataId !==
+          objectMetadataToDeleteId,
+      )
+      .reduce(
+        (flatObjectMetadataMaps, flatFieldMetadata) =>
+          deleteFieldFromFlatObjectMetadataMapsOrThrow({
+            fieldMetadataId: flatFieldMetadata.id,
+            objectMetadataId: flatFieldMetadata.objectMetadataId,
+            flatObjectMetadataMaps,
           }),
-        );
-      const validateAndBuildResult =
-        await this.workspaceMigrationBuilderV2.validateAndBuild({
-          fromFlatObjectMetadataMaps,
-          toFlatObjectMetadataMaps,
-          buildOptions: {
-            inferDeletionFromMissingObjectFieldIndex: false,
-            isSystemBuild: false,
-          },
-          workspaceId,
-        });
+        deleteObjectFromFlatObjectMetadataMapsOrThrow({
+          flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
+          objectMetadataId: objectMetadataToDeleteId,
+        }),
+      );
 
-      if (validateAndBuildResult.status === 'fail') {
-        throw new MultipleMetadataValidationErrors(
-          validateAndBuildResult.errors,
+    await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      {
+        fromFlatObjectMetadataMaps,
+        toFlatObjectMetadataMaps,
+        buildOptions: {
+          inferDeletionFromMissingObjectFieldIndex: false,
+          isSystemBuild: false,
+        },
+        workspaceId,
+        errorMessage:
           'Multiple validation errors occurred while deleting object',
-        );
-      }
-
-      await this.workspaceMigrationRunnerV2Service.run(
-        validateAndBuildResult.workspaceMigration,
-      );
-    } catch {
-      throw new ObjectMetadataException(
-        'Workspace migration fail to run',
-        ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
+      },
+    );
 
     return fromFlatObjectMetadataToObjectMetadataDto(
       flatObjectMetadataToDelete,
@@ -227,38 +195,23 @@ export class ObjectMetadataServiceV2 {
         objectMetadataIds: [flatObjectMetadataToCreate.id],
       }) ?? EMPTY_FLAT_OBJECT_METADATA_MAPS;
 
-    try {
-      const validateAndBuildResult =
-        await this.workspaceMigrationBuilderV2.validateAndBuild({
-          fromFlatObjectMetadataMaps,
-          toFlatObjectMetadataMaps:
-            addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
-              flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
-              flatObjectMetadata: flatObjectMetadataToCreate,
-            }),
-          buildOptions: {
-            isSystemBuild: false,
-            inferDeletionFromMissingObjectFieldIndex: false,
-          },
-          workspaceId,
-        });
-
-      if (validateAndBuildResult.status === 'fail') {
-        throw new MultipleMetadataValidationErrors(
-          validateAndBuildResult.errors,
-          'Multiple validation errors occurred while creating object',
-        );
-      }
-
-      await this.workspaceMigrationRunnerV2Service.run(
-        validateAndBuildResult.workspaceMigration,
-      );
-    } catch {
-      throw new ObjectMetadataException(
-        'Workspace migration fail to run',
-        ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
+    await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      {
+        fromFlatObjectMetadataMaps,
+        toFlatObjectMetadataMaps:
+          addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
+            flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+            flatObjectMetadata: flatObjectMetadataToCreate,
+          }),
+        buildOptions: {
+          isSystemBuild: false,
+          inferDeletionFromMissingObjectFieldIndex: false,
+        },
+        workspaceId,
+        errorMessage:
+          'Multiple validation errors occurred while deleting object',
+      },
+    );
 
     const { flatObjectMetadataMaps: recomputedFlatObjectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
