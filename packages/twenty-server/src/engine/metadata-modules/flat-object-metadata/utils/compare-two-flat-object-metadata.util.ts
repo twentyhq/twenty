@@ -3,47 +3,27 @@ import diff from 'microdiff';
 import { type FromTo } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
+import { FLAT_OBJECT_METADATA_JSONB_PROPERTIES } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-jsonb-properties.constant';
+import { FLAT_OBJECT_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-properties-to-compare.constant';
+import { FlatObjectMetadataEntityJsonbProperties } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-jsonb-properties.type';
+import { FlatObjectMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-properties-to-compare.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { type UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
-export const flatObjectMetadataPropertiesToCompare = [
-  'description',
-  'icon',
-  'isActive',
-  'isLabelSyncedWithName',
-  'labelPlural',
-  'labelSingular',
-  'namePlural',
-  'nameSingular',
-  'standardOverrides', // Only if standard
-] as const satisfies (keyof FlatObjectMetadata)[];
-
-export type FlatObjectMetadataPropertiesToCompare =
-  (typeof flatObjectMetadataPropertiesToCompare)[number];
-
-export const flatObjectMetadataEntityJsonbProperties = [
-  'standardOverrides',
-] as const satisfies (keyof FlatObjectMetadata)[];
-export type FlatObjectMetadataEntityJsonbProperties =
-  (typeof flatObjectMetadataEntityJsonbProperties)[number];
-
-/**
- * This comparator handles update on colliding uniqueIdentifier flatObjectMetadata
- */
 export const compareTwoFlatObjectMetadata = ({
   from,
   to,
 }: FromTo<FlatObjectMetadata>) => {
   const transformMetadataForComparisonOptions = {
-    propertiesToStringify: flatObjectMetadataEntityJsonbProperties,
+    propertiesToStringify: FLAT_OBJECT_METADATA_JSONB_PROPERTIES,
     shouldIgnoreProperty: (
       property: string,
       flatObjectMetadata: FlatObjectMetadata,
     ) => {
       if (
-        !flatObjectMetadataPropertiesToCompare.includes(
+        !FLAT_OBJECT_METADATA_PROPERTIES_TO_COMPARE.includes(
           property as FlatObjectMetadataPropertiesToCompare,
         )
       ) {
@@ -77,7 +57,7 @@ export const compareTwoFlatObjectMetadata = ({
       case 'CHANGE': {
         const { oldValue, path, value } = difference;
         const property = path[0] as FlatObjectMetadataPropertiesToCompare;
-        const isJsonb = flatObjectMetadataEntityJsonbProperties.includes(
+        const isJsonb = FLAT_OBJECT_METADATA_JSONB_PROPERTIES.includes(
           property as FlatObjectMetadataEntityJsonbProperties,
         );
 
