@@ -32,8 +32,6 @@ export const extractRecordIdsAndDatesAsExpectAny = (
       key === 'deletedAt' ||
       key === 'createdAt'
     ) {
-      console.log(key);
-
       return {
         ...acc,
         [key]: expect.any(String),
