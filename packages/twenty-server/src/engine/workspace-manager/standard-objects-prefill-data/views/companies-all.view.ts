@@ -20,7 +20,7 @@ export const companiesAllView = (
   }
 
   return {
-    name: msg`All Companies`,
+    name: msg`All {objectLabelPlural}`,
     objectMetadataId: companyObjectMetadata.id ?? '',
     type: 'table',
     key: 'INDEX',

@@ -216,49 +216,17 @@ msgstr ""
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr ""
 
-#. js-lingui-id: 8fY6nW
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
-msgid "All {{objectLabelPlural}}"
-msgstr ""
-
-#. js-lingui-id: tZLcDK
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
-msgid "All Companies"
-msgstr ""
-
-#. js-lingui-id: EDmCFR
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
-msgid "All Notes"
-msgstr ""
-
-#. js-lingui-id: GTFTPw
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
-msgid "All Opportunities"
-msgstr ""
-
-#. js-lingui-id: CdMWOd
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
-msgid "All People"
-msgstr ""
-
-#. js-lingui-id: ao1zYt
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
-msgid "All Tasks"
-msgstr ""
-
-#. js-lingui-id: F07cj7
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
-msgid "All Workflow Runs"
-msgstr ""
-
-#. js-lingui-id: gT9CX+
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
-msgid "All Workflow Versions"
-msgstr ""
-
-#. js-lingui-id: Vh9B8k
+#. js-lingui-id: pdOYzu
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
-msgid "All Workflows"
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
+msgid "All {objectLabelPlural}"
 msgstr ""
 
 #. js-lingui-id: hehnjM

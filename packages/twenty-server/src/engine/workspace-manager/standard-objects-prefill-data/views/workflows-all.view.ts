@@ -20,7 +20,7 @@ export const workflowsAllView = (
   }
 
   return {
-    name: msg`All Workflows`,
+    name: msg`All {objectLabelPlural}`,
     objectMetadataId: workflowObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

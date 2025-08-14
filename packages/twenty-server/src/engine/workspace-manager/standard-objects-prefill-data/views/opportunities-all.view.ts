@@ -17,7 +17,7 @@ export const opportunitiesAllView = (
   }
 
   return {
-    name: msg`All Opportunities`,
+    name: msg`All {objectLabelPlural}`,
     objectMetadataId: opportunityObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

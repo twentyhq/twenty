@@ -17,7 +17,7 @@ export const tasksAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
   }
 
   return {
-    name: msg`All Tasks`,
+    name: msg`All {objectLabelPlural}`,
     objectMetadataId: taskObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

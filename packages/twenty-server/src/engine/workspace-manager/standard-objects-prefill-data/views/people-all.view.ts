@@ -18,7 +18,7 @@ export const peopleAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
   }
 
   return {
-    name: msg`All People`,
+    name: msg`All {objectLabelPlural}`,
     objectMetadataId: personObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

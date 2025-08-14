@@ -8,7 +8,6 @@ import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/typ
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 @Injectable()
@@ -16,8 +15,6 @@ export class ViewSyncService {
   constructor(
     @InjectRepository(View, 'core')
     private readonly coreViewRepository: Repository<View>,
-    @InjectRepository(ObjectMetadataEntity, 'core')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
   private parseUpdateDataFromDiff(
@@ -57,16 +54,8 @@ export class ViewSyncService {
     let viewName = workspaceView.name;
 
     if (workspaceView.key === 'INDEX') {
-      const objectMetadata = await this.objectMetadataRepository.findOne({
-        where: {
-          id: workspaceView.objectMetadataId,
-          workspaceId,
-        },
-      });
-
-      if (objectMetadata?.isCustom) {
-        viewName = 'All {{objectLabelPlural}}';
-      }
+      // All INDEX views use the template for consistency
+      viewName = 'All {objectLabelPlural}';
     }
 
     const coreView: Partial<View> = {

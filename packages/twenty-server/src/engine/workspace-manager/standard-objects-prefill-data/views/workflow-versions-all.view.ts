@@ -20,7 +20,7 @@ export const workflowVersionsAllView = (
   }
 
   return {
-    name: msg`All Workflow Versions`,
+    name: msg`All {objectLabelPlural}`,
     objectMetadataId: workflowVersionObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

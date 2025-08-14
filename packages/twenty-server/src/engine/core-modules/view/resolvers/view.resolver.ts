@@ -22,6 +22,7 @@ import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/util
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 
 @Resolver(() => ViewDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -32,30 +33,42 @@ export class ViewResolver {
   @ResolveField(() => String)
   async name(
     @Parent() view: ViewDTO,
-    @Context() _context: I18nContext,
+    @Context() context: I18nContext,
   ): Promise<string> {
-    if (view.isCustom) {
-      return view.name;
-    }
-
-    if (view.name.includes('{{objectLabelPlural}}')) {
+    if (view.name.includes('{objectLabelPlural}')) {
       const objectMetadata = await this.viewService.getObjectMetadataByViewId(
         view.id,
       );
 
       if (objectMetadata) {
+        const translatedObjectLabel = resolveObjectMetadataStandardOverride(
+          {
+            labelPlural: objectMetadata.labelPlural,
+            labelSingular: objectMetadata.labelSingular,
+            description: objectMetadata.description ?? undefined,
+            icon: objectMetadata.icon ?? undefined,
+            isCustom: objectMetadata.isCustom,
+            standardOverrides: objectMetadata.standardOverrides ?? undefined,
+          },
+          'labelPlural',
+          context.req.locale,
+        );
+
         const messageId = generateMessageId(view.name);
-        const translatedMessage = i18n._(messageId, {
-          objectLabelPlural: objectMetadata.labelPlural,
+        const translatedTemplate = i18n._(messageId, {
+          objectLabelPlural: translatedObjectLabel,
         });
 
-        return translatedMessage !== messageId
-          ? translatedMessage
-          : view.name.replace(
-              '{{objectLabelPlural}}',
-              objectMetadata.labelPlural,
-            );
+        if (translatedTemplate !== messageId) {
+          return translatedTemplate;
+        }
+
+        return view.name.replace('{objectLabelPlural}', translatedObjectLabel);
       }
+    }
+
+    if (view.isCustom) {
+      return view.name;
     }
 
     const messageId = generateMessageId(view.name);

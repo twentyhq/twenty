@@ -18,7 +18,7 @@ export const customAllView = (objectMetadataItem: ObjectMetadataEntity) => {
   }
 
   return {
-    name: msg`All {{objectLabelPlural}}`,
+    name: msg`All {objectLabelPlural}`,
     objectMetadataId: objectMetadataItem.id,
     type: 'table',
     key: 'INDEX',
