@@ -11,7 +11,7 @@ import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/fla
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
-import { getSubFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps.util';
+import { getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-out-of-flat-field-metadatas.util';
 import { FailedFlatObjectMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { areFlatObjectMetadataNamesSyncedWithLabels } from 'src/engine/metadata-modules/flat-object-metadata/utils/are-flat-object-metadata-names-synced-with-labels.util';
@@ -66,14 +66,9 @@ const computeOtherFlatObjectMetadataMapsToValidate = ({
     return undefined;
   }
 
-  return getSubFlatObjectMetadataMaps({
+  return getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatas({
     flatObjectMetadataMaps,
-    objectMetadataAndFieldIds: [
-      {
-        objectMetadataId: relationTargetFlatFieldMetadata.objectMetadataId,
-        fieldMetadataIds: [relationTargetFlatFieldMetadata.id],
-      },
-    ],
+    flatFieldMetadatas: [relationTargetFlatFieldMetadata],
   });
 };
 

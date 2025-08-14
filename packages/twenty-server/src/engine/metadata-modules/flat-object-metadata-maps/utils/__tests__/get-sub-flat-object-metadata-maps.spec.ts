@@ -19,9 +19,7 @@ describe('getSubFlatObjectMetadataMaps', () => {
         title: 'should throw when object metadata id is not found',
         context: {
           input: {
-            objectMetadataAndFieldIds: [
-              { objectMetadataId: 'non-existent-id' },
-            ],
+            objectMetadataIds: ['non-existent-id'],
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           },
         },
@@ -30,9 +28,9 @@ describe('getSubFlatObjectMetadataMaps', () => {
         title: 'should throw when extracting twice the same object',
         context: {
           input: {
-            objectMetadataAndFieldIds: [
-              { objectMetadataId: PET_FLAT_OBJECT_MOCK.id },
-              { objectMetadataId: PET_FLAT_OBJECT_MOCK.id },
+            objectMetadataIds: [
+              PET_FLAT_OBJECT_MOCK.id,
+              PET_FLAT_OBJECT_MOCK.id,
             ],
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
           },
@@ -46,14 +44,11 @@ describe('getSubFlatObjectMetadataMaps', () => {
     '$title',
     ({
       context: {
-        input: {
-          objectMetadataAndFieldIds: objectMetadataIds,
-          flatObjectMetadataMaps,
-        },
+        input: { objectMetadataIds: objectMetadataIds, flatObjectMetadataMaps },
       },
     }) => {
       const result = getSubFlatObjectMetadataMaps({
-        objectMetadataAndFieldIds: objectMetadataIds,
+        objectMetadataIds: objectMetadataIds,
         flatObjectMetadataMaps,
       });
 
