@@ -1,3 +1,4 @@
+import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { recordBoardCardEditModePositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardEditModePositionComponentState';
 import { recordBoardCardHoverPositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardHoverPositionComponentState';
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
@@ -23,7 +24,7 @@ export const RecordBoardCardCellHoveredPortalContent = () => {
     getRecordFieldInputInstanceId({
       recordId,
       fieldName: fieldDefinition.metadata.fieldName,
-      prefix: `record-board-card-body`,
+      prefix: RECORD_BOARD_CARD_INPUT_ID_PREFIX,
     }),
   );
 
@@ -46,7 +47,7 @@ export const RecordBoardCardCellHoveredPortalContent = () => {
       openFieldInput({
         fieldDefinition,
         recordId,
-        prefix: `record-board-card-body`,
+        prefix: RECORD_BOARD_CARD_INPUT_ID_PREFIX,
       });
     }
   };
