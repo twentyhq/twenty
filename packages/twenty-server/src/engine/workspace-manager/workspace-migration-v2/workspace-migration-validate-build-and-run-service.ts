@@ -9,6 +9,7 @@ import {
   WorkspaceMigrationV2ExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration.exception';
 
+@Injectable()
 export class WorkspaceMigrationValidateBuildAndRunService {
   constructor(
     private readonly workspaceMigrationBuilderV2Service: WorkspaceMigrationBuilderV2Service,
