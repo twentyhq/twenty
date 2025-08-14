@@ -9,6 +9,7 @@ import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-r
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { searchRecordStoreComponentFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
+import { sortMorphItems } from '@/object-record/record-picker/multiple-record-picker/utils/sortMorphItems';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { type ApolloClient } from '@apollo/client';
@@ -260,11 +261,16 @@ export const useMultipleRecordPickerPerformSearch = () => {
             )
           : newMorphItems;
 
+        const sortedMorphItems = sortMorphItems(morphItems, [
+          ...searchRecordsFilteredOnPickedRecords,
+          ...searchRecordsExcludingPickedRecords,
+        ]);
+
         set(
           multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
             instanceId: multipleRecordPickerInstanceId,
           }),
-          morphItems,
+          sortedMorphItems,
         );
 
         const searchRecords = [
