@@ -61,6 +61,7 @@ export class ObjectMetadataServiceV2 {
         flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
         flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
       });
+
     await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
       {
         fromFlatObjectMetadataMaps,
