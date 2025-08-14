@@ -18,7 +18,9 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { doesOtherObjectWithSameNameExists } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
+import { WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 
 // Refactor this type
 export type ValidateOneFlatObjectMetadataArgs = {
@@ -72,9 +74,11 @@ export class FlatObjectMetadataValidatorService {
   public validateFlatObjectMetadataDeletion({
     existingFlatObjectMetadataMaps,
     objectMetadataToDeleteId,
+    buildOptions,
   }: {
     existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
     objectMetadataToDeleteId: string;
+    buildOptions: WorkspaceMigrationV2BuilderOptions;
   }) {
     const errors: FailedFlatObjectMetadataValidationExceptions[] = [];
 
@@ -99,8 +103,8 @@ export class FlatObjectMetadataValidatorService {
       }
 
       if (
-        flatObjectMetadataToDelete.standardId !== null &&
-        !flatObjectMetadataToDelete.isCustom
+        !buildOptions.isSystemBuild &&
+        isStandardMetadata(flatObjectMetadataToDelete)
       ) {
         errors.push(
           new ObjectMetadataException(
@@ -110,7 +114,7 @@ export class FlatObjectMetadataValidatorService {
         );
       }
 
-      if (flatObjectMetadataToDelete.isActive) {
+      if (!buildOptions.isSystemBuild && flatObjectMetadataToDelete.isActive) {
         errors.push(
           new ObjectMetadataException(
             t`Active objects cannot be deleted`,
@@ -126,8 +130,12 @@ export class FlatObjectMetadataValidatorService {
   public async validateFlatObjectMetadataCreation({
     existingFlatObjectMetadataMaps,
     flatObjectMetadataToValidate,
-    workspaceId,
-  }: ValidateOneFlatObjectMetadataArgs) {
+  }: {
+    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+    flatObjectMetadataToValidate: FlatObjectMetadata;
+    buildOptions: WorkspaceMigrationV2BuilderOptions;
+    // othersFlatObjectMetadata non validated stuff
+  }) {
     const errors: FailedFlatObjectMetadataValidationExceptions[] = [];
 
     if (flatObjectMetadataToValidate.isRemote) {
@@ -166,7 +174,7 @@ export class FlatObjectMetadataValidatorService {
             existingFlatObjectMetadataMaps:
               existingFlatObjectMetadataMapsWithFlatObjectMetadataToBeCreatedWithoutFields,
             flatFieldMetadataToValidate,
-            workspaceId,
+            workspaceId: flatObjectMetadataToValidate.workspaceId,
             otherFlatObjectMetadataMapsToValidate,
           },
         );

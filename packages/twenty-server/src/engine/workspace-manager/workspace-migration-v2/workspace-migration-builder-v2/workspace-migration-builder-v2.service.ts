@@ -14,17 +14,16 @@ import { buildWorkspaceMigrationV2FieldActions } from 'src/engine/workspace-mana
 import { buildWorkspaceMigrationIndexActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-index-actions-builder';
 import { WorkspaceMigrationV2ObjectActionsBuilder } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
 
-type BuildOptions = {
+export type WorkspaceMigrationV2BuilderOptions = {
   inferDeletionFromMissingObjectFieldIndex: boolean;
-  // authorizeStandardMutation: boolean;
+  isSystemBuild: boolean;
 };
 
 export type WorkspaceMigrationBuildArgs = {
   workspaceId: string;
-  buildOptions: BuildOptions;
+  buildOptions: WorkspaceMigrationV2BuilderOptions;
   // Could from be optional ? we still have a race condition when if we recompute cache it could have been different than when we calculated the to
 } & FromTo<FlatObjectMetadataMaps, 'FlatObjectMetadataMaps'>;
-
 @Injectable()
 export class WorkspaceMigrationBuilderV2Service {
   constructor(
@@ -35,7 +34,7 @@ export class WorkspaceMigrationBuilderV2Service {
     fromFlatObjectMetadataMaps,
     toFlatObjectMetadataMaps,
     workspaceId,
-    buildOptions: { inferDeletionFromMissingObjectFieldIndex },
+    buildOptions,
   }: WorkspaceMigrationBuildArgs): Promise<WorkspaceMigrationV2> {
     const fromFlatObjectMetadatas =
       fromFlatObjectMetadataMapsToFlatObjectMetadatas(
@@ -72,7 +71,7 @@ export class WorkspaceMigrationBuilderV2Service {
         createdFlatObjectMetadata,
         deletedFlatObjectMetadata,
         updatedFlatObjectMetadata,
-        inferDeletionFromMissingObjectFieldIndex,
+        buildOptions,
       });
 
     if (objectWorkspaceMigrationActions.results.failed.length > 0) {
@@ -87,7 +86,7 @@ export class WorkspaceMigrationBuilderV2Service {
       );
 
     const deletedObjectWorkspaceMigrationDeleteFieldActions =
-      inferDeletionFromMissingObjectFieldIndex
+      buildOptions.inferDeletionFromMissingObjectFieldIndex
         ? deletedFlatObjectMetadata.flatMap((flatObjectMetadata) =>
             flatObjectMetadata.flatFieldMetadatas.map((flatFieldMetadata) =>
               getWorkspaceMigrationV2FieldDeleteAction({
@@ -100,13 +99,15 @@ export class WorkspaceMigrationBuilderV2Service {
 
     const fieldWorkspaceMigrationActions =
       buildWorkspaceMigrationV2FieldActions({
-        inferDeletionFromMissingObjectFieldIndex,
+        inferDeletionFromMissingObjectFieldIndex:
+          buildOptions.inferDeletionFromMissingObjectFieldIndex,
         objectMetadataDeletedCreatedUpdatedFields,
       });
 
     const indexWorkspaceMigrationActions = buildWorkspaceMigrationIndexActions({
       objectMetadataDeletedCreatedUpdatedIndex,
-      inferDeletionFromMissingObjectFieldIndex,
+      inferDeletionFromMissingObjectFieldIndex:
+        buildOptions.inferDeletionFromMissingObjectFieldIndex,
     });
     ///
 
