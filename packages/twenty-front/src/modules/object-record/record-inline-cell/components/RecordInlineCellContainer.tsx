@@ -9,8 +9,6 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
-import { RecordInlineCellCloseOnCommandMenuOpeningEffect } from '@/object-record/record-inline-cell/components/RecordInlineCellCloseOnCommandMenuOpeningEffect';
-import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import {
   AppTooltip,
   OverflowingTextWithTooltip,
@@ -88,22 +86,11 @@ export const StyledSkeletonDiv = styled.div`
 `;
 
 export const RecordInlineCellContainer = () => {
-  const {
-    readonly,
-    IconLabel,
-    label,
-    labelWidth,
-    showLabel,
-    editModeContentOnly,
-  } = useRecordInlineCellContext();
-
-  const { isInlineCellInEditMode, openInlineCell } = useInlineCell();
+  const { readonly, IconLabel, label, labelWidth, showLabel } =
+    useRecordInlineCellContext();
 
   const { recordId, fieldDefinition, onMouseEnter, onMouseLeave, anchorId } =
     useContext(FieldContext);
-
-  const shouldContainerBeClickable =
-    !readonly && !editModeContentOnly && !isInlineCellInEditMode;
 
   if (isFieldText(fieldDefinition)) {
     assertFieldMetadata(FieldMetadataType.TEXT, isFieldText, fieldDefinition);
@@ -136,7 +123,6 @@ export const RecordInlineCellContainer = () => {
       readonly={readonly ?? false}
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
-      onClick={shouldContainerBeClickable ? openInlineCell : undefined}
     >
       {(IconLabel || label) && (
         <StyledLabelAndIconContainer id={labelId}>
@@ -164,9 +150,7 @@ export const RecordInlineCellContainer = () => {
           )}
         </StyledLabelAndIconContainer>
       )}
-      {isInlineCellInEditMode && (
-        <RecordInlineCellCloseOnCommandMenuOpeningEffect />
-      )}
+
       <StyledValueContainer readonly={readonly ?? false} id={anchorId}>
         <RecordInlineCellValue />
       </StyledValueContainer>
