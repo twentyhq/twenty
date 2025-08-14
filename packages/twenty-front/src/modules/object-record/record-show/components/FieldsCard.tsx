@@ -1,5 +1,11 @@
 import { RecordFieldList } from '@/object-record/record-field-list/components/RecordFieldList';
 import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
+import styled from '@emotion/styled';
+
+const StyledPropertyBoxContainer = styled.div`
+  padding: ${({ theme }) => theme.spacing(3)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+`;
 
 type FieldsCardProps = {
   objectNameSingular: string;
@@ -15,11 +21,13 @@ export const FieldsCard = ({
   const { isInRightDrawer } = useIsInRightDrawerOrThrow();
 
   return (
-    <RecordFieldList
-      instanceId={`fields-card-${objectRecordId}-${isInRightDrawer ? 'right-drawer' : ''}`}
-      objectNameSingular={objectNameSingular}
-      objectRecordId={objectRecordId}
-      showDuplicatesSection={showDuplicatesSection}
-    />
+    <StyledPropertyBoxContainer>
+      <RecordFieldList
+        instanceId={`fields-card-${objectRecordId}-${isInRightDrawer ? 'right-drawer' : ''}`}
+        objectNameSingular={objectNameSingular}
+        objectRecordId={objectRecordId}
+        showDuplicatesSection={showDuplicatesSection}
+      />
+    </StyledPropertyBoxContainer>
   );
 };

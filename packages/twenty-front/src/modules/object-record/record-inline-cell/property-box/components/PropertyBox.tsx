@@ -11,8 +11,8 @@ export const StyledPropertyBoxContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(3)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(3)};
+  padding-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
 export const PropertyBox = ({ children, className }: PropertyBoxProps) => (

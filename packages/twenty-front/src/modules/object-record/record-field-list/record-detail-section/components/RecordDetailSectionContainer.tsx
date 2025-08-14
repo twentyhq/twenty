@@ -5,8 +5,8 @@ import { Section } from 'twenty-ui/layout';
 
 const StyledRecordDetailSectionContainer = styled(Section)`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  padding: ${({ theme }) => theme.spacing(3)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(3)};
+  padding-bottom: ${({ theme }) => theme.spacing(3)};
   width: auto;
 `;
 
