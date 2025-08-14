@@ -9,20 +9,21 @@ export type RecordComponentInstanceContextsWrapperProps = PropsWithChildren<{
 }>;
 
 export const RecordComponentInstanceContextsWrapper = ({
+  componentInstanceId,
   children,
 }: RecordComponentInstanceContextsWrapperProps) => {
   return (
     <RecordFilterGroupsComponentInstanceContext.Provider
-      value={{ instanceId: 'instanceId' }}
+      value={{ instanceId: componentInstanceId }}
     >
       <RecordFiltersComponentInstanceContext.Provider
-        value={{ instanceId: 'instanceId' }}
+        value={{ instanceId: componentInstanceId }}
       >
         <RecordSortsComponentInstanceContext.Provider
-          value={{ instanceId: 'instanceId' }}
+          value={{ instanceId: componentInstanceId }}
         >
           <RecordFieldsComponentInstanceContext.Provider
-            value={{ instanceId: 'instanceId' }}
+            value={{ instanceId: componentInstanceId }}
           >
             {children}
           </RecordFieldsComponentInstanceContext.Provider>
