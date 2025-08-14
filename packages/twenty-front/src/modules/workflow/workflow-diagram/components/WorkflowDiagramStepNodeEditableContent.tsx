@@ -150,7 +150,6 @@ export const WorkflowDiagramStepNodeEditableContent = ({
       )}
 
       <StyledNodeContainer
-        className="workflow-node-container"
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
         onClick={onClick}
         onMouseEnter={handleMouseEnter}

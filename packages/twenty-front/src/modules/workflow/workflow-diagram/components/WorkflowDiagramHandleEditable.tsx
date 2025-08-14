@@ -43,6 +43,10 @@ const StyledHandle = styled(Handle)<{
       }
     }}
 
+    &.connectionindicator {
+      cursor: pointer;
+    }
+
     ${({ disableHoverEffect, theme, position }) => {
       if (disableHoverEffect === true) {
         return undefined;

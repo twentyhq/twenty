@@ -82,9 +82,6 @@ const StyledResetReactflowStyles = styled.div`
   .react-flow__handle-bottom {
     transform: translate(-50%, 100%);
   }
-  .react-flow__handle.connectionindicator {
-    cursor: pointer;
-  }
 
   --xy-node-border-radius: none;
   --xy-node-border: none;
