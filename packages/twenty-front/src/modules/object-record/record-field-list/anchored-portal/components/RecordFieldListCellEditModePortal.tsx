@@ -5,11 +5,11 @@ import { RecordFieldListInputContextProvider } from '@/object-record/record-fiel
 import { useFieldListFieldMetadataFromPosition } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataFromPosition';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { recordFieldListCellEditModePositionComponentState } from '@/object-record/record-field-list/states/recordFieldListCellEditModePositionComponentState';
+import { FieldInput } from '@/object-record/record-field/ui/components/FieldInput';
 import { RecordInlineCellAnchoredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortal';
+import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldInput } from '@/object-record/record-field/ui/components/FieldInput';
-import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 
 type RecordFieldListCellEditModePortalProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -42,7 +42,7 @@ export const RecordFieldListCellEditModePortal = ({
       fieldMetadataItem={editedFieldMetadataItem}
       objectMetadataItem={objectMetadataItem}
       recordId={recordId}
-      anchorIdPrefix={instanceId}
+      instanceIdPrefix={instanceId}
     >
       <RecordFieldListInputContextProvider>
         <RecordInlineCellEditMode>

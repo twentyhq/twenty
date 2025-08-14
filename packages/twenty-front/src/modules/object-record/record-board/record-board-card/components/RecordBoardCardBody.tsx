@@ -89,7 +89,7 @@ export const RecordBoardCardBody = ({
               useUpdateRecord: useUpdateOneRecordHook,
               isDisplayModeFixHeight: true,
               triggerEvent: 'CLICK',
-              anchorId: `record-board-card-body-${recordId}-${index}`,
+              anchorId: `${RECORD_BOARD_CARD_INPUT_ID_PREFIX}-${recordId}-${fieldDefinition.metadata.fieldName}`,
               onMouseEnter: () => handleMouseEnter(index),
             }}
           >

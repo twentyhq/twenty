@@ -2,6 +2,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCardInputContextProvider } from '@/object-record/record-board/record-board-card/anchored-portal/components/RecordBoardCardInputContextProvider';
+import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { useRecordBoardCardMetadataFromPosition } from '@/object-record/record-board/record-board-card/hooks/useRecordBoardCardMetadataFromPosition';
 import { recordBoardCardEditModePositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardEditModePositionComponentState';
@@ -31,7 +32,7 @@ export const RecordBoardCardCellEditModePortal = () => {
       fieldMetadataItem={editedFieldMetadataItem}
       objectMetadataItem={objectMetadataItem}
       recordId={recordId}
-      anchorIdPrefix={`record-board-card-body-${recordId}`}
+      instanceIdPrefix={RECORD_BOARD_CARD_INPUT_ID_PREFIX}
     >
       <RecordBoardCardInputContextProvider>
         <RecordInlineCellEditMode>

@@ -23,20 +23,25 @@ type RecordInlineCellAnchoredPortalProps = {
   >;
   objectMetadataItem: ObjectMetadataItem;
   recordId: string;
-  anchorIdPrefix: string;
+  instanceIdPrefix: string;
   children: React.ReactNode;
 };
 
 export const RecordInlineCellAnchoredPortal = ({
-  position,
   fieldMetadataItem,
   objectMetadataItem,
   recordId,
-  anchorIdPrefix,
+  instanceIdPrefix,
   children,
 }: RecordInlineCellAnchoredPortalProps) => {
+  const fieldInstanceId = getRecordFieldInputInstanceId({
+    recordId,
+    fieldName: fieldMetadataItem.name,
+    prefix: instanceIdPrefix,
+  });
+
   const anchorElement = document.body.querySelector<HTMLAnchorElement>(
-    `#${anchorIdPrefix}-${position}`,
+    `#${fieldInstanceId}`,
   );
 
   const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
@@ -88,11 +93,7 @@ export const RecordInlineCellAnchoredPortal = ({
           {createPortal(
             <RecordFieldComponentInstanceContext.Provider
               value={{
-                instanceId: getRecordFieldInputInstanceId({
-                  recordId,
-                  fieldName: fieldMetadataItem.name,
-                  prefix: anchorIdPrefix,
-                }),
+                instanceId: fieldInstanceId,
               }}
             >
               <RecordInlineCellAnchoredPortalContext>
