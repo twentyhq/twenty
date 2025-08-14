@@ -508,6 +508,11 @@ msgstr "Участники Событий Календаря"
 msgid "Calendar events"
 msgstr "События Календаря"
 
+#. js-lingui-id: eSaCR/
+#: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
+msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
+msgstr ""
+
 #. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Cannot activate non-draft or non-last-published version"
@@ -940,11 +945,6 @@ msgstr "Исключить непрофессиональные адреса э�
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Executed by"
 msgstr "Выполнено"
-
-#. js-lingui-id: o7LKFQ
-#: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
-msgid "Expected 1 record to connect to {connectFieldName}, but found {recordToConnectTotal} for {formattedConnectCondition}"
-msgstr ""
 
 #. js-lingui-id: AiFXmG
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
