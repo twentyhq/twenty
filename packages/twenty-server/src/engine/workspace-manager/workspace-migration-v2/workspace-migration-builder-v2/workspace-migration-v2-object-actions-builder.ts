@@ -8,8 +8,8 @@ import { FlatObjectMetadataValidatorService } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { compareTwoFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/compare-two-flat-object-metadata.util';
 import { type CustomDeletedCreatedUpdatedMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
-import { FailedAndSuccessfulMetadataBuildRecord } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/failed-and-successful-metadata-build-record.type';
-import { MetadataBuildResult } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/metadata-build-result.type';
+import { MetadataActionValidateAndBuildResult } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/metadata-action-validate-and-build-result.type';
+import { MetadataValidateAndBuildResult } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/metadata-validate-and-build-result.type';
 import {
   UpdateObjectAction,
   WorkspaceMigrationObjectActionV2,
@@ -36,31 +36,30 @@ export type CreatedDeletedUpdatedObjectMetadataInputMatrix = FromTo<
   };
 
 @Injectable()
-// TODO rename class
 export class WorkspaceMigrationV2ObjectActionsBuilder {
   constructor(
     private readonly flatObjectMetadataValidatorService: FlatObjectMetadataValidatorService,
   ) {}
 
-  // TODO rename validateAndBuild
-  public async build({
+  public async validateAndBuildObjectActions({
     createdFlatObjectMetadata,
     deletedFlatObjectMetadata,
     updatedFlatObjectMetadata,
     buildOptions,
     fromFlatObjectMetadataMaps,
     toFlatObjectMetadataMaps,
-  }: CreatedDeletedUpdatedObjectMetadataInputMatrix): Promise<{
-    results: FailedAndSuccessfulMetadataBuildRecord<WorkspaceMigrationObjectActionV2>;
-    optimisticFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-  }> {
+  }: CreatedDeletedUpdatedObjectMetadataInputMatrix): Promise<
+    MetadataActionValidateAndBuildResult<WorkspaceMigrationObjectActionV2>
+  > {
     let optimisticFlatObjectMetadataMaps = structuredClone(
       fromFlatObjectMetadataMaps,
     );
     const createdObjectBuildResults = (
       await Promise.all(
         createdFlatObjectMetadata.map<
-          Promise<MetadataBuildResult<WorkspaceMigrationObjectActionV2>>
+          Promise<
+            MetadataValidateAndBuildResult<WorkspaceMigrationObjectActionV2>
+          >
         >(async (flatObjectMetadata) => {
           const validationErrors =
             await this.flatObjectMetadataValidatorService.validateFlatObjectMetadataCreation(
@@ -110,7 +109,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilder {
     const deletedObjectBuildResults =
       buildOptions.inferDeletionFromMissingObjectFieldIndex
         ? deletedFlatObjectMetadata.map<
-            MetadataBuildResult<WorkspaceMigrationObjectActionV2>
+            MetadataValidateAndBuildResult<WorkspaceMigrationObjectActionV2>
           >((flatObjectMetadataToDelete) => {
             // Shouldn't we validate the flatFieldMetadatasToDelete here too or within the validateFlatObjectMetadataDeletion directly ?
             // Standard fields of a custom object cannot be deleted unless we delete the parent custom objects
@@ -150,7 +149,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilder {
         : [];
 
     const updatedObjectBuildResults = updatedFlatObjectMetadata.flatMap<
-      MetadataBuildResult<WorkspaceMigrationObjectActionV2>
+      MetadataValidateAndBuildResult<WorkspaceMigrationObjectActionV2>
     >(({ from: fromFlatObjectMetadata, to: toFlatObjectMetadata }) => {
       const objectUpdatedProperties = compareTwoFlatObjectMetadata({
         from: fromFlatObjectMetadata,

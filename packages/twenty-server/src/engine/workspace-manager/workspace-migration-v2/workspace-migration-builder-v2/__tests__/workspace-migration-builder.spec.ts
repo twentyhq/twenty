@@ -120,7 +120,7 @@ describe.each(allWorkspaceBuilderTestCases)(
             isSystemBuild: false,
           },
         } = typeof input === 'function' ? input() : input;
-        const workspaceMigration = await service.build({
+        const workspaceMigration = await service.validateAndBuild({
           buildOptions,
           fromFlatObjectMetadataMaps,
           toFlatObjectMetadataMaps,

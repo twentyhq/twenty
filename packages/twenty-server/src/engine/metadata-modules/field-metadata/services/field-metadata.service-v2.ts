@@ -130,15 +130,16 @@ export class FieldMetadataServiceV2 {
         flatObjectMetadataMapsWithImpactedObject,
       );
 
-      const workspaceMigration = await this.workspaceMigrationBuilderV2.build({
-        buildOptions: {
-          isSystemBuild: false,
-          inferDeletionFromMissingObjectFieldIndex: true,
-        },
-        fromFlatObjectMetadataMaps: flatObjectMetadataMapsWithImpactedObject,
-        toFlatObjectMetadataMaps,
-        workspaceId,
-      });
+      const workspaceMigration =
+        await this.workspaceMigrationBuilderV2.validateAndBuild({
+          buildOptions: {
+            isSystemBuild: false,
+            inferDeletionFromMissingObjectFieldIndex: true,
+          },
+          fromFlatObjectMetadataMaps: flatObjectMetadataMapsWithImpactedObject,
+          toFlatObjectMetadataMaps,
+          workspaceId,
+        });
 
       await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
     } catch {
@@ -256,15 +257,16 @@ export class FieldMetadataServiceV2 {
           flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
           flatFieldMetadata: optimisticiallyUpdatedFlatFieldMetadata,
         });
-      const workspaceMigration = await this.workspaceMigrationBuilderV2.build({
-        fromFlatObjectMetadataMaps,
-        toFlatObjectMetadataMaps,
-        buildOptions: {
-          isSystemBuild: false,
-          inferDeletionFromMissingObjectFieldIndex: false,
-        },
-        workspaceId,
-      });
+      const workspaceMigration =
+        await this.workspaceMigrationBuilderV2.validateAndBuild({
+          fromFlatObjectMetadataMaps,
+          toFlatObjectMetadataMaps,
+          buildOptions: {
+            isSystemBuild: false,
+            inferDeletionFromMissingObjectFieldIndex: false,
+          },
+          workspaceId,
+        });
 
       await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
 
@@ -386,15 +388,16 @@ export class FieldMetadataServiceV2 {
         flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
         objectMetadataIds: impactedObjectMetadataIds,
       });
-      const workspaceMigration = await this.workspaceMigrationBuilderV2.build({
-        fromFlatObjectMetadataMaps,
-        toFlatObjectMetadataMaps,
-        buildOptions: {
-          isSystemBuild: false,
-          inferDeletionFromMissingObjectFieldIndex: false,
-        },
-        workspaceId,
-      });
+      const workspaceMigration =
+        await this.workspaceMigrationBuilderV2.validateAndBuild({
+          fromFlatObjectMetadataMaps,
+          toFlatObjectMetadataMaps,
+          buildOptions: {
+            isSystemBuild: false,
+            inferDeletionFromMissingObjectFieldIndex: false,
+          },
+          workspaceId,
+        });
 
       await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
 

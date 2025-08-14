@@ -11,6 +11,7 @@ import { STANDARD_RELATION_TARGET_FLAT_OBJECT_METADATA_MOCKS } from 'src/engine/
 import { fromFlatObjectMetadatasToFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadatas-to-flat-object-metadata-maps.util';
 import { type WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
 
+// TODO prastoin implement validation exception tests cases coverage too
 const DELETE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
   {
     title:
