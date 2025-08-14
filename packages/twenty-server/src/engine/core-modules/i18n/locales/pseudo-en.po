@@ -216,6 +216,11 @@ msgstr ""
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr ""
 
+#. js-lingui-id: N40H+G
+#: src/engine/workspace-manager/standard-objects-prefill-data/constants/view-prefix.constants.ts
+msgid "All"
+msgstr ""
+
 #. js-lingui-id: tZLcDK
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
 msgid "All Companies"

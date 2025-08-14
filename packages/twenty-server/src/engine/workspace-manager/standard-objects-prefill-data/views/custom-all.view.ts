@@ -16,13 +16,13 @@ export const customAllView = (objectMetadataItem: ObjectMetadataEntity) => {
   }
 
   return {
-    name: `All ${objectMetadataItem.namePlural}`,
+    name: 'All {{objectLabelPlural}}',
     objectMetadataId: objectMetadataItem.id,
     type: 'table',
     key: 'INDEX',
     position: 0,
     icon: 'IconList',
-    isCustom: true,
+    isCustom: false,
     kanbanFieldMetadataId: '',
     filters: [],
     fields: [

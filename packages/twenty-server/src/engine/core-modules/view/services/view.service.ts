@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   ViewException,
   ViewExceptionCode,
@@ -18,6 +19,8 @@ export class ViewService {
   constructor(
     @InjectRepository(View, 'core')
     private readonly viewRepository: Repository<View>,
+    @InjectRepository(ObjectMetadataEntity, 'core')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<View[]> {
@@ -176,5 +179,22 @@ export class ViewService {
     await this.viewRepository.delete(id);
 
     return true;
+  }
+
+  async getObjectMetadataByViewId(
+    viewId: string,
+  ): Promise<ObjectMetadataEntity | null> {
+    const view = await this.viewRepository.findOne({
+      where: { id: viewId },
+      select: ['objectMetadataId'],
+    });
+
+    if (!view) {
+      return null;
+    }
+
+    return this.objectMetadataRepository.findOne({
+      where: { id: view.objectMetadataId },
+    });
   }
 }

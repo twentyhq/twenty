@@ -38,6 +38,21 @@ export class ViewResolver {
       return view.name;
     }
 
+    if (view.name.includes('{{objectLabelPlural}}')) {
+      const objectMetadata = await this.viewService.getObjectMetadataByViewId(
+        view.id,
+      );
+
+      if (objectMetadata) {
+        const allTranslated = i18n._(generateMessageId('All'));
+
+        return view.name.replace(
+          'All {{objectLabelPlural}}',
+          `${allTranslated} ${objectMetadata.labelPlural}`,
+        );
+      }
+    }
+
     const messageId = generateMessageId(view.name);
     const translatedMessage = i18n._(messageId);
 
