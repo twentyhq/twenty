@@ -30,7 +30,7 @@ import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRec
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/useIsRecordFieldReadOnly';
-import { isInlineCellInEditModeFamilyState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeFamilyState';
+import { isTitleCellInEditModeComponentState } from '@/object-record/record-title-cell/states/isTitleCellInEditModeComponentState';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
@@ -391,7 +391,11 @@ export const ActivityRichTextEditor = ({
         //  Because that is how we do in the app, for example with stacked dropdowns, we always close what's open before
         //  letting the click being captured by a button or input that can capture it.
         const isRecordTitleCellOpen = snapshot
-          .getLoadable(isInlineCellInEditModeFamilyState(recordTitleCellId))
+          .getLoadable(
+            isTitleCellInEditModeComponentState.atomFamily({
+              instanceId: recordTitleCellId,
+            }),
+          )
           .getValue();
 
         if (isRecordTitleCellOpen) {
@@ -417,7 +421,11 @@ export const ActivityRichTextEditor = ({
     ({ snapshot }) =>
       () => {
         const isRecordTitleCellOpen = snapshot
-          .getLoadable(isInlineCellInEditModeFamilyState(recordTitleCellId))
+          .getLoadable(
+            isTitleCellInEditModeComponentState.atomFamily({
+              instanceId: recordTitleCellId,
+            }),
+          )
           .getValue();
 
         if (isRecordTitleCellOpen) {

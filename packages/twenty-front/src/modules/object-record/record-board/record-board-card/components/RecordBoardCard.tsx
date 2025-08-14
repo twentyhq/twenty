@@ -11,9 +11,12 @@ import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-re
 
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
+import { RecordBoardCardCellEditModePortal } from '@/object-record/record-board/record-board-card/anchored-portal/components/RecordBoardCardCellEditModePortal';
+import { RecordBoardCardCellHoveredPortal } from '@/object-record/record-board/record-board-card/anchored-portal/components/RecordBoardCardCellHoveredPortal';
 import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
+import { RecordBoardCardComponentInstanceContext } from '@/object-record/record-board/record-board-card/states/contexts/RecordBoardCardComponentInstanceContext';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -226,44 +229,58 @@ export const RecordBoardCard = () => {
   );
 
   return (
-    <StyledBoardCardWrapper
-      data-click-outside-id={RECORD_BOARD_CARD_CLICK_OUTSIDE_ID}
-      onContextMenu={handleContextMenuOpen}
+    <RecordBoardCardComponentInstanceContext.Provider
+      value={{
+        instanceId: `record-board-card-${recordId}`,
+      }}
     >
-      <InView>
-        <StyledCardContainer isPrimaryMultiDrag={isPrimaryMultiDrag}>
-          {isPrimaryMultiDrag &&
-            Array.from({
-              length: Math.min(5, multiDragState.originalSelection.length - 1),
-            }).map((_, index) => (
-              <StyledRecordBoardCardStackCard key={index} offset={index + 1} />
-            ))}
+      <StyledBoardCardWrapper
+        data-click-outside-id={RECORD_BOARD_CARD_CLICK_OUTSIDE_ID}
+        onContextMenu={handleContextMenuOpen}
+      >
+        <InView>
+          <StyledCardContainer isPrimaryMultiDrag={isPrimaryMultiDrag}>
+            {isPrimaryMultiDrag &&
+              Array.from({
+                length: Math.min(
+                  5,
+                  multiDragState.originalSelection.length - 1,
+                ),
+              }).map((_, index) => (
+                <StyledRecordBoardCardStackCard
+                  key={index}
+                  offset={index + 1}
+                />
+              ))}
 
-          <StyledBoardCard
-            ref={cardRef}
-            data-selected={isCurrentCardSelected}
-            data-focused={isCurrentCardFocused}
-            data-active={isCurrentCardActive}
-            onMouseLeave={onMouseLeaveBoard}
-            onClick={handleCardClick}
-            isPrimaryMultiDrag={isPrimaryMultiDrag}
-            isSecondaryDragged={isSecondaryDragged}
-          >
-            <RecordBoardCardHeader
-              isCardExpanded={isCardExpanded}
-              setIsCardExpanded={setIsCardExpanded}
-            />
-            <AnimatedEaseInOut
-              isOpen={isCardExpanded || !isCompactModeActive}
-              initial={false}
+            <StyledBoardCard
+              ref={cardRef}
+              data-selected={isCurrentCardSelected}
+              data-focused={isCurrentCardFocused}
+              data-active={isCurrentCardActive}
+              onMouseLeave={onMouseLeaveBoard}
+              onClick={handleCardClick}
+              isPrimaryMultiDrag={isPrimaryMultiDrag}
+              isSecondaryDragged={isSecondaryDragged}
             >
-              <RecordBoardCardBody
-                fieldDefinitions={visibleFieldDefinitionsFiltered}
+              <RecordBoardCardHeader
+                isCardExpanded={isCardExpanded}
+                setIsCardExpanded={setIsCardExpanded}
               />
-            </AnimatedEaseInOut>
-          </StyledBoardCard>
-        </StyledCardContainer>
-      </InView>
-    </StyledBoardCardWrapper>
+              <AnimatedEaseInOut
+                isOpen={isCardExpanded || !isCompactModeActive}
+                initial={false}
+              >
+                <RecordBoardCardBody
+                  fieldDefinitions={visibleFieldDefinitionsFiltered}
+                />
+              </AnimatedEaseInOut>
+            </StyledBoardCard>
+          </StyledCardContainer>
+          <RecordBoardCardCellHoveredPortal />
+          <RecordBoardCardCellEditModePortal />
+        </InView>
+      </StyledBoardCardWrapper>
+    </RecordBoardCardComponentInstanceContext.Provider>
   );
 };
