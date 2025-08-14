@@ -1,14 +1,17 @@
 import { usePersistFieldFromFieldInputContext } from '@/object-record/record-field/ui/hooks/usePersistFieldFromFieldInputContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 
+import { recordFieldListCellEditModePositionComponentState } from '@/object-record/record-field-list/states/recordFieldListCellEditModePositionComponentState';
 import {
   FieldInputEventContext,
   type FieldInputClickOutsideEvent,
   type FieldInputEvent,
 } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
+import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 type RecordFieldListInputContextProviderProps = {
@@ -18,7 +21,15 @@ type RecordFieldListInputContextProviderProps = {
 export const RecordFieldListInputContextProvider = ({
   children,
 }: RecordFieldListInputContextProviderProps) => {
-  const { onCloseEditMode } = useRecordInlineCellContext();
+  const { closeInlineCell } = useInlineCell();
+  const setRecordFieldListCellEditModePosition = useSetRecoilComponentState(
+    recordFieldListCellEditModePositionComponentState,
+  );
+
+  const closeInlineCellAndResetEditModePosition = useCallback(() => {
+    setRecordFieldListCellEditModePosition(null);
+    closeInlineCell();
+  }, [closeInlineCell, setRecordFieldListCellEditModePosition]);
 
   const instanceId = useAvailableComponentInstanceId(
     RecordFieldComponentInstanceContext,
@@ -28,12 +39,11 @@ export const RecordFieldListInputContextProvider = ({
     usePersistFieldFromFieldInputContext();
 
   const handleEnter: FieldInputEvent = ({ newValue, skipPersist }) => {
-    console.log('handleEnter');
     if (skipPersist !== true) {
       persistFieldFromFieldInputContext(newValue);
     }
 
-    onCloseEditMode?.();
+    closeInlineCellAndResetEditModePosition();
   };
 
   const handleSubmit: FieldInputEvent = ({ newValue, skipPersist }) => {
@@ -41,11 +51,11 @@ export const RecordFieldListInputContextProvider = ({
       persistFieldFromFieldInputContext(newValue);
     }
 
-    onCloseEditMode?.();
+    closeInlineCellAndResetEditModePosition();
   };
 
   const handleCancel = () => {
-    onCloseEditMode?.();
+    closeInlineCellAndResetEditModePosition();
   };
 
   const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
@@ -65,9 +75,13 @@ export const RecordFieldListInputContextProvider = ({
           persistFieldFromFieldInputContext(newValue);
         }
 
-        onCloseEditMode?.();
+        closeInlineCellAndResetEditModePosition();
       },
-    [onCloseEditMode, instanceId, persistFieldFromFieldInputContext],
+    [
+      closeInlineCellAndResetEditModePosition,
+      instanceId,
+      persistFieldFromFieldInputContext,
+    ],
   );
 
   const handleEscape: FieldInputEvent = ({ newValue, skipPersist }) => {
@@ -75,7 +89,7 @@ export const RecordFieldListInputContextProvider = ({
       persistFieldFromFieldInputContext(newValue);
     }
 
-    onCloseEditMode?.();
+    closeInlineCellAndResetEditModePosition();
   };
 
   const handleTab: FieldInputEvent = ({ newValue, skipPersist }) => {
@@ -83,7 +97,7 @@ export const RecordFieldListInputContextProvider = ({
       persistFieldFromFieldInputContext(newValue);
     }
 
-    onCloseEditMode?.();
+    closeInlineCellAndResetEditModePosition();
   };
 
   const handleShiftTab: FieldInputEvent = ({ newValue, skipPersist }) => {
@@ -91,7 +105,7 @@ export const RecordFieldListInputContextProvider = ({
       persistFieldFromFieldInputContext(newValue);
     }
 
-    onCloseEditMode?.();
+    closeInlineCellAndResetEditModePosition();
   };
 
   return (
