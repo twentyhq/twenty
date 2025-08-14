@@ -24,7 +24,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util';
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
-import { fromUpdateFieldInputToFlatFieldMetadataToUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata-to-update.util';
+import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
@@ -213,11 +213,10 @@ export class FieldMetadataServiceV2 {
         { workspaceId },
       );
 
-    const inputTranspilationResult =
-      fromUpdateFieldInputToFlatFieldMetadataToUpdate({
-        existingFlatObjectMetadataMaps,
-        updateFieldInput,
-      });
+    const inputTranspilationResult = fromUpdateFieldInputToFlatFieldMetadata({
+      existingFlatObjectMetadataMaps,
+      updateFieldInput,
+    });
 
     if (inputTranspilationResult.status === 'fail') {
       throw inputTranspilationResult.error;

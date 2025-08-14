@@ -4,30 +4,28 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
-import {
-  fieldMetadataStandardOverridesProperties,
-  type FieldMetadataStandardOverridesProperties,
-} from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
+import { FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-standard-overrides-properties.constant';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { type FieldMetadataStandardOverridesProperties } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-standard-overrides-properties.type';
+import { FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-properties-to-compare.constant';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
+import { type FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-properties-to-compare.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import {
-  flatFieldMetadataPropertiesToCompare,
-  type FlatFieldMetadataPropertiesToCompare,
-} from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
+import {} from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
 import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 
 const fieldMetadataEditableProperties =
-  flatFieldMetadataPropertiesToCompare.filter(
+  FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE.filter(
     (
       property,
     ): property is Exclude<
@@ -36,20 +34,20 @@ const fieldMetadataEditableProperties =
     > => property !== 'standardOverrides',
   );
 
-type FromUpdateFieldInputToFlatFieldMetadataToUpdateArgs = {
+type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   updateFieldInput: UpdateFieldInput;
 };
-export const fromUpdateFieldInputToFlatFieldMetadataToUpdate = ({
+export const fromUpdateFieldInputToFlatFieldMetadata = ({
   existingFlatObjectMetadataMaps,
   updateFieldInput: rawUpdateFieldInput,
-}: FromUpdateFieldInputToFlatFieldMetadataToUpdateArgs): FieldInputTranspilationResult<FlatFieldMetadata> => {
+}: FromUpdateFieldInputToFlatFieldMetadataArgs): FieldInputTranspilationResult<FlatFieldMetadata> => {
   const updateFieldInputInformalProperties =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawUpdateFieldInput,
       ['objectMetadataId', 'id'],
     );
-  const updatedEditableFields = extractAndSanitizeObjectStringFields(
+  const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
     rawUpdateFieldInput,
     fieldMetadataEditableProperties,
   );
@@ -94,16 +92,14 @@ export const fromUpdateFieldInputToFlatFieldMetadataToUpdate = ({
       ),
     };
   }
-  const isStandardField =
-    relatedFlatFieldMetadata.standardId !== null &&
-    !relatedFlatFieldMetadata.isCustom;
 
-  if (isStandardField) {
-    const invalidUpdatedProperties = Object.keys(updatedEditableFields).filter(
-      (property) =>
-        fieldMetadataStandardOverridesProperties.includes(
-          property as FieldMetadataStandardOverridesProperties,
-        ),
+  if (isStandardMetadata(relatedFlatFieldMetadata)) {
+    const invalidUpdatedProperties = Object.keys(
+      updatedEditableFieldProperties,
+    ).filter((property) =>
+      FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.includes(
+        property as FieldMetadataStandardOverridesProperties,
+      ),
     );
 
     if (invalidUpdatedProperties.length > 0) {
@@ -117,15 +113,16 @@ export const fromUpdateFieldInputToFlatFieldMetadataToUpdate = ({
     }
 
     const updatedStandardFlatFieldMetadata =
-      fieldMetadataStandardOverridesProperties.reduce((acc, property) => {
-        const isPropertyUpdated = updatedEditableFields[property] !== undefined;
+      FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.reduce((acc, property) => {
+        const isPropertyUpdated =
+          updatedEditableFieldProperties[property] !== undefined;
 
         return {
           ...acc,
           standardOverrides: {
             ...acc.standardOverrides,
             ...(isPropertyUpdated
-              ? { [property]: updatedEditableFields[property] }
+              ? { [property]: updatedEditableFieldProperties[property] }
               : {}),
           },
         };
@@ -139,12 +136,13 @@ export const fromUpdateFieldInputToFlatFieldMetadataToUpdate = ({
 
   const updatedFlatFieldMetadata = fieldMetadataEditableProperties.reduce(
     (acc, property) => {
-      const isPropertyUpdated = updatedEditableFields[property] !== undefined;
+      const isPropertyUpdated =
+        updatedEditableFieldProperties[property] !== undefined;
 
       return {
         ...acc,
         ...(isPropertyUpdated
-          ? { [property]: updatedEditableFields[property] }
+          ? { [property]: updatedEditableFieldProperties[property] }
           : {}),
       };
     },

@@ -95,8 +95,9 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
 
     if (!objectMetadataItem.isCustom) {
       const {
-        nameSingular: _,
-        namePlural: __,
+        nameSingular: _nameSingular,
+        namePlural: _namePlural,
+        isLabelSyncedWithName: _isLabelSyncedWithName,
         ...payloadWithoutNames
       } = updatePayload;
 

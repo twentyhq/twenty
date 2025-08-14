@@ -139,39 +139,6 @@ exports[`Workspace migration builder field actions test suite It should build an
 ]
 `;
 
-exports[`Workspace migration builder field actions test suite It should build an update_field action 1`] = `
-[
-  {
-    "fieldMetadataId": Any<String>,
-    "objectMetadataId": Any<String>,
-    "type": "update_field",
-    "updates": [
-      {
-        "from": "Opportunity stage",
-        "property": "description",
-        "to": "new description",
-      },
-      {
-        "from": "IconProgressCheck",
-        "property": "icon",
-        "to": "new icon",
-      },
-      {
-        "from": true,
-        "property": "isActive",
-        "to": false,
-      },
-      {
-        "from": "stage",
-        "property": "name",
-        "to": "new name",
-      },
-    ],
-    "workspaceId": Any<String>,
-  },
-]
-`;
-
 exports[`Workspace migration builder field actions test suite It should build an update_field action for a RELATION field 1`] = `
 [
   {
@@ -188,6 +155,50 @@ exports[`Workspace migration builder field actions test suite It should build an
         "from": "Species",
         "property": "label",
         "to": "new label",
+      },
+    ],
+    "workspaceId": Any<String>,
+  },
+]
+`;
+
+exports[`Workspace migration builder field actions test suite It should build an update_field action for custom fields 1`] = `
+[
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "update_field",
+    "updates": [
+      {
+        "from": null,
+        "property": "description",
+        "to": "new description",
+      },
+      {
+        "from": null,
+        "property": "icon",
+        "to": "new icon",
+      },
+    ],
+    "workspaceId": Any<String>,
+  },
+]
+`;
+
+exports[`Workspace migration builder field actions test suite It should build an update_field action for standard field 1`] = `
+[
+  {
+    "fieldMetadataId": Any<String>,
+    "objectMetadataId": Any<String>,
+    "type": "update_field",
+    "updates": [
+      {
+        "from": null,
+        "property": "standardOverrides",
+        "to": {
+          "description": "new description",
+          "icon": "new icon",
+        },
       },
     ],
     "workspaceId": Any<String>,
@@ -1633,7 +1644,7 @@ exports[`Workspace migration builder object actions test suite It should build a
 ]
 `;
 
-exports[`Workspace migration builder object actions test suite It should build an update_object action with all object updated fields 1`] = `
+exports[`Workspace migration builder object actions test suite It should build an update_object for custom object 1`] = `
 [
   {
     "objectMetadataId": Any<String>,
@@ -1648,6 +1659,24 @@ exports[`Workspace migration builder object actions test suite It should build a
         "from": "pet",
         "property": "nameSingular",
         "to": "prastouin",
+      },
+    ],
+  },
+]
+`;
+
+exports[`Workspace migration builder object actions test suite It should build an update_object for standard object 1`] = `
+[
+  {
+    "objectMetadataId": Any<String>,
+    "type": "update_object",
+    "updates": [
+      {
+        "from": null,
+        "property": "standardOverrides",
+        "to": {
+          "description": "Updated description",
+        },
       },
     ],
   },
