@@ -14,8 +14,8 @@ export const MKT_PREFILLS = [
   prefillMktValues,
   prefillMktVariants,
   prefillMktVariantAttributes,
-  // order prefills
-  prefillMktContracts,
+  // order prefills (orders must come before contracts and licenses)
   prefillMktOrders,
+  prefillMktContracts,
   prefillMktLicenses,
 ];
