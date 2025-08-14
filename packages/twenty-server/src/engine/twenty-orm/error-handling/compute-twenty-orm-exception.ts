@@ -12,7 +12,7 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 
 interface QueryFailedErrorWithCode extends QueryFailedError {
-  code: string;
+  code?: string;
 }
 
 export const computeTwentyORMException = (
@@ -40,7 +40,7 @@ export const computeTwentyORMException = (
     }
     const errorCode = (error as QueryFailedErrorWithCode).code;
 
-    if (POSTGRESQL_ERROR_CODES.includes(errorCode)) {
+    if (isDefined(errorCode) && POSTGRESQL_ERROR_CODES.includes(errorCode)) {
       throw new PostgresException(error.message, errorCode);
     }
     throw error;
