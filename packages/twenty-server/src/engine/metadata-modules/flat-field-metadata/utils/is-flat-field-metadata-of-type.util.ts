@@ -11,3 +11,13 @@ export function isFlatFieldMetadataEntityOfType<
 ): fieldMetadata is Field & FlatFieldMetadata<Type> {
   return fieldMetadata.type === type;
 }
+
+export function isFlatFieldMetadataEntityOfTypes<
+  Field extends FlatFieldMetadata<FieldMetadataType>,
+  Types extends FieldMetadataType[],
+>(
+  fieldMetadata: Pick<Field, 'type'>,
+  types: Types,
+): fieldMetadata is Field & FlatFieldMetadata<Types[number]> {
+  return types.includes(fieldMetadata.type);
+}

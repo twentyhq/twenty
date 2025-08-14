@@ -1,5 +1,9 @@
 import { type QueryRunner } from 'typeorm';
 
+import {
+  WorkspaceSchemaManagerException,
+  WorkspaceSchemaManagerExceptionCode,
+} from 'src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { buildColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-runner/utils/compute-postgres-enum-name.util';
@@ -14,7 +18,10 @@ export class WorkspaceSchemaEnumManagerService {
     values: string[],
   ): Promise<void> {
     if (values.length === 0) {
-      throw new Error(`Cannot create enum with no values`);
+      throw new WorkspaceSchemaManagerException(
+        `Cannot create enum with no values`,
+        WorkspaceSchemaManagerExceptionCode.ENUM_OPERATION_FAILED,
+      );
     }
 
     const sanitizedValues = values
@@ -115,8 +122,9 @@ export class WorkspaceSchemaEnumManagerService {
       !columnDefinition.enumValues ||
       columnDefinition.enumValues.length === 0
     ) {
-      throw new Error(
+      throw new WorkspaceSchemaManagerException(
         `Cannot alter enum values for column ${columnDefinition.name} because it has no enum values`,
+        WorkspaceSchemaManagerExceptionCode.ENUM_OPERATION_FAILED,
       );
     }
 

@@ -6,6 +6,8 @@ import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/worksp
 import { WorkspaceSchemaMigrationException } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/exceptions/workspace-schema-migration.exception';
 import {
   collectEnumOperationsForField,
+  EnumOperation,
+  type EnumOperationSpec,
   executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/workspace-schema-enum-operations.util';
 
@@ -28,10 +30,22 @@ describe('WorkspaceSchemaEnumOperations', () => {
 
   describe('Batch Operation Atomicity', () => {
     it('should fail fast when any enum operation fails to preserve transaction integrity', async () => {
-      const enumOperations = [
-        { enumName: 'enum1', values: ['A', 'B'] },
-        { enumName: 'enum2', values: ['X', 'Y'] },
-        { enumName: 'enum3', values: ['P', 'Q'] },
+      const enumOperations: EnumOperationSpec[] = [
+        {
+          operation: EnumOperation.CREATE,
+          enumName: 'enum1',
+          values: ['A', 'B'],
+        },
+        {
+          operation: EnumOperation.CREATE,
+          enumName: 'enum2',
+          values: ['X', 'Y'],
+        },
+        {
+          operation: EnumOperation.CREATE,
+          enumName: 'enum3',
+          values: ['P', 'Q'],
+        },
       ];
 
       // Simulate failure on second enum
@@ -42,7 +56,6 @@ describe('WorkspaceSchemaEnumOperations', () => {
 
       await expect(
         executeBatchEnumOperations({
-          operation: 'create',
           enumOperations,
           queryRunner: mockQueryRunner,
           schemaName: 'test_schema',
@@ -58,7 +71,6 @@ describe('WorkspaceSchemaEnumOperations', () => {
 
     it('should handle empty operations without unnecessary database calls', async () => {
       await executeBatchEnumOperations({
-        operation: 'create',
         enumOperations: [],
         queryRunner: mockQueryRunner,
         schemaName: 'test_schema',
@@ -97,16 +109,17 @@ describe('WorkspaceSchemaEnumOperations', () => {
       });
 
       const enumOps = collectEnumOperationsForField({
-        fieldMetadata: selectField,
+        flatFieldMetadata: selectField,
         tableName: 'contacts',
-        operation: 'create',
+        operation: EnumOperation.CREATE,
       });
 
-      expect(enumOps).toHaveLength(1);
-      expect(enumOps[0]).toMatchObject({
-        enumName: expect.stringContaining('contacts_status_enum'),
-        values: ['ACTIVE', 'INACTIVE'],
-      });
+      expect(enumOps).toMatchObject([
+        {
+          enumName: expect.stringContaining('contacts_status_enum'),
+          values: ['ACTIVE', 'INACTIVE'],
+        },
+      ]);
     });
 
     it('should collect enum operations for MULTI_SELECT fields', () => {
@@ -134,16 +147,17 @@ describe('WorkspaceSchemaEnumOperations', () => {
       });
 
       const enumOps = collectEnumOperationsForField({
-        fieldMetadata: multiSelectField,
+        flatFieldMetadata: multiSelectField,
         tableName: 'tasks',
-        operation: 'create',
+        operation: EnumOperation.CREATE,
       });
 
-      expect(enumOps).toHaveLength(1);
-      expect(enumOps[0]).toMatchObject({
-        enumName: expect.stringContaining('tasks_tags_enum'),
-        values: ['URGENT', 'LOW_PRIORITY'],
-      });
+      expect(enumOps).toMatchObject([
+        {
+          enumName: expect.stringContaining('tasks_tags_enum'),
+          values: ['URGENT', 'LOW_PRIORITY'],
+        },
+      ]);
     });
 
     it('should handle field renaming with proper enum name mapping', () => {
@@ -155,18 +169,18 @@ describe('WorkspaceSchemaEnumOperations', () => {
       });
 
       const enumOps = collectEnumOperationsForField({
-        fieldMetadata: selectField,
+        flatFieldMetadata: selectField,
         tableName: 'contacts',
-        operation: 'rename',
+        operation: EnumOperation.RENAME,
         options: { newFieldName: 'newStatus' },
       });
 
-      expect(enumOps).toHaveLength(1);
-      expect(enumOps[0]).toMatchObject({
-        enumName: expect.stringContaining('contacts_oldStatus_enum'),
-        fromName: expect.stringContaining('contacts_oldStatus_enum'),
-        toName: expect.stringContaining('contacts_newStatus_enum'),
-      });
+      expect(enumOps).toMatchObject([
+        {
+          fromName: expect.stringContaining('contacts_oldStatus_enum'),
+          toName: expect.stringContaining('contacts_newStatus_enum'),
+        },
+      ]);
     });
   });
 
@@ -180,9 +194,9 @@ describe('WorkspaceSchemaEnumOperations', () => {
       });
 
       const enumOps = collectEnumOperationsForField({
-        fieldMetadata: addressField,
+        flatFieldMetadata: addressField,
         tableName: 'contacts',
-        operation: 'create',
+        operation: EnumOperation.CREATE,
       });
 
       // Current implementation doesn't handle composite enum fields
@@ -198,9 +212,9 @@ describe('WorkspaceSchemaEnumOperations', () => {
       });
 
       const enumOps = collectEnumOperationsForField({
-        fieldMetadata: relationField,
+        flatFieldMetadata: relationField,
         tableName: 'contacts',
-        operation: 'create',
+        operation: EnumOperation.CREATE,
       });
 
       // Relation fields should not generate enum operations
@@ -218,9 +232,9 @@ describe('WorkspaceSchemaEnumOperations', () => {
       });
 
       const enumOps = collectEnumOperationsForField({
-        fieldMetadata: textField,
+        flatFieldMetadata: textField,
         tableName: 'contacts',
-        operation: 'create',
+        operation: EnumOperation.CREATE,
       });
 
       expect(enumOps).toEqual([]);

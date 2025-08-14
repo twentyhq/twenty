@@ -1,13 +1,14 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
+import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
+import { isFlatFieldMetadataEntityOfTypes } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-runner/utils/compute-postgres-enum-name.util';
 import {
@@ -15,164 +16,203 @@ import {
   WorkspaceSchemaMigrationExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/exceptions/workspace-schema-migration.exception';
 
-export interface EnumOperationSpec {
+export interface CreateEnumOperationSpec {
+  operation: EnumOperation.CREATE;
   enumName: string;
-  values?: string[];
-  fromName?: string;
-  toName?: string;
+  values: string[];
 }
 
-export const collectEnumOperationsForField = ({
-  fieldMetadata,
+export interface DropEnumOperationSpec {
+  operation: EnumOperation.DROP;
+  enumName: string;
+}
+
+export interface RenameEnumOperationSpec {
+  operation: EnumOperation.RENAME;
+  fromName: string;
+  toName: string;
+}
+
+export type EnumOperationSpec =
+  | CreateEnumOperationSpec
+  | DropEnumOperationSpec
+  | RenameEnumOperationSpec;
+
+export enum EnumOperation {
+  CREATE = 'create',
+  DROP = 'drop',
+  RENAME = 'rename',
+}
+
+const collectEnumOperationsForBasicEnumField = ({
+  flatFieldMetadata,
   tableName,
   operation,
   options,
 }: {
-  fieldMetadata: FlatFieldMetadata;
+  flatFieldMetadata: FlatFieldMetadata<
+    | FieldMetadataType.SELECT
+    | FieldMetadataType.MULTI_SELECT
+    | FieldMetadataType.RATING
+  >;
   tableName: string;
-  operation: 'create' | 'drop' | 'rename';
-  options?: { newFieldName?: string };
+  operation: EnumOperation;
+  options?: { newTableName?: string; newFieldName?: string };
 }): EnumOperationSpec[] => {
-  const enumOperations: EnumOperationSpec[] = [];
+  const enumName = computePostgresEnumName({
+    tableName,
+    columnName: flatFieldMetadata.name,
+  });
 
-  if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-    const compositeType = getCompositeTypeOrThrow(fieldMetadata.type);
+  switch (operation) {
+    case EnumOperation.CREATE:
+      return [
+        {
+          operation: EnumOperation.CREATE,
+          enumName,
+          values:
+            flatFieldMetadata.options?.map((option) => option.value) ?? [],
+        },
+      ];
+    case EnumOperation.DROP:
+      return [{ operation: EnumOperation.DROP, enumName }];
+    case EnumOperation.RENAME: {
+      const newEnumName = computePostgresEnumName({
+        tableName: options?.newTableName ?? tableName,
+        columnName: options?.newFieldName ?? flatFieldMetadata.name,
+      });
 
-    for (const property of compositeType.properties) {
-      if (
-        property.type === FieldMetadataType.RELATION ||
-        !isEnumFieldMetadataType(property.type)
-      ) {
-        continue;
-      }
+      return [
+        {
+          operation: EnumOperation.RENAME,
+          fromName: enumName,
+          toName: newEnumName,
+        },
+      ];
+    }
+    default:
+      return assertUnreachable(operation, 'Unsupported enum operation');
+  }
+};
 
+const collectEnumOperationsForCompositeField = ({
+  flatFieldMetadata,
+  tableName,
+  operation,
+  options,
+}: {
+  flatFieldMetadata: FlatFieldMetadata<CompositeFieldMetadataType>;
+  tableName: string;
+  operation: EnumOperation;
+  options?: { newTableName?: string; newFieldName?: string };
+}): EnumOperationSpec[] => {
+  const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
+
+  return compositeType.properties
+    .filter((property) => isEnumFieldMetadataType(property.type))
+    .map((property) => {
       const columnName = computeCompositeColumnName(
-        fieldMetadata.name,
+        flatFieldMetadata.name,
         property,
       );
       const enumName = computePostgresEnumName({ tableName, columnName });
 
-      if (operation === 'create') {
-        enumOperations.push({
-          enumName,
-          values: property.options?.map((option) => option.value) ?? [],
-        });
-      } else if (operation === 'drop') {
-        enumOperations.push({ enumName });
-      } else if (operation === 'rename' && options?.newFieldName) {
-        const newColumnName = computeCompositeColumnName(
-          options.newFieldName,
-          property,
-        );
-        const newEnumName = computePostgresEnumName({
-          tableName,
-          columnName: newColumnName,
-        });
+      switch (operation) {
+        case EnumOperation.CREATE:
+          return {
+            operation: EnumOperation.CREATE,
+            enumName,
+            values: property.options?.map((option) => option.value) ?? [],
+          };
+        case EnumOperation.DROP:
+          return { operation: EnumOperation.DROP, enumName };
+        case EnumOperation.RENAME: {
+          const newOrExistingTableName = options?.newTableName ?? tableName;
+          const newOrExistingColumnName = computeCompositeColumnName(
+            options?.newFieldName ?? flatFieldMetadata.name,
+            property,
+          );
+          const newEnumName = computePostgresEnumName({
+            tableName: newOrExistingTableName,
+            columnName: newOrExistingColumnName,
+          });
 
-        enumOperations.push({
-          enumName,
-          fromName: enumName,
-          toName: newEnumName,
-        });
+          return {
+            operation: EnumOperation.RENAME,
+            fromName: enumName,
+            toName: newEnumName,
+          };
+        }
+        default:
+          return assertUnreachable(operation, 'Unsupported enum operation');
       }
-    }
-  } else if (isEnumFieldMetadataType(fieldMetadata.type)) {
-    if (operation === 'create') {
-      const enumName = computePostgresEnumName({
-        tableName,
-        columnName: fieldMetadata.name,
-      });
-
-      enumOperations.push({
-        enumName,
-        values: fieldMetadata.options?.map((option) => option.value) ?? [],
-      });
-    } else if (operation === 'drop') {
-      const enumName = computePostgresEnumName({
-        tableName,
-        columnName: fieldMetadata.name,
-      });
-
-      enumOperations.push({ enumName });
-    } else if (operation === 'rename' && options?.newFieldName) {
-      const enumName = computePostgresEnumName({
-        tableName,
-        columnName: fieldMetadata.name,
-      });
-      const newEnumName = computePostgresEnumName({
-        tableName,
-        columnName: options.newFieldName,
-      });
-
-      enumOperations.push({
-        enumName,
-        fromName: enumName,
-        toName: newEnumName,
-      });
-    }
-  }
-
-  return enumOperations;
+    });
 };
 
-export const collectEnumOperationsForObject = ({
-  objectMetadata,
+export const collectEnumOperationsForField = ({
+  flatFieldMetadata,
   tableName,
   operation,
   options,
 }: {
-  objectMetadata: FlatObjectMetadataWithFlatFieldMaps;
+  flatFieldMetadata: FlatFieldMetadata;
   tableName: string;
-  operation: 'drop' | 'rename';
-  options?: { newTableName?: string };
+  operation: EnumOperation;
+  options?: { newTableName?: string; newFieldName?: string };
 }): EnumOperationSpec[] => {
-  const enumOperations: EnumOperationSpec[] = [];
-
-  if (!objectMetadata.fieldsById) {
-    return enumOperations;
+  if (isCompositeFlatFieldMetadata(flatFieldMetadata)) {
+    return collectEnumOperationsForCompositeField({
+      flatFieldMetadata,
+      tableName,
+      operation,
+      options,
+    });
+  }
+  if (
+    isFlatFieldMetadataEntityOfTypes(flatFieldMetadata, [
+      FieldMetadataType.SELECT,
+      FieldMetadataType.MULTI_SELECT,
+      FieldMetadataType.RATING,
+    ])
+  ) {
+    return collectEnumOperationsForBasicEnumField({
+      flatFieldMetadata,
+      tableName,
+      operation,
+      options,
+    });
   }
 
-  const enumFields = Object.values(objectMetadata.fieldsById)
-    .filter(isDefined)
-    .filter((field) => isEnumFieldMetadataType(field.type));
+  return [];
+};
 
-  for (const enumField of enumFields) {
-    if (operation === 'drop') {
-      const enumName = computePostgresEnumName({
-        tableName,
-        columnName: enumField.name,
-      });
-
-      enumOperations.push({ enumName });
-    } else if (operation === 'rename' && options?.newTableName) {
-      const fromEnumName = computePostgresEnumName({
-        tableName,
-        columnName: enumField.name,
-      });
-      const toEnumName = computePostgresEnumName({
-        tableName: options.newTableName,
-        columnName: enumField.name,
-      });
-
-      enumOperations.push({
-        enumName: fromEnumName,
-        fromName: fromEnumName,
-        toName: toEnumName,
-      });
-    }
-  }
-
-  return enumOperations;
+export const collectEnumOperationsForObject = ({
+  tableName,
+  operation,
+  enumFlatFieldMetadatas,
+  options,
+}: {
+  tableName: string;
+  operation: EnumOperation;
+  enumFlatFieldMetadatas: FlatFieldMetadata[];
+  options?: { newTableName?: string; newFieldName?: string };
+}): EnumOperationSpec[] => {
+  return enumFlatFieldMetadatas.flatMap((enumFlatFieldMetadata) =>
+    collectEnumOperationsForField({
+      flatFieldMetadata: enumFlatFieldMetadata,
+      tableName,
+      operation,
+      options,
+    }),
+  );
 };
 
 export const executeBatchEnumOperations = async ({
-  operation,
   enumOperations,
   queryRunner,
   schemaName,
   workspaceSchemaManagerService,
 }: {
-  operation: 'create' | 'drop' | 'rename';
   enumOperations: EnumOperationSpec[];
   queryRunner: QueryRunner;
   schemaName: string;
@@ -184,28 +224,21 @@ export const executeBatchEnumOperations = async ({
 
   try {
     const enumPromises = enumOperations.map((enumOp) => {
-      switch (operation) {
-        case 'create':
+      switch (enumOp.operation) {
+        case EnumOperation.CREATE:
           return workspaceSchemaManagerService.enumManager.createEnum(
             queryRunner,
             schemaName,
             enumOp.enumName,
-            enumOp.values ?? [],
+            enumOp.values,
           );
-        case 'drop':
+        case EnumOperation.DROP:
           return workspaceSchemaManagerService.enumManager.dropEnum(
             queryRunner,
             schemaName,
             enumOp.enumName,
           );
-        case 'rename':
-          if (!enumOp.fromName || !enumOp.toName) {
-            throw new WorkspaceSchemaMigrationException(
-              'From and to enum names are required for rename',
-              WorkspaceSchemaMigrationExceptionCode.ENUM_OPERATION_FAILED,
-            );
-          }
-
+        case EnumOperation.RENAME:
           return workspaceSchemaManagerService.enumManager.renameEnum(
             queryRunner,
             schemaName,
@@ -213,17 +246,14 @@ export const executeBatchEnumOperations = async ({
             enumOp.toName,
           );
         default:
-          throw new WorkspaceSchemaMigrationException(
-            `Unsupported enum operation: ${operation}`,
-            WorkspaceSchemaMigrationExceptionCode.ENUM_OPERATION_FAILED,
-          );
+          return assertUnreachable(enumOp, 'Unsupported enum operation');
       }
     });
 
     await Promise.all(enumPromises);
   } catch (error) {
     throw new WorkspaceSchemaMigrationException(
-      `Failed to execute batch ${operation} enum operations: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      `Failed to execute batch enum operations: ${error instanceof Error ? error.message : 'Unknown error'}`,
       WorkspaceSchemaMigrationExceptionCode.ENUM_OPERATION_FAILED,
     );
   }

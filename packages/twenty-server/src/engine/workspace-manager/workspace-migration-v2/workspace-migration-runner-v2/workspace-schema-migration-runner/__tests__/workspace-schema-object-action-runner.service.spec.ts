@@ -345,7 +345,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         },
       });
 
-      // Table must be created with all field columns
+      // Table must be created with all field columns and enums
       expect(
         mockSchemaManagerService.tableManager.createTable,
       ).toHaveBeenCalledWith(
@@ -391,6 +391,15 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
             default: null,
           },
         ],
+      );
+
+      expect(
+        mockSchemaManagerService.enumManager.createEnum,
+      ).toHaveBeenCalledWith(
+        mockQueryRunner,
+        'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        '_article_status_enum',
+        ['DRAFT', 'PUBLISHED'],
       );
     });
 
@@ -786,10 +795,11 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         },
       };
 
-      await service.runDeleteObjectSchemaMigration({
+      await service.runCreateObjectSchemaMigration({
         action: {
-          type: 'delete_object',
-          objectMetadataId: mockObjectMetadataId,
+          type: 'create_object',
+          flatObjectMetadataWithoutFields: objectMetadata,
+          createFieldActions: [],
         },
         queryRunner: mockQueryRunner,
         flatObjectMetadataMaps,
@@ -797,17 +807,13 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
 
       // Should still drop table
       expect(
-        mockSchemaManagerService.tableManager.dropTable,
+        mockSchemaManagerService.tableManager.createTable,
       ).toHaveBeenCalledWith(
         mockQueryRunner,
         'workspace_1wgvd1injqtife6y4rvfbu3h5',
         '_testObject',
+        [],
       );
-
-      // Should not attempt enum operations
-      expect(
-        mockSchemaManagerService.enumManager.dropEnum,
-      ).not.toHaveBeenCalled();
     });
 
     it('should handle empty fieldsById object', async () => {

@@ -12,12 +12,15 @@ import { unserializeDefaultValue } from 'src/engine/metadata-modules/field-metad
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
-import { type FlatObjectMetadataWithFlatFieldMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-with-flat-field-metadata-maps.type';
 import { type FlatObjectMetadataWithoutFields } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-runner/utils/compute-postgres-enum-name.util';
+import {
+  WorkspaceSchemaMigrationException,
+  WorkspaceSchemaMigrationExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/exceptions/workspace-schema-migration.exception';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 
 import { getWorkspaceSchemaContextForMigration } from './get-workspace-schema-context-for-migration.util';
@@ -25,21 +28,22 @@ import { getWorkspaceSchemaContextForMigration } from './get-workspace-schema-co
 export const generateCompositeColumnDefinition = ({
   compositeProperty,
   parentFieldMetadata,
-  objectMetadataWithOrWithoutFields: objectMetadata,
+  flatObjectMetadataWithoutFields,
 }: {
   compositeProperty: CompositeProperty;
   parentFieldMetadata: FlatFieldMetadata<CompositeFieldMetadataType>;
-  objectMetadataWithOrWithoutFields:
-    | FlatObjectMetadataWithFlatFieldMaps
-    | FlatObjectMetadataWithoutFields;
+  flatObjectMetadataWithoutFields: FlatObjectMetadataWithoutFields;
 }): WorkspaceSchemaColumnDefinition => {
   const { tableName } = getWorkspaceSchemaContextForMigration({
-    workspaceId: objectMetadata.workspaceId,
-    flatObjectMetadata: objectMetadata,
+    workspaceId: flatObjectMetadataWithoutFields.workspaceId,
+    flatObjectMetadataWithoutFields,
   });
 
   if (compositeProperty.type === FieldMetadataType.RELATION) {
-    throw new Error(`Relation type not supported for composite columns`);
+    throw new WorkspaceSchemaMigrationException(
+      `Relation type not supported for composite columns`,
+      WorkspaceSchemaMigrationExceptionCode.UNSUPPORTED_COMPOSITE_COLUMN_TYPE,
+    );
   }
 
   const columnName = computeCompositeColumnName(
@@ -150,33 +154,26 @@ const generateStandardColumnDefinition = (
 
 export const generateColumnDefinitions = ({
   fieldMetadata,
-  objectMetadataWithOrWithoutFields: objectMetadata,
+  flatObjectMetadataWithoutFields,
 }: {
   fieldMetadata: FlatFieldMetadata;
-  objectMetadataWithOrWithoutFields:
-    | FlatObjectMetadataWithFlatFieldMaps
-    | FlatObjectMetadataWithoutFields;
+  flatObjectMetadataWithoutFields: FlatObjectMetadataWithoutFields;
 }): WorkspaceSchemaColumnDefinition[] => {
   const { tableName } = getWorkspaceSchemaContextForMigration({
-    workspaceId: objectMetadata.workspaceId,
-    flatObjectMetadata: objectMetadata,
+    workspaceId: flatObjectMetadataWithoutFields.workspaceId,
+    flatObjectMetadataWithoutFields: flatObjectMetadataWithoutFields,
   });
 
   if (isCompositeFlatFieldMetadata(fieldMetadata)) {
     const compositeType = getCompositeTypeOrThrow(fieldMetadata.type);
-    const columnDefinitions: WorkspaceSchemaColumnDefinition[] = [];
 
-    for (const property of compositeType.properties) {
-      columnDefinitions.push(
-        generateCompositeColumnDefinition({
-          compositeProperty: property,
-          parentFieldMetadata: fieldMetadata,
-          objectMetadataWithOrWithoutFields: objectMetadata,
-        }),
-      );
-    }
-
-    return columnDefinitions;
+    return compositeType.properties.map((property) =>
+      generateCompositeColumnDefinition({
+        compositeProperty: property,
+        parentFieldMetadata: fieldMetadata,
+        flatObjectMetadataWithoutFields: flatObjectMetadataWithoutFields,
+      }),
+    );
   }
 
   if (
