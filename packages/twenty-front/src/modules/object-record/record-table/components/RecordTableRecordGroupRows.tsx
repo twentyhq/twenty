@@ -56,9 +56,9 @@ export const RecordTableRecordGroupRows = () => {
           />
         );
       })}
+      <RecordTableBodyDroppablePlaceholder />
       <RecordTableRecordGroupSectionLoadMore />
       <RecordTableRecordGroupSectionAddNew />
-      <RecordTableBodyDroppablePlaceholder />
       <RecordTableAggregateFooter
         key={currentRecordGroupId}
         currentRecordGroupId={currentRecordGroupId}

@@ -25,9 +25,7 @@ import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpe
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
-import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
-import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
+import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { HttpResponse, graphql } from 'msw';
 import { IconDotsVertical } from 'twenty-ui/display';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
@@ -38,33 +36,25 @@ const openTimeout = 50;
 
 const ContextStoreDecorator: Decorator = (Story) => {
   return (
-    <RecordFilterGroupsComponentInstanceContext.Provider
-      value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+    <RecordComponentInstanceContextsWrapper
+      componentInstanceId={COMMAND_MENU_COMPONENT_INSTANCE_ID}
     >
-      <RecordFiltersComponentInstanceContext.Provider
+      <ContextStoreComponentInstanceContext.Provider
         value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
       >
-        <RecordSortsComponentInstanceContext.Provider
+        <ActionMenuComponentInstanceContext.Provider
           value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
         >
-          <ContextStoreComponentInstanceContext.Provider
-            value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+          <JestContextStoreSetter
+            contextStoreCurrentObjectMetadataNameSingular="company"
+            contextStoreCurrentViewId="1"
+            contextStoreCurrentViewType={ContextStoreViewType.Table}
           >
-            <ActionMenuComponentInstanceContext.Provider
-              value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
-            >
-              <JestContextStoreSetter
-                contextStoreCurrentObjectMetadataNameSingular="company"
-                contextStoreCurrentViewId="1"
-                contextStoreCurrentViewType={ContextStoreViewType.Table}
-              >
-                <Story />
-              </JestContextStoreSetter>
-            </ActionMenuComponentInstanceContext.Provider>
-          </ContextStoreComponentInstanceContext.Provider>
-        </RecordSortsComponentInstanceContext.Provider>
-      </RecordFiltersComponentInstanceContext.Provider>
-    </RecordFilterGroupsComponentInstanceContext.Provider>
+            <Story />
+          </JestContextStoreSetter>
+        </ActionMenuComponentInstanceContext.Provider>
+      </ContextStoreComponentInstanceContext.Provider>
+    </RecordComponentInstanceContextsWrapper>
   );
 };
 

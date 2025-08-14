@@ -4,7 +4,7 @@ import { FormFieldInput } from '@/object-record/record-field/ui/components/FormF
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
-import { useWorkflowStepContextOrThrow } from '@/workflow/states/context/WorkflowStepContext';
+import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
@@ -36,16 +36,12 @@ export const WorkflowEditActionFormFiller = ({
   const { getIcon } = useIcons();
   const { submitFormStep } = useSubmitFormStep();
   const [formData, setFormData] = useState<FormData>(action.settings.input);
-  const { workflowRunId } = useWorkflowStepContextOrThrow();
+  const workflowRunId = useWorkflowRunIdOrThrow();
   const { goBackFromCommandMenu } = useCommandMenuHistory();
   const { updateWorkflowRunStep } = useUpdateWorkflowRunStep();
   const [error, setError] = useState<string | undefined>(undefined);
+
   const canSubmit = !actionOptions.readonly && !isDefined(error);
-
-  if (!isDefined(workflowRunId)) {
-    throw new Error('Form filler action must be used in a workflow run');
-  }
-
   const headerTitle = isDefined(action.name) ? action.name : `Form`;
   const headerIcon = getActionIcon(action.type);
 

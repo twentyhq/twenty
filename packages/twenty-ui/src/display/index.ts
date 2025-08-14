@@ -389,6 +389,8 @@ export {
   IconWebhook,
   IconWorld,
   IconX,
+  IconPinned,
+  IconPinnedOff,
 } from './icon/components/TablerIcons';
 export { useIcons } from './icon/hooks/useIcons';
 export { IconsProvider } from './icon/providers/IconsProvider';

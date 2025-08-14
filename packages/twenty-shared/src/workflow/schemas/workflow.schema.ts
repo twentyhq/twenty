@@ -234,6 +234,7 @@ export const workflowManualTriggerSchema = baseTriggerSchema.extend({
     objectType: z.string().optional(),
     outputSchema: z.object({}).passthrough(),
     icon: z.string().optional(),
+    isPinned: z.boolean().optional(),
   }),
 });
 

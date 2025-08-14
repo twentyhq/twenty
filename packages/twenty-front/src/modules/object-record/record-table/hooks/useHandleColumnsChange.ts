@@ -5,6 +5,7 @@ import { type ColumnDefinition } from '@/object-record/record-table/types/Column
 
 // TODO: see how we can better abstract this and set the correct interaction between view and table
 //   but for now it allows to have a cleaner API globally.
+// TODO: should be solved with new RecordField abstraction
 export const useHandleColumnsChange = () => {
   const { saveColumnsToView } = useSaveColumnsToView();
   const { setTableColumns } = useSetTableColumns();
