@@ -20,12 +20,14 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { doesOtherObjectWithSameNameExists } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
 
+// Refactor this type
 export type ValidateOneFlatObjectMetadataArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   flatObjectMetadataToValidate: FlatObjectMetadata;
   otherFlatObjectMetadataMapsToValidate?: FlatObjectMetadataMaps;
   workspaceId: string;
 };
+///
 
 @Injectable()
 export class FlatObjectMetadataValidatorService {

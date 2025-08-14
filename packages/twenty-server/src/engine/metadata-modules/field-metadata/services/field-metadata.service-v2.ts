@@ -130,10 +130,12 @@ export class FieldMetadataServiceV2 {
         flatObjectMetadataMapsWithImpactedObject,
       );
 
-      const workspaceMigration = this.workspaceMigrationBuilderV2.build({
+      const workspaceMigration = await this.workspaceMigrationBuilderV2.build({
+        buildOptions: {
+          inferDeletionFromMissingObjectFieldIndex: true,
+        },
         fromFlatObjectMetadataMaps: flatObjectMetadataMapsWithImpactedObject,
         toFlatObjectMetadataMaps,
-        inferDeletionFromMissingObjectFieldIndex: true,
         workspaceId,
       });
 
@@ -253,10 +255,12 @@ export class FieldMetadataServiceV2 {
           flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
           flatFieldMetadata: optimisticiallyUpdatedFlatFieldMetadata,
         });
-      const workspaceMigration = this.workspaceMigrationBuilderV2.build({
+      const workspaceMigration = await this.workspaceMigrationBuilderV2.build({
         fromFlatObjectMetadataMaps,
         toFlatObjectMetadataMaps,
-        inferDeletionFromMissingObjectFieldIndex: false,
+        buildOptions: {
+          inferDeletionFromMissingObjectFieldIndex: false,
+        },
         workspaceId,
       });
 
@@ -380,10 +384,12 @@ export class FieldMetadataServiceV2 {
         flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
         objectMetadataIds: impactedObjectMetadataIds,
       });
-      const workspaceMigration = this.workspaceMigrationBuilderV2.build({
+      const workspaceMigration = await this.workspaceMigrationBuilderV2.build({
         fromFlatObjectMetadataMaps,
         toFlatObjectMetadataMaps,
-        inferDeletionFromMissingObjectFieldIndex: false,
+        buildOptions: {
+          inferDeletionFromMissingObjectFieldIndex: false,
+        },
         workspaceId,
       });
 

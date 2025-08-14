@@ -81,16 +81,18 @@ describe.each(allWorkspaceBuilderTestCases)(
 
     it.each(eachTestingContextFilter(testCases))(
       '$title',
-      ({ context: { input, expectedActionsTypeCounter } }) => {
+      async ({ context: { input, expectedActionsTypeCounter } }) => {
         const {
           fromFlatObjectMetadataMaps,
           toFlatObjectMetadataMaps,
-          inferDeletionFromMissingObjectFieldIndex,
+          buildOptions = {
+            inferDeletionFromMissingObjectFieldIndex: true,
+          },
         } = typeof input === 'function' ? input() : input;
-        const workspaceMigration = service.build({
+        const workspaceMigration = await service.build({
+          buildOptions,
           fromFlatObjectMetadataMaps,
           toFlatObjectMetadataMaps,
-          inferDeletionFromMissingObjectFieldIndex,
           workspaceId: '20202020-52cc-4c64-ad63-76c26fc3a1e1',
         });
 

@@ -79,10 +79,12 @@ export class ObjectMetadataServiceV2 {
           flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
           flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
         });
-      const workspaceMigration = this.workspaceMigrationBuilderV2.build({
+      const workspaceMigration = await this.workspaceMigrationBuilderV2.build({
         fromFlatObjectMetadataMaps,
         toFlatObjectMetadataMaps,
-        inferDeletionFromMissingObjectFieldIndex: false,
+        buildOptions: {
+          inferDeletionFromMissingObjectFieldIndex: false,
+        },
         workspaceId,
       });
 
@@ -137,6 +139,8 @@ export class ObjectMetadataServiceV2 {
       });
     const { id: objectMetadataToDeleteId } = flatObjectMetadataToDelete;
 
+    // Shouldn't we validate the flatFieldMetadatasToDelete here too or within the validateFlatObjectMetadataDeletion directly ?
+    // Standard fields of a custom object cannot be deleted unless we delete the parent custom objects
     const flatObjectDeleteValidationErrors =
       this.flatObjectMetadataValidatorService.validateFlatObjectMetadataDeletion(
         {
@@ -184,10 +188,12 @@ export class ObjectMetadataServiceV2 {
             objectMetadataId: objectMetadataToDeleteId,
           }),
         );
-      const workspaceMigration = this.workspaceMigrationBuilderV2.build({
+      const workspaceMigration = await this.workspaceMigrationBuilderV2.build({
         fromFlatObjectMetadataMaps,
         toFlatObjectMetadataMaps,
-        inferDeletionFromMissingObjectFieldIndex: true,
+        buildOptions: {
+          inferDeletionFromMissingObjectFieldIndex: true,
+        },
         workspaceId,
       });
 
@@ -241,14 +247,16 @@ export class ObjectMetadataServiceV2 {
     }
 
     try {
-      const workspaceMigration = this.workspaceMigrationBuilderV2.build({
+      const workspaceMigration = await this.workspaceMigrationBuilderV2.build({
         fromFlatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         toFlatObjectMetadataMaps:
           addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
             flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
             flatObjectMetadata: flatObjectMetadataToCreate,
           }),
-        inferDeletionFromMissingObjectFieldIndex: false,
+        buildOptions: {
+          inferDeletionFromMissingObjectFieldIndex: false,
+        },
         workspaceId,
       });
 

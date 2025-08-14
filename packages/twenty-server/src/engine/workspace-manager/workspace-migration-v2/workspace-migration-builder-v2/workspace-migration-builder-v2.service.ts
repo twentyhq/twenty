@@ -12,21 +12,31 @@ import { getWorkspaceMigrationV2FieldDeleteAction } from 'src/engine/workspace-m
 import { getWorkspaceMigrationV2CreateIndexAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-index-actions';
 import { buildWorkspaceMigrationV2FieldActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-field-actions-builder';
 import { buildWorkspaceMigrationIndexActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-index-actions-builder';
-import { buildWorkspaceMigrationV2ObjectActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
+import { WorkspaceMigrationV2ObjectActionsBuilder } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
+
+type BuildOptions = {
+  inferDeletionFromMissingObjectFieldIndex: boolean;
+  // authorizeStandardMutation: boolean;
+};
+
 export type WorkspaceMigrationBuildArgs = {
   workspaceId: string;
-  inferDeletionFromMissingObjectFieldIndex?: boolean;
+  buildOptions: BuildOptions;
+  // Could from be optional ? we still have a race condition when if we recompute cache it could have been different than when we calculated the to
 } & FromTo<FlatObjectMetadataMaps, 'FlatObjectMetadataMaps'>;
+
 @Injectable()
 export class WorkspaceMigrationBuilderV2Service {
-  constructor() {}
+  constructor(
+    private readonly workspaceMigrationV2ObjectActionsBuilder: WorkspaceMigrationV2ObjectActionsBuilder,
+  ) {}
 
-  build({
+  public async build({
     fromFlatObjectMetadataMaps,
     toFlatObjectMetadataMaps,
     workspaceId,
-    inferDeletionFromMissingObjectFieldIndex = true,
-  }: WorkspaceMigrationBuildArgs): WorkspaceMigrationV2 {
+    buildOptions: { inferDeletionFromMissingObjectFieldIndex },
+  }: WorkspaceMigrationBuildArgs): Promise<WorkspaceMigrationV2> {
     const fromFlatObjectMetadatas =
       fromFlatObjectMetadataMapsToFlatObjectMetadatas(
         fromFlatObjectMetadataMaps,
@@ -34,6 +44,7 @@ export class WorkspaceMigrationBuilderV2Service {
     const toFlatObjectMetadatas =
       fromFlatObjectMetadataMapsToFlatObjectMetadatas(toFlatObjectMetadataMaps);
 
+    // Dispatch
     const {
       created: createdFlatObjectMetadata,
       deleted: deletedFlatObjectMetadata,
@@ -43,13 +54,30 @@ export class WorkspaceMigrationBuilderV2Service {
       to: toFlatObjectMetadatas,
     });
 
+    const objectMetadataDeletedCreatedUpdatedIndex =
+      computeUpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix(
+        updatedFlatObjectMetadata,
+      );
+
+    const objectMetadataDeletedCreatedUpdatedFields =
+      computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix(
+        updatedFlatObjectMetadata,
+      );
+    ///
+
+    // Build
     const objectWorkspaceMigrationActions =
-      buildWorkspaceMigrationV2ObjectActions({
+      await this.workspaceMigrationV2ObjectActionsBuilder.build({
+        fromFlatObjectMetadataMaps: fromFlatObjectMetadataMaps,
         createdFlatObjectMetadata,
         deletedFlatObjectMetadata,
         updatedFlatObjectMetadata,
         inferDeletionFromMissingObjectFieldIndex,
       });
+
+    if (objectWorkspaceMigrationActions.results.failed.length > 0) {
+      throw new Error('TMP exit prastoin');
+    }
 
     const createdObjectMetadataCreateIndexActions =
       createdFlatObjectMetadata.flatMap((objectMetadata) =>
@@ -70,31 +98,25 @@ export class WorkspaceMigrationBuilderV2Service {
           )
         : [];
 
-    const objectMetadataDeletedCreatedUpdatedFields =
-      computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix(
-        updatedFlatObjectMetadata,
-      );
-
     const fieldWorkspaceMigrationActions =
       buildWorkspaceMigrationV2FieldActions({
         inferDeletionFromMissingObjectFieldIndex,
         objectMetadataDeletedCreatedUpdatedFields,
       });
 
-    const objectMetadataDeletedCreatedUpdatedIndex =
-      computeUpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix(
-        updatedFlatObjectMetadata,
-      );
     const indexWorkspaceMigrationActions = buildWorkspaceMigrationIndexActions({
       objectMetadataDeletedCreatedUpdatedIndex,
       inferDeletionFromMissingObjectFieldIndex,
     });
+    ///
 
     return {
       workspaceId,
       actions: [
         ...deletedObjectWorkspaceMigrationDeleteFieldActions,
-        ...objectWorkspaceMigrationActions,
+        ...objectWorkspaceMigrationActions.results.successful.map(
+          (el) => el.result,
+        ), // TMP create util
         ...createdObjectMetadataCreateIndexActions,
         ...fieldWorkspaceMigrationActions,
         ...indexWorkspaceMigrationActions,
