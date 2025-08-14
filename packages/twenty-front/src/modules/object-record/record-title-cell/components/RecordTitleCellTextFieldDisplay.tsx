@@ -50,7 +50,6 @@ export const RecordTitleCellSingleTextDisplayMode = ({
         openRecordTitleCell({
           recordId,
           fieldName: fieldDefinition.metadata.fieldName,
-          containerType,
         });
       }}
     >

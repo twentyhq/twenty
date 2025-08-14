@@ -5,7 +5,6 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { useBuildRecordInputFromFilters } from '@/object-record/record-table/hooks/useBuildRecordInputFromFilters';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
-import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { canOpenObjectInSidePanel } from '@/object-record/utils/canOpenObjectInSidePanel';
 import { AppPath } from '@/types/AppPath';
@@ -67,7 +66,6 @@ export const useCreateNewIndexRecord = ({
             openRecordTitleCell({
               recordId,
               fieldName: labelIdentifierFieldMetadataItem.name,
-              containerType: RecordTitleCellContainerType.ShowPage,
             });
           }
         } else {

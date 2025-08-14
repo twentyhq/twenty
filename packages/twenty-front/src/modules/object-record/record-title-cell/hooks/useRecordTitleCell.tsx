@@ -1,17 +1,33 @@
 import { useContextStoreObjectMetadataItem } from '@/context-store/hooks/useContextStoreObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useInitDraftValue } from '@/object-record/record-field/ui/hooks/useInitDraftValue';
-import { isInlineCellInEditModeFamilyState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeFamilyState';
-import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
-import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { RecordTitleCellComponentInstanceContext } from '@/object-record/record-title-cell/states/contexts/RecordTitleCellComponentInstanceContext';
+import { isTitleCellInEditModeComponentState } from '@/object-record/record-title-cell/states/isTitleCellInEditModeComponentState';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useRecordTitleCell = () => {
+type OpenTitleCellFunctionParams = {
+  recordId: string;
+  fieldName: string;
+};
+
+export const useRecordTitleCell = (instanceIdFromProps?: string) => {
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordTitleCellComponentInstanceContext,
+    instanceIdFromProps,
+  );
+
+  const isTitleCellInEditModeState = useRecoilComponentCallbackState(
+    isTitleCellInEditModeComponentState,
+    instanceId,
+  );
+
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
@@ -23,52 +39,28 @@ export const useRecordTitleCell = () => {
 
   const closeRecordTitleCell = useRecoilCallback(
     ({ set }) =>
-      ({
-        recordId,
-        fieldName,
-        containerType,
-      }: {
-        recordId: string;
-        fieldName: string;
-        containerType: RecordTitleCellContainerType;
-      }) => {
-        set(
-          isInlineCellInEditModeFamilyState(
-            getRecordFieldInputInstanceId({
-              recordId,
-              fieldName,
-              prefix: containerType,
-            }),
-          ),
-          false,
-        );
+      () => {
+        set(isTitleCellInEditModeState, false);
 
         removeFocusItemFromFocusStackById({
-          focusId: getRecordFieldInputInstanceId({
-            recordId,
-            fieldName,
-            prefix: containerType,
-          }),
+          focusId: instanceId,
         });
 
         goBackToPreviousDropdownFocusId();
       },
-    [goBackToPreviousDropdownFocusId, removeFocusItemFromFocusStackById],
+    [
+      goBackToPreviousDropdownFocusId,
+      instanceId,
+      isTitleCellInEditModeState,
+      removeFocusItemFromFocusStackById,
+    ],
   );
 
   const initFieldInputDraftValue = useInitDraftValue();
 
   const openRecordTitleCell = useRecoilCallback(
     ({ set }) =>
-      ({
-        recordId,
-        fieldName,
-        containerType,
-      }: {
-        recordId: string;
-        fieldName: string;
-        containerType: RecordTitleCellContainerType;
-      }) => {
+      ({ recordId, fieldName }: OpenTitleCellFunctionParams) => {
         if (!isDefined(objectMetadataItem)) {
           throw new Error(
             'Cannot find object metadata item in openRecordTitleCell this should not happen.',
@@ -76,18 +68,10 @@ export const useRecordTitleCell = () => {
         }
 
         pushFocusItemToFocusStack({
-          focusId: getRecordFieldInputInstanceId({
-            recordId,
-            fieldName,
-            prefix: containerType,
-          }),
+          focusId: instanceId,
           component: {
             type: FocusComponentType.OPENED_FIELD_INPUT,
-            instanceId: getRecordFieldInputInstanceId({
-              recordId,
-              fieldName,
-              prefix: containerType,
-            }),
+            instanceId: instanceId,
           },
           globalHotkeysConfig: {
             enableGlobalHotkeysConflictingWithKeyboard: false,
@@ -95,12 +79,7 @@ export const useRecordTitleCell = () => {
           },
         });
 
-        const recordTitleCellId = getRecordFieldInputInstanceId({
-          recordId,
-          fieldName,
-          prefix: containerType,
-        });
-        set(isInlineCellInEditModeFamilyState(recordTitleCellId), true);
+        set(isTitleCellInEditModeState, true);
 
         const fieldDefinitions = objectMetadataItem.fields.map(
           (fieldMetadataItem, index) =>
@@ -124,10 +103,16 @@ export const useRecordTitleCell = () => {
         initFieldInputDraftValue({
           recordId,
           fieldDefinition,
-          fieldComponentInstanceId: recordTitleCellId,
+          fieldComponentInstanceId: instanceId,
         });
       },
-    [initFieldInputDraftValue, pushFocusItemToFocusStack, objectMetadataItem],
+    [
+      objectMetadataItem,
+      pushFocusItemToFocusStack,
+      instanceId,
+      isTitleCellInEditModeState,
+      initFieldInputDraftValue,
+    ],
   );
 
   return {
