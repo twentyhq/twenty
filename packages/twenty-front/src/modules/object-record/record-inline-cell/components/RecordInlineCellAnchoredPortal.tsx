@@ -11,6 +11,7 @@ import { FieldFocusContextProvider } from '@/object-record/record-field/ui/conte
 import { useIsRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/useIsRecordFieldReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCellAnchoredPortalContext } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortalContext';
+import { RecordInlineCellCloseOnCommandMenuOpeningEffect } from '@/object-record/record-inline-cell/components/RecordInlineCellCloseOnCommandMenuOpeningEffect';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,20 +24,25 @@ type RecordInlineCellAnchoredPortalProps = {
   >;
   objectMetadataItem: ObjectMetadataItem;
   recordId: string;
-  anchorIdPrefix: string;
+  instanceIdPrefix: string;
   children: React.ReactNode;
 };
 
 export const RecordInlineCellAnchoredPortal = ({
-  position,
   fieldMetadataItem,
   objectMetadataItem,
   recordId,
-  anchorIdPrefix,
+  instanceIdPrefix,
   children,
 }: RecordInlineCellAnchoredPortalProps) => {
+  const fieldInstanceId = getRecordFieldInputInstanceId({
+    recordId,
+    fieldName: fieldMetadataItem.name,
+    prefix: instanceIdPrefix,
+  });
+
   const anchorElement = document.body.querySelector<HTMLAnchorElement>(
-    `#${anchorIdPrefix}-${position}`,
+    `#${fieldInstanceId}`,
   );
 
   const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
@@ -88,16 +94,13 @@ export const RecordInlineCellAnchoredPortal = ({
           {createPortal(
             <RecordFieldComponentInstanceContext.Provider
               value={{
-                instanceId: getRecordFieldInputInstanceId({
-                  recordId,
-                  fieldName: fieldMetadataItem.name,
-                  prefix: anchorIdPrefix,
-                }),
+                instanceId: fieldInstanceId,
               }}
             >
               <RecordInlineCellAnchoredPortalContext>
                 {children}
               </RecordInlineCellAnchoredPortalContext>
+              <RecordInlineCellCloseOnCommandMenuOpeningEffect />
             </RecordFieldComponentInstanceContext.Provider>,
             anchorElement,
           )}

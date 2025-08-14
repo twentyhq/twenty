@@ -111,7 +111,11 @@ export const RecordFieldList = ({
                     useUpdateRecord: useUpdateOneObjectRecordMutation,
                     isDisplayModeFixHeight: true,
                     onMouseEnter: () => handleMouseEnter(index),
-                    anchorId: `${instanceId}-${index}`,
+                    anchorId: `${getRecordFieldInputInstanceId({
+                      recordId: objectRecordId,
+                      fieldName: fieldMetadataItem.name,
+                      prefix: instanceId,
+                    })}`,
                     isRecordFieldReadOnly: isRecordFieldReadOnly({
                       isRecordReadOnly,
                       objectPermissions:
@@ -178,9 +182,11 @@ export const RecordFieldList = ({
                     handleMouseEnter(
                       index + (inlineRelationFieldMetadataItems?.length ?? 0),
                     ),
-                  anchorId: `${instanceId}-${
-                    index + (inlineRelationFieldMetadataItems?.length ?? 0)
-                  }`,
+                  anchorId: `${getRecordFieldInputInstanceId({
+                    recordId: objectRecordId,
+                    fieldName: fieldMetadataItem.name,
+                    prefix: instanceId,
+                  })}`,
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider
