@@ -276,7 +276,10 @@ export class WorkspaceSchemaFieldActionRunnerService
       const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
 
       for (const property of compositeType.properties) {
-        if (property.type === FieldMetadataType.RELATION) {
+        if (
+          property.type === FieldMetadataType.RELATION ||
+          property.type === FieldMetadataType.MORPH_RELATION
+        ) {
           continue;
         }
 

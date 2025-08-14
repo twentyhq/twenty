@@ -313,8 +313,5 @@
     }
   },
   "useInferencePlugins": false,
-  "defaultBase": "main",
-  "tui": {
-    "enabled": false
-  }
+  "defaultBase": "main"
 }

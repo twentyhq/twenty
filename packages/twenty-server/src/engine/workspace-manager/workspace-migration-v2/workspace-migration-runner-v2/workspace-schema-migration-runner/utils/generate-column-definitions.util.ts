@@ -39,7 +39,10 @@ export const generateCompositeColumnDefinition = ({
     flatObjectMetadataWithoutFields,
   });
 
-  if (compositeProperty.type === FieldMetadataType.RELATION) {
+  if (
+    compositeProperty.type === FieldMetadataType.RELATION ||
+    compositeProperty.type === FieldMetadataType.MORPH_RELATION
+  ) {
     throw new WorkspaceSchemaMigrationException(
       `Relation type not supported for composite columns`,
       WorkspaceSchemaMigrationExceptionCode.UNSUPPORTED_COMPOSITE_COLUMN_TYPE,
