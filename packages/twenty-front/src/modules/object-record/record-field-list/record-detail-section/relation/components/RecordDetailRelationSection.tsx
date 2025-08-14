@@ -5,6 +5,9 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
+import { RecordDetailSectionContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailSectionContainer';
+import { RecordDetailRelationRecordsList } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsList';
+import { RecordDetailRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSectionDropdown';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import {
   FieldInputEventContext,
@@ -12,10 +15,6 @@ import {
 } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { usePersistField } from '@/object-record/record-field/ui/hooks/usePersistField';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
-import { RecordDetailRelationSectionDropdown } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSectionDropdown';
-import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
-import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
@@ -157,30 +156,29 @@ export const RecordDetailRelationSection = ({
         onSubmit: handleSubmit,
       }}
     >
-      <RecordDetailSection>
-        <RecordDetailSectionHeader
-          title={fieldDefinition.label}
-          link={
-            isToManyObjects
-              ? {
-                  to: filterLinkHref,
-                  label:
-                    relationRecordsCount > 0
-                      ? t`All (${relationRecordsCount})`
-                      : '',
-                }
-              : undefined
-          }
-          hideRightAdornmentOnMouseLeave={!isDropdownOpen && !isMobile}
-          areRecordsAvailable={relationRecords.length > 0}
-          rightAdornment={
-            <RecordDetailRelationSectionDropdown loading={loading} />
-          }
-        />
+      <RecordDetailSectionContainer
+        title={fieldDefinition.label}
+        link={
+          isToManyObjects
+            ? {
+                to: filterLinkHref,
+                label:
+                  relationRecordsCount > 0
+                    ? t`All (${relationRecordsCount})`
+                    : '',
+              }
+            : undefined
+        }
+        hideRightAdornmentOnMouseLeave={!isDropdownOpen && !isMobile}
+        areRecordsAvailable={relationRecords.length > 0}
+        rightAdornment={
+          <RecordDetailRelationSectionDropdown loading={loading} />
+        }
+      >
         {relationRecords.length > 0 && (
           <RecordDetailRelationRecordsList relationRecords={relationRecords} />
         )}
-      </RecordDetailSection>
+      </RecordDetailSectionContainer>
     </FieldInputEventContext.Provider>
   );
 };

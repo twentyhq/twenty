@@ -8,4 +8,4 @@ const StyledListItem = styled.div`
   height: ${({ theme }) => theme.spacing(10)};
 `;
 
-export { StyledListItem as RecordDetailRecordsListItem };
+export { StyledListItem as RecordDetailRecordsListItemContainer };

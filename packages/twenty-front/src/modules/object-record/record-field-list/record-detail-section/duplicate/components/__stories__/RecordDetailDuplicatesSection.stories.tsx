@@ -7,8 +7,8 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 
-import { RecordDetailDuplicatesSection } from '../RecordDetailDuplicatesSection';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { RecordDetailDuplicatesSection } from '../../components/RecordDetailDuplicatesSection';
 
 const companiesMock = getCompaniesMock();
 

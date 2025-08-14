@@ -1,8 +1,8 @@
 import { Fragment, useState } from 'react';
 
-import { RecordDetailRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsList';
-import { RecordDetailRelationRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsListItem';
-import { RecordDetailRelationRecordsListItemEffect } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsListItemEffect';
+import { RecordDetailRecordsListContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailRecordsListContainer';
+import { RecordDetailRelationRecordsListItem } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem';
+import { RecordDetailRelationRecordsListItemEffect } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItemEffect';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type RecordDetailRelationRecordsListProps = {
@@ -18,7 +18,7 @@ export const RecordDetailRelationRecordsList = ({
     setExpandedItem(recordId === expandedItem ? '' : recordId);
 
   return (
-    <RecordDetailRecordsList>
+    <RecordDetailRecordsListContainer>
       {relationRecords.slice(0, 5).map((relationRecord) => (
         <Fragment key={relationRecord.id}>
           <RecordDetailRelationRecordsListItemEffect
@@ -33,6 +33,6 @@ export const RecordDetailRelationRecordsList = ({
           />
         </Fragment>
       ))}
-    </RecordDetailRecordsList>
+    </RecordDetailRecordsListContainer>
   );
 };
