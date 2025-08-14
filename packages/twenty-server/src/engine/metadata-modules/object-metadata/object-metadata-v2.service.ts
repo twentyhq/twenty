@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
 import { EMPTY_FLAT_OBJECT_METADATA_MAPS } from 'src/engine/metadata-modules/flat-object-metadata-maps/constant/empty-flat-object-metadata-maps.constant';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
@@ -63,7 +64,7 @@ export class ObjectMetadataServiceV2 {
           flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
           flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
         });
-      const workspaceMigration =
+      const validateAndBuildResult =
         await this.workspaceMigrationBuilderV2.validateAndBuild({
           fromFlatObjectMetadataMaps,
           toFlatObjectMetadataMaps,
@@ -74,10 +75,19 @@ export class ObjectMetadataServiceV2 {
           workspaceId,
         });
 
-      await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
+      if (validateAndBuildResult.status === 'fail') {
+        throw new MultipleMetadataValidationErrors(
+          validateAndBuildResult.errors,
+          'Multiple validation errors occurred while deleting object',
+        );
+      }
+
+      await this.workspaceMigrationRunnerV2Service.run(
+        validateAndBuildResult.workspaceMigration,
+      );
     } catch {
       throw new ObjectMetadataException(
-        'Workspace migration failed to run',
+        'Workspace migration fail to run',
         ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
@@ -157,7 +167,7 @@ export class ObjectMetadataServiceV2 {
             objectMetadataId: objectMetadataToDeleteId,
           }),
         );
-      const workspaceMigration =
+      const validateAndBuildResult =
         await this.workspaceMigrationBuilderV2.validateAndBuild({
           fromFlatObjectMetadataMaps,
           toFlatObjectMetadataMaps,
@@ -168,10 +178,19 @@ export class ObjectMetadataServiceV2 {
           workspaceId,
         });
 
-      await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
+      if (validateAndBuildResult.status === 'fail') {
+        throw new MultipleMetadataValidationErrors(
+          validateAndBuildResult.errors,
+          'Multiple validation errors occurred while deleting object',
+        );
+      }
+
+      await this.workspaceMigrationRunnerV2Service.run(
+        validateAndBuildResult.workspaceMigration,
+      );
     } catch {
       throw new ObjectMetadataException(
-        'Workspace migration failed to run',
+        'Workspace migration fail to run',
         ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
@@ -217,14 +236,19 @@ export class ObjectMetadataServiceV2 {
           workspaceId,
         });
 
-      if (validateAndBuildResult.status === 'failed') {
-        return;
+      if (validateAndBuildResult.status === 'fail') {
+        throw new MultipleMetadataValidationErrors(
+          validateAndBuildResult.errors,
+          'Multiple validation errors occurred while creating object',
+        );
       }
 
-      await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
+      await this.workspaceMigrationRunnerV2Service.run(
+        validateAndBuildResult.workspaceMigration,
+      );
     } catch {
       throw new ObjectMetadataException(
-        'Workspace migration failed to run',
+        'Workspace migration fail to run',
         ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }

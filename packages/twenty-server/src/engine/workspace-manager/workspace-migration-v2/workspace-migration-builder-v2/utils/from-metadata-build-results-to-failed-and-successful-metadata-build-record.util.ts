@@ -9,7 +9,7 @@ export const fromMetadataBuildResultsToFailedAndSuccessfulMetadataBuildRecord =
   ): FailedAndSuccessfulMetadataValidateAndBuildRecord<T> =>
     metadataBuildResults.reduce(
       (acc, buildResult) =>
-        buildResult.status === 'failed'
+        buildResult.status === 'fail'
           ? {
               ...acc,
               failed: [...acc.failed, buildResult],

@@ -71,7 +71,7 @@ export class WorkspaceMigrationBuilderV2Service {
       );
     ///
 
-    // Build
+    // Validate and build
     const objectWorkspaceMigrationActions =
       await this.workspaceMigrationV2ObjectActionsBuilder.validateAndBuildObjectActions(
         {

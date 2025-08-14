@@ -104,9 +104,7 @@ export class FieldMetadataServiceV2 {
     if (validationErrors.length > 0) {
       throw new MultipleMetadataValidationErrors(
         validationErrors,
-        validationErrors.length > 1
-          ? 'Multiple validation errors occurred while deleting field'
-          : 'A validation error occurred while deleting field',
+        'Multiple validation errors occurred while deleting field',
       );
     }
 
@@ -130,7 +128,7 @@ export class FieldMetadataServiceV2 {
         flatObjectMetadataMapsWithImpactedObject,
       );
 
-      const workspaceMigration =
+      const validateAndBuildResult =
         await this.workspaceMigrationBuilderV2.validateAndBuild({
           buildOptions: {
             isSystemBuild: false,
@@ -141,7 +139,16 @@ export class FieldMetadataServiceV2 {
           workspaceId,
         });
 
-      await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
+      if (validateAndBuildResult.status === 'fail') {
+        throw new MultipleMetadataValidationErrors(
+          validateAndBuildResult.errors,
+          'Multiple validation errors occurred while deleting field',
+        );
+      }
+
+      await this.workspaceMigrationRunnerV2Service.run(
+        validateAndBuildResult.workspaceMigration,
+      );
     } catch {
       throw new FieldMetadataException(
         'Workspace migration failed to run',
@@ -257,7 +264,7 @@ export class FieldMetadataServiceV2 {
           flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
           flatFieldMetadata: optimisticiallyUpdatedFlatFieldMetadata,
         });
-      const workspaceMigration =
+      const validateAndBuildResult =
         await this.workspaceMigrationBuilderV2.validateAndBuild({
           fromFlatObjectMetadataMaps,
           toFlatObjectMetadataMaps,
@@ -268,7 +275,16 @@ export class FieldMetadataServiceV2 {
           workspaceId,
         });
 
-      await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
+      if (validateAndBuildResult.status === 'fail') {
+        throw new MultipleMetadataValidationErrors(
+          validateAndBuildResult.errors,
+          'Multiple validation errors occurred while updating field',
+        );
+      }
+
+      await this.workspaceMigrationRunnerV2Service.run(
+        validateAndBuildResult.workspaceMigration,
+      );
 
       return this.fieldMetadataRepository.findOneOrFail({
         where: {
@@ -388,7 +404,7 @@ export class FieldMetadataServiceV2 {
         flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
         objectMetadataIds: impactedObjectMetadataIds,
       });
-      const workspaceMigration =
+      const validateAndBuildResult =
         await this.workspaceMigrationBuilderV2.validateAndBuild({
           fromFlatObjectMetadataMaps,
           toFlatObjectMetadataMaps,
@@ -399,7 +415,16 @@ export class FieldMetadataServiceV2 {
           workspaceId,
         });
 
-      await this.workspaceMigrationRunnerV2Service.run(workspaceMigration);
+      if (validateAndBuildResult.status === 'fail') {
+        throw new MultipleMetadataValidationErrors(
+          validateAndBuildResult.errors,
+          'Multiple validation errors occurred while updating field',
+        );
+      }
+
+      await this.workspaceMigrationRunnerV2Service.run(
+        validateAndBuildResult.workspaceMigration,
+      );
 
       // In the best of the world could consume runner returned value instead of searching in db here
       return this.fieldMetadataRepository.find({

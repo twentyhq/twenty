@@ -118,7 +118,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilder {
                 {
                   buildOptions,
                   existingFlatObjectMetadataMaps:
-                    optimisticFlatObjectMetadataMaps, // Should get updated everytime ?
+                    optimisticFlatObjectMetadataMaps,
                   objectMetadataToDeleteId: flatObjectMetadataToDelete.id, // does this makes sense that it's only the id ? we already retrieved the flat
                 },
               );
