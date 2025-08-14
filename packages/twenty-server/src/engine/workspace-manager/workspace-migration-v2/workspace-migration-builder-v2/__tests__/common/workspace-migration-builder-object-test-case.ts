@@ -1,18 +1,13 @@
 import { getFlatIndexMetadataMock } from 'src/engine/metadata-modules/flat-index-metadata/__mocks__/get-flat-index-metadata.mock';
-import { EMPTY_FLAT_OBJECT_METADATA_MAPS } from 'src/engine/metadata-modules/flat-object-metadata-maps/constant/empty-flat-object-metadata-maps.constant';
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
 import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
-import { FAVORITE_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/favorite-flat-object.mock';
-import { FAVORITE_FOLDER_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/favorite-folder-flat-object.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { NOTE_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/note-flat-object.mock';
-import { NOTE_TARGET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/note-target-flat-object.mock';
+import { OPPORTUNITY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/opportunity-flat-object.mock';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';
 import { ROCKET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/rocket-flat-object.mock';
-import { TASK_TARGET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/task-target-flat-object.mock';
-import { TIMELINE_ACTIVITY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/timeline-activity-flat-object.mock';
+import { STANDARD_RELATION_TARGET_FLAT_OBJECT_METADATA_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/standard-relation-target-flat-object-metadata.mocks';
 import { fromFlatObjectMetadatasToFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadatas-to-flat-object-metadata-maps.util';
 import { type WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
 
@@ -68,32 +63,21 @@ const DELETE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
   },
 ];
 
-const CREATE_OBJECT_TESTS_CASES: WorkspaceMigrationBuilderTestCase[] = [
+const CREATE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
   {
-    only: true,
     title: 'It should build a create_object action with custom object',
     context: {
       input: {
         fromFlatObjectMetadataMaps:
           fromFlatObjectMetadatasToFlatObjectMetadataMaps([
             PET_FLAT_OBJECT_MOCK,
-            NOTE_FLAT_OBJECT_MOCK,
-            TIMELINE_ACTIVITY_FLAT_OBJECT_MOCK,
-            NOTE_TARGET_FLAT_OBJECT_MOCK,
-            FAVORITE_FLAT_OBJECT_MOCK,
-            TASK_TARGET_FLAT_OBJECT_MOCK,
-            FAVORITE_FOLDER_FLAT_OBJECT_MOCK,
+            ...STANDARD_RELATION_TARGET_FLAT_OBJECT_METADATA_MOCKS,
           ]),
         toFlatObjectMetadataMaps:
           fromFlatObjectMetadatasToFlatObjectMetadataMaps([
             PET_FLAT_OBJECT_MOCK,
-            NOTE_FLAT_OBJECT_MOCK,
-            TIMELINE_ACTIVITY_FLAT_OBJECT_MOCK,
-            NOTE_TARGET_FLAT_OBJECT_MOCK,
-            FAVORITE_FLAT_OBJECT_MOCK,
-            TASK_TARGET_FLAT_OBJECT_MOCK,
-            FAVORITE_FOLDER_FLAT_OBJECT_MOCK,
             ROCKET_FLAT_OBJECT_MOCK,
+            ...STANDARD_RELATION_TARGET_FLAT_OBJECT_METADATA_MOCKS,
           ]),
       },
       expectedActionsTypeCounter: {
@@ -108,11 +92,13 @@ const CREATE_OBJECT_TESTS_CASES: WorkspaceMigrationBuilderTestCase[] = [
         fromFlatObjectMetadataMaps:
           fromFlatObjectMetadatasToFlatObjectMetadataMaps([
             ROCKET_FLAT_OBJECT_MOCK,
+            ...STANDARD_RELATION_TARGET_FLAT_OBJECT_METADATA_MOCKS,
           ]),
         toFlatObjectMetadataMaps:
           fromFlatObjectMetadatasToFlatObjectMetadataMaps([
             PET_FLAT_OBJECT_MOCK,
             ROCKET_FLAT_OBJECT_MOCK,
+            ...STANDARD_RELATION_TARGET_FLAT_OBJECT_METADATA_MOCKS,
           ]),
       },
       expectedActionsTypeCounter: {
@@ -124,10 +110,18 @@ const CREATE_OBJECT_TESTS_CASES: WorkspaceMigrationBuilderTestCase[] = [
     title:
       'It should build a create_object and create_index actions for each of this fieldMetadata',
     context: {
+      expectedActionsTypeCounter: {
+        createIndex: 1,
+        createObject: 1,
+      },
       input: {
-        fromFlatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        fromFlatObjectMetadataMaps:
+          fromFlatObjectMetadatasToFlatObjectMetadataMaps([
+            ...STANDARD_RELATION_TARGET_FLAT_OBJECT_METADATA_MOCKS,
+          ]),
         toFlatObjectMetadataMaps:
           fromFlatObjectMetadatasToFlatObjectMetadataMaps([
+            ...STANDARD_RELATION_TARGET_FLAT_OBJECT_METADATA_MOCKS,
             {
               ...ROCKET_FLAT_OBJECT_MOCK,
               flatIndexMetadatas: [
@@ -143,105 +137,63 @@ const CREATE_OBJECT_TESTS_CASES: WorkspaceMigrationBuilderTestCase[] = [
   },
 ];
 
+const UPDATE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
+  {
+    title: 'It should build an update_object for custom object',
+    context: {
+      input: {
+        fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+        toFlatObjectMetadataMaps:
+          replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
+            flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+            flatObjectMetadata: getFlatObjectMetadataMock({
+              ...PET_FLAT_OBJECT_MOCK,
+              nameSingular: 'prastouin',
+              namePlural: 'prastoins',
+              isLabelSyncedWithName: false,
+            }),
+          }),
+      },
+      expectedActionsTypeCounter: {
+        updateObject: 1,
+      },
+    },
+  },
+  {
+    title: 'It should build an update_object for standard object',
+    context: {
+      input: {
+        fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+        toFlatObjectMetadataMaps:
+          replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
+            flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+            flatObjectMetadata: getFlatObjectMetadataMock({
+              ...OPPORTUNITY_FLAT_OBJECT_MOCK,
+              standardOverrides: {
+                description: 'Updated description',
+              },
+            }),
+          }),
+      },
+      expectedActionsTypeCounter: {
+        updateObject: 1,
+      },
+    },
+  },
+];
+
 export const WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES: WorkspaceMigrationBuilderTestCase[] =
   [
-    // ...DELETE_OBJECT_TEST_CASES,
-    ...CREATE_OBJECT_TESTS_CASES,
-    // {
-    //   title: 'It should build an update_object for custom object',
-    //   context: {
-    //     input: {
-    //       fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
-    //       toFlatObjectMetadataMaps:
-    //         replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
-    //           flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
-    //           flatObjectMetadata: getFlatObjectMetadataMock({
-    //             ...PET_FLAT_OBJECT_MOCK,
-    //             nameSingular: 'prastouin',
-    //             namePlural: 'prastoins',
-    //             isLabelSyncedWithName: false,
-    //           }),
-    //         }),
-    //     },
-    //     expectedActionsTypeCounter: {
-    //       updateObject: 1,
-    //     },
-    //   },
-    // },
-    // {
-    //   title: 'It should build an update_object for standard object',
-    //   context: {
-    //     input: {
-    //       fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
-    //       toFlatObjectMetadataMaps:
-    //         replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
-    //           flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
-    //           flatObjectMetadata: getFlatObjectMetadataMock({
-    //             ...OPPORTUNITY_FLAT_OBJECT_MOCK,
-    //             standardOverrides: {
-    //               description: 'Updated description',
-    //             },
-    //           }),
-    //         }),
-    //     },
-    //     expectedActionsTypeCounter: {
-    //       updateObject: 1,
-    //     },
-    //   },
-    // },
-    // {
-    //   title: 'It should build a create_object action',
-    //   context: {
-    //     input: {
-    //       fromFlatObjectMetadataMaps:
-    //         fromFlatObjectMetadatasToFlatObjectMetadataMaps([
-    //           PET_FLAT_OBJECT_MOCK,
-    //         ]),
-    //       toFlatObjectMetadataMaps:
-    //         fromFlatObjectMetadatasToFlatObjectMetadataMaps([
-    //           PET_FLAT_OBJECT_MOCK,
-    //           ROCKET_FLAT_OBJECT_MOCK,
-    //         ]),
-    //     },
-    //     expectedActionsTypeCounter: {
-    //       createObject: 1,
-    //     },
-    //   },
-    // },
-    // {
-    //   title:
-    //     'It should build a create_object and create_index actions for each of this fieldMetadata',
-    //   context: {
-    //     input: {
-    //       fromFlatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
-    //       toFlatObjectMetadataMaps:
-    //         fromFlatObjectMetadatasToFlatObjectMetadataMaps([
-    //           {
-    //             ...ROCKET_FLAT_OBJECT_MOCK,
-    //             flatIndexMetadatas: [
-    //               getFlatIndexMetadataMock({
-    //                 objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
-    //                 uniqueIdentifier: 'field-metadata-unique-identifier-1',
-    //               }),
-    //             ],
-    //           },
-    //         ]),
-    //     },
-
-    //     expectedActionsTypeCounter: {
-    //       createObject: 1,
-    //       createField: 0,
-    //       createIndex: 1,
-    //     },
-    //   },
-    // },
-    // {
-    //   title: 'It should not infer any actions as from and to are identical',
-    //   context: {
-    //     input: {
-    //       fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
-    //       toFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
-    //     },
-    //   },
-    // },
+    ...DELETE_OBJECT_TEST_CASES,
+    ...CREATE_OBJECT_TEST_CASES,
+    ...UPDATE_OBJECT_TEST_CASES,
+    {
+      title: 'It should not infer any actions as from and to are identical',
+      context: {
+        input: {
+          fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+          toFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+        },
+      },
+    },
   ];

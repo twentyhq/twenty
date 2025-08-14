@@ -18,17 +18,24 @@ export const extractRecordIdsAndDatesAsExpectAny = (
       return acc;
     }
 
-    if (key.endsWith('Id') || key === 'id') {
-      return {
-        ...acc,
-        [key]: expect.any(String),
-      };
-    }
-
     if (value instanceof Date) {
       return {
         ...acc,
         [key]: expect.any(Date),
+      };
+    }
+
+    if (
+      key.endsWith('Id') ||
+      key === 'id' ||
+      key === 'updatedAt' ||
+      key === 'deletedAt' ||
+      key === 'createdAt'
+    ) {
+      console.log(key);
+      return {
+        ...acc,
+        [key]: expect.any(String),
       };
     }
 

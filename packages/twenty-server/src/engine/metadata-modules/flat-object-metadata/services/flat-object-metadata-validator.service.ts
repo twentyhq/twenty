@@ -58,7 +58,6 @@ const computeOtherFlatObjectMetadataMapsToValidate = ({
 
   const relationTargetFlatFieldMetadata =
     findRelationFlatFieldMetadataTargetFlatFieldMetadata({
-      // should not throw
       flatFieldMetadata,
       flatObjectMetadataMaps,
     });
