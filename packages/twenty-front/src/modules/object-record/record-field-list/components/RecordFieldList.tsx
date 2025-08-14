@@ -21,21 +21,26 @@ import { useRecordShowContainerActions } from '@/object-record/record-show/hooks
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 type RecordFieldListProps = {
+  instanceId: string;
   objectNameSingular: string;
   objectRecordId: string;
   showDuplicatesSection?: boolean;
+  showRelationSections?: boolean;
+  excludeFieldMetadataIds?: string[];
+  excludeCreatedAtAndUpdatedAt?: boolean;
 };
 
-const INPUT_ID_PREFIX = 'fields-card';
-
 export const RecordFieldList = ({
+  instanceId,
   objectNameSingular,
   objectRecordId,
   showDuplicatesSection = true,
+  showRelationSections = true,
+  excludeFieldMetadataIds = [],
+  excludeCreatedAtAndUpdatedAt = true,
 }: RecordFieldListProps) => {
   const { recordLoading, isPrefetchLoading } = useRecordShowContainerData({
     objectRecordId,
@@ -52,8 +57,6 @@ export const RecordFieldList = ({
     objectRecordId,
   });
 
-  const { isInRightDrawer } = useIsInRightDrawerOrThrow();
-
   const isRecordReadOnly = useIsRecordReadOnly({
     recordId: objectRecordId,
     objectMetadataId: objectMetadataItem.id,
@@ -61,7 +64,7 @@ export const RecordFieldList = ({
 
   const setRecordFieldListHoverPosition = useSetRecoilComponentState(
     recordFieldListHoverPositionComponentState,
-    `fields-list-${objectRecordId}`,
+    instanceId,
   );
 
   const handleMouseEnter = (index: number) => {
@@ -74,12 +77,15 @@ export const RecordFieldList = ({
     boxedRelationFieldMetadataItems,
   } = useFieldListFieldMetadataItems({
     objectNameSingular,
+    excludeFieldMetadataIds,
+    showRelationSections,
+    excludeCreatedAtAndUpdatedAt,
   });
 
   return (
     <RecordFieldListComponentInstanceContext.Provider
       value={{
-        instanceId: `fields-list-${objectRecordId}`,
+        instanceId,
       }}
     >
       <PropertyBox>
@@ -125,9 +131,7 @@ export const RecordFieldList = ({
                     componentInstanceId={getRecordFieldInputInstanceId({
                       recordId: objectRecordId,
                       fieldName: fieldMetadataItem.name,
-                      prefix: isInRightDrawer
-                        ? 'right-drawer-fields-card'
-                        : 'fields-card',
+                      prefix: instanceId,
                     })}
                     activityObjectNameSingular={
                       objectNameSingular as
@@ -174,7 +178,7 @@ export const RecordFieldList = ({
                     handleMouseEnter(
                       index + (inlineRelationFieldMetadataItems?.length ?? 0),
                     ),
-                  anchorId: `record-field-list-inline-cell-${
+                  anchorId: `${instanceId}-${
                     index + (inlineRelationFieldMetadataItems?.length ?? 0)
                   }`,
                 }}
@@ -184,13 +188,13 @@ export const RecordFieldList = ({
                     instanceId: getRecordFieldInputInstanceId({
                       recordId: objectRecordId,
                       fieldName: fieldMetadataItem.name,
-                      prefix: INPUT_ID_PREFIX,
+                      prefix: instanceId,
                     }),
                   }}
                 >
                   <RecordInlineCell
                     loading={recordLoading}
-                    instanceIdPrefix={INPUT_ID_PREFIX}
+                    instanceIdPrefix={instanceId}
                   />
                 </RecordFieldComponentInstanceContext.Provider>
               </FieldContext.Provider>

@@ -26,6 +26,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useIsInRightDrawerOrThrow } from '@/ui/layout/right-drawer/contexts/RightDrawerContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { createPortal } from 'react-dom';
@@ -195,6 +196,8 @@ export const RecordDetailRelationRecordsListItem = ({
     [isExpanded],
   );
 
+  const { isInRightDrawer } = useIsInRightDrawerOrThrow();
+
   return (
     <>
       <StyledListItem isDropdownOpen={isDropdownOpen}>
@@ -245,9 +248,12 @@ export const RecordDetailRelationRecordsListItem = ({
       </StyledListItem>
       <AnimatedEaseInOut isOpen={isExpanded}>
         <RecordFieldList
+          instanceId={`record-detail-relation-${relationRecord.id}-${isInRightDrawer ? 'right-drawer' : ''}`}
           objectNameSingular={relationObjectMetadataNameSingular}
           objectRecordId={relationRecord.id}
           showDuplicatesSection={false}
+          excludeCreatedAtAndUpdatedAt={true}
+          excludeFieldMetadataIds={[relationFieldMetadataId]}
         />
       </AnimatedEaseInOut>
       {createPortal(
