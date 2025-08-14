@@ -23,12 +23,6 @@ export const useIsRecordFieldReadOnly = ({
     (field) => field.id === fieldMetadataId,
   );
 
-  if (!fieldMetadataItem) {
-    throw new Error(
-      `Could not load read only property for field ${fieldMetadataId}`,
-    );
-  }
-
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const objectPermissions = getObjectPermissionsForObject(
@@ -40,6 +34,10 @@ export const useIsRecordFieldReadOnly = ({
     recordId,
     objectMetadataId,
   });
+
+  if (!fieldMetadataItem) {
+    return false;
+  }
 
   return isRecordFieldReadOnly({
     isRecordReadOnly,
