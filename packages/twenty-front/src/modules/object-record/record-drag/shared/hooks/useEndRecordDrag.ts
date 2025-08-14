@@ -17,28 +17,28 @@ export const useEndRecordDrag = (
   context: RecordDragContext,
   instanceId?: string,
 ) => {
-  const isMultiDragActiveState = useRecoilComponentCallbackState(
+  const isMultiDragActiveCallbackState = useRecoilComponentCallbackState(
     context === 'board'
       ? isMultiDragActiveComponentState
       : isMultiDragActiveTableComponentState,
     instanceId,
   );
 
-  const draggedRecordIdsState = useRecoilComponentCallbackState(
+  const draggedRecordIdsCallbackState = useRecoilComponentCallbackState(
     context === 'board'
       ? draggedRecordIdsComponentState
       : draggedRecordIdsTableComponentState,
     instanceId,
   );
 
-  const primaryDraggedRecordIdState = useRecoilComponentCallbackState(
+  const primaryDraggedRecordIdCallbackState = useRecoilComponentCallbackState(
     context === 'board'
       ? primaryDraggedRecordIdComponentState
       : primaryDraggedRecordIdTableComponentState,
     instanceId,
   );
 
-  const originalSelectionState = useRecoilComponentCallbackState(
+  const originalSelectionCallbackState = useRecoilComponentCallbackState(
     context === 'board'
       ? originalSelectionComponentState
       : originalSelectionTableComponentState,
@@ -48,16 +48,16 @@ export const useEndRecordDrag = (
   const endDrag = useRecoilCallback(
     ({ set }) =>
       () => {
-        set(isMultiDragActiveState, false);
-        set(draggedRecordIdsState, []);
-        set(primaryDraggedRecordIdState, null);
-        set(originalSelectionState, []);
+        set(isMultiDragActiveCallbackState, false);
+        set(draggedRecordIdsCallbackState, []);
+        set(primaryDraggedRecordIdCallbackState, null);
+        set(originalSelectionCallbackState, []);
       },
     [
-      isMultiDragActiveState,
-      draggedRecordIdsState,
-      primaryDraggedRecordIdState,
-      originalSelectionState,
+      isMultiDragActiveCallbackState,
+      draggedRecordIdsCallbackState,
+      primaryDraggedRecordIdCallbackState,
+      originalSelectionCallbackState,
     ],
   );
 

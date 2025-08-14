@@ -1,15 +1,11 @@
-import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
-import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { type DropResult } from '@hello-pangea/dnd';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { getDragOperationType } from '@/object-record/record-drag/shared/utils/getDragOperationType';
-import { getRecordPositionDataFromSnapshot } from '@/object-record/record-drag/shared/utils/getRecordPositionDataFromSnapshot';
-import { processMultiDrag } from '@/object-record/record-drag/shared/utils/processMultiDrag';
-import { processSingleDrag } from '@/object-record/record-drag/shared/utils/processSingleDrag';
+
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { processGroupDragOperation } from '@/object-record/record-drag/shared/utils/processGroupDragOperation';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 
 export const useRecordBoardDragOperations = () => {
   const { updateOneRecord, selectFieldMetadataItem } =
@@ -23,69 +19,24 @@ export const useRecordBoardDragOperations = () => {
   const processDragOperation = useRecoilCallback(
     ({ snapshot }) =>
       (result: DropResult, selectedRecordIds: string[]) => {
-        if (!result.destination || !selectFieldMetadataItem) return;
+        if (!selectFieldMetadataItem) return;
 
-        const draggedRecordId = result.draggableId;
-        const destinationGroupId = result.destination.droppableId;
-
-        const recordGroup = getSnapshotValue(
+        processGroupDragOperation({
+          result,
           snapshot,
-          recordGroupDefinitionFamilyState(destinationGroupId),
-        );
-
-        if (!recordGroup) return;
-
-        const destinationRecordIds = getSnapshotValue(
-          snapshot,
-          recordIndexRecordIdsByGroupFamilyState(destinationGroupId),
-        ) as string[];
-
-        const recordPositionData = getRecordPositionDataFromSnapshot({
-          allRecordIds: destinationRecordIds,
-          snapshot,
-        });
-
-        const operationType = getDragOperationType({
-          draggedRecordId,
           selectedRecordIds,
-        });
-
-        if (operationType === 'single') {
-          const singleDragResult = processSingleDrag({
-            result,
-            recordPositionData,
-            recordIds: destinationRecordIds,
-            groupValue: recordGroup.value,
-            selectFieldName: selectFieldMetadataItem.name,
-          });
-
-          updateOneRecord({
-            idToUpdate: singleDragResult.recordId,
-            updateOneRecordInput: {
-              [selectFieldMetadataItem.name]: singleDragResult.groupValue,
-              position: singleDragResult.position,
-            },
-          });
-        } else {
-          const multiDragResult = processMultiDrag({
-            result,
-            selectedRecordIds,
-            recordPositionData,
-            recordIds: destinationRecordIds,
-            groupValue: recordGroup.value,
-            selectFieldName: selectFieldMetadataItem.name,
-          });
-
-          for (const update of multiDragResult.recordUpdates) {
+          selectFieldName: selectFieldMetadataItem.name,
+          recordIdsByGroupFamilyState: recordIndexRecordIdsByGroupFamilyState,
+          onUpdateRecord: ({ recordId, position, groupValue }) => {
             updateOneRecord({
-              idToUpdate: update.recordId,
+              idToUpdate: recordId,
               updateOneRecordInput: {
-                [selectFieldMetadataItem.name]: update.groupValue,
-                position: update.position,
+                [selectFieldMetadataItem.name]: groupValue,
+                position,
               },
             });
-          }
-        }
+          },
+        });
       },
     [
       updateOneRecord,

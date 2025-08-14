@@ -68,12 +68,12 @@ export const useRecordTableDragOperations = () => {
           snapshot,
         });
 
-        const operationType = getDragOperationType({
+        const dragOperationType = getDragOperationType({
           draggedRecordId,
           selectedRecordIds,
         });
 
-        if (operationType === 'single') {
+        if (dragOperationType === 'single') {
           const singleDragResult = processSingleDrag({
             result,
             recordPositionData,

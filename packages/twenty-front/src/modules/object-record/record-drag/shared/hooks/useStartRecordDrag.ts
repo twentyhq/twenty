@@ -19,28 +19,28 @@ export const useStartRecordDrag = (
   context: RecordDragContext,
   instanceId?: string,
 ) => {
-  const isMultiDragActiveState = useRecoilComponentCallbackState(
+  const isMultiDragActiveCallbackState = useRecoilComponentCallbackState(
     context === 'board'
       ? isMultiDragActiveComponentState
       : isMultiDragActiveTableComponentState,
     instanceId,
   );
 
-  const draggedRecordIdsState = useRecoilComponentCallbackState(
+  const draggedRecordIdsCallbackState = useRecoilComponentCallbackState(
     context === 'board'
       ? draggedRecordIdsComponentState
       : draggedRecordIdsTableComponentState,
     instanceId,
   );
 
-  const primaryDraggedRecordIdState = useRecoilComponentCallbackState(
+  const primaryDraggedRecordIdCallbackState = useRecoilComponentCallbackState(
     context === 'board'
       ? primaryDraggedRecordIdComponentState
       : primaryDraggedRecordIdTableComponentState,
     instanceId,
   );
 
-  const originalSelectionState = useRecoilComponentCallbackState(
+  const originalSelectionCallbackState = useRecoilComponentCallbackState(
     context === 'board'
       ? originalSelectionComponentState
       : originalSelectionTableComponentState,
@@ -52,28 +52,28 @@ export const useStartRecordDrag = (
       (start: DragStart, selectedRecordIds: string[]) => {
         const draggedRecordId = start.draggableId;
 
-        const operationType = getDragOperationType({
+        const dragOperationType = getDragOperationType({
           draggedRecordId,
           selectedRecordIds,
         });
 
-        if (operationType === 'multi') {
-          set(isMultiDragActiveState, true);
-          set(draggedRecordIdsState, selectedRecordIds);
-          set(primaryDraggedRecordIdState, draggedRecordId);
-          set(originalSelectionState, selectedRecordIds);
+        if (dragOperationType === 'multi') {
+          set(isMultiDragActiveCallbackState, true);
+          set(draggedRecordIdsCallbackState, selectedRecordIds);
+          set(primaryDraggedRecordIdCallbackState, draggedRecordId);
+          set(originalSelectionCallbackState, selectedRecordIds);
         } else {
-          set(isMultiDragActiveState, true);
-          set(draggedRecordIdsState, [draggedRecordId]);
-          set(primaryDraggedRecordIdState, draggedRecordId);
-          set(originalSelectionState, [draggedRecordId]);
+          set(isMultiDragActiveCallbackState, true);
+          set(draggedRecordIdsCallbackState, [draggedRecordId]);
+          set(primaryDraggedRecordIdCallbackState, draggedRecordId);
+          set(originalSelectionCallbackState, [draggedRecordId]);
         }
       },
     [
-      isMultiDragActiveState,
-      draggedRecordIdsState,
-      primaryDraggedRecordIdState,
-      originalSelectionState,
+      isMultiDragActiveCallbackState,
+      draggedRecordIdsCallbackState,
+      primaryDraggedRecordIdCallbackState,
+      originalSelectionCallbackState,
     ],
   );
 
