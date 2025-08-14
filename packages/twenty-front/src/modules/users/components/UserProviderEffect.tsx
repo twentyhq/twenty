@@ -22,6 +22,7 @@ import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { AppPath } from '@/types/AppPath';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
 import { useEffect } from 'react';
@@ -92,8 +93,10 @@ export const UserProviderEffect = () => {
           .getLoadable(prefetchViewsState)
           .getValue();
 
-        if (!isDeeplyEqual(existingViews, views)) {
-          set(prefetchViewsState, views);
+        const convertedViews = views.map(convertCoreViewToView);
+
+        if (!isDeeplyEqual(existingViews, convertedViews)) {
+          set(prefetchViewsState, convertedViews);
           set(arePrefetchViewsLoadedState, true);
         }
       },
