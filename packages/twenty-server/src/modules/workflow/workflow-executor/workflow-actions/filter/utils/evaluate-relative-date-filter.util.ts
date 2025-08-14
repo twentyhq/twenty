@@ -21,7 +21,7 @@ import {
   type VariableDateViewFilterValue,
   type VariableDateViewFilterValueUnit,
 } from 'twenty-shared/types';
-import { safeParseRelativeDateValue } from 'twenty-shared/utils';
+import { safeParseRelativeDateFilterValue } from 'twenty-shared/utils';
 
 export function evaluateRelativeDateFilter({
   dateToCheck,
@@ -30,7 +30,8 @@ export function evaluateRelativeDateFilter({
   dateToCheck: Date;
   relativeDateString: string;
 }): boolean {
-  const relativeDateValue = safeParseRelativeDateValue(relativeDateString);
+  const relativeDateValue =
+    safeParseRelativeDateFilterValue(relativeDateString);
 
   if (!relativeDateValue) {
     return false;

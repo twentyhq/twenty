@@ -1,18 +1,12 @@
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
-import {
-  type VariableDateViewFilterValueDirection,
-  type VariableDateViewFilterValueUnit,
-} from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
-import { isNonEmptyString, isString } from '@sniptt/guards';
-import { DEFAULT_RELATIVE_DATE_VALUE } from 'twenty-shared/types';
-import { safeParseRelativeDateValue } from 'twenty-shared/utils';
-import { type JsonValue } from 'type-fest';
 
-type RelativeDatePickerValue = {
-  direction: VariableDateViewFilterValueDirection;
-  amount?: number;
-  unit: VariableDateViewFilterValueUnit;
-};
+import { isNonEmptyString, isString } from '@sniptt/guards';
+import {
+  DEFAULT_RELATIVE_DATE_VALUE,
+  type VariableDateViewFilterValue,
+} from 'twenty-shared/types';
+import { safeParseRelativeDateFilterValue } from 'twenty-shared/utils';
+import { type JsonValue } from 'type-fest';
 
 export type FormRelativeDatePickerProps = {
   label?: string;
@@ -28,10 +22,10 @@ export const FormRelativeDatePicker = ({
 }: FormRelativeDatePickerProps) => {
   const value =
     isString(defaultValue) && isNonEmptyString(defaultValue)
-      ? safeParseRelativeDateValue(defaultValue)
+      ? safeParseRelativeDateFilterValue(defaultValue)
       : DEFAULT_RELATIVE_DATE_VALUE;
 
-  const handleValueChange = (newValue: RelativeDatePickerValue) => {
+  const handleValueChange = (newValue: VariableDateViewFilterValue) => {
     onChange(JSON.stringify(newValue));
   };
 

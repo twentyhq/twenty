@@ -392,7 +392,6 @@ describe('evaluateRelativeDateFilter', () => {
         unit: 'WEEK',
       });
 
-      // Same week should match (assuming week starts on Sunday)
       expect(
         evaluateRelativeDateFilter({
           dateToCheck: now,
@@ -401,13 +400,13 @@ describe('evaluateRelativeDateFilter', () => {
       ).toBe(true);
       expect(
         evaluateRelativeDateFilter({
-          dateToCheck: new Date('2024-01-14T12:00:00Z'), // Sunday
+          dateToCheck: new Date('2024-01-14T12:00:00Z'),
           relativeDateString,
         }),
       ).toBe(true);
       expect(
         evaluateRelativeDateFilter({
-          dateToCheck: new Date('2024-01-20T12:00:00Z'), // Saturday
+          dateToCheck: new Date('2024-01-20T12:00:00Z'),
           relativeDateString,
         }),
       ).toBe(true);
@@ -415,13 +414,13 @@ describe('evaluateRelativeDateFilter', () => {
       // Different weeks should not match
       expect(
         evaluateRelativeDateFilter({
-          dateToCheck: new Date('2024-01-13T12:00:00Z'), // Previous Saturday
+          dateToCheck: new Date('2024-01-13T12:00:00Z'),
           relativeDateString,
         }),
       ).toBe(false);
       expect(
         evaluateRelativeDateFilter({
-          dateToCheck: new Date('2024-01-21T12:00:00Z'), // Next Sunday
+          dateToCheck: new Date('2024-01-21T12:00:00Z'),
           relativeDateString,
         }),
       ).toBe(false);

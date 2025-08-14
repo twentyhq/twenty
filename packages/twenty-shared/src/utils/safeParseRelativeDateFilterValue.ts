@@ -2,7 +2,7 @@ import {
   type VariableDateViewFilterValue,
 } from '@/types/RelativeDateValue';
 
-export const safeParseRelativeDateValue = (
+export const safeParseRelativeDateFilterValue = (
   value: string,
 ): VariableDateViewFilterValue | undefined => {
   try {
