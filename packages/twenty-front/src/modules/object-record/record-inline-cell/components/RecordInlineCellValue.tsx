@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
+import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellDisplayMode } from '@/object-record/record-inline-cell/components/RecordInlineCellDisplayMode';
 import { RecordInlineCellSkeletonLoader } from '@/object-record/record-inline-cell/components/RecordInlineCellSkeletonLoader';

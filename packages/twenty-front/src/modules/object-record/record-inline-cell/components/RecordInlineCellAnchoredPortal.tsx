@@ -6,10 +6,11 @@ import {
   FieldContext,
   type RecordUpdateHook,
   type RecordUpdateHookParams,
-} from '@/object-record/record-field/ui/contexts/FieldContext';
-import { FieldFocusContextProvider } from '@/object-record/record-field/ui/contexts/FieldFocusContextProvider';
-import { useIsRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/useIsRecordFieldReadOnly';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+} from '@/object-record/record-field/contexts/FieldContext';
+import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
+import { useIsRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordFieldReadOnly';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+
 import { RecordInlineCellAnchoredPortalContext } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortalContext';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { createPortal } from 'react-dom';

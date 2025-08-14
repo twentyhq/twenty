@@ -1,8 +1,8 @@
-import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
-import { FieldInput } from '@/object-record/record-field/ui/components/FieldInput';
-import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useGetButtonIcon } from '@/object-record/record-field/ui/hooks/useGetButtonIcon';
-import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
+import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
+import { FieldInput } from '@/object-record/record-field/components/FieldInput';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
+import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import {
   RecordInlineCellContext,
   type RecordInlineCellContextProps,
