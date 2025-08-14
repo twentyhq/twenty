@@ -4,11 +4,15 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
+import { useMoveRecordField } from '@/object-record/record-field/hooks/useMoveRecordField';
+import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
+import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { useHandleColumnsChange } from '@/object-record/record-table/hooks/useHandleColumnsChange';
 import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { v4 } from 'uuid';
 import { type ColumnDefinition } from '../types/ColumnDefinition';
 
 type useRecordTableProps = {
@@ -40,6 +44,9 @@ export const useTableColumns = ({
 
   const { handleColumnsChange } = useHandleColumnsChange();
 
+  const { updateRecordField } = useUpdateRecordField();
+  const { upsertRecordField } = useUpsertRecordField();
+
   const handleColumnVisibilityChange = useCallback(
     async (
       viewField: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
@@ -68,6 +75,14 @@ export const useTableColumns = ({
           { ...newColumn, isVisible: true, position: lastPosition + 1 },
         ];
 
+        upsertRecordField({
+          id: v4(),
+          fieldMetadataItemId: viewField.fieldMetadataId,
+          size: 100,
+          isVisible: true,
+          position: lastPosition + 1,
+        });
+
         await handleColumnsChange({
           columns: nextColumns,
           objectMetadataId,
@@ -80,6 +95,10 @@ export const useTableColumns = ({
             : previousColumn,
         );
 
+        updateRecordField(viewField.fieldMetadataId, {
+          isVisible: !viewField.isVisible,
+        });
+
         await handleColumnsChange({
           columns: nextColumns,
           objectMetadataId,
@@ -88,14 +107,18 @@ export const useTableColumns = ({
       }
     },
     [
+      upsertRecordField,
       tableColumns,
       availableTableColumns,
       handleColumnsChange,
       visibleTableColumns,
       objectMetadataId,
       recordTableId,
+      updateRecordField,
     ],
   );
+
+  const { moveRecordField } = useMoveRecordField();
 
   const handleMoveTableColumn = useCallback(
     async (
@@ -115,6 +138,11 @@ export const useTableColumns = ({
         visibleTableColumns,
       );
 
+      moveRecordField({
+        direction: direction === 'left' ? 'before' : 'after',
+        fieldMetadataItemIdToMove: column.fieldMetadataId,
+      });
+
       await handleColumnsChange({
         columns,
         objectMetadataId,
@@ -128,6 +156,7 @@ export const useTableColumns = ({
       handleColumnsChange,
       objectMetadataId,
       recordTableId,
+      moveRecordField,
     ],
   );
 

@@ -3,17 +3,15 @@ import { RecordIndexContextProvider } from '@/object-record/record-index/context
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
-import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
 import { RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect';
 import { RecordIndexLoadBaseOnContextStoreEffect } from '@/object-record/record-index/components/RecordIndexLoadBaseOnContextStoreEffect';
 import { RecordIndexPageHeader } from '@/object-record/record-index/components/RecordIndexPageHeader';
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
 import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
-import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
@@ -74,34 +72,26 @@ export const RecordIndexContainerGater = () => {
         <ViewComponentInstanceContext.Provider
           value={{ instanceId: recordIndexId }}
         >
-          <RecordFilterGroupsComponentInstanceContext.Provider
-            value={{ instanceId: recordIndexId }}
+          <RecordComponentInstanceContextsWrapper
+            componentInstanceId={recordIndexId}
           >
-            <RecordFiltersComponentInstanceContext.Provider
-              value={{ instanceId: recordIndexId }}
+            <ActionMenuComponentInstanceContext.Provider
+              value={{
+                instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+              }}
             >
-              <RecordSortsComponentInstanceContext.Provider
-                value={{ instanceId: recordIndexId }}
-              >
-                <ActionMenuComponentInstanceContext.Provider
-                  value={{
-                    instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
-                  }}
+              <PageTitle title={objectMetadataItem.labelPlural} />
+              <RecordIndexPageHeader />
+              <PageBody>
+                <StyledIndexContainer
+                  className={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
                 >
-                  <PageTitle title={objectMetadataItem.labelPlural} />
-                  <RecordIndexPageHeader />
-                  <PageBody>
-                    <StyledIndexContainer
-                      className={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
-                    >
-                      <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
-                      <RecordIndexContainer />
-                    </StyledIndexContainer>
-                  </PageBody>
-                </ActionMenuComponentInstanceContext.Provider>
-              </RecordSortsComponentInstanceContext.Provider>
-            </RecordFiltersComponentInstanceContext.Provider>
-          </RecordFilterGroupsComponentInstanceContext.Provider>
+                  <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
+                  <RecordIndexContainer />
+                </StyledIndexContainer>
+              </PageBody>
+            </ActionMenuComponentInstanceContext.Provider>
+          </RecordComponentInstanceContextsWrapper>
           <RecordIndexLoadBaseOnContextStoreEffect />
         </ViewComponentInstanceContext.Provider>
       </RecordIndexContextProvider>
