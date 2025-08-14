@@ -51,7 +51,7 @@ export const RecordFieldListCellHoveredPortalContent = () => {
       openFieldInput({
         fieldDefinition,
         recordId,
-        prefix: 'inline-cell',
+        prefix: instanceId,
       });
     }
   };
