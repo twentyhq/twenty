@@ -20,11 +20,10 @@ import { ViewFilterRestApiExceptionFilter } from 'src/engine/core-modules/view/f
 import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Controller('rest/metadata/viewFilters')
-@UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
+@UseGuards(WorkspaceAuthGuard)
 @UseFilters(ViewFilterRestApiExceptionFilter)
 export class ViewFilterController {
   constructor(private readonly viewFilterService: ViewFilterService) {}

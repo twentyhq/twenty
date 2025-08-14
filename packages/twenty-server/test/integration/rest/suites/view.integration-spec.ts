@@ -17,6 +17,7 @@ import {
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 
+import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import {
@@ -68,7 +69,7 @@ describe('View REST API', () => {
         name: viewName,
         icon: 'IconTable',
         type: ViewType.TABLE,
-        key: 'INDEX',
+        key: ViewKey.INDEX,
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
@@ -79,7 +80,7 @@ describe('View REST API', () => {
         objectMetadataId: TEST_OBJECT_METADATA_1_ID,
         icon: 'IconTable',
         type: ViewType.TABLE,
-        key: 'INDEX',
+        key: ViewKey.INDEX,
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
@@ -92,7 +93,7 @@ describe('View REST API', () => {
         name: viewName,
         icon: 'IconKanban',
         type: ViewType.KANBAN,
-        key: 'KANBAN',
+        key: null,
         position: 1,
         isCompact: true,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
@@ -116,7 +117,7 @@ describe('View REST API', () => {
         name: viewName,
         icon: 'IconTable',
         type: ViewType.TABLE,
-        key: 'INDEX',
+        key: ViewKey.INDEX,
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
@@ -155,7 +156,7 @@ describe('View REST API', () => {
         name: viewName,
         icon: 'IconTable',
         type: ViewType.TABLE,
-        key: 'INDEX',
+        key: ViewKey.INDEX,
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
@@ -218,7 +219,7 @@ describe('View REST API', () => {
         name: viewName,
         icon: 'IconTable',
         type: ViewType.TABLE,
-        key: 'INDEX',
+        key: ViewKey.INDEX,
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,

@@ -9,7 +9,7 @@ import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/typ
 import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { type ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
-import { transformViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/utils/transform-view-filter-workspace-value-to-core-value';
+import { convertViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/utils/convert-view-filter-workspace-value-to-core-value';
 
 @Injectable()
 export class ViewFilterSyncService {
@@ -32,7 +32,7 @@ export class ViewFilterSyncService {
 
       if (isDefined(diffValue)) {
         if (key === 'value' && typeof diffValue.after === 'string') {
-          updateData[key] = transformViewFilterWorkspaceValueToCoreValue(
+          updateData[key] = convertViewFilterWorkspaceValueToCoreValue(
             diffValue.after,
           );
         } else if (key === 'operand' && diffValue.after) {
@@ -63,7 +63,7 @@ export class ViewFilterSyncService {
       operand: convertViewFilterOperandToCoreOperand(
         workspaceViewFilter.operand as SharedViewFilterOperand,
       ),
-      value: transformViewFilterWorkspaceValueToCoreValue(
+      value: convertViewFilterWorkspaceValueToCoreValue(
         workspaceViewFilter.value,
       ),
       viewFilterGroupId: workspaceViewFilter.viewFilterGroupId,
