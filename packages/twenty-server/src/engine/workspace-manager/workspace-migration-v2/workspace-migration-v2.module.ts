@@ -8,9 +8,8 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
   imports: [
     WorkspaceMigrationBuilderV2Module,
     WorkspaceMigrationRunnerV2Module,
-    WorkspaceMigrationValidateBuildAndRunService,
   ],
-  providers: [],
+  providers: [WorkspaceMigrationValidateBuildAndRunService],
   exports: [
     WorkspaceMigrationRunnerV2Module,
     WorkspaceMigrationBuilderV2Module,
