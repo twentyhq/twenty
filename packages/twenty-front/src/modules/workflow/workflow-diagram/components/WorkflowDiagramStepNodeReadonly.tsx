@@ -51,7 +51,7 @@ export const WorkflowDiagramStepNodeReadonly = ({
       variant={getNodeVariantFromStepRunStatus(data.runStatus)}
       nodeType={data.nodeType}
       Icon={<WorkflowDiagramStepNodeIcon data={data} />}
-      displayHandle={false}
+      displayHandle
       onClick={() => {
         if (
           !isDefined(workflowVisualizerWorkflowId) ||
