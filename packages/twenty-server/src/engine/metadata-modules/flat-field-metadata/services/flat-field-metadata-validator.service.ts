@@ -247,7 +247,11 @@ export class FlatFieldMetadataValidatorService {
     FailedFlatFieldMetadataValidationExceptions[]
   > {
     const errors: FailedFlatFieldMetadataValidationExceptions[] = [];
-
+    console.log(
+      'toto',
+      flatFieldMetadataToValidate.type,
+      otherFlatObjectMetadataMapsToValidate,
+    );
     const parentFlatObjectMetadata =
       otherFlatObjectMetadataMapsToValidate?.byId[
         flatFieldMetadataToValidate.objectMetadataId

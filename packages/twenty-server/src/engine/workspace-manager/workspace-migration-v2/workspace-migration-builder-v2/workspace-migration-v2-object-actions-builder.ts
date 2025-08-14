@@ -60,7 +60,6 @@ export class WorkspaceMigrationV2ObjectActionsBuilder {
         createdFlatObjectMetadata.map<
           Promise<MetadataBuildResult<WorkspaceMigrationObjectActionV2>>
         >(async (flatObjectMetadata) => {
-          // Won't work for object that contains relations we need to compute
           const validationErrors =
             await this.flatObjectMetadataValidatorService.validateFlatObjectMetadataCreation(
               {

@@ -8,17 +8,17 @@ import {
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 
-type GetRelationFlatFieldMetadatasUtilArgs = {
+export type GetRelationFlatFieldMetadatasUtilArgs = {
   flatObjectMetadataMaps: FlatObjectMetadataMaps;
   flatFieldMetadata: FlatFieldMetadata<
     FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
   >;
 };
 // TODO prastoin handle morph relation
-export const getRelationFlatFieldMetadatasOrThrow = ({
+export const findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow = ({
   flatObjectMetadataMaps,
   flatFieldMetadata,
-}: GetRelationFlatFieldMetadatasUtilArgs): FlatFieldMetadata[] => {
+}: GetRelationFlatFieldMetadatasUtilArgs): FlatFieldMetadata => {
   const { relationTargetFieldMetadataId, relationTargetObjectMetadataId } =
     flatFieldMetadata;
 
@@ -41,5 +41,5 @@ export const getRelationFlatFieldMetadatasOrThrow = ({
     );
   }
 
-  return [flatFieldMetadata, relatedFlatFieldMetadata];
+  return relatedFlatFieldMetadata;
 };
