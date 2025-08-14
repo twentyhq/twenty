@@ -7,6 +7,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { MultiSelectControl } from '@/ui/input/components/MultiSelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -91,11 +92,14 @@ export const SettingsMorphRelationMultiSelect = ({
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
   const { getIcon } = useIcons();
-  const options = activeObjectMetadataItems.map((objectMetadataItem) => ({
-    label: objectMetadataItem.labelSingular,
-    Icon: getIcon(objectMetadataItem.icon),
-    objectMetadataId: objectMetadataItem.id,
-  }));
+  const options = activeObjectMetadataItems
+    .filter(isObjectMetadataAvailableForRelation)
+    .sort((item1, item2) => item1.labelPlural.localeCompare(item2.labelPlural))
+    .map((objectMetadataItem) => ({
+      label: objectMetadataItem.labelSingular,
+      Icon: getIcon(objectMetadataItem.icon),
+      objectMetadataId: objectMetadataItem.id,
+    }));
 
   const selectedOptions = options.filter((option) =>
     selectedObjectMetadataIds.includes(option.objectMetadataId),
