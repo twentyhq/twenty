@@ -4,12 +4,17 @@ import { type WorkspaceSchemaIndexDefinition } from 'src/engine/twenty-orm/works
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
 
 export class WorkspaceSchemaIndexManagerService {
-  async createIndex(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    index: WorkspaceSchemaIndexDefinition,
-  ): Promise<void> {
+  async createIndex({
+    queryRunner,
+    schemaName,
+    tableName,
+    index,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    index: WorkspaceSchemaIndexDefinition;
+  }): Promise<void> {
     try {
       const safeSchemaName = removeSqlDDLInjection(schemaName);
       const safeTableName = removeSqlDDLInjection(tableName);
@@ -54,11 +59,15 @@ export class WorkspaceSchemaIndexManagerService {
     }
   }
 
-  async dropIndex(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    indexName: string,
-  ): Promise<void> {
+  async dropIndex({
+    queryRunner,
+    schemaName,
+    indexName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    indexName: string;
+  }): Promise<void> {
     try {
       const safeSchemaName = removeSqlDDLInjection(schemaName);
       const safeIndexName = removeSqlDDLInjection(indexName);
@@ -74,12 +83,17 @@ export class WorkspaceSchemaIndexManagerService {
     }
   }
 
-  async renameIndex(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    oldIndexName: string,
-    newIndexName: string,
-  ): Promise<void> {
+  async renameIndex({
+    queryRunner,
+    schemaName,
+    oldIndexName,
+    newIndexName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    oldIndexName: string;
+    newIndexName: string;
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeOldIndexName = removeSqlDDLInjection(oldIndexName);
     const safeNewIndexName = removeSqlDDLInjection(newIndexName);
@@ -88,13 +102,19 @@ export class WorkspaceSchemaIndexManagerService {
     await queryRunner.query(sql);
   }
 
-  async createUniqueConstraint(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    constraintName: string,
-    columnNames: string[],
-  ): Promise<void> {
+  async createUniqueConstraint({
+    queryRunner,
+    schemaName,
+    tableName,
+    constraintName,
+    columnNames,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    constraintName: string;
+    columnNames: string[];
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeConstraintName = removeSqlDDLInjection(constraintName);
@@ -106,12 +126,17 @@ export class WorkspaceSchemaIndexManagerService {
     await queryRunner.query(sql);
   }
 
-  async dropUniqueConstraint(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    constraintName: string,
-  ): Promise<void> {
+  async dropUniqueConstraint({
+    queryRunner,
+    schemaName,
+    tableName,
+    constraintName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    constraintName: string;
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeConstraintName = removeSqlDDLInjection(constraintName);

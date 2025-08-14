@@ -97,11 +97,11 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       // All 8 ADDRESS composite columns must be dropped
       expect(
         mockSchemaManagerService.columnManager.dropColumns,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_person',
-        [
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        tableName: '_person',
+        columnNames: [
           'homeAddressAddressStreet1',
           'homeAddressAddressStreet2',
           'homeAddressAddressCity',
@@ -111,7 +111,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
           'homeAddressAddressLat',
           'homeAddressAddressLng',
         ],
-      );
+      });
 
       // No enum operations should be performed for ADDRESS fields
       expect(
@@ -169,21 +169,21 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       // Column must be dropped first
       expect(
         mockSchemaManagerService.columnManager.dropColumns,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_person',
-        ['status'],
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        tableName: '_person',
+        columnNames: ['status'],
+      });
 
       // Enum type must be properly cleaned up
       expect(
         mockSchemaManagerService.enumManager.dropEnum,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_person_status_enum',
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        enumName: '_person_status_enum',
+      });
     });
 
     it('should properly delete RELATION fields with foreign key cleanup', async () => {
@@ -224,12 +224,12 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       // Foreign key column must be dropped
       expect(
         mockSchemaManagerService.columnManager.dropColumns,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_person',
-        ['companyId'],
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        tableName: '_person',
+        columnNames: ['companyId'],
+      });
 
       // No enum operations for relation fields
       expect(
@@ -296,21 +296,21 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       // Enum creation with correct parameters
       expect(
         mockSchemaManagerService.enumManager.createEnum,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_task_priority_enum',
-        ['HIGH', 'LOW'],
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        enumName: '_task_priority_enum',
+        values: ['HIGH', 'LOW'],
+      });
 
       // Column creation with enum reference
       expect(
         mockSchemaManagerService.columnManager.addColumns,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_task',
-        [
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        tableName: '_task',
+        columnDefinitions: [
           {
             name: 'priority',
             type: '_task_priority_enum',
@@ -321,7 +321,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
             enumValues: ['HIGH', 'LOW'],
           },
         ],
-      );
+      });
     });
 
     it('should create CURRENCY composite fields with proper column generation', async () => {
@@ -365,11 +365,11 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       // Both composite columns must be created
       expect(
         mockSchemaManagerService.columnManager.addColumns,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_employee',
-        [
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        tableName: '_employee',
+        columnDefinitions: [
           {
             name: 'salaryAmountMicros',
             type: 'numeric',
@@ -387,7 +387,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
             isArray: false,
           },
         ],
-      );
+      });
     });
   });
 
@@ -450,13 +450,13 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       expectedRenameCalls.forEach(([fromName, toName]) => {
         expect(
           mockSchemaManagerService.columnManager.renameColumn,
-        ).toHaveBeenCalledWith(
-          mockQueryRunner,
-          'workspace_1wgvd1injqtife6y4rvfbu3h5',
-          '_company',
-          fromName,
-          toName,
-        );
+        ).toHaveBeenCalledWith({
+          queryRunner: mockQueryRunner,
+          schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+          tableName: '_company',
+          oldColumnName: fromName,
+          newColumnName: toName,
+        });
       });
     });
 
@@ -548,11 +548,11 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       // Enum values must be updated with proper mapping
       expect(
         mockSchemaManagerService.enumManager.alterEnumValues,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_person',
-        {
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        tableName: '_person',
+        columnDefinition: {
           name: 'status',
           type: '_person_status_enum',
           isNullable: true,
@@ -561,11 +561,11 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
           default: null,
           enumValues: ['UPDATED_ACTIVE', 'UPDATED_INACTIVE'],
         },
-        {
-          ACTIVE: 'UPDATED_ACTIVE',
+        oldToNewEnumOptionMap: {
+          ACTIVE: 'UPDATED_ACTIVE', // Keep original values
           INACTIVE: 'UPDATED_INACTIVE',
         },
-      );
+      });
     });
 
     it('should handle default value updates for composite fields', async () => {
@@ -620,23 +620,23 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       // Both composite column defaults must be updated
       expect(
         mockSchemaManagerService.columnManager.alterColumnDefault,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_product',
-        'priceAmountMicros',
-        "'100000000'",
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        tableName: '_product',
+        columnName: 'priceAmountMicros',
+        defaultValue: "'100000000'",
+      });
 
       expect(
         mockSchemaManagerService.columnManager.alterColumnDefault,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_product',
-        'priceCurrencyCode',
-        "'EUR'",
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        tableName: '_product',
+        columnName: 'priceCurrencyCode',
+        defaultValue: "'EUR'",
+      });
     });
   });
 
@@ -676,12 +676,12 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       // Should not attempt to drop columns for relations without join columns
       expect(
         mockSchemaManagerService.columnManager.dropColumns,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_person',
-        [], // Empty array - no columns to drop
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        tableName: '_person',
+        columnNames: [], // Empty array - no columns to drop
+      });
     });
 
     it('should handle enum fields without options safely', async () => {
@@ -718,12 +718,12 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
       // Should still create enum even with empty values
       expect(
         mockSchemaManagerService.enumManager.createEnum,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_test_emptyStatus_enum',
-        [], // Empty enum values array
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        enumName: '_test_emptyStatus_enum',
+        values: [], // Empty enum values array
+      });
     });
   });
 });

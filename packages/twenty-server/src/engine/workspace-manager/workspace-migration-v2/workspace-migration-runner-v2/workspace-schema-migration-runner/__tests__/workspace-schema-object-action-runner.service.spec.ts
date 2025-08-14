@@ -119,11 +119,11 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
       // Table must be dropped first
       expect(
         mockSchemaManagerService.tableManager.dropTable,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_task',
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        tableName: '_task',
+      });
 
       // All enum types associated with the object must be cleaned up
       expect(
@@ -131,18 +131,18 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
       ).toHaveBeenCalledTimes(2);
       expect(
         mockSchemaManagerService.enumManager.dropEnum,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_task_status_enum',
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        enumName: '_task_status_enum',
+      });
       expect(
         mockSchemaManagerService.enumManager.dropEnum,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_task_priority_enum',
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        enumName: '_task_priority_enum',
+      });
     });
 
     it('should handle object deletion with mixed field types', async () => {
@@ -200,11 +200,11 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
       // Table must be dropped
       expect(
         mockSchemaManagerService.tableManager.dropTable,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_project',
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        tableName: '_project',
+      });
 
       // Only enum fields should trigger enum cleanup
       expect(
@@ -212,11 +212,11 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
       ).toHaveBeenCalledTimes(1);
       expect(
         mockSchemaManagerService.enumManager.dropEnum,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_project_tags_enum',
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        enumName: '_project_tags_enum',
+      });
     });
 
     it('should handle object deletion with no enum fields', async () => {
@@ -251,11 +251,11 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
       // Table must be dropped
       expect(
         mockSchemaManagerService.tableManager.dropTable,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_simpleObject',
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        tableName: '_simpleObject',
+      });
 
       // No enum cleanup should occur
       expect(
@@ -348,11 +348,11 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
       // Table must be created with all field columns and enums
       expect(
         mockSchemaManagerService.tableManager.createTable,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_article',
-        [
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        tableName: '_article',
+        columnDefinitions: [
           // TEXT field column
           {
             name: 'title',
@@ -391,16 +391,16 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
             default: null,
           },
         ],
-      );
+      });
 
       expect(
         mockSchemaManagerService.enumManager.createEnum,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_article_status_enum',
-        ['DRAFT', 'PUBLISHED'],
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        enumName: '_article_status_enum',
+        values: ['DRAFT', 'PUBLISHED'],
+      });
     });
 
     it('should handle object creation with ADDRESS composite fields', async () => {
@@ -447,11 +447,11 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
       // Table must be created with all 8 ADDRESS composite columns
       expect(
         mockSchemaManagerService.tableManager.createTable,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_company',
-        [
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        tableName: '_company',
+        columnDefinitions: [
           {
             name: 'headquartersAddressStreet1',
             type: 'text',
@@ -517,7 +517,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
             isArray: false,
           },
         ],
-      );
+      });
     });
 
     it('should handle object creation with no field actions', async () => {
@@ -553,12 +553,12 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
       // Table must be created even with no columns
       expect(
         mockSchemaManagerService.tableManager.createTable,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_emptyObject',
-        [], // Empty columns array
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        tableName: '_emptyObject',
+        columnDefinitions: [], // Empty columns array
+      });
     });
   });
 
@@ -627,12 +627,12 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
       // Table must be renamed
       expect(
         mockSchemaManagerService.tableManager.renameTable,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_blogPost',
-        '_article',
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        oldTableName: '_blogPost',
+        newTableName: '_article',
+      });
 
       // All enum types must be renamed to match new table name
       expect(
@@ -640,20 +640,20 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
       ).toHaveBeenCalledTimes(2);
       expect(
         mockSchemaManagerService.enumManager.renameEnum,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_blogPost_category_enum',
-        '_article_category_enum',
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        oldEnumName: '_blogPost_category_enum',
+        newEnumName: '_article_category_enum',
+      });
       expect(
         mockSchemaManagerService.enumManager.renameEnum,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_blogPost_tags_enum',
-        '_article_tags_enum',
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        oldEnumName: '_blogPost_tags_enum',
+        newEnumName: '_article_tags_enum',
+      });
     });
 
     it('should handle object name changes with no actual table rename needed', async () => {
@@ -749,12 +749,12 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
       // Table rename
       expect(
         mockSchemaManagerService.tableManager.renameTable,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_oldEntity',
-        '_newEntity',
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        oldTableName: '_oldEntity',
+        newTableName: '_newEntity',
+      });
 
       // Only SELECT field should trigger enum rename
       expect(
@@ -762,12 +762,12 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
       ).toHaveBeenCalledTimes(1);
       expect(
         mockSchemaManagerService.enumManager.renameEnum,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_oldEntity_status_enum',
-        '_newEntity_status_enum',
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        oldEnumName: '_oldEntity_status_enum',
+        newEnumName: '_newEntity_status_enum',
+      });
     });
   });
 
@@ -808,12 +808,12 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
       // Should still drop table
       expect(
         mockSchemaManagerService.tableManager.createTable,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_testObject',
-        [],
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        tableName: '_testObject',
+        columnDefinitions: [],
+      });
     });
 
     it('should handle empty fieldsById object', async () => {
@@ -857,12 +857,12 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
       // Should rename table
       expect(
         mockSchemaManagerService.tableManager.renameTable,
-      ).toHaveBeenCalledWith(
-        mockQueryRunner,
-        'workspace_1wgvd1injqtife6y4rvfbu3h5',
-        '_emptyFieldsObject',
-        '_renamedEmptyFieldsObject',
-      );
+      ).toHaveBeenCalledWith({
+        queryRunner: mockQueryRunner,
+        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        oldTableName: '_emptyFieldsObject',
+        newTableName: '_renamedEmptyFieldsObject',
+      });
 
       // Should not perform enum operations
       expect(

@@ -4,12 +4,17 @@ import { type WorkspaceSchemaForeignKeyDefinition } from 'src/engine/twenty-orm/
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
 
 export class WorkspaceSchemaForeignKeyManagerService {
-  async createForeignKey(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    foreignKey: WorkspaceSchemaForeignKeyDefinition,
-  ): Promise<void> {
+  async createForeignKey({
+    queryRunner,
+    schemaName,
+    tableName,
+    foreignKey,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    foreignKey: WorkspaceSchemaForeignKeyDefinition;
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeForeignKeyName = removeSqlDDLInjection(foreignKey.name);
@@ -37,12 +42,17 @@ export class WorkspaceSchemaForeignKeyManagerService {
     await queryRunner.query(sql);
   }
 
-  async dropForeignKey(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    foreignKeyName: string,
-  ): Promise<void> {
+  async dropForeignKey({
+    queryRunner,
+    schemaName,
+    tableName,
+    foreignKeyName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    foreignKeyName: string;
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeForeignKeyName = removeSqlDDLInjection(foreignKeyName);
@@ -51,35 +61,45 @@ export class WorkspaceSchemaForeignKeyManagerService {
     await queryRunner.query(sql);
   }
 
-  async dropForeignKeyByColumn(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    columnName: string,
-  ): Promise<void> {
-    const foreignKeyName = await this.getForeignKeyNameByColumn(
+  async dropForeignKeyByColumn({
+    queryRunner,
+    schemaName,
+    tableName,
+    columnName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+  }): Promise<void> {
+    const foreignKeyName = await this.getForeignKeyNameByColumn({
       queryRunner,
       schemaName,
       tableName,
       columnName,
-    );
+    });
 
     if (foreignKeyName) {
-      await this.dropForeignKey(
+      await this.dropForeignKey({
         queryRunner,
         schemaName,
         tableName,
         foreignKeyName,
-      );
+      });
     }
   }
 
-  async foreignKeyExists(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    foreignKeyName: string,
-  ): Promise<boolean> {
+  async foreignKeyExists({
+    queryRunner,
+    schemaName,
+    tableName,
+    foreignKeyName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    foreignKeyName: string;
+  }): Promise<boolean> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeForeignKeyName = removeSqlDDLInjection(foreignKeyName);
@@ -98,12 +118,17 @@ export class WorkspaceSchemaForeignKeyManagerService {
     return result[0]?.exists || false;
   }
 
-  async getForeignKeyNameByColumn(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    columnName: string,
-  ): Promise<string | null> {
+  async getForeignKeyNameByColumn({
+    queryRunner,
+    schemaName,
+    tableName,
+    columnName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+  }): Promise<string | null> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeColumnName = removeSqlDDLInjection(columnName);
@@ -124,11 +149,15 @@ export class WorkspaceSchemaForeignKeyManagerService {
     return result[0]?.constraint_name || null;
   }
 
-  async getForeignKeysForTable(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-  ): Promise<
+  async getForeignKeysForTable({
+    queryRunner,
+    schemaName,
+    tableName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+  }): Promise<
     Array<{
       constraint_name: string;
       column_name: string;
@@ -168,15 +197,23 @@ export class WorkspaceSchemaForeignKeyManagerService {
     return result;
   }
 
-  async createForeignKeyFromColumn(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    columnName: string,
-    referencedTableName: string,
+  async createForeignKeyFromColumn({
+    queryRunner,
+    schemaName,
+    tableName,
+    columnName,
+    referencedTableName,
     referencedColumnName = 'id',
-    onDelete?: WorkspaceSchemaForeignKeyDefinition['onDelete'],
-  ): Promise<void> {
+    onDelete,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+    referencedTableName: string;
+    referencedColumnName?: string;
+    onDelete?: WorkspaceSchemaForeignKeyDefinition['onDelete'];
+  }): Promise<void> {
     const foreignKeyName = queryRunner.connection.namingStrategy.foreignKeyName(
       tableName,
       [columnName],
@@ -192,16 +229,27 @@ export class WorkspaceSchemaForeignKeyManagerService {
       onDelete,
     };
 
-    await this.createForeignKey(queryRunner, schemaName, tableName, foreignKey);
+    await this.createForeignKey({
+      queryRunner,
+      schemaName,
+      tableName,
+      foreignKey,
+    });
   }
 
-  async renameForeignKey(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    oldConstraintName: string,
-    newConstraintName: string,
-  ): Promise<void> {
+  async renameForeignKey({
+    queryRunner,
+    schemaName,
+    tableName,
+    oldConstraintName,
+    newConstraintName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    oldConstraintName: string;
+    newConstraintName: string;
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeOldConstraintName = removeSqlDDLInjection(oldConstraintName);
@@ -211,12 +259,17 @@ export class WorkspaceSchemaForeignKeyManagerService {
     await queryRunner.query(sql);
   }
 
-  async validateForeignKey(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    foreignKeyName: string,
-  ): Promise<void> {
+  async validateForeignKey({
+    queryRunner,
+    schemaName,
+    tableName,
+    foreignKeyName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    foreignKeyName: string;
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeForeignKeyName = removeSqlDDLInjection(foreignKeyName);
@@ -225,12 +278,17 @@ export class WorkspaceSchemaForeignKeyManagerService {
     await queryRunner.query(sql);
   }
 
-  async setForeignKeyNotDeferrable(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    foreignKeyName: string,
-  ): Promise<void> {
+  async setForeignKeyNotDeferrable({
+    queryRunner,
+    schemaName,
+    tableName,
+    foreignKeyName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    foreignKeyName: string;
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeForeignKeyName = removeSqlDDLInjection(foreignKeyName);
@@ -239,12 +297,17 @@ export class WorkspaceSchemaForeignKeyManagerService {
     await queryRunner.query(sql);
   }
 
-  async setForeignKeyDeferrable(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    foreignKeyName: string,
-  ): Promise<void> {
+  async setForeignKeyDeferrable({
+    queryRunner,
+    schemaName,
+    tableName,
+    foreignKeyName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    foreignKeyName: string;
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeForeignKeyName = removeSqlDDLInjection(foreignKeyName);

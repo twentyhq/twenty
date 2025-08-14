@@ -139,33 +139,33 @@ describe('WorkspaceSchemaManager', () => {
       const tableName = 'users';
 
       // Act
-      await service.tableManager.createTable(
-        mockQueryRunner,
+      await service.tableManager.createTable({
+        queryRunner: mockQueryRunner,
         schemaName,
         tableName,
-        [
+        columnDefinitions: [
           { name: 'id', type: 'uuid', isPrimary: true },
           { name: 'name', type: 'varchar', isNullable: false },
           { name: 'status', type: 'varchar' },
         ],
-      );
+      });
 
-      await service.enumManager.createEnum(
-        mockQueryRunner,
+      await service.enumManager.createEnum({
+        queryRunner: mockQueryRunner,
         schemaName,
-        'user_status_enum',
-        ['ACTIVE', 'INACTIVE'],
-      );
+        enumName: 'user_status_enum',
+        values: ['ACTIVE', 'INACTIVE'],
+      });
 
-      await service.indexManager.createIndex(
-        mockQueryRunner,
+      await service.indexManager.createIndex({
+        queryRunner: mockQueryRunner,
         schemaName,
         tableName,
-        {
+        index: {
           name: 'idx_users_name',
           columns: ['name'],
         },
-      );
+      });
 
       // Assert
       expect(tableManager.createTable).toHaveBeenCalled();

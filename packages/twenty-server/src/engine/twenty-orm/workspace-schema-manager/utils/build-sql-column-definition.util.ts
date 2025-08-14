@@ -2,7 +2,7 @@ import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/work
 import { sanitizeDefaultValue } from 'src/engine/twenty-orm/workspace-schema-manager/utils/sanitize-default-value.util';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
 
-export const buildColumnDefinition = (
+export const buildSqlColumnDefinition = (
   column: WorkspaceSchemaColumnDefinition,
 ): string => {
   const safeName = removeSqlDDLInjection(column.name);
@@ -31,13 +31,9 @@ export const buildColumnDefinition = (
     }
 
     if (column.default !== undefined) {
-      if (typeof column.default === 'string') {
-        const safeDefault = sanitizeDefaultValue(column.default);
+      const safeDefault = sanitizeDefaultValue(column.default);
 
-        parts.push(`DEFAULT ${safeDefault}`);
-      } else {
-        parts.push(`DEFAULT ${column.default}`); // TODO: to sanitize
-      }
+      parts.push(`DEFAULT ${safeDefault}`);
     }
   }
 

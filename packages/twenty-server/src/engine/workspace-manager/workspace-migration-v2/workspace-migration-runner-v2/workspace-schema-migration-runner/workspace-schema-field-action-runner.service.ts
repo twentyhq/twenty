@@ -76,12 +76,12 @@ export class WorkspaceSchemaFieldActionRunnerService
     });
     const columnNamesToDrop = columnDefinitions.map((def) => def.name);
 
-    await this.workspaceSchemaManagerService.columnManager.dropColumns(
+    await this.workspaceSchemaManagerService.columnManager.dropColumns({
       queryRunner,
       schemaName,
       tableName,
-      columnNamesToDrop,
-    );
+      columnNames: columnNamesToDrop,
+    });
 
     const enumOperations = collectEnumOperationsForField({
       flatFieldMetadata: fieldMetadata,
@@ -132,12 +132,12 @@ export class WorkspaceSchemaFieldActionRunnerService
       flatObjectMetadataWithoutFields: flatObjectMetadata,
     });
 
-    await this.workspaceSchemaManagerService.columnManager.addColumns(
+    await this.workspaceSchemaManagerService.columnManager.addColumns({
       queryRunner,
       schemaName,
       tableName,
       columnDefinitions,
-    );
+    });
 
     return;
   };
@@ -227,22 +227,22 @@ export class WorkspaceSchemaFieldActionRunnerService
           property,
         );
 
-        await this.workspaceSchemaManagerService.columnManager.renameColumn(
+        await this.workspaceSchemaManagerService.columnManager.renameColumn({
           queryRunner,
           schemaName,
           tableName,
-          fromCompositeColumnName,
-          toCompositeColumnName,
-        );
+          oldColumnName: fromCompositeColumnName,
+          newColumnName: toCompositeColumnName,
+        });
       }
     } else {
-      await this.workspaceSchemaManagerService.columnManager.renameColumn(
+      await this.workspaceSchemaManagerService.columnManager.renameColumn({
         queryRunner,
         schemaName,
         tableName,
-        update.from,
-        update.to,
-      );
+        oldColumnName: update.from,
+        newColumnName: update.to,
+      });
     }
 
     const enumOperations = collectEnumOperationsForField({
@@ -299,22 +299,26 @@ export class WorkspaceSchemaFieldActionRunnerService
         );
 
         await this.workspaceSchemaManagerService.columnManager.alterColumnDefault(
-          queryRunner,
-          schemaName,
-          tableName,
-          compositeColumnName,
-          serializedNewDefaultValue,
+          {
+            queryRunner,
+            schemaName,
+            tableName,
+            columnName: compositeColumnName,
+            defaultValue: serializedNewDefaultValue,
+          },
         );
       }
     } else {
       const serializedNewDefaultValue = serializeDefaultValue(update.to);
 
       await this.workspaceSchemaManagerService.columnManager.alterColumnDefault(
-        queryRunner,
-        schemaName,
-        tableName,
-        fieldMetadata.name,
-        serializedNewDefaultValue,
+        {
+          queryRunner,
+          schemaName,
+          tableName,
+          columnName: fieldMetadata.name,
+          defaultValue: serializedNewDefaultValue,
+        },
       );
     }
   }
@@ -388,12 +392,12 @@ export class WorkspaceSchemaFieldActionRunnerService
       );
     }
 
-    await this.workspaceSchemaManagerService.enumManager.alterEnumValues(
+    await this.workspaceSchemaManagerService.enumManager.alterEnumValues({
       queryRunner,
       schemaName,
       tableName,
-      enumColumnDefinition,
-      valueMapping,
-    );
+      columnDefinition: enumColumnDefinition,
+      oldToNewEnumOptionMap: valueMapping,
+    });
   }
 }

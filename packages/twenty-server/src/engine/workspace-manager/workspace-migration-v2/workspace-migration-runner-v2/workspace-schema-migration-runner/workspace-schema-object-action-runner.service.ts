@@ -42,11 +42,11 @@ export class WorkspaceSchemaObjectActionRunnerService
         objectMetadataId,
       });
 
-    await this.workspaceSchemaManagerService.tableManager.dropTable(
+    await this.workspaceSchemaManagerService.tableManager.dropTable({
       queryRunner,
       schemaName,
       tableName,
-    );
+    });
 
     const enumFlatFieldMetadatas = Object.values(
       flatObjectMetadataWithFlatFieldMaps.fieldsById,
@@ -100,12 +100,12 @@ export class WorkspaceSchemaObjectActionRunnerService
       workspaceSchemaManagerService: this.workspaceSchemaManagerService,
     });
 
-    await this.workspaceSchemaManagerService.tableManager.createTable(
+    await this.workspaceSchemaManagerService.tableManager.createTable({
       queryRunner,
       schemaName,
       tableName,
       columnDefinitions,
-    );
+    });
   };
 
   runUpdateObjectSchemaMigration = async ({
@@ -136,12 +136,12 @@ export class WorkspaceSchemaObjectActionRunnerService
       const newTableName = computeObjectTargetTable(updatedObjectMetadata);
 
       if (currentTableName !== newTableName) {
-        await this.workspaceSchemaManagerService.tableManager.renameTable(
+        await this.workspaceSchemaManagerService.tableManager.renameTable({
           queryRunner,
           schemaName,
-          currentTableName,
+          oldTableName: currentTableName,
           newTableName,
-        );
+        });
 
         const enumFlatFieldMetadatas = Object.values(
           flatObjectMetadataWithFlatFieldMaps.fieldsById,

@@ -226,25 +226,25 @@ export const executeBatchEnumOperations = async ({
     const enumPromises = enumOperations.map((enumOp) => {
       switch (enumOp.operation) {
         case EnumOperation.CREATE:
-          return workspaceSchemaManagerService.enumManager.createEnum(
+          return workspaceSchemaManagerService.enumManager.createEnum({
             queryRunner,
             schemaName,
-            enumOp.enumName,
-            enumOp.values,
-          );
+            enumName: enumOp.enumName,
+            values: enumOp.values,
+          });
         case EnumOperation.DROP:
-          return workspaceSchemaManagerService.enumManager.dropEnum(
+          return workspaceSchemaManagerService.enumManager.dropEnum({
             queryRunner,
             schemaName,
-            enumOp.enumName,
-          );
+            enumName: enumOp.enumName,
+          });
         case EnumOperation.RENAME:
-          return workspaceSchemaManagerService.enumManager.renameEnum(
+          return workspaceSchemaManagerService.enumManager.renameEnum({
             queryRunner,
             schemaName,
-            enumOp.fromName,
-            enumOp.toName,
-          );
+            oldEnumName: enumOp.fromName,
+            newEnumName: enumOp.toName,
+          });
         default:
           return assertUnreachable(enumOp, 'Unsupported enum operation');
       }

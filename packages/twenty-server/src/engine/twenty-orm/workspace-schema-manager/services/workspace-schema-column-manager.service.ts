@@ -1,35 +1,45 @@
 import { type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
-import { buildColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util';
+import { buildSqlColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util';
 import { sanitizeDefaultValue } from 'src/engine/twenty-orm/workspace-schema-manager/utils/sanitize-default-value.util';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
 
 export class WorkspaceSchemaColumnManagerService {
-  async addColumns(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    columnDefinitions: WorkspaceSchemaColumnDefinition[],
-  ): Promise<void> {
+  async addColumns({
+    queryRunner,
+    schemaName,
+    tableName,
+    columnDefinitions,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    columnDefinitions: WorkspaceSchemaColumnDefinition[];
+  }): Promise<void> {
     if (columnDefinitions.length === 0) return;
 
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const addColumnClauses = columnDefinitions.map(
-      (column) => `ADD COLUMN ${buildColumnDefinition(column)}`,
+      (column) => `ADD COLUMN ${buildSqlColumnDefinition(column)}`,
     );
     const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ${addColumnClauses.join(', ')}`;
 
     await queryRunner.query(sql);
   }
 
-  async dropColumns(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    columnNames: string[],
-  ): Promise<void> {
+  async dropColumns({
+    queryRunner,
+    schemaName,
+    tableName,
+    columnNames,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    columnNames: string[];
+  }): Promise<void> {
     if (columnNames.length === 0) return;
 
     const safeSchemaName = removeSqlDDLInjection(schemaName);
@@ -44,13 +54,19 @@ export class WorkspaceSchemaColumnManagerService {
     await queryRunner.query(sql);
   }
 
-  async renameColumn(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    oldColumnName: string,
-    newColumnName: string,
-  ): Promise<void> {
+  async renameColumn({
+    queryRunner,
+    schemaName,
+    tableName,
+    oldColumnName,
+    newColumnName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    oldColumnName: string;
+    newColumnName: string;
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeOldColumnName = removeSqlDDLInjection(oldColumnName);
@@ -60,13 +76,19 @@ export class WorkspaceSchemaColumnManagerService {
     await queryRunner.query(sql);
   }
 
-  async alterColumnDefault(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    columnName: string,
-    defaultValue?: string | number | boolean | null,
-  ): Promise<void> {
+  async alterColumnDefault({
+    queryRunner,
+    schemaName,
+    tableName,
+    columnName,
+    defaultValue,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+    defaultValue?: string | number | boolean | null;
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeColumnName = removeSqlDDLInjection(columnName);
