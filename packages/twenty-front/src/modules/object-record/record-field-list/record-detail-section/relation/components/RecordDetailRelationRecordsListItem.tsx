@@ -5,33 +5,20 @@ import { useCallback, useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { RecordFieldListCellEditModePortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellEditModePortal';
-import { RecordFieldListCellHoveredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortal';
-import {
-  FieldContext,
-  type RecordUpdateHook,
-  type RecordUpdateHookParams,
-} from '@/object-record/record-field/ui/contexts/FieldContext';
+import { RecordFieldList } from '@/object-record/record-field-list/components/RecordFieldList';
+import { RecordDetailRecordsListItemContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailRecordsListItemContainer';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { useIsRecordReadOnly } from '@/object-record/record-field/ui/hooks/read-only/useIsRecordReadOnly';
-import { isRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isRecordFieldReadOnly';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { singleRecordPickerSelectedIdComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSelectedIdComponentState';
-import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsListItem';
-import { useRecordDetailSectionFieldMetadataItems } from '@/object-record/record-show/record-detail-section/hooks/useRecordDetailSectionFieldMetadataItems';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
-import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -54,7 +41,7 @@ import { MenuItem } from 'twenty-ui/navigation';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 import { RelationType } from '~/generated-metadata/graphql';
 
-const StyledListItem = styled(RecordDetailRecordsListItem)<{
+const StyledListItem = styled(RecordDetailRecordsListItemContainer)<{
   isDropdownOpen?: boolean;
 }>`
   ${({ isDropdownOpen, theme }) =>
@@ -73,14 +60,6 @@ const StyledListItem = styled(RecordDetailRecordsListItem)<{
       pointer-events: auto;
     }
   }
-`;
-
-const StyledPropertyBox = styled(PropertyBox)`
-  align-items: flex-start;
-  display: flex;
-  padding-left: ${({ theme }) => theme.spacing(0)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(0)};
 `;
 
 const StyledClickableZone = styled.div`
@@ -133,11 +112,6 @@ export const RecordDetailRelationRecordsListItem = ({
   const relationObjectTypeName = getObjectTypename(
     relationObjectMetadataNameSingular,
   );
-
-  const { fieldMetadataItems } = useRecordDetailSectionFieldMetadataItems({
-    objectNameSingular: relationObjectMetadataNameSingular,
-    excludeFieldMetadataIds: [relationFieldMetadataId],
-  });
 
   const relationObjectPermissions = useObjectPermissionsForObject(
     relationObjectMetadataItem.id,
@@ -205,17 +179,6 @@ export const RecordDetailRelationRecordsListItem = ({
     await deleteOneRelationRecord(relationRecord.id);
   };
 
-  const useUpdateOneObjectRecordMutation: RecordUpdateHook = () => {
-    const updateEntity = ({ variables }: RecordUpdateHookParams) => {
-      updateOneRelationRecord?.({
-        idToUpdate: variables.where.id as string,
-        updateOneRecordInput: variables.updateOneRecordInput,
-      });
-    };
-
-    return [updateEntity, { loading: false }];
-  };
-
   const handleClick = () => onClick(relationRecord.id);
 
   const AnimatedIconChevronDown = useCallback<IconComponent>(
@@ -231,11 +194,6 @@ export const RecordDetailRelationRecordsListItem = ({
     ),
     [isExpanded],
   );
-
-  const isRelationRecordReadOnly = useIsRecordReadOnly({
-    recordId: relationRecord.id,
-    objectMetadataId: relationObjectMetadataItem.id,
-  });
 
   return (
     <>
@@ -286,57 +244,11 @@ export const RecordDetailRelationRecordsListItem = ({
         )}
       </StyledListItem>
       <AnimatedEaseInOut isOpen={isExpanded}>
-        <StyledPropertyBox>
-          {availableRelationFieldMetadataItems.map(
-            (fieldMetadataItem, index) => (
-              <FieldContext.Provider
-                key={fieldMetadataItem.id}
-                value={{
-                  recordId: relationRecord.id,
-                  maxWidth: 200,
-                  isLabelIdentifier: false,
-                  fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-                    field: fieldMetadataItem,
-                    position: index,
-                    objectMetadataItem: relationObjectMetadataItem,
-                    showLabel: true,
-                    labelWidth: 90,
-                  }),
-                  useUpdateRecord: useUpdateOneObjectRecordMutation,
-                  isRecordFieldReadOnly: isRecordFieldReadOnly({
-                    isRecordReadOnly: isRelationRecordReadOnly,
-                    objectPermissions: relationObjectPermissions,
-                    fieldMetadataId: fieldMetadataItem.id,
-                    objectNameSingular: relationObjectMetadataNameSingular,
-                    fieldName: fieldMetadataItem.name,
-                    fieldType: fieldMetadataItem.type,
-                    isCustom: relationObjectMetadataItem.isCustom,
-                  }),
-                }}
-              >
-                <RecordFieldComponentInstanceContext.Provider
-                  value={{
-                    instanceId: getRecordFieldInputInstanceId({
-                      recordId: relationRecord.id,
-                      fieldName: fieldMetadataItem.name,
-                      prefix: 'record-detail',
-                    }),
-                  }}
-                >
-                  <RecordInlineCell instanceIdPrefix="record-detail" />
-                </RecordFieldComponentInstanceContext.Provider>
-              </FieldContext.Provider>
-            ),
-          )}
-          <RecordFieldListCellHoveredPortal
-            objectMetadataItem={relationObjectMetadataItem}
-            recordId={relationRecord.id}
-          />
-          <RecordFieldListCellEditModePortal
-            objectMetadataItem={relationObjectMetadataItem}
-            recordId={relationRecord.id}
-          />
-        </StyledPropertyBox>
+        <RecordFieldList
+          objectNameSingular={relationObjectMetadataNameSingular}
+          objectRecordId={relationRecord.id}
+          showDuplicatesSection={false}
+        />
       </AnimatedEaseInOut>
       {createPortal(
         <ConfirmationModal

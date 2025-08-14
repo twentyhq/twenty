@@ -4,4 +4,4 @@ const StyledRecordsList = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
 `;
 
-export { StyledRecordsList as RecordDetailRecordsList };
+export { StyledRecordsList as RecordDetailRecordsListContainer };

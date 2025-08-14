@@ -1,4 +1,4 @@
-import { useRecordDetailSectionFieldMetadataItems } from '@/object-record/record-show/record-detail-section/hooks/useRecordDetailSectionFieldMetadataItems';
+import { useRecordDetailSectionFieldMetadataItems } from '@/object-record/record-field-list/hooks/useRecordDetailSectionFieldMetadataItems';
 import { recordDetailSectionCellEditModePositionComponentState } from '@/object-record/record-show/record-detail-section/states/recordDetailSectionCellEditModePositionComponentState';
 import { recordDetailSectionHoverPositionComponentState } from '@/object-record/record-show/record-detail-section/states/recordDetailSectionHoverPositionComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
