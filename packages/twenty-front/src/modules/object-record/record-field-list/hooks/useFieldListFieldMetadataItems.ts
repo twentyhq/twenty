@@ -11,10 +11,16 @@ import { isDefined } from 'twenty-shared/utils';
 
 type UseFieldListFieldMetadataItemsProps = {
   objectNameSingular: string;
+  excludeFieldMetadataIds?: string[];
+  excludeCreatedAtAndUpdatedAt?: boolean;
+  showRelationSections?: boolean;
 };
 
 export const useFieldListFieldMetadataItems = ({
   objectNameSingular,
+  excludeFieldMetadataIds = [],
+  showRelationSections = true,
+  excludeCreatedAtAndUpdatedAt = true,
 }: UseFieldListFieldMetadataItemsProps) => {
   const { labelIdentifierFieldMetadataItem } =
     useLabelIdentifierFieldMetadataItem({
@@ -33,7 +39,13 @@ export const useFieldListFieldMetadataItems = ({
     .filter(
       (fieldMetadataItem) =>
         isFieldCellSupported(fieldMetadataItem, objectMetadataItems) &&
-        fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id,
+        fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id &&
+        !excludeFieldMetadataIds.includes(fieldMetadataItem.id) &&
+        (!excludeCreatedAtAndUpdatedAt ||
+          (fieldMetadataItem.name !== 'createdAt' &&
+            fieldMetadataItem.name !== 'deletedAt')) &&
+        (showRelationSections ||
+          fieldMetadataItem.type !== FieldMetadataType.RELATION),
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),

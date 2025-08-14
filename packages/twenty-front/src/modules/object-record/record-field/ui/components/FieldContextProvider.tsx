@@ -18,6 +18,8 @@ export const FieldContextProvider = ({
   objectRecordId,
   customUseUpdateOneObjectHook,
   overridenIsFieldEmpty,
+  onMouseEnter,
+  anchorId,
   children,
 }: {
   clearable?: boolean;
@@ -28,6 +30,8 @@ export const FieldContextProvider = ({
   objectRecordId: string;
   customUseUpdateOneObjectHook?: RecordUpdateHook;
   overridenIsFieldEmpty?: boolean;
+  onMouseEnter?: () => void;
+  anchorId?: string;
   children: ReactNode;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -81,6 +85,8 @@ export const FieldContextProvider = ({
         clearable,
         overridenIsFieldEmpty,
         isRecordFieldReadOnly,
+        onMouseEnter,
+        anchorId,
       }}
     >
       {children}

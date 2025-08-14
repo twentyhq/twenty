@@ -91,7 +91,7 @@ export const RecordInlineCellAnchoredPortal = ({
                 instanceId: getRecordFieldInputInstanceId({
                   recordId,
                   fieldName: fieldMetadataItem.name,
-                  prefix: 'inline-cell',
+                  prefix: anchorIdPrefix,
                 }),
               }}
             >

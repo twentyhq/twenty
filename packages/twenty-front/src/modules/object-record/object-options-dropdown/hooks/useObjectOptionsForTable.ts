@@ -1,6 +1,7 @@
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useCallback } from 'react';
 
+import { useReorderRecordFields } from '@/object-record/record-field/hooks/useReorderRecordFields';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
@@ -24,6 +25,8 @@ export const useObjectOptionsForTable = (
     { recordTableId, objectMetadataId },
   );
 
+  const { reorderRecordFields } = useReorderRecordFields();
+
   const handleReorderColumns: OnDragEndResponder = useCallback(
     async (result) => {
       if (
@@ -39,9 +42,14 @@ export const useObjectOptionsForTable = (
         toIndex: result.destination.index - 1,
       });
 
+      reorderRecordFields({
+        fromIndex: result.source.index - 1,
+        toIndex: result.destination.index - 1,
+      });
+
       handleColumnReorder(reorderedFields);
     },
-    [visibleTableColumns, handleColumnReorder],
+    [visibleTableColumns, handleColumnReorder, reorderRecordFields],
   );
 
   return {

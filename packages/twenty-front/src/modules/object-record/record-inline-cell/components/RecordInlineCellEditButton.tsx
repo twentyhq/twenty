@@ -8,10 +8,16 @@ const StyledInlineCellButtonContainer = styled.div`
   display: flex;
 `;
 
-export const RecordInlineCellButton = ({ Icon }: { Icon: IconComponent }) => {
+export const RecordInlineCellButton = ({
+  Icon,
+  onClick,
+}: {
+  Icon: IconComponent;
+  onClick?: () => void;
+}) => {
   return (
     <AnimatedContainer>
-      <StyledInlineCellButtonContainer>
+      <StyledInlineCellButtonContainer onClick={onClick}>
         <FloatingIconButton
           size="small"
           Icon={Icon}

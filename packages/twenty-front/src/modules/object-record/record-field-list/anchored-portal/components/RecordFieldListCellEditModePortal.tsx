@@ -4,8 +4,10 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { RecordFieldListCellEditModePortalContent } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellEditModePortalContent';
 import { RecordFieldListInputContextProvider } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListInputContextProvider';
 import { useFieldListFieldMetadataFromPosition } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataFromPosition';
+import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { recordFieldListCellEditModePositionComponentState } from '@/object-record/record-field-list/states/recordFieldListCellEditModePositionComponentState';
 import { RecordInlineCellAnchoredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellAnchoredPortal';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordFieldListCellEditModePortalProps = {
@@ -17,6 +19,10 @@ export const RecordFieldListCellEditModePortal = ({
   objectMetadataItem,
   recordId,
 }: RecordFieldListCellEditModePortalProps) => {
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldListComponentInstanceContext,
+  );
+
   const editModePosition = useRecoilComponentValue(
     recordFieldListCellEditModePositionComponentState,
   );
@@ -35,7 +41,7 @@ export const RecordFieldListCellEditModePortal = ({
       fieldMetadataItem={editedFieldMetadataItem}
       objectMetadataItem={objectMetadataItem}
       recordId={recordId}
-      anchorIdPrefix={'record-field-list-inline-cell'}
+      anchorIdPrefix={instanceId}
     >
       <RecordFieldListInputContextProvider>
         <RecordFieldListCellEditModePortalContent />

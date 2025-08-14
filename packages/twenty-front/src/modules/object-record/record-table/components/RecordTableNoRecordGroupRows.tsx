@@ -28,9 +28,9 @@ export const RecordTableNoRecordGroupRows = () => {
           />
         );
       })}
-      <RecordTableAddNew />
       <RecordTableBodyFetchMoreLoader />
       <RecordTableBodyDroppablePlaceholder />
+      <RecordTableAddNew />
       {!isRecordTableInitialLoading && allRecordIds.length > 0 && (
         <RecordTableAggregateFooter />
       )}
