@@ -315,11 +315,6 @@ msgstr ""
 msgid "Assigned tasks"
 msgstr ""
 
-#. js-lingui-id: kZ7PLo
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me.ts
-msgid "Assigned to Me"
-msgstr ""
-
 #. js-lingui-id: ojKCLU
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Assignee"
@@ -488,17 +483,6 @@ msgstr ""
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Body"
-msgstr ""
-
-#. js-lingui-id: 6+byWT
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
-msgid "By Stage"
-msgstr ""
-
-#. js-lingui-id: jQX8V+
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view.ts
-msgid "By Status"
 msgstr ""
 
 #. js-lingui-id: 8mVqF7

@@ -320,11 +320,6 @@ msgstr "AKS"
 msgid "Assigned tasks"
 msgstr "Tildelte oppgaver"
 
-#. js-lingui-id: kZ7PLo
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me.ts
-msgid "Assigned to Me"
-msgstr ""
-
 #. js-lingui-id: ojKCLU
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Assignee"
@@ -494,17 +489,6 @@ msgstr "Blokkeringslister"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Body"
 msgstr "Innhold"
-
-#. js-lingui-id: 6+byWT
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
-msgid "By Stage"
-msgstr ""
-
-#. js-lingui-id: jQX8V+
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view.ts
-msgid "By Status"
-msgstr ""
 
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts

@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
@@ -14,7 +12,6 @@ import { type ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view
 export class ObjectMetadataRelatedRecordsService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   public async createObjectRelatedRecords(
@@ -35,19 +32,10 @@ export class ObjectMetadataRelatedRecordsService {
         'view',
       );
 
-    const isCoreViewEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_CORE_VIEW_ENABLED,
-      objectMetadata.workspaceId,
-    );
-
-    const viewName = isCoreViewEnabled
-      ? 'All {{objectLabelPlural}}'
-      : `All ${objectMetadata.labelPlural}`;
-
     return await viewRepository.save({
       objectMetadataId: objectMetadata.id,
       type: 'table',
-      name: viewName,
+      name: `All ${objectMetadata.labelPlural}`,
       key: 'INDEX',
       icon: 'IconList',
     });
@@ -109,19 +97,10 @@ export class ObjectMetadataRelatedRecordsService {
         'view',
       );
 
-    const isCoreViewEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_CORE_VIEW_ENABLED,
-      workspaceId,
-    );
-
-    const viewName = isCoreViewEnabled
-      ? 'All {{objectLabelPlural}}'
-      : `All ${updatedObjectMetadata.labelPlural}`;
-
     await viewRepository.update(
       { objectMetadataId: updatedObjectMetadata.id, key: 'INDEX' },
       {
-        name: viewName,
+        name: `All ${updatedObjectMetadata.labelPlural}`,
         ...(isDefined(updatedObjectMetadata.icon)
           ? { icon: updatedObjectMetadata.icon }
           : {}),

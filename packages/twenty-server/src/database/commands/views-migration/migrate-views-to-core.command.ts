@@ -21,6 +21,7 @@ import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-r
 import { type ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 import { type ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
@@ -246,15 +247,33 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     workspaceId: string,
     queryRunner: QueryRunner,
   ): Promise<void> {
+    let viewName = workspaceView.name;
+
+    if (workspaceView.key === 'INDEX' && !viewName.includes('{{')) {
+      const objectMetadataRepository =
+        queryRunner.manager.getRepository(ObjectMetadataEntity);
+      const objectMetadata = await objectMetadataRepository.findOne({
+        where: {
+          id: workspaceView.objectMetadataId,
+          workspaceId,
+        },
+      });
+
+      if (objectMetadata?.isCustom) {
+        viewName = 'All {{objectLabelPlural}}';
+      }
+    }
+
     const coreView: Partial<View> = {
       id: workspaceView.id,
-      name: workspaceView.name,
+      name: viewName,
       objectMetadataId: workspaceView.objectMetadataId,
       type: workspaceView.type === 'table' ? ViewType.TABLE : ViewType.KANBAN,
       key: workspaceView.key,
       icon: workspaceView.icon,
       position: workspaceView.position,
       isCompact: workspaceView.isCompact,
+      isCustom: workspaceView.key !== 'INDEX',
       openRecordIn:
         workspaceView.openRecordIn === 'SIDE_PANEL'
           ? ViewOpenRecordIn.SIDE_PANEL

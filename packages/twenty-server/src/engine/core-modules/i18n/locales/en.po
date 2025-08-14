@@ -315,11 +315,6 @@ msgstr "ARR"
 msgid "Assigned tasks"
 msgstr "Assigned tasks"
 
-#. js-lingui-id: kZ7PLo
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me.ts
-msgid "Assigned to Me"
-msgstr "Assigned to Me"
-
 #. js-lingui-id: ojKCLU
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Assignee"
@@ -489,17 +484,6 @@ msgstr "Blocklists"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Body"
 msgstr "Body"
-
-#. js-lingui-id: 6+byWT
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
-msgid "By Stage"
-msgstr "By Stage"
-
-#. js-lingui-id: jQX8V+
-#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view.ts
-msgid "By Status"
-msgstr "By Status"
 
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
