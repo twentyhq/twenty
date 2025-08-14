@@ -17,7 +17,7 @@ export const workflowRunsAllView = (
   }
 
   return {
-    name: msg`All Workflow Runs`.message ?? '',
+    name: msg`All Workflow Runs`,
     objectMetadataId: workflowRunObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

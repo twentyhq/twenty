@@ -20,7 +20,7 @@ export const companiesAllView = (
   }
 
   return {
-    name: msg`All Companies`.message ?? '',
+    name: msg`All Companies`,
     objectMetadataId: companyObjectMetadata.id ?? '',
     type: 'table',
     key: 'INDEX',

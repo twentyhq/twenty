@@ -216,9 +216,9 @@ msgstr ""
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr ""
 
-#. js-lingui-id: N40H+G
-#: src/engine/workspace-manager/standard-objects-prefill-data/constants/view-prefix.constants.ts
-msgid "All"
+#. js-lingui-id: 8fY6nW
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
+msgid "All {{objectLabelPlural}}"
 msgstr ""
 
 #. js-lingui-id: tZLcDK
@@ -313,6 +313,11 @@ msgstr ""
 #. js-lingui-id: Ek7xGj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Assigned tasks"
+msgstr ""
+
+#. js-lingui-id: kZ7PLo
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me.ts
+msgid "Assigned to Me"
 msgstr ""
 
 #. js-lingui-id: ojKCLU
@@ -483,6 +488,17 @@ msgstr ""
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Body"
+msgstr ""
+
+#. js-lingui-id: 6+byWT
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
+msgid "By Stage"
+msgstr ""
+
+#. js-lingui-id: jQX8V+
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view.ts
+msgid "By Status"
 msgstr ""
 
 #. js-lingui-id: 8mVqF7

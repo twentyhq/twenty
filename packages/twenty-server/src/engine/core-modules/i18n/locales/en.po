@@ -216,10 +216,10 @@ msgstr "Aggregate operation"
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "Aggregated / filtered event to be displayed on the timeline"
 
-#. js-lingui-id: N40H+G
-#: src/engine/workspace-manager/standard-objects-prefill-data/constants/view-prefix.constants.ts
-msgid "All"
-msgstr "All"
+#. js-lingui-id: 8fY6nW
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
+msgid "All {{objectLabelPlural}}"
+msgstr "All {{objectLabelPlural}}"
 
 #. js-lingui-id: tZLcDK
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
@@ -314,6 +314,11 @@ msgstr "ARR"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Assigned tasks"
 msgstr "Assigned tasks"
+
+#. js-lingui-id: kZ7PLo
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me.ts
+msgid "Assigned to Me"
+msgstr "Assigned to Me"
 
 #. js-lingui-id: ojKCLU
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -484,6 +489,17 @@ msgstr "Blocklists"
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Body"
 msgstr "Body"
+
+#. js-lingui-id: 6+byWT
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
+msgid "By Stage"
+msgstr "By Stage"
+
+#. js-lingui-id: jQX8V+
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view.ts
+msgid "By Status"
+msgstr "By Status"
 
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts

@@ -99,7 +99,7 @@ const createCoreViews = async (
       kanbanAggregateOperationFieldMetadataId,
     }) => ({
       id,
-      name,
+      name: name.message ?? '',
       objectMetadataId,
       type: type === 'kanban' ? ViewType.KANBAN : ViewType.TABLE,
       key: key || undefined,

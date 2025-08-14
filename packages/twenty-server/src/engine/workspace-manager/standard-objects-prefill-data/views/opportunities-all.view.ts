@@ -17,7 +17,7 @@ export const opportunitiesAllView = (
   }
 
   return {
-    name: msg`All Opportunities`.message ?? '',
+    name: msg`All Opportunities`,
     objectMetadataId: opportunityObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

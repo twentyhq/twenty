@@ -17,7 +17,7 @@ export const notesAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
   }
 
   return {
-    name: msg`All Notes`.message ?? '',
+    name: msg`All Notes`,
     objectMetadataId: noteObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

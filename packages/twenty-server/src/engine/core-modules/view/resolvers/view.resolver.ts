@@ -44,12 +44,17 @@ export class ViewResolver {
       );
 
       if (objectMetadata) {
-        const allTranslated = i18n._(generateMessageId('All'));
+        const messageId = generateMessageId(view.name);
+        const translatedMessage = i18n._(messageId, {
+          objectLabelPlural: objectMetadata.labelPlural,
+        });
 
-        return view.name.replace(
-          'All {{objectLabelPlural}}',
-          `${allTranslated} ${objectMetadata.labelPlural}`,
-        );
+        return translatedMessage !== messageId
+          ? translatedMessage
+          : view.name.replace(
+              '{{objectLabelPlural}}',
+              objectMetadata.labelPlural,
+            );
       }
     }
 

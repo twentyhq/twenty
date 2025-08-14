@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
@@ -17,7 +19,7 @@ export const tasksByStatusView = (
   }
 
   return {
-    name: 'By Status',
+    name: msg`By Status`,
     objectMetadataId: taskObjectMetadata.id,
     type: 'kanban',
     key: null,

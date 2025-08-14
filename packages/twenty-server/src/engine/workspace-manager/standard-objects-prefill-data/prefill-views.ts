@@ -91,7 +91,7 @@ const createWorkspaceViews = async (
           kanbanAggregateOperationFieldMetadataId,
         }) => ({
           id,
-          name,
+          name: name.message ?? '',
           objectMetadataId,
           type,
           key,
