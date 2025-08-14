@@ -56,6 +56,8 @@ export const useDefaultHomePagePath = () => {
 
         const views = snapshot.getLoadable(prefetchViewsState).getValue();
 
+        console.log('views', views);
+
         return views.find(
           (view) => view.objectMetadataId === objectMetadataItemId,
         );
