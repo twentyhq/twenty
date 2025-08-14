@@ -153,19 +153,6 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   mktContracts: Relation<MktContractWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: MKT_ORDER_FIELD_IDS.orderItems,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Order Items`,
-    description: msg`Items included in this order`,
-    icon: 'IconShoppingCartCog',
-    inverseSideTarget: () => MktOrderItemWorkspaceEntity,
-    inverseSideFieldKey: 'mktOrder',
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  orderItems: Relation<MktOrderItemWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
     standardId: MKT_ORDER_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Timeline Activities`,

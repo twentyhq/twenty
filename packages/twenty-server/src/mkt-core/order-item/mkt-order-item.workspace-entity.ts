@@ -120,20 +120,20 @@ export class MktOrderItemWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('mktProduct')
   mktProductId?: string;
 
-  // Temporarily commented out due to relation conflicts with TimelineActivityMktEntity
+  // Temporarily commented out due to TimelineActivityMktEntity not being a registered entity
   // @WorkspaceRelation({
   //   standardId: MKT_ORDER_ITEM_FIELD_IDS.timelineActivities,
   //   type: RelationType.MANY_TO_ONE,
   //   label: msg`Timeline Activity`,
   //   description: msg`Timeline Activity that owns this order item`,
   //   icon: 'IconTimelineEvent',
-  //   inverseSideTarget: () => TimelineActivityWorkspaceEntity,
-  //   inverseSideFieldKey: 'mktOrderItems',
+  //   inverseSideTarget: () => TimelineActivityMktEntity,
+  //   inverseSideFieldKey: 'mktOrderItem',
   //   onDelete: RelationOnDeleteAction.SET_NULL,
   // })
   // @WorkspaceIsNullable()
   // @WorkspaceIsSystem()
-  // timelineActivity: Relation<TimelineActivityWorkspaceEntity> | null;
+  // timelineActivity: Relation<TimelineActivityMktEntity> | null;
 
   // @WorkspaceJoinColumn('timelineActivity')
   // timelineActivityId: string | null;
