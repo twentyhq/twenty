@@ -1,4 +1,4 @@
-import { useTheme } from '@emotion/react';
+import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconReload, IconX } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
@@ -10,6 +10,17 @@ const StyledOverridableCheckboxContainer = styled.div`
   display: inline-flex;
   justify-content: flex-start;
   width: 48px;
+`;
+
+const spin = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(90deg); }
+`;
+
+const StyledIconReload = styled(IconReload)`
+  &:hover {
+    animation: ${spin} 250ms linear forwards;
+  }
 `;
 
 const StyledOverridableCheckboxContainerItem = styled.div`
@@ -79,7 +90,7 @@ export const OverridableCheckbox = ({
               onClick={disabled ? undefined : onChange}
               isDisabled={disabled}
             >
-              <IconReload
+              <StyledIconReload
                 size={theme.icon.size.md}
                 color={theme.adaptiveColors.orange4}
               />
