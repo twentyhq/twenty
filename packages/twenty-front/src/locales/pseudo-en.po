@@ -2107,6 +2107,11 @@ msgstr ""
 msgid "Do not import"
 msgstr ""
 
+#. js-lingui-id: TvY/XA
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "Documentation"
+msgstr ""
+
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Doesn't contain"
@@ -4563,11 +4568,6 @@ msgstr ""
 #. js-lingui-id: GdgCoi
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Plan"
-msgstr ""
-
-#. js-lingui-id: 0LrFTO
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
-msgid "Playground"
 msgstr ""
 
 #. js-lingui-id: 90/XJz
