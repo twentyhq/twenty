@@ -63,7 +63,6 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     pgColumns: MKT_VARIANT_ATTRIBUTE_DATA_SEED_COLUMNS,
     recordSeeds: MKT_VARIANT_ATTRIBUTE_DATA_SEEDS,
   },
-  // Order configs (orders must come before contracts)
   {
     tableName: 'mktOrder',
     pgColumns: MKT_ORDER_DATA_SEED_COLUMNS,

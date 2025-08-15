@@ -146,4 +146,21 @@ export class TimelineActivityMktEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('mktLicense')
   mktLicenseId: string | null;
+
+  // Temporarily commented out due to relation conflicts
+  // @WorkspaceRelation({
+  //   standardId: TIMELINE_ACTIVITY_MKT_FIELD_IDS.mktContract,
+  //   type: RelationType.MANY_TO_ONE,
+  //   label: msg`Contract`,
+  //   description: msg`Event contract`,
+  //   icon: 'IconBox',
+  //   inverseSideTarget: () => MktContractWorkspaceEntity,
+  //   inverseSideFieldKey: 'timelineActivities',
+  //   onDelete: RelationOnDeleteAction.CASCADE,
+  // })
+  // @WorkspaceIsNullable()
+  // mktContract: Relation<MktContractWorkspaceEntity> | null;
+
+  // @WorkspaceJoinColumn('mktContract')
+  // mktContractId: string | null;
 }
