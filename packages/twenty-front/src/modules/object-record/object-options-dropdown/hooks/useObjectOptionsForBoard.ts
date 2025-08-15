@@ -119,9 +119,9 @@ export const useObjectOptionsForBoard = ({
   // Let's refactor this as we introduce the new viewBar
   const handleBoardFieldVisibilityChange = useCallback(
     async (
-      updatedFieldDefinition: Omit<
+      updatedFieldDefinition: Pick<
         ColumnDefinition<FieldMetadata>,
-        'size' | 'position'
+        'fieldMetadataId' | 'isVisible'
       >,
     ) => {
       const isNewViewField = !(
