@@ -20,11 +20,15 @@ export const MKT_PREFILLS = [
   prefillMktVariants,
   prefillMktVariantAttributes,
   // order prefills
-  prefillMktTemplates,
   prefillMktOrders,
   prefillMktOrderItems,
+  // template prefills
+  prefillMktTemplates,
+  // contract prefills
   prefillMktContracts,
+  // license prefills
   prefillMktLicenses,
+  // invoice prefills
   prefillMktInvoices,
   // payment prefills (after orders to reference existing orders)
   prefillMktPaymentMethods,

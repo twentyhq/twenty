@@ -20,11 +20,15 @@ export const MKT_DATABASE_COMMAND_MODULES = [
   SeedValueModuleCommand,
   SeedVariantAttributeModuleCommand,
   // order commands
-  SeedTemplateModuleCommand,
   SeedOrderModuleCommand,
   SeedOrderItemModuleCommand,
+  // template commands
+  SeedTemplateModuleCommand,
+  // contract commands
   SeedContractModuleCommand,
+  // license commands
   SeedLicenseModuleCommand,
+  // invoice commands
   SeedInvoiceModuleCommand,
   // payment commands
   MktPaymentMethodDataSeedDevWorkspaceCommand,

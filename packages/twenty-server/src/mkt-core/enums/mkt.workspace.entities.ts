@@ -20,11 +20,15 @@ export const MKT_WORKSPACE_ENTITIES = [
   MktValueWorkspaceEntity,
   MktVariantAttributeWorkspaceEntity,
   // Order
-  MktTemplateWorkspaceEntity,
   MktOrderWorkspaceEntity,
   MktOrderItemWorkspaceEntity,
+  // Template
+  MktTemplateWorkspaceEntity,
+  // Contracts
   MktContractWorkspaceEntity,
+  // License
   MktLicenseWorkspaceEntity,
+  // Invoice
   MktInvoiceWorkspaceEntity,
   // Payment
   MktPaymentMethodWorkspaceEntity,

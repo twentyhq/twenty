@@ -20,11 +20,15 @@ export const MKT_ALL_VIEWS = [
   mktValuesAllView,
   mktVariantAttributesAllView,
   // order views
-  mktTemplatesAllView,
   mktOrdersAllView,
   mktOrderItemsAllView,
+  // template views
+  mktTemplatesAllView,
+  // license views
   mktLicensesAllView,
+  // contract views
   mktContractsAllView,
+  // invoice views
   mktInvoicesAllView,
   // payment views
   mktPaymentMethodsAllView,
