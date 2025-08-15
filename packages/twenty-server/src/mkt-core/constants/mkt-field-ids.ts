@@ -261,9 +261,9 @@ export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   accountOwnerForMktLicenses: 'a343e640-2214-4896-a0e2-830ee854a778',
   accountOwnerForMktContracts: '87d29139-844b-44b9-a3e7-3f9e5a3e4165',
   accountOwnerForMktOrderItems: '5f4e3d2c-1b0a-9876-5432-109876543210',
+  accountOwnerForMktPayments: 'df8a9b92-6d5e-4f42-9c32-8b7f6e5d4c52',
+  accountOwnerForMktPaymentMethods: 'ef8a9b93-6d5e-4f43-9c33-8b7f6e5d4c53',
   //invoices
   accountOwnerForMktInvoices: 'ab600d66-5755-4934-b5c3-19036927cf92',
   accountOwnerForMktTemplates: 'a88096b8-e818-4421-afc2-5b1ab207aca3',
-  accountOwnerForMktPayments: 'df8a9b92-6d5e-4f42-9c32-8b7f6e5d4c52',
-  accountOwnerForMktPaymentMethods: 'ef8a9b93-6d5e-4f43-9c33-8b7f6e5d4c53',
 };
