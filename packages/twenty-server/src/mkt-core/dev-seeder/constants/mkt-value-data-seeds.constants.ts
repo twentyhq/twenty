@@ -59,10 +59,108 @@ ID_32: '3f6cc145-3c83-416e-bc1d-7f5c15078666',
 ID_33: '26e74d45-e85d-414f-97a6-66b6e5a20471',
 ID_34: '82dff586-93db-4fe9-af37-2ef0e22833ba',
 ID_35: 'd79ddcb0-4532-453c-9f1f-bb062858392b',
+MKT_LANGUAGE_VN_ID: 'df7d589b-1d0c-4a02-8c40-0ac371e76d3f',
+MKT_LANGUAGE_EN_ID: 'cf3fe86e-a95b-4c07-9277-4947e926dccf',
+MKT_CHANNEL_DIRECT_ID: '18b096a6-a943-4dfb-81da-f459740c5942',
+MKT_CHANNEL_RESELLER_ID: '11e8b90e-3587-4854-8b54-d6ed328467c1',
+MKT_CHANNEL_AFFILIATE_ID: 'afdaacfc-753a-4017-a0bc-e827e78cb21c',
+MKT_MONTH_DURATION_6_ID: 'c1cd27e6-b995-42da-a406-dc47eda414f3',
+MKT_MONTH_DURATION_12_ID: '86bbd554-3f02-44d4-8179-f3636756c322',
+MKT_PRODUCT_TYPE_SINGLE_ID: 'ad0f6321-8b88-4126-9a70-d98ce4bffa68',
+  MKT_PRODUCT_TYPE_COMBO_ID: '18d6a537-52f8-4ac3-a376-1512f26aba88',
 };
 
 //prettier-ignore
 export const MKT_VALUE_DATA_SEEDS: MktValueDataSeed[] = [
+  // MKT Language values for MKT_LANGUAGE_ID
+  {
+    id: MKT_VALUE_DATA_SEEDS_IDS.MKT_LANGUAGE_VN_ID,
+    name: 'VN',
+    position: 1,
+    mktAttributeId: MKT_ATTRIBUTE_DATA_SEEDS_IDS.MKT_LANGUAGE_ID,
+    createdBySource: 'API',
+    createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+    createdByName: 'John Doe',
+  },
+  {
+    id: MKT_VALUE_DATA_SEEDS_IDS.MKT_LANGUAGE_EN_ID,
+    name: 'EN',
+    position: 2,
+    mktAttributeId: MKT_ATTRIBUTE_DATA_SEEDS_IDS.MKT_LANGUAGE_ID,
+    createdBySource: 'API',
+    createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+    createdByName: 'John Doe',
+  },
+
+  // MKT Channel values for MKT_CHANNEL_ID
+  {
+    id: MKT_VALUE_DATA_SEEDS_IDS.MKT_CHANNEL_DIRECT_ID,
+    name: 'direct',
+    position: 1,
+    mktAttributeId: MKT_ATTRIBUTE_DATA_SEEDS_IDS.MKT_CHANNEL_ID,
+    createdBySource: 'API',
+    createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+    createdByName: 'John Doe',
+  },
+  {
+    id: MKT_VALUE_DATA_SEEDS_IDS.MKT_CHANNEL_RESELLER_ID,
+    name: 'reseller',
+    position: 2,
+    mktAttributeId: MKT_ATTRIBUTE_DATA_SEEDS_IDS.MKT_CHANNEL_ID,
+    createdBySource: 'API',
+    createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+    createdByName: 'John Doe',
+  },
+  {
+    id: MKT_VALUE_DATA_SEEDS_IDS.MKT_CHANNEL_AFFILIATE_ID,
+    name: 'affiliate',
+    position: 3,
+    mktAttributeId: MKT_ATTRIBUTE_DATA_SEEDS_IDS.MKT_CHANNEL_ID,
+    createdBySource: 'API',
+    createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+    createdByName: 'John Doe',
+  },
+
+  // MKT Duration values for MKT_MONTH_DURATION_ID
+  {
+    id: MKT_VALUE_DATA_SEEDS_IDS.MKT_MONTH_DURATION_6_ID,
+    name: '6 months',
+    position: 1,
+    mktAttributeId: MKT_ATTRIBUTE_DATA_SEEDS_IDS.MKT_MONTH_DURATION_ID,
+    createdBySource: 'API',
+    createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+    createdByName: 'John Doe',
+  },
+  {
+    id: MKT_VALUE_DATA_SEEDS_IDS.MKT_MONTH_DURATION_12_ID,
+    name: '12 months',
+    position: 2,
+    mktAttributeId: MKT_ATTRIBUTE_DATA_SEEDS_IDS.MKT_MONTH_DURATION_ID,
+    createdBySource: 'API',
+    createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+    createdByName: 'John Doe',
+  },
+
+  // MKT Product Type values for MKT_INTERNAL_TYPE_ID
+  {
+    id: MKT_VALUE_DATA_SEEDS_IDS.MKT_PRODUCT_TYPE_SINGLE_ID,
+    name: 'single',
+    position: 1,
+    mktAttributeId: MKT_ATTRIBUTE_DATA_SEEDS_IDS.MKT_INTERNAL_TYPE_ID,
+    createdBySource: 'API',
+    createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+    createdByName: 'John Doe',
+  },
+  {
+    id: MKT_VALUE_DATA_SEEDS_IDS.MKT_PRODUCT_TYPE_COMBO_ID,
+    name: 'combo',
+    position: 2,
+    mktAttributeId: MKT_ATTRIBUTE_DATA_SEEDS_IDS.MKT_INTERNAL_TYPE_ID,
+    createdBySource: 'API',
+    createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+    createdByName: 'John Doe',
+  },
+
   // Color attribute (ID_1) - 3 values
   {
     id: MKT_VALUE_DATA_SEEDS_IDS.ID_1,

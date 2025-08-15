@@ -38,15 +38,6 @@ export const mktAttributesAllView = (
       {
         fieldMetadataId:
           attributeObjectMetadata.fields.find(
-            (field) => field.standardId === MKT_ATTRIBUTE_FIELD_IDS.mktProduct,
-          )?.id ?? '',
-        position: 1,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId:
-          attributeObjectMetadata.fields.find(
             (field) =>
               field.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.createdAt,
           )?.id ?? '',

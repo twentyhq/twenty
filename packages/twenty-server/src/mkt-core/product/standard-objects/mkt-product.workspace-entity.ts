@@ -23,13 +23,12 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { MktAttributeWorkspaceEntity } from 'src/mkt-core/attribute/mkt-attribute.workspace-entity';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { MKT_PRODUCT_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
-import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
 import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
+import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 const TABLE_PRODUCT_NAME = 'mktProduct';
 const NAME_FIELD_NAME = 'name';
 const DESCRIPTION_FIELD_NAME = 'description';
@@ -49,6 +48,7 @@ export enum PRODUCT_TYPE {
   SERVICE = 'SERVICE',
   SUBSCRIPTION = 'SUBSCRIPTION',
   LICENSE = 'LICENSE',
+  INTERNAL = 'INTERNAL',
   OTHER = 'OTHER',
 }
 export const PRODUCT_TYPE_OPTIONS: FieldMetadataComplexOption[] = [
@@ -82,7 +82,18 @@ export const PRODUCT_TYPE_OPTIONS: FieldMetadataComplexOption[] = [
     position: 4,
     color: 'yellow',
   },
-  { value: PRODUCT_TYPE.OTHER, label: 'Other', position: 5, color: 'gray' },
+  {
+    value: PRODUCT_TYPE.INTERNAL,
+    label: 'Internal',
+    position: 5,
+    color: 'red',
+  },
+  {
+    value: PRODUCT_TYPE.OTHER,
+    label: 'Other',
+    position: 6,
+    color: 'gray',
+  },
 ];
 
 @WorkspaceEntity({
@@ -178,15 +189,6 @@ export class MktProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   price: number;
 
-  @WorkspaceField({
-    standardId: MKT_PRODUCT_FIELD_IDS.licenseDurationMonths,
-    type: FieldMetadataType.NUMBER,
-    label: msg`License Duration (months)`,
-    description: msg`License duration in months`,
-    icon: 'IconClock',
-  })
-  @WorkspaceIsNullable()
-  licenseDurationMonths?: number;
 
   @WorkspaceField({
     standardId: MKT_PRODUCT_FIELD_IDS.isActive,
@@ -246,19 +248,6 @@ export class MktProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: MKT_PRODUCT_FIELD_IDS.mktAttributes,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Attributes`,
-    description: msg`List of product attributes`,
-    icon: 'IconTag',
-    inverseSideTarget: () => MktAttributeWorkspaceEntity,
-    inverseSideFieldKey: 'mktProduct',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsNullable()
-  mktAttributes: Relation<MktAttributeWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: MKT_PRODUCT_FIELD_IDS.mktVariants,
