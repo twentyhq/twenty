@@ -7,6 +7,7 @@ import { FavoriteModule } from 'src/modules/favorite/favorite.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { ViewModule } from 'src/modules/view/view.module';
 import { WorkflowModule } from 'src/modules/workflow/workflow.module';
+import { MktOrderModule } from 'src/mkt-core/order/mkt-order.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     WorkflowModule,
     FavoriteFolderModule,
     FavoriteModule,
+    MktOrderModule,
   ],
   providers: [],
   exports: [],

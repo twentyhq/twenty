@@ -6,6 +6,7 @@ import { SeedProductModuleCommand } from 'src/mkt-core/dev-seeder/commands/mkt-p
 import { SeedValueModuleCommand } from 'src/mkt-core/dev-seeder/commands/mkt-value-data-seed-dev-workspace.command';
 import { SeedVariantAttributeModuleCommand } from 'src/mkt-core/dev-seeder/commands/mkt-variant-attribute-data-seed-dev-workspace.command';
 import { SeedVariantModuleCommand } from 'src/mkt-core/dev-seeder/commands/mkt-variant-data-seed-dev-workspace.command';
+import { SeedOrderItemModuleCommand } from 'src/mkt-core/dev-seeder/commands/mkt-order-item-data-seed-dev-workspace.command';
 
 export const MKT_DATABASE_COMMAND_MODULES = [
   // product commands
@@ -16,6 +17,7 @@ export const MKT_DATABASE_COMMAND_MODULES = [
   SeedVariantAttributeModuleCommand,
   // order commands
   SeedOrderModuleCommand,
-  SeedLicenseModuleCommand,
+  SeedOrderItemModuleCommand,
   SeedContractModuleCommand,
+  SeedLicenseModuleCommand,
 ];
