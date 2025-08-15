@@ -197,6 +197,36 @@ export const MKT_CONTRACT_FIELD_IDS = {
   searchVector: '4769af80-5c7a-4c51-8272-e85bd5377a39',
 };
 
+export const MKT_PAYMENT_FIELD_IDS = {
+  name: '3f8a9b7c-6d5e-4f32-9c1a-8b7f6e5d4c3b',
+  amount: '4e9a8b7c-6d5f-4e32-9c1b-8b7f6e5d4c3c',
+  currency: '5e9a8b7d-6d5f-4e33-9c1c-8b7f6e5d4c3d',
+  status: '6e9a8b7e-6d5f-4e34-9c1d-8b7f6e5d4c3e',
+  paymentDate: '7e9a8b7f-6d5f-4e35-9c1e-8b7f6e5d4c3f',
+  description: '8e9a8b80-6d5f-4e36-9c1f-8b7f6e5d4c40',
+  orderId: '9e9a8b81-6d5f-4e37-9c20-8b7f6e5d4c41',
+  invoiceId: 'ae9a8b82-6d5f-4e38-9c21-8b7f6e5d4c42',
+  position: 'be9a8b83-6d5f-4e39-9c22-8b7f6e5d4c43',
+  createdBy: 'ce9a8b84-6d5f-4e3a-9c23-8b7f6e5d4c44',
+  mktPaymentMethod: 'de9a8b85-6d5f-4e3b-9c24-8b7f6e5d4c45',
+  accountOwner: 'ee9a8b86-6d5f-4e3c-9c25-8b7f6e5d4c46',
+  timelineActivities: 'fe9a8b87-6d5f-4e3d-9c26-8b7f6e5d4c47',
+  searchVector: '0f9a8b88-6d5f-4e3e-9c27-8b7f6e5d4c48',
+};
+
+export const MKT_PAYMENT_METHOD_FIELD_IDS = {
+  name: '1f8a9b7c-6d5e-4f32-9c1a-8b7f6e5d4c3a',
+  type: '2f8a9b7d-6d5e-4f33-9c1b-8b7f6e5d4c3b',
+  description: '3f8a9b7e-6d5e-4f34-9c1c-8b7f6e5d4c3c',
+  isActive: '4f8a9b7f-6d5e-4f35-9c1d-8b7f6e5d4c3d',
+  position: '5f8a9b80-6d5e-4f36-9c1e-8b7f6e5d4c3e',
+  createdBy: '6f8a9b81-6d5e-4f37-9c1f-8b7f6e5d4c3f',
+  mktPayments: '7f8a9b82-6d5e-4f38-9c20-8b7f6e5d4c40',
+  accountOwner: '8f8a9b83-6d5e-4f39-9c21-8b7f6e5d4c41',
+  timelineActivities: '9f8a9b84-6d5e-4f3a-9c22-8b7f6e5d4c42',
+  searchVector: 'af8a9b85-6d5e-4f3b-9c23-8b7f6e5d4c43',
+};
+
 //EXTENDS FROM TIMELINE_ACTIVITY_STANDARD_FIELD_IDS
 export const TIMELINE_ACTIVITY_MKT_FIELD_IDS = {
   //products
@@ -214,6 +244,8 @@ export const TIMELINE_ACTIVITY_MKT_FIELD_IDS = {
   //invoices
   mktInvoice: 'a0b038a6-cab6-4777-b51c-861c5671bb49',
   mktTemplate: 'f0fb46f9-c26f-4154-b17e-326ca166f8c9',
+  mktPayment: 'bf8a9b90-6d5e-4f40-9c30-8b7f6e5d4c50',
+  mktPaymentMethod: 'cf8a9b91-6d5e-4f41-9c31-8b7f6e5d4c51',
 };
 
 //EXTENDS FROM WORKSPACE_MEMBER_STANDARD_FIELD_IDS
@@ -229,6 +261,8 @@ export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   accountOwnerForMktLicenses: 'a343e640-2214-4896-a0e2-830ee854a778',
   accountOwnerForMktContracts: '87d29139-844b-44b9-a3e7-3f9e5a3e4165',
   accountOwnerForMktOrderItems: '5f4e3d2c-1b0a-9876-5432-109876543210',
+  accountOwnerForMktPayments: 'df8a9b92-6d5e-4f42-9c32-8b7f6e5d4c52',
+  accountOwnerForMktPaymentMethods: 'ef8a9b93-6d5e-4f43-9c33-8b7f6e5d4c53',
   //invoices
   accountOwnerForMktInvoices: 'ab600d66-5755-4934-b5c3-19036927cf92',
   accountOwnerForMktTemplates: 'a88096b8-e818-4421-afc2-5b1ab207aca3',

@@ -307,4 +307,4 @@ export const MKT_INVOICE_DATA_SEEDS: MktInvoiceDataSeed[] = [
     createdByWorkspaceMemberId: null,
     createdByName: 'Mike Johnson',
   },
-]; 
+];

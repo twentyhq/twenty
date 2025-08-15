@@ -142,7 +142,6 @@ export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
   })
   accountOwnerForMktInvoices: Relation<MktInvoiceWorkspaceEntity[]>;
 
-
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.accountOwnerForMktTemplates,
     type: RelationType.ONE_TO_MANY,

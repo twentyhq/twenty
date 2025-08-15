@@ -20,4 +20,6 @@ export const MKT_OBJECT_IDS = {
   //invoices
   mktInvoice: 'c8696169-73a2-44db-8a2a-c6335f0cc18e',
   mktTemplate: '0b9f9dbd-6c1a-4418-9302-97c38c2dc0a0',
+  mktPayment: '8b4c2d1e-5f6a-7b8c-9d0e-1f2a3b4c5d6e',
+  mktPaymentMethod: '9c5d3e2f-6a7b-8c9d-0e1f-2a3b4c5d6e7f',
 };

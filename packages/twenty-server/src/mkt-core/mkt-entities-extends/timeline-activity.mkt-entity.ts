@@ -166,7 +166,6 @@ export class TimelineActivityMktEntity extends BaseWorkspaceEntity {
   // @WorkspaceJoinColumn('mktContract')
   // mktContractId: string | null;
 
-
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_MKT_FIELD_IDS.mktInvoice,
     type: RelationType.MANY_TO_ONE,

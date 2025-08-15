@@ -9,6 +9,8 @@ import { prefillMktTemplates } from 'src/mkt-core/dev-seeder/prefill-data/prefil
 import { prefillMktValues } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-values';
 import { prefillMktVariantAttributes } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-variant-attribute';
 import { prefillMktVariants } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-variants';
+import { prefillMktPaymentMethods } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-payment-methods';
+import { prefillMktPayments } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-payments';
 
 export const MKT_PREFILLS = [
   // product prefills
@@ -18,10 +20,17 @@ export const MKT_PREFILLS = [
   prefillMktVariants,
   prefillMktVariantAttributes,
   // order prefills
-  prefillMktTemplates,
   prefillMktOrders,
   prefillMktOrderItems,
+  // template prefills
+  prefillMktTemplates,
+  // contract prefills
   prefillMktContracts,
+  // license prefills
   prefillMktLicenses,
+  // invoice prefills
   prefillMktInvoices,
+  // payment prefills (after orders to reference existing orders)
+  prefillMktPaymentMethods,
+  prefillMktPayments,
 ];
