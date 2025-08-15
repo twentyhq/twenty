@@ -76,14 +76,13 @@ const StyledResetReactflowStyles = styled.div`
     min-height: 0;
     min-width: 0;
   }
+  /* TODO: drop the custom transform */
   .react-flow__handle-top {
     transform: translate(-50%, -50%);
   }
+  /* TODO: drop the custom transform */
   .react-flow__handle-bottom {
     transform: translate(-50%, 100%);
-  }
-  .react-flow__handle.connectionindicator {
-    cursor: pointer;
   }
 
   --xy-node-border-radius: none;
