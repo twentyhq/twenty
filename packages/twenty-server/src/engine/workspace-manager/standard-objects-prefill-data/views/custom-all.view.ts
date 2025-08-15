@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 export const customAllView = (objectMetadataItem: ObjectMetadataEntity) => {
@@ -16,12 +18,13 @@ export const customAllView = (objectMetadataItem: ObjectMetadataEntity) => {
   }
 
   return {
-    name: `All ${objectMetadataItem.namePlural}`,
+    name: msg`All {objectLabelPlural}`,
     objectMetadataId: objectMetadataItem.id,
     type: 'table',
     key: 'INDEX',
     position: 0,
     icon: 'IconList',
+    isCustom: false,
     kanbanFieldMetadataId: '',
     filters: [],
     fields: [

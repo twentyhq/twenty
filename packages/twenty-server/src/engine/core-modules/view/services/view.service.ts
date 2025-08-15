@@ -5,6 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import {
   ViewException,
   ViewExceptionCode,
@@ -18,6 +20,7 @@ export class ViewService {
   constructor(
     @InjectRepository(View, 'core')
     private readonly viewRepository: Repository<View>,
+    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
   ) {}
 
   async findByWorkspaceId(workspaceId: string): Promise<View[]> {
@@ -109,7 +112,10 @@ export class ViewService {
       );
     }
 
-    const view = this.viewRepository.create(viewData);
+    const view = this.viewRepository.create({
+      ...viewData,
+      isCustom: true,
+    });
 
     return this.viewRepository.save(view);
   }
@@ -173,5 +179,26 @@ export class ViewService {
     await this.viewRepository.delete(id);
 
     return true;
+  }
+
+  async getObjectMetadataByViewId(
+    viewId: string,
+    workspaceId: string,
+  ): Promise<ObjectMetadataItemWithFieldMaps | null> {
+    const view = await this.viewRepository.findOne({
+      where: { id: viewId },
+      select: ['objectMetadataId'],
+    });
+
+    if (!view) {
+      return null;
+    }
+
+    const { objectMetadataMaps } =
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+        { workspaceId },
+      );
+
+    return objectMetadataMaps.byId[view.objectMetadataId] || null;
   }
 }

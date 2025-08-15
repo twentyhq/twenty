@@ -60,6 +60,9 @@ export class View {
   @Column({ nullable: false, default: false, type: 'boolean' })
   isCompact: boolean;
 
+  @Column({ nullable: false, default: false, type: 'boolean' })
+  isCustom: boolean;
+
   @Column({
     type: 'enum',
     enum: Object.values(ViewOpenRecordIn),

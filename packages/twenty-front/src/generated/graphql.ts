@@ -504,6 +504,7 @@ export type CoreView = {
   icon: Scalars['String'];
   id: Scalars['UUID'];
   isCompact: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
   kanbanAggregateOperation?: Maybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']>;
   key?: Maybe<Scalars['String']>;

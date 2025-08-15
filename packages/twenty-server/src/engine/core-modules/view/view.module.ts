@@ -26,6 +26,7 @@ import { ViewFilterService } from 'src/engine/core-modules/view/services/view-fi
 import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
 import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
+import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 @Module({
@@ -36,6 +37,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     ),
     AuthModule,
     WorkspaceCacheStorageModule,
+    WorkspaceMetadataCacheModule,
   ],
   controllers: [
     ViewController,
