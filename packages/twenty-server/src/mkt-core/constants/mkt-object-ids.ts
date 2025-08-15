@@ -16,4 +16,6 @@ export const MKT_OBJECT_IDS = {
   mktLicense: 'bedb60ad-9854-4618-b912-c93f8df3e756',
   mktContract: 'f5a03266-1b62-4f41-94a2-a843221f307b',
   mktOrderItem: '7a3b1f2e-4c5d-6e7f-8901-234567890abc',
+  mktPayment: '8b4c2d1e-5f6a-7b8c-9d0e-1f2a3b4c5d6e',
+  mktPaymentMethod: '9c5d3e2f-6a7b-8c9d-0e1f-2a3b4c5d6e7f',
 };
