@@ -1,7 +1,7 @@
 import {
   type VariableDateViewFilterValueDirection,
   type VariableDateViewFilterValueUnit,
-} from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
+} from 'twenty-shared/types';
 
 export const computeVariableDateViewFilterValue = (
   direction: VariableDateViewFilterValueDirection,
