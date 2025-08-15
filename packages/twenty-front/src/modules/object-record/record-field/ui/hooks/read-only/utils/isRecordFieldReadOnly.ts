@@ -12,25 +12,23 @@ type IsRecordFieldReadOnlyParams = {
 export const isRecordFieldReadOnly = ({
   isRecordReadOnly,
   objectPermissions,
-  objectMetadataItem,
-  fieldMetadataItem,
+  fieldMetadataId,
+  fieldMetadataType,
+  isUIReadOnly,
 }: IsRecordFieldReadOnlyParams) => {
-  if (fieldMetadataItem.type === FieldMetadataType.RAW_JSON) {
+  if (fieldMetadataType === FieldMetadataType.RAW_JSON) {
     return false;
   }
 
   const fieldReadOnlyByPermissions = isFieldReadOnlyByPermissions({
     objectPermissions,
-    objectMetadataItem,
-    fieldMetadataItem,
+    fieldMetadataId,
+    fieldMetadataType,
+    isUIReadOnly,
   });
 
   const fieldReadOnlyBySystem = isFieldReadOnlyBySystem({
-    objectNameSingular: objectMetadataItem.nameSingular,
-    fieldName: fieldMetadataItem.name,
-    fieldType: fieldMetadataItem.type,
-    isCustom: fieldMetadataItem.isCustom ?? false,
-    isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
+    isUIReadOnly,
   });
 
   return (

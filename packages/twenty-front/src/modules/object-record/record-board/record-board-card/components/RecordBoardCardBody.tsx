@@ -48,10 +48,12 @@ export const RecordBoardCardBody = ({
       isRecordFieldReadOnly: isRecordFieldReadOnly({
         isRecordReadOnly,
         objectPermissions,
-        fieldMetadataItem: objectMetadataItem.fields.find(
-          (field) => field.id === fieldDefinition.fieldMetadataId,
-        )!,
-        objectMetadataItem,
+        fieldMetadataId: fieldDefinition.fieldMetadataId,
+        fieldMetadataType: fieldDefinition.type,
+        isUIReadOnly:
+          objectMetadataItem.isUIReadOnly ??
+          fieldDefinition.metadata.isUIReadOnly ??
+          false,
       }),
     }),
   );

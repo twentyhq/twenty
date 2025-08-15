@@ -11,6 +11,7 @@ import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-enti
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsObjectUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-object-ui-readonly.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CALENDAR_EVENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
@@ -30,6 +31,7 @@ import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/co
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
+@WorkspaceIsObjectUIReadOnly()
 export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.title,

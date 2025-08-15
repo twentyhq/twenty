@@ -199,6 +199,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => TaskTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   taskTargets: Relation<TaskTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
@@ -210,6 +211,7 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => NoteTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   noteTargets: Relation<NoteTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({

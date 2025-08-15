@@ -1,17 +1,13 @@
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { type ObjectPermission } from '~/generated/graphql';
 
 type IsObjectReadOnlyParams = {
   objectPermissions: ObjectPermission;
-  objectMetadataItem: ObjectMetadataItem;
+  isUIReadOnly: boolean;
 };
 
 export const isObjectReadOnly = ({
   objectPermissions,
-  objectMetadataItem,
+  isUIReadOnly,
 }: IsObjectReadOnlyParams) => {
-  return (
-    !objectPermissions.canUpdateObjectRecords ||
-    (objectMetadataItem?.isUIReadOnly ?? false)
-  );
+  return !objectPermissions.canUpdateObjectRecords || isUIReadOnly;
 };

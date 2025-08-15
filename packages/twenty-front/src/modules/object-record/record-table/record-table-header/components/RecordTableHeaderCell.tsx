@@ -243,7 +243,8 @@ export const RecordTableHeaderCell = ({
 
   const isReadOnly = isObjectReadOnly({
     objectPermissions,
-    objectMetadataItem,
+    isUIReadOnly:
+      objectMetadataItem.isUIReadOnly ?? column.metadata.isUIReadOnly ?? false,
   });
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;

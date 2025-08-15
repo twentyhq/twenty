@@ -91,6 +91,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconVersions',
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsFieldUIReadOnly()
   lastPublishedVersionId: string | null;
 
   @WorkspaceField({
@@ -102,6 +103,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     options: WorkflowStatusOptions,
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsFieldUIReadOnly()
   statuses: WorkflowStatus[] | null;
 
   @WorkspaceField({

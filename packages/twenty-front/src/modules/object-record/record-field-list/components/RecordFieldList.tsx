@@ -123,8 +123,12 @@ export const RecordFieldList = ({
                           objectPermissionsByObjectMetadataId,
                           objectMetadataId: objectMetadataItem.id,
                         }),
-                      objectMetadataItem,
-                      fieldMetadataItem,
+                      fieldMetadataId: fieldMetadataItem.id,
+                      fieldMetadataType: fieldMetadataItem.type,
+                      isUIReadOnly:
+                        objectMetadataItem.isUIReadOnly ??
+                        fieldMetadataItem.isUIReadOnly ??
+                        false,
                     }),
                   }}
                 >
@@ -169,8 +173,12 @@ export const RecordFieldList = ({
                         objectPermissionsByObjectMetadataId,
                         objectMetadataId: objectMetadataItem.id,
                       }),
-                    objectMetadataItem,
-                    fieldMetadataItem,
+                    fieldMetadataId: fieldMetadataItem.id,
+                    fieldMetadataType: fieldMetadataItem.type,
+                    isUIReadOnly:
+                      objectMetadataItem.isUIReadOnly ??
+                      fieldMetadataItem.isUIReadOnly ??
+                      false,
                   }),
                   onMouseEnter: () =>
                     handleMouseEnter(
@@ -227,8 +235,12 @@ export const RecordFieldList = ({
                 objectPermissionsByObjectMetadataId,
                 objectMetadataId: objectMetadataItem.id,
               }),
-              objectMetadataItem,
-              fieldMetadataItem,
+              fieldMetadataId: fieldMetadataItem.id,
+              fieldMetadataType: fieldMetadataItem.type,
+              isUIReadOnly:
+                objectMetadataItem.isUIReadOnly ??
+                fieldMetadataItem.isUIReadOnly ??
+                false,
             }),
           }}
         >
