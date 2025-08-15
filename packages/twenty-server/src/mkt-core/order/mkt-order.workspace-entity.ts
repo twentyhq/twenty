@@ -20,14 +20,15 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { MKT_ORDER_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktContractWorkspaceEntity } from 'src/mkt-core/contract/mkt-contract.workspace-entity';
 import { MktLicenseWorkspaceEntity } from 'src/mkt-core/license/mkt-license.workspace-entity';
 import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
-import { ORDER_STATUS_OPTIONS, OrderStatus } from './constants';
+import { ORDER_STATUS_OPTIONS,OrderStatus } from './constants';
+import { MktInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/mkt-invoice.workspace-entity';
 
 // Define fields to be used for search
 const SEARCH_FIELDS_FOR_ORDER: FieldTypeAndNameMetadata[] = [
@@ -207,4 +208,17 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The creator of the record`,
   })
   createdBy: ActorMetadata;
+
+  @WorkspaceRelation({
+    standardId: MKT_ORDER_FIELD_IDS.mktInvoices,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Invoices`,
+    description: msg`Invoices linked to the order`,
+    icon: 'IconBox',
+    inverseSideTarget: () => MktInvoiceWorkspaceEntity,
+    inverseSideFieldKey: 'mktOrder',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  mktInvoices: Relation<MktInvoiceWorkspaceEntity[]>;
 }

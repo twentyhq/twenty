@@ -83,6 +83,7 @@ export const MKT_VARIANT_ATTRIBUTE_FIELD_IDS = {
 };
 
 export const MKT_ORDER_FIELD_IDS = {
+  //fields
   name: 'a5faa4d8-e788-465f-811b-a311d07c0aa2',
   orderCode: 'b6db3443-3b87-4fad-b27f-77ec6eb6e57a',
   status: 'c384db65-a8ae-436f-a3c0-63175c91bd53',
@@ -91,11 +92,13 @@ export const MKT_ORDER_FIELD_IDS = {
   note: '60377888-15dc-42df-b868-5015a1f43c2e',
   requireContract: '3bc491e5-3e65-44d4-97d5-f71300ab3d41',
 
-  // TODO: check if this can be deleted
+  // relations
   mktContracts: '66277a67-41c6-4709-820f-dda8df091ae9', // ONE_TO_MANY relation with contracts
   mktLicense: '837f7353-df5d-449a-961c-fef566d663b9',
+  mktInvoices: '0d4664c7-90ef-491a-8a34-02cdf51ef518',
   items: '5c818b2a-bd61-4423-b1bc-ac89781f4324',
   person: '4d6b6ef3-6d6b-4323-9e4f-a7f01d97e68d',
+  //common relations or fields
   position: '9d970deb-f1e5-4cc4-8b36-9ad83ca03ee5',
   createdBy: '6d52adfa-9230-4df0-84fc-d51c646e8538',
   accountOwner: '8e8ab1f5-3777-488f-ac6b-495f6b816c5f',
@@ -139,6 +142,44 @@ export const MKT_LICENSE_FIELD_IDS = {
   searchVector: '7e2e3eda-2ba6-40d4-b7bc-8ab1370f8b31',
 };
 
+export const MKT_INVOICE_FIELD_IDS = {
+  name: 'e1f98b9c-a4df-4852-8b5a-817c2484d1e8',
+  amount: '076ecd76-e7ec-40ba-a410-ce277b439109',
+  status: '6104f95e-7bfb-4337-981f-ddbea7d180b4',
+  vat: 'edd5c034-2fcd-4b61-b3fd-4ba07d59682b',
+  totalAmount: 'ce102ddf-26af-4dd5-aa44-53aeab7a20eb',
+  sInvoiceCode: '671561b1-ddf5-4a31-a66e-969135648638',
+  sentAt: '0adeb47b-0c7d-43ec-890f-19ecf8e3714a',
+  // relations
+  mktTemplate: '768581ac-7240-4fd1-bc4c-6a49445d8ad0',
+  mktOrder: '3cf48a8e-fa6d-41c2-bcb9-302e90dbe03c',
+
+  // common relations or fields
+  position: 'faf1d878-72c2-4011-a76c-da088e6ad92f',
+  createdBy: '752aed66-9ddc-4d25-b805-ceac7943788f',
+  accountOwner: '244704b8-1beb-400e-be86-ebc92c165a07',
+  timelineActivities: 'fafa89ea-f3d3-439e-a3c2-8d42939aa6e8',
+  searchVector: '7df8f89a-374c-4ba1-8326-a8a78c5d6b6c',
+};
+
+export const MKT_TEMPLATE_FIELD_IDS = {
+  //fields
+  name: '9b5a19c7-fa6c-4a31-ab8f-7e0e83fb678b',
+  type: '35760f3b-3bb8-48df-9eef-1ca4c05f12c7',
+  content: '3a3b49a8-6fed-4f99-a8c2-d3df9a4efa09',
+  version: '2e6ade87-6f35-4dbc-8eb0-c3f4b25dc5c8',
+
+  //relations
+  mktContracts: '5ff3cd2e-32f0-48f8-8196-2c879e15e7b8',
+  mktInvoices: '6b51b55c-e22c-4472-91a8-c9e920cf942b',
+  //common relations or fields
+  position: '81ba7aae-3b8f-41b0-891a-dc0d003d52bf',
+  createdBy: '8bf41ea9-eaaf-4718-a8c9-4a071e51b840',
+  accountOwner: '2ad28a81-0905-4592-9070-708aa6920e82',
+  timelineActivities: '9ec4140d-a6dd-42e0-b882-5f6b35556530',
+  searchVector: '7efe35b6-1956-48e2-9e43-183998ebc800',
+};
+
 export const MKT_CONTRACT_FIELD_IDS = {
   name: '5c81d04d-b56c-40a9-9d3e-8c0bdba1af0b',
   status: '90a61a70-1871-4534-8215-8031ca107a99',
@@ -158,27 +199,37 @@ export const MKT_CONTRACT_FIELD_IDS = {
 
 //EXTENDS FROM TIMELINE_ACTIVITY_STANDARD_FIELD_IDS
 export const TIMELINE_ACTIVITY_MKT_FIELD_IDS = {
+  //products
   mktCustomer: 'e42c00cb-dcc8-4682-ab98-2fa5f5c03f08',
   mktProduct: 'fb70cd51-fca9-414c-ac2e-41c00fcb1d45',
   mktAttribute: '18a51a5f-122f-4536-a4c5-cc4672664f93',
   mktVariant: 'b6ecb5e1-14c8-4aaa-b715-e26ed4e81e62',
   mktValue: '9022a8c1-5948-473e-a361-1ddfb017a4f2',
   mktVariantAttribute: 'f656fa33-96e7-42a0-8f4f-f35dfcb0acae',
+  //orders
   mktOrder: 'e0919045-74af-4800-bb40-ccef297253a9',
   mktLicense: '4b8283ce-daa4-4f11-87d0-2ade1cd6dc81',
   mktContract: 'b8c23b61-29ab-47e5-b412-4789f0653a69',
   mktOrderItem: 'c8d7e6f5-4321-0987-6543-21098765432a',
+  //invoices
+  mktInvoice: 'a0b038a6-cab6-4777-b51c-861c5671bb49',
+  mktTemplate: 'f0fb46f9-c26f-4154-b17e-326ca166f8c9',
 };
 
 //EXTENDS FROM WORKSPACE_MEMBER_STANDARD_FIELD_IDS
 export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
+  //products
   accountOwnerForMktProducts: 'fa7e06e6-3d12-4185-928a-db45e0257b95',
   accountOwnerForMktAttributes: '84954c00-5b31-46ab-9b6c-e95b81ae8d94',
   accountOwnerForMktVariants: '27b1e5ab-980b-4c3c-8168-c8ed77e86363',
   accountOwnerForMktValues: '7bdf395c-9f67-4fc9-9149-e58ba5c135de',
   accountOwnerForMktVariantAttributes: '6cd393a4-db2a-4cc6-b444-8e9ca99f93ec',
+  //orders
   accountOwnerForMktOrders: 'dbbf2703-8803-4c21-9b10-2cf38b045d4b',
   accountOwnerForMktLicenses: 'a343e640-2214-4896-a0e2-830ee854a778',
   accountOwnerForMktContracts: '87d29139-844b-44b9-a3e7-3f9e5a3e4165',
   accountOwnerForMktOrderItems: '5f4e3d2c-1b0a-9876-5432-109876543210',
+  //invoices
+  accountOwnerForMktInvoices: 'ab600d66-5755-4934-b5c3-19036927cf92',
+  accountOwnerForMktTemplates: 'a88096b8-e818-4421-afc2-5b1ab207aca3',
 };
