@@ -29,6 +29,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 import { MKT_PRODUCT_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
+import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
 const TABLE_PRODUCT_NAME = 'mktProduct';
 const NAME_FIELD_NAME = 'name';
 const DESCRIPTION_FIELD_NAME = 'description';
@@ -271,6 +272,19 @@ export class MktProductWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   mktVariants: Relation<MktVariantWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: MKT_PRODUCT_FIELD_IDS.orderItems,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Order Items`,
+    description: msg`Order items that include this product`,
+    icon: 'IconShoppingCartCog',
+    inverseSideTarget: () => MktOrderItemWorkspaceEntity,
+    inverseSideFieldKey: 'mktProduct',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  orderItems: Relation<MktOrderItemWorkspaceEntity[]>;
 
   @WorkspaceField({
     standardId: MKT_PRODUCT_FIELD_IDS.searchVector,
