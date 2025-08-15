@@ -7,8 +7,10 @@ import { mktProductsAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-pro
 import { mktValuesAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-value-all.view';
 import { mktVariantsAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-variant-all.view';
 import { mktVariantAttributesAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-variant-attribute-all.view';
-import { mktInvoicesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-invoice-all.view';
 import { mktTemplatesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-template-all.view';
+import { mktInvoicesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-invoice-all.view';
+import { mktPaymentMethodsAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-payment-method-all.view';
+import { mktPaymentsAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-payment-all.view';
 
 export const MKT_ALL_VIEWS = [
   // product views
@@ -18,10 +20,17 @@ export const MKT_ALL_VIEWS = [
   mktValuesAllView,
   mktVariantAttributesAllView,
   // order views
-  mktTemplatesAllView,
   mktOrdersAllView,
   mktOrderItemsAllView,
+  // template views
+  mktTemplatesAllView,
+  // license views
   mktLicensesAllView,
+  // contract views
   mktContractsAllView,
-  mktInvoicesAllView
+  // invoice views
+  mktInvoicesAllView,
+  // payment views
+  mktPaymentMethodsAllView,
+  mktPaymentsAllView,
 ];

@@ -39,7 +39,19 @@ import {
   MKT_ORDER_ITEM_DATA_SEED_COLUMNS,
   MKT_ORDER_ITEM_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-order-item-data-seeds.constants';
-import { MKT_TEMPLATE_DATA_SEED_COLUMNS,MKT_TEMPLATE_DATA_SEEDS } from 'src/mkt-core/dev-seeder/constants/mkt-template-data-seeds.constants';
+import {
+  MKT_TEMPLATE_DATA_SEED_COLUMNS,
+  MKT_TEMPLATE_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-template-data-seeds.constants';
+import {
+  MKT_PAYMENT_DATA_SEED_COLUMNS,
+  MKT_PAYMENT_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-payment-data-seeds.constants';
+import {
+  MKT_PAYMENT_METHOD_DATA_SEED_COLUMNS,
+  MKT_PAYMENT_METHOD_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-payment-method-data-seeds.constants';
+
 export const MKT_RECORD_SEEDS_CONFIGS = [
   // Product configs
   {
@@ -91,10 +103,21 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     tableName: 'mktLicense',
     pgColumns: MKT_LICENSE_DATA_SEED_COLUMNS,
     recordSeeds: MKT_LICENSE_DATA_SEEDS,
-  },  
+  },
   {
     tableName: 'mktInvoice',
     pgColumns: MKT_INVOICE_DATA_SEED_COLUMNS,
     recordSeeds: MKT_INVOICE_DATA_SEEDS,
+  },
+  // Payment configs
+  {
+    tableName: 'mktPaymentMethod',
+    pgColumns: MKT_PAYMENT_METHOD_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_PAYMENT_METHOD_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktPayment',
+    pgColumns: MKT_PAYMENT_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_PAYMENT_DATA_SEEDS,
   },
 ];

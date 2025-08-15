@@ -9,6 +9,8 @@ import { MktTemplateWorkspaceEntity } from 'src/mkt-core/template/mkt-template.w
 import { MktValueWorkspaceEntity } from 'src/mkt-core/value/mkt-value.workspace-entity';
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
 import { MktVariantAttributeWorkspaceEntity } from 'src/mkt-core/variant_attribute/mkt-variant-attribute.workspace-entity';
+import { MktPaymentMethodWorkspaceEntity } from 'src/mkt-core/payment-method/mkt-payment-method.workspace-entity';
+import { MktPaymentWorkspaceEntity } from 'src/mkt-core/payment/mkt-payment.workspace-entity';
 
 export const MKT_WORKSPACE_ENTITIES = [
   // Product
@@ -18,10 +20,17 @@ export const MKT_WORKSPACE_ENTITIES = [
   MktValueWorkspaceEntity,
   MktVariantAttributeWorkspaceEntity,
   // Order
-  MktTemplateWorkspaceEntity,
   MktOrderWorkspaceEntity,
   MktOrderItemWorkspaceEntity,
+  // Template
+  MktTemplateWorkspaceEntity,
+  // Contracts
   MktContractWorkspaceEntity,
+  // License
   MktLicenseWorkspaceEntity,
+  // Invoice
   MktInvoiceWorkspaceEntity,
+  // Payment
+  MktPaymentMethodWorkspaceEntity,
+  MktPaymentWorkspaceEntity,
 ];
