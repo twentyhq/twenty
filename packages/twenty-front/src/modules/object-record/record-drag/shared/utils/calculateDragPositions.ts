@@ -1,34 +1,28 @@
-import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
+import { type RecordDragPositionData } from '@/object-record/record-drag/shared/types/RecordDragPositionData';
+import { getDraggedRecordPosition } from '@/object-record/record-drag/shared/utils/getDraggedRecordPosition';
 import { getIndexNeighboursElementsFromArray } from '~/utils/array/getIndexNeighboursElementsFromArray';
 
-export type RecordPositionData = {
-  recordId: string;
-  position?: number;
-};
-
-type PositionCalculationContext = {
-  destinationRecordIds: string[];
+type DragPositionCalculationParams = {
+  recordIds: string[];
   recordsToMove: string[];
   destinationIndex: number;
-  recordPositionData: RecordPositionData[];
+  recordPositionData: RecordDragPositionData[];
 };
 
-export const calculateRecordPositions = ({
-  destinationRecordIds,
+export const calculateDragPositions = ({
+  recordIds,
   recordsToMove,
   destinationIndex,
   recordPositionData,
-}: PositionCalculationContext): Record<string, number> => {
-  const otherRecordIdsInDestinationColumn = destinationRecordIds.filter(
+}: DragPositionCalculationParams): Record<string, number> => {
+  const otherRecordIds = recordIds.filter(
     (recordId: string) => !recordsToMove.includes(recordId),
   );
 
   const filteredRecordIds =
     recordsToMove.length === 1
-      ? otherRecordIdsInDestinationColumn
-      : destinationRecordIds.filter(
-          (recordId) => recordId !== recordsToMove[0],
-        );
+      ? otherRecordIds
+      : recordIds.filter((recordId) => recordId !== recordsToMove[0]);
 
   const { before: recordBeforeId, after: recordAfterId } =
     getIndexNeighboursElementsFromArray({
