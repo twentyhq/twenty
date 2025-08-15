@@ -46,7 +46,7 @@ export const SettingsApiKeys = () => {
         <StyledContainer>
           <Section>
             <H2Title
-              title={t`Playground`}
+              title={t`Documentation`}
               description={t`Try our REST or GraphQL API playgrounds.`}
             />
             <StyledSettingsApiPlaygroundCoverImage />

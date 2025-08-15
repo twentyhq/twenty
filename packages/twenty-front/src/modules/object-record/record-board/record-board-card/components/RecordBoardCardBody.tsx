@@ -3,6 +3,7 @@ import { RecordBoardCardBodyContainer } from '@/object-record/record-board/recor
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
+import { recordBoardCardHoverPositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardHoverPositionComponentState';
 import { type RecordBoardFieldDefinition } from '@/object-record/record-board/types/RecordBoardFieldDefinition';
 import {
   FieldContext,
@@ -15,6 +16,7 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { getFieldButtonIcon } from '@/object-record/record-field/ui/utils/getFieldButtonIcon';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useContext } from 'react';
 
 export const RecordBoardCardBody = ({
@@ -53,9 +55,17 @@ export const RecordBoardCardBody = ({
     }),
   );
 
+  const setRecordBoardCardHoverPosition = useSetRecoilComponentState(
+    recordBoardCardHoverPositionComponentState,
+  );
+
+  const handleMouseEnter = (index: number) => {
+    setRecordBoardCardHoverPosition(index);
+  };
+
   return (
     <RecordBoardCardBodyContainer>
-      {fieldDefinitionsWithReadOnly.map((fieldDefinition) => (
+      {fieldDefinitionsWithReadOnly.map((fieldDefinition, index) => (
         <StopPropagationContainer key={fieldDefinition.fieldMetadataId}>
           <FieldContext.Provider
             value={{
@@ -79,6 +89,8 @@ export const RecordBoardCardBody = ({
               useUpdateRecord: useUpdateOneRecordHook,
               isDisplayModeFixHeight: true,
               triggerEvent: 'CLICK',
+              anchorId: `${RECORD_BOARD_CARD_INPUT_ID_PREFIX}-${recordId}-${fieldDefinition.metadata.fieldName}`,
+              onMouseEnter: () => handleMouseEnter(index),
             }}
           >
             <RecordFieldComponentInstanceContext.Provider
