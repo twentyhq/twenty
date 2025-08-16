@@ -17,6 +17,7 @@ import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { useTheme } from '@emotion/react';
 
 export const CommandMenuWorkflowSelectTriggerTypeContent = ({
   workflow,
@@ -67,30 +68,49 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
     };
   };
 
+  const theme = useTheme();
+
   return (
     <RightDrawerStepListContainer>
       <RightDrawerWorkflowSelectStepTitle>
         Data
       </RightDrawerWorkflowSelectStepTitle>
-      {DATABASE_TRIGGER_TYPES.map((action) => (
-        <MenuItemCommand
-          key={action.defaultLabel}
-          LeftIcon={getIcon(action.icon)}
-          text={action.defaultLabel}
-          onClick={handleTriggerTypeClick(action)}
-        />
-      ))}
+      {DATABASE_TRIGGER_TYPES.map((action) => {
+        const Icon = getIcon(action.icon);
+        return (
+          <MenuItemCommand
+            key={action.defaultLabel}
+            LeftIcon={(props) => (
+              <Icon
+                {...props}
+                color={theme.color.blue}
+              />
+            )}
+            text={action.defaultLabel}
+            onClick={handleTriggerTypeClick(action)}
+          />
+        );
+      })}
+
       <RightDrawerWorkflowSelectStepTitle>
         Others
       </RightDrawerWorkflowSelectStepTitle>
-      {OTHER_TRIGGER_TYPES.map((action) => (
+      {OTHER_TRIGGER_TYPES.map((action) => {
+        const Icon = getIcon(action.icon);
+        return (
         <MenuItemCommand
           key={action.defaultLabel}
-          LeftIcon={getIcon(action.icon)}
+          LeftIcon={(props) => (
+              <Icon
+                {...props}
+                color={theme.color.purple}
+              />
+            )}
           text={action.defaultLabel}
           onClick={handleTriggerTypeClick(action)}
         />
-      ))}
+      );
+      })}
     </RightDrawerStepListContainer>
   );
 };
