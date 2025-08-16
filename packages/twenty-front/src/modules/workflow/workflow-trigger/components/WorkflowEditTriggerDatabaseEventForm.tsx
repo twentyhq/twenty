@@ -181,7 +181,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
           });
         }}
         Icon={getIcon(headerIcon)}
-        iconColor={theme.font.color.tertiary}
+        iconColor={theme.color.blue}
         initialTitle={defaultLabel}
         headerType={headerType}
         disabled={triggerOptions.readonly}

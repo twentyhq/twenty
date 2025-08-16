@@ -26,7 +26,16 @@ export const WorkflowDiagramStepNodeIcon = ({
   switch (data.nodeType) {
     case 'trigger': {
       switch (data.triggerType) {
-        case 'DATABASE_EVENT':
+        case 'DATABASE_EVENT': {
+          return (
+            <StyledStepNodeLabelIconContainer>
+              <Icon
+                size={theme.icon.size.md}
+                color={theme.color.blue}
+              />
+            </StyledStepNodeLabelIconContainer>
+          );
+        }
         case 'MANUAL':
         case 'CRON':
         case 'WEBHOOK': {
@@ -34,7 +43,7 @@ export const WorkflowDiagramStepNodeIcon = ({
             <StyledStepNodeLabelIconContainer>
               <Icon
                 size={theme.icon.size.md}
-                color={theme.font.color.tertiary}
+                color={theme.color.purple}
               />
             </StyledStepNodeLabelIconContainer>
           );
@@ -46,21 +55,22 @@ export const WorkflowDiagramStepNodeIcon = ({
     case 'action': {
       switch (data.actionType) {
         case 'CODE':
-        case 'HTTP_REQUEST': {
+        case 'HTTP_REQUEST':
+        case 'SEND_EMAIL': {
           return (
             <StyledStepNodeLabelIconContainer>
               <Icon
                 size={theme.icon.size.md}
-                color={theme.color.orange}
+                color={theme.color.red}
                 stroke={theme.icon.stroke.sm}
               />
             </StyledStepNodeLabelIconContainer>
           );
         }
-        case 'SEND_EMAIL': {
+        case 'FORM': {
           return (
             <StyledStepNodeLabelIconContainer>
-              <Icon size={theme.icon.size.md} color={theme.color.blue} />
+              <Icon size={theme.icon.size.md} color={theme.color.orange} />
             </StyledStepNodeLabelIconContainer>
           );
         }

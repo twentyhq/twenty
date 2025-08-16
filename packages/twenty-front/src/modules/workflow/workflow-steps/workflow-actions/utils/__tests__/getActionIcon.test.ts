@@ -1,4 +1,6 @@
-import { OTHER_ACTIONS } from '../../constants/OtherActions';
+import { AI_ACTIONS } from '../../constants/AIActions';
+import { CORE_ACTIONS } from '../../constants/CoreActions';
+import { HUMAN_INPUT_ACTIONS } from '../../constants/HumanInputActions';
 import { RECORD_ACTIONS } from '../../constants/RecordActions';
 import { getActionIcon } from '../getActionIcon';
 
@@ -8,7 +10,15 @@ describe('getActionIcon', () => {
       expect(getActionIcon(action.type)).toBe(action.icon);
     });
 
-    OTHER_ACTIONS.forEach((action) => {
+    AI_ACTIONS.forEach((action) => {
+      expect(getActionIcon(action.type)).toBe(action.icon);
+    });
+
+    CORE_ACTIONS.forEach((action) => {
+      expect(getActionIcon(action.type)).toBe(action.icon);
+    });
+
+    HUMAN_INPUT_ACTIONS.forEach((action) => {
       expect(getActionIcon(action.type)).toBe(action.icon);
     });
   });

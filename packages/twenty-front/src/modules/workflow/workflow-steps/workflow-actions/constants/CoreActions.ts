@@ -1,10 +1,10 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 
-export const OTHER_ACTIONS: Array<{
+export const CORE_ACTIONS: Array<{
   label: string;
-  type: Exclude<
+  type: Extract<
     WorkflowActionType,
-    'CREATE_RECORD' | 'UPDATE_RECORD' | 'DELETE_RECORD' | 'FIND_RECORDS'
+    'CODE' | 'SEND_EMAIL' | 'HTTP_REQUEST' 
   >;
   icon: string;
 }> = [
@@ -19,18 +19,8 @@ export const OTHER_ACTIONS: Array<{
     icon: 'IconCode',
   },
   {
-    label: 'Form',
-    type: 'FORM',
-    icon: 'IconForms',
-  },
-  {
     label: 'HTTP Request',
     type: 'HTTP_REQUEST',
     icon: 'IconWorld',
-  },
-  {
-    label: 'AI Agent',
-    type: 'AI_AGENT',
-    icon: 'IconBrain',
   },
 ];

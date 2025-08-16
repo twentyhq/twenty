@@ -75,7 +75,7 @@ export const WorkflowEditTriggerCronForm = ({
           });
         }}
         Icon={getIcon(headerIcon)}
-        iconColor={theme.font.color.tertiary}
+        iconColor={theme.color.purple}
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={triggerOptions.readonly}
