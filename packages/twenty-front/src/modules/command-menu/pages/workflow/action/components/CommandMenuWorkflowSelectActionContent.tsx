@@ -12,13 +12,17 @@ import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/componen
 import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
+import { AI_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/AIActions';
+import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/CoreActions';
+import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
-import { useFilteredOtherActions } from '@/workflow/workflow-steps/workflow-actions/hooks/useFilteredOtherActions';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
+import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
+import { useTheme } from '@emotion/react';
 
 export const CommandMenuWorkflowSelectActionContent = ({
   workflow,
@@ -30,7 +34,6 @@ export const CommandMenuWorkflowSelectActionContent = ({
   const { createStep } = useCreateStep({
     workflow,
   });
-  const filteredOtherActions = useFilteredOtherActions();
 
   const { closeRightClickMenu } = useCloseRightClickMenu();
 
@@ -83,30 +86,86 @@ export const CommandMenuWorkflowSelectActionContent = ({
     );
   };
 
+  const theme = useTheme();
+
   return (
     <RightDrawerStepListContainer>
       <RightDrawerWorkflowSelectStepTitle>
-        Records
+        Data
       </RightDrawerWorkflowSelectStepTitle>
-      {RECORD_ACTIONS.map((action) => (
-        <MenuItemCommand
-          key={action.type}
-          LeftIcon={getIcon(action.icon)}
-          text={action.label}
-          onClick={() => handleCreateStep(action.type)}
-        />
-      ))}
+      {RECORD_ACTIONS.map((action) => {
+        const Icon = getIcon(action.icon);
+        return (
+          <MenuItemCommand
+            key={action.type}
+            LeftIcon={(props) => (
+              <Icon
+                {...props}
+                color={getActionIconColorOrThrow({ theme, actionType: action.type })}
+              />
+            )}
+            text={action.label}
+            onClick={() => handleCreateStep(action.type)}
+          />
+        );
+      })}
       <RightDrawerWorkflowSelectStepTitle>
-        Other
+        AI
       </RightDrawerWorkflowSelectStepTitle>
-      {filteredOtherActions.map((action) => (
-        <MenuItemCommand
-          key={action.type}
-          LeftIcon={getIcon(action.icon)}
-          text={action.label}
-          onClick={() => handleCreateStep(action.type)}
-        />
-      ))}
+      {AI_ACTIONS.map((action) => {
+        const Icon = getIcon(action.icon);
+        return (
+          <MenuItemCommand
+            key={action.type}
+            LeftIcon={(props) => (
+              <Icon
+                {...props}
+                color={getActionIconColorOrThrow({ theme, actionType: action.type })}
+              />
+            )}
+            text={action.label}
+            onClick={() => handleCreateStep(action.type)}
+          />
+        );
+      })}
+      <RightDrawerWorkflowSelectStepTitle>
+        Core
+      </RightDrawerWorkflowSelectStepTitle>
+      {CORE_ACTIONS.map((action) => {
+        const Icon = getIcon(action.icon);
+        return (
+          <MenuItemCommand
+            key={action.type}
+            LeftIcon={(props) => (
+              <Icon
+                {...props}
+                color={getActionIconColorOrThrow({ theme, actionType: action.type })}
+              />
+            )}
+            text={action.label}
+            onClick={() => handleCreateStep(action.type)}
+          />
+        );
+      })}
+      <RightDrawerWorkflowSelectStepTitle>
+        Human Input
+      </RightDrawerWorkflowSelectStepTitle>
+      {HUMAN_INPUT_ACTIONS.map((action) => {
+        const Icon = getIcon(action.icon);
+        return (
+          <MenuItemCommand
+            key={action.type}
+            LeftIcon={(props) => (
+              <Icon
+                {...props}
+                color={getActionIconColorOrThrow({ theme, actionType: action.type })}
+              />
+            )}
+            text={action.label}
+            onClick={() => handleCreateStep(action.type)}
+          />
+        );
+      })}
     </RightDrawerStepListContainer>
   );
 };
