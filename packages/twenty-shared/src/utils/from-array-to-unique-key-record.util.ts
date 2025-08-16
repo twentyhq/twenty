@@ -1,5 +1,5 @@
-import { type StringPropertyKeys } from '@/utils/trim-and-remove-duplicated-whitespaces-from-object-string-properties';
-import { isDefined } from '@/utils/validation';
+import { type StringPropertyKeys } from './trim-and-remove-duplicated-whitespaces-from-object-string-properties';
+import { isDefined } from './validation/isDefined';
 
 export const fromArrayToUniqueKeyRecord = <T extends object>({
   array,
@@ -13,7 +13,7 @@ export const fromArrayToUniqueKeyRecord = <T extends object>({
 
     if (isDefined(acc[currentUniqueKey])) {
       throw new Error(
-        `Should never occur, flat array contains twice the same unique key ${occurrence[uniqueKey]}`,
+        `Should never occur, flat array contains twice the same unique key ${currentUniqueKey}`,
       );
     }
 

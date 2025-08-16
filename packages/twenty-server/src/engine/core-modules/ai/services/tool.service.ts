@@ -20,7 +20,7 @@ import {
   generateSoftDeleteToolSchema,
   getRecordInputSchema,
 } from 'src/engine/metadata-modules/agent/utils/agent-tool-schema.utils';
-import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-related-object.util';
+import { isWorkflowSubObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-sub-object.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -53,7 +53,7 @@ export class ToolService {
       });
 
     const filteredObjectMetadata = allObjectMetadata.filter(
-      (objectMetadata) => !isWorkflowRelatedObject(objectMetadata),
+      (objectMetadata) => !isWorkflowSubObject(objectMetadata),
     );
 
     filteredObjectMetadata.forEach((objectMetadata) => {

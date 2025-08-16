@@ -7,11 +7,13 @@ import { z } from 'zod';
 
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
+import { WorkflowToolRegistryService } from 'src/engine/core-modules/tool/services/workflow-tool-registry.workspace-service';
 import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
 import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { AGENT_HANDOFF_DESCRIPTION_TEMPLATE } from 'src/engine/metadata-modules/agent/constants/agent-handoff-description.const';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { WORKFLOW_CREATION_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/workflow-creation-agent';
 import { camelCase } from 'src/utils/camel-case';
 
 @Injectable()
@@ -24,6 +26,7 @@ export class AgentToolService {
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly toolService: ToolService,
     private readonly toolAdapterService: ToolAdapterService,
+    private readonly workflowToolRegistry: WorkflowToolRegistryService,
   ) {}
 
   async generateToolsForAgent(
@@ -51,6 +54,11 @@ export class AgentToolService {
       return {};
     }
 
+    const workflowTools = this.getWorkflowToolsFromRegistry({
+      agentStandardId: agent.standardId,
+      workspaceId,
+    });
+
     const actionTools = await this.toolAdapterService.getTools(
       role.id,
       workspaceId,
@@ -61,7 +69,12 @@ export class AgentToolService {
       workspaceId,
     );
 
-    return { ...databaseTools, ...actionTools, ...handoffTools };
+    return {
+      ...databaseTools,
+      ...actionTools,
+      ...handoffTools,
+      ...workflowTools,
+    };
   }
 
   private async generateHandoffTools(
@@ -123,5 +136,49 @@ export class AgentToolService {
     }, {});
 
     return handoffTools;
+  }
+
+  private getWorkflowToolsFromRegistry({
+    agentStandardId,
+    workspaceId,
+  }: {
+    agentStandardId?: string;
+    workspaceId: string;
+  }): ToolSet {
+    if (agentStandardId === WORKFLOW_CREATION_AGENT.standardId) {
+      return this.generateWorkflowToolsFromRegistry(workspaceId);
+    }
+
+    return {};
+  }
+
+  private generateWorkflowToolsFromRegistry(workspaceId: string): ToolSet {
+    const tools: ToolSet = {};
+
+    const registeredToolNames =
+      this.workflowToolRegistry.getRegisteredToolNames();
+
+    registeredToolNames.forEach((toolName) => {
+      const toolDefinition =
+        this.workflowToolRegistry.getToolDefinition(toolName);
+
+      if (toolDefinition) {
+        tools[toolName] = {
+          description: toolDefinition.description,
+          parameters: toolDefinition.parameters,
+          execute: async (params, options) => {
+            const paramsWithWorkspace = { ...params, workspaceId };
+
+            return this.workflowToolRegistry.executeTool(
+              toolName,
+              paramsWithWorkspace,
+              options,
+            );
+          },
+        };
+      }
+    });
+
+    return tools;
   }
 }

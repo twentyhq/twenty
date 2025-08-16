@@ -1,6 +1,6 @@
-import { FieldMetadataType } from 'twenty-shared/types';
-import { StepStatus } from 'twenty-shared/workflow';
 import { z } from 'zod';
+import { FieldMetadataType } from '../../types/FieldMetadataType';
+import { StepStatus } from '../types/WorkflowRunStateStepInfos';
 
 // Base schemas
 export const objectRecordSchema = z.record(z.any());
@@ -162,26 +162,20 @@ export const workflowSendEmailActionSchema = baseWorkflowActionSchema.extend({
   settings: workflowSendEmailActionSettingsSchema,
 });
 
-export const workflowCreateRecordActionSchema = baseWorkflowActionSchema.extend(
-  {
-    type: z.literal('CREATE_RECORD'),
-    settings: workflowCreateRecordActionSettingsSchema,
-  },
-);
+export const workflowCreateRecordActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('CREATE_RECORD'),
+  settings: workflowCreateRecordActionSettingsSchema,
+});
 
-export const workflowUpdateRecordActionSchema = baseWorkflowActionSchema.extend(
-  {
-    type: z.literal('UPDATE_RECORD'),
-    settings: workflowUpdateRecordActionSettingsSchema,
-  },
-);
+export const workflowUpdateRecordActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('UPDATE_RECORD'),
+  settings: workflowUpdateRecordActionSettingsSchema,
+});
 
-export const workflowDeleteRecordActionSchema = baseWorkflowActionSchema.extend(
-  {
-    type: z.literal('DELETE_RECORD'),
-    settings: workflowDeleteRecordActionSettingsSchema,
-  },
-);
+export const workflowDeleteRecordActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('DELETE_RECORD'),
+  settings: workflowDeleteRecordActionSettingsSchema,
+});
 
 export const workflowFindRecordsActionSchema = baseWorkflowActionSchema.extend({
   type: z.literal('FIND_RECORDS'),

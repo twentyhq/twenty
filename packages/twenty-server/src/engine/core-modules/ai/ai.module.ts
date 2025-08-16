@@ -12,6 +12,7 @@ import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
+import { WorkflowToolRegistryService } from 'src/engine/core-modules/tool/services/workflow-tool-registry.workspace-service';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -43,6 +44,7 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     ToolService,
     ToolAdapterService,
     ToolRegistryService,
+    WorkflowToolRegistryService,
     AIBillingService,
     McpService,
     SendEmailTool,
@@ -54,6 +56,7 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     ToolService,
     ToolAdapterService,
     ToolRegistryService,
+    WorkflowToolRegistryService,
     McpService,
     SendEmailTool,
   ],

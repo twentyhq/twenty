@@ -1,4 +1,4 @@
-import { SOURCE_LOCALE } from '@/translations/constants/SourceLocale';
+import { SOURCE_LOCALE } from './SourceLocale';
 
 export const APP_LOCALES = {
   [SOURCE_LOCALE]: SOURCE_LOCALE,
