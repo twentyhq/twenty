@@ -21,13 +21,12 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { MktProductWorkspaceEntity } from 'src/mkt-core/product/standard-objects/mkt-product.workspace-entity';
-import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { MKT_ATTRIBUTE_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktValueWorkspaceEntity } from 'src/mkt-core/value/mkt-value.workspace-entity';
 import { MktVariantAttributeWorkspaceEntity } from 'src/mkt-core/variant_attribute/mkt-variant-attribute.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const TABLE_ATTRIBUTE_NAME = 'mktAttribute';
 const NAME_FIELD_NAME = 'name';
@@ -75,21 +74,14 @@ export class MktAttributeWorkspaceEntity extends BaseWorkspaceEntity {
   })
   createdBy: ActorMetadata;
 
-  @WorkspaceRelation({
-    standardId: MKT_ATTRIBUTE_FIELD_IDS.mktProduct,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Product`,
-    description: msg`Parent product`,
-    icon: 'IconBox',
-    inverseSideTarget: () => MktProductWorkspaceEntity,
-    inverseSideFieldKey: 'mktAttributes',
-    onDelete: RelationOnDeleteAction.SET_NULL,
+  @WorkspaceField({
+    standardId: MKT_ATTRIBUTE_FIELD_IDS.description,
+    type: FieldMetadataType.TEXT,
+    label: msg`Description`,
+    description: msg`Attribute description`,
+    icon: 'IconFileDescription',
   })
-  @WorkspaceIsNullable()
-  mktProduct: MktProductWorkspaceEntity | null;
-
-  @WorkspaceJoinColumn('mktProduct')
-  mktProductId: string | null;
+  description: string;
 
   @WorkspaceRelation({
     standardId: MKT_ATTRIBUTE_FIELD_IDS.mktValues,

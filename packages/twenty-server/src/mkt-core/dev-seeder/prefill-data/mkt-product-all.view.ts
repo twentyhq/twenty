@@ -67,16 +67,6 @@ export const mktProductsAllView = (
       {
         fieldMetadataId:
           productObjectMetadata.fields.find(
-            (field) =>
-              field.standardId === MKT_PRODUCT_FIELD_IDS.licenseDurationMonths,
-          )?.id ?? '',
-        position: 4,
-        isVisible: true,
-        size: 120,
-      },
-      {
-        fieldMetadataId:
-          productObjectMetadata.fields.find(
             (field) => field.standardId === MKT_PRODUCT_FIELD_IDS.isActive,
           )?.id ?? '',
         position: 5,
