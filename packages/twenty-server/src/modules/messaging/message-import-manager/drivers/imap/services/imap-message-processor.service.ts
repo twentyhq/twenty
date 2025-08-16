@@ -84,7 +84,7 @@ export class ImapMessageProcessorService {
       const lock = await client.getMailboxLock(mailbox);
 
       try {
-        return await this.fetchMessagesWithSequences(messageLocations, client);
+        return await this.fetchMessagesWithUids(messageLocations, client);
       } finally {
         lock.release();
       }
@@ -99,7 +99,7 @@ export class ImapMessageProcessorService {
     }
   }
 
-  private async fetchMessagesWithSequences(
+  private async fetchMessagesWithUids(
     messageLocations: MessageLocation[],
     client: ImapFlow,
   ): Promise<MessageFetchResult[]> {
@@ -107,10 +107,11 @@ export class ImapMessageProcessorService {
     const results: MessageFetchResult[] = [];
 
     try {
-      const sequences = messageLocations.map((loc) => loc.sequence.toString());
-      const sequenceSet = sequences.join(',');
+      const uids = messageLocations.map((loc) => loc.uid.toString());
+      const uidSet = uids.join(',');
 
-      const fetchResults = client.fetch(sequenceSet, {
+      const fetchResults = client.fetch(uidSet, {
+        uid: true,
         source: true,
         envelope: true,
       });
@@ -118,11 +119,11 @@ export class ImapMessageProcessorService {
       const messagesData = new Map<number, FetchMessageObject>();
 
       for await (const message of fetchResults) {
-        messagesData.set(message.seq, message);
+        messagesData.set(message.uid, message);
       }
 
       for (const location of messageLocations) {
-        const messageData = messagesData.get(location.sequence);
+        const messageData = messagesData.get(location.uid);
 
         if (messageData) {
           const result = await this.processMessageData(

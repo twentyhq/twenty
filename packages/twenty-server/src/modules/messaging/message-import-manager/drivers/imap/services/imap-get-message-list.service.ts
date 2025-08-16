@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type ImapFlow } from 'imapflow';
+import { FetchQueryObject, type ImapFlow } from 'imapflow';
 
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
+import { ImapFindSentMailboxService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-sent-mailbox.service';
 import { ImapHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-handle-error.service';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/imap/types/folders';
-import { findSentMailbox } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/find-sent-mailbox.util';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
   type GetMessageListsResponse,
@@ -19,6 +19,7 @@ export class ImapGetMessageListService {
 
   constructor(
     private readonly imapClientProvider: ImapClientProvider,
+    private readonly imapFindSentMailboxService: ImapFindSentMailboxService,
     private readonly imapHandleErrorService: ImapHandleErrorService,
   ) {}
 
@@ -33,9 +34,11 @@ export class ImapGetMessageListService {
       const result: GetMessageListsResponse = [];
 
       for (const folder of messageFolders) {
+        this.logger.log(`Processing folder: ${folder.name}`);
         const mailboxName = await this.getMailboxName(client, folder.name);
 
         if (!mailboxName) {
+          this.logger.warn(`No mailbox name found for folder: ${folder.name}`);
           continue;
         }
 
@@ -124,7 +127,8 @@ export class ImapGetMessageListService {
     }
 
     if (folderName === MessageFolderName.SENT_ITEMS) {
-      const sentMailbox = await findSentMailbox(client, this.logger);
+      const sentMailbox =
+        await this.imapFindSentMailboxService.findSentMailbox(client);
 
       if (!sentMailbox) {
         this.logger.warn('SENT folder not found, skipping');
@@ -148,31 +152,46 @@ export class ImapGetMessageListService {
     try {
       lock = await client.getMailboxLock(mailbox);
 
-      let searchOptions = {};
+      const supportsUidPlus = client.capabilities.has('UIDPLUS');
+      let sequence = '1:*';
 
-      if (cursor) {
+      if (cursor && supportsUidPlus) {
         const cursorUid = parseInt(cursor);
 
         if (!isNaN(cursorUid)) {
-          searchOptions = {
-            uid: `${cursorUid + 1}:*`,
-          };
+          sequence = `${cursorUid + 1}:*`;
         }
       }
 
       const messages: { id: string; uid: string }[] = [];
 
-      for await (const message of client.fetch(searchOptions, {
+      this.logger.log(
+        `Fetching from mailbox: ${mailbox} with sequence: ${sequence} (UIDPLUS: ${supportsUidPlus})`,
+      );
+
+      const fetchOptions: FetchQueryObject = {
         envelope: true,
-        uid: true,
-      })) {
-        if (message.envelope?.messageId && message.uid) {
+      };
+
+      if (supportsUidPlus) {
+        fetchOptions.uid = true;
+      }
+
+      for await (const message of client.fetch(sequence, fetchOptions)) {
+        if (message.envelope?.messageId) {
           messages.push({
             id: message.envelope.messageId,
-            uid: message.uid.toString(),
+            uid:
+              supportsUidPlus && message.uid
+                ? message.uid.toString()
+                : message.seq?.toString() || '0',
           });
         }
       }
+
+      this.logger.log(
+        `Found ${messages.length} messages in mailbox: ${mailbox}`,
+      );
 
       return messages;
     } catch (error) {

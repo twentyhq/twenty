@@ -1,20 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type ImapFlow } from 'imapflow';
+import { FetchMessageObject, type ImapFlow } from 'imapflow';
 
-import { findSentMailbox } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/find-sent-mailbox.util';
+import { ImapFindSentMailboxService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-sent-mailbox.service';
 
 export type MessageLocation = {
   messageId: string;
-  sequence: number;
+  uid: number;
   mailbox: string;
 };
 
 @Injectable()
 export class ImapMessageLocatorService {
   private readonly logger = new Logger(ImapMessageLocatorService.name);
+  private static readonly FETCH_BATCH_SIZE = 500;
 
-  private static readonly IMAP_SEARCH_BATCH_SIZE = 50;
+  constructor(
+    private readonly imapFindSentMailboxService: ImapFindSentMailboxService,
+  ) {}
 
   async locateAllMessages(
     messageIds: string[],
@@ -22,79 +25,98 @@ export class ImapMessageLocatorService {
   ): Promise<Map<string, MessageLocation>> {
     const locations = new Map<string, MessageLocation>();
     const mailboxes = await this.getMailboxesToSearch(client);
+    const messageIdSet = new Set(messageIds);
 
     for (const mailbox of mailboxes) {
-      try {
-        const lock = await client.getMailboxLock(mailbox);
-
-        try {
-          const searchBatches = this.chunkArray(
-            messageIds.filter((id) => !locations.has(id)),
-            ImapMessageLocatorService.IMAP_SEARCH_BATCH_SIZE,
-          );
-
-          for (const batch of searchBatches) {
-            await this.locateMessagesInMailbox(
-              batch,
-              mailbox,
-              client,
-              locations,
-            );
-          }
-        } finally {
-          lock.release();
-        }
-      } catch (error) {
-        this.logger.warn(
-          `Error searching mailbox ${mailbox}: ${error.message}`,
-        );
-      }
+      await this.searchMailboxForMessages(
+        mailbox,
+        client,
+        messageIdSet,
+        locations,
+      );
     }
 
     return locations;
   }
 
-  private async locateMessagesInMailbox(
-    messageIds: string[],
+  private async searchMailboxForMessages(
     mailbox: string,
     client: ImapFlow,
+    messageIdSet: Set<string>,
     locations: Map<string, MessageLocation>,
   ): Promise<void> {
+    let lock;
+
     try {
-      const orConditions = messageIds.map((id) => ({
-        header: { 'message-id': id },
-      }));
-      const searchResults = await client.search({ or: orConditions });
+      lock = await client.getMailboxLock(mailbox);
+      const uids = await client.search({ all: true });
 
-      if (searchResults.length === 0) return;
-
-      const fetchResults = client.fetch(
-        searchResults.map((r) => r.toString()).join(','),
-        { envelope: true },
+      await this.processBatchedMessages(
+        uids,
+        mailbox,
+        client,
+        messageIdSet,
+        locations,
       );
+    } catch (error) {
+      this.logger.warn(`Error searching mailbox ${mailbox}: ${error.message}`);
+    } finally {
+      lock?.release();
+    }
+  }
+
+  private async processBatchedMessages(
+    uids: number[],
+    mailbox: string,
+    client: ImapFlow,
+    messageIdSet: Set<string>,
+    locations: Map<string, MessageLocation>,
+  ): Promise<void> {
+    const batches = this.chunkArray(
+      uids,
+      ImapMessageLocatorService.FETCH_BATCH_SIZE,
+    );
+
+    for (const batchUids of batches) {
+      const fetchResults = client.fetch(batchUids.join(','), {
+        envelope: true,
+      });
 
       for await (const message of fetchResults) {
-        const messageId = message.envelope?.messageId;
-
-        if (messageId && messageIds.includes(messageId)) {
-          locations.set(messageId, {
-            messageId,
-            sequence: message.seq,
-            mailbox,
-          });
-        }
+        this.processMessage(message, mailbox, messageIdSet, locations);
       }
-    } catch (error) {
-      this.logger.debug(`Batch search failed in ${mailbox}: ${error.message}`);
+    }
+  }
+
+  private processMessage(
+    message: FetchMessageObject,
+    mailbox: string,
+    messageIdSet: Set<string>,
+    locations: Map<string, MessageLocation>,
+  ): void {
+    const envelopeMessageId = message.envelope?.messageId;
+
+    if (envelopeMessageId && messageIdSet.has(envelopeMessageId)) {
+      locations.set(envelopeMessageId, {
+        messageId: envelopeMessageId,
+        uid: message.uid,
+        mailbox,
+      });
     }
   }
 
   private async getMailboxesToSearch(client: ImapFlow): Promise<string[]> {
     const mailboxes = ['INBOX'];
-    const sentFolder = await findSentMailbox(client, this.logger);
 
-    if (sentFolder) {
-      mailboxes.push(sentFolder);
+    try {
+      const sentFolder =
+        await this.imapFindSentMailboxService.findSentMailbox(client);
+
+      if (sentFolder && sentFolder !== 'INBOX') {
+        mailboxes.push(sentFolder);
+      }
+    } catch (error) {
+      this.logger.warn(`Failed to find sent folder: ${error.message}`);
     }
 
     return mailboxes;

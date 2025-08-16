@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { JSDOM } from 'jsdom';
 import { type AddressObject, type ParsedMail } from 'mailparser';
 // @ts-expect-error legacy noImplicitAny
 import planer from 'planer';
@@ -71,7 +72,7 @@ export class ImapGetMessagesService {
   ): MessageWithParticipants[] {
     const messages = batchResults.map((result) => {
       if (!result.parsed) {
-        this.logger.debug(
+        this.logger.warn(
           `Message ${result.messageId} could not be parsed - likely not found in current mailboxes`,
         );
 
@@ -85,7 +86,13 @@ export class ImapGetMessagesService {
       );
     });
 
-    return messages.filter(isDefined);
+    const validMessages = messages.filter(isDefined);
+
+    this.logger.log(
+      `Successfully parsed ${validMessages.length} out of ${batchResults.length} messages`,
+    );
+
+    return validMessages;
   }
 
   private createMessageFromParsedMail(
@@ -107,9 +114,8 @@ export class ImapGetMessagesService {
 
     const fromHandle = fromAddresses.length > 0 ? fromAddresses[0].address : '';
 
-    const textWithoutReplyQuotations = parsed.text
-      ? planer.extractFrom(parsed.text, 'text/plain')
-      : '';
+    const textWithoutReplyQuotations =
+      this.extractTextWithoutReplyQuotations(parsed);
 
     const direction = computeMessageDirection(fromHandle, connectedAccount);
     const text = sanitizeString(textWithoutReplyQuotations);
@@ -135,7 +141,7 @@ export class ImapGetMessagesService {
       const threadRoot = references[0].trim();
 
       if (threadRoot && threadRoot.length > 0) {
-        return this.normalizeMessageId(threadRoot);
+        return threadRoot;
       }
     }
 
@@ -146,32 +152,18 @@ export class ImapGetMessagesService {
           : String(inReplyTo).trim();
 
       if (cleanInReplyTo && cleanInReplyTo.length > 0) {
-        return this.normalizeMessageId(cleanInReplyTo);
+        return cleanInReplyTo;
       }
     }
 
     if (messageId) {
-      return this.normalizeMessageId(messageId);
+      return messageId.trim();
     }
 
     const timestamp = Date.now();
     const randomSuffix = Math.random().toString(36).substring(2, 11);
 
     return `thread-${timestamp}-${randomSuffix}`;
-  }
-
-  private normalizeMessageId(messageId: string): string {
-    const trimmedMessageId = messageId.trim();
-
-    if (
-      trimmedMessageId.includes('@') &&
-      !trimmedMessageId.startsWith('<') &&
-      !trimmedMessageId.endsWith('>')
-    ) {
-      return `<${trimmedMessageId}>`;
-    }
-
-    return trimmedMessageId;
   }
 
   private extractAllParticipants(parsed: ParsedMail) {
@@ -198,6 +190,20 @@ export class ImapGetMessagesService {
       ...formatAddressObjectAsParticipants(ccAddresses, 'cc'),
       ...formatAddressObjectAsParticipants(bccAddresses, 'bcc'),
     ];
+  }
+
+  private extractTextWithoutReplyQuotations(parsed: ParsedMail): string {
+    if (parsed.text) {
+      return planer.extractFrom(parsed.text, 'text/plain');
+    }
+
+    if (parsed.html) {
+      const dom = new JSDOM(parsed.html);
+
+      return dom.window.document.body?.textContent || '';
+    }
+
+    return '';
   }
 
   private extractAddresses(
