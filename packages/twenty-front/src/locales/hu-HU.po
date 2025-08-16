@@ -2112,6 +2112,11 @@ msgstr "Szöveg megjelenítése több sorban"
 msgid "Do not import"
 msgstr "Ne importálja"
 
+#. js-lingui-id: TvY/XA
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "Documentation"
+msgstr ""
+
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Doesn't contain"
@@ -4569,11 +4574,6 @@ msgstr "Kép"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Plan"
 msgstr "Csomag"
-
-#. js-lingui-id: 0LrFTO
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
-msgid "Playground"
-msgstr "Játszótér"
 
 #. js-lingui-id: 90/XJz
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx

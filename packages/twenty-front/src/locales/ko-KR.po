@@ -2112,6 +2112,11 @@ msgstr "여러 줄에 텍스트 표시"
 msgid "Do not import"
 msgstr "가져오지 않음"
 
+#. js-lingui-id: TvY/XA
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "Documentation"
+msgstr ""
+
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Doesn't contain"
@@ -4569,11 +4574,6 @@ msgstr "사진"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Plan"
 msgstr "플랜"
-
-#. js-lingui-id: 0LrFTO
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
-msgid "Playground"
-msgstr "플레이그라운드"
 
 #. js-lingui-id: 90/XJz
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
