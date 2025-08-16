@@ -8,7 +8,6 @@ const StyledText = styled.div`
   height: ${({ theme }) => theme.spacing(8)};
   display: flex;
   align-items: center;
-
   padding-left: ${({ theme }) => theme.spacing(2.25)};
 `;
 
@@ -17,6 +16,13 @@ const StyledContainer = styled.div`
   display: flex;
   min-width: ${({ theme }) => theme.spacing(20)};
   color: ${({ theme }) => theme.font.color.tertiary};
+`;
+
+const WhereLabel = styled(StyledText)`
+  && {
+    color: ${({ theme }) => theme.font.color.primary};
+    font-weight: 600;
+  }
 `;
 
 type AdvancedFilterLogicalOperatorCellProps = {
@@ -31,7 +37,7 @@ export const AdvancedFilterLogicalOperatorCell = ({
   return (
     <StyledContainer>
       {index === 0 ? (
-        <StyledText>Where</StyledText>
+        <WhereLabel>Where</WhereLabel>
       ) : index === 1 ? (
         <AdvancedFilterLogicalOperatorDropdown
           recordFilterGroup={recordFilterGroup}
