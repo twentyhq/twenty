@@ -49,6 +49,7 @@ export const computeStandardFields = (
           isNullable: true,
           isLabelSyncedWithName: true,
           isUnique: null,
+          isUIReadOnly: false,
           options: null,
           relationTargetFieldMetadata: null,
           relationTargetFieldMetadataId: null,

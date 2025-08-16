@@ -52,5 +52,6 @@ export const getDefaultFlatFieldMetadata = ({
     settings: settings ?? null,
     createdAt,
     updatedAt: createdAt,
+    isUIReadOnly: createFieldInput.isUIReadOnly ?? false,
   } as const satisfies FlatFieldMetadata;
 };

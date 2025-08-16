@@ -22,6 +22,7 @@ describe('generateAggregateQuery', () => {
       isLabelSyncedWithName: true,
       isRemote: false,
       isSystem: false,
+      isUIReadOnly: false,
     };
 
     const mockRecordGqlFields = {
@@ -63,6 +64,7 @@ describe('generateAggregateQuery', () => {
       isLabelSyncedWithName: true,
       isRemote: false,
       isSystem: false,
+      isUIReadOnly: false,
     };
 
     const mockRecordGqlFields = {

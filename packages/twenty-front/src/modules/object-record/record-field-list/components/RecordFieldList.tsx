@@ -124,10 +124,11 @@ export const RecordFieldList = ({
                           objectMetadataId: objectMetadataItem.id,
                         }),
                       fieldMetadataId: fieldMetadataItem.id,
-                      objectNameSingular,
-                      fieldName: fieldMetadataItem.name,
-                      fieldType: fieldMetadataItem.type,
-                      isCustom: fieldMetadataItem.isCustom ?? false,
+                      fieldMetadataType: fieldMetadataItem.type,
+                      isUIReadOnly:
+                        objectMetadataItem.isUIReadOnly ??
+                        fieldMetadataItem.isUIReadOnly ??
+                        false,
                     }),
                   }}
                 >
@@ -173,10 +174,11 @@ export const RecordFieldList = ({
                         objectMetadataId: objectMetadataItem.id,
                       }),
                     fieldMetadataId: fieldMetadataItem.id,
-                    objectNameSingular,
-                    fieldName: fieldMetadataItem.name,
-                    fieldType: fieldMetadataItem.type,
-                    isCustom: fieldMetadataItem.isCustom ?? false,
+                    fieldMetadataType: fieldMetadataItem.type,
+                    isUIReadOnly:
+                      objectMetadataItem.isUIReadOnly ??
+                      fieldMetadataItem.isUIReadOnly ??
+                      false,
                   }),
                   onMouseEnter: () =>
                     handleMouseEnter(
@@ -234,10 +236,11 @@ export const RecordFieldList = ({
                 objectMetadataId: objectMetadataItem.id,
               }),
               fieldMetadataId: fieldMetadataItem.id,
-              objectNameSingular,
-              fieldName: fieldMetadataItem.name,
-              fieldType: fieldMetadataItem.type,
-              isCustom: fieldMetadataItem.isCustom ?? false,
+              fieldMetadataType: fieldMetadataItem.type,
+              isUIReadOnly:
+                objectMetadataItem.isUIReadOnly ??
+                fieldMetadataItem.isUIReadOnly ??
+                false,
             }),
           }}
         >

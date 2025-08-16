@@ -16,6 +16,7 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
           isRemote
           isActive
           isSystem
+          isUIReadOnly
           createdAt
           updatedAt
           labelIdentifierFieldMetadataId
@@ -51,6 +52,7 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
             isCustom
             isActive
             isSystem
+            isUIReadOnly
             isNullable
             isUnique
             createdAt

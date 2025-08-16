@@ -70,13 +70,14 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
         isLabelIdentifierCompact,
         displayedMaxRows: 1,
         isRecordFieldReadOnly: isRecordFieldReadOnly({
-          objectPermissions,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          fieldName: columnDefinition.metadata.fieldName,
-          fieldType: columnDefinition.type,
-          isCustom: objectMetadataItem.isCustom,
-          fieldMetadataId: columnDefinition.fieldMetadataId,
           isRecordReadOnly: isRecordReadOnly ?? false,
+          objectPermissions,
+          fieldMetadataId: columnDefinition.fieldMetadataId,
+          fieldMetadataType: columnDefinition.type,
+          isUIReadOnly:
+            objectMetadataItem.isUIReadOnly ??
+            columnDefinition.metadata.isUIReadOnly ??
+            false,
         }),
         maxWidth: columnDefinition.size,
         onRecordChipClick: () => {

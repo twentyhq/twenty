@@ -30,6 +30,7 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     label: 'flat field metadata label',
     isNullable: true,
     isUnique: false,
+    isUIReadOnly: false,
     isLabelSyncedWithName: false,
     isSystem: false,
     standardId: null,

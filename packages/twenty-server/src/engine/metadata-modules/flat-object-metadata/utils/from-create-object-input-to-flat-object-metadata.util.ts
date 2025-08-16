@@ -51,6 +51,7 @@ export const fromCreateObjectInputToFlatObjectMetadata = ({
     isActive: true,
     isAuditLogged: true,
     isCustom: true,
+    isUIReadOnly: false,
     isLabelSyncedWithName: createObjectInput.isLabelSyncedWithName ?? false,
     isRemote: createObjectInput.isRemote ?? false,
     isSearchable: true,

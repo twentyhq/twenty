@@ -110,6 +110,11 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
 
   @IsBoolean()
   @IsOptional()
+  @FilterableField({ nullable: true })
+  isUIReadOnly?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
   @Field({ nullable: true })
   isNullable?: boolean;
 

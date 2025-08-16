@@ -72,6 +72,11 @@ export interface WorkspaceFieldMetadataArgs {
   readonly isSystem: boolean;
 
   /**
+   * Is UI read-only field.
+   */
+  readonly isUIReadOnly: boolean;
+
+  /**
    * Is nullable field.
    */
   readonly isNullable: boolean;

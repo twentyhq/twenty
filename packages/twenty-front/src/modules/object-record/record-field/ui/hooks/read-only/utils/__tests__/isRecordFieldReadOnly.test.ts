@@ -12,10 +12,8 @@ describe('isRecordFieldReadOnly', () => {
     isRecordReadOnly: false,
     objectPermissions: mockObjectPermissions,
     fieldMetadataId: 'field-123',
-    objectNameSingular: 'person',
-    fieldName: 'firstName',
-    fieldType: FieldMetadataType.TEXT,
-    isCustom: false,
+    fieldMetadataType: FieldMetadataType.TEXT,
+    isUIReadOnly: false,
   };
 
   it('should return true when record is read-only', () => {
@@ -53,34 +51,23 @@ describe('isRecordFieldReadOnly', () => {
     expect(result).toBe(true);
   });
 
-  it('should return true for system read-only fields like createdAt', () => {
+  it('should return true when field is marked as UI read-only', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
-      fieldName: 'createdAt',
-      fieldType: FieldMetadataType.DATE_TIME,
+      isUIReadOnly: true,
     });
 
     expect(result).toBe(true);
   });
 
-  it('should return true for calendar event objects (system read-only)', () => {
+  it('should return false for RAW_JSON fields even when marked as UI read-only', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
-      objectNameSingular: 'calendarEvent',
+      fieldMetadataType: FieldMetadataType.RAW_JSON,
+      isUIReadOnly: true,
     });
 
-    expect(result).toBe(true);
-  });
-
-  it('should return true for workflow non-name fields (system read-only)', () => {
-    const result = isRecordFieldReadOnly({
-      ...mockParams,
-      objectNameSingular: 'workflow',
-      fieldName: 'status',
-      isCustom: false,
-    });
-
-    expect(result).toBe(true);
+    expect(result).toBe(false);
   });
 
   it('should return false when all conditions allow editing', () => {

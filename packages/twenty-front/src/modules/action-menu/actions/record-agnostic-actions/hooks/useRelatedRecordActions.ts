@@ -6,7 +6,6 @@ import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
 import { msg } from '@lingui/core/macro';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -81,11 +80,13 @@ export const useRelatedRecordActions = ({
         selectedRecord,
         objectPermissions,
         getTargetObjectWritePermission,
+        objectMetadataItem,
       }) =>
         (isDefined(selectedRecord) &&
           !selectedRecord.isRemote &&
+          !selectedRecord.isUIReadOnly &&
+          !objectMetadataItem?.isUIReadOnly &&
           objectPermissions.canUpdateObjectRecords &&
-          !isWorkflowSubObjectMetadata(targetObjectNameSingular) &&
           getTargetObjectWritePermission(
             targetObjectNameSingular === CoreObjectNameSingular.TaskTarget
               ? CoreObjectNameSingular.Task

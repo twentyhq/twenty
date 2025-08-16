@@ -53,6 +53,7 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   isLabelSyncedWithName: true,
   isRemote: false,
   isSystem: false,
+  isUIReadOnly: false,
 };
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({

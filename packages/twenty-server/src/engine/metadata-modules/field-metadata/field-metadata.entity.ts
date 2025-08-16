@@ -103,6 +103,9 @@ export class FieldMetadataEntity<
   @Column({ default: false })
   isSystem: boolean;
 
+  @Column({ default: false })
+  isUIReadOnly: boolean;
+
   // Is this really nullable ?
   @Column({ nullable: true, default: true, type: 'boolean' })
   isNullable: boolean | null;

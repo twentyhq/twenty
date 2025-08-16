@@ -10,6 +10,8 @@ export interface ReflectMetadataTypeMap {
   ['workspace:is-nullable-metadata-args']: true;
   ['workspace:gate-metadata-args']: Gate;
   ['workspace:is-system-metadata-args']: true;
+  ['workspace:is-field-ui-readonly-metadata-args']: true;
+  ['workspace:is-object-ui-readonly-metadata-args']: true;
   ['workspace:is-audit-logged-metadata-args']: false;
   ['workspace:is-primary-field-metadata-args']: true;
   ['workspace:is-deprecated-field-metadata-args']: true;

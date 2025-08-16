@@ -1,3 +1,4 @@
+import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCardBodyContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBodyContainer';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
@@ -28,6 +29,8 @@ export const RecordBoardCardBody = ({
 
   const { updateOneRecord, objectPermissions } = useContext(RecordBoardContext);
 
+  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+
   const useUpdateOneRecordHook: RecordUpdateHook = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
       updateOneRecord?.({
@@ -46,11 +49,11 @@ export const RecordBoardCardBody = ({
         isRecordReadOnly,
         objectPermissions,
         fieldMetadataId: fieldDefinition.fieldMetadataId,
-        fieldName: fieldDefinition.metadata.fieldName,
-        fieldType: fieldDefinition.type,
-        isCustom: fieldDefinition.metadata.isCustom,
-        objectNameSingular:
-          fieldDefinition.metadata.objectMetadataNameSingular ?? '',
+        fieldMetadataType: fieldDefinition.type,
+        isUIReadOnly:
+          objectMetadataItem.isUIReadOnly ??
+          fieldDefinition.metadata.isUIReadOnly ??
+          false,
       }),
     }),
   );
