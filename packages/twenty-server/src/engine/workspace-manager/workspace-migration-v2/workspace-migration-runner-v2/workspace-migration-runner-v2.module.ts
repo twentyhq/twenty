@@ -46,6 +46,8 @@ import { WorkspaceSchemaObjectActionRunnerService } from 'src/engine/workspace-m
     WorkspaceSchemaObjectActionRunnerService,
     WorkspaceSchemaIndexActionRunnerService,
     WorkspaceSchemaFieldActionRunnerService,
+    WorkspaceMetadataMigrationRunnerService,
+    WorkspaceSchemaMigrationRunnerService,
   ],
 })
 export class WorkspaceMigrationRunnerV2Module {}

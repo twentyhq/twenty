@@ -9,7 +9,7 @@ import {
 
 export type UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix = {
   flatObjectMetadata: FlatObjectMetadata;
-} & CustomDeletedCreatedUpdatedMatrix<'fieldMetadata', FlatFieldMetadata>;
+} & CustomDeletedCreatedUpdatedMatrix<'flatFieldMetadata', FlatFieldMetadata>;
 
 export const computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix = (
   updatedObjectMetadata: FromTo<FlatObjectMetadata>[],
@@ -25,9 +25,9 @@ export const computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix = (
 
     matrixAccumulator.push({
       flatObjectMetadata: to,
-      createdFieldMetadata: fieldMetadataMatrix.created,
-      deletedFieldMetadata: fieldMetadataMatrix.deleted,
-      updatedFieldMetadata: fieldMetadataMatrix.updated,
+      createdFlatFieldMetadata: fieldMetadataMatrix.created,
+      deletedFlatFieldMetadata: fieldMetadataMatrix.deleted,
+      updatedFlatFieldMetadata: fieldMetadataMatrix.updated,
     });
   }
 

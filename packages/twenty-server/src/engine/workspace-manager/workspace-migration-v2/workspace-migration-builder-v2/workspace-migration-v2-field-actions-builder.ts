@@ -21,13 +21,13 @@ export const buildWorkspaceMigrationV2FieldActions = ({
     [];
 
   for (const {
-    createdFieldMetadata,
-    deletedFieldMetadata,
-    updatedFieldMetadata,
+    createdFlatFieldMetadata,
+    deletedFlatFieldMetadata,
+    updatedFlatFieldMetadata,
     flatObjectMetadata,
   } of objectMetadataDeletedCreatedUpdatedFields) {
-    const updateFieldActions = updatedFieldMetadata.flatMap<UpdateFieldAction>(
-      ({ from, to }) => {
+    const updateFieldActions =
+      updatedFlatFieldMetadata.flatMap<UpdateFieldAction>(({ from, to }) => {
         const updates = compareTwoFlatFieldMetadata({
           from,
           to,
@@ -44,18 +44,18 @@ export const buildWorkspaceMigrationV2FieldActions = ({
           workspaceId: to.workspaceId,
           updates,
         };
-      },
-    );
+      });
 
-    const createFieldAction = createdFieldMetadata.map((flatFieldMetadata) =>
-      getWorkspaceMigrationV2FieldCreateAction({
-        flatFieldMetadata,
-        flatObjectMetadata,
-      }),
+    const createFieldAction = createdFlatFieldMetadata.map(
+      (flatFieldMetadata) =>
+        getWorkspaceMigrationV2FieldCreateAction({
+          flatFieldMetadata,
+          flatObjectMetadata,
+        }),
     );
 
     const deleteFieldAction = inferDeletionFromMissingObjectFieldIndex
-      ? deletedFieldMetadata.map((flatFieldMetadata) =>
+      ? deletedFlatFieldMetadata.map((flatFieldMetadata) =>
           getWorkspaceMigrationV2FieldDeleteAction({
             flatFieldMetadata,
             flatObjectMetadata,
