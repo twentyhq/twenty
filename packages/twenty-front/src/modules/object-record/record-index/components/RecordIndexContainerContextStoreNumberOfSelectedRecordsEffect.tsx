@@ -47,18 +47,20 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
 
     const { filterValueDependencies } = useFilterValueDependencies();
 
+    const computedFilter = computeContextStoreFilters(
+      contextStoreTargetedRecordsRule,
+      contextStoreFilters,
+      objectMetadataItem,
+      filterValueDependencies,
+      contextStoreAnyFieldFilterValue,
+    );
+
     const { totalCount } = useFindManyRecords({
       ...findManyRecordsParams,
       recordGqlFields: {
         id: true,
       },
-      filter: computeContextStoreFilters(
-        contextStoreTargetedRecordsRule,
-        contextStoreFilters,
-        objectMetadataItem,
-        filterValueDependencies,
-        contextStoreAnyFieldFilterValue,
-      ),
+      filter: computedFilter,
       limit: 1,
       skip: contextStoreTargetedRecordsRule.mode === 'selection',
     });

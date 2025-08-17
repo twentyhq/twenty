@@ -20,9 +20,15 @@ export const computeRecordGqlOperationFilter = ({
   fields: Pick<Field, 'id' | 'name' | 'type'>[];
   recordFilterGroups: RecordFilterGroup[];
 }): RecordGqlOperationFilter => {
+  // NEW: detect if there are groups at all
+  const hasGroups = recordFilterGroups.length > 0;
+
   const regularRecordGqlOperationFilter: RecordGqlOperationFilter[] =
     recordFilters
-      .filter((filter) => !isDefined(filter.recordFilterGroupId))
+      // MINIMAL FIX:
+      // - If there ARE groups, keep the original behavior (exclude rows assigned to a group).
+      // - If there are NO groups, include everything (so nothing gets dropped).
+      .filter((filter) => !hasGroups || !isDefined(filter.recordFilterGroupId))
       .map((regularFilter) =>
         turnRecordFilterIntoRecordGqlOperationFilter({
           filterValueDependencies,

@@ -15,6 +15,9 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 
+// add this type so we can precisely narrow the composed filter
+import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {
     onError?: (error?: Error) => void;
@@ -53,22 +56,38 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     handleError: onError,
   });
 
+  // Soft-deleted clause typed as a valid GraphQL filter
+  const withSoftDeleterFilter: RecordGqlOperationFilter = {
+    or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
+  } as RecordGqlOperationFilter;
+
+  // Base UI filter narrowed to the same filter type (or undefined)
+  const baseFilter = filter as RecordGqlOperationFilter | undefined;
+
+  // Compose once (include soft-deleted if requested), keep exact type
+  const combinedFilter: RecordGqlOperationFilter | undefined = withSoftDeleted
+    ? ({
+        and: [
+          ...(baseFilter ? [baseFilter] : []),
+          withSoftDeleterFilter,
+        ],
+      } as RecordGqlOperationFilter)
+    : baseFilter;
+
   const queryIdentifier = getQueryIdentifier({
     objectNameSingular,
-    filter,
+    filter: combinedFilter, // use the same composed predicate for cache key
     orderBy,
     limit,
   });
 
-  const { handleFindManyRecordsCompleted } = useHandleFindManyRecordsCompleted({
-    objectMetadataItem,
-    queryIdentifier,
-    onCompleted,
-  });
-
-  const withSoftDeleterFilter = {
-    or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
-  };
+  // Recreate completed handler with the final identifier
+  const { handleFindManyRecordsCompleted: handleCompleted } =
+    useHandleFindManyRecordsCompleted({
+      objectMetadataItem,
+      queryIdentifier,
+      onCompleted,
+    });
 
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
@@ -80,20 +99,13 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
       skip: skip || !objectMetadataItem || !hasReadPermission,
       variables: {
-        filter: withSoftDeleted
-          ? {
-              and: [
-                ...(filter ? [filter] : []),
-                ...(withSoftDeleted ? [withSoftDeleterFilter] : []),
-              ],
-            }
-          : filter,
+        filter: combinedFilter, // SAME filter goes to the query
         orderBy,
         lastCursor: cursorFilter?.cursor ?? undefined,
         limit,
       },
       fetchPolicy: fetchPolicy,
-      onCompleted: handleFindManyRecordsCompleted,
+      onCompleted: handleCompleted,
       onError: handleFindManyRecordsError,
       client: apolloCoreClient,
     });
@@ -101,7 +113,8 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   const { fetchMoreRecords, records, hasNextPage } =
     useFetchMoreRecordsWithPagination<T>({
       objectNameSingular,
-      filter,
+      // Pass the same composed filter; cast retains the original param shape
+      filter: combinedFilter as typeof filter,
       orderBy,
       limit,
       fetchMore,
