@@ -15,6 +15,7 @@ import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type WorkflowStepFilterFieldSelectProps = {
@@ -32,6 +33,7 @@ export const WorkflowStepFilterFieldSelect = ({
   const { readonly } = useContext(WorkflowStepFilterContext);
   const shouldDisplayRecordFields = true;
   const shouldDisplayRecordObjects = true;
+  const { getIcon } = useIcons();
 
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
 
@@ -61,7 +63,7 @@ export const WorkflowStepFilterFieldSelect = ({
 
   const handleChange = useRecoilCallback(
     ({ snapshot }) =>
-      (variableName: string) => {
+      (variableName: string, icon?: string) => {
         const stepId = extractRawVariableNamePart({
           rawVariableName: variableName,
           part: 'stepId',
@@ -114,6 +116,7 @@ export const WorkflowStepFilterFieldSelect = ({
             type: filterType ?? 'unknown',
             value: '',
             fieldMetadataId,
+            icon: icon,
             compositeFieldSubFieldName,
             operand: getViewFilterOperands({
               filterType,
@@ -144,7 +147,7 @@ export const WorkflowStepFilterFieldSelect = ({
   const label =
     isSelectedFieldNotFound || !isDefined(stepFilter.displayValue)
       ? t`Select a field from a previous step`
-      : stepFilter.displayValue;
+      : variableLabel;
 
   const dropdownId = `step-filter-field-${stepFilter.id}`;
 
@@ -161,6 +164,7 @@ export const WorkflowStepFilterFieldSelect = ({
               label: isReadonly
                 ? (label ?? '')
                 : t`No available fields to select`,
+              Icon: stepFilter.icon ? getIcon(stepFilter.icon) : undefined,
             }}
             isDisabled={true}
           />
@@ -179,7 +183,8 @@ export const WorkflowStepFilterFieldSelect = ({
         <SelectControl
           selectedOption={{
             value: stepFilter.stepOutputKey,
-            label,
+            label: label,
+            Icon: stepFilter.icon ? getIcon(stepFilter.icon) : undefined,
           }}
           textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
         />

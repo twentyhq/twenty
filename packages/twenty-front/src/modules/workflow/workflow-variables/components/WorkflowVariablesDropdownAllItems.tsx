@@ -22,7 +22,7 @@ import { useVariableDropdown } from '../hooks/useVariableDropdown';
 
 type WorkflowVariablesDropdownAllItemsProps = {
   step: StepOutputSchema;
-  onSelect: (value: string) => void;
+  onSelect: (value: string, icon?: string) => void;
   onBack: () => void;
   shouldEnableSelectRelationObject?: boolean;
 };
@@ -75,6 +75,7 @@ export const WorkflowVariablesDropdownAllItems = ({
           stepId: step.id,
           path: currentPath,
         }),
+        displayedSubStepObject?.icon,
       );
     } else {
       onSelect(
@@ -82,6 +83,7 @@ export const WorkflowVariablesDropdownAllItems = ({
           stepId: step.id,
           path: [...currentPath, currentSubStep.object.fieldIdName],
         }),
+        displayedSubStepObject?.icon,
       );
     }
   };

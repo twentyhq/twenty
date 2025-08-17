@@ -23,7 +23,7 @@ import { isRecordOutputSchema } from '../utils/isRecordOutputSchema';
 
 type UseVariableDropdownProps = {
   step: StepOutputSchema;
-  onSelect: (value: string) => void;
+  onSelect: (value: string, icon?: string) => void;
   onBack: () => void;
 };
 
@@ -88,11 +88,36 @@ export const useVariableDropdown = ({
         setCurrentPath([...currentPath, key]);
         setSearchInputValue('');
       } else {
+        const currentSubStep = getCurrentSubStepFromPath(step, currentPath);
+        let icon: string | undefined;
+
+        if (isBaseOutputSchema(currentSubStep)) {
+          icon = currentSubStep[key]?.icon;
+        } else if (isRecordOutputSchema(currentSubStep)) {
+          icon = currentSubStep.fields[key]?.icon;
+        }
+
+        if (!icon && currentPath.length > 0) {
+          const parentPath = currentPath.slice(0, -1);
+          const parentSubStep = getCurrentSubStepFromPath(step, parentPath);
+
+          if (isDefined(parentSubStep)) {
+            if (isBaseOutputSchema(parentSubStep)) {
+              const parentKey = currentPath[currentPath.length - 1];
+              icon = parentSubStep[parentKey]?.icon;
+            } else if (isRecordOutputSchema(parentSubStep)) {
+              const parentKey = currentPath[currentPath.length - 1];
+              icon = parentSubStep.fields[parentKey]?.icon;
+            }
+          }
+        }
+
         onSelect(
           getVariableTemplateFromPath({
             stepId: step.id,
             path: [...currentPath, key],
           }),
+          icon,
         );
       }
     };

@@ -18,7 +18,7 @@ import { useVariableDropdown } from '../hooks/useVariableDropdown';
 
 type WorkflowVariablesDropdownFieldItemsProps = {
   step: StepOutputSchema;
-  onSelect: (value: string) => void;
+  onSelect: (value: string, icon?: string) => void;
   onBack: () => void;
 };
 

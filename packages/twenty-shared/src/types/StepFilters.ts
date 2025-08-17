@@ -16,6 +16,7 @@ export type StepFilter = {
   id: string;
   type: string;
   label: string;
+  icon?: string;
   stepOutputKey: string;
   operand: ViewFilterOperand;
   value: string;
