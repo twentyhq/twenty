@@ -27,7 +27,6 @@ export const AdvancedFilterLogicalOperatorDropdown = ({
 
   return (
     <Select
-      fullWidth
       dropdownWidth={GenericDropdownContentWidth.Narrow}
       dropdownId={`advanced-filter-logical-operator-${recordFilterGroup.id}`}
       value={recordFilterGroup.logicalOperator}
