@@ -6,6 +6,7 @@ import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/component
 import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/components/WorkflowNodeLabel';
 import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/components/WorkflowNodeLabelWithCounterPart';
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/components/WorkflowNodeRightPart';
+import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/components/WorkflowNodeTitle';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { useEdgeSelected } from '@/workflow/workflow-diagram/hooks/useEdgeSelected';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
@@ -59,19 +60,8 @@ const StyledNodeLabel = styled(WorkflowNodeLabel)`
   }
 `;
 
-const StyledNodeTitle = styled.div`
-  box-sizing: border-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  align-self: stretch;
+const StyledNodeTitle = styled(WorkflowNodeTitle)`
   color: ${({ theme }) => theme.font.color.primary};
-  display: -webkit-box;
-  font-family: Inter;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-style: normal;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  overflow: hidden;
-  text-overflow: ellipsis;
 `;
 
 const StyledDeleteButtonContainer = styled.div`
