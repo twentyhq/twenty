@@ -15,8 +15,8 @@ import {
   type WorkspaceMigrationBuilderTestCase,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
+import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-v2-object-actions-builder.service';
 import { type WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
-import { WorkspaceMigrationV2ObjectActionsBuilder } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
 
 const allWorkspaceBuilderTestCases: {
   label: string;
@@ -83,7 +83,7 @@ describe.each(allWorkspaceBuilderTestCases)(
     let flatFieldMetadataTypeValidatorService: FlatFieldMetadataTypeValidatorService;
     let flatFieldMetadataValidatorService: FlatFieldMetadataValidatorService;
     let flatObjectMetadataValidatorService: FlatObjectMetadataValidatorService;
-    let objectActionsBuilder: WorkspaceMigrationV2ObjectActionsBuilder;
+    let objectActionsBuilder: WorkspaceMigrationV2ObjectActionsBuilderService;
 
     beforeEach(() => {
       featureFlagService = {
@@ -102,7 +102,7 @@ describe.each(allWorkspaceBuilderTestCases)(
           flatFieldMetadataValidatorService,
         );
 
-      objectActionsBuilder = new WorkspaceMigrationV2ObjectActionsBuilder(
+      objectActionsBuilder = new WorkspaceMigrationV2ObjectActionsBuilderService(
         flatObjectMetadataValidatorService,
       );
       service = new WorkspaceMigrationBuilderV2Service(objectActionsBuilder);

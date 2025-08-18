@@ -37,7 +37,7 @@ export type CreatedDeletedUpdatedObjectMetadataInputMatrix = FromTo<
   };
 
 @Injectable()
-export class WorkspaceMigrationV2ObjectActionsBuilder {
+export class WorkspaceMigrationV2ObjectActionsBuilderService {
   constructor(
     private readonly flatObjectMetadataValidatorService: FlatObjectMetadataValidatorService,
   ) {}
