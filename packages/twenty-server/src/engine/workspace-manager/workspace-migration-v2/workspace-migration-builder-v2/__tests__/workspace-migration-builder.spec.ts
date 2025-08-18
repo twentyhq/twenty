@@ -119,7 +119,7 @@ describe.each(allWorkspaceBuilderTestCases)(
 
     it.each(eachTestingContextFilter(testCases))(
       '$title',
-      async ({ title, context: { input, expectedActionsTypeCounter } }) => {
+      async ({ context: { input, expectedActionsTypeCounter } }) => {
         const {
           fromFlatObjectMetadataMaps,
           toFlatObjectMetadataMaps,
