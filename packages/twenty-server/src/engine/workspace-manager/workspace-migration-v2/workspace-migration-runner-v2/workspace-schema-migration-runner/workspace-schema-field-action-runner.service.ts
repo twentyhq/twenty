@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType, type FromTo } from 'twenty-shared/types';
+import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
@@ -18,9 +18,11 @@ import { unserializeDefaultValue } from 'src/engine/metadata-modules/field-metad
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
+import { isRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-flat-field-metadata.util';
 import { findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import {
   type CreateFieldAction,
   type DeleteFieldAction,
@@ -29,6 +31,10 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { type RunnerMethodForActionType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/runner-method-for-action-type';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
+import {
+  WorkspaceSchemaMigrationException,
+  WorkspaceSchemaMigrationExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/exceptions/workspace-schema-migration.exception';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/generate-column-definitions.util';
 
 import {
@@ -213,11 +219,11 @@ export class WorkspaceSchemaFieldActionRunnerService
       const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
 
       for (const property of compositeType.properties) {
-        if (
-          property.type === FieldMetadataType.RELATION ||
-          property.type === FieldMetadataType.MORPH_RELATION
-        ) {
-          continue;
+        if (isRelationFieldMetadataType(property.type)) {
+          throw new WorkspaceSchemaMigrationException(
+            'Relation field metadata in composite type is not supported yet',
+            WorkspaceSchemaMigrationExceptionCode.NOT_SUPPORTED,
+          );
         }
 
         const fromCompositeColumnName = computeCompositeColumnName(
@@ -238,6 +244,12 @@ export class WorkspaceSchemaFieldActionRunnerService
         });
       }
     } else {
+      if (isRelationFlatFieldMetadata(flatFieldMetadata)) {
+        throw new WorkspaceSchemaMigrationException(
+          'Relation field metadata name update is not supported yet',
+          WorkspaceSchemaMigrationExceptionCode.NOT_SUPPORTED,
+        );
+      }
       await this.workspaceSchemaManagerService.columnManager.renameColumn({
         queryRunner,
         schemaName,
@@ -277,11 +289,11 @@ export class WorkspaceSchemaFieldActionRunnerService
       const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
 
       for (const property of compositeType.properties) {
-        if (
-          property.type === FieldMetadataType.RELATION ||
-          property.type === FieldMetadataType.MORPH_RELATION
-        ) {
-          continue;
+        if (isRelationFieldMetadataType(property.type)) {
+          throw new WorkspaceSchemaMigrationException(
+            'Relation field metadata in composite type is not supported yet',
+            WorkspaceSchemaMigrationExceptionCode.NOT_SUPPORTED,
+          );
         }
 
         const compositeColumnName = computeCompositeColumnName(
