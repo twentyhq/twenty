@@ -16,8 +16,8 @@ import { settingsDataModelFieldCurrencyFormSchema } from '@/settings/data-model/
 import { SettingsDataModelFieldCurrencySettingsFormCard } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencySettingsFormCard';
 import { settingsDataModelFieldDateFormSchema } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
 import { SettingsDataModelFieldDateSettingsFormCard } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateSettingsFormCard';
-import { settingsDataModelFieldMorphRelationFormSchema } from '@/settings/data-model/fields/forms/morphRelation/components/SettingsDataModelFieldMorphRelationForm';
-import { SettingsDataModelFieldMorphRelationSettingsFormCard } from '@/settings/data-model/fields/forms/morphRelation/components/SettingsDataModelFieldMorphRelationSettingsFormCard';
+import { settingsDataModelFieldMorphRelationFormSchema } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm';
+import { SettingsDataModelFieldMorphRelationSettingsFormCard } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationSettingsFormCard';
 import { settingsDataModelFieldNumberFormSchema } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
 import { SettingsDataModelFieldNumberSettingsFormCard } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberSettingsFormCard';
 import { settingsDataModelFieldPhonesFormSchema } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';

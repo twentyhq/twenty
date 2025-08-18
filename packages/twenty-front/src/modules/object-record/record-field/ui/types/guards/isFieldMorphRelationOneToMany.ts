@@ -6,7 +6,7 @@ import {
   type FieldMorphRelationMetadata,
 } from '../FieldMetadata';
 
-export const isFieldMorphRelationFromManyObjects = (
+export const isFieldMorphRelationOneToMany = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>,
 ): field is FieldDefinition<FieldMorphRelationMetadata> =>
   isFieldMorphRelation(field) &&

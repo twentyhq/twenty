@@ -8,8 +8,8 @@ import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import {
   SettingsDataModelFieldMorphRelationForm,
   type SettingsDataModelFieldMorphRelationFormValues,
-} from '@/settings/data-model/fields/forms/morphRelation/components/SettingsDataModelFieldMorphRelationForm';
-import { useMorphRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/morphRelation/hooks/useMorphRelationSettingsFormInitialValues';
+} from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm';
+import { useMorphRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormInitialValues';
 import {
   SettingsDataModelFieldPreviewCard,
   type SettingsDataModelFieldPreviewCardProps,
