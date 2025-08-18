@@ -1,18 +1,12 @@
-import { type Field, type RelationType } from '~/generated-metadata/graphql';
+import { type Field } from '~/generated-metadata/graphql';
 
 import { type FieldMetadataItem } from '../types/FieldMetadataItem';
 import { formatFieldMetadataItemInput } from '../utils/formatFieldMetadataItemInput';
 
+import { type RelationCreationPayload } from 'twenty-shared/types';
 import { useCreateOneFieldMetadataItem } from './useCreateOneFieldMetadataItem';
 import { useDeleteOneFieldMetadataItem } from './useDeleteOneFieldMetadataItem';
 import { useUpdateOneFieldMetadataItem } from './useUpdateOneFieldMetadataItem';
-
-type RelationCreationPayload = {
-  type: RelationType;
-  targetObjectMetadataId: string;
-  targetFieldLabel: string;
-  targetFieldIcon: string;
-};
 
 export const useFieldMetadataItem = () => {
   const { createOneFieldMetadataItem } = useCreateOneFieldMetadataItem();
