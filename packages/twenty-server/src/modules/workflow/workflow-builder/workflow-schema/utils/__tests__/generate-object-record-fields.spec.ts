@@ -6,7 +6,7 @@ import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builde
 import { shouldGenerateFieldFakeValue } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/should-generate-field-fake-value';
 
 jest.mock(
-  'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field',
+  'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-record-field',
 );
 jest.mock(
   'src/modules/workflow/workflow-builder/workflow-schema/utils/should-generate-field-fake-value',

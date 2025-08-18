@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
@@ -16,15 +18,22 @@ export const prefillWorkflows = async (
   const companyObjectMetadataId =
     objectMetadataMaps.idByNameSingular['company'];
 
-  if (!companyObjectMetadataId) {
-    throw new Error('Company object metadata not found');
+  const personObjectMetadataId = objectMetadataMaps.idByNameSingular['person'];
+
+  if (
+    !isDefined(companyObjectMetadataId) ||
+    !isDefined(personObjectMetadataId)
+  ) {
+    throw new Error('Company or person object metadata not found');
   }
 
   const companyObjectMetadata =
     objectMetadataMaps.byId[companyObjectMetadataId];
 
-  if (!companyObjectMetadata) {
-    throw new Error('Company object metadata not found');
+  const personObjectMetadata = objectMetadataMaps.byId[personObjectMetadataId];
+
+  if (!isDefined(companyObjectMetadata) || !isDefined(personObjectMetadata)) {
+    throw new Error('Company or person object metadata not found');
   }
 
   await entityManager
@@ -200,9 +209,90 @@ export const prefillWorkflows = async (
                 },
               },
               outputSchema: {
+                object: {
+                  icon: 'IconBuildingSkyscraper',
+                  label: 'Company',
+                  value: 'A company',
+                  isLeaf: true,
+                  fieldIdName: 'id',
+                  nameSingular: 'company',
+                },
+                _outputSchemaType: 'RECORD',
                 fields: generateObjectRecordFields({
                   objectMetadataInfo: {
                     objectMetadataItemWithFieldsMaps: companyObjectMetadata,
+                    objectMetadataMaps,
+                  },
+                  depth: 0,
+                }),
+              },
+              errorHandlingOptions: {
+                retryOnFailure: { value: false },
+                continueOnFailure: { value: false },
+              },
+            },
+            __typename: 'WorkflowAction',
+            nextStepIds: null,
+          },
+          {
+            id: '0715b6cd-7cc1-4b98-971b-00f54dfe643b',
+            name: 'Create Company',
+            type: 'CREATE_RECORD',
+            valid: false,
+            settings: {
+              input: {
+                objectName: 'company',
+                objectRecord: {
+                  name: '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.companyName}}',
+                  domainName: {
+                    primaryLinkUrl:
+                      '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.companyDomain}}',
+                    primaryLinkLabel: '',
+                  },
+                },
+              },
+              outputSchema: {
+                fields: generateObjectRecordFields({
+                  objectMetadataInfo: {
+                    objectMetadataItemWithFieldsMaps: companyObjectMetadata,
+                    objectMetadataMaps,
+                  },
+                  depth: 0,
+                }),
+              },
+              errorHandlingOptions: {
+                retryOnFailure: { value: false },
+                continueOnFailure: { value: false },
+              },
+            },
+            __typename: 'WorkflowAction',
+            nextStepIds: ['6f553ea7-b00e-4371-9d88-d8298568a246'],
+          },
+          {
+            id: '6f553ea7-b00e-4371-9d88-d8298568a246',
+            name: 'Create Person',
+            type: 'CREATE_RECORD',
+            valid: false,
+            settings: {
+              objectRecord: {
+                name: {
+                  lastName: '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.lastName}}',
+                  firstName:
+                    '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.firstName}}',
+                },
+                emails: {
+                  primaryEmail:
+                    '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.email}}',
+                  additionalEmails: [],
+                },
+                company: {
+                  id: '{{0715b6cd-7cc1-4b98-971b-00f54dfe643b.id}}',
+                },
+              },
+              outputSchema: {
+                fields: generateObjectRecordFields({
+                  objectMetadataInfo: {
+                    objectMetadataItemWithFieldsMaps: personObjectMetadata,
                     objectMetadataMaps,
                   },
                   depth: 0,

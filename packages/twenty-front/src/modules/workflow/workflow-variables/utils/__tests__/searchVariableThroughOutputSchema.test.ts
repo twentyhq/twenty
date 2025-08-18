@@ -111,6 +111,8 @@ describe('searchVariableThroughOutputSchema', () => {
       });
 
       expect(result).toEqual({
+        compositeFieldSubFieldName: undefined,
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
         variableLabel: 'Name',
         variablePathLabel: 'Step 1 > Company > Name',
         variableType: 'unknown',
@@ -125,6 +127,8 @@ describe('searchVariableThroughOutputSchema', () => {
       });
 
       expect(result).toEqual({
+        compositeFieldSubFieldName: undefined,
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
         variableLabel: 'Email',
         variablePathLabel: 'Step 1 > Person > Email',
         variableType: 'unknown',
@@ -313,6 +317,8 @@ describe('searchVariableThroughOutputSchema', () => {
       });
 
       expect(result).toEqual({
+        compositeFieldSubFieldName: undefined,
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
         variableLabel: 'Name',
         variablePathLabel: 'Record is Created > Name',
         variableType: FieldMetadataType.TEXT,
@@ -328,6 +334,8 @@ describe('searchVariableThroughOutputSchema', () => {
       });
 
       expect(result).toEqual({
+        compositeFieldSubFieldName: 'amountMicros',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
         variableLabel: ' Amount Micros',
         variablePathLabel: 'Record is Created > ARR >  Amount Micros',
         variableType: FieldMetadataType.NUMERIC,
