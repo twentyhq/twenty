@@ -102,7 +102,7 @@ const StyledNodeTitle = styled(WorkflowNodeTitle)`
 const StyledNodeCounter = styled.div`
   align-items: center;
   display: flex;
-  gap: 4px;
+  gap: ${({ theme }) => theme.spacing(1)};
   justify-content: flex-end;
   box-sizing: border-box;
 `;
