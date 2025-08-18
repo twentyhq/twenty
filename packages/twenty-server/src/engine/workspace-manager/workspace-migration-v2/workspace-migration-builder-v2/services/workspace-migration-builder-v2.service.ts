@@ -79,7 +79,7 @@ export class WorkspaceMigrationBuilderV2Service {
     ///
 
     // Validate and build
-    const objectWorkspaceMigrationActions =
+    const objectActionsValidateAndBuildResult =
       await this.workspaceMigrationV2ObjectActionsBuilderService.validateAndBuildObjectActions(
         {
           fromFlatObjectMetadataMaps,
@@ -91,13 +91,15 @@ export class WorkspaceMigrationBuilderV2Service {
         },
       );
 
-    const fieldWorkspaceMigrationActions =
-      await this.workspaceMigrationV2FieldActionsBuilderService.build({
-        buildOptions,
-        fromFlatObjectMetadataMaps,
-        toFlatObjectMetadataMaps,
-        objectMetadataDeletedCreatedUpdatedFields,
-      });
+    const fieldActionsValidateAndBuildResult =
+      await this.workspaceMigrationV2FieldActionsBuilderService.validateAndBuildFieldActions(
+        {
+          buildOptions,
+          fromFlatObjectMetadataMaps,
+          toFlatObjectMetadataMaps,
+          objectMetadataDeletedCreatedUpdatedFields,
+        },
+      );
 
     const createdObjectMetadataCreateIndexActions =
       createdFlatObjectMetadatas.flatMap((objectMetadata) =>
@@ -125,10 +127,15 @@ export class WorkspaceMigrationBuilderV2Service {
     });
     ///
 
-    if (objectWorkspaceMigrationActions.failed.length > 0) {
+    const allValidateAndBuildResultFailures = [
+      ...objectActionsValidateAndBuildResult.failed,
+      ...fieldActionsValidateAndBuildResult.failed,
+    ];
+
+    if (allValidateAndBuildResultFailures.length > 0) {
       return {
         status: 'fail',
-        errors: objectWorkspaceMigrationActions.failed,
+        errors: allValidateAndBuildResultFailures,
       };
     }
 
@@ -138,9 +145,9 @@ export class WorkspaceMigrationBuilderV2Service {
         workspaceId,
         actions: [
           ...deletedObjectWorkspaceMigrationDeleteFieldActions,
-          ...objectWorkspaceMigrationActions.successful,
+          ...objectActionsValidateAndBuildResult.successful,
           ...createdObjectMetadataCreateIndexActions,
-          ...fieldWorkspaceMigrationActions.successful,
+          ...fieldActionsValidateAndBuildResult.successful,
           ...indexWorkspaceMigrationActions,
         ],
       },

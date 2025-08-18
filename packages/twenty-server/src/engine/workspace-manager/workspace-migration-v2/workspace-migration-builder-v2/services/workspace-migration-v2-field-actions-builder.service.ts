@@ -10,7 +10,7 @@ import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadat
 import { replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { computeRelationTargetFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/compute-relation-target-flat-object-metadata-maps.util';
 import { WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
-import { MetadataActionValidateAndBuildResult } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/metadata-action-validate-and-build-result.type';
+import { ValidateAndBuildMetadataResult } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/validate-and-build-metadata-result.type';
 import { type WorkspaceMigrationFieldActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { type UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-field-matrix.util';
 import {
@@ -49,9 +49,9 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
     toFlatObjectMetadataMaps,
     buildOptions,
   }: validateFlatObjectMetadataFlatFieldMetadataMatrixArgs): Promise<
-    MetadataActionValidateAndBuildResult<WorkspaceMigrationFieldActionV2>
+    ValidateAndBuildMetadataResult<WorkspaceMigrationFieldActionV2>
   > {
-    const validateAndBuildResult: MetadataActionValidateAndBuildResult<WorkspaceMigrationFieldActionV2> =
+    const validateAndBuildResult: ValidateAndBuildMetadataResult<WorkspaceMigrationFieldActionV2> =
       {
         failed: [],
         successful: [],
@@ -195,15 +195,15 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
     return validateAndBuildResult;
   }
 
-  public async build({
+  public async validateAndBuildFieldActions({
     buildOptions,
     fromFlatObjectMetadataMaps,
     toFlatObjectMetadataMaps,
     objectMetadataDeletedCreatedUpdatedFields,
   }: BuildWorkspaceMigrationV2FieldActionsArgs): Promise<
-    MetadataActionValidateAndBuildResult<WorkspaceMigrationFieldActionV2>
+    ValidateAndBuildMetadataResult<WorkspaceMigrationFieldActionV2>
   > {
-    let validateAndBuildResult: MetadataActionValidateAndBuildResult<WorkspaceMigrationFieldActionV2> =
+    let validateAndBuildResult: ValidateAndBuildMetadataResult<WorkspaceMigrationFieldActionV2> =
       {
         failed: [],
         successful: [],

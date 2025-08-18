@@ -11,7 +11,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { compareTwoFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/compare-two-flat-object-metadata.util';
 import { type CustomDeletedCreatedUpdatedMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import { WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
-import { MetadataActionValidateAndBuildResult } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/metadata-action-validate-and-build-result.type';
+import { ValidateAndBuildMetadataResult } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/validate-and-build-metadata-result.type';
 import {
   UpdateObjectAction,
   WorkspaceMigrationObjectActionV2,
@@ -48,9 +48,9 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
     fromFlatObjectMetadataMaps,
     toFlatObjectMetadataMaps,
   }: CreatedDeletedUpdatedObjectMetadataInputMatrix): Promise<
-    MetadataActionValidateAndBuildResult<WorkspaceMigrationObjectActionV2>
+    ValidateAndBuildMetadataResult<WorkspaceMigrationObjectActionV2>
   > {
-    const validateAndBuildResult: MetadataActionValidateAndBuildResult<WorkspaceMigrationObjectActionV2> =
+    const validateAndBuildResult: ValidateAndBuildMetadataResult<WorkspaceMigrationObjectActionV2> =
       {
         failed: [],
         successful: [],
