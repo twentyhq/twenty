@@ -310,6 +310,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         queryRunner: mockQueryRunner,
         schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
         tableName: '_task',
+        enumValues: ['HIGH', 'LOW'],
         columnDefinitions: [
           {
             name: 'priority',
@@ -318,7 +319,6 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
             isArray: false,
             isUnique: false,
             default: null,
-            enumValues: ['HIGH', 'LOW'],
           },
         ],
       });
@@ -552,6 +552,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         queryRunner: mockQueryRunner,
         schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
         tableName: '_person',
+        enumValues: ['UPDATED_ACTIVE', 'UPDATED_INACTIVE'],
         columnDefinition: {
           name: 'status',
           type: '_person_status_enum',
@@ -559,7 +560,6 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
           isArray: false,
           isUnique: false,
           default: null,
-          enumValues: ['UPDATED_ACTIVE', 'UPDATED_INACTIVE'],
         },
         oldToNewEnumOptionMap: {
           ACTIVE: 'UPDATED_ACTIVE', // Keep original values

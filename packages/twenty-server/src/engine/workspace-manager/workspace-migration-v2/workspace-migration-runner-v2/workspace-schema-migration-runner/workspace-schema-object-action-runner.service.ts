@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
@@ -55,7 +56,7 @@ export class WorkspaceSchemaObjectActionRunnerService
       .filter((field) => isEnumFlatFieldMetadata(field));
 
     const enumOperations = collectEnumOperationsForObject({
-      enumFlatFieldMetadatas,
+      flatFieldMetadatas: enumFlatFieldMetadatas,
       tableName,
       operation: EnumOperation.DROP,
     });
@@ -77,18 +78,21 @@ export class WorkspaceSchemaObjectActionRunnerService
 
     const columnDefinitions = createFieldActions.flatMap((createFieldAction) =>
       generateColumnDefinitions({
-        fieldMetadata: createFieldAction.flatFieldMetadata,
+        flatFieldMetadata: createFieldAction.flatFieldMetadata,
         flatObjectMetadataWithoutFields: flatObjectMetadataWithoutFields,
       }),
     );
 
-    const enumFlatFieldMetadatas = createFieldActions
+    const enumOrCompositeFlatFieldMetadatas = createFieldActions
       .map((createFieldAction) => createFieldAction.flatFieldMetadata)
       .filter((field): field is FlatFieldMetadata => field != null)
-      .filter((field) => isEnumFlatFieldMetadata(field));
+      .filter(
+        (field) =>
+          isEnumFlatFieldMetadata(field) || isCompositeFlatFieldMetadata(field),
+      );
 
     const enumOperations = collectEnumOperationsForObject({
-      enumFlatFieldMetadatas,
+      flatFieldMetadatas: enumOrCompositeFlatFieldMetadatas,
       tableName,
       operation: EnumOperation.CREATE,
     });
@@ -143,14 +147,18 @@ export class WorkspaceSchemaObjectActionRunnerService
           newTableName,
         });
 
-        const enumFlatFieldMetadatas = Object.values(
+        const enumOrCompositeFlatFieldMetadatas = Object.values(
           flatObjectMetadataWithFlatFieldMaps.fieldsById,
         )
           .filter((field): field is FlatFieldMetadata => field != null)
-          .filter((field) => isEnumFlatFieldMetadata(field));
+          .filter(
+            (field) =>
+              isEnumFlatFieldMetadata(field) ||
+              isCompositeFlatFieldMetadata(field),
+          );
 
         const enumOperations = collectEnumOperationsForObject({
-          enumFlatFieldMetadatas,
+          flatFieldMetadatas: enumOrCompositeFlatFieldMetadatas,
           tableName: currentTableName,
           operation: EnumOperation.RENAME,
           options: {

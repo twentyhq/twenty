@@ -8,9 +8,9 @@ export const sanitizeDefaultValue = (
   }
 
   const allowedFunctions = [
-    'gen_random_uuid()',
-    'uuid_generate_v4()',
-    'now()',
+    'gen_random_uuid',
+    'uuid_generate_v4',
+    'now',
     'current_timestamp',
     'current_date',
     'current_time',
@@ -19,11 +19,19 @@ export const sanitizeDefaultValue = (
   ];
 
   if (typeof defaultValue === 'string') {
-    if (allowedFunctions.includes(defaultValue.toLowerCase())) {
+    const functionCallPattern =
+      /^(?:[a-zA-Z_][a-zA-Z0-9_]*\.)?([a-zA-Z_][a-zA-Z0-9_]*)\(\)$/;
+    const match = defaultValue.match(functionCallPattern);
+
+    if (match && allowedFunctions.includes(match[1].toLowerCase())) {
       return defaultValue;
     }
 
-    return removeSqlDDLInjection(defaultValue);
+    if (defaultValue === '') {
+      return "''";
+    }
+
+    return `'${removeSqlDDLInjection(defaultValue)}'`;
   }
 
   return defaultValue;

@@ -125,6 +125,21 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
         ],
       };
     }
+    case FieldMetadataType.TS_VECTOR: {
+      return {
+        status: 'success',
+        result: [
+          {
+            ...commonFlatFieldMetadata,
+            type: createFieldInput.type,
+            settings: {
+              asExpression: 'TODO',
+              generatedType: 'STORED',
+            },
+          },
+        ],
+      };
+    }
     case FieldMetadataType.UUID:
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONES:
@@ -143,8 +158,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.RICH_TEXT:
     case FieldMetadataType.RICH_TEXT_V2:
     case FieldMetadataType.ACTOR:
-    case FieldMetadataType.ARRAY:
-    case FieldMetadataType.TS_VECTOR: {
+    case FieldMetadataType.ARRAY: {
       return {
         status: 'success',
         result: [
