@@ -91,6 +91,10 @@ export const MultiSelectControl = ({
 }: MultiSelectControlProps) => {
   const theme = useTheme();
 
+  if (selectedOptions.length === 0) {
+    return null;
+  }
+
   const firstSelectedOption = selectedOptions[0];
   const selectedOptionsCount = selectedOptions.length;
   return (
