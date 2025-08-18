@@ -11,8 +11,9 @@ import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.work
 import { MktVariantAttributeWorkspaceEntity } from 'src/mkt-core/variant_attribute/mkt-variant-attribute.workspace-entity';
 import { MktPaymentMethodWorkspaceEntity } from 'src/mkt-core/payment-method/mkt-payment-method.workspace-entity';
 import { MktPaymentWorkspaceEntity } from 'src/mkt-core/payment/mkt-payment.workspace-entity';
-import { MktResellerTierWorkspaceEntity } from 'src/mkt-core/mkt-reseller-tier/mkt-reseller-tier';
+import { MktResellerTierWorkspaceEntity } from 'src/mkt-core/mkt-reseller-tier/mkt-reseller-tier.workspace-entity';
 import { MktResellerWorkspaceEntity } from 'src/mkt-core/mkt-reseller/mkt-reseller.workspace-entity';
+import { MktResellerTierHistoryWorkspaceEntity } from 'src/mkt-core/mkt-reseller-tier-history/mkt-reseller-tier-history.workspace-entity';
 
 export const MKT_WORKSPACE_ENTITIES = [
   // Product
@@ -38,4 +39,5 @@ export const MKT_WORKSPACE_ENTITIES = [
   // Seller Tier
   MktResellerTierWorkspaceEntity,
   MktResellerWorkspaceEntity,
+  MktResellerTierHistoryWorkspaceEntity,
 ];

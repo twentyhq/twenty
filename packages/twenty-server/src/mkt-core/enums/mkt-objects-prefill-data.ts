@@ -13,6 +13,7 @@ import { prefillMktPaymentMethods } from 'src/mkt-core/dev-seeder/prefill-data/p
 import { prefillMktPayments } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-payments';
 import { prefillMktResellerTiers } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-reseller-tiers';
 import { prefillMktResellers } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-resellers';
+import { prefillMktResellerTierHistories } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-reseller-tier-histories';
 
 export const MKT_PREFILLS = [
   // product prefills
@@ -38,4 +39,5 @@ export const MKT_PREFILLS = [
   // reseller prefills
   prefillMktResellerTiers,
   prefillMktResellers,
+  prefillMktResellerTierHistories,
 ];

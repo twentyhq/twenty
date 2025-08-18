@@ -59,6 +59,10 @@ import {
   MKT_RESELLER_DATA_SEED_COLUMNS,
   MKT_RESELLER_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-reseller-data-seeds.constants';
+import {
+  MKT_RESELLER_TIER_HISTORY_DATA_SEED_COLUMNS,
+  MKT_RESELLER_TIER_HISTORY_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-reseller-tier-history-data-seeds.constants';
 
 export const MKT_RECORD_SEEDS_CONFIGS = [
   // Product configs
@@ -138,5 +142,10 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     tableName: 'mktReseller',
     pgColumns: MKT_RESELLER_DATA_SEED_COLUMNS,
     recordSeeds: MKT_RESELLER_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktResellerTierHistory',
+    pgColumns: MKT_RESELLER_TIER_HISTORY_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_RESELLER_TIER_HISTORY_DATA_SEEDS,
   },
 ];
