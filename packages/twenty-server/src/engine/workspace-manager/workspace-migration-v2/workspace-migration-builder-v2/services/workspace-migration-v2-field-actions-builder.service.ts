@@ -55,7 +55,9 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
     const validateAndBuildResult: ValidateAndBuildMetadataResult<WorkspaceMigrationFieldActionV2> =
       {
         failed: [],
-        successful: [],
+        created: [],
+        deleted: [],
+        updated: [],
         optimisticFlatObjectMetadataMaps: structuredClone(
           fromFlatObjectMetadataMaps,
         ),
@@ -102,7 +104,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
             validateAndBuildResult.optimisticFlatObjectMetadataMaps,
         });
 
-      validateAndBuildResult.successful.push({
+      validateAndBuildResult.updated.push({
         type: 'update_field',
         fieldMetadataId,
         objectMetadataId,
@@ -156,7 +158,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
         flatObjectMetadata,
       });
 
-      validateAndBuildResult.successful.push(createFieldAction);
+      validateAndBuildResult.created.push(createFieldAction);
     }
 
     for (const flatFieldMetadataToDelete of buildOptions.inferDeletionFromMissingObjectFieldIndex
@@ -189,7 +191,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
         flatObjectMetadata,
       });
 
-      validateAndBuildResult.successful.push(deleteFieldAction);
+      validateAndBuildResult.deleted.push(deleteFieldAction);
     }
 
     return validateAndBuildResult;
@@ -206,7 +208,9 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
     let validateAndBuildResult: ValidateAndBuildMetadataResult<WorkspaceMigrationFieldActionV2> =
       {
         failed: [],
-        successful: [],
+        created: [],
+        deleted: [],
+        updated: [],
         optimisticFlatObjectMetadataMaps: structuredClone(
           fromFlatObjectMetadataMaps,
         ),
@@ -235,9 +239,17 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
           ...validateAndBuildResult.failed,
           ...flatObjectMetadataFlatFieldMatrixValidateAndBuildResult.failed,
         ],
-        successful: [
-          ...validateAndBuildResult.successful,
-          ...flatObjectMetadataFlatFieldMatrixValidateAndBuildResult.successful,
+        created: [
+          ...validateAndBuildResult.created,
+          ...flatObjectMetadataFlatFieldMatrixValidateAndBuildResult.created,
+        ],
+        deleted: [
+          ...validateAndBuildResult.deleted,
+          ...flatObjectMetadataFlatFieldMatrixValidateAndBuildResult.deleted,
+        ],
+        updated: [
+          ...validateAndBuildResult.updated,
+          ...flatObjectMetadataFlatFieldMatrixValidateAndBuildResult.updated,
         ],
         optimisticFlatObjectMetadataMaps:
           flatObjectMetadataFlatFieldMatrixValidateAndBuildResult.optimisticFlatObjectMetadataMaps,

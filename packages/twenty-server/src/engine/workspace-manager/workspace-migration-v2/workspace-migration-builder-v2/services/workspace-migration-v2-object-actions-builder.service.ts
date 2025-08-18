@@ -53,7 +53,9 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
     const validateAndBuildResult: ValidateAndBuildMetadataResult<WorkspaceMigrationObjectActionV2> =
       {
         failed: [],
-        successful: [],
+        created: [],
+        deleted: [],
+        updated: [],
         optimisticFlatObjectMetadataMaps: structuredClone(
           fromFlatObjectMetadataMaps,
         ),
@@ -95,7 +97,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
         createFieldActions,
       });
 
-      validateAndBuildResult.successful.push(createObjectAction);
+      validateAndBuildResult.created.push(createObjectAction);
     }
 
     for (const flatObjectMetadataToDelete of buildOptions.inferDeletionFromMissingObjectFieldIndex
@@ -127,7 +129,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
         flatObjectMetadataToDelete,
       );
 
-      validateAndBuildResult.successful.push(deleteObjectAction);
+      validateAndBuildResult.deleted.push(deleteObjectAction);
     }
 
     for (const {
@@ -170,7 +172,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
         updates: objectUpdatedProperties,
       };
 
-      validateAndBuildResult.successful.push(updateObjectAction);
+      validateAndBuildResult.updated.push(updateObjectAction);
     }
 
     return validateAndBuildResult;

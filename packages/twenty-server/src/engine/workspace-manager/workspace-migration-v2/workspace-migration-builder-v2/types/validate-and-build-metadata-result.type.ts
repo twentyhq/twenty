@@ -10,6 +10,8 @@ export type ValidateAndBuildMetadataResult<
     | FailedFlatFieldMetadataValidationExceptions
     | FailedFlatObjectMetadataValidationExceptions
   )[];
-  successful: T[];
+  created: T[];
+  deleted: T[];
+  updated: T[];
   optimisticFlatObjectMetadataMaps: FlatObjectMetadataMaps;
 };
