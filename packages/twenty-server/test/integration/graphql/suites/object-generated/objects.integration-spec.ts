@@ -11,7 +11,6 @@ describe('objectsResolver (e2e)', () => {
             edges {
               node {
                 id
-                dataSourceId
                 nameSingular
                 namePlural
                 labelSingular

@@ -1,10 +1,8 @@
-import { EDGE_GRAY_CIRCLE_MARKED_ID } from '@/workflow/workflow-diagram/constants/EdgeGrayCircleMarkedId';
+import { EDGE_BRANCH_ARROW_MARKER_ID } from '@/workflow/workflow-diagram/constants/EdgeBranchArrowMarkerId';
 import { EDGE_GREEN_CIRCLE_MARKED_ID } from '@/workflow/workflow-diagram/constants/EdgeGreenCircleMarkedId';
 import { EDGE_GREEN_ROUNDED_ARROW_MARKER_ID } from '@/workflow/workflow-diagram/constants/EdgeGreenRoundedArrowMarkerId';
 import { EDGE_GREEN_ROUNDED_ARROW_MARKER_WIDTH_PX } from '@/workflow/workflow-diagram/constants/EdgeGreenRoundedArrowMarkerWidthPx';
 import { EDGE_ROUNDED_ARROW_MARKER_ID } from '@/workflow/workflow-diagram/constants/EdgeRoundedArrowMarkerId';
-import { NODE_HANDLE_HEIGHT_PX } from '@/workflow/workflow-diagram/constants/NodeHandleHeightPx';
-import { NODE_HANDLE_WIDTH_PX } from '@/workflow/workflow-diagram/constants/NodeHandleWidthPx';
 import { useTheme } from '@emotion/react';
 
 export const WorkflowDiagramCustomMarkers = () => {
@@ -40,17 +38,16 @@ export const WorkflowDiagramCustomMarkers = () => {
         </marker>
 
         <marker
-          markerHeight={NODE_HANDLE_HEIGHT_PX}
-          markerWidth={NODE_HANDLE_WIDTH_PX}
-          refX={NODE_HANDLE_WIDTH_PX / 2}
-          refY={NODE_HANDLE_HEIGHT_PX}
-          id={EDGE_GRAY_CIRCLE_MARKED_ID}
+          id={EDGE_BRANCH_ARROW_MARKER_ID}
+          markerHeight={8}
+          markerWidth={10}
+          refX={5}
+          refY={4}
         >
-          <rect
-            height={NODE_HANDLE_HEIGHT_PX}
-            width={NODE_HANDLE_WIDTH_PX}
-            rx="2"
-            fill={theme.border.color.strong}
+          <path
+            d="M1.7915 1.38672H8.18311C8.57541 1.38705 8.81458 1.81852 8.60693 2.15137L5.41064 7.26465C5.21481 7.57798 4.75882 7.57798 4.56299 7.26465L1.3667 2.15137C1.15906 1.81841 1.39896 1.38672 1.7915 1.38672Z"
+            stroke={theme.border.color.strong}
+            fill={theme.background.primary}
           />
         </marker>
 

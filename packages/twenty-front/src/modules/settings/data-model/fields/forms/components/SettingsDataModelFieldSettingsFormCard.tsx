@@ -283,6 +283,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       form={
         <SettingsDataModelFieldIsUniqueForm
           fieldMetadataItem={fieldMetadataItem}
+          objectMetadataItem={objectMetadataItem}
         />
       }
     />

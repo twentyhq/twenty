@@ -1,4 +1,4 @@
-import { FieldDateDisplayFormat } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { Trans } from '@lingui/react/macro';
 
 export const getDisplayFormatSelectDescription = (

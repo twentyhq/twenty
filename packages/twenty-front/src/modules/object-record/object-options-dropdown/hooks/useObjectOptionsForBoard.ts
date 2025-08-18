@@ -5,7 +5,7 @@ import { useRecoilState } from 'recoil';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
-import { type FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
@@ -119,9 +119,9 @@ export const useObjectOptionsForBoard = ({
   // Let's refactor this as we introduce the new viewBar
   const handleBoardFieldVisibilityChange = useCallback(
     async (
-      updatedFieldDefinition: Omit<
+      updatedFieldDefinition: Pick<
         ColumnDefinition<FieldMetadata>,
-        'size' | 'position'
+        'fieldMetadataId' | 'isVisible'
       >,
     ) => {
       const isNewViewField = !(

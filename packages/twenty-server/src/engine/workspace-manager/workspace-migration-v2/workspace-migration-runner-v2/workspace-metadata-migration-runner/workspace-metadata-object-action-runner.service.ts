@@ -38,6 +38,7 @@ export class WorkspaceMetadataObjectActionRunnerService
   runCreateObjectMetadataMigration = async ({
     action: { flatObjectMetadataWithoutFields, createFieldActions },
     queryRunner,
+    flatObjectMetadataMaps,
   }: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>) => {
     const objectMetadataRepository =
       queryRunner.manager.getRepository<ObjectMetadataEntity>(
@@ -59,6 +60,7 @@ export class WorkspaceMetadataObjectActionRunnerService
         {
           action: createFieldAction,
           queryRunner,
+          flatObjectMetadataMaps,
         },
       );
     }

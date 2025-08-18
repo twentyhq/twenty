@@ -59,10 +59,12 @@ export const OverridableCheckbox = ({
               onClick={disabled ? undefined : onChange}
               isDisabled={disabled}
             >
-              <IconX
-                size={theme.icon.size.md}
-                color={theme.font.color.secondary}
-              />
+              {!disabled && (
+                <IconX
+                  size={theme.icon.size.md}
+                  color={theme.font.color.secondary}
+                />
+              )}
             </StyledIconWrapper>
           </StyledOverridableCheckboxContainerItem>
         </>

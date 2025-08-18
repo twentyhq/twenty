@@ -1,11 +1,11 @@
 import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useClearField } from '@/object-record/record-field/hooks/useClearField';
-import { useIsFieldClearable } from '@/object-record/record-field/hooks/useIsFieldClearable';
-import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
-import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { useClearField } from '@/object-record/record-field/ui/hooks/useClearField';
+import { useIsFieldClearable } from '@/object-record/record-field/ui/hooks/useIsFieldClearable';
+import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
+import { useToggleEditOnlyInput } from '@/object-record/record-field/ui/hooks/useToggleEditOnlyInput';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';

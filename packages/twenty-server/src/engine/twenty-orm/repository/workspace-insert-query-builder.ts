@@ -200,7 +200,12 @@ export class WorkspaceInsertQueryBuilder<
         identifiers: result.identifiers,
       };
     } catch (error) {
-      throw computeTwentyORMException(error);
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        this.getMainAliasTarget(),
+        this.internalContext,
+      );
+
+      throw computeTwentyORMException(error, objectMetadata);
     }
   }
 

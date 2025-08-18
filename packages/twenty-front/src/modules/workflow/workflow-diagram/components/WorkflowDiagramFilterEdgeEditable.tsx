@@ -9,8 +9,6 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/components/WorkflowDiagramBaseEdge';
 import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeButtonGroup';
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
@@ -28,6 +26,7 @@ import {
 import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -48,6 +47,7 @@ import {
 } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 type WorkflowDiagramFilterEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
 
@@ -94,6 +94,9 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   assertFilterEdgeDataOrThrow(data);
 
   const { t } = useLingui();
+  const isWorkflowBranchEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
+  );
 
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -102,15 +105,10 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     targetY,
   });
 
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
-    workflowVisualizerWorkflowIdComponentState,
-  );
-  const workflow = useWorkflowWithCurrentVersion(workflowVisualizerWorkflowId);
-
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
-  const { deleteStep } = useDeleteStep({ workflow });
-  const { deleteEdge } = useDeleteEdge({ workflow });
+  const { deleteStep } = useDeleteStep();
+  const { deleteEdge } = useDeleteEdge();
   const { startNodeCreation, isNodeCreationStarted } = useStartNodeCreation();
 
   const setCommandMenuNavigationStack = useSetRecoilState(
@@ -271,11 +269,13 @@ export const WorkflowDiagramFilterEdgeEditable = ({
                       LeftIcon={IconPlus}
                       onClick={handleAddNodeButtonClick}
                     />
-                    <MenuItem
-                      text={t`Delete branch`}
-                      LeftIcon={IconTrash}
-                      onClick={handleDeleteBranchClick}
-                    />
+                    {isWorkflowBranchEnabled && (
+                      <MenuItem
+                        text={t`Delete branch`}
+                        LeftIcon={IconTrash}
+                        onClick={handleDeleteBranchClick}
+                      />
+                    )}
                   </DropdownMenuItemsContainer>
                 </DropdownContent>
               }
