@@ -43,7 +43,7 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
 
         const targetRelationFlatField = getFlatFieldMetadataMock({
           id: targetRelationId,
-          uniqueIdentifier: 'field-metadata-unique-identifier-1',
+          uniqueIdentifier: 'field-metadata-unique-identifier-2',
           objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
           type: FieldMetadataType.RELATION,
           relationTargetFieldMetadataId: sourceRelationId,

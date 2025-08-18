@@ -27,7 +27,7 @@ type BuildWorkspaceMigrationV2FieldActionsArgs = FromTo<
   objectMetadataDeletedCreatedUpdatedFields: UpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix[];
 };
 
-type validateFlatObjectMetadataFlatFieldMetadataMatrixArgs = FromTo<
+type ValidateFlatObjectMetadataFlatFieldMetadataMatrixArgs = FromTo<
   FlatObjectMetadataMaps,
   'flatObjectMetadataMaps'
 > &
@@ -49,7 +49,7 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
     fromFlatObjectMetadataMaps,
     toFlatObjectMetadataMaps,
     buildOptions,
-  }: validateFlatObjectMetadataFlatFieldMetadataMatrixArgs): Promise<
+  }: ValidateFlatObjectMetadataFlatFieldMetadataMatrixArgs): Promise<
     ValidateAndBuildMetadataResult<WorkspaceMigrationFieldActionV2>
   > {
     const validateAndBuildResult: ValidateAndBuildMetadataResult<WorkspaceMigrationFieldActionV2> =
