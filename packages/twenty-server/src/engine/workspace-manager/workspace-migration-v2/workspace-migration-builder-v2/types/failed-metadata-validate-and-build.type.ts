@@ -1,10 +1,19 @@
-import { type FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { type FailedFlatObjectMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
 
-export type FailedMetadataValidateAndBuild = {
+// TODO improve error handling from the most atomic source to start
+type FailedObjectMetadataValidateAndBuild = {
   status: 'fail';
-  errors: (
-    | FailedFlatFieldMetadataValidationExceptions
-    | FailedFlatObjectMetadataValidationExceptions
-  )[];
+  // objectMetadataId: string;
+  errors: FailedFlatObjectMetadataValidationExceptions[];
 };
+
+type FailedFieldMetadataValidateAndBuild = {
+  status: 'fail';
+  // fieldMetadataId: string;
+  // objectMetadataId: string;
+  errors: FailedFlatObjectMetadataValidationExceptions[];
+};
+
+export type FailedMetadataValidateAndBuild =
+  | FailedFieldMetadataValidateAndBuild
+  | FailedObjectMetadataValidateAndBuild;

@@ -4,7 +4,6 @@ import { type WorkspaceMigrationActionV2 } from 'src/engine/workspace-manager/wo
 
 export type MetadataActionValidateAndBuildResult<
   T extends WorkspaceMigrationActionV2,
-> = {
-  results: FailedAndSuccessfulMetadataValidateAndBuildRecord<T>;
+> = FailedAndSuccessfulMetadataValidateAndBuildRecord<T> & {
   optimisticFlatObjectMetadataMaps: FlatObjectMetadataMaps;
 };
