@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/generate-column-definitions.util';
 
 describe('Generate Column Definitions', () => {
@@ -11,6 +12,8 @@ describe('Generate Column Definitions', () => {
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
     nameSingular: 'person',
   });
+
+  const mockSchemaName = getWorkspaceSchemaName(mockObjectMetadata.workspaceId);
 
   describe('Enum Field Schema Generation', () => {
     it('should generate deterministic enum names to prevent schema conflicts', () => {
@@ -38,7 +41,7 @@ describe('Generate Column Definitions', () => {
       });
 
       const columns = generateColumnDefinitions({
-        fieldMetadata: enumField,
+        flatFieldMetadata: enumField,
         flatObjectMetadataWithoutFields: mockObjectMetadata,
       });
 
@@ -48,8 +51,7 @@ describe('Generate Column Definitions', () => {
 
       expect(column).toEqual({
         name: 'status',
-        type: '_person_status_enum',
-        enumValues: ['ACTIVE', 'INACTIVE'],
+        type: `"${mockSchemaName}"."_person_status_enum"`,
         isArray: false,
         isNullable: true,
         isUnique: false,
@@ -82,7 +84,7 @@ describe('Generate Column Definitions', () => {
       });
 
       const columns = generateColumnDefinitions({
-        fieldMetadata: multiSelectField,
+        flatFieldMetadata: multiSelectField,
         flatObjectMetadataWithoutFields: mockObjectMetadata,
       });
 
@@ -92,8 +94,7 @@ describe('Generate Column Definitions', () => {
 
       expect(column).toEqual({
         name: 'tags',
-        type: '_person_tags_enum',
-        enumValues: ['URGENT', 'LOW_PRIORITY'],
+        type: `"${mockSchemaName}"."_person_tags_enum"`,
         isArray: true,
         isNullable: true,
         isUnique: false,
@@ -113,7 +114,7 @@ describe('Generate Column Definitions', () => {
       });
 
       const columns = generateColumnDefinitions({
-        fieldMetadata: relationField,
+        flatFieldMetadata: relationField,
         flatObjectMetadataWithoutFields: mockObjectMetadata,
       });
 
@@ -134,7 +135,7 @@ describe('Generate Column Definitions', () => {
       });
 
       const columns = generateColumnDefinitions({
-        fieldMetadata: relationField,
+        flatFieldMetadata: relationField,
         flatObjectMetadataWithoutFields: mockObjectMetadata,
       });
 
@@ -164,7 +165,7 @@ describe('Generate Column Definitions', () => {
       });
 
       const columns = generateColumnDefinitions({
-        fieldMetadata: addressField,
+        flatFieldMetadata: addressField,
         flatObjectMetadataWithoutFields: mockObjectMetadata,
       });
 
@@ -204,7 +205,7 @@ describe('Generate Column Definitions', () => {
       });
 
       const columns = generateColumnDefinitions({
-        fieldMetadata: currencyField,
+        flatFieldMetadata: currencyField,
         flatObjectMetadataWithoutFields: mockObjectMetadata,
       });
 
@@ -243,7 +244,7 @@ describe('Generate Column Definitions', () => {
       });
 
       const columns = generateColumnDefinitions({
-        fieldMetadata: textField,
+        flatFieldMetadata: textField,
         flatObjectMetadataWithoutFields: mockObjectMetadata,
       });
 
@@ -254,7 +255,6 @@ describe('Generate Column Definitions', () => {
           isNullable: true,
           isUnique: false,
           default: null,
-          enumValues: undefined,
           isArray: false,
         },
       ]);
@@ -270,7 +270,7 @@ describe('Generate Column Definitions', () => {
       });
 
       const columns = generateColumnDefinitions({
-        fieldMetadata: booleanField,
+        flatFieldMetadata: booleanField,
         flatObjectMetadataWithoutFields: mockObjectMetadata,
       });
 
@@ -281,7 +281,6 @@ describe('Generate Column Definitions', () => {
           isNullable: true,
           isUnique: false,
           default: true,
-          enumValues: undefined,
           isArray: false,
         },
       ]);
@@ -298,7 +297,7 @@ describe('Generate Column Definitions', () => {
       });
 
       const columns = generateColumnDefinitions({
-        fieldMetadata: textField,
+        flatFieldMetadata: textField,
         flatObjectMetadataWithoutFields: mockObjectMetadata,
       });
 
@@ -309,7 +308,6 @@ describe('Generate Column Definitions', () => {
           isNullable: true,
           isUnique: false,
           default: null,
-          enumValues: undefined,
           isArray: false,
         },
       ]);
@@ -324,7 +322,7 @@ describe('Generate Column Definitions', () => {
       });
 
       const columns = generateColumnDefinitions({
-        fieldMetadata: uuidField,
+        flatFieldMetadata: uuidField,
         flatObjectMetadataWithoutFields: mockObjectMetadata,
       });
 
@@ -335,7 +333,6 @@ describe('Generate Column Definitions', () => {
           isNullable: true,
           isUnique: false,
           default: null,
-          enumValues: undefined,
           isArray: false,
         },
       ]);

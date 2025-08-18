@@ -62,17 +62,17 @@ export const WorkflowVariablesDropdownFieldItems = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        {filteredOptions.map(([key, subStep]) => (
+        {filteredOptions.map(([key, option]) => (
           <MenuItemSelect
             key={key}
             selected={false}
             focused={false}
             onClick={() => handleSelectField(key)}
-            text={subStep.label || key}
-            hasSubMenu={!subStep.isLeaf}
-            LeftIcon={subStep.icon ? getIcon(subStep.icon) : undefined}
+            text={option.label || key}
+            hasSubMenu={!option.isLeaf}
+            LeftIcon={option.icon ? getIcon(option.icon) : undefined}
             contextualText={
-              subStep.isLeaf ? subStep?.value?.toString() : undefined
+              option.isLeaf ? option?.value?.toString() : undefined
             }
           />
         ))}

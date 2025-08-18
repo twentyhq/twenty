@@ -1,6 +1,7 @@
 import { ActionModal } from '@/action-menu/actions/components/ActionModal';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
@@ -39,19 +40,24 @@ export const DeleteMultipleRecordsAction = () => {
     contextStoreFiltersComponentState,
   );
 
+  const contextStoreFilterGroups = useRecoilComponentValue(
+    contextStoreFilterGroupsComponentState,
+  );
+
   const contextStoreAnyFieldFilterValue = useRecoilComponentValue(
     contextStoreAnyFieldFilterValueComponentState,
   );
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
-  const graphqlFilter = computeContextStoreFilters(
+  const graphqlFilter = computeContextStoreFilters({
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
+    contextStoreFilterGroups,
     objectMetadataItem,
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
-  );
+  });
 
   const { fetchAllRecords: fetchAllRecordIds } = useLazyFetchAllRecords({
     objectNameSingular: objectMetadataItem.nameSingular,

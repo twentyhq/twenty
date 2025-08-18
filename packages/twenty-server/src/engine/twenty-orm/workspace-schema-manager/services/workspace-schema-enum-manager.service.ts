@@ -137,13 +137,15 @@ export class WorkspaceSchemaEnumManagerService {
     schemaName,
     tableName,
     columnDefinition,
+    enumValues,
     oldToNewEnumOptionMap,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
     tableName: string;
     columnDefinition: WorkspaceSchemaColumnDefinition;
-    oldToNewEnumOptionMap?: Record<string, string>;
+    enumValues: string[];
+    oldToNewEnumOptionMap: Record<string, string>;
   }): Promise<void> {
     const isTransactionAlreadyActive = queryRunner.isTransactionActive;
 
@@ -151,10 +153,7 @@ export class WorkspaceSchemaEnumManagerService {
       await queryRunner.startTransaction();
     }
 
-    if (
-      !columnDefinition.enumValues ||
-      columnDefinition.enumValues.length === 0
-    ) {
+    if (!enumValues || enumValues.length === 0) {
       throw new WorkspaceSchemaManagerException(
         `Cannot alter enum values for column ${columnDefinition.name} because it has no enum values`,
         WorkspaceSchemaManagerExceptionCode.ENUM_OPERATION_FAILED,
@@ -182,7 +181,7 @@ export class WorkspaceSchemaEnumManagerService {
         queryRunner,
         schemaName,
         enumName,
-        values: columnDefinition.enumValues,
+        values: enumValues,
       });
 
       const oldColumnName = `${columnName}_old`;
@@ -217,13 +216,13 @@ export class WorkspaceSchemaEnumManagerService {
         });
       }
 
-      await this.dropEnum({ queryRunner, schemaName, enumName: oldEnumName });
       await this.dropColumn({
         queryRunner,
         schemaName,
         tableName,
         columnName: oldColumnName,
       });
+      await this.dropEnum({ queryRunner, schemaName, enumName: oldEnumName });
 
       if (!isTransactionAlreadyActive) {
         await queryRunner.commitTransaction();
@@ -271,12 +270,14 @@ export class WorkspaceSchemaEnumManagerService {
     columnDefinition: WorkspaceSchemaColumnDefinition;
     enumTypeName: string;
   }): Promise<void> {
-    const columnDef = buildSqlColumnDefinition({
-      ...columnDefinition,
-      type: enumTypeName,
-    });
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
+
+    const columnDef = buildSqlColumnDefinition({
+      ...columnDefinition,
+      type: `"${safeSchemaName}"."${enumTypeName}"`,
+    });
+
     const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ADD COLUMN ${columnDef}`;
 
     await queryRunner.query(sql);
@@ -322,22 +323,36 @@ export class WorkspaceSchemaEnumManagerService {
     const safeOldColumnName = removeSqlDDLInjection(oldColumnName);
     const safeNewColumnName = removeSqlDDLInjection(newColumnName);
 
+    const newEnumTypeName = computePostgresEnumName({
+      tableName,
+      columnName: newColumnName,
+    });
+
+    if (Object.keys(oldToNewEnumOptionMap).length === 0) {
+      return;
+    }
+
     const caseStatements = Object.entries(oldToNewEnumOptionMap)
       .map(
         ([oldEnumOption, newEnumOption]) =>
-          `WHEN '${removeSqlDDLInjection(oldEnumOption)}' THEN '${removeSqlDDLInjection(newEnumOption)}'`,
+          `WHEN '${removeSqlDDLInjection(oldEnumOption)}' THEN '${removeSqlDDLInjection(newEnumOption)}'::"${safeSchemaName}"."${newEnumTypeName}"`,
       )
       .join(' ');
 
-    const updateSql = `
-      UPDATE "${safeSchemaName}"."${safeTableName}" 
-      SET "${safeNewColumnName}" = 
-        CASE "${safeOldColumnName}" 
-          ${caseStatements}
-          ELSE "${safeOldColumnName}"
-        END
-      WHERE "${safeOldColumnName}" IS NOT NULL`;
+    const mappedValuesCondition = Object.keys(oldToNewEnumOptionMap)
+      .map((oldValue) => `'${removeSqlDDLInjection(oldValue)}'`)
+      .join(', ');
 
-    await queryRunner.query(updateSql);
+    // Update rows with mapped enum values
+    const updateMappedSql = `
+        UPDATE "${safeSchemaName}"."${safeTableName}" 
+        SET "${safeNewColumnName}" = 
+          CASE "${safeOldColumnName}"::text 
+            ${caseStatements}
+          END
+        WHERE "${safeOldColumnName}" IS NOT NULL 
+          AND "${safeOldColumnName}"::text IN (${mappedValuesCondition})`;
+
+    await queryRunner.query(updateMappedSql);
   }
 }

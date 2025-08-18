@@ -31,7 +31,7 @@ export type BaseOutputSchema = Record<string, Leaf | Node>;
 
 export type FieldOutputSchema =
   | ((Leaf | Node) & {
-      fieldMetadataId?: string;
+      fieldMetadataId: string;
     })
   | RecordOutputSchema;
 

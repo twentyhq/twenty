@@ -19,12 +19,12 @@ export const validateFlatObjectMetadataIdentifiers = (
     flatObjectMetadata;
 
   if (isDefined(labelIdentifierFieldMetadataId)) {
-    const relatedFlatFieldMetadata = flatObjectMetadata.flatFieldMetadatas.find(
+    const flatFieldMetadata = flatObjectMetadata.flatFieldMetadatas.find(
       (flatFieldMetadata) =>
         flatFieldMetadata.id === labelIdentifierFieldMetadataId,
     );
 
-    if (!isDefined(relatedFlatFieldMetadata)) {
+    if (!isDefined(flatFieldMetadata)) {
       errors.push(
         new ObjectMetadataException(
           'labelIdentifierFieldMetadataId validation failed: related field metadata not found',
@@ -34,9 +34,7 @@ export const validateFlatObjectMetadataIdentifiers = (
           },
         ),
       );
-    } else if (
-      !isLabelIdentifierFieldMetadataTypes(relatedFlatFieldMetadata.type)
-    ) {
+    } else if (!isLabelIdentifierFieldMetadataTypes(flatFieldMetadata.type)) {
       errors.push(
         new ObjectMetadataException(
           'labelIdentifierFieldMetadataId validation failed: field type not compatible',

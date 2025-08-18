@@ -14,14 +14,14 @@ import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/co
 import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { UserContext } from '@/users/contexts/UserContext';
-import {
-  type VariableDateViewFilterValueDirection,
-  type VariableDateViewFilterValueUnit,
-} from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { useTheme } from '@emotion/react';
 import { t } from '@lingui/core/macro';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useRecoilValue } from 'recoil';
+import {
+  type VariableDateViewFilterValueDirection,
+  type VariableDateViewFilterValueUnit,
+} from 'twenty-shared/types';
 import { IconCalendarX } from 'twenty-ui/display';
 import {
   MenuItemLeftContent,

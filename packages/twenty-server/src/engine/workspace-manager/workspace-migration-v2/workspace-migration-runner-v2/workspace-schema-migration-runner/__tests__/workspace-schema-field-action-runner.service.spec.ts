@@ -6,6 +6,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceSchemaFieldActionRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/workspace-schema-field-action-runner.service';
 
 describe('WorkspaceSchemaFieldActionRunner', () => {
@@ -14,6 +15,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
   let mockQueryRunner: jest.Mocked<QueryRunner>;
 
   const mockWorkspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+  const mockSchemaName = getWorkspaceSchemaName(mockWorkspaceId);
   const mockObjectMetadataId = '20202020-1c25-4d02-bf25-6aeccf7ea418';
   const mockFieldMetadataId = '20202020-1c25-4d02-bf25-6aeccf7ea417';
 
@@ -99,7 +101,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         mockSchemaManagerService.columnManager.dropColumns,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         tableName: '_person',
         columnNames: [
           'homeAddressAddressStreet1',
@@ -171,7 +173,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         mockSchemaManagerService.columnManager.dropColumns,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         tableName: '_person',
         columnNames: ['status'],
       });
@@ -181,7 +183,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         mockSchemaManagerService.enumManager.dropEnum,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         enumName: '_person_status_enum',
       });
     });
@@ -226,7 +228,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         mockSchemaManagerService.columnManager.dropColumns,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         tableName: '_person',
         columnNames: ['companyId'],
       });
@@ -298,7 +300,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         mockSchemaManagerService.enumManager.createEnum,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         enumName: '_task_priority_enum',
         values: ['HIGH', 'LOW'],
       });
@@ -308,17 +310,16 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         mockSchemaManagerService.columnManager.addColumns,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         tableName: '_task',
         columnDefinitions: [
           {
             name: 'priority',
-            type: '_task_priority_enum',
+            type: `"${mockSchemaName}"."_task_priority_enum"`,
             isNullable: true,
             isArray: false,
             isUnique: false,
             default: null,
-            enumValues: ['HIGH', 'LOW'],
           },
         ],
       });
@@ -367,7 +368,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         mockSchemaManagerService.columnManager.addColumns,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         tableName: '_employee',
         columnDefinitions: [
           {
@@ -452,7 +453,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
           mockSchemaManagerService.columnManager.renameColumn,
         ).toHaveBeenCalledWith({
           queryRunner: mockQueryRunner,
-          schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+          schemaName: mockSchemaName,
           tableName: '_company',
           oldColumnName: fromName,
           newColumnName: toName,
@@ -550,16 +551,16 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         mockSchemaManagerService.enumManager.alterEnumValues,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         tableName: '_person',
+        enumValues: ['UPDATED_ACTIVE', 'UPDATED_INACTIVE'],
         columnDefinition: {
           name: 'status',
-          type: '_person_status_enum',
+          type: `"${mockSchemaName}"."_person_status_enum"`,
           isNullable: true,
           isArray: false,
           isUnique: false,
           default: null,
-          enumValues: ['UPDATED_ACTIVE', 'UPDATED_INACTIVE'],
         },
         oldToNewEnumOptionMap: {
           ACTIVE: 'UPDATED_ACTIVE', // Keep original values
@@ -622,7 +623,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         mockSchemaManagerService.columnManager.alterColumnDefault,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         tableName: '_product',
         columnName: 'priceAmountMicros',
         defaultValue: '100000000',
@@ -632,7 +633,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         mockSchemaManagerService.columnManager.alterColumnDefault,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         tableName: '_product',
         columnName: 'priceCurrencyCode',
         defaultValue: 'EUR',
@@ -678,7 +679,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         mockSchemaManagerService.columnManager.dropColumns,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         tableName: '_person',
         columnNames: [], // Empty array - no columns to drop
       });
@@ -720,7 +721,7 @@ describe('WorkspaceSchemaFieldActionRunner', () => {
         mockSchemaManagerService.enumManager.createEnum,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         enumName: '_test_emptyStatus_enum',
         values: [], // Empty enum values array
       });

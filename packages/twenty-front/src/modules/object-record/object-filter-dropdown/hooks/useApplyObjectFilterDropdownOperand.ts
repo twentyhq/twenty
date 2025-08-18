@@ -14,7 +14,7 @@ import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/ut
 import {
   type VariableDateViewFilterValueDirection,
   type VariableDateViewFilterValueUnit,
-} from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useApplyObjectFilterDropdownOperand = () => {

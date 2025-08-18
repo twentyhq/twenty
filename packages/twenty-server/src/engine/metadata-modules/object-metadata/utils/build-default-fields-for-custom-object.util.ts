@@ -7,6 +7,7 @@ import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 
 export const buildDefaultFieldsForCustomObject = (
   workspaceId: string,
@@ -350,6 +351,39 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
     settings: null,
   };
 
+  const searchVectorField: FlatFieldMetadata<FieldMetadataType.TS_VECTOR> = {
+    type: FieldMetadataType.TS_VECTOR,
+    id: v4(),
+    isLabelSyncedWithName: false,
+    isUnique: false,
+    objectMetadataId,
+    uniqueIdentifier: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
+    workspaceId,
+    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.searchVector,
+    name: 'searchVector',
+    label: 'Search vector',
+    icon: 'IconSearch',
+    description: 'Search vector',
+    isNullable: true,
+    isActive: true,
+    isCustom: false,
+    isSystem: true,
+    defaultValue: null,
+
+    createdAt,
+    updatedAt: createdAt,
+    flatRelationTargetFieldMetadata: null,
+    flatRelationTargetObjectMetadata: null,
+    options: null,
+    standardOverrides: null,
+    relationTargetFieldMetadataId: null,
+    relationTargetObjectMetadataId: null,
+    settings: {
+      asExpression: getTsVectorColumnExpressionFromFields([nameField]),
+      generatedType: 'STORED',
+    },
+  };
+
   return {
     idField,
     nameField,
@@ -358,5 +392,6 @@ export const buildDefaultFlatFieldMetadataForCustomObject = ({
     deletedAtField,
     createdByField,
     positionField,
+    searchVectorField,
   } as const;
 };
