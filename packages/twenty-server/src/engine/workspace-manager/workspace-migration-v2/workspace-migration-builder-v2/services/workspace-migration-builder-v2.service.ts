@@ -12,7 +12,6 @@ import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/work
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 import { computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-field-matrix.util';
 import { computeUpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-index-matrix.util';
-import { getWorkspaceMigrationV2FieldDeleteAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
 import { getWorkspaceMigrationV2CreateIndexAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-index-actions';
 import { buildWorkspaceMigrationIndexActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-index-actions-builder';
 
@@ -108,18 +107,6 @@ export class WorkspaceMigrationBuilderV2Service {
         ),
       );
 
-    const deletedObjectWorkspaceMigrationDeleteFieldActions =
-      buildOptions.inferDeletionFromMissingObjectFieldIndex
-        ? deletedFlatObjectMetadatas.flatMap((flatObjectMetadata) =>
-            flatObjectMetadata.flatFieldMetadatas.map((flatFieldMetadata) =>
-              getWorkspaceMigrationV2FieldDeleteAction({
-                flatFieldMetadata,
-                flatObjectMetadata,
-              }),
-            ),
-          )
-        : [];
-
     const indexWorkspaceMigrationActions = buildWorkspaceMigrationIndexActions({
       objectMetadataDeletedCreatedUpdatedIndex,
       inferDeletionFromMissingObjectFieldIndex:
@@ -144,10 +131,13 @@ export class WorkspaceMigrationBuilderV2Service {
       workspaceMigration: {
         workspaceId,
         actions: [
-          ...deletedObjectWorkspaceMigrationDeleteFieldActions,
-          ...objectActionsValidateAndBuildResult.successful,
+          ...fieldActionsValidateAndBuildResult.deleted,
+          ...objectActionsValidateAndBuildResult.deleted,
+          ...objectActionsValidateAndBuildResult.created,
+          ...objectActionsValidateAndBuildResult.updated,
+          ...fieldActionsValidateAndBuildResult.created,
+          ...fieldActionsValidateAndBuildResult.updated,
           ...createdObjectMetadataCreateIndexActions,
-          ...fieldActionsValidateAndBuildResult.successful,
           ...indexWorkspaceMigrationActions,
         ],
       },
