@@ -22,7 +22,6 @@ import { fromFlatObjectMetadataToFlatObjectMetadataWithoutFields } from 'src/eng
 
 const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
   {
-    only: true,
     title: 'It should build an create_field action for a RELATION field',
     context: {
       input: () => {
