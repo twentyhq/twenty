@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromString,
@@ -17,18 +16,14 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util';
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
-import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { addFlatFieldMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps.util';
+import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { getSubFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-or-throw.util';
-import { getSubFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps.util';
 import { replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-validate-build-and-run-service';
@@ -120,57 +115,6 @@ export class FieldMetadataServiceV2 {
     return fromFlatFieldMetadataToFieldMetadataDto(
       flatFieldMetadatasToDelete[0],
     );
-  }
-
-  private computeOtherFlatObjectMetadataMapsToValidate({
-    flatFieldMetadataToCreate,
-    flatFieldMetadatasToCreate,
-    flatObjectMetadataMaps,
-  }: {
-    flatObjectMetadataMaps: FlatObjectMetadataMaps;
-    flatFieldMetadatasToCreate: FlatFieldMetadata[];
-    flatFieldMetadataToCreate: FlatFieldMetadata;
-  }): FlatObjectMetadataMaps | undefined {
-    if (
-      !isFlatFieldMetadataEntityOfType(
-        flatFieldMetadataToCreate,
-        FieldMetadataType.RELATION,
-      ) &&
-      !isFlatFieldMetadataEntityOfType(
-        flatFieldMetadataToCreate,
-        FieldMetadataType.MORPH_RELATION,
-      )
-    ) {
-      return undefined;
-    }
-    const relatedFlatFieldMetadataToCreate = flatFieldMetadatasToCreate.find(
-      (relatedFlatFieldMetadata) =>
-        isFlatFieldMetadataEntityOfType(
-          relatedFlatFieldMetadata,
-          FieldMetadataType.RELATION,
-        ) &&
-        relatedFlatFieldMetadata.id ===
-          flatFieldMetadataToCreate.relationTargetFieldMetadataId,
-    );
-
-    if (!isDefined(relatedFlatFieldMetadataToCreate)) {
-      return undefined;
-    }
-
-    const flatObjectMetadataMapsWithRelatedObjectMetadata =
-      getSubFlatObjectMetadataMaps({
-        flatObjectMetadataMaps,
-        objectMetadataIds: [relatedFlatFieldMetadataToCreate.objectMetadataId],
-      });
-
-    if (!isDefined(flatObjectMetadataMapsWithRelatedObjectMetadata)) {
-      return undefined;
-    }
-
-    return addFlatFieldMetadataInFlatObjectMetadataMaps({
-      flatFieldMetadata: relatedFlatFieldMetadataToCreate,
-      flatObjectMetadataMaps: flatObjectMetadataMapsWithRelatedObjectMetadata,
-    });
   }
 
   async updateOne({
@@ -280,10 +224,17 @@ export class FieldMetadataServiceV2 {
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       objectMetadataIds: impactedObjectMetadataIds,
     });
-    const toFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      objectMetadataIds: impactedObjectMetadataIds,
-    });
+    const toFlatObjectMetadataMaps = flatFieldMetadatasToCreate.reduce(
+      (flatObjectMetadataMaps, flatFieldMetadataToCreate) =>
+        addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+          flatFieldMetadata: flatFieldMetadataToCreate,
+          flatObjectMetadataMaps,
+        }),
+      getSubFlatObjectMetadataMapsOrThrow({
+        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+        objectMetadataIds: impactedObjectMetadataIds,
+      }),
+    );
 
     await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
       {
