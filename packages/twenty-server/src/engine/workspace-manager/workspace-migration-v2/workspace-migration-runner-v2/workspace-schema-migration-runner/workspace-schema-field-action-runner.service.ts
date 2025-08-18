@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, type FromTo } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
 import { type FieldMetadataDefaultValueForAnyType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
@@ -69,7 +70,7 @@ export class WorkspaceSchemaFieldActionRunnerService
       });
 
     const columnDefinitions = generateColumnDefinitions({
-      fieldMetadata,
+      flatFieldMetadata: fieldMetadata,
       flatObjectMetadataWithoutFields: flatObjectMetadata,
     });
     const columnNamesToDrop = columnDefinitions.map((def) => def.name);
@@ -126,7 +127,7 @@ export class WorkspaceSchemaFieldActionRunnerService
     });
 
     const columnDefinitions = generateColumnDefinitions({
-      fieldMetadata: flatFieldMetadata,
+      flatFieldMetadata: flatFieldMetadata,
       flatObjectMetadataWithoutFields: flatObjectMetadata,
     });
 
@@ -333,32 +334,28 @@ export class WorkspaceSchemaFieldActionRunnerService
   ) {
     const fromOptionsById = new Map(
       (update.from ?? [])
-        .filter(
-          (opt: FieldMetadataDefaultOption | FieldMetadataComplexOption) =>
-            Boolean(opt.id),
-        )
-        .map((opt: FieldMetadataDefaultOption | FieldMetadataComplexOption) => [
-          opt.id,
-          opt,
-        ]),
+        .filter((opt) => isDefined(opt.id))
+        .map((opt) => [opt.id, opt]),
+    );
+
+    const toOptionsById = new Map(
+      (update.to ?? [])
+        .filter((opt) => isDefined(opt.id))
+        .map((opt) => [opt.id, opt]),
     );
 
     const valueMapping: Record<string, string> = {};
 
-    for (const toOption of flatFieldMetadata.options ?? []) {
-      if (!toOption.id) {
-        continue;
-      }
-
+    for (const toOption of toOptionsById.values()) {
       const fromOption = fromOptionsById.get(toOption.id);
 
-      if (fromOption && fromOption.value !== toOption.value) {
+      if (fromOption) {
         valueMapping[fromOption.value] = toOption.value;
       }
     }
 
     const enumColumnDefinitions = generateColumnDefinitions({
-      fieldMetadata: flatFieldMetadata,
+      flatFieldMetadata: flatFieldMetadata,
       flatObjectMetadataWithoutFields: flatObjectMetadata,
     });
 
@@ -368,6 +365,7 @@ export class WorkspaceSchemaFieldActionRunnerService
         schemaName,
         tableName,
         columnDefinition: enumColumnDefinition,
+        enumValues: update.to?.map((opt) => opt.value) ?? [],
         oldToNewEnumOptionMap: valueMapping,
       });
     }
