@@ -12,7 +12,7 @@ type FlatIndexFieldMetadataOverrides = Required<
 export const getFlatIndexFieldMetadataMock = (
   overrides: FlatIndexFieldMetadataOverrides,
 ): FlatIndexFieldMetadata => {
-  const createdAt = faker.date.anytime();
+  const createdAt = '2024-01-01T00:00:00.000Z' as unknown as Date;
 
   return {
     createdAt,
