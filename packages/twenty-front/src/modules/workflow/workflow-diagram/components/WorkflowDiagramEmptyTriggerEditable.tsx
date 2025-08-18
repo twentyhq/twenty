@@ -127,21 +127,19 @@ export const WorkflowDiagramEmptyTriggerEditable = ({ id }: { id: string }) => {
   };
 
   return (
-    <>
-      <StyledNodeContainer
-        data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
-        onClick={handleClick}
-      >
-        <StyledNodeIconContainer />
+    <StyledNodeContainer
+      data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
+      onClick={handleClick}
+    >
+      <StyledNodeIconContainer />
 
-        <StyledNodeRightPart>
-          <StyledNodeLabelWithCounterPart>
-            <StyledNodeLabel>{t`Trigger`}</StyledNodeLabel>
-          </StyledNodeLabelWithCounterPart>
+      <StyledNodeRightPart>
+        <StyledNodeLabelWithCounterPart>
+          <StyledNodeLabel>{t`Trigger`}</StyledNodeLabel>
+        </StyledNodeLabelWithCounterPart>
 
-          <StyledNodeTitle>{t`Add a Trigger`}</StyledNodeTitle>
-        </StyledNodeRightPart>
-      </StyledNodeContainer>
-    </>
+        <StyledNodeTitle>{t`Add a Trigger`}</StyledNodeTitle>
+      </StyledNodeRightPart>
+    </StyledNodeContainer>
   );
 };
