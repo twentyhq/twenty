@@ -328,20 +328,23 @@ export class WorkspaceSchemaEnumManagerService {
       columnName: newColumnName,
     });
 
-    if (Object.keys(oldToNewEnumOptionMap).length > 0) {
-      const caseStatements = Object.entries(oldToNewEnumOptionMap)
-        .map(
-          ([oldEnumOption, newEnumOption]) =>
-            `WHEN '${removeSqlDDLInjection(oldEnumOption)}' THEN '${removeSqlDDLInjection(newEnumOption)}'::"${safeSchemaName}"."${newEnumTypeName}"`,
-        )
-        .join(' ');
+    if (Object.keys(oldToNewEnumOptionMap).length === 0) {
+      return;
+    }
 
-      const mappedValuesCondition = Object.keys(oldToNewEnumOptionMap)
-        .map((oldValue) => `'${removeSqlDDLInjection(oldValue)}'`)
-        .join(', ');
+    const caseStatements = Object.entries(oldToNewEnumOptionMap)
+      .map(
+        ([oldEnumOption, newEnumOption]) =>
+          `WHEN '${removeSqlDDLInjection(oldEnumOption)}' THEN '${removeSqlDDLInjection(newEnumOption)}'::"${safeSchemaName}"."${newEnumTypeName}"`,
+      )
+      .join(' ');
 
-      // Update rows with mapped enum values
-      const updateMappedSql = `
+    const mappedValuesCondition = Object.keys(oldToNewEnumOptionMap)
+      .map((oldValue) => `'${removeSqlDDLInjection(oldValue)}'`)
+      .join(', ');
+
+    // Update rows with mapped enum values
+    const updateMappedSql = `
         UPDATE "${safeSchemaName}"."${safeTableName}" 
         SET "${safeNewColumnName}" = 
           CASE "${safeOldColumnName}"::text 
@@ -350,7 +353,6 @@ export class WorkspaceSchemaEnumManagerService {
         WHERE "${safeOldColumnName}" IS NOT NULL 
           AND "${safeOldColumnName}"::text IN (${mappedValuesCondition})`;
 
-      await queryRunner.query(updateMappedSql);
-    }
+    await queryRunner.query(updateMappedSql);
   }
 }

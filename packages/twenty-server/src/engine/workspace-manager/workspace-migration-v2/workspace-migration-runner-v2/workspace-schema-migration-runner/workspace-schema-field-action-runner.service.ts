@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, type FromTo } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
 import { type FieldMetadataDefaultValueForAnyType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
@@ -333,13 +334,13 @@ export class WorkspaceSchemaFieldActionRunnerService
   ) {
     const fromOptionsById = new Map(
       (update.from ?? [])
-        .filter((opt) => Boolean(opt.id))
+        .filter((opt) => isDefined(opt.id))
         .map((opt) => [opt.id, opt]),
     );
 
     const toOptionsById = new Map(
       (update.to ?? [])
-        .filter((opt) => Boolean(opt.id))
+        .filter((opt) => isDefined(opt.id))
         .map((opt) => [opt.id, opt]),
     );
 

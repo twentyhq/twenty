@@ -10,4 +10,5 @@ export const FLAT_OBJECT_METADATA_PROPERTIES_TO_COMPARE = [
   'namePlural',
   'nameSingular',
   'standardOverrides', // Only if standard
+  'labelIdentifierFieldMetadataId',
 ] as const satisfies (keyof FlatObjectMetadata)[];
