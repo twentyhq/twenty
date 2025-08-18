@@ -6,7 +6,7 @@ import {
   type Leaf,
   type Node,
 } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
-import { generateFakeField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field';
+import { generateFakeFormField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-form-field';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
 import { type FormFieldMetadata } from 'src/modules/workflow/workflow-executor/workflow-actions/form/types/workflow-form-action-settings.type';
 
@@ -50,10 +50,10 @@ export const generateFakeFormResponse = async ({
         };
       } else {
         return {
-          [formFieldMetadata.name]: generateFakeField({
+          [formFieldMetadata.name]: generateFakeFormField({
             type: formFieldMetadata.type,
             label: formFieldMetadata.label,
-            value: formFieldMetadata.placeholder,
+            value: formFieldMetadata.placeholder ?? '',
           }),
         };
       }

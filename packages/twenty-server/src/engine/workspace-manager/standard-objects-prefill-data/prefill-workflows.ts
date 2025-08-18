@@ -2,7 +2,6 @@ import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/com
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
 
 const QUICK_LEAD_WORKFLOW_ID = '8b213cac-a68b-4ffe-817a-3ec994e9932d';
@@ -14,8 +13,15 @@ export const prefillWorkflows = async (
   objectMetadataItems: ObjectMetadataEntity[],
 ) => {
   const objectMetadataMaps = generateObjectMetadataMaps(objectMetadataItems);
+  const companyObjectMetadataId =
+    objectMetadataMaps.idByNameSingular['company'];
+
+  if (!companyObjectMetadataId) {
+    throw new Error('Company object metadata not found');
+  }
+
   const companyObjectMetadata =
-    objectMetadataMaps.byId[STANDARD_OBJECT_IDS.company];
+    objectMetadataMaps.byId[companyObjectMetadataId];
 
   if (!companyObjectMetadata) {
     throw new Error('Company object metadata not found');

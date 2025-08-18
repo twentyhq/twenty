@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import * as generateFakeValueModule from 'src/engine/utils/generate-fake-value';
-import { generateFakeField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field';
+import { generateFakeRecordField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-record-field';
 import * as camelToTitleCaseModule from 'src/utils/camel-to-title-case';
 
 jest.mock('src/engine/utils/generate-fake-value');
@@ -52,7 +52,7 @@ describe('generateFakeField', () => {
     it('should generate a leaf node for TEXT type', () => {
       generateFakeValueSpy.mockReturnValueOnce('Fake Text');
 
-      const result = generateFakeField({
+      const result = generateFakeRecordField({
         type: FieldMetadataType.TEXT,
         label: 'Text Field',
         fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
@@ -74,7 +74,7 @@ describe('generateFakeField', () => {
     });
 
     it('should handle custom value', () => {
-      const result = generateFakeField({
+      const result = generateFakeRecordField({
         type: FieldMetadataType.TEXT,
         label: 'Text Field',
         value: 'Test value',
@@ -96,7 +96,7 @@ describe('generateFakeField', () => {
     it('should generate a leaf node for NUMBER type with icon', () => {
       generateFakeValueSpy.mockReturnValueOnce(42);
 
-      const result = generateFakeField({
+      const result = generateFakeRecordField({
         type: FieldMetadataType.NUMBER,
         label: 'Number Field',
         icon: 'IconNumber',
@@ -118,7 +118,7 @@ describe('generateFakeField', () => {
 
       generateFakeValueSpy.mockReturnValueOnce(fakeDate);
 
-      const result = generateFakeField({
+      const result = generateFakeRecordField({
         type: FieldMetadataType.DATE,
         label: 'Date Field',
         fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
@@ -145,7 +145,7 @@ describe('generateFakeField', () => {
         .mockReturnValueOnce('Label')
         .mockReturnValueOnce('Url');
 
-      const result = generateFakeField({
+      const result = generateFakeRecordField({
         type: FieldMetadataType.LINKS,
         label: 'Links Field',
         fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
@@ -189,7 +189,7 @@ describe('generateFakeField', () => {
         .mockReturnValueOnce('Amount')
         .mockReturnValueOnce('Currency Code');
 
-      const result = generateFakeField({
+      const result = generateFakeRecordField({
         type: FieldMetadataType.CURRENCY,
         label: 'Currency Field',
         icon: 'IconCurrency',
@@ -230,7 +230,7 @@ describe('generateFakeField', () => {
 
       generateFakeValueSpy.mockReturnValueOnce('Unknown Value');
 
-      const result = generateFakeField({
+      const result = generateFakeRecordField({
         type: unknownType,
         label: 'Unknown Field',
         fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
@@ -249,7 +249,7 @@ describe('generateFakeField', () => {
     it('should handle empty label', () => {
       generateFakeValueSpy.mockReturnValueOnce('Fake Boolean');
 
-      const result = generateFakeField({
+      const result = generateFakeRecordField({
         type: FieldMetadataType.BOOLEAN,
         label: '',
         fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
