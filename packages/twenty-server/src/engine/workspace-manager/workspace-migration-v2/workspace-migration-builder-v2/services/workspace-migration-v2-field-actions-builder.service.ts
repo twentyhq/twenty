@@ -6,6 +6,7 @@ import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/f
 import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { computeRelationTargetFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/compute-relation-target-flat-object-metadata-maps.util';
@@ -144,11 +145,10 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
       }
 
       validateAndBuildResult.optimisticFlatObjectMetadataMaps =
-        deleteFieldFromFlatObjectMetadataMapsOrThrow({
-          fieldMetadataId: flatFieldMetadataToCreate.id,
+        addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+          flatFieldMetadata: flatFieldMetadataToCreate,
           flatObjectMetadataMaps:
             validateAndBuildResult.optimisticFlatObjectMetadataMaps,
-          objectMetadataId: flatFieldMetadataToCreate.objectMetadataId,
         });
 
       const createFieldAction = getWorkspaceMigrationV2FieldCreateAction({
