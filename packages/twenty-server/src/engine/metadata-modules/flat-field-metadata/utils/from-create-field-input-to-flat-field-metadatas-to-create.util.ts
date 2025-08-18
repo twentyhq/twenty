@@ -127,17 +127,11 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     }
     case FieldMetadataType.TS_VECTOR: {
       return {
-        status: 'success',
-        result: [
-          {
-            ...commonFlatFieldMetadata,
-            type: createFieldInput.type,
-            settings: {
-              asExpression: 'TODO',
-              generatedType: 'STORED',
-            },
-          },
-        ],
+        status: 'fail',
+        error: new FieldMetadataException(
+          'TS Vector is not supported for field creation',
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        ),
       };
     }
     case FieldMetadataType.UUID:
