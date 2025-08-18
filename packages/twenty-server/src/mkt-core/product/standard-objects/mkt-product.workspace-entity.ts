@@ -189,7 +189,6 @@ export class MktProductWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   price: number;
 
-
   @WorkspaceField({
     standardId: MKT_PRODUCT_FIELD_IDS.isActive,
     type: FieldMetadataType.BOOLEAN,

@@ -267,3 +267,21 @@ export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   accountOwnerForMktInvoices: 'ab600d66-5755-4934-b5c3-19036927cf92',
   accountOwnerForMktTemplates: 'a88096b8-e818-4421-afc2-5b1ab207aca3',
 };
+
+export const MKT_RESELLER_TIER_FIELD_IDS = {
+  // fields
+  tierCode: '3e0c1c7a-9a4d-4b1e-8b0a-3e1c1c7a9a4d',
+  tierName: 'f4d3b3e3-8c7b-4e4a-9b3e-3e3d3b3e38c7',
+  tierNameEn: 'a2b1c0d9-7e6f-4d3c-b1a0-d9e8f7d6c5b4',
+  minCommitmentAmount: 'b3c2d1e0-8f7a-4e3d-c2b1-e0f9a8b7c6d5',
+  maxCommitmentAmount: 'c4d3e2f1-9a8b-4f4e-d3c2-f1a0b9c8d7e6',
+  commissionRate: 'd5e4f3a2-a9b8-4a5f-e4d3-a2b1c0d9e8f7',
+  systemFeeRate: 'e6f5a4b3-ba9c-4b6a-f5e4-b3c2d1e0f9a8',
+  allowedProducts: 'f7a6b5c4-cba9-4c7b-a6f5-c4d3e2f1a0b9',
+  specialBenefits: 'a8b7c6d5-dca8-4d8c-b7a6-d5e4f3a2b1c0',
+  displayOrder: 'b9c8d7e6-edb7-4e9d-c8b7-e6f5a4b3c2d1',
+  isActive: 'ca9d8e7f-fec6-4fae-d9c8-f7a6b5c4d3e2',
+  description: 'dbad9f8a-afb5-4abf-ead9-a8b7c6d5e4f3',
+  // relations
+  createdBy: 'ecbeaf9b-bfca-4bca-fbea-b9c8d7e6f5a4',
+};
