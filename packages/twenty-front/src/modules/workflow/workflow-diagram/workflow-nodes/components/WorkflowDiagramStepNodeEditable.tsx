@@ -4,10 +4,10 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { WorkflowDiagramStepNodeEditableContent } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeEditableContent';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
+import { WorkflowDiagramStepNodeEditableContent } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditableContent';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';

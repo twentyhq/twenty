@@ -3,7 +3,7 @@ import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/component
 import { WorkflowDiagramDefaultEdgeRun } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdgeRun';
 import { WorkflowDiagramFilterEdgeRun } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeRun';
 import { WorkflowDiagramFilteringDisabledEdgeRun } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilteringDisabledEdgeRun';
-import { WorkflowRunDiagramStepNode } from '@/workflow/workflow-diagram/components/WorkflowRunDiagramStepNode';
+import { WorkflowRunDiagramStepNode } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowRunDiagramStepNode';
 import { getWorkflowRunStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps';
 import { ReactFlowProvider } from '@xyflow/react';
 

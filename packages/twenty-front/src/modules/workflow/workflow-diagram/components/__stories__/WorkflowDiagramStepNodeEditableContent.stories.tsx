@@ -9,7 +9,7 @@ import { RecoilRoot } from 'recoil';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { WorkflowDiagramStepNodeEditableContent } from '../WorkflowDiagramStepNodeEditableContent';
+import { WorkflowDiagramStepNodeEditableContent } from '../../workflow-nodes/components/WorkflowDiagramStepNodeEditableContent';
 
 const meta: Meta<typeof WorkflowDiagramStepNodeEditableContent> = {
   title: 'Modules/Workflow/WorkflowDiagramStepNodeEditableContent',
