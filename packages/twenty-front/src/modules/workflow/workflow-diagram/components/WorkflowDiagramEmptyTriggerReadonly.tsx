@@ -7,6 +7,7 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeIconContainer';
+import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/components/WorkflowNodeLabel';
 import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/components/WorkflowNodeLabelWithCounterPart';
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/components/WorkflowNodeRightPart';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
@@ -17,7 +18,7 @@ import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { Label, useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/display';
 
 const StyledNodeContainer = styled(WorkflowNodeContainer)`
   border-color: ${({ theme }) => theme.border.color.strong};
@@ -38,10 +39,8 @@ const StyledNodeContainer = styled(WorkflowNodeContainer)`
   }
 `;
 
-const StyledNodeLabel = styled(Label)`
-  box-sizing: border-box;
+const StyledNodeLabel = styled(WorkflowNodeLabel)`
   color: ${({ theme }) => theme.font.color.tertiary};
-  flex: 1 0 0;
 
   .selectable.selected & {
     color: ${({ theme }) => theme.tag.text.blue};

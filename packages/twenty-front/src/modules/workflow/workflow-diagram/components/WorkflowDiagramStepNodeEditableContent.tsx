@@ -3,6 +3,7 @@ import { WorkflowDiagramHandleEditable } from '@/workflow/workflow-diagram/compo
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeIcon';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeIconContainer';
+import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/components/WorkflowNodeLabel';
 import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/components/WorkflowNodeLabelWithCounterPart';
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/components/WorkflowNodeRightPart';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
@@ -14,7 +15,7 @@ import styled from '@emotion/styled';
 import { Position } from '@xyflow/react';
 import { useState } from 'react';
 import { capitalize } from 'twenty-shared/utils';
-import { IconTrash, Label } from 'twenty-ui/display';
+import { IconTrash } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
 
 const StyledAddStepButtonContainer = styled.div<{
@@ -50,10 +51,8 @@ const StyledNodeContainer = styled(WorkflowNodeContainer)`
   }
 `;
 
-const StyledNodeLabel = styled(Label)`
-  box-sizing: border-box;
+const StyledNodeLabel = styled(WorkflowNodeLabel)`
   color: ${({ theme }) => theme.font.color.tertiary};
-  flex: 1 0 0;
 
   .selectable.selected & {
     color: ${({ theme }) => theme.tag.text.blue};

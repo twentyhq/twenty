@@ -9,6 +9,7 @@ import { WorkflowDiagramHandleReadonly } from '@/workflow/workflow-diagram/compo
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeIcon';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeIconContainer';
+import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/components/WorkflowNodeLabel';
 import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/components/WorkflowNodeLabelWithCounterPart';
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/components/WorkflowNodeRightPart';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
@@ -22,7 +23,7 @@ import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
-import { IconCheck, IconX, Label, useIcons } from 'twenty-ui/display';
+import { IconCheck, IconX, useIcons } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 
 const StyledNodeContainer = styled(WorkflowNodeContainer)`
@@ -64,10 +65,8 @@ const StyledNodeLabelWithCounterPart = styled(WorkflowNodeLabelWithCounterPart)`
   column-gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledNodeLabel = styled(Label)`
-  box-sizing: border-box;
+const StyledNodeLabel = styled(WorkflowNodeLabel)`
   color: ${({ theme }) => theme.font.color.tertiary};
-  flex: 1 0 0;
 
   .selected & {
     color: ${({ theme }) => theme.tag.text.blue};
