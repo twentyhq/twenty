@@ -43,7 +43,7 @@ const StyledNodeContainer = styled(WorkflowNodeContainer)`
 const StyledNodeLabel = styled(WorkflowNodeLabel)`
   color: ${({ theme }) => theme.font.color.tertiary};
 
-  .selectable.selected & {
+  .selected & {
     color: ${({ theme }) => theme.tag.text.blue};
   }
 `;
@@ -51,7 +51,7 @@ const StyledNodeLabel = styled(WorkflowNodeLabel)`
 const StyledNodeTitle = styled(WorkflowNodeTitle)`
   color: ${({ theme }) => theme.font.color.light};
 
-  .selectable.selected & {
+  .selected & {
     color: ${({ theme }) => theme.font.color.primary};
   }
 `;

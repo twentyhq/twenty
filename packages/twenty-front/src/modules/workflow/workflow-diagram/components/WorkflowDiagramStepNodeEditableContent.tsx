@@ -55,7 +55,7 @@ const StyledNodeContainer = styled(WorkflowNodeContainer)`
 const StyledNodeLabel = styled(WorkflowNodeLabel)`
   color: ${({ theme }) => theme.font.color.tertiary};
 
-  .selectable.selected & {
+  .selected & {
     color: ${({ theme }) => theme.tag.text.blue};
   }
 `;
