@@ -8,7 +8,6 @@ import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/st
 import { WorkflowDiagramHandleReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramHandleReadonly';
 import { WorkflowDiagramStepNodeBigIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeBigIcon';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
-import { useEdgeSelected } from '@/workflow/workflow-diagram/hooks/useEdgeSelected';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
@@ -133,10 +132,6 @@ export const WorkflowDiagramStepNodeReadonly = ({
     commandMenuNavigationStackState,
   );
 
-  const { getNodeHandlesSelectedState } = useEdgeSelected();
-
-  const handlesSelectedState = getNodeHandlesSelectedState(id);
-
   const handleClick = () => {
     if (
       !isDefined(workflowVisualizerWorkflowId) ||
@@ -165,7 +160,7 @@ export const WorkflowDiagramStepNodeReadonly = ({
         <WorkflowDiagramHandleReadonly
           type="target"
           position={Position.Top}
-          selected={handlesSelectedState.targetHandle}
+          selected={false}
         />
       )}
 
@@ -189,7 +184,7 @@ export const WorkflowDiagramStepNodeReadonly = ({
       <WorkflowDiagramHandleReadonly
         type="source"
         position={Position.Bottom}
-        selected={handlesSelectedState.sourceHandle || selected}
+        selected={selected}
       />
     </>
   );
