@@ -200,11 +200,19 @@ export const prefillWorkflows = async (
               input: {
                 objectName: 'company',
                 objectRecord: {
-                  name: '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.companyName}}',
-                  domainName: {
-                    primaryLinkUrl:
-                      '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.companyDomain}}',
-                    primaryLinkLabel: '',
+                  name: {
+                    lastName:
+                      '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.lastName}}',
+                    firstName:
+                      '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.firstName}}',
+                  },
+                  emails: {
+                    primaryEmail:
+                      '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.email}}',
+                    additionalEmails: [],
+                  },
+                  company: {
+                    id: '{{0715b6cd-7cc1-4b98-971b-00f54dfe643b.id}}',
                   },
                 },
               },
@@ -218,40 +226,6 @@ export const prefillWorkflows = async (
                   nameSingular: 'company',
                 },
                 _outputSchemaType: 'RECORD',
-                fields: generateObjectRecordFields({
-                  objectMetadataInfo: {
-                    objectMetadataItemWithFieldsMaps: companyObjectMetadata,
-                    objectMetadataMaps,
-                  },
-                  depth: 0,
-                }),
-              },
-              errorHandlingOptions: {
-                retryOnFailure: { value: false },
-                continueOnFailure: { value: false },
-              },
-            },
-            __typename: 'WorkflowAction',
-            nextStepIds: null,
-          },
-          {
-            id: '0715b6cd-7cc1-4b98-971b-00f54dfe643b',
-            name: 'Create Company',
-            type: 'CREATE_RECORD',
-            valid: false,
-            settings: {
-              input: {
-                objectName: 'company',
-                objectRecord: {
-                  name: '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.companyName}}',
-                  domainName: {
-                    primaryLinkUrl:
-                      '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.companyDomain}}',
-                    primaryLinkLabel: '',
-                  },
-                },
-              },
-              outputSchema: {
                 fields: generateObjectRecordFields({
                   objectMetadataInfo: {
                     objectMetadataItemWithFieldsMaps: companyObjectMetadata,
