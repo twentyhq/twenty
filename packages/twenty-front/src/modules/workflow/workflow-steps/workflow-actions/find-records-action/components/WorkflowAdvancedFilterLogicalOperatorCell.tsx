@@ -14,6 +14,7 @@ const StyledText = styled.div`
   height: ${({ theme }) => theme.spacing(8)};
   display: flex;
   align-items: center;
+  color: ${({ theme }) => theme.font.color.primary};
 `;
 
 const StyledContainer = styled.div`
