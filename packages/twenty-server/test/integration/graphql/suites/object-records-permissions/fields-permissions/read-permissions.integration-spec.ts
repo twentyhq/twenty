@@ -19,6 +19,7 @@ import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update
 import { upsertFieldPermissions } from 'test/integration/graphql/utils/upsert-field-permissions.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
@@ -139,7 +140,7 @@ describe('Field permissions restrictions', () => {
     // Enable the feature flag
     const enablePermissionsQuery = updateFeatureFlagFactory(
       SEED_APPLE_WORKSPACE_ID,
-      'IS_FIELDS_PERMISSIONS_ENABLED',
+      FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED,
       true,
     );
 
@@ -246,7 +247,7 @@ describe('Field permissions restrictions', () => {
     // Restore the feature flag
     const disablePermissionsQuery = updateFeatureFlagFactory(
       SEED_APPLE_WORKSPACE_ID,
-      'IS_FIELDS_PERMISSIONS_ENABLED',
+      FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED,
       false,
     );
 
