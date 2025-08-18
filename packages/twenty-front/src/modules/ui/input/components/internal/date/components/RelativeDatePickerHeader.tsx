@@ -30,6 +30,7 @@ type RelativeDatePickerHeaderProps = {
   }) => void;
   isFormField?: boolean;
   readonly?: boolean;
+  unitDropdownWidth?: number;
 };
 
 export const RelativeDatePickerHeader = (
@@ -111,9 +112,10 @@ export const RelativeDatePickerHeader = (
             unit: newUnit,
           });
         }}
-        options={unitSelectOptions}
         fullWidth
+        options={unitSelectOptions}
         disabled={props.readonly}
+        dropdownWidth={props.unitDropdownWidth}
       />
     </StyledContainer>
   );

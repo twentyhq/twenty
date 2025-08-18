@@ -37,6 +37,7 @@ export const FormRelativeDatePicker = ({
       amount={value?.amount}
       isFormField={true}
       readonly={readonly}
+      unitDropdownWidth={150}
     />
   );
 };
