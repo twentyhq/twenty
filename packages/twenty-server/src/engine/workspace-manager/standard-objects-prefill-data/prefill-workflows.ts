@@ -5,6 +5,7 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
+import { type WorkflowCreateRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const QUICK_LEAD_WORKFLOW_ID = '8b213cac-a68b-4ffe-817a-3ec994e9932d';
 const QUICK_LEAD_WORKFLOW_VERSION_ID = 'ac67974f-c524-4288-9d88-af8515400b68';
@@ -200,19 +201,11 @@ export const prefillWorkflows = async (
               input: {
                 objectName: 'company',
                 objectRecord: {
-                  name: {
-                    lastName:
-                      '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.lastName}}',
-                    firstName:
-                      '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.firstName}}',
-                  },
-                  emails: {
-                    primaryEmail:
-                      '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.email}}',
-                    additionalEmails: [],
-                  },
-                  company: {
-                    id: '{{0715b6cd-7cc1-4b98-971b-00f54dfe643b.id}}',
+                  name: '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.companyName}}',
+                  domainName: {
+                    primaryLinkUrl:
+                      '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.companyDomain}}',
+                    primaryLinkLabel: '',
                   },
                 },
               },
@@ -248,19 +241,23 @@ export const prefillWorkflows = async (
             type: 'CREATE_RECORD',
             valid: false,
             settings: {
-              objectRecord: {
-                name: {
-                  lastName: '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.lastName}}',
-                  firstName:
-                    '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.firstName}}',
-                },
-                emails: {
-                  primaryEmail:
-                    '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.email}}',
-                  additionalEmails: [],
-                },
-                company: {
-                  id: '{{0715b6cd-7cc1-4b98-971b-00f54dfe643b.id}}',
+              input: {
+                objectName: 'person',
+                objectRecord: {
+                  name: {
+                    lastName:
+                      '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.lastName}}',
+                    firstName:
+                      '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.firstName}}',
+                  },
+                  emails: {
+                    primaryEmail:
+                      '{{6e089bc9-aabd-435f-865f-f31c01c8f4a7.email}}',
+                    additionalEmails: [],
+                  },
+                  company: {
+                    id: '{{0715b6cd-7cc1-4b98-971b-00f54dfe643b.id}}',
+                  },
                 },
               },
               outputSchema: {
