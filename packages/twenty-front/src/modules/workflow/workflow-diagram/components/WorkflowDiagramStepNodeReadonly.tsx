@@ -14,7 +14,7 @@ import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/ty
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
 import styled from '@emotion/styled';
 import { Position } from '@xyflow/react';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Label, useIcons } from 'twenty-ui/display';
@@ -133,16 +133,6 @@ export const WorkflowDiagramStepNodeReadonly = ({
     commandMenuNavigationStackState,
   );
 
-  const [isHovered, setIsHovered] = useState(false);
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
-
   const { getNodeHandlesSelectedState } = useEdgeSelected();
 
   const handlesSelectedState = getNodeHandlesSelectedState(id);
@@ -182,8 +172,6 @@ export const WorkflowDiagramStepNodeReadonly = ({
       <StyledNodeContainer
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
         onClick={handleClick}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
       >
         <StyledNodeIconContainer>
           <WorkflowDiagramStepNodeBigIcon data={data} />
