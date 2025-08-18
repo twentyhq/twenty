@@ -283,5 +283,32 @@ export const MKT_RESELLER_TIER_FIELD_IDS = {
   isActive: 'ca9d8e7f-fec6-4fae-d9c8-f7a6b5c4d3e2',
   description: 'dbad9f8a-afb5-4abf-ead9-a8b7c6d5e4f3',
   // relations
+  resellers: '38a96a35-4b8d-4384-8ce5-10e74a84ed84',
   createdBy: 'ecbeaf9b-bfca-4bca-fbea-b9c8d7e6f5a4',
+};
+
+export const MKT_RESELLER_FIELD_IDS = {
+  // business info
+  companyName: 'a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d7',
+  companyShortName: 'b2c3d4e5-f6a7-8b9c-0d1e-f2a3b4c5d6e8',
+  taxCode: 'c3d4e5f6-a7b8-9c0d-1e2f-a3b4c5d6e7f9',
+  legalRepresentativeName: 'd4e5f6a7-b8c9-0d1e-2f3a-b4c5d6e7f8a0',
+  contactEmail: 'e5f6a7b8-c9d0-1e2f-3a4b-c5d6e7f8a9b1',
+  contactPhone: 'f6a7b8c9-d0e1-2f3a-4b5c-d6e7f8a9b0c2',
+  address: 'a7b8c9d0-e1f2-3a4b-5c6d-e7f8a9b0c1d3',
+  // tier & commitment
+  currentTierId: 'b8c9d0e1-f2a3-4b5c-6d7e-f8a9b0c1d2e4',
+  commitmentAmount: 'c9d0e1f2-a3b4-5c6d-7e8f-a9b0c1d2e3f5',
+  commissionRate: 'd0e1f2a3-b4c5-6d7e-8f9a-b0c1d2e3f4a6',
+  // subdomain & multi-tenant
+  subdomain: 'e1f2a3b4-c5d6-7e8f-9a0b-c1d2e3f4a5b7',
+  customDomain: 'f2a3b4c5-d6e7-8f9a-0b1c-d2e3f4a5b6c8',
+  isCustomDomainEnabled: 'a3b4c5d6-e7f8-9a0b-1c2d-e3f4a5b6c7d9',
+  // status & performance
+  status: 'b4c5d6e7-f8a9-0b1c-2d3e-f4a5b6c7d8ea',
+  actualRevenue: 'c5d6e7f8-a9b0-1c2d-3e4f-a5b6c7d8e9fb',
+  lastRevenueUpdate: 'd6e7f8a9-b0c1-2d3e-4f5a-b6c7d8e9fafc',
+  // tracking
+  position: 'e7f8a9b0-c1d2-3e4f-5a6b-c7d8e9fafbfd',
+  createdBy: 'f8a9b0c1-d2e3-4f5a-6b7c-d8e9fafbfcfe',
 };

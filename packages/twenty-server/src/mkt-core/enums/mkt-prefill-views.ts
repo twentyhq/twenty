@@ -12,6 +12,7 @@ import { mktInvoicesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-inv
 import { mktPaymentMethodsAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-payment-method-all.view';
 import { mktPaymentsAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-payment-all.view';
 import { mktResellerTiersAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-reseller-tier-all.view';
+import { mktResellersAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-reseller-all.view';
 
 export const MKT_ALL_VIEWS = [
   // product views
@@ -36,4 +37,5 @@ export const MKT_ALL_VIEWS = [
   mktPaymentsAllView,
   // reseller views
   mktResellerTiersAllView,
+  mktResellersAllView,
 ];

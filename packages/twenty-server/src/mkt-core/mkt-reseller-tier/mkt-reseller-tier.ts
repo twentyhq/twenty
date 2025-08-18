@@ -1,14 +1,19 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MKT_RESELLER_TIER_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
+import { MktResellerWorkspaceEntity } from 'src/mkt-core/mkt-reseller/mkt-reseller.workspace-entity';
 
 @WorkspaceEntity({
   standardId: MKT_OBJECT_IDS.mktResellerTier,
@@ -145,4 +150,15 @@ export class MktResellerTierWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The creator of the record`,
   })
   createdBy: ActorMetadata;
+
+  @WorkspaceRelation({
+    standardId: MKT_RESELLER_TIER_FIELD_IDS.resellers,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Resellers`,
+    description: msg`Resellers in this tier`,
+    icon: 'IconBuilding',
+    inverseSideTarget: () => MktResellerWorkspaceEntity,
+    inverseSideFieldKey: 'currentTier',
+  })
+  resellers: Relation<MktResellerWorkspaceEntity>[];
 }
