@@ -1,12 +1,12 @@
 import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement';
 import { WorkflowDiagramHandleEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramHandleEditable';
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeIcon';
+import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeContainer';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { useEdgeSelected } from '@/workflow/workflow-diagram/hooks/useEdgeSelected';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { type WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
-import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/WorkflowNodeContainer';
 import styled from '@emotion/styled';
 import { Position } from '@xyflow/react';
 import { useState } from 'react';
