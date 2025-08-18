@@ -12,12 +12,10 @@ import { compareTwoFlatObjectMetadata } from 'src/engine/metadata-modules/flat-o
 import { type CustomDeletedCreatedUpdatedMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import { WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
 import { MetadataActionValidateAndBuildResult } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/metadata-action-validate-and-build-result.type';
-import { MetadataValidateAndBuildResult } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/metadata-validate-and-build-result.type';
 import {
   UpdateObjectAction,
   WorkspaceMigrationObjectActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
-import { fromMetadataBuildResultsToFailedAndSuccessfulMetadataBuildRecord } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-metadata-build-results-to-failed-and-successful-metadata-build-record.util';
 import { getWorkspaceMigrationV2FieldCreateAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
 import {
   getWorkspaceMigrationV2ObjectCreateAction,
@@ -29,7 +27,7 @@ export type CreatedDeletedUpdatedObjectMetadataInputMatrix = FromTo<
   'FlatObjectMetadataMaps'
 > &
   CustomDeletedCreatedUpdatedMatrix<
-    'flatObjectMetadata',
+    'flatObjectMetadatas',
     FlatObjectMetadata
   > & {
     buildOptions: WorkspaceMigrationV2BuilderOptions;
@@ -43,137 +41,140 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
   ) {}
 
   public async validateAndBuildObjectActions({
-    createdFlatObjectMetadata,
-    deletedFlatObjectMetadata,
-    updatedFlatObjectMetadata,
+    createdFlatObjectMetadatas,
+    deletedFlatObjectMetadatas,
+    updatedFlatObjectMetadatas,
     buildOptions,
     fromFlatObjectMetadataMaps,
     toFlatObjectMetadataMaps,
   }: CreatedDeletedUpdatedObjectMetadataInputMatrix): Promise<
     MetadataActionValidateAndBuildResult<WorkspaceMigrationObjectActionV2>
   > {
-    let optimisticFlatObjectMetadataMaps = structuredClone(
-      fromFlatObjectMetadataMaps,
-    );
-    const createdObjectBuildResults = await Promise.all(
-      createdFlatObjectMetadata.map<
-        Promise<
-          MetadataValidateAndBuildResult<WorkspaceMigrationObjectActionV2>
-        >
-      >(async (flatObjectMetadata) => {
-        const validationErrors =
-          await this.flatObjectMetadataValidatorService.validateFlatObjectMetadataCreation(
-            {
-              existingFlatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-              flatObjectMetadataToValidate: flatObjectMetadata,
-              otherFlatObjectMetadataMapsToValidate: toFlatObjectMetadataMaps,
-            },
-          );
+    const validateAndBuildResult: MetadataActionValidateAndBuildResult<WorkspaceMigrationObjectActionV2> =
+      {
+        failed: [],
+        successful: [],
+        optimisticFlatObjectMetadataMaps: structuredClone(
+          fromFlatObjectMetadataMaps,
+        ),
+      };
 
-        if (validationErrors.length > 0) {
-          return {
-            status: 'fail',
-            errors: validationErrors,
-          };
-        }
-
-        optimisticFlatObjectMetadataMaps =
-          addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
-            flatObjectMetadata: flatObjectMetadata,
-            flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-          });
-
-        const createFieldActions = flatObjectMetadata.flatFieldMetadatas.map(
-          (flatFieldMetadata) =>
-            getWorkspaceMigrationV2FieldCreateAction({
-              flatFieldMetadata,
-              flatObjectMetadata,
-            }),
+    for (const flatObjectMetadataToCreate of createdFlatObjectMetadatas) {
+      const validationErrors =
+        await this.flatObjectMetadataValidatorService.validateFlatObjectMetadataCreation(
+          {
+            existingFlatObjectMetadataMaps:
+              validateAndBuildResult.optimisticFlatObjectMetadataMaps,
+            flatObjectMetadataToValidate: flatObjectMetadataToCreate,
+            otherFlatObjectMetadataMapsToValidate: toFlatObjectMetadataMaps,
+          },
         );
 
-        const createObjectAction = getWorkspaceMigrationV2ObjectCreateAction({
-          flatObjectMetadata,
-          createFieldActions,
+      if (validationErrors.length > 0) {
+        validateAndBuildResult.failed.push({
+          errors: validationErrors,
+          status: 'fail',
+        });
+        continue;
+      }
+
+      validateAndBuildResult.optimisticFlatObjectMetadataMaps =
+        addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
+          flatObjectMetadata: flatObjectMetadataToCreate,
+          flatObjectMetadataMaps:
+            validateAndBuildResult.optimisticFlatObjectMetadataMaps,
         });
 
-        return {
-          status: 'success',
-          result: createObjectAction,
-        };
-      }),
-    );
+      const createFieldActions =
+        flatObjectMetadataToCreate.flatFieldMetadatas.map((flatFieldMetadata) =>
+          getWorkspaceMigrationV2FieldCreateAction({
+            flatFieldMetadata,
+            flatObjectMetadata: flatObjectMetadataToCreate,
+          }),
+        );
 
-    const deletedObjectBuildResults =
-      buildOptions.inferDeletionFromMissingObjectFieldIndex
-        ? deletedFlatObjectMetadata.map<
-            MetadataValidateAndBuildResult<WorkspaceMigrationObjectActionV2>
-          >((flatObjectMetadataToDelete) => {
-            const validationErrors =
-              this.flatObjectMetadataValidatorService.validateFlatObjectMetadataDeletion(
-                {
-                  buildOptions,
-                  existingFlatObjectMetadataMaps:
-                    optimisticFlatObjectMetadataMaps,
-                  objectMetadataToDeleteId: flatObjectMetadataToDelete.id,
-                },
-              );
+      const createObjectAction = getWorkspaceMigrationV2ObjectCreateAction({
+        flatObjectMetadata: flatObjectMetadataToCreate,
+        createFieldActions,
+      });
 
-            if (validationErrors.length > 0) {
-              return {
-                status: 'fail',
-                errors: validationErrors,
-              };
-            }
+      validateAndBuildResult.successful.push({
+        status: 'success',
+        result: createObjectAction,
+      });
+    }
 
-            optimisticFlatObjectMetadataMaps =
-              deleteObjectFromFlatObjectMetadataMapsOrThrow({
-                objectMetadataId: flatObjectMetadataToDelete.id,
-                flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-              });
+    for (const flatObjectMetadataToDelete of deletedFlatObjectMetadatas) {
+      const validationErrors =
+        this.flatObjectMetadataValidatorService.validateFlatObjectMetadataDeletion(
+          {
+            buildOptions,
+            existingFlatObjectMetadataMaps:
+              validateAndBuildResult.optimisticFlatObjectMetadataMaps,
+            objectMetadataToDeleteId: flatObjectMetadataToDelete.id,
+          },
+        );
 
-            const deleteObjectAction =
-              getWorkspaceMigrationV2ObjectDeleteAction(
-                flatObjectMetadataToDelete,
-              );
+      if (validationErrors.length > 0) {
+        validateAndBuildResult.failed.push({
+          errors: validationErrors,
+          status: 'fail',
+        });
+        continue;
+      }
 
-            return {
-              status: 'success',
-              result: deleteObjectAction,
-            };
-          })
-        : [];
+      validateAndBuildResult.optimisticFlatObjectMetadataMaps =
+        deleteObjectFromFlatObjectMetadataMapsOrThrow({
+          objectMetadataId: flatObjectMetadataToDelete.id,
+          flatObjectMetadataMaps:
+            validateAndBuildResult.optimisticFlatObjectMetadataMaps,
+        });
 
-    const updatedObjectBuildResults = updatedFlatObjectMetadata.flatMap<
-      MetadataValidateAndBuildResult<WorkspaceMigrationObjectActionV2>
-    >(({ from: fromFlatObjectMetadata, to: toFlatObjectMetadata }) => {
+      const deleteObjectAction = getWorkspaceMigrationV2ObjectDeleteAction(
+        flatObjectMetadataToDelete,
+      );
+
+      validateAndBuildResult.successful.push({
+        status: 'success',
+        result: deleteObjectAction,
+      });
+    }
+
+    for (const {
+      from: fromFlatObjectMetadata,
+      to: toFlatObjectMetadata,
+    } of updatedFlatObjectMetadatas) {
       const objectUpdatedProperties = compareTwoFlatObjectMetadata({
         from: fromFlatObjectMetadata,
         to: toFlatObjectMetadata,
       });
 
       if (objectUpdatedProperties.length === 0) {
-        return [];
+        continue;
       }
 
       const validationErrors =
         this.flatObjectMetadataValidatorService.validateFlatObjectMetadataUpdate(
           {
-            existingFlatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+            existingFlatObjectMetadataMaps:
+              validateAndBuildResult.optimisticFlatObjectMetadataMaps,
             updatedFlatObjectMetadata: toFlatObjectMetadata,
           },
         );
 
       if (validationErrors.length > 0) {
-        return {
-          status: 'fail',
+        validateAndBuildResult.failed.push({
           errors: validationErrors,
-        };
+          status: 'fail',
+        });
+        continue;
       }
 
-      optimisticFlatObjectMetadataMaps =
+      validateAndBuildResult.optimisticFlatObjectMetadataMaps =
         replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
           flatObjectMetadata: toFlatObjectMetadata,
-          flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+          flatObjectMetadataMaps:
+            validateAndBuildResult.optimisticFlatObjectMetadataMaps,
         });
 
       const updateObjectAction: UpdateObjectAction = {
@@ -182,21 +183,12 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
         updates: objectUpdatedProperties,
       };
 
-      return {
+      validateAndBuildResult.successful.push({
         status: 'success',
         result: updateObjectAction,
-      };
-    });
+      });
+    }
 
-    return {
-      optimisticFlatObjectMetadataMaps,
-      results: fromMetadataBuildResultsToFailedAndSuccessfulMetadataBuildRecord(
-        [
-          ...createdObjectBuildResults,
-          ...deletedObjectBuildResults,
-          ...updatedObjectBuildResults,
-        ],
-      ),
-    };
+    return validateAndBuildResult;
   }
 }
