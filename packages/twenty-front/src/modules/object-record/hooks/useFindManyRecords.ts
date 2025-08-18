@@ -72,12 +72,11 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     limit,
   });
 
-  const { handleFindManyRecordsCompleted: handleCompleted } =
-    useHandleFindManyRecordsCompleted({
-      objectMetadataItem,
-      queryIdentifier,
-      onCompleted,
-    });
+  const { handleFindManyRecordsCompleted } = useHandleFindManyRecordsCompleted({
+    objectMetadataItem,
+    queryIdentifier,
+    onCompleted,
+  });
 
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
@@ -95,7 +94,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         limit,
       },
       fetchPolicy: fetchPolicy,
-      onCompleted: handleCompleted,
+      onCompleted: handleFindManyRecordsCompleted,
       onError: handleFindManyRecordsError,
       client: apolloCoreClient,
     });
