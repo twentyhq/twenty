@@ -7,6 +7,7 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeIconContainer';
+import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/components/WorkflowNodeLabelWithCounterPart';
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/components/WorkflowNodeRightPart';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
@@ -35,15 +36,6 @@ const StyledNodeContainer = styled(WorkflowNodeContainer)`
     border-color: ${({ theme }) => theme.color.blue};
     background: ${({ theme }) => theme.adaptiveColors.blue1};
   }
-`;
-
-const StyledNodeLabelWithCounterPart = styled.div`
-  align-items: center;
-  align-self: stretch;
-  display: flex;
-  height: 14px;
-  justify-content: space-between;
-  box-sizing: border-box;
 `;
 
 const StyledNodeLabel = styled(Label)`
@@ -130,9 +122,9 @@ export const WorkflowDiagramEmptyTriggerReadonly = () => {
       <WorkflowNodeIconContainer />
 
       <WorkflowNodeRightPart>
-        <StyledNodeLabelWithCounterPart>
+        <WorkflowNodeLabelWithCounterPart>
           <StyledNodeLabel>{t`Trigger`}</StyledNodeLabel>
-        </StyledNodeLabelWithCounterPart>
+        </WorkflowNodeLabelWithCounterPart>
 
         <StyledNodeTitle>{t`Add a Trigger`}</StyledNodeTitle>
       </WorkflowNodeRightPart>

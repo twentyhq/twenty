@@ -9,6 +9,7 @@ import { WorkflowDiagramHandleReadonly } from '@/workflow/workflow-diagram/compo
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeIcon';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeIconContainer';
+import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/components/WorkflowNodeLabelWithCounterPart';
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/components/WorkflowNodeRightPart';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
@@ -59,14 +60,8 @@ const StyledNodeContainer = styled(WorkflowNodeContainer)`
   }
 `;
 
-const StyledNodeLabelWithCounterPart = styled.div`
-  align-items: center;
-  align-self: stretch;
-  display: flex;
+const StyledNodeLabelWithCounterPart = styled(WorkflowNodeLabelWithCounterPart)`
   column-gap: ${({ theme }) => theme.spacing(2)};
-  height: 14px;
-  justify-content: space-between;
-  box-sizing: border-box;
 `;
 
 const StyledNodeLabel = styled(Label)`
