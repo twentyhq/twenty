@@ -3,8 +3,8 @@ import { RecoilRoot } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { textfieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { textfieldDefinition } from '@/object-record/record-field/ui/__mocks__/fieldDefinitions';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';

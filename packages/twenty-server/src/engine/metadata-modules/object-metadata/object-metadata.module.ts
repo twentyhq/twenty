@@ -43,8 +43,7 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
-import { WorkspaceMigrationBuilderV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.module';
-import { WorkspaceMigrationRunnerV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.module';
+import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
 @Module({
   imports: [
@@ -69,8 +68,7 @@ import { WorkspaceMigrationRunnerV2Module } from 'src/engine/workspace-manager/w
         WorkspaceMetadataCacheModule,
         WorkspaceDataSourceModule,
         FeatureFlagModule,
-        WorkspaceMigrationBuilderV2Module,
-        WorkspaceMigrationRunnerV2Module,
+        WorkspaceMigrationV2Module,
       ],
       services: [
         ObjectMetadataService,

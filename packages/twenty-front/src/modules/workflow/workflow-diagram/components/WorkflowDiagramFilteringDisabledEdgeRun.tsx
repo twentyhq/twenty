@@ -10,7 +10,8 @@ export const WorkflowDiagramFilteringDisabledEdgeRun = ({
   sourceY,
   targetX,
   targetY,
-  data,
+  markerStart,
+  markerEnd,
 }: WorkflowDiagramFilteringDisabledEdgeRunProps) => {
   const [edgePath] = getBezierPath({
     sourceX,
@@ -21,8 +22,9 @@ export const WorkflowDiagramFilteringDisabledEdgeRun = ({
 
   return (
     <WorkflowRunDiagramBaseEdge
-      edgePath={edgePath}
-      edgeExecutionStatus={data?.edgeExecutionStatus}
+      path={edgePath}
+      markerStart={markerStart}
+      markerEnd={markerEnd}
     />
   );
 };

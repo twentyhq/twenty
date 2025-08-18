@@ -1,9 +1,9 @@
-import { FieldInputEventContext } from '@/object-record/record-field/contexts/FieldInputEventContext';
-import { useFullNameField } from '@/object-record/record-field/meta-types/hooks/useFullNameField';
-import { FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/meta-types/input/constants/FirstNamePlaceholder';
-import { LAST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/meta-types/input/constants/LastNamePlaceholder';
-import { isDoubleTextFieldEmpty } from '@/object-record/record-field/meta-types/input/utils/isDoubleTextFieldEmpty';
-import { type FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
+import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import { useFullNameField } from '@/object-record/record-field/ui/meta-types/hooks/useFullNameField';
+import { FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/ui/meta-types/input/constants/FirstNamePlaceholder';
+import { LAST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/ui/meta-types/input/constants/LastNamePlaceholder';
+import { isDoubleTextFieldEmpty } from '@/object-record/record-field/ui/meta-types/input/utils/isDoubleTextFieldEmpty';
+import { type FieldDoubleText } from '@/object-record/record-field/ui/types/FieldDoubleText';
 
 import { useContext } from 'react';
 import { RecordTitleDoubleTextInput } from './RecordTitleDoubleTextInput';

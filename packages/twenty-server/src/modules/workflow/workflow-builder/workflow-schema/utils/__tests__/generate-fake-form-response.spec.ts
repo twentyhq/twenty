@@ -10,7 +10,7 @@ const companyMockObjectMetadataItem = mockObjectMetadataItemsWithFieldMaps.find(
 
 describe('generateFakeFormResponse', () => {
   it('should generate fake responses for a form schema', async () => {
-    const schema: FormFieldMetadata[] = [
+    const formFieldMetadataItems: FormFieldMetadata[] = [
       {
         id: '96939213-49ac-4dee-949d-56e6c7be98e6',
         name: 'name',
@@ -51,8 +51,8 @@ describe('generateFakeFormResponse', () => {
       },
     };
 
-    const result = await generateFakeFormResponse({
-      formMetadata: schema,
+    const result = generateFakeFormResponse({
+      formFieldMetadataItems,
       objectMetadataMaps: mockObjectMetadataMaps,
     });
 

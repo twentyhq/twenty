@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -11,11 +12,10 @@ import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/fla
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
-import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
-import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';
 import { ROCKET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/rocket-flat-object.mock';
 import { type WorkspaceMigrationBuilderTestCase } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
+import { fromFlatObjectMetadataToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-flat-object-metadata-to-flat-object-metadata-without-fields.util';
 
 // TODO prastoin test defaultValue and settings updates
 // TODO prastoin test standard abstraction in TDD style
@@ -25,33 +25,58 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
     title: 'It should build an create_field action for a RELATION field',
     context: {
       input: () => {
-        const createdFlatRelationFieldMetadata = getFlatFieldMetadataMock({
+        const targetRelationId = faker.string.uuid();
+        const sourceRelationId = faker.string.uuid();
+        const sourceRelationFlatField = getFlatFieldMetadataMock({
+          id: sourceRelationId,
           uniqueIdentifier: 'field-metadata-unique-identifier-1',
           objectMetadataId: PET_FLAT_OBJECT_MOCK.id,
           type: FieldMetadataType.RELATION,
-          relationTargetFieldMetadataId: faker.string.uuid(),
-          relationTargetObjectMetadataId: faker.string.uuid(),
-          flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
-            objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
-            type: FieldMetadataType.RELATION,
-            uniqueIdentifier: 'field-metadata-unique-identifier-2',
-          }),
-          flatRelationTargetObjectMetadata: getFlatObjectMetadataMock({
-            uniqueIdentifier: 'object-metadata-unique-identifier-2',
-          }),
+          relationTargetFieldMetadataId: targetRelationId,
+          relationTargetObjectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
+          flatRelationTargetFieldMetadata: undefined,
+          flatRelationTargetObjectMetadata:
+            fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
+              ROCKET_FLAT_OBJECT_MOCK,
+            ),
         });
+
+        const targetRelationFlatField = getFlatFieldMetadataMock({
+          id: targetRelationId,
+          uniqueIdentifier: 'field-metadata-unique-identifier-2',
+          objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
+          type: FieldMetadataType.RELATION,
+          relationTargetFieldMetadataId: sourceRelationId,
+          relationTargetObjectMetadataId: PET_FLAT_OBJECT_MOCK.id,
+          flatRelationTargetFieldMetadata: sourceRelationFlatField,
+          flatRelationTargetObjectMetadata:
+            fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
+              PET_FLAT_OBJECT_MOCK,
+            ),
+        });
+
+        sourceRelationFlatField.flatRelationTargetFieldMetadata =
+          removePropertiesFromRecord(targetRelationFlatField, [
+            'flatRelationTargetFieldMetadata',
+            'flatRelationTargetObjectMetadata',
+          ]);
+        const toFlatObjectMetadataMaps = [
+          sourceRelationFlatField,
+          targetRelationFlatField,
+        ].reduce((flatObjectMetadataMaps, flatFieldMetadata) => {
+          return addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+            flatFieldMetadata,
+            flatObjectMetadataMaps,
+          });
+        }, FLAT_OBJECT_METADATA_MAPS_MOCKS);
 
         return {
           fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
-          toFlatObjectMetadataMaps:
-            addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
-              flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
-              flatFieldMetadata: createdFlatRelationFieldMetadata,
-            }),
+          toFlatObjectMetadataMaps,
         };
       },
       expectedActionsTypeCounter: {
-        createField: 1,
+        createField: 2,
       },
     },
   },
@@ -123,7 +148,7 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
     },
   },
   {
-    title: 'It should build an update_field action',
+    title: 'It should build an update_field action for standard field',
     context: {
       input: {
         fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
@@ -132,9 +157,29 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
             flatFieldMetadata: getFlatFieldMetadataMock({
               ...OPPORTUNITY_FLAT_FIELDS_MOCK.stage,
+              standardOverrides: {
+                description: 'new description',
+                icon: 'new icon',
+              },
+            }),
+          }),
+      },
+      expectedActionsTypeCounter: {
+        updateField: 1,
+      },
+    },
+  },
+  {
+    title: 'It should build an update_field action for custom fields',
+    context: {
+      input: {
+        fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+        toFlatObjectMetadataMaps:
+          replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+            flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+            flatFieldMetadata: getFlatFieldMetadataMock({
+              ...PET_FLAT_FIELDS_MOCK.species,
               description: 'new description',
-              name: 'new name',
-              isActive: false,
               icon: 'new icon',
             }),
           }),
@@ -148,7 +193,14 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
     title: 'It should build a delete_field action',
     context: {
       input: {
-        fromFlatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+        fromFlatObjectMetadataMaps:
+          replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+            flatFieldMetadata: getFlatFieldMetadataMock({
+              ...PET_FLAT_FIELDS_MOCK.species,
+              isActive: false,
+            }),
+            flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,
+          }),
         toFlatObjectMetadataMaps: deleteFieldFromFlatObjectMetadataMapsOrThrow({
           fieldMetadataId: PET_FLAT_FIELDS_MOCK.species.id,
           objectMetadataId: PET_FLAT_FIELDS_MOCK.species.objectMetadataId,

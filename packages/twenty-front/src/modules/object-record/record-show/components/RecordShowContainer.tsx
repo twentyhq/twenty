@@ -36,7 +36,6 @@ export const RecordShowContainer = ({
   });
 
   const { isPrefetchLoading, recordLoading } = useRecordShowContainerData({
-    objectNameSingular,
     objectRecordId,
   });
 

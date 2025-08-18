@@ -1,6 +1,6 @@
-import { type RefObject, useCallback, useState } from 'react';
+import { useCallback, useState, type RefObject } from 'react';
 
-import { type FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
+import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
 
 export const useFocusManagement = (
   inputRefs: {

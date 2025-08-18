@@ -1,27 +1,24 @@
 import { useCallback, useContext } from 'react';
 
-import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
-import { FieldInput } from '@/object-record/record-field/components/FieldInput';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
-import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
+import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
+import { FieldInput } from '@/object-record/record-field/ui/components/FieldInput';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { FieldFocusContextProvider } from '@/object-record/record-field/ui/contexts/FieldFocusContextProvider';
+import { useGetButtonIcon } from '@/object-record/record-field/ui/hooks/useGetButtonIcon';
 
-import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
-import { useOpenFieldInputEditMode } from '@/object-record/record-field/hooks/useOpenFieldInputEditMode';
+import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
+import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 
 import {
   FieldInputEventContext,
   type FieldInputClickOutsideEvent,
   type FieldInputEvent,
-} from '@/object-record/record-field/contexts/FieldInputEventContext';
-import { usePersistFieldFromFieldInputContext } from '@/object-record/record-field/hooks/usePersistFieldFromFieldInputContext';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { isInlineCellInEditModeFamilyState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeFamilyState';
+} from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import { usePersistFieldFromFieldInputContext } from '@/object-record/record-field/ui/hooks/usePersistFieldFromFieldInputContext';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
@@ -82,23 +79,10 @@ export const RecordInlineCell = ({
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
-  const recordFieldComponentInstanceId = useAvailableComponentInstanceIdOrThrow(
-    RecordFieldComponentInstanceContext,
-  );
-
-  const setIsInlineCellInEditMode = useSetRecoilState(
-    isInlineCellInEditModeFamilyState(recordFieldComponentInstanceId),
-  );
-
   const closeInlineCell = useCallback(() => {
     onCloseEditMode();
-    setIsInlineCellInEditMode(false);
     goBackToPreviousDropdownFocusId();
-  }, [
-    onCloseEditMode,
-    setIsInlineCellInEditMode,
-    goBackToPreviousDropdownFocusId,
-  ]);
+  }, [onCloseEditMode, goBackToPreviousDropdownFocusId]);
 
   const { persistFieldFromFieldInputContext } =
     usePersistFieldFromFieldInputContext();

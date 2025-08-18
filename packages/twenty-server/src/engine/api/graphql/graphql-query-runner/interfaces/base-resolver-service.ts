@@ -210,7 +210,7 @@ export abstract class GraphqlQueryBaseResolverService<
 
       return resultWithGetters;
     } catch (error) {
-      workspaceQueryRunnerGraphqlApiExceptionHandler(error, options);
+      workspaceQueryRunnerGraphqlApiExceptionHandler(error);
     }
   }
 
