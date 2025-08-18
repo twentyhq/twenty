@@ -10,7 +10,8 @@ import styled from '@emotion/styled';
 import { Position } from '@xyflow/react';
 import { useState } from 'react';
 import { capitalize } from 'twenty-shared/utils';
-import { Label } from 'twenty-ui/display';
+import { IconTrash, Label } from 'twenty-ui/display';
+import { FloatingIconButton } from 'twenty-ui/input';
 
 const StyledAddStepButtonContainer = styled.div<{
   shouldDisplay: boolean;
@@ -110,11 +111,22 @@ const StyledNodeTitle = styled.div`
   text-overflow: ellipsis;
 `;
 
+const StyledDeleteButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  position: absolute;
+  right: ${({ theme }) => theme.spacing(-4)};
+  bottom: 0;
+  top: 0;
+  transform: translateX(100%);
+`;
+
 export const WorkflowDiagramStepNodeEditableContent = ({
   id,
   data,
   selected,
   onClick,
+  onDelete,
 }: {
   id: string;
   data: WorkflowDiagramStepNodeData;
@@ -166,6 +178,16 @@ export const WorkflowDiagramStepNodeEditableContent = ({
 
           <StyledNodeTitle>{data.name}</StyledNodeTitle>
         </StyledNodeRightPart>
+
+        {selected && (
+          <StyledDeleteButtonContainer>
+            <FloatingIconButton
+              size="medium"
+              Icon={IconTrash}
+              onClick={onDelete}
+            />
+          </StyledDeleteButtonContainer>
+        )}
       </StyledNodeContainer>
 
       {!data.hasNextStepIds && (
