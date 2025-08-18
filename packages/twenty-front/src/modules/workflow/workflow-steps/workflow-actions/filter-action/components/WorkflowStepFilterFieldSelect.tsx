@@ -163,11 +163,31 @@ export const WorkflowStepFilterFieldSelect = ({
     );
   }
 
+  if (readonly === true) {
+    return (
+      <Dropdown
+        dropdownId={dropdownId}
+        clickableComponent={
+          <SelectControl
+            selectedOption={{
+              value: stepFilter.stepOutputKey,
+              label,
+              Icon: filterFieldMetadataItem?.icon
+                ? getIcon(filterFieldMetadataItem.icon)
+                : undefined,
+            }}
+            isDisabled={true}
+          />
+        }
+        dropdownComponents={[]}
+      />
+    );
+  }
+
   return (
     <WorkflowVariablesDropdown
       instanceId={dropdownId}
       onVariableSelect={handleChange}
-      disabled={readonly}
       clickableComponent={
         <SelectControl
           selectedOption={{
@@ -178,7 +198,6 @@ export const WorkflowStepFilterFieldSelect = ({
               : undefined,
           }}
           textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
-          isDisabled={readonly}
         />
       }
       shouldDisplayRecordFields={shouldDisplayRecordFields}
