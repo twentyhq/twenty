@@ -4,6 +4,7 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
+import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/WorkflowNodeContainer';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
@@ -11,19 +12,9 @@ import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Label } from 'twenty-ui/display';
 
-const StyledNodeContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  max-width: 240px;
-  min-width: 44px;
-  padding: ${({ theme }) => theme.spacing(2)};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  border: 1px solid ${({ theme }) => theme.border.color.strong};
+const StyledNodeContainer = styled(WorkflowNodeContainer)`
+  border-color: ${({ theme }) => theme.border.color.strong};
   background: ${({ theme }) => theme.background.secondary};
-  box-sizing: border-box;
-  cursor: pointer;
-  position: relative;
 
   &:hover {
     background: linear-gradient(
@@ -34,7 +25,7 @@ const StyledNodeContainer = styled.div`
       ${({ theme }) => theme.background.secondary};
   }
 
-  .react-flow__node.selected & {
+  .selected & {
     border-color: ${({ theme }) => theme.color.blue};
     background: ${({ theme }) => theme.adaptiveColors.blue1};
   }

@@ -11,6 +11,7 @@ import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/wor
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowRunDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
+import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/WorkflowNodeContainer';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Position } from '@xyflow/react';
@@ -21,19 +22,9 @@ import { StepStatus } from 'twenty-shared/workflow';
 import { IconCheck, IconX, Label, useIcons } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 
-const StyledNodeContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  max-width: 240px;
-  min-width: 44px;
-  padding: ${({ theme }) => theme.spacing(2)};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  border: 1px solid ${({ theme }) => theme.border.color.strong};
+const StyledNodeContainer = styled(WorkflowNodeContainer)`
+  border-color: ${({ theme }) => theme.border.color.strong};
   background: ${({ theme }) => theme.background.secondary};
-  box-sizing: border-box;
-  cursor: pointer;
-  position: relative;
 
   &:hover {
     background: linear-gradient(
