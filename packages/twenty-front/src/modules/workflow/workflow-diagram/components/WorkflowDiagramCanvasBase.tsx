@@ -72,20 +72,6 @@ const StyledResetReactflowStyles = styled.div`
     white-space: nowrap;
   }
 
-  .react-flow__handle {
-    min-height: 0;
-    min-width: 0;
-  }
-  .react-flow__handle-top {
-    transform: translate(-50%, -50%);
-  }
-  .react-flow__handle-bottom {
-    transform: translate(-50%, 100%);
-  }
-  .react-flow__handle.connectionindicator {
-    cursor: pointer;
-  }
-
   --xy-node-border-radius: none;
   --xy-node-border: none;
   --xy-node-background-color: none;
