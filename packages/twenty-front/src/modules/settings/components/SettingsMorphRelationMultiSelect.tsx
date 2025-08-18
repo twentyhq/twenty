@@ -138,9 +138,20 @@ export const SettingsMorphRelationMultiSelect = ({
   const { setSelectedItemId } = useSelectableList(dropdownId);
 
   const handleDropdownOpen = () => {
-    if (selectedOptions && !searchInputValue) {
+    if (selectedOptions && selectedOptions.length > 0 && !searchInputValue) {
       setSelectedItemId(selectedOptions[0].label);
     }
+  };
+
+  const addIfNotIncludedOrRemoveFromArray = (array: string[], item: string) => {
+    let newArray = [...array];
+    const alreadySelectedIndex = newArray.indexOf(item);
+    if (alreadySelectedIndex !== -1) {
+      newArray.splice(alreadySelectedIndex, 1);
+    } else {
+      newArray.push(item);
+    }
+    return newArray;
   };
 
   return (
@@ -201,7 +212,12 @@ export const SettingsMorphRelationMultiSelect = ({
                         key={`${option.objectMetadataId}-${option.label}`}
                         itemId={option.label}
                         onEnter={() => {
-                          onChange?.([option.objectMetadataId]);
+                          const newSelectedObjectMetadataIds =
+                            addIfNotIncludedOrRemoveFromArray(
+                              selectedObjectMetadataIds,
+                              option.objectMetadataId,
+                            );
+                          onChange?.(newSelectedObjectMetadataIds);
                           onBlur?.();
                           closeDropdown(dropdownId);
                         }}
@@ -217,23 +233,11 @@ export const SettingsMorphRelationMultiSelect = ({
                           )}
                           isKeySelected={selectedItemId === option.label}
                           onSelectChange={() => {
-                            let newSelectedObjectMetadataIds = [
-                              ...selectedObjectMetadataIds,
-                            ];
-                            const alreadySelectedIndex =
-                              newSelectedObjectMetadataIds.indexOf(
+                            let newSelectedObjectMetadataIds =
+                              addIfNotIncludedOrRemoveFromArray(
+                                selectedObjectMetadataIds,
                                 option.objectMetadataId,
                               );
-                            if (alreadySelectedIndex !== -1) {
-                              newSelectedObjectMetadataIds.splice(
-                                alreadySelectedIndex,
-                                1,
-                              );
-                            } else {
-                              newSelectedObjectMetadataIds.push(
-                                option.objectMetadataId,
-                              );
-                            }
 
                             onChange?.(newSelectedObjectMetadataIds);
                             onBlur?.();
