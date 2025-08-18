@@ -49,7 +49,10 @@ export const useTableColumns = ({
 
   const handleColumnVisibilityChange = useCallback(
     async (
-      viewField: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
+      viewField: Pick<
+        ColumnDefinition<FieldMetadata>,
+        'fieldMetadataId' | 'isVisible'
+      >,
     ) => {
       const shouldShowColumn = !visibleTableColumns.some(
         (visibleColumn) =>
