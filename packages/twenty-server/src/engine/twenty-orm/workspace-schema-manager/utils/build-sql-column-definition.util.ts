@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { sanitizeDefaultValue } from 'src/engine/twenty-orm/workspace-schema-manager/utils/sanitize-default-value.util';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
@@ -29,7 +31,11 @@ export const buildSqlColumnDefinition = (
     parts.push('UNIQUE');
   }
 
-  if (column.default !== undefined && column.type !== 'tsvector') {
+  if (
+    isDefined(column.default) &&
+    column.default !== '' &&
+    column.type !== 'tsvector'
+  ) {
     const safeDefault = sanitizeDefaultValue(column.default);
 
     parts.push(`DEFAULT ${safeDefault}`);

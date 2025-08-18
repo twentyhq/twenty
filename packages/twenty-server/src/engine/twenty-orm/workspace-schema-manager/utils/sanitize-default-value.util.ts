@@ -7,28 +7,11 @@ export const sanitizeDefaultValue = (
     return 'NULL';
   }
 
-  const allowedFunctions = [
-    'gen_random_uuid',
-    'uuid_generate_v4',
-    'now',
-    'current_timestamp',
-    'current_date',
-    'current_time',
-    'localtime',
-    'localtimestamp',
-  ];
+  const allowedFunctions = ['public.uuid_generate_v4()', 'now()'];
 
   if (typeof defaultValue === 'string') {
-    const functionCallPattern =
-      /^(?:[a-zA-Z_][a-zA-Z0-9_]*\.)?([a-zA-Z_][a-zA-Z0-9_]*)\(\)$/;
-    const match = defaultValue.match(functionCallPattern);
-
-    if (match && allowedFunctions.includes(match[1].toLowerCase())) {
+    if (allowedFunctions.includes(defaultValue.toLowerCase())) {
       return defaultValue;
-    }
-
-    if (defaultValue === '') {
-      return "''";
     }
 
     return `'${removeSqlDDLInjection(defaultValue)}'`;
