@@ -1,7 +1,7 @@
 import { NOTETARGET_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/notetarget-flat-fields.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
-export const NOTETARGET_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
+export const NOTE_TARGET_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: '12e3cb51-c3de-4192-b0d5-965d48d001c0',
   standardId: '20202020-fff0-4b44-be82-bda313884400',
   nameSingular: 'noteTarget',

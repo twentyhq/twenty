@@ -1,13 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { findRelationFlatFieldMetadataTargetFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata.util';
+import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
+import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
+import { getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-out-of-flat-field-metadatas.util';
 import { FailedFlatObjectMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { areFlatObjectMetadataNamesSyncedWithLabels } from 'src/engine/metadata-modules/flat-object-metadata/utils/are-flat-object-metadata-names-synced-with-labels.util';
@@ -18,13 +24,44 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { doesOtherObjectWithSameNameExists } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
+import { WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 
-export type ValidateOneFlatObjectMetadataArgs = {
-  existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-  flatObjectMetadataToValidate: FlatObjectMetadata;
-  otherFlatObjectMetadataMapsToValidate?: FlatObjectMetadataMaps;
-  workspaceId: string;
+const computeRelationTargetFlatObjectMetadataMapsForValidation = ({
+  flatFieldMetadata,
+  flatObjectMetadataMaps,
+}: {
+  flatFieldMetadata: FlatFieldMetadata;
+  flatObjectMetadataMaps: FlatObjectMetadataMaps;
+}): FlatObjectMetadataMaps | undefined => {
+  if (
+    !isFlatFieldMetadataEntityOfType(
+      flatFieldMetadata,
+      FieldMetadataType.RELATION,
+    ) &&
+    !isFlatFieldMetadataEntityOfType(
+      flatFieldMetadata,
+      FieldMetadataType.MORPH_RELATION,
+    )
+  ) {
+    return undefined;
+  }
+
+  const relationTargetFlatFieldMetadata =
+    findRelationFlatFieldMetadataTargetFlatFieldMetadata({
+      flatFieldMetadata,
+      flatObjectMetadataMaps,
+    });
+
+  if (!isDefined(relationTargetFlatFieldMetadata)) {
+    return undefined;
+  }
+
+  return getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatas({
+    flatObjectMetadataMaps,
+    flatFieldMetadatas: [relationTargetFlatFieldMetadata],
+  });
 };
 
 @Injectable()
@@ -70,9 +107,11 @@ export class FlatObjectMetadataValidatorService {
   public validateFlatObjectMetadataDeletion({
     existingFlatObjectMetadataMaps,
     objectMetadataToDeleteId,
+    buildOptions,
   }: {
     existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
     objectMetadataToDeleteId: string;
+    buildOptions: WorkspaceMigrationV2BuilderOptions;
   }) {
     const errors: FailedFlatObjectMetadataValidationExceptions[] = [];
 
@@ -97,8 +136,8 @@ export class FlatObjectMetadataValidatorService {
       }
 
       if (
-        flatObjectMetadataToDelete.standardId !== null &&
-        !flatObjectMetadataToDelete.isCustom
+        !buildOptions.isSystemBuild &&
+        isStandardMetadata(flatObjectMetadataToDelete)
       ) {
         errors.push(
           new ObjectMetadataException(
@@ -108,7 +147,7 @@ export class FlatObjectMetadataValidatorService {
         );
       }
 
-      if (flatObjectMetadataToDelete.isActive) {
+      if (!buildOptions.isSystemBuild && flatObjectMetadataToDelete.isActive) {
         errors.push(
           new ObjectMetadataException(
             t`Active objects cannot be deleted`,
@@ -124,9 +163,29 @@ export class FlatObjectMetadataValidatorService {
   public async validateFlatObjectMetadataCreation({
     existingFlatObjectMetadataMaps,
     flatObjectMetadataToValidate,
-    workspaceId,
-  }: ValidateOneFlatObjectMetadataArgs) {
+    otherFlatObjectMetadataMapsToValidate,
+  }: {
+    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+    flatObjectMetadataToValidate: FlatObjectMetadata;
+    otherFlatObjectMetadataMapsToValidate?: FlatObjectMetadataMaps;
+  }) {
     const errors: FailedFlatObjectMetadataValidationExceptions[] = [];
+
+    if (
+      isDefined(
+        findFlatObjectMetadataInFlatObjectMetadataMaps({
+          flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+          objectMetadataId: flatObjectMetadataToValidate.id,
+        }),
+      )
+    ) {
+      errors.push(
+        new ObjectMetadataException(
+          t`Object with same id already exists`,
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        ),
+      );
+    }
 
     if (flatObjectMetadataToValidate.isRemote) {
       errors.push(
@@ -146,7 +205,7 @@ export class FlatObjectMetadataValidatorService {
 
     const allFlatFieldMetadatasValidationErrors: FailedFlatFieldMetadataValidationExceptions[] =
       [];
-    let existingFlatObjectMetadataMapsWithFlatObjectMetadataToBeCreatedWithoutFields =
+    let optimisticFlatObjectMetadataMaps =
       addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
         flatObjectMetadata: {
           ...flatObjectMetadataToValidate,
@@ -156,16 +215,20 @@ export class FlatObjectMetadataValidatorService {
       });
 
     for (const flatFieldMetadataToValidate of flatObjectMetadataToValidate.flatFieldMetadatas) {
-      const otherFlatObjectMetadataMapsToValidate = undefined; // TODO prastoin when implementing import
-
       const flatFieldValidatorErrors =
         await this.flatFieldMetadataValidatorService.validateFlatFieldMetadataCreation(
           {
-            existingFlatObjectMetadataMaps:
-              existingFlatObjectMetadataMapsWithFlatObjectMetadataToBeCreatedWithoutFields,
+            existingFlatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
             flatFieldMetadataToValidate,
-            workspaceId,
-            otherFlatObjectMetadataMapsToValidate,
+            workspaceId: flatObjectMetadataToValidate.workspaceId,
+            otherFlatObjectMetadataMapsToValidate: isDefined(
+              otherFlatObjectMetadataMapsToValidate,
+            )
+              ? computeRelationTargetFlatObjectMetadataMapsForValidation({
+                  flatFieldMetadata: flatFieldMetadataToValidate,
+                  flatObjectMetadataMaps: otherFlatObjectMetadataMapsToValidate,
+                })
+              : undefined,
           },
         );
 
@@ -174,11 +237,10 @@ export class FlatObjectMetadataValidatorService {
         continue;
       }
 
-      existingFlatObjectMetadataMapsWithFlatObjectMetadataToBeCreatedWithoutFields =
+      optimisticFlatObjectMetadataMaps =
         addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
           flatFieldMetadata: flatFieldMetadataToValidate,
-          flatObjectMetadataMaps:
-            existingFlatObjectMetadataMapsWithFlatObjectMetadataToBeCreatedWithoutFields,
+          flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
         });
     }
 

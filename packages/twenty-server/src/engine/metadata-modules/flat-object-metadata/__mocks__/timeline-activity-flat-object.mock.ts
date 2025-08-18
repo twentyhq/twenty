@@ -1,7 +1,7 @@
 import { TIMELINEACTIVITY_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/timelineactivity-flat-fields.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
-export const TIMELINEACTIVITY_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
+export const TIMELINE_ACTIVITY_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: '3090f830-c4b1-41a1-8e18-815760830bec',
   standardId: '20202020-6736-4337-b5c4-8b39fae325a5',
   nameSingular: 'timelineActivity',
