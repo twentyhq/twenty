@@ -1,4 +1,5 @@
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
+import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -41,19 +42,24 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       contextStoreFiltersComponentState,
     );
 
+    const contextStoreFilterGroups = useRecoilComponentValue(
+      contextStoreFilterGroupsComponentState,
+    );
+
     const contextStoreAnyFieldFilterValue = useRecoilComponentValue(
       contextStoreAnyFieldFilterValueComponentState,
     );
 
     const { filterValueDependencies } = useFilterValueDependencies();
 
-    const computedFilter = computeContextStoreFilters(
+    const computedFilter = computeContextStoreFilters({
       contextStoreTargetedRecordsRule,
       contextStoreFilters,
+      contextStoreFilterGroups,
       objectMetadataItem,
       filterValueDependencies,
       contextStoreAnyFieldFilterValue,
-    );
+    });
 
     const { totalCount } = useFindManyRecords({
       ...findManyRecordsParams,
