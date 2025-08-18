@@ -44,7 +44,7 @@ const StyledIconContainer = styled.div`
   flex-shrink: 0;
 `;
 
-const StyledSeperator = styled.div`
+const StyledSeparator = styled.div`
   align-self: stretch;
   background: ${({ theme }) => theme.background.quaternary};
   height: 1px;
@@ -68,7 +68,7 @@ export const SettingsDataModelObjectSummary = ({
 
     return index < 3 ? (
       <>
-        {index > 0 && <StyledSeperator />}
+        {index > 0 && <StyledSeparator />}
         <StyledObjectSummary
           className={className}
           key={`${objectMetadataItem.labelSingular}-${index}`}
@@ -96,7 +96,7 @@ export const SettingsDataModelObjectSummary = ({
   if (selected > 3) {
     Components.push(
       <>
-        <StyledSeperator />
+        <StyledSeparator />
         <StyledObjectSummary className={className} key={`other-objects`}>
           <StyledObjectName>
             <StyledIconContainer>
