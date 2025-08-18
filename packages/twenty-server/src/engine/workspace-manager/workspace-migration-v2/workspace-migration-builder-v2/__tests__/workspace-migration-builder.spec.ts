@@ -15,6 +15,7 @@ import {
   type WorkspaceMigrationBuilderTestCase,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
 import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
+import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-v2-field-actions-builder';
 import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-v2-object-actions-builder.service';
 import { type WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 
@@ -84,6 +85,7 @@ describe.each(allWorkspaceBuilderTestCases)(
     let flatFieldMetadataValidatorService: FlatFieldMetadataValidatorService;
     let flatObjectMetadataValidatorService: FlatObjectMetadataValidatorService;
     let objectActionsBuilder: WorkspaceMigrationV2ObjectActionsBuilderService;
+    let fieldActionsBuilder: WorkspaceMigrationV2FieldActionsBuilderService;
 
     beforeEach(() => {
       featureFlagService = {
@@ -102,10 +104,16 @@ describe.each(allWorkspaceBuilderTestCases)(
           flatFieldMetadataValidatorService,
         );
 
-      objectActionsBuilder = new WorkspaceMigrationV2ObjectActionsBuilderService(
-        flatObjectMetadataValidatorService,
+      objectActionsBuilder =
+        new WorkspaceMigrationV2ObjectActionsBuilderService(
+          flatObjectMetadataValidatorService,
+        );
+      fieldActionsBuilder =
+        new WorkspaceMigrationV2FieldActionsBuilderService();
+      service = new WorkspaceMigrationBuilderV2Service(
+        objectActionsBuilder,
+        fieldActionsBuilder,
       );
-      service = new WorkspaceMigrationBuilderV2Service(objectActionsBuilder);
     });
 
     it.each(eachTestingContextFilter(testCases))(
