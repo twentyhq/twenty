@@ -284,6 +284,8 @@ export const MKT_RESELLER_TIER_FIELD_IDS = {
   description: 'dbad9f8a-afb5-4abf-ead9-a8b7c6d5e4f3',
   // relations
   resellers: '38a96a35-4b8d-4384-8ce5-10e74a84ed84',
+  fromTierHistories: 'b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6e',
+  toTierHistories: 'c2d3e4f5-a6b7-8c9d-0e1f-2a3b4c5d6e7f',
   createdBy: 'ecbeaf9b-bfca-4bca-fbea-b9c8d7e6f5a4',
 };
 
@@ -311,4 +313,24 @@ export const MKT_RESELLER_FIELD_IDS = {
   // tracking
   position: 'e7f8a9b0-c1d2-3e4f-5a6b-c7d8e9fafbfd',
   createdBy: 'f8a9b0c1-d2e3-4f5a-6b7c-d8e9fafbfcfe',
+  // relations
+  tierHistories: 'a1b2c3d4-e5f6-789a-bcde-f012345678ab',
+};
+
+export const MKT_RESELLER_TIER_HISTORY_FIELD_IDS = {
+  // relations
+  resellerId: 'a9b0c1d2-e3f4-5a6b-7c8d-e9fafbfcfdfe',
+  fromTierId: 'b0c1d2e3-f4a5-6b7c-8d9e-fafbfcfdfeaf',
+  toTierId: 'c1d2e3f4-a5b6-7c8d-9efa-fbfcfdfea0fb',
+  // fields
+  changeType: 'd2e3f4a5-b6c7-8d9e-afbf-cfdfea0fb1fc',
+  changeReason: 'e3f4a5b6-c7d8-9eaf-bfc0-dfea0fb1fc2d',
+  actualRevenue: 'f4a5b6c7-d8e9-afb0-c1df-ea0fb1fc2d3e',
+  changedAt: 'a5b6c7d8-e9af-b0c1-d2ea-0fb1fc2d3e4f',
+  changedBy: 'b6c7d8e9-afb0-c1d2-e3fb-1fc2d3e4f5a6',
+  effectiveFrom: 'c7d8e9af-b0c1-d2e3-f4fc-2d3e4f5a6b7c',
+  notes: 'd8e9afb0-c1d2-e3f4-a5fd-3e4f5a6b7c8d',
+  // standard fields
+  position: 'e9afb0c1-d2e3-f4a5-b6fe-4f5a6b7c8d9e',
+  createdBy: 'afb0c1d2-e3f4-a5b6-c7ff-5a6b7c8d9eaf',
 };

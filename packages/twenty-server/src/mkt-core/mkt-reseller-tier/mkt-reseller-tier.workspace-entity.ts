@@ -14,6 +14,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { MKT_RESELLER_TIER_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktResellerWorkspaceEntity } from 'src/mkt-core/mkt-reseller/mkt-reseller.workspace-entity';
+import { MktResellerTierHistoryWorkspaceEntity } from 'src/mkt-core/mkt-reseller-tier-history/mkt-reseller-tier-history.workspace-entity';
 
 @WorkspaceEntity({
   standardId: MKT_OBJECT_IDS.mktResellerTier,
@@ -161,4 +162,26 @@ export class MktResellerTierWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'currentTier',
   })
   resellers: Relation<MktResellerWorkspaceEntity>[];
+
+  @WorkspaceRelation({
+    standardId: MKT_RESELLER_TIER_FIELD_IDS.fromTierHistories,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`From Tier Histories`,
+    description: msg`History records where this was the previous tier`,
+    icon: 'IconHistoryToggle',
+    inverseSideTarget: () => MktResellerTierHistoryWorkspaceEntity,
+    inverseSideFieldKey: 'fromTier',
+  })
+  fromTierHistories: Relation<MktResellerTierHistoryWorkspaceEntity>[];
+
+  @WorkspaceRelation({
+    standardId: MKT_RESELLER_TIER_FIELD_IDS.toTierHistories,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`To Tier Histories`,
+    description: msg`History records where this became the new tier`,
+    icon: 'IconHistory',
+    inverseSideTarget: () => MktResellerTierHistoryWorkspaceEntity,
+    inverseSideFieldKey: 'toTier',
+  })
+  toTierHistories: Relation<MktResellerTierHistoryWorkspaceEntity>[];
 }

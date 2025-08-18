@@ -15,7 +15,8 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MKT_RESELLER_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
-import { MktResellerTierWorkspaceEntity } from 'src/mkt-core/mkt-reseller-tier/mkt-reseller-tier';
+import { MktResellerTierWorkspaceEntity } from 'src/mkt-core/mkt-reseller-tier/mkt-reseller-tier.workspace-entity';
+import { MktResellerTierHistoryWorkspaceEntity } from 'src/mkt-core/mkt-reseller-tier-history/mkt-reseller-tier-history.workspace-entity';
 
 export enum RESELLER_STATUS {
   PENDING = 'PENDING',
@@ -242,4 +243,15 @@ export class MktResellerWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('currentTier')
   currentTierId: string | null;
+
+  @WorkspaceRelation({
+    standardId: MKT_RESELLER_FIELD_IDS.tierHistories,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Tier Histories`,
+    description: msg`History of tier changes for this reseller`,
+    icon: 'IconHistory',
+    inverseSideTarget: () => MktResellerTierHistoryWorkspaceEntity,
+    inverseSideFieldKey: 'reseller',
+  })
+  tierHistories: Relation<MktResellerTierHistoryWorkspaceEntity>[];
 }
