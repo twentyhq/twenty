@@ -44,7 +44,7 @@ export const WorkflowVariablesDropdown = ({
   clickableComponent,
 }: {
   instanceId: string;
-  onVariableSelect: (variableName: string, icon?: string) => void;
+  onVariableSelect: (variableName: string) => void;
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
   fieldTypesToExclude?: InputSchemaPropertyType[];
@@ -84,8 +84,8 @@ export const WorkflowVariablesDropdown = ({
     );
   };
 
-  const handleSubItemSelect = (subItem: string, icon?: string) => {
-    onVariableSelect(subItem, icon);
+  const handleSubItemSelect = (subItem: string) => {
+    onVariableSelect(subItem);
     setSelectedStep(initialStep);
     closeDropdown(dropdownId);
   };
