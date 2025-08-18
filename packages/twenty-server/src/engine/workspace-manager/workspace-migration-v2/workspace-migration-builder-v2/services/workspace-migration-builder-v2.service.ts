@@ -23,7 +23,6 @@ export type WorkspaceMigrationV2BuilderOptions = {
 export type WorkspaceMigrationBuildArgs = {
   workspaceId: string;
   buildOptions: WorkspaceMigrationV2BuilderOptions;
-  // Could from be optional ? we still have a race condition when if we recompute cache it could have been different than when we calculated the to
 } & FromTo<FlatObjectMetadataMaps, 'FlatObjectMetadataMaps'>;
 @Injectable()
 export class WorkspaceMigrationBuilderV2Service {
@@ -84,6 +83,13 @@ export class WorkspaceMigrationBuilderV2Service {
         },
       );
 
+    const fieldWorkspaceMigrationActions =
+      buildWorkspaceMigrationV2FieldActions({
+        inferDeletionFromMissingObjectFieldIndex:
+          buildOptions.inferDeletionFromMissingObjectFieldIndex,
+        objectMetadataDeletedCreatedUpdatedFields,
+      });
+
     const createdObjectMetadataCreateIndexActions =
       createdFlatObjectMetadata.flatMap((objectMetadata) =>
         objectMetadata.flatIndexMetadatas.map(
@@ -102,13 +108,6 @@ export class WorkspaceMigrationBuilderV2Service {
             ),
           )
         : [];
-
-    const fieldWorkspaceMigrationActions =
-      buildWorkspaceMigrationV2FieldActions({
-        inferDeletionFromMissingObjectFieldIndex:
-          buildOptions.inferDeletionFromMissingObjectFieldIndex,
-        objectMetadataDeletedCreatedUpdatedFields,
-      });
 
     const indexWorkspaceMigrationActions = buildWorkspaceMigrationIndexActions({
       objectMetadataDeletedCreatedUpdatedIndex,

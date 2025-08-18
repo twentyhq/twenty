@@ -4,7 +4,7 @@ import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/
 import {
   WorkspaceMigrationBuildArgs,
   WorkspaceMigrationBuilderV2Service,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
 import {
   WorkspaceMigrationV2Exception,
