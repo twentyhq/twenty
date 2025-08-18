@@ -8,19 +8,23 @@ import {
 } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { camelToTitleCase } from 'src/utils/camel-to-title-case';
 
-export const generateFakeField = ({
+type GenerateFakeRecordFieldArgs = {
+  type: FieldMetadataType;
+  label: string;
+  fieldMetadataId: string;
+  icon?: string;
+  value?: string;
+};
+
+export const generateFakeRecordField = ({
   type,
   label,
   icon,
   value,
   fieldMetadataId,
-}: {
-  type: FieldMetadataType;
-  label: string;
-  fieldMetadataId?: string;
-  icon?: string;
-  value?: string;
-}): (Leaf | Node) & { fieldMetadataId?: string } => {
+}: GenerateFakeRecordFieldArgs): (Leaf | Node) & {
+  fieldMetadataId: string;
+} => {
   const compositeType = compositeTypeDefinitions.get(type);
 
   if (compositeType) {

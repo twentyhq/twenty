@@ -33,6 +33,7 @@ type UseVariableDropdownReturn = {
   setSearchInputValue: (value: string) => void;
   handleSelectField: (key: string) => void;
   goBack: () => void;
+  // TODO: fix typing here
   filteredOptions: [string, any][];
 };
 
