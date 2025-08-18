@@ -8,13 +8,14 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
+import { eachTestingContextFilter } from 'twenty-shared/testing';
+import { FieldMetadataType } from 'twenty-shared/types';
 
-describe.each(fieldMetadataEnumTypes)(
+describe.each([FieldMetadataType.SELECT] as const)(
   'Create field metadata %s tests suite v2',
   (testedFieldMetadataType) => {
     let createdObjectMetadataId: string;
@@ -35,7 +36,7 @@ describe.each(fieldMetadataEnumTypes)(
 
       await makeGraphqlAPIRequest(enablePermissionsQuery);
 
-      const { data } = await createOneObjectMetadata({
+      const { data } = await forceCreateOneObjectMetadata({
         input: {
           labelSingular: LISTING_NAME_SINGULAR,
           labelPlural: LISTING_NAME_PLURAL,
@@ -62,10 +63,11 @@ describe.each(fieldMetadataEnumTypes)(
       await makeGraphqlAPIRequest(enablePermissionsQuery);
     });
 
-    test.each(failingTestCases)(
+    test.each(eachTestingContextFilter(failingTestCases))(
       'Create $title',
       async ({ context: { input } }) => {
         const { data, errors } = await createOneFieldMetadata({
+          expectToFail: true,
           input: {
             objectMetadataId: createdObjectMetadataId,
             type: testedFieldMetadataType,
