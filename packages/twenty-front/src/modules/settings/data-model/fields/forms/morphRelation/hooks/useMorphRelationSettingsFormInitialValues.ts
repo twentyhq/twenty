@@ -44,12 +44,9 @@ export const useMorphRelationSettingsFormInitialValues = ({
   const initialRelationType =
     morphRelations?.[0]?.relationType ?? RelationType.ONE_TO_MANY;
 
-  // todo @guillim not sure if this works fine
   return {
-    disableFieldEdition:
-      morphRelations?.[1]?.relationFieldMetadataItem &&
-      !morphRelations?.[1]?.relationFieldMetadataItem.isCustom,
-    disableRelationEdition: !!morphRelations?.[1]?.relationFieldMetadataItem,
+    disableFieldEdition: morphRelations?.[0]?.relationFieldMetadataItem,
+    disableRelationEdition: !!morphRelations?.[0]?.relationFieldMetadataItem,
     initialRelationObjectMetadataItems,
     initialRelationType,
   };
