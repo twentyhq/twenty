@@ -54,7 +54,7 @@ export const generateFakeFormResponse = ({
         [formFieldMetadata.name]: generateFakeFormField({
           type: formFieldMetadata.type,
           label: formFieldMetadata.label,
-          value: formFieldMetadata.placeholder ?? '',
+          value: formFieldMetadata.placeholder,
         }),
       };
     }
