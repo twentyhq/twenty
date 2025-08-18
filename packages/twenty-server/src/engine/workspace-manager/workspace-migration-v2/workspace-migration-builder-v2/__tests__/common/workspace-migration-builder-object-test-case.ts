@@ -35,7 +35,6 @@ const DELETE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
       },
       expectedActionsTypeCounter: {
         deleteObject: 1,
-        deleteField: ROCKET_FLAT_OBJECT_MOCK.flatFieldMetadatas.length,
       },
     },
   },
@@ -58,7 +57,6 @@ const DELETE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
       },
       expectedActionsTypeCounter: {
         deleteObject: 1,
-        deleteField: COMPANY_FLAT_OBJECT_MOCK.flatFieldMetadatas.length,
       },
     },
   },
