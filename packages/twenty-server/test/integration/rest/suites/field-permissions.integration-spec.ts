@@ -9,6 +9,7 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
 describe('Restricted fields', () => {
@@ -146,7 +147,7 @@ describe('Restricted fields', () => {
     beforeAll(async () => {
       const enablePermissionsQuery = updateFeatureFlagFactory(
         SEED_APPLE_WORKSPACE_ID,
-        'IS_FIELDS_PERMISSIONS_ENABLED',
+        FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED,
         true,
       );
 
@@ -156,7 +157,7 @@ describe('Restricted fields', () => {
     afterAll(async () => {
       const disablePermissionsQuery = updateFeatureFlagFactory(
         SEED_APPLE_WORKSPACE_ID,
-        'IS_FIELDS_PERMISSIONS_ENABLED',
+        FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED,
         false,
       );
 
