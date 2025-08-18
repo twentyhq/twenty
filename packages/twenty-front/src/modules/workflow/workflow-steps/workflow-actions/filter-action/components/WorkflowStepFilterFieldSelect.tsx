@@ -72,7 +72,7 @@ export const WorkflowStepFilterFieldSelect = ({
           rawVariableName: variableName,
           part: 'stepId',
         });
-        const currentStepOutputSchema = snapshot
+        const [currentStepOutputSchema] = snapshot
           .getLoadable(
             stepsOutputSchemaFamilySelector({
               workflowVersionId,
@@ -87,7 +87,7 @@ export const WorkflowStepFilterFieldSelect = ({
           fieldMetadataId,
           compositeFieldSubFieldName,
         } = searchVariableThroughOutputSchema({
-          stepOutputSchema: currentStepOutputSchema?.[0],
+          stepOutputSchema: currentStepOutputSchema,
           rawVariableName: variableName,
           isFullRecord: false,
         });
@@ -145,9 +145,7 @@ export const WorkflowStepFilterFieldSelect = ({
 
   const dropdownId = `step-filter-field-${stepFilter.id}`;
 
-  const isReadonly = readonly ?? false;
-
-  if (isReadonly || noAvailableVariables) {
+  if (noAvailableVariables) {
     return (
       <Dropdown
         dropdownId={dropdownId}
@@ -155,12 +153,7 @@ export const WorkflowStepFilterFieldSelect = ({
           <SelectControl
             selectedOption={{
               value: stepFilter.stepOutputKey,
-              label: isReadonly
-                ? (label ?? '')
-                : t`No available fields to select`,
-              Icon: filterFieldMetadataItem?.icon
-                ? getIcon(filterFieldMetadataItem.icon)
-                : undefined,
+              label: t`No available fields to select`,
             }}
             isDisabled={true}
           />
@@ -185,6 +178,7 @@ export const WorkflowStepFilterFieldSelect = ({
               : undefined,
           }}
           textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
+          isDisabled={readonly}
         />
       }
       shouldDisplayRecordFields={shouldDisplayRecordFields}
