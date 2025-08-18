@@ -1,6 +1,7 @@
 import {
   type VariableDateViewFilterValue,
 } from '@/types/RelativeDateValue';
+import { isNumber, isObject } from '@sniptt/guards';
 
 export const safeParseRelativeDateFilterValue = (
   value: string,
@@ -8,7 +9,7 @@ export const safeParseRelativeDateFilterValue = (
   try {
     const parsedValue = JSON.parse(value);
 
-    if (!parsedValue || typeof parsedValue !== 'object') {
+    if (!parsedValue || !isObject(parsedValue)) {
       return undefined;
     }
 
@@ -23,7 +24,7 @@ export const safeParseRelativeDateFilterValue = (
     }
 
     if (direction === 'NEXT' || direction === 'PAST') {
-      if (typeof amount !== 'number' || amount <= 0) {
+      if (!isNumber(amount) || amount <= 0) {
         return undefined;
       }
     }
