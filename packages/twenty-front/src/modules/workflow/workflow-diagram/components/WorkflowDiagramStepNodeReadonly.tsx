@@ -9,6 +9,7 @@ import { WorkflowDiagramHandleReadonly } from '@/workflow/workflow-diagram/compo
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeIcon';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeIconContainer';
+import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/components/WorkflowNodeRightPart';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -37,16 +38,6 @@ const StyledNodeContainer = styled(WorkflowNodeContainer)`
     border-color: ${({ theme }) => theme.color.blue};
     background: ${({ theme }) => theme.adaptiveColors.blue1};
   }
-`;
-
-const StyledNodeRightPart = styled.div`
-  align-items: flex-start;
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  max-width: 184px;
-  box-sizing: border-box;
 `;
 
 const StyledNodeLabelWithCounterPart = styled.div`
@@ -153,13 +144,13 @@ export const WorkflowDiagramStepNodeReadonly = ({
           <WorkflowDiagramStepNodeIcon data={data} />
         </WorkflowNodeIconContainer>
 
-        <StyledNodeRightPart>
+        <WorkflowNodeRightPart>
           <StyledNodeLabelWithCounterPart>
             <StyledNodeLabel>{capitalize(data.nodeType)}</StyledNodeLabel>
           </StyledNodeLabelWithCounterPart>
 
           <StyledNodeTitle>{data.name}</StyledNodeTitle>
-        </StyledNodeRightPart>
+        </WorkflowNodeRightPart>
       </StyledNodeContainer>
 
       <WorkflowDiagramHandleReadonly

@@ -9,6 +9,7 @@ import { WorkflowDiagramHandleReadonly } from '@/workflow/workflow-diagram/compo
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeIcon';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeIconContainer';
+import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/components/WorkflowNodeRightPart';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowRunDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -56,16 +57,6 @@ const StyledNodeContainer = styled(WorkflowNodeContainer)`
     border-color: ${({ theme }) => theme.color.turquoise};
     background: ${({ theme }) => theme.adaptiveColors.turquoise1};
   }
-`;
-
-const StyledNodeRightPart = styled.div`
-  align-items: flex-start;
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  max-width: 184px;
-  box-sizing: border-box;
 `;
 
 const StyledNodeLabelWithCounterPart = styled.div`
@@ -219,7 +210,7 @@ export const WorkflowRunDiagramStepNode = ({
           <WorkflowDiagramStepNodeIcon data={data} />
         </WorkflowNodeIconContainer>
 
-        <StyledNodeRightPart>
+        <WorkflowNodeRightPart>
           <StyledNodeLabelWithCounterPart>
             <StyledNodeLabel data-status={data.runStatus}>
               {capitalize(data.nodeType)}
@@ -252,7 +243,7 @@ export const WorkflowRunDiagramStepNode = ({
           <StyledNodeTitle data-status={data.runStatus}>
             {data.name}
           </StyledNodeTitle>
-        </StyledNodeRightPart>
+        </WorkflowNodeRightPart>
       </StyledNodeContainer>
 
       <WorkflowDiagramHandleReadonly
