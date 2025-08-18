@@ -6,17 +6,15 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { findRelationFlatFieldMetadataTargetFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
 import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
-import { getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-out-of-flat-field-metadatas.util';
 import { FailedFlatObjectMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { areFlatObjectMetadataNamesSyncedWithLabels } from 'src/engine/metadata-modules/flat-object-metadata/utils/are-flat-object-metadata-names-synced-with-labels.util';
+import { computeRelationTargetFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/compute-relation-target-flat-object-metadata-maps.util';
 import { validateFlatObjectMetadataIdentifiers } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util';
 import { validateFlatObjectMetadataLabel } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util';
 import { validateFlatObjectMetadataNames } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util';
@@ -26,43 +24,7 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { doesOtherObjectWithSameNameExists } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
-import { WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
-
-const computeRelationTargetFlatObjectMetadataMapsForValidation = ({
-  flatFieldMetadata,
-  flatObjectMetadataMaps,
-}: {
-  flatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadataMaps: FlatObjectMetadataMaps;
-}): FlatObjectMetadataMaps | undefined => {
-  if (
-    !isFlatFieldMetadataEntityOfType(
-      flatFieldMetadata,
-      FieldMetadataType.RELATION,
-    ) &&
-    !isFlatFieldMetadataEntityOfType(
-      flatFieldMetadata,
-      FieldMetadataType.MORPH_RELATION,
-    )
-  ) {
-    return undefined;
-  }
-
-  const relationTargetFlatFieldMetadata =
-    findRelationFlatFieldMetadataTargetFlatFieldMetadata({
-      flatFieldMetadata,
-      flatObjectMetadataMaps,
-    });
-
-  if (!isDefined(relationTargetFlatFieldMetadata)) {
-    return undefined;
-  }
-
-  return getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatas({
-    flatObjectMetadataMaps,
-    flatFieldMetadatas: [relationTargetFlatFieldMetadata],
-  });
-};
+import { WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
 
 @Injectable()
 export class FlatObjectMetadataValidatorService {
@@ -215,20 +177,29 @@ export class FlatObjectMetadataValidatorService {
       });
 
     for (const flatFieldMetadataToValidate of flatObjectMetadataToValidate.flatFieldMetadatas) {
+      const relationTargetFlatObjectMetadataMaps =
+        (isFlatFieldMetadataEntityOfType(
+          flatFieldMetadataToValidate,
+          FieldMetadataType.RELATION,
+        ) ||
+          isFlatFieldMetadataEntityOfType(
+            flatFieldMetadataToValidate,
+            FieldMetadataType.MORPH_RELATION,
+          )) &&
+        isDefined(otherFlatObjectMetadataMapsToValidate)
+          ? computeRelationTargetFlatObjectMetadataMaps({
+              flatFieldMetadata: flatFieldMetadataToValidate,
+              flatObjectMetadataMaps: otherFlatObjectMetadataMapsToValidate,
+            })
+          : undefined;
       const flatFieldValidatorErrors =
         await this.flatFieldMetadataValidatorService.validateFlatFieldMetadataCreation(
           {
             existingFlatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
             flatFieldMetadataToValidate,
             workspaceId: flatObjectMetadataToValidate.workspaceId,
-            otherFlatObjectMetadataMapsToValidate: isDefined(
-              otherFlatObjectMetadataMapsToValidate,
-            )
-              ? computeRelationTargetFlatObjectMetadataMapsForValidation({
-                  flatFieldMetadata: flatFieldMetadataToValidate,
-                  flatObjectMetadataMaps: otherFlatObjectMetadataMapsToValidate,
-                })
-              : undefined,
+            otherFlatObjectMetadataMapsToValidate:
+              relationTargetFlatObjectMetadataMaps,
           },
         );
 

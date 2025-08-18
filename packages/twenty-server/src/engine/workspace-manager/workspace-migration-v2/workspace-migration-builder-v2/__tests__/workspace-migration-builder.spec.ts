@@ -6,7 +6,6 @@ import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/se
 import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FlatObjectMetadataValidatorService } from 'src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service';
-import { WorkspaceMigrationV2ObjectActionsBuilder } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-v2-object-actions-builder';
 import { WORKSPACE_MIGRATION_FIELD_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-field-test-case';
 import { WORKSPACE_MIGRATION_INDEX_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-index-test-case';
 import { WORKSPACE_MIGRATION_OBJECT_BUILDER_TEST_CASES } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/common/workspace-migration-builder-object-test-case';
@@ -15,8 +14,10 @@ import {
   type ExpectedActionCounters,
   type WorkspaceMigrationBuilderTestCase,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/__tests__/types/workspace-migration-builder-test-case.type';
+import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
+import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-v2-field-actions-builder.service';
+import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-v2-object-actions-builder.service';
 import { type WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
-import { WorkspaceMigrationBuilderV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 
 const allWorkspaceBuilderTestCases: {
   label: string;
@@ -83,7 +84,8 @@ describe.each(allWorkspaceBuilderTestCases)(
     let flatFieldMetadataTypeValidatorService: FlatFieldMetadataTypeValidatorService;
     let flatFieldMetadataValidatorService: FlatFieldMetadataValidatorService;
     let flatObjectMetadataValidatorService: FlatObjectMetadataValidatorService;
-    let objectActionsBuilder: WorkspaceMigrationV2ObjectActionsBuilder;
+    let objectActionsBuilder: WorkspaceMigrationV2ObjectActionsBuilderService;
+    let fieldActionsBuilder: WorkspaceMigrationV2FieldActionsBuilderService;
 
     beforeEach(() => {
       featureFlagService = {
@@ -102,10 +104,17 @@ describe.each(allWorkspaceBuilderTestCases)(
           flatFieldMetadataValidatorService,
         );
 
-      objectActionsBuilder = new WorkspaceMigrationV2ObjectActionsBuilder(
-        flatObjectMetadataValidatorService,
+      objectActionsBuilder =
+        new WorkspaceMigrationV2ObjectActionsBuilderService(
+          flatObjectMetadataValidatorService,
+        );
+      fieldActionsBuilder = new WorkspaceMigrationV2FieldActionsBuilderService(
+        flatFieldMetadataValidatorService,
       );
-      service = new WorkspaceMigrationBuilderV2Service(objectActionsBuilder);
+      service = new WorkspaceMigrationBuilderV2Service(
+        objectActionsBuilder,
+        fieldActionsBuilder,
+      );
     });
 
     it.each(eachTestingContextFilter(testCases))(
