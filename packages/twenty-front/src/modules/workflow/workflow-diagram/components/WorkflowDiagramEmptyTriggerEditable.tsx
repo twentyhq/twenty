@@ -4,6 +4,7 @@ import { commandMenuNavigationStackState } from '@/command-menu/states/commandMe
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeContainer';
+import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeIconContainer';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -29,17 +30,6 @@ const StyledNodeContainer = styled(WorkflowNodeContainer)`
     border-color: ${({ theme }) => theme.color.blue};
     background: ${({ theme }) => theme.adaptiveColors.blue1};
   }
-`;
-
-const StyledNodeIconContainer = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: 4px;
-  box-sizing: border-box;
-  display: flex;
-  height: 32px;
-  justify-content: center;
-  width: 32px;
 `;
 
 const StyledNodeRightPart = styled.div`
@@ -122,7 +112,7 @@ export const WorkflowDiagramEmptyTriggerEditable = () => {
       data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
       onClick={handleClick}
     >
-      <StyledNodeIconContainer />
+      <WorkflowNodeIconContainer />
 
       <StyledNodeRightPart>
         <StyledNodeLabelWithCounterPart>

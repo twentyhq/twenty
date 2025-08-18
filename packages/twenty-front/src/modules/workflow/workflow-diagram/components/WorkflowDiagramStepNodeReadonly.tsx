@@ -8,6 +8,7 @@ import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/st
 import { WorkflowDiagramHandleReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramHandleReadonly';
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeIcon';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeContainer';
+import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeIconContainer';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -36,17 +37,6 @@ const StyledNodeContainer = styled(WorkflowNodeContainer)`
     border-color: ${({ theme }) => theme.color.blue};
     background: ${({ theme }) => theme.adaptiveColors.blue1};
   }
-`;
-
-const StyledNodeIconContainer = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: 4px;
-  box-sizing: border-box;
-  display: flex;
-  height: 32px;
-  justify-content: center;
-  width: 32px;
 `;
 
 const StyledNodeRightPart = styled.div`
@@ -159,9 +149,9 @@ export const WorkflowDiagramStepNodeReadonly = ({
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
         onClick={handleClick}
       >
-        <StyledNodeIconContainer>
+        <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />
-        </StyledNodeIconContainer>
+        </WorkflowNodeIconContainer>
 
         <StyledNodeRightPart>
           <StyledNodeLabelWithCounterPart>

@@ -2,6 +2,7 @@ import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/co
 import { WorkflowDiagramHandleEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramHandleEditable';
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeIcon';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeContainer';
+import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/components/WorkflowNodeIconContainer';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { useEdgeSelected } from '@/workflow/workflow-diagram/hooks/useEdgeSelected';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
@@ -45,17 +46,6 @@ const StyledNodeContainer = styled(WorkflowNodeContainer)`
     border-color: ${({ theme }) => theme.color.blue};
     background: ${({ theme }) => theme.adaptiveColors.blue1};
   }
-`;
-
-const StyledNodeIconContainer = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: 4px;
-  box-sizing: border-box;
-  display: flex;
-  height: 32px;
-  justify-content: center;
-  width: 32px;
 `;
 
 const StyledNodeRightPart = styled.div`
@@ -158,9 +148,9 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <StyledNodeIconContainer>
+        <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />
-        </StyledNodeIconContainer>
+        </WorkflowNodeIconContainer>
 
         <StyledNodeRightPart>
           <StyledNodeLabelWithCounterPart>
