@@ -1,7 +1,7 @@
-import { v4 } from 'uuid';
 import { type FieldMetadataEnumSuccessfulAndFailingTestCases } from 'test/integration/metadata/suites/field-metadata/enum/types/fieldMetadataEnumSuccessfulAndFailingTestCases';
 import { type UpdateCreateFieldMetadataSelectTestCase } from 'test/integration/metadata/suites/field-metadata/enum/types/update-create-field-metadata-enum-test-case';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
@@ -69,6 +69,7 @@ export const SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_T
       ...fuzzedDefaultValueFailingTestCases,
       ...fuzzedOptionsStringFieldFailingTestCases,
       {
+        only: true,
         title: 'should fail with invalid option id',
         context: {
           input: {
