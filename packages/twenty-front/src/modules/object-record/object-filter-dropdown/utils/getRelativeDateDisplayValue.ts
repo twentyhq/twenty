@@ -1,8 +1,8 @@
+import { plural } from 'pluralize';
 import {
   type VariableDateViewFilterValueDirection,
   type VariableDateViewFilterValueUnit,
-} from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
-import { plural } from 'pluralize';
+} from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
 export const getRelativeDateDisplayValue = (

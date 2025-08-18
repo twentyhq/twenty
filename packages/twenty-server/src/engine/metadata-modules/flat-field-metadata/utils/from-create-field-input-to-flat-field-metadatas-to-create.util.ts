@@ -125,6 +125,15 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
         ],
       };
     }
+    case FieldMetadataType.TS_VECTOR: {
+      return {
+        status: 'fail',
+        error: new FieldMetadataException(
+          'TS Vector is not supported for field creation',
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        ),
+      };
+    }
     case FieldMetadataType.UUID:
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONES:
@@ -143,8 +152,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.RICH_TEXT:
     case FieldMetadataType.RICH_TEXT_V2:
     case FieldMetadataType.ACTOR:
-    case FieldMetadataType.ARRAY:
-    case FieldMetadataType.TS_VECTOR: {
+    case FieldMetadataType.ARRAY: {
       return {
         status: 'success',
         result: [

@@ -5,6 +5,8 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
+import { parseAndEvaluateRelativeDateFilter } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/parse-and-evaluate-relative-date-filter.util';
+
 type ResolvedFilter = Omit<StepFilter, 'value' | 'stepOutputKey'> & {
   rightOperand: unknown;
   leftOperand: unknown;
@@ -153,11 +155,13 @@ function evaluateBooleanFilter(filter: ResolvedFilter): boolean {
 
 function evaluateDateFilter(filter: ResolvedFilter): boolean {
   const dateLeftValue = new Date(String(filter.leftOperand));
-  const dateRightValue = new Date(String(filter.rightOperand));
 
   switch (filter.operand) {
     case ViewFilterOperand.Is:
-      return dateLeftValue.getDate() === dateRightValue.getDate();
+      return (
+        dateLeftValue.getDate() ===
+        new Date(String(filter.rightOperand)).getDate()
+      );
     case ViewFilterOperand.IsInPast:
       return dateLeftValue.getTime() < Date.now();
 
@@ -168,10 +172,16 @@ function evaluateDateFilter(filter: ResolvedFilter): boolean {
       return dateLeftValue.toDateString() === new Date().toDateString();
 
     case ViewFilterOperand.IsBefore:
-      return dateLeftValue.getTime() < dateRightValue.getTime();
+      return (
+        dateLeftValue.getTime() <
+        new Date(String(filter.rightOperand)).getTime()
+      );
 
     case ViewFilterOperand.IsAfter:
-      return dateLeftValue.getTime() > dateRightValue.getTime();
+      return (
+        dateLeftValue.getTime() >
+        new Date(String(filter.rightOperand)).getTime()
+      );
 
     case ViewFilterOperand.IsEmpty:
       return (
@@ -186,6 +196,12 @@ function evaluateDateFilter(filter: ResolvedFilter): boolean {
         filter.leftOperand !== undefined &&
         filter.leftOperand !== ''
       );
+
+    case ViewFilterOperand.IsRelative:
+      return parseAndEvaluateRelativeDateFilter({
+        dateToCheck: dateLeftValue,
+        relativeDateString: String(filter.rightOperand),
+      });
 
     default:
       throw new Error(
