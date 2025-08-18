@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 
+import { FieldMetadataType, FromTo } from 'twenty-shared/types';
+
+import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
@@ -15,7 +17,6 @@ import {
   getWorkspaceMigrationV2FieldCreateAction,
   getWorkspaceMigrationV2FieldDeleteAction,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/get-workspace-migration-v2-field-actions';
-import { FieldMetadataType, FromTo } from 'twenty-shared/types';
 
 type BuildWorkspaceMigrationV2FieldActionsArgs = FromTo<
   FlatObjectMetadataMaps,
