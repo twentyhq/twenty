@@ -11,6 +11,7 @@ import { SeedOrderItemModuleCommand } from 'src/mkt-core/dev-seeder/commands/mkt
 import { SeedInvoiceModuleCommand } from 'src/mkt-core/dev-seeder/commands/mkt-invoice-data-seed-dev-workspace.command';
 import { MktPaymentMethodDataSeedDevWorkspaceCommand } from 'src/mkt-core/dev-seeder/commands/mkt-payment-method-data-seed-dev-workspace.command';
 import { MktPaymentDataSeedDevWorkspaceCommand } from 'src/mkt-core/dev-seeder/commands/mkt-payment-data-seed-dev-workspace.command';
+import { SeedResellerTierModuleCommand } from 'src/mkt-core/dev-seeder/commands/mkt-reseller-tier-data-seed-dev-workspace.command';
 
 export const MKT_DATABASE_COMMAND_MODULES = [
   // product commands
@@ -33,4 +34,6 @@ export const MKT_DATABASE_COMMAND_MODULES = [
   // payment commands
   MktPaymentMethodDataSeedDevWorkspaceCommand,
   MktPaymentDataSeedDevWorkspaceCommand,
+  // reseller commands
+  SeedResellerTierModuleCommand,
 ];

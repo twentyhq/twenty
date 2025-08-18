@@ -51,6 +51,10 @@ import {
   MKT_PAYMENT_METHOD_DATA_SEED_COLUMNS,
   MKT_PAYMENT_METHOD_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-payment-method-data-seeds.constants';
+import {
+  MKT_RESELLER_TIER_DATA_SEED_COLUMNS,
+  MKT_RESELLER_TIER_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-reseller-tier-data-seeds.constants';
 
 export const MKT_RECORD_SEEDS_CONFIGS = [
   // Product configs
@@ -119,5 +123,10 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     tableName: 'mktPayment',
     pgColumns: MKT_PAYMENT_DATA_SEED_COLUMNS,
     recordSeeds: MKT_PAYMENT_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktResellerTier',
+    pgColumns: MKT_RESELLER_TIER_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_RESELLER_TIER_DATA_SEEDS,
   },
 ];

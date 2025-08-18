@@ -11,6 +11,7 @@ import { prefillMktVariantAttributes } from 'src/mkt-core/dev-seeder/prefill-dat
 import { prefillMktVariants } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-variants';
 import { prefillMktPaymentMethods } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-payment-methods';
 import { prefillMktPayments } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-payments';
+import { prefillMktResellerTiers } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-reseller-tiers';
 
 export const MKT_PREFILLS = [
   // product prefills
@@ -33,4 +34,6 @@ export const MKT_PREFILLS = [
   // payment prefills (after orders to reference existing orders)
   prefillMktPaymentMethods,
   prefillMktPayments,
+  // reseller prefills
+  prefillMktResellerTiers,
 ];
