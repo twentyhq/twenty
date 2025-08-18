@@ -1,35 +1,36 @@
 import {
   type VariableDateViewFilterValue,
+  type VariableDateViewFilterValueDirection,
+  type VariableDateViewFilterValueUnit,
 } from '@/types/RelativeDateValue';
-import { isNumber, isObject } from '@sniptt/guards';
+import { z } from 'zod';
+
+const RelativeDateValueSchema = z.object({
+  direction: z.enum(['NEXT', 'THIS', 'PAST'] as const) as z.ZodType<VariableDateViewFilterValueDirection>,
+  unit: z.enum(['DAY', 'WEEK', 'MONTH', 'YEAR'] as const) as z.ZodType<VariableDateViewFilterValueUnit>,
+  amount: z.number().positive().optional(),
+}).refine((data) => {
+  if (data.direction === 'NEXT' || data.direction === 'PAST') {
+    return data.amount !== undefined && data.amount > 0;
+  }
+  return true;
+}, {
+  message: 'Amount is required for NEXT and PAST directions and must be positive',
+});
 
 export const safeParseRelativeDateFilterValue = (
   value: string,
 ): VariableDateViewFilterValue | undefined => {
   try {
-    const parsedValue = JSON.parse(value);
+    const parsedJson = JSON.parse(value);
 
-    if (!parsedValue || !isObject(parsedValue)) {
-      return undefined;
+    const result = RelativeDateValueSchema.safeParse(parsedJson);
+
+    if (result.success) {
+      return result.data;
     }
 
-    const { direction, unit, amount } = parsedValue;
-
-    if (!['NEXT', 'THIS', 'PAST'].includes(direction)) {
-      return undefined;
-    }
-
-    if (!['DAY', 'WEEK', 'MONTH', 'YEAR'].includes(unit)) {
-      return undefined;
-    }
-
-    if (direction === 'NEXT' || direction === 'PAST') {
-      if (!isNumber(amount) || amount <= 0) {
-        return undefined;
-      }
-    }
-
-    return { direction, unit, amount };
+    return undefined;
   } catch {
     return undefined;
   }

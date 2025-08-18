@@ -5,7 +5,7 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
-import { evaluateRelativeDateFilter } from './evaluate-relative-date-filter.util';
+import { parseAndEvaluateRelativeDateFilter } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/parse-and-evaluate-relative-date-filter.util';
 
 type ResolvedFilter = Omit<StepFilter, 'value' | 'stepOutputKey'> & {
   rightOperand: unknown;
@@ -198,7 +198,7 @@ function evaluateDateFilter(filter: ResolvedFilter): boolean {
       );
 
     case ViewFilterOperand.IsRelative:
-      return evaluateRelativeDateFilter({
+      return parseAndEvaluateRelativeDateFilter({
         dateToCheck: dateLeftValue,
         relativeDateString: String(filter.rightOperand),
       });

@@ -23,44 +23,57 @@ import {
 } from 'twenty-shared/types';
 import { safeParseRelativeDateFilterValue } from 'twenty-shared/utils';
 
-export function evaluateRelativeDateFilter({
+export const parseAndEvaluateRelativeDateFilter = ({
   dateToCheck,
   relativeDateString,
 }: {
   dateToCheck: Date;
   relativeDateString: string;
-}): boolean {
-  const relativeDateValue =
+}): boolean => {
+  const relativeDateFilterValue =
     safeParseRelativeDateFilterValue(relativeDateString);
 
-  if (!relativeDateValue) {
+  if (!relativeDateFilterValue) {
     return false;
   }
 
+  return evaluateRelativeDateFilter({
+    dateToCheck,
+    relativeDateFilterValue,
+  });
+};
+
+export const evaluateRelativeDateFilter = ({
+  dateToCheck,
+  relativeDateFilterValue,
+}: {
+  dateToCheck: Date;
+  relativeDateFilterValue: VariableDateViewFilterValue;
+}): boolean => {
   const now = new Date();
 
-  switch (relativeDateValue.direction) {
+  switch (relativeDateFilterValue.direction) {
     case 'NEXT':
-      return evaluateNextDirection(dateToCheck, relativeDateValue, now);
+      return evaluateNextDirection(dateToCheck, relativeDateFilterValue, now);
     case 'THIS':
-      return evaluateThisDirection(dateToCheck, relativeDateValue, now);
+      return evaluateThisDirection(dateToCheck, relativeDateFilterValue, now);
     case 'PAST':
-      return evaluatePastDirection(dateToCheck, relativeDateValue, now);
+      return evaluatePastDirection(dateToCheck, relativeDateFilterValue, now);
     default:
       return false;
   }
-}
+};
 
-function evaluateNextDirection(
+const evaluateNextDirection = (
   dateToCheck: Date,
-  relativeDateValue: VariableDateViewFilterValue,
+  relativeDateFilterValue: VariableDateViewFilterValue,
   now: Date,
-): boolean {
-  if (relativeDateValue.amount === undefined) {
+): boolean => {
+  if (relativeDateFilterValue.amount === undefined) {
     return false;
   }
 
-  const { amount, unit } = relativeDateValue;
+  const { amount, unit } = relativeDateFilterValue;
 
   const endOfPeriod = addUnitToDate(now, amount, unit);
 
@@ -72,18 +85,18 @@ function evaluateNextDirection(
     start: now,
     end: endOfPeriod,
   });
-}
+};
 
 function evaluatePastDirection(
   dateToCheck: Date,
-  relativeDateValue: VariableDateViewFilterValue,
+  relativeDateFilterValue: VariableDateViewFilterValue,
   now: Date,
 ): boolean {
-  if (relativeDateValue.amount === undefined) {
+  if (relativeDateFilterValue.amount === undefined) {
     return false;
   }
 
-  const { amount, unit } = relativeDateValue;
+  const { amount, unit } = relativeDateFilterValue;
 
   const startOfPeriod = subtractUnitFromDate(now, amount, unit);
 
