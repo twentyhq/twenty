@@ -64,8 +64,12 @@ const StyledEmptyField = styled.div`
 
 export const RecordInlineCellDisplayMode = ({
   children,
+  onClick,
   isHovered,
-}: React.PropsWithChildren<{ isHovered: boolean }>) => {
+}: React.PropsWithChildren<{
+  isHovered: boolean;
+  onClick?: () => void;
+}>) => {
   const { t } = useLingui();
 
   const { editModeContentOnly, showLabel, label, buttonIcon } =
@@ -86,7 +90,10 @@ export const RecordInlineCellDisplayMode = ({
 
   return (
     <>
-      <StyledRecordInlineCellNormalModeOuterContainer isHovered={isHovered}>
+      <StyledRecordInlineCellNormalModeOuterContainer
+        isHovered={isHovered}
+        onClick={onClick}
+      >
         <StyledRecordInlineCellNormalModeInnerContainer>
           {(isDisplayModeContentEmpty && !shouldDisplayEditModeOnFocus) ||
           !children ? (
@@ -96,7 +103,9 @@ export const RecordInlineCellDisplayMode = ({
           )}
         </StyledRecordInlineCellNormalModeInnerContainer>
       </StyledRecordInlineCellNormalModeOuterContainer>
-      {showEditButton && <RecordInlineCellButton Icon={buttonIcon} />}
+      {showEditButton && (
+        <RecordInlineCellButton Icon={buttonIcon} onClick={onClick} />
+      )}
     </>
   );
 };

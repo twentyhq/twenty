@@ -11,9 +11,15 @@ export type ExpectedActionCounters = Partial<
   Record<CamelCasedWorkspaceMigrationActionsType, number>
 >;
 
+type TestWorkspaceMigrationBuildArgs = Omit<
+  WorkspaceMigrationBuildArgs,
+  'workspaceId' | 'buildOptions'
+> &
+  Partial<Pick<WorkspaceMigrationBuildArgs, 'buildOptions'>>;
+
 export type WorkspaceMigrationBuilderTestCase = EachTestingContext<{
   input:
-    | Omit<WorkspaceMigrationBuildArgs, 'workspaceId'>
-    | (() => Omit<WorkspaceMigrationBuildArgs, 'workspaceId'>);
+    | TestWorkspaceMigrationBuildArgs
+    | (() => TestWorkspaceMigrationBuildArgs);
   expectedActionsTypeCounter?: ExpectedActionCounters;
 }>;

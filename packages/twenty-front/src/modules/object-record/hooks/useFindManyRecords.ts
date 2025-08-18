@@ -15,6 +15,8 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 
+import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {
     onError?: (error?: Error) => void;
@@ -53,9 +55,19 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     handleError: onError,
   });
 
+  const softDeleteFilter: RecordGqlOperationFilter = {
+    or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
+  };
+
+  const withSoftDeleteFilter = withSoftDeleted
+    ? {
+        and: [...(filter ? [filter] : []), softDeleteFilter],
+      }
+    : filter;
+
   const queryIdentifier = getQueryIdentifier({
     objectNameSingular,
-    filter,
+    filter: withSoftDeleteFilter,
     orderBy,
     limit,
   });
@@ -65,10 +77,6 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     queryIdentifier,
     onCompleted,
   });
-
-  const withSoftDeleterFilter = {
-    or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
-  };
 
   const objectPermissions = useObjectPermissionsForObject(
     objectMetadataItem.id,
@@ -80,14 +88,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
       skip: skip || !objectMetadataItem || !hasReadPermission,
       variables: {
-        filter: withSoftDeleted
-          ? {
-              and: [
-                ...(filter ? [filter] : []),
-                ...(withSoftDeleted ? [withSoftDeleterFilter] : []),
-              ],
-            }
-          : filter,
+        filter: withSoftDeleteFilter,
         orderBy,
         lastCursor: cursorFilter?.cursor ?? undefined,
         limit,
@@ -101,7 +102,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   const { fetchMoreRecords, records, hasNextPage } =
     useFetchMoreRecordsWithPagination<T>({
       objectNameSingular,
-      filter,
+      filter: withSoftDeleteFilter,
       orderBy,
       limit,
       fetchMore,

@@ -36,12 +36,10 @@ export const RecordInlineCellValue = () => {
   }
 
   return (
-    <>
-      <StyledClickableContainer readonly={readonly} isCentered={isCentered}>
-        <RecordInlineCellDisplayMode isHovered={false}>
-          <FieldDisplay />
-        </RecordInlineCellDisplayMode>
-      </StyledClickableContainer>
-    </>
+    <StyledClickableContainer readonly={readonly} isCentered={isCentered}>
+      <RecordInlineCellDisplayMode isHovered={false}>
+        <FieldDisplay />
+      </RecordInlineCellDisplayMode>
+    </StyledClickableContainer>
   );
 };

@@ -18,53 +18,54 @@ export class WorkspaceMetadataMigrationRunnerService {
   runWorkspaceMetadataMigration = async ({
     action,
     queryRunner,
+    flatObjectMetadataMaps,
   }: WorkspaceMigrationRunnerArgs) => {
     switch (action.type) {
       case 'delete_object': {
         await this.workspaceMetadataObjectMigrationRunnerService.runDeleteObjectMetadataMigration(
-          { action, queryRunner },
+          { action, queryRunner, flatObjectMetadataMaps },
         );
         break;
       }
       case 'create_object': {
         await this.workspaceMetadataObjectMigrationRunnerService.runCreateObjectMetadataMigration(
-          { action, queryRunner },
+          { action, queryRunner, flatObjectMetadataMaps },
         );
         break;
       }
       case 'update_object': {
         await this.workspaceMetadataObjectMigrationRunnerService.runUpdateObjectMetadataMigration(
-          { action, queryRunner },
+          { action, queryRunner, flatObjectMetadataMaps },
         );
         break;
       }
       case 'create_field': {
         await this.workspaceMetadataFieldMigrationRunnerService.runCreateFieldMetadataMigration(
-          { action, queryRunner },
+          { action, queryRunner, flatObjectMetadataMaps },
         );
         break;
       }
       case 'update_field': {
         await this.workspaceMetadataFieldMigrationRunnerService.runUpdateFieldMetadataMigration(
-          { action, queryRunner },
+          { action, queryRunner, flatObjectMetadataMaps },
         );
         break;
       }
       case 'delete_field': {
         await this.workspaceMetadataFieldMigrationRunnerService.runDeleteFieldMetadataMigration(
-          { action, queryRunner },
+          { action, queryRunner, flatObjectMetadataMaps },
         );
         break;
       }
       case 'create_index': {
         await this.workspaceMetadataIndexMigrationRunnerService.runCreateIndexMetadataMigration(
-          { action, queryRunner },
+          { action, queryRunner, flatObjectMetadataMaps },
         );
         break;
       }
       case 'delete_index': {
         await this.workspaceMetadataIndexMigrationRunnerService.runDeleteIndexMetadataMigration(
-          { action, queryRunner },
+          { action, queryRunner, flatObjectMetadataMaps },
         );
         break;
       }

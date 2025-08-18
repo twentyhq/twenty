@@ -37,8 +37,12 @@ export const ActivityTargetsInlineCell = ({
 
   const { closeInlineCell } = useInlineCell(componentInstanceId);
 
-  const { fieldDefinition, isRecordFieldReadOnly: isReadOnly } =
-    useContext(FieldContext);
+  const {
+    fieldDefinition,
+    isRecordFieldReadOnly: isReadOnly,
+    anchorId,
+    onMouseEnter,
+  } = useContext(FieldContext);
 
   const { openActivityTargetCellEditMode } =
     useOpenActivityTargetCellEditMode();
@@ -61,6 +65,8 @@ export const ActivityTargetsInlineCell = ({
           fieldMetadataName={fieldDefinition.metadata.fieldName}
           fieldPosition={3}
           overridenIsFieldEmpty={activityTargetObjectRecords.length === 0}
+          onMouseEnter={onMouseEnter}
+          anchorId={anchorId}
         >
           <RecordInlineCellContext.Provider
             value={{
