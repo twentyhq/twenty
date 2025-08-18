@@ -72,7 +72,7 @@ export class ObjectMetadataServiceV2 {
         },
         workspaceId,
         errorMessage:
-          'Multiple validation errors occurred while deleting object',
+          'Multiple validation errors occurred while updating object',
       },
     );
 
@@ -210,7 +210,7 @@ export class ObjectMetadataServiceV2 {
         },
         workspaceId,
         errorMessage:
-          'Multiple validation errors occurred while deleting object',
+          'Multiple validation errors occurred while creating object',
       },
     );
 

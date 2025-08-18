@@ -28,7 +28,7 @@ import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standar
 import { doesOtherObjectWithSameNameExists } from 'src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util';
 import { WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.service';
 
-const computeOtherFlatObjectMetadataMapsToValidate = ({
+const computeRelationTargetFlatObjectMetadataMapsForValidation = ({
   flatFieldMetadata,
   flatObjectMetadataMaps,
 }: {
@@ -167,7 +167,6 @@ export class FlatObjectMetadataValidatorService {
   }: {
     existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
     flatObjectMetadataToValidate: FlatObjectMetadata;
-    buildOptions: WorkspaceMigrationV2BuilderOptions;
     otherFlatObjectMetadataMapsToValidate?: FlatObjectMetadataMaps;
   }) {
     const errors: FailedFlatObjectMetadataValidationExceptions[] = [];
@@ -206,7 +205,7 @@ export class FlatObjectMetadataValidatorService {
 
     const allFlatFieldMetadatasValidationErrors: FailedFlatFieldMetadataValidationExceptions[] =
       [];
-    let existingFlatObjectMetadataMapsWithFlatObjectMetadataToBeCreatedWithoutFields =
+    let optimisticFlatObjectMetadataMaps =
       addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
         flatObjectMetadata: {
           ...flatObjectMetadataToValidate,
@@ -219,14 +218,13 @@ export class FlatObjectMetadataValidatorService {
       const flatFieldValidatorErrors =
         await this.flatFieldMetadataValidatorService.validateFlatFieldMetadataCreation(
           {
-            existingFlatObjectMetadataMaps:
-              existingFlatObjectMetadataMapsWithFlatObjectMetadataToBeCreatedWithoutFields,
+            existingFlatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
             flatFieldMetadataToValidate,
             workspaceId: flatObjectMetadataToValidate.workspaceId,
             otherFlatObjectMetadataMapsToValidate: isDefined(
               otherFlatObjectMetadataMapsToValidate,
             )
-              ? computeOtherFlatObjectMetadataMapsToValidate({
+              ? computeRelationTargetFlatObjectMetadataMapsForValidation({
                   flatFieldMetadata: flatFieldMetadataToValidate,
                   flatObjectMetadataMaps: otherFlatObjectMetadataMapsToValidate,
                 })
@@ -239,11 +237,10 @@ export class FlatObjectMetadataValidatorService {
         continue;
       }
 
-      existingFlatObjectMetadataMapsWithFlatObjectMetadataToBeCreatedWithoutFields =
+      optimisticFlatObjectMetadataMaps =
         addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
           flatFieldMetadata: flatFieldMetadataToValidate,
-          flatObjectMetadataMaps:
-            existingFlatObjectMetadataMapsWithFlatObjectMetadataToBeCreatedWithoutFields,
+          flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
         });
     }
 

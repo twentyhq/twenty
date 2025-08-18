@@ -75,7 +75,7 @@ export class WorkspaceMigrationBuilderV2Service {
     const objectWorkspaceMigrationActions =
       await this.workspaceMigrationV2ObjectActionsBuilder.validateAndBuildObjectActions(
         {
-          fromFlatObjectMetadataMaps: fromFlatObjectMetadataMaps,
+          fromFlatObjectMetadataMaps,
           createdFlatObjectMetadata,
           deletedFlatObjectMetadata,
           toFlatObjectMetadataMaps,

@@ -44,11 +44,11 @@ describe('getSubFlatObjectMetadataMaps', () => {
     '$title',
     ({
       context: {
-        input: { objectMetadataIds: objectMetadataIds, flatObjectMetadataMaps },
+        input: { objectMetadataIds, flatObjectMetadataMaps },
       },
     }) => {
       const result = getSubFlatObjectMetadataMaps({
-        objectMetadataIds: objectMetadataIds,
+        objectMetadataIds,
         flatObjectMetadataMaps,
       });
 

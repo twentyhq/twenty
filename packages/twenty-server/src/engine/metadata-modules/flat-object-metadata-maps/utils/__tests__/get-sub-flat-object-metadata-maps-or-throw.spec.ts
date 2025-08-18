@@ -82,7 +82,7 @@ describe('getSubFlatObjectMetadataMapsOrThrow', () => {
     '$title',
     ({
       context: {
-        input: { objectMetadataIds: objectMetadataIds, flatObjectMetadataMaps },
+        input: { objectMetadataIds, flatObjectMetadataMaps },
         shouldThrow = false,
         expected,
       },
@@ -90,14 +90,14 @@ describe('getSubFlatObjectMetadataMapsOrThrow', () => {
       if (shouldThrow) {
         expect(() =>
           getSubFlatObjectMetadataMapsOrThrow({
-            objectMetadataIds: objectMetadataIds,
+            objectMetadataIds,
             flatObjectMetadataMaps,
           }),
         ).toThrowErrorMatchingSnapshot();
       } else {
         jestExpectToBeDefined(expected);
         const result = getSubFlatObjectMetadataMapsOrThrow({
-          objectMetadataIds: objectMetadataIds,
+          objectMetadataIds,
           flatObjectMetadataMaps,
         });
 

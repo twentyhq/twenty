@@ -383,7 +383,7 @@ export class FieldMetadataServiceV2 {
         },
         workspaceId,
         errorMessage:
-          'Multiple validation errors occurred while updating field',
+          'Multiple validation errors occurred while creating fields',
       },
     );
 

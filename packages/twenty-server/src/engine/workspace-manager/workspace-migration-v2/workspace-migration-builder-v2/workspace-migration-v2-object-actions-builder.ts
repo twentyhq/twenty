@@ -55,57 +55,53 @@ export class WorkspaceMigrationV2ObjectActionsBuilder {
     let optimisticFlatObjectMetadataMaps = structuredClone(
       fromFlatObjectMetadataMaps,
     );
-    const createdObjectBuildResults = (
-      await Promise.all(
-        createdFlatObjectMetadata.map<
-          Promise<
-            MetadataValidateAndBuildResult<WorkspaceMigrationObjectActionV2>
-          >
-        >(async (flatObjectMetadata) => {
-          const validationErrors =
-            await this.flatObjectMetadataValidatorService.validateFlatObjectMetadataCreation(
-              {
-                buildOptions,
-                existingFlatObjectMetadataMaps:
-                  optimisticFlatObjectMetadataMaps,
-                flatObjectMetadataToValidate: flatObjectMetadata,
-                otherFlatObjectMetadataMapsToValidate: toFlatObjectMetadataMaps,
-              },
-            );
-
-          if (validationErrors.length > 0) {
-            return {
-              status: 'fail',
-              errors: validationErrors,
-            };
-          }
-
-          optimisticFlatObjectMetadataMaps =
-            addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
-              flatObjectMetadata: flatObjectMetadata,
-              flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
-            });
-
-          const createFieldActions = flatObjectMetadata.flatFieldMetadatas.map(
-            (flatFieldMetadata) =>
-              getWorkspaceMigrationV2FieldCreateAction({
-                flatFieldMetadata,
-                flatObjectMetadata,
-              }),
+    const createdObjectBuildResults = await Promise.all(
+      createdFlatObjectMetadata.map<
+        Promise<
+          MetadataValidateAndBuildResult<WorkspaceMigrationObjectActionV2>
+        >
+      >(async (flatObjectMetadata) => {
+        const validationErrors =
+          await this.flatObjectMetadataValidatorService.validateFlatObjectMetadataCreation(
+            {
+              existingFlatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
+              flatObjectMetadataToValidate: flatObjectMetadata,
+              otherFlatObjectMetadataMapsToValidate: toFlatObjectMetadataMaps,
+            },
           );
 
-          const createObjectAction = getWorkspaceMigrationV2ObjectCreateAction({
-            flatObjectMetadata,
-            createFieldActions,
+        if (validationErrors.length > 0) {
+          return {
+            status: 'fail',
+            errors: validationErrors,
+          };
+        }
+
+        optimisticFlatObjectMetadataMaps =
+          addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
+            flatObjectMetadata: flatObjectMetadata,
+            flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
           });
 
-          return {
-            status: 'success',
-            result: createObjectAction,
-          };
-        }),
-      )
-    ).flat();
+        const createFieldActions = flatObjectMetadata.flatFieldMetadatas.map(
+          (flatFieldMetadata) =>
+            getWorkspaceMigrationV2FieldCreateAction({
+              flatFieldMetadata,
+              flatObjectMetadata,
+            }),
+        );
+
+        const createObjectAction = getWorkspaceMigrationV2ObjectCreateAction({
+          flatObjectMetadata,
+          createFieldActions,
+        });
+
+        return {
+          status: 'success',
+          result: createObjectAction,
+        };
+      }),
+    );
 
     const deletedObjectBuildResults =
       buildOptions.inferDeletionFromMissingObjectFieldIndex

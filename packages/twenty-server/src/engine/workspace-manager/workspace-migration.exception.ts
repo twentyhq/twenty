@@ -4,5 +4,5 @@ export class WorkspaceMigrationV2Exception extends CustomException<WorkspaceMigr
 
 export enum WorkspaceMigrationV2ExceptionCode {
   BUILDER_INTERNAL_SERVER_ERROR = 'BUILDER_INTERNAL_SERVER_ERROR',
-  RUNNER_INTERNAL_SERVER_ERROR = 'BUILDER_INTERNAL_SERVER_ERROR',
+  RUNNER_INTERNAL_SERVER_ERROR = 'RUNNER_INTERNAL_SERVER_ERROR',
 }

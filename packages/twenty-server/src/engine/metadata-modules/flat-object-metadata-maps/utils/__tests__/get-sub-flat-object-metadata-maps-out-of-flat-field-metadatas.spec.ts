@@ -13,11 +13,11 @@ type GetSubFlatObjectMetadataMapsTestCase = {
   input: GetSubFlatObjectMetadataMapsOfSpecificFieldsOrThrowArgs;
 };
 
-describe('getSubFlatObjectMetadataMapsOfSpecificFields', () => {
+describe('getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatas', () => {
   const testCases: EachTestingContext<GetSubFlatObjectMetadataMapsTestCase>[] =
     [
       {
-        title: 'should throw when object metadata id is not found',
+        title: 'return undefined when object metadata id is not found',
         context: {
           input: {
             flatFieldMetadatas: [
