@@ -55,6 +55,10 @@ import {
   MKT_RESELLER_TIER_DATA_SEED_COLUMNS,
   MKT_RESELLER_TIER_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-reseller-tier-data-seeds.constants';
+import {
+  MKT_RESELLER_DATA_SEED_COLUMNS,
+  MKT_RESELLER_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-reseller-data-seeds.constants';
 
 export const MKT_RECORD_SEEDS_CONFIGS = [
   // Product configs
@@ -124,9 +128,15 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     pgColumns: MKT_PAYMENT_DATA_SEED_COLUMNS,
     recordSeeds: MKT_PAYMENT_DATA_SEEDS,
   },
+  // Reseller configs
   {
     tableName: 'mktResellerTier',
     pgColumns: MKT_RESELLER_TIER_DATA_SEED_COLUMNS,
     recordSeeds: MKT_RESELLER_TIER_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktReseller',
+    pgColumns: MKT_RESELLER_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_RESELLER_DATA_SEEDS,
   },
 ];

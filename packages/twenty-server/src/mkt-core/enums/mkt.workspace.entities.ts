@@ -12,6 +12,7 @@ import { MktVariantAttributeWorkspaceEntity } from 'src/mkt-core/variant_attribu
 import { MktPaymentMethodWorkspaceEntity } from 'src/mkt-core/payment-method/mkt-payment-method.workspace-entity';
 import { MktPaymentWorkspaceEntity } from 'src/mkt-core/payment/mkt-payment.workspace-entity';
 import { MktResellerTierWorkspaceEntity } from 'src/mkt-core/mkt-reseller-tier/mkt-reseller-tier';
+import { MktResellerWorkspaceEntity } from 'src/mkt-core/mkt-reseller/mkt-reseller.workspace-entity';
 
 export const MKT_WORKSPACE_ENTITIES = [
   // Product
@@ -36,4 +37,5 @@ export const MKT_WORKSPACE_ENTITIES = [
   MktPaymentWorkspaceEntity,
   // Seller Tier
   MktResellerTierWorkspaceEntity,
+  MktResellerWorkspaceEntity,
 ];
