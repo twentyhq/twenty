@@ -94,7 +94,9 @@ export const SettingsMorphRelationMultiSelect = ({
   const { getIcon } = useIcons();
   const options = activeObjectMetadataItems
     .filter(isObjectMetadataAvailableForRelation)
-    .sort((item1, item2) => item1.labelPlural.localeCompare(item2.labelPlural))
+    .sort((item1, item2) =>
+      item1.labelSingular.localeCompare(item2.labelSingular),
+    )
     .map((objectMetadataItem) => ({
       label: objectMetadataItem.labelSingular,
       Icon: getIcon(objectMetadataItem.icon),
