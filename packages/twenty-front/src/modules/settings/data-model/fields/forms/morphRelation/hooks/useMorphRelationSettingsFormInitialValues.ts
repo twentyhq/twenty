@@ -18,7 +18,6 @@ export const useMorphRelationSettingsFormInitialValues = ({
   const morphRelations = fieldMetadataItem
     ? getMorphRelationMetadata({ fieldMetadataItem })
     : null;
-
   const initialRelationObjectMetadataItems = useMemo(() => {
     const availableItems = activeObjectMetadataItems
       .filter(isObjectMetadataAvailableForRelation)
@@ -41,13 +40,21 @@ export const useMorphRelationSettingsFormInitialValues = ({
     return [firstInitialObjectCandidate, secondInitialObjectCandidate];
   }, [activeObjectMetadataItems, morphRelations]);
 
-  const initialRelationType =
-    morphRelations?.[0]?.relationType ?? RelationType.ONE_TO_MANY;
+  if (isDefined(morphRelations) && morphRelations.length > 0) {
+    return {
+      disableFieldEdition: true,
+      disableRelationEdition: true,
+      initialRelationObjectMetadataItems: morphRelations.map(
+        (morphRelation) => morphRelation.relationObjectMetadataItem,
+      ),
+      initialRelationType: morphRelations[0].relationType,
+    };
+  }
 
   return {
-    disableFieldEdition: morphRelations?.[0]?.relationFieldMetadataItem,
-    disableRelationEdition: !!morphRelations?.[0]?.relationFieldMetadataItem,
+    disableFieldEdition: false,
+    disableRelationEdition: false,
     initialRelationObjectMetadataItems,
-    initialRelationType,
+    initialRelationType: RelationType.ONE_TO_MANY,
   };
 };
