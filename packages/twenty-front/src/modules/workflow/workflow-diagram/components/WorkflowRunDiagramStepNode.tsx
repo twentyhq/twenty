@@ -6,7 +6,7 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { WorkflowDiagramHandleReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramHandleReadonly';
-import { WorkflowDiagramStepNodeBigIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeBigIcon';
+import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeIcon';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowRunDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -235,7 +235,7 @@ export const WorkflowRunDiagramStepNode = ({
         onClick={handleClick}
       >
         <StyledNodeIconContainer>
-          <WorkflowDiagramStepNodeBigIcon data={data} />
+          <WorkflowDiagramStepNodeIcon data={data} />
         </StyledNodeIconContainer>
 
         <StyledNodeRightPart>

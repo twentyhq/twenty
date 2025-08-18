@@ -1,6 +1,6 @@
 import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement';
 import { WorkflowDiagramHandleEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramHandleEditable';
-import { WorkflowDiagramStepNodeBigIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeBigIcon';
+import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeIcon';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
 import { useEdgeSelected } from '@/workflow/workflow-diagram/hooks/useEdgeSelected';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
@@ -168,7 +168,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         onMouseLeave={handleMouseLeave}
       >
         <StyledNodeIconContainer>
-          <WorkflowDiagramStepNodeBigIcon data={data} />
+          <WorkflowDiagramStepNodeIcon data={data} />
         </StyledNodeIconContainer>
 
         <StyledNodeRightPart>
