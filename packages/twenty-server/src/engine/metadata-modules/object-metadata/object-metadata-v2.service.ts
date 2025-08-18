@@ -156,7 +156,7 @@ export class ObjectMetadataServiceV2 {
         fromFlatObjectMetadataMaps,
         toFlatObjectMetadataMaps,
         buildOptions: {
-          inferDeletionFromMissingObjectFieldIndex: false,
+          inferDeletionFromMissingObjectFieldIndex: true,
           isSystemBuild: false,
         },
         workspaceId,
