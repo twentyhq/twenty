@@ -71,10 +71,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
         );
 
       if (validationErrors.length > 0) {
-        validateAndBuildResult.failed.push({
-          errors: validationErrors,
-          status: 'fail',
-        });
+        validateAndBuildResult.failed.push(...validationErrors);
         continue;
       }
 
@@ -98,13 +95,12 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
         createFieldActions,
       });
 
-      validateAndBuildResult.successful.push({
-        status: 'success',
-        result: createObjectAction,
-      });
+      validateAndBuildResult.successful.push(createObjectAction);
     }
 
-    for (const flatObjectMetadataToDelete of deletedFlatObjectMetadatas) {
+    for (const flatObjectMetadataToDelete of buildOptions.inferDeletionFromMissingObjectFieldIndex
+      ? deletedFlatObjectMetadatas
+      : []) {
       const validationErrors =
         this.flatObjectMetadataValidatorService.validateFlatObjectMetadataDeletion(
           {
@@ -116,10 +112,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
         );
 
       if (validationErrors.length > 0) {
-        validateAndBuildResult.failed.push({
-          errors: validationErrors,
-          status: 'fail',
-        });
+        validateAndBuildResult.failed.push(...validationErrors);
         continue;
       }
 
@@ -134,10 +127,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
         flatObjectMetadataToDelete,
       );
 
-      validateAndBuildResult.successful.push({
-        status: 'success',
-        result: deleteObjectAction,
-      });
+      validateAndBuildResult.successful.push(deleteObjectAction);
     }
 
     for (const {
@@ -163,10 +153,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
         );
 
       if (validationErrors.length > 0) {
-        validateAndBuildResult.failed.push({
-          errors: validationErrors,
-          status: 'fail',
-        });
+        validateAndBuildResult.failed.push(...validationErrors);
         continue;
       }
 
@@ -183,10 +170,7 @@ export class WorkspaceMigrationV2ObjectActionsBuilderService {
         updates: objectUpdatedProperties,
       };
 
-      validateAndBuildResult.successful.push({
-        status: 'success',
-        result: updateObjectAction,
-      });
+      validateAndBuildResult.successful.push(updateObjectAction);
     }
 
     return validateAndBuildResult;
