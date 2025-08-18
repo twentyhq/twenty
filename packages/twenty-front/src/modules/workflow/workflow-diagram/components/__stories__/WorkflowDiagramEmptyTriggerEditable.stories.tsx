@@ -11,11 +11,6 @@ import { WorkflowDiagramEmptyTriggerEditable } from '../WorkflowDiagramEmptyTrig
 const meta: Meta<typeof WorkflowDiagramEmptyTriggerEditable> = {
   title: 'Modules/Workflow/WorkflowDiagramEmptyTriggerEditable',
   component: WorkflowDiagramEmptyTriggerEditable,
-  args: {
-    data: {
-      nodeType: 'empty-trigger',
-    },
-  },
   decorators: [I18nFrontDecorator],
 };
 

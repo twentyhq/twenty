@@ -99,7 +99,7 @@ const StyledNodeTitle = styled.div`
   }
 `;
 
-export const WorkflowDiagramEmptyTriggerEditable = ({ id }: { id: string }) => {
+export const WorkflowDiagramEmptyTriggerEditable = () => {
   const { t } = useLingui();
 
   const { openWorkflowTriggerTypeInCommandMenu } = useWorkflowCommandMenu();
