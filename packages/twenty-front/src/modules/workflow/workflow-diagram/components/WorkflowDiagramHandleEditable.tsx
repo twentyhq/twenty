@@ -12,7 +12,10 @@ type WorkflowDiagramHandleEditableProps = HandleProps & {
 
 const HANDLE_SCALE_ON_HOVER = 1.5;
 
-const StyledHandle = styled(Handle)<{
+const StyledHandle = styled(Handle, {
+  shouldForwardProp: (prop) =>
+    prop !== 'disableHoverEffect' && prop !== 'selected',
+})<{
   disableHoverEffect: boolean;
   selected: boolean;
 }>`
@@ -48,7 +51,7 @@ const StyledHandle = styled(Handle)<{
     }
 
     ${({ disableHoverEffect, theme, position }) => {
-      if (disableHoverEffect === true) {
+      if (disableHoverEffect) {
         return undefined;
       }
 
@@ -61,6 +64,7 @@ const StyledHandle = styled(Handle)<{
           css`
             transform: scale(${HANDLE_SCALE_ON_HOVER}) translate(-50%, -50%);
           `}
+
           ${position === 'bottom' &&
           css`
             transform: scale(${HANDLE_SCALE_ON_HOVER}) translate(-50%, 50%);
