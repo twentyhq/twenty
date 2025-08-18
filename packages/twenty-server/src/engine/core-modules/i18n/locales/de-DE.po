@@ -1898,6 +1898,11 @@ msgstr ""
 msgid "Object to update not found"
 msgstr ""
 
+#. js-lingui-id: cdjRFZ
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Object with same id already exists"
+msgstr ""
+
 #. js-lingui-id: 53pIyA
 #: src/engine/core-modules/view/exceptions/view.exception.ts
 msgid "ObjectMetadataId is required to create a view."
