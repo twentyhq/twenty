@@ -58,7 +58,10 @@ const generateSourceFlatFieldMetadata = ({
     ];
 
   if (!isDefined(standardId)) {
-    throw new Error('TODO prastoin custom exception');
+    throw new ObjectMetadataException(
+      `Standard field ID not found for target object ${targetFlatObjectMetadata.namePlural}`,
+      ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+    );
   }
 
   return {

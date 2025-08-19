@@ -11,83 +11,87 @@ import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metad
 import { buildDefaultFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
 import { buildDefaultRelationFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-relation-flat-field-metadatas-for-custom-object.util';
 
-type FromCreateObjectInputToFlatObjectMetadataMapsArgs = {
-  createObjectInput: Omit<CreateObjectInput, 'workspaceId'>;
-  workspaceId: string;
-  existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-};
-export const fromCreateObjectInputToFlatObjectMetadataMetadataMaps = ({
-  createObjectInput: rawCreateObjectInput,
-  workspaceId,
-  existingFlatObjectMetadataMaps,
-}: FromCreateObjectInputToFlatObjectMetadataMapsArgs): {
-  flatObjectMetadataToCreate: FlatObjectMetadata;
-  relationTargetFlatFieldMetadatas: FlatFieldMetadata[];
-} => {
-  const createObjectInput =
-    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
-      rawCreateObjectInput,
-      [
-        'description',
-        'icon',
-        'labelPlural',
-        'labelSingular',
-        'namePlural',
-        'nameSingular',
-        'shortcut',
-      ],
-    );
-
-  const objectMetadataId = v4();
-  const baseCustomFlatFieldMetadatas =
-    buildDefaultFlatFieldMetadatasForCustomObject({
-      objectMetadataId,
-      workspaceId,
-    });
-  const createdAt = new Date();
-  const flatObjectMetadataToCreate: FlatObjectMetadata = {
-    createdAt,
-    flatFieldMetadatas: [],
-    updatedAt: createdAt,
-    duplicateCriteria: null,
-    description: createObjectInput.description ?? null,
-    flatIndexMetadatas: [],
-    icon: createObjectInput.icon ?? null,
-    id: objectMetadataId,
-    imageIdentifierFieldMetadataId: null,
-    isActive: true,
-    isAuditLogged: true,
-    isCustom: true,
-    isLabelSyncedWithName: createObjectInput.isLabelSyncedWithName ?? false,
-    isRemote: createObjectInput.isRemote ?? false,
-    isSearchable: true,
-    isSystem: false,
-    labelIdentifierFieldMetadataId: baseCustomFlatFieldMetadatas.nameField.id,
-    labelPlural: capitalize(createObjectInput.labelPlural),
-    labelSingular: capitalize(createObjectInput.labelSingular),
-    namePlural: createObjectInput.namePlural,
-    nameSingular: createObjectInput.nameSingular,
-    shortcut: createObjectInput.shortcut ?? null,
-    standardId: null,
-    standardOverrides: null,
-    uniqueIdentifier: objectMetadataId,
-    targetTableName: 'DEPRECATED',
-    workspaceId,
+type FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs =
+  {
+    createObjectInput: Omit<CreateObjectInput, 'workspaceId'>;
+    workspaceId: string;
+    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   };
-  const { standardSourceFlatFieldMetadatas, standardTargetFlatFieldMetadatas } =
-    buildDefaultRelationFlatFieldMetadatasForCustomObject({
+export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate =
+  ({
+    createObjectInput: rawCreateObjectInput,
+    workspaceId,
+    existingFlatObjectMetadataMaps,
+  }: FromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreateArgs): {
+    flatObjectMetadataToCreate: FlatObjectMetadata;
+    relationTargetFlatFieldMetadatas: FlatFieldMetadata[];
+  } => {
+    const createObjectInput =
+      trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
+        rawCreateObjectInput,
+        [
+          'description',
+          'icon',
+          'labelPlural',
+          'labelSingular',
+          'namePlural',
+          'nameSingular',
+          'shortcut',
+        ],
+      );
+
+    const objectMetadataId = v4();
+    const baseCustomFlatFieldMetadatas =
+      buildDefaultFlatFieldMetadatasForCustomObject({
+        objectMetadataId,
+        workspaceId,
+      });
+    const createdAt = new Date();
+    const flatObjectMetadataToCreate: FlatObjectMetadata = {
+      createdAt,
+      flatFieldMetadatas: [],
+      updatedAt: createdAt,
+      duplicateCriteria: null,
+      description: createObjectInput.description ?? null,
+      flatIndexMetadatas: [],
+      icon: createObjectInput.icon ?? null,
+      id: objectMetadataId,
+      imageIdentifierFieldMetadataId: null,
+      isActive: true,
+      isAuditLogged: true,
+      isCustom: true,
+      isLabelSyncedWithName: createObjectInput.isLabelSyncedWithName ?? false,
+      isRemote: createObjectInput.isRemote ?? false,
+      isSearchable: true,
+      isSystem: false,
+      labelIdentifierFieldMetadataId: baseCustomFlatFieldMetadatas.nameField.id,
+      labelPlural: capitalize(createObjectInput.labelPlural),
+      labelSingular: capitalize(createObjectInput.labelSingular),
+      namePlural: createObjectInput.namePlural,
+      nameSingular: createObjectInput.nameSingular,
+      shortcut: createObjectInput.shortcut ?? null,
+      standardId: null,
+      standardOverrides: null,
+      uniqueIdentifier: objectMetadataId,
+      targetTableName: 'DEPRECATED',
+      workspaceId,
+    };
+    const {
+      standardSourceFlatFieldMetadatas,
+      standardTargetFlatFieldMetadatas,
+    } = buildDefaultRelationFlatFieldMetadatasForCustomObject({
       existingFlatObjectMetadataMaps,
       sourceFlatObjectMetadata: flatObjectMetadataToCreate,
       workspaceId,
     });
 
-  flatObjectMetadataToCreate.flatFieldMetadatas = [
-    ...Object.values(baseCustomFlatFieldMetadatas),
-    ...standardSourceFlatFieldMetadatas,
-  ];
+    flatObjectMetadataToCreate.flatFieldMetadatas = [
+      ...Object.values(baseCustomFlatFieldMetadatas),
+      ...standardSourceFlatFieldMetadatas,
+    ];
 
-  return {
-    flatObjectMetadataToCreate,
-    relationTargetFlatFieldMetadatas: standardTargetFlatFieldMetadatas,
+    return {
+      flatObjectMetadataToCreate,
+      relationTargetFlatFieldMetadatas: standardTargetFlatFieldMetadatas,
+    };
   };
-};
