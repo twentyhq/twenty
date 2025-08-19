@@ -16,6 +16,9 @@ import { settingsDataModelFieldCurrencyFormSchema } from '@/settings/data-model/
 import { SettingsDataModelFieldCurrencySettingsFormCard } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencySettingsFormCard';
 import { settingsDataModelFieldDateFormSchema } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
 import { SettingsDataModelFieldDateSettingsFormCard } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateSettingsFormCard';
+import { settingsDataModelFieldMorphRelationFormSchema } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm';
+
+import { SettingsDataModelFieldMorphRelationFormCard } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationFormCard';
 import { settingsDataModelFieldNumberFormSchema } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
 import { SettingsDataModelFieldNumberSettingsFormCard } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberSettingsFormCard';
 import { settingsDataModelFieldPhonesFormSchema } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';
@@ -59,6 +62,10 @@ const relationFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.RELATION) })
   .merge(settingsDataModelFieldRelationFormSchema);
 
+const morphRelationFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.MORPH_RELATION) })
+  .merge(settingsDataModelFieldMorphRelationFormSchema);
+
 const selectFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.SELECT) })
   .merge(settingsDataModelFieldSelectFormSchema);
@@ -94,6 +101,7 @@ const otherFieldsFormSchema = z
           FieldMetadataType.BOOLEAN,
           FieldMetadataType.CURRENCY,
           FieldMetadataType.RELATION,
+          FieldMetadataType.MORPH_RELATION,
           FieldMetadataType.SELECT,
           FieldMetadataType.MULTI_SELECT,
           FieldMetadataType.DATE,
@@ -116,6 +124,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     dateFieldFormSchema,
     dateTimeFieldFormSchema,
     relationFieldFormSchema,
+    morphRelationFieldFormSchema,
     selectFieldFormSchema,
     multiSelectFieldFormSchema,
     numberFieldFormSchema,
@@ -154,6 +163,7 @@ const previewableTypes = [
   FieldMetadataType.RATING,
   FieldMetadataType.RAW_JSON,
   FieldMetadataType.RELATION,
+  FieldMetadataType.MORPH_RELATION,
   FieldMetadataType.SELECT,
   FieldMetadataType.TEXT,
   FieldMetadataType.UUID,
@@ -200,6 +210,15 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.RELATION) {
     return (
       <SettingsDataModelFieldRelationSettingsFormCard
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
+
+  if (fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION) {
+    return (
+      <SettingsDataModelFieldMorphRelationFormCard
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />

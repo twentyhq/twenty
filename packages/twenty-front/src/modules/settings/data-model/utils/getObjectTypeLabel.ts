@@ -21,7 +21,7 @@ type RemoteObjectTypeLabel = {
 };
 
 export const getObjectTypeLabel = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: Pick<ObjectMetadataItem, 'isCustom' | 'isRemote'>,
 ): ObjectTypeLabel =>
   objectMetadataItem.isCustom
     ? {
