@@ -1,9 +1,10 @@
 export class MultipleMetadataValidationErrors extends Error {
   constructor(
     public readonly errors: Error[],
-    message = 'Multiple errors occurred',
+    message: string,
   ) {
-    super(message);
-    this.name = 'AggregateError';
+    const allMessages = `${message}\n${errors.map((error) => error.message).join('\n')}`;
+    super(allMessages);
+    this.name = 'MultipleMetadataValidationErrors';
   }
 }
