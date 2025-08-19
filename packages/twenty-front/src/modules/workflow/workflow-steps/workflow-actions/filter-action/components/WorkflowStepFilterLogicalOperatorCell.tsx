@@ -65,7 +65,6 @@ export const WorkflowStepFilterLogicalOperatorCell = ({
       ) : index === 1 ? (
         readonly ? (
           <Select
-            fullWidth
             dropdownWidth={GenericDropdownContentWidth.Narrow}
             dropdownId={`advanced-filter-logical-operator-${stepFilterGroup.id}`}
             value={stepFilterGroup.logicalOperator}
@@ -75,7 +74,6 @@ export const WorkflowStepFilterLogicalOperatorCell = ({
           />
         ) : (
           <Select
-            fullWidth
             dropdownWidth={GenericDropdownContentWidth.Narrow}
             dropdownId={`advanced-filter-logical-operator-${stepFilterGroup.id}`}
             value={stepFilterGroup.logicalOperator}
