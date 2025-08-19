@@ -29,4 +29,5 @@ export const MKT_OBJECT_IDS = {
   // organization
   mktOrganizationLevel: 'd4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a',
   mktEmploymentStatus: 'e5f6a7b8-c9d0-1e2f-3a4b-5c6d7e8f9a0b',
+  mktDepartment: 'f6a7b8c9-d0e1-2f3a-4b5c-6d7e8f9a0b1c',
 };
