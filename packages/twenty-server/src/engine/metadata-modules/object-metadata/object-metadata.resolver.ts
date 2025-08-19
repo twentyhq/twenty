@@ -8,6 +8,8 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
@@ -25,6 +27,7 @@ import {
   type UpdateObjectPayload,
 } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { objectMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/object-metadata/utils/object-metadata-graphql-api-exception-handler.util';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
@@ -42,6 +45,8 @@ export class ObjectMetadataResolver {
   constructor(
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly beforeUpdateOneObject: BeforeUpdateOneObject<UpdateObjectPayload>,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
   ) {}
 
   @ResolveField(() => String, { nullable: true })
@@ -112,15 +117,35 @@ export class ObjectMetadataResolver {
   @UseGuards(SettingsPermissionsGuard(PermissionFlagType.DATA_MODEL))
   @Mutation(() => ObjectMetadataDTO)
   async updateOneObject(
-    @Args('input') input: UpdateOneObjectInput,
+    @Args('input') updateObjectInput: UpdateOneObjectInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Context() context: I18nContext,
   ) {
-    try {
-      const updatedInput = (await this.beforeUpdateOneObject.run(input, {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
         workspaceId,
-        locale: context.req.locale,
-      })) as UpdateOneObjectInput;
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      try {
+        return await this.objectMetadataServiceV2.updateOne({
+          updateObjectInput,
+          workspaceId,
+        });
+      } catch (error) {
+        objectMetadataGraphqlApiExceptionHandler(error);
+      }
+    }
+
+    try {
+      const updatedInput = (await this.beforeUpdateOneObject.run(
+        updateObjectInput,
+        {
+          workspaceId,
+          locale: context.req.locale,
+        },
+      )) as UpdateOneObjectInput;
 
       return await this.objectMetadataService.updateOneObject(
         updatedInput,

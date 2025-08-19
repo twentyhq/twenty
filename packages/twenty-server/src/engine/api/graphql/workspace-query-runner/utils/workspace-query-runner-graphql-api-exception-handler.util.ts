@@ -1,12 +1,7 @@
-import { QueryFailedError } from 'typeorm';
-
-import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
+import { type QueryFailedError } from 'typeorm';
 
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { graphqlQueryRunnerExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/graphql-query-runner-exception-handler.util';
-import { handleDuplicateKeyError } from 'src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util';
-import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { workspaceExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-exception-handler.util';
 import { WorkspaceQueryRunnerException } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { ApiKeyException } from 'src/engine/core-modules/api-key/api-key.exception';
@@ -26,22 +21,8 @@ interface QueryFailedErrorWithCode extends QueryFailedError {
 
 export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
   error: QueryFailedErrorWithCode,
-  context: WorkspaceQueryRunnerOptions,
 ) => {
   switch (true) {
-    case error instanceof QueryFailedError: {
-      if (
-        error.message.includes('duplicate key value violates unique constraint')
-      ) {
-        return handleDuplicateKeyError(error, context);
-      }
-      const errorCode = (error as QueryFailedErrorWithCode).code;
-
-      if (POSTGRESQL_ERROR_CODES.includes(errorCode)) {
-        throw new PostgresException(error.message, errorCode);
-      }
-      throw error;
-    }
     case error instanceof RecordTransformerException:
       return recordTransformerGraphqlApiExceptionHandler(error);
     case error instanceof PermissionsException:

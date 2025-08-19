@@ -19,7 +19,12 @@ const mockStep = {
           objectMetadataId: '123',
         },
         fields: {
-          name: { label: 'Name', value: 'Twenty', isLeaf: true },
+          name: {
+            label: 'Name',
+            value: 'Twenty',
+            isLeaf: true,
+            fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+          },
         },
         _outputSchemaType: 'RECORD',
       },

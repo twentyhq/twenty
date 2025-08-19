@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { RecordInlineCellHoveredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellHoveredPortal';
 import styled from '@emotion/styled';
 
 const StyledRecordTableCellHoveredPortalContent = styled.div<{
@@ -15,12 +15,6 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
     `
       justify-content: center;
     `};
-
-  ${({ readonly }) =>
-    !readonly &&
-    css`
-      cursor: pointer;
-    `};
 `;
 
 const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
@@ -31,14 +25,12 @@ const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
   gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   align-items: center;
-  cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
 `;
 
 type RecordInlineCellHoveredPortalContentProps = {
   children: React.ReactNode;
   readonly: boolean;
   isCentered?: boolean;
-  onClick?: () => void;
   onMouseLeave?: () => void;
 };
 
@@ -46,21 +38,21 @@ export const RecordInlineCellHoveredPortalContent = ({
   children,
   isCentered,
   readonly,
-  onClick,
   onMouseLeave,
 }: RecordInlineCellHoveredPortalContentProps) => {
   return (
-    <StyledInlineCellBaseContainer
-      readonly={readonly}
-      onClick={onClick}
-      onMouseLeave={onMouseLeave}
-    >
-      <StyledRecordTableCellHoveredPortalContent
-        isCentered={isCentered}
+    <RecordInlineCellHoveredPortal>
+      <StyledInlineCellBaseContainer
         readonly={readonly}
+        onMouseLeave={onMouseLeave}
       >
-        {children}
-      </StyledRecordTableCellHoveredPortalContent>
-    </StyledInlineCellBaseContainer>
+        <StyledRecordTableCellHoveredPortalContent
+          isCentered={isCentered}
+          readonly={readonly}
+        >
+          {children}
+        </StyledRecordTableCellHoveredPortalContent>
+      </StyledInlineCellBaseContainer>
+    </RecordInlineCellHoveredPortal>
   );
 };
