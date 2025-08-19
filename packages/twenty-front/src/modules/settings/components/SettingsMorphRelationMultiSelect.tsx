@@ -143,15 +143,14 @@ export const SettingsMorphRelationMultiSelect = ({
     }
   };
 
-  const addIfNotIncludedOrRemoveFromArray = (array: string[], item: string) => {
-    let newArray = [...array];
-    const alreadySelectedIndex = newArray.indexOf(item);
-    if (alreadySelectedIndex !== -1) {
-      newArray.splice(alreadySelectedIndex, 1);
+  const addOrRemoveFromArray = (array: string[], item: string) => {
+    let newArray = new Set(array);
+    if (newArray.has(item)) {
+      newArray.delete(item);
     } else {
-      newArray.push(item);
+      newArray.add(item);
     }
-    return newArray;
+    return Array.from(newArray);
   };
 
   return (
@@ -213,7 +212,7 @@ export const SettingsMorphRelationMultiSelect = ({
                         itemId={option.label}
                         onEnter={() => {
                           const newSelectedObjectMetadataIds =
-                            addIfNotIncludedOrRemoveFromArray(
+                            addOrRemoveFromArray(
                               selectedObjectMetadataIds,
                               option.objectMetadataId,
                             );
@@ -234,7 +233,7 @@ export const SettingsMorphRelationMultiSelect = ({
                           isKeySelected={selectedItemId === option.label}
                           onSelectChange={() => {
                             let newSelectedObjectMetadataIds =
-                              addIfNotIncludedOrRemoveFromArray(
+                              addOrRemoveFromArray(
                                 selectedObjectMetadataIds,
                                 option.objectMetadataId,
                               );
