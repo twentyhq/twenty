@@ -4,7 +4,7 @@ import {
   SettingsDataModelFieldPreview,
   type SettingsDataModelFieldPreviewProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreview';
-import { SettingsDataModelObjectSummary } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
+import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { Card, CardContent } from 'twenty-ui/layout';
 
 export type SettingsDataModelFieldPreviewCardProps =
@@ -34,7 +34,7 @@ export const SettingsDataModelFieldPreviewCard = ({
   return (
     <StyledCard className={className} fullWidth>
       <StyledCardContent>
-        <SettingsDataModelObjectSummary
+        <SettingsDataModelObjectPreview
           objectMetadataItems={[objectMetadataItem]}
           pluralizeLabel={pluralizeLabel}
         />

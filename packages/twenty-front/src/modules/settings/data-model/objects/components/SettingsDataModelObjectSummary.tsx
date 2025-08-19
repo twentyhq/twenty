@@ -10,7 +10,7 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 
-export type SettingsDataModelObjectSummaryProps = {
+export type SettingsDataModelObjectPreviewProps = {
   className?: string;
   objectMetadataItems: Pick<
     ObjectMetadataItem,
@@ -19,7 +19,7 @@ export type SettingsDataModelObjectSummaryProps = {
   pluralizeLabel?: boolean;
 };
 
-const StyledObjectSummary = styled.div`
+const StyledObjectPreview = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
@@ -52,7 +52,7 @@ const StyledSeparator = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-type SettingsDataModelObjectSummaryItemProps = {
+type SettingsDataModelObjectPreviewItemProps = {
   objectMetadataItem: Pick<
     ObjectMetadataItem,
     'icon' | 'labelSingular' | 'labelPlural' | 'isCustom' | 'isRemote'
@@ -61,11 +61,11 @@ type SettingsDataModelObjectSummaryItemProps = {
   index: number;
 };
 
-const SettingsDataModelObjectSummaryItem = ({
+const SettingsDataModelObjectPreviewItem = ({
   objectMetadataItem,
   pluralizeLabel = true,
   index,
-}: SettingsDataModelObjectSummaryItemProps) => {
+}: SettingsDataModelObjectPreviewItemProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
   const ObjectIcon = getIcon(objectMetadataItem.icon);
@@ -74,7 +74,7 @@ const SettingsDataModelObjectSummaryItem = ({
   return (
     <>
       {index > 0 && <StyledSeparator />}
-      <StyledObjectSummary key={`${objectMetadataItem.labelSingular}-${index}`}>
+      <StyledObjectPreview key={`${objectMetadataItem.labelSingular}-${index}`}>
         <StyledObjectName>
           <StyledIconContainer>
             <ObjectIcon
@@ -91,12 +91,12 @@ const SettingsDataModelObjectSummaryItem = ({
           />
         </StyledObjectName>
         <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
-      </StyledObjectSummary>
+      </StyledObjectPreview>
     </>
   );
 };
 
-const SettingsDataModelObjectSummaryOtherObjects = ({
+const SettingsDataModelObjectPreviewOtherObjects = ({
   selected,
 }: {
   selected: number;
@@ -105,7 +105,7 @@ const SettingsDataModelObjectSummaryOtherObjects = ({
   return (
     <>
       <StyledSeparator />
-      <StyledObjectSummary key={`other-objects`}>
+      <StyledObjectPreview key={`other-objects`}>
         <StyledObjectName>
           <StyledIconContainer>
             <IconBox
@@ -121,15 +121,15 @@ const SettingsDataModelObjectSummaryOtherObjects = ({
         <StyledNumber>
           <OverflowingTextWithTooltip text={`${selected - 3}`} />
         </StyledNumber>
-      </StyledObjectSummary>
+      </StyledObjectPreview>
     </>
   );
 };
 
-export const SettingsDataModelObjectSummary = ({
+export const SettingsDataModelObjectPreview = ({
   objectMetadataItems,
   pluralizeLabel = true,
-}: SettingsDataModelObjectSummaryProps) => {
+}: SettingsDataModelObjectPreviewProps) => {
   let selected = 0;
 
   return (
@@ -137,7 +137,7 @@ export const SettingsDataModelObjectSummary = ({
       {objectMetadataItems.map((objectMetadataItem, index) => {
         selected++;
         return (
-          <SettingsDataModelObjectSummaryItem
+          <SettingsDataModelObjectPreviewItem
             objectMetadataItem={objectMetadataItem}
             pluralizeLabel={pluralizeLabel}
             index={index}
@@ -145,7 +145,7 @@ export const SettingsDataModelObjectSummary = ({
         );
       })}
       {selected > 3 && (
-        <SettingsDataModelObjectSummaryOtherObjects selected={selected} />
+        <SettingsDataModelObjectPreviewOtherObjects selected={selected} />
       )}
     </>
   );

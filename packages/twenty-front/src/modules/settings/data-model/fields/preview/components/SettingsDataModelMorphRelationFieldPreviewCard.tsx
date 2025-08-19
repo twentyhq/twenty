@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsDataModelFieldPreview } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreview';
-import { SettingsDataModelObjectSummary } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
+import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { Card, CardContent } from 'twenty-ui/layout';
 
 export type SettingsDataModelMorphRelationFieldPreviewCardProps = {
@@ -69,7 +69,7 @@ export const SettingsDataModelMorphRelationFieldPreviewCard = ({
   return (
     <StyledCard className={className} fullWidth>
       <StyledCardContent>
-        <SettingsDataModelObjectSummary
+        <SettingsDataModelObjectPreview
           objectMetadataItems={objectMetadataItems}
           pluralizeLabel={pluralizeLabel}
         />
