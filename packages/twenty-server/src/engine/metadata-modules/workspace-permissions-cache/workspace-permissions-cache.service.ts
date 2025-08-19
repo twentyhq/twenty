@@ -33,6 +33,7 @@ const WORKFLOW_STANDARD_OBJECT_IDS = [
   STANDARD_OBJECT_IDS.workflowRun,
   STANDARD_OBJECT_IDS.workflowVersion,
 ] as const;
+
 @Injectable()
 export class WorkspacePermissionsCacheService {
   logger = new Logger(WorkspacePermissionsCacheService.name);
