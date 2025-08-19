@@ -142,7 +142,7 @@ export const SettingsObjectNewFieldConfigure = () => {
       ) {
         const {
           morphRelationObjectMetadataIds,
-          fieldOnDestination,
+          targetFieldLabel,
           iconOnDestination,
           relationType,
         } = formValues;
@@ -153,7 +153,7 @@ export const SettingsObjectNewFieldConfigure = () => {
             (morphRelationObjectMetadataId: string) => ({
               type: relationType,
               targetObjectMetadataId: morphRelationObjectMetadataId,
-              targetFieldLabel: fieldOnDestination,
+              targetFieldLabel,
               targetFieldIcon: iconOnDestination,
             }),
           ),

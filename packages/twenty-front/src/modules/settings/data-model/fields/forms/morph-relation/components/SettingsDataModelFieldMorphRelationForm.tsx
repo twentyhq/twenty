@@ -20,7 +20,7 @@ export const settingsDataModelFieldMorphRelationFormSchema = z.object({
   relationType: z.enum(
     Object.keys(RELATION_TYPES) as [RelationType, ...RelationType[]],
   ),
-  fieldOnDestination: z.string().min(1),
+  targetFieldLabel: z.string().min(1),
   iconOnDestination: z.string().min(1),
 });
 
@@ -148,7 +148,7 @@ export const SettingsDataModelFieldMorphRelationForm = ({
           )}
         />
         <Controller
-          name="fieldOnDestination"
+          name="targetFieldLabel"
           control={control}
           defaultValue={getLabel(initialRelationObjectMetadataItems[0])}
           render={({ field: { onChange, value } }) => (

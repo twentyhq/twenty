@@ -6,21 +6,21 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import {
-  SettingsDataModelFieldMorphRelationForm,
-  type SettingsDataModelFieldMorphRelationFormValues,
+    SettingsDataModelFieldMorphRelationForm,
+    type SettingsDataModelFieldMorphRelationFormValues,
 } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm';
 import { useMorphRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormInitialValues';
 import {
-  SettingsDataModelFieldPreviewCard,
-  type SettingsDataModelFieldPreviewCardProps,
+    SettingsDataModelFieldPreviewCard,
+    type SettingsDataModelFieldPreviewCardProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { SettingsDataModelMorphRelationFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelMorphRelationFieldPreviewCard';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  FieldMetadataType,
-  RelationType,
-  type Relation,
+    FieldMetadataType,
+    RelationType,
+    type Relation,
 } from '~/generated-metadata/graphql';
 
 // todo @guillim : this is a copy of the relation settings form card, we need to refactor it to be more morphspecific
@@ -160,7 +160,7 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
                 ),
                 label:
                   watchFormValue(
-                    'fieldOnDestination',
+                    'targetFieldLabel',
                     initialRelationFieldMetadataItem.label,
                   ) || 'Field name',
                 type: FieldMetadataType.RELATION,
