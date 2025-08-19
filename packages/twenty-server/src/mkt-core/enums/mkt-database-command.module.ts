@@ -15,6 +15,7 @@ import { SeedResellerTierModuleCommand } from 'src/mkt-core/dev-seeder/commands/
 import { SeedResellerModuleCommand } from 'src/mkt-core/dev-seeder/commands/mkt-reseller-data-seed-dev-workspace.command';
 import { SeedResellerTierHistoryModuleCommand } from 'src/mkt-core/dev-seeder/commands/mkt-reseller-tier-history-data-seed-dev-workspace.command';
 import { SeedOrganizationLevelModuleCommand } from 'src/mkt-core/dev-seeder/commands/mkt-organization-level-data-seed-dev-workspace.command';
+import { SeedEmploymentStatusModuleCommand } from 'src/mkt-core/dev-seeder/commands/mkt-employment-status-data-seed-dev-workspace.command';
 
 export const MKT_DATABASE_COMMAND_MODULES = [
   // product commands
@@ -43,4 +44,5 @@ export const MKT_DATABASE_COMMAND_MODULES = [
   SeedResellerTierHistoryModuleCommand,
   // organization level commands
   SeedOrganizationLevelModuleCommand,
+  SeedEmploymentStatusModuleCommand,
 ];

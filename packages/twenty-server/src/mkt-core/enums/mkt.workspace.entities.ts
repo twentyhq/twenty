@@ -15,6 +15,7 @@ import { MktResellerTierWorkspaceEntity } from 'src/mkt-core/mkt-reseller-tier/m
 import { MktResellerWorkspaceEntity } from 'src/mkt-core/mkt-reseller/mkt-reseller.workspace-entity';
 import { MktResellerTierHistoryWorkspaceEntity } from 'src/mkt-core/mkt-reseller-tier-history/mkt-reseller-tier-history.workspace-entity';
 import { MktOrganizationLevelWorkspaceEntity } from 'src/mkt-core/mkt-organization-level/mkt-organization-level.workspace-entity';
+import { MktEmploymentStatusWorkspaceEntity } from 'src/mkt-core/mkt-employment-status/mkt-employment-status.workspace-entity';
 
 export const MKT_WORKSPACE_ENTITIES = [
   // Product
@@ -43,4 +44,5 @@ export const MKT_WORKSPACE_ENTITIES = [
   MktResellerTierHistoryWorkspaceEntity,
   // Organization Level
   MktOrganizationLevelWorkspaceEntity,
+  MktEmploymentStatusWorkspaceEntity,
 ];

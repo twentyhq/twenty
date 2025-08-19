@@ -15,6 +15,7 @@ import { prefillMktResellerTiers } from 'src/mkt-core/dev-seeder/prefill-data/pr
 import { prefillMktResellers } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-resellers';
 import { prefillMktResellerTierHistories } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-reseller-tier-histories';
 import { prefillMktOrganizationLevels } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-organization-levels';
+import { prefillMktEmploymentStatuses } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-employment-statuses';
 
 export const MKT_PREFILLS = [
   // product prefills
@@ -43,4 +44,5 @@ export const MKT_PREFILLS = [
   prefillMktResellerTierHistories,
   // organization level prefills
   prefillMktOrganizationLevels,
+  prefillMktEmploymentStatuses,
 ];
