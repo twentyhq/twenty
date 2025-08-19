@@ -8,15 +8,15 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { eachTestingContextFilter } from 'twenty-shared/testing';
-import { FieldMetadataType } from 'twenty-shared/types';
 
-describe.each([FieldMetadataType.SELECT] as const)(
+describe.each(fieldMetadataEnumTypes)(
   'Create field metadata %s tests suite v2',
   (testedFieldMetadataType) => {
     let createdObjectMetadataId: string;
@@ -49,9 +49,6 @@ describe.each([FieldMetadataType.SELECT] as const)(
         },
       });
 
-      console.log('*'.repeat(100));
-      console.log(data.createOneObject.id);
-      console.log('*'.repeat(100));
       createdObjectMetadataId = data.createOneObject.id;
     });
 
