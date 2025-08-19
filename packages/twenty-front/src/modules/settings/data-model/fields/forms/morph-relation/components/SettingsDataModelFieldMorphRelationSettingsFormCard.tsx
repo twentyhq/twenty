@@ -26,7 +26,6 @@ import {
   type Relation,
 } from '~/generated-metadata/graphql';
 
-// todo @guillim : this is a copy of the relation settings form card, we need to refactor it to be more morphspecific
 type SettingsDataModelFieldMorphRelationSettingsFormCardProps = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> &
     Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
