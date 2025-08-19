@@ -1,13 +1,9 @@
 import { Module } from '@nestjs/common';
-import { MktMiddlewareModule } from 'src/mkt-core/middlewares/mkt-middleware.module';
+
+import { MktInvoiceModule } from 'src/mkt-core/invoice/mkt-invoice.module';
 import { MktOrderModule } from 'src/mkt-core/order/mkt-order.module';
-import { InvoiceModule } from './invoice/invoice.module';
 
 @Module({
-  imports: [
-    MktOrderModule,
-    InvoiceModule,
-    MktMiddlewareModule,
-  ],
+  imports: [MktOrderModule, MktInvoiceModule],
 })
 export class MktCoreModule {}
