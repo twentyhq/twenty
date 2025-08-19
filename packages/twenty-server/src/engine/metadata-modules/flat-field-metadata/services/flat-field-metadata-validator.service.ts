@@ -29,6 +29,7 @@ import {
   InvalidMetadataException,
   InvalidMetadataExceptionCode,
 } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
+import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 
 export type ValidateOneFieldMetadataArgs<
   T extends FieldMetadataType = FieldMetadataType,
@@ -216,17 +217,17 @@ export class FlatFieldMetadataValidatorService {
       }
     }
 
-    const isRelationAndTargetObjectMetadataNotFound =
+    const isRelationFieldAndRelationTargetObjectMetadataExists =
       isRelationFlatFieldMetadata(flatFieldMetadataToDelete) &&
-      !isDefined(
+      isDefined(
         existingFlatObjectMetadataMaps.byId[
           flatFieldMetadataToDelete.relationTargetObjectMetadataId
         ],
       );
 
     if (
-      !isRelationAndTargetObjectMetadataNotFound &&
-      !flatFieldMetadataToDelete.isCustom
+      isRelationFieldAndRelationTargetObjectMetadataExists &&
+      isStandardMetadata(flatFieldMetadataToDelete)
     ) {
       errors.push(
         new FieldMetadataException(
@@ -237,7 +238,7 @@ export class FlatFieldMetadataValidatorService {
     }
 
     if (
-      !isRelationAndTargetObjectMetadataNotFound &&
+      isRelationFieldAndRelationTargetObjectMetadataExists &&
       flatFieldMetadataToDelete.isActive
     ) {
       errors.push(
