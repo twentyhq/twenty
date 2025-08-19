@@ -176,7 +176,12 @@ export class WorkspaceUpdateQueryBuilder<
         affected: result.affected,
       };
     } catch (error) {
-      throw computeTwentyORMException(error);
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        this.getMainAliasTarget(),
+        this.internalContext,
+      );
+
+      throw computeTwentyORMException(error, objectMetadata);
     }
   }
 
@@ -235,37 +240,41 @@ export class WorkspaceUpdateQueryBuilder<
 
       const results: UpdateResult[] = [];
 
+      const nestedRelationQueryBuilder = new WorkspaceSelectQueryBuilder(
+        this as unknown as WorkspaceSelectQueryBuilder<T>,
+        this.objectRecordsPermissions,
+        this.internalContext,
+        this.shouldBypassPermissionChecks,
+        this.authContext,
+      );
+
+      this.relationNestedConfig =
+        this.relationNestedQueries.prepareNestedRelationQueries(
+          this.manyInputs.map(
+            (input) => input.partialEntity,
+          ) as QueryDeepPartialEntityWithNestedRelationFields<T>[],
+          mainAliasTarget,
+        );
+
+      if (isDefined(this.relationNestedConfig)) {
+        const updatedValues =
+          await this.relationNestedQueries.processRelationNestedQueries({
+            entities: this.manyInputs.map((input) => input.partialEntity) as
+              | QueryDeepPartialEntityWithNestedRelationFields<T>
+              | QueryDeepPartialEntityWithNestedRelationFields<T>[],
+            relationNestedConfig: this.relationNestedConfig,
+            queryBuilder: nestedRelationQueryBuilder,
+          });
+
+        this.manyInputs = updatedValues.map((updatedValue, index) => ({
+          criteria: this.manyInputs[index].criteria,
+          partialEntity: updatedValue,
+        }));
+      }
+
       for (const input of this.manyInputs) {
         this.expressionMap.valuesSet = input.partialEntity;
         this.where({ id: input.criteria });
-
-        const nestedRelationQueryBuilder = new WorkspaceSelectQueryBuilder(
-          this as unknown as WorkspaceSelectQueryBuilder<T>,
-          this.objectRecordsPermissions,
-          this.internalContext,
-          this.shouldBypassPermissionChecks,
-          this.authContext,
-        );
-
-        this.relationNestedConfig =
-          this.relationNestedQueries.prepareNestedRelationQueries(
-            input.partialEntity as QueryDeepPartialEntityWithNestedRelationFields<T>,
-            mainAliasTarget,
-          );
-
-        if (isDefined(this.relationNestedConfig)) {
-          const updatedValues =
-            await this.relationNestedQueries.processRelationNestedQueries({
-              entities: input.partialEntity as
-                | QueryDeepPartialEntityWithNestedRelationFields<T>
-                | QueryDeepPartialEntityWithNestedRelationFields<T>[],
-              relationNestedConfig: this.relationNestedConfig,
-              queryBuilder: nestedRelationQueryBuilder,
-            });
-
-          this.expressionMap.valuesSet =
-            updatedValues.length === 1 ? updatedValues[0] : updatedValues;
-        }
 
         const result = await super.execute();
 
@@ -301,7 +310,12 @@ export class WorkspaceUpdateQueryBuilder<
         affected: results.length,
       };
     } catch (error) {
-      throw computeTwentyORMException(error);
+      const objectMetadata = getObjectMetadataFromEntityTarget(
+        this.getMainAliasTarget(),
+        this.internalContext,
+      );
+
+      throw computeTwentyORMException(error, objectMetadata);
     }
   }
 

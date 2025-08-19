@@ -106,6 +106,7 @@ msgstr "{メッセージ}"
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
 #: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
+#: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
 msgid "{name}"
 msgstr "{name}"
 
@@ -118,6 +119,12 @@ msgstr "{roleLabel} は {objectLabel} レコードを {humanReadableAction} で�
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
 msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
 msgstr "{roleLabel} は {objectLabel} レコードを {humanReadableAction} できません"
+
+#. js-lingui-id: 32wPk/
+#. placeholder {0}: selectedOptionsCount <= 1 ? fixedText : pluralize(fixedText)
+#: src/modules/ui/input/components/MultiSelectControl.tsx
+msgid "{selectedOptionsCount} {0}"
+msgstr ""
 
 #. js-lingui-id: pDgeaz
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -343,9 +350,9 @@ msgid "Active API keys created by you or your team."
 msgstr "あなたまたはチームが作成したアクティブなAPIキー。"
 
 #. js-lingui-id: KKfos4
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerReadonly.tsx
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerReadonly.tsx
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
 msgid "Add a Trigger"
 msgstr ""
 
@@ -389,9 +396,13 @@ msgstr "フォームに入力を追加する"
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
-#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
 msgid "Add new"
 msgstr "新規追加"
+
+#. js-lingui-id: ApsD9J
+#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
+msgid "Add New"
+msgstr ""
 
 #. js-lingui-id: erHjaG
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
@@ -399,7 +410,7 @@ msgid "Add node"
 msgstr ""
 
 #. js-lingui-id: 1Ltnvs
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Add Node"
 msgstr ""
 
@@ -584,7 +595,7 @@ msgid "All"
 msgstr "すべて"
 
 #. js-lingui-id: 3saA7W
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx
+#: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSection.tsx
 msgid "All ({relationRecordsCount})"
 msgstr "すべて ({relationRecordsCount})"
 
@@ -904,10 +915,10 @@ msgstr "人々のために自動的に連絡先を作成する。"
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "メールの受信・送信時に自動的に人物レコードを作成"
 
-#. js-lingui-id: csDS2L
+#. js-lingui-id: lXkUEV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Available"
-msgstr "利用可能"
+msgid "Availability"
+msgstr ""
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -1250,10 +1261,10 @@ msgstr "列データがマルチセレクトと互換性がありません。"
 msgid "Columns not matched:"
 msgstr "一致しない列："
 
-#. js-lingui-id: Icd+JO
+#. js-lingui-id: RyZt4H
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Command menu icon"
-msgstr "コマンドメニューアイコン"
+msgid "Command Icon"
+msgstr ""
 
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -1918,7 +1929,7 @@ msgid "Delete API key"
 msgstr "APIキーを削除"
 
 #. js-lingui-id: YLfVFw
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Delete branch"
 msgstr ""
 
@@ -2081,6 +2092,11 @@ msgstr "下書きを破棄"
 msgid "Display"
 msgstr "表示"
 
+#. js-lingui-id: r/aDR/
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Display a button in the top navbar to trigger this workflow"
+msgstr ""
+
 #. js-lingui-id: 8Vg8H7
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Display as a plain number or a percentage"
@@ -2101,6 +2117,11 @@ msgstr "複数行でテキストを表示"
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Do not import"
 msgstr "インポートしない"
+
+#. js-lingui-id: TvY/XA
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "Documentation"
+msgstr ""
 
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -2735,6 +2756,7 @@ msgstr "機能フラグと偽装"
 
 #. js-lingui-id: nrXDdR
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
 msgid "Field name"
 msgstr "フィールド名"
 
@@ -2742,6 +2764,11 @@ msgstr "フィールド名"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Field Name"
 msgstr "フィールド名"
+
+#. js-lingui-id: x07QTl
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+msgid "Field on destination"
+msgstr ""
 
 #. js-lingui-id: zXgopL
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -3023,11 +3050,6 @@ msgstr "健康状態"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hebrew"
 msgstr "ヘブライ語"
-
-#. js-lingui-id: D+zLDD
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
-msgid "Hidden"
-msgstr "非表示"
 
 #. js-lingui-id: em+S/U
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
@@ -3944,6 +3966,11 @@ msgstr "APIキーの名前"
 msgid "Name of your workspace"
 msgstr "ワークスペースの名前"
 
+#. js-lingui-id: JxC/pi
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Navbar"
+msgstr ""
+
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
@@ -4317,6 +4344,7 @@ msgstr "オブジェクト"
 
 #. js-lingui-id: Zrauom
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
 msgid "Object destination"
 msgstr "オブジェクトの目的地"
 
@@ -4340,6 +4368,11 @@ msgstr "オブジェクト"
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
 msgstr "道を外れた"
+
+#. js-lingui-id: 4e9dd8
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "On which object(s) should this trigger be available"
+msgstr ""
 
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -4550,11 +4583,6 @@ msgstr "写真"
 msgid "Plan"
 msgstr "プラン"
 
-#. js-lingui-id: 0LrFTO
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
-msgid "Playground"
-msgstr "プレイグラウンド"
-
 #. js-lingui-id: 90/XJz
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Please check your email for a verification link."
@@ -4751,6 +4779,7 @@ msgstr "キーを再生成"
 
 #. js-lingui-id: UiAJoB
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
 msgid "Relation type"
 msgstr "関係タイプ"
 
@@ -4788,7 +4817,7 @@ msgid "Remove as default"
 msgstr "デフォルトとして削除"
 
 #. js-lingui-id: rn2/2V
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Remove filter"
 msgstr ""
 
@@ -5224,11 +5253,6 @@ msgstr "ワークフローを表示"
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
 msgstr ""
-
-#. js-lingui-id: 5S/Gqz
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Select a record then open the ⌘K to trigger this workflow"
-msgstr "レコードを選択してから、⌘Kを開いてこのワークフローを起動します"
 
 #. js-lingui-id: h4pFju
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -5876,6 +5900,11 @@ msgstr "組織の名前"
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
 msgstr "お探しのページは存在しないか、削除されました。元のページに戻りましょう"
 
+#. js-lingui-id: 3lMl10
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "The selected record(s) will be passed to your workflow"
+msgstr ""
+
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field"
@@ -6043,6 +6072,12 @@ msgstr "試用期間が終了しました。管理者に連絡してください
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Trial expired. Please update your billing details."
 msgstr "トライアル期間が終了しました。請求先の詳細を更新してください。"
+
+#. js-lingui-id: H2Sfhg
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
+msgid "Trigger"
+msgstr ""
 
 #. js-lingui-id: EfDzVR
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -6361,11 +6396,6 @@ msgstr "ビューのタイプ"
 msgid "Visibility"
 msgstr "可視性"
 
-#. js-lingui-id: oh8+os
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
-msgid "Visible"
-msgstr "表示可能"
-
 #. js-lingui-id: zYTdqe
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -6477,11 +6507,6 @@ msgstr "APIキーの有効期限"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "When the key will be disabled"
 msgstr "キーが無効になる時期"
-
-#. js-lingui-id: e9sagb
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Will return one {objectType} to the next step of this workflow"
-msgstr "このワークフローの次のステップに{objectType}を1つ返します"
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx

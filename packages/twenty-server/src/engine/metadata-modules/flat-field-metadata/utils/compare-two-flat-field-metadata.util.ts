@@ -2,35 +2,16 @@ import diff from 'microdiff';
 import { FieldMetadataType, type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FLAT_FIELD_METADATA_JSONB_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-jsonb-properties.constant';
+import { FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-properties-to-compare.constant';
+import { FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-relation-properties-to-compare.constant';
+import { type FlatFieldMetadataEntityJsonbProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-jsonb-properties.type';
+import { type FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-properties-to-compare.type';
+import { type FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
-
-export const flatFieldMetadataPropertiesToCompare = [
-  'defaultValue',
-  'description',
-  'icon',
-  'isActive',
-  'isLabelSyncedWithName',
-  'isUnique',
-  'label',
-  'name',
-  'options',
-  'standardOverrides',
-  'settings',
-] as const satisfies (keyof FlatFieldMetadata)[];
-
-export type FlatFieldMetadataPropertiesToCompare =
-  (typeof flatFieldMetadataPropertiesToCompare)[number];
-
-export const flatFieldMetadataEntityJsonbProperties = [
-  'defaultValue',
-  'options',
-  'settings',
-  'standardOverrides',
-] as const satisfies (keyof FlatFieldMetadata)[];
-export type FlatFieldMetadataEntityJsonbProperties =
-  (typeof flatFieldMetadataEntityJsonbProperties)[number];
 
 const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
   return [
@@ -51,13 +32,13 @@ export const compareTwoFlatFieldMetadata = ({
   from,
   to,
 }: GetWorkspaceMigrationUpdateFieldActionArgs) => {
-  const compareFieldMetadataOptions = {
+  const transformMetadataForComparisonParameters = {
     shouldIgnoreProperty: (
       property: string,
       fieldMetadata: FlatFieldMetadata,
     ) => {
       if (
-        !flatFieldMetadataPropertiesToCompare.includes(
+        !FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE.includes(
           property as FlatFieldMetadataPropertiesToCompare,
         )
       ) {
@@ -73,26 +54,38 @@ export const compareTwoFlatFieldMetadata = ({
       }
 
       // Remove below assertion when we authorize relation edition, see https://github.com/twentyhq/twenty/commit/39f6f3c4bb101272a9014e142a842d0801a3c33b
-      if (
+      const isRelationFieldType =
         isDefined(fieldMetadata.type) &&
         (fieldMetadata.type === FieldMetadataType.RELATION ||
-          fieldMetadata.type === FieldMetadataType.MORPH_RELATION) &&
-        !['label', 'description', 'isActive'].includes(property)
+          fieldMetadata.type === FieldMetadataType.MORPH_RELATION);
+
+      if (
+        isRelationFieldType &&
+        !FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE.includes(
+          property as FlatFieldMetadataRelationPropertiesToCompare,
+        )
+      ) {
+        return true;
+      }
+
+      if (
+        isStandardMetadata(fieldMetadata) &&
+        property !== 'standardOverrides'
       ) {
         return true;
       }
 
       return false;
     },
-    propertiesToStringify: flatFieldMetadataEntityJsonbProperties,
+    propertiesToStringify: FLAT_FIELD_METADATA_JSONB_PROPERTIES,
   };
   const fromCompare = transformMetadataForComparison(
     from,
-    compareFieldMetadataOptions,
+    transformMetadataForComparisonParameters,
   );
   const toCompare = transformMetadataForComparison(
     to,
-    compareFieldMetadataOptions,
+    transformMetadataForComparisonParameters,
   );
 
   const flatFieldMetadataDifferences = diff(fromCompare, toCompare);
@@ -104,7 +97,7 @@ export const compareTwoFlatFieldMetadata = ({
       case 'CHANGE': {
         const { oldValue, path, value } = difference;
         const property = path[0] as FlatFieldMetadataPropertiesToCompare;
-        const isJsonb = flatFieldMetadataEntityJsonbProperties.includes(
+        const isJsonb = FLAT_FIELD_METADATA_JSONB_PROPERTIES.includes(
           property as FlatFieldMetadataEntityJsonbProperties,
         );
 

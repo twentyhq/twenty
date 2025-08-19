@@ -61,7 +61,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
 
   const { createStep } = useCreateStep({ workflow });
 
-  const { deleteEdge } = useDeleteEdge({ workflow });
+  const { deleteEdge } = useDeleteEdge();
 
   const { startNodeCreation, isNodeCreationStarted } = useStartNodeCreation();
 

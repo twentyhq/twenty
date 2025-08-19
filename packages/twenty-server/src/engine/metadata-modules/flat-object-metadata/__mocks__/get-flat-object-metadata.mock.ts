@@ -9,7 +9,7 @@ type FlatObjectMetadataOverrides = Required<
 export const getFlatObjectMetadataMock = (
   overrides: FlatObjectMetadataOverrides,
 ): FlatObjectMetadata => {
-  const createdAt = new Date();
+  const createdAt = '2024-01-01T00:00:00.000Z' as unknown as Date;
 
   return {
     flatFieldMetadatas: [],
@@ -25,6 +25,7 @@ export const getFlatObjectMetadataMock = (
     isRemote: false,
     isSearchable: true,
     isSystem: false,
+    isUIReadOnly: false,
     labelIdentifierFieldMetadataId: faker.string.uuid(),
     labelPlural: 'default flat object metadata label plural',
     labelSingular: 'default flat object metadata label singular',

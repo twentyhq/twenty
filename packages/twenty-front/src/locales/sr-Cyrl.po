@@ -106,6 +106,7 @@ msgstr "{порука}"
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
 #: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
+#: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
 msgid "{name}"
 msgstr "{name}"
 
@@ -118,6 +119,12 @@ msgstr "{roleLabel} може {humanReadableAction} {objectLabel} записе"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
 msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
 msgstr "{roleLabel} не може {humanReadableAction} {objectLabel} записе"
+
+#. js-lingui-id: 32wPk/
+#. placeholder {0}: selectedOptionsCount <= 1 ? fixedText : pluralize(fixedText)
+#: src/modules/ui/input/components/MultiSelectControl.tsx
+msgid "{selectedOptionsCount} {0}"
+msgstr ""
 
 #. js-lingui-id: pDgeaz
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -343,9 +350,9 @@ msgid "Active API keys created by you or your team."
 msgstr "Активни API кључеви које сте креирали ви или ваш тим."
 
 #. js-lingui-id: KKfos4
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerReadonly.tsx
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerReadonly.tsx
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
 msgid "Add a Trigger"
 msgstr ""
 
@@ -389,9 +396,13 @@ msgstr "Додај уносе у ваш образац"
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
-#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
 msgid "Add new"
 msgstr "Додајте ново"
+
+#. js-lingui-id: ApsD9J
+#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
+msgid "Add New"
+msgstr ""
 
 #. js-lingui-id: erHjaG
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
@@ -399,7 +410,7 @@ msgid "Add node"
 msgstr ""
 
 #. js-lingui-id: 1Ltnvs
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Add Node"
 msgstr ""
 
@@ -584,7 +595,7 @@ msgid "All"
 msgstr "Сви"
 
 #. js-lingui-id: 3saA7W
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx
+#: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSection.tsx
 msgid "All ({relationRecordsCount})"
 msgstr "Сви ({relationRecordsCount})"
 
@@ -904,10 +915,10 @@ msgstr "Аутоматски креирајте контакте за особе
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "Аутоматски креирај записе о људима приликом примања или слања е-поште"
 
-#. js-lingui-id: csDS2L
+#. js-lingui-id: lXkUEV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Available"
-msgstr "Доступно"
+msgid "Availability"
+msgstr ""
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -1250,10 +1261,10 @@ msgstr "податковни ступац није компатибилан са
 msgid "Columns not matched:"
 msgstr "Колоне нису упарене:"
 
-#. js-lingui-id: Icd+JO
+#. js-lingui-id: RyZt4H
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Command menu icon"
-msgstr "Икона менија команде"
+msgid "Command Icon"
+msgstr ""
 
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -1918,7 +1929,7 @@ msgid "Delete API key"
 msgstr "Обриши API кључ"
 
 #. js-lingui-id: YLfVFw
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Delete branch"
 msgstr ""
 
@@ -2081,6 +2092,11 @@ msgstr "Одбаци нацрт"
 msgid "Display"
 msgstr "Приказ"
 
+#. js-lingui-id: r/aDR/
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Display a button in the top navbar to trigger this workflow"
+msgstr ""
+
 #. js-lingui-id: 8Vg8H7
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Display as a plain number or a percentage"
@@ -2101,6 +2117,11 @@ msgstr "Прикажи текст на више линија"
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Do not import"
 msgstr "Не увози"
+
+#. js-lingui-id: TvY/XA
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "Documentation"
+msgstr ""
 
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -2735,6 +2756,7 @@ msgstr "Заставице функције & Имперсонација"
 
 #. js-lingui-id: nrXDdR
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
 msgid "Field name"
 msgstr "Име поља"
 
@@ -2742,6 +2764,11 @@ msgstr "Име поља"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Field Name"
 msgstr "Име поља"
+
+#. js-lingui-id: x07QTl
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+msgid "Field on destination"
+msgstr ""
 
 #. js-lingui-id: zXgopL
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -3023,11 +3050,6 @@ msgstr "Статус здравља"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hebrew"
 msgstr "Хебрејски"
-
-#. js-lingui-id: D+zLDD
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
-msgid "Hidden"
-msgstr "Сакривено"
 
 #. js-lingui-id: em+S/U
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
@@ -3944,6 +3966,11 @@ msgstr "Име Вашег API кључа"
 msgid "Name of your workspace"
 msgstr "Име вашег простора"
 
+#. js-lingui-id: JxC/pi
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Navbar"
+msgstr ""
+
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
@@ -4317,6 +4344,7 @@ msgstr "Објекат"
 
 #. js-lingui-id: Zrauom
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
 msgid "Object destination"
 msgstr "Одредишни објекат"
 
@@ -4340,6 +4368,11 @@ msgstr "Објекти"
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
 msgstr "Ван утабаних стаза"
+
+#. js-lingui-id: 4e9dd8
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "On which object(s) should this trigger be available"
+msgstr ""
 
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -4550,11 +4583,6 @@ msgstr "Слика"
 msgid "Plan"
 msgstr "План"
 
-#. js-lingui-id: 0LrFTO
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
-msgid "Playground"
-msgstr "Плејграунд"
-
 #. js-lingui-id: 90/XJz
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Please check your email for a verification link."
@@ -4751,6 +4779,7 @@ msgstr "Регенеришите кључ"
 
 #. js-lingui-id: UiAJoB
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
 msgid "Relation type"
 msgstr "Тип релације"
 
@@ -4788,7 +4817,7 @@ msgid "Remove as default"
 msgstr "Уклони као подразумевано"
 
 #. js-lingui-id: rn2/2V
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Remove filter"
 msgstr ""
 
@@ -5224,11 +5253,6 @@ msgstr "Погледајте токове рада"
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
 msgstr ""
-
-#. js-lingui-id: 5S/Gqz
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Select a record then open the ⌘K to trigger this workflow"
-msgstr "Изаберите запис, а затим отворите ⌘K да покренете овај ток радног процеса"
 
 #. js-lingui-id: h4pFju
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -5876,6 +5900,11 @@ msgstr "Име ваше организације"
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
 msgstr "Страница коју тражите је или уклоњена или никад није постојала. Вратимо вас на прави пут"
 
+#. js-lingui-id: 3lMl10
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "The selected record(s) will be passed to your workflow"
+msgstr ""
+
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field"
@@ -6043,6 +6072,12 @@ msgstr "Пробни период је истекао. Молимо вас ко�
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Trial expired. Please update your billing details."
 msgstr "Пробни период је истекао. Молимо вас ажурирајте ваше податке о наплати."
+
+#. js-lingui-id: H2Sfhg
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
+msgid "Trigger"
+msgstr ""
 
 #. js-lingui-id: EfDzVR
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -6361,11 +6396,6 @@ msgstr "Тип приказа"
 msgid "Visibility"
 msgstr "Видљивост"
 
-#. js-lingui-id: oh8+os
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
-msgid "Visible"
-msgstr "Видљив"
-
 #. js-lingui-id: zYTdqe
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -6477,11 +6507,6 @@ msgstr "Када ће API кључ истећи."
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "When the key will be disabled"
 msgstr "Када ће кључ бити онемогућен"
-
-#. js-lingui-id: e9sagb
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Will return one {objectType} to the next step of this workflow"
-msgstr ""
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx

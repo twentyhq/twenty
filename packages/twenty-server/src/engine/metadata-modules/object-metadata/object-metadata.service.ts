@@ -110,7 +110,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         workspaceId: createObjectInput.workspaceId,
       });
 
-      // Since V2 returns FlatObjectMetadata, we need to fetch the created entity
       const createdObjectMetadata = await this.objectMetadataRepository.findOne(
         {
           where: {
@@ -200,7 +199,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         (field) => field.standardId === CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
       )?.id;
 
-      if (!labelIdentifierFieldMetadataId) {
+      if (!isDefined(labelIdentifierFieldMetadataId)) {
         throw new ObjectMetadataException(
           'Label identifier field metadata not created properly',
           ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD,
@@ -288,7 +287,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   }
 
   public async updateOneObject(
-    input: UpdateOneObjectInput,
+    updateObjectInput: UpdateOneObjectInput,
     workspaceId: string,
   ): Promise<ObjectMetadataEntity> {
     const mainDataSource =
@@ -306,14 +305,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
           { workspaceId },
         );
-      const inputId = input.id;
+      const inputId = updateObjectInput.id;
       const inputPayload = {
-        ...input.update,
-        ...(isDefined(input.update.labelSingular)
-          ? { labelSingular: capitalize(input.update.labelSingular) }
+        ...updateObjectInput.update,
+        ...(isDefined(updateObjectInput.update.labelSingular)
+          ? {
+              labelSingular: capitalize(updateObjectInput.update.labelSingular),
+            }
           : {}),
-        ...(isDefined(input.update.labelPlural)
-          ? { labelPlural: capitalize(input.update.labelPlural) }
+        ...(isDefined(updateObjectInput.update.labelPlural)
+          ? { labelPlural: capitalize(updateObjectInput.update.labelPlural) }
           : {}),
       };
 

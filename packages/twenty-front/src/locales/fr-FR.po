@@ -106,6 +106,7 @@ msgstr "{message}"
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
 #: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
+#: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
 msgid "{name}"
 msgstr "{name}"
 
@@ -118,6 +119,12 @@ msgstr "{roleLabel} peut {humanReadableAction} des enregistrements {objectLabel}
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
 msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
 msgstr "{roleLabel} ne peut pas {humanReadableAction} des enregistrements {objectLabel}"
+
+#. js-lingui-id: 32wPk/
+#. placeholder {0}: selectedOptionsCount <= 1 ? fixedText : pluralize(fixedText)
+#: src/modules/ui/input/components/MultiSelectControl.tsx
+msgid "{selectedOptionsCount} {0}"
+msgstr ""
 
 #. js-lingui-id: pDgeaz
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -343,9 +350,9 @@ msgid "Active API keys created by you or your team."
 msgstr "Clés API actives créées par vous ou votre équipe."
 
 #. js-lingui-id: KKfos4
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerReadonly.tsx
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerReadonly.tsx
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
 msgid "Add a Trigger"
 msgstr ""
 
@@ -389,9 +396,13 @@ msgstr "Ajoutez des entrées à votre formulaire"
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
-#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
 msgid "Add new"
 msgstr "Ajouter nouveau"
+
+#. js-lingui-id: ApsD9J
+#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
+msgid "Add New"
+msgstr ""
 
 #. js-lingui-id: erHjaG
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
@@ -399,7 +410,7 @@ msgid "Add node"
 msgstr ""
 
 #. js-lingui-id: 1Ltnvs
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Add Node"
 msgstr ""
 
@@ -584,7 +595,7 @@ msgid "All"
 msgstr "Tous"
 
 #. js-lingui-id: 3saA7W
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx
+#: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSection.tsx
 msgid "All ({relationRecordsCount})"
 msgstr "Tous ({relationRecordsCount})"
 
@@ -904,10 +915,10 @@ msgstr "Créer automatiquement des contacts pour les personnes."
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "Créer automatiquement des enregistrements de personnes lors de la réception ou de l'envoi d'emails"
 
-#. js-lingui-id: csDS2L
+#. js-lingui-id: lXkUEV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Available"
-msgstr "Disponible"
+msgid "Availability"
+msgstr ""
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -1250,10 +1261,10 @@ msgstr "les données de la colonne ne sont pas compatibles avec la sélection mu
 msgid "Columns not matched:"
 msgstr "Colonnes non appariées :"
 
-#. js-lingui-id: Icd+JO
+#. js-lingui-id: RyZt4H
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Command menu icon"
-msgstr "Icône du menu de commande"
+msgid "Command Icon"
+msgstr ""
 
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -1918,7 +1929,7 @@ msgid "Delete API key"
 msgstr "Supprimer la clé API"
 
 #. js-lingui-id: YLfVFw
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Delete branch"
 msgstr ""
 
@@ -2081,6 +2092,11 @@ msgstr "Rejeter le brouillon"
 msgid "Display"
 msgstr "Afficher"
 
+#. js-lingui-id: r/aDR/
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Display a button in the top navbar to trigger this workflow"
+msgstr ""
+
 #. js-lingui-id: 8Vg8H7
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Display as a plain number or a percentage"
@@ -2101,6 +2117,11 @@ msgstr "Afficher le texte sur plusieurs lignes"
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Do not import"
 msgstr "Ne pas importer"
+
+#. js-lingui-id: TvY/XA
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "Documentation"
+msgstr ""
 
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -2735,6 +2756,7 @@ msgstr "Drapeaux de fonctionnalité & Usurpation d'identité"
 
 #. js-lingui-id: nrXDdR
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
 msgid "Field name"
 msgstr "Nom du champ"
 
@@ -2742,6 +2764,11 @@ msgstr "Nom du champ"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Field Name"
 msgstr "Nom du champ"
+
+#. js-lingui-id: x07QTl
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+msgid "Field on destination"
+msgstr ""
 
 #. js-lingui-id: zXgopL
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -3023,11 +3050,6 @@ msgstr "Statut de santé"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hebrew"
 msgstr "Hébreu"
-
-#. js-lingui-id: D+zLDD
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
-msgid "Hidden"
-msgstr "Caché"
 
 #. js-lingui-id: em+S/U
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
@@ -3944,6 +3966,11 @@ msgstr "Nom de votre clé API"
 msgid "Name of your workspace"
 msgstr "Nom de votre espace de travail"
 
+#. js-lingui-id: JxC/pi
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Navbar"
+msgstr ""
+
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
@@ -4317,6 +4344,7 @@ msgstr "Objet"
 
 #. js-lingui-id: Zrauom
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
 msgid "Object destination"
 msgstr "Destination de l'objet"
 
@@ -4340,6 +4368,11 @@ msgstr "Objets"
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
 msgstr "Hors des sentiers battus"
+
+#. js-lingui-id: 4e9dd8
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "On which object(s) should this trigger be available"
+msgstr ""
 
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -4550,11 +4583,6 @@ msgstr "Photo"
 msgid "Plan"
 msgstr "Plan"
 
-#. js-lingui-id: 0LrFTO
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
-msgid "Playground"
-msgstr "Terrain de jeu"
-
 #. js-lingui-id: 90/XJz
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Please check your email for a verification link."
@@ -4751,6 +4779,7 @@ msgstr "Régénérer la clé"
 
 #. js-lingui-id: UiAJoB
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
 msgid "Relation type"
 msgstr "Type de relation"
 
@@ -4788,7 +4817,7 @@ msgid "Remove as default"
 msgstr "Supprimer comme défaut"
 
 #. js-lingui-id: rn2/2V
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Remove filter"
 msgstr ""
 
@@ -5224,11 +5253,6 @@ msgstr "Voir les workflows"
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
 msgstr ""
-
-#. js-lingui-id: 5S/Gqz
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Select a record then open the ⌘K to trigger this workflow"
-msgstr "Sélectionnez un enregistrement puis ouvrez le ⌘K pour déclencher ce flux de travail"
 
 #. js-lingui-id: h4pFju
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -5876,6 +5900,11 @@ msgstr "Le nom de votre organisation"
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
 msgstr "La page que vous recherchez a disparu ou n'a jamais existé. Revenons sur la bonne voie"
 
+#. js-lingui-id: 3lMl10
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "The selected record(s) will be passed to your workflow"
+msgstr ""
+
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field"
@@ -6043,6 +6072,12 @@ msgstr "La période d'essai est expirée. Veuillez contacter votre administrateu
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Trial expired. Please update your billing details."
 msgstr "Essai expiré. Veuillez mettre à jour vos informations de facturation."
+
+#. js-lingui-id: H2Sfhg
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
+msgid "Trigger"
+msgstr ""
 
 #. js-lingui-id: EfDzVR
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -6361,11 +6396,6 @@ msgstr "Type de vue"
 msgid "Visibility"
 msgstr "Visibilité"
 
-#. js-lingui-id: oh8+os
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
-msgid "Visible"
-msgstr "Visible"
-
 #. js-lingui-id: zYTdqe
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -6477,11 +6507,6 @@ msgstr "Date d'expiration de la clé API."
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "When the key will be disabled"
 msgstr "Quand la clé sera désactivée"
-
-#. js-lingui-id: e9sagb
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Will return one {objectType} to the next step of this workflow"
-msgstr "Retournera {objectType} au prochain étapes de ce flux de travail"
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx

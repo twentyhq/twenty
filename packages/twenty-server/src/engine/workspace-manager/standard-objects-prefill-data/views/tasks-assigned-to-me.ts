@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
@@ -7,6 +9,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 
 export const tasksAssignedToMeView = (
   objectMetadataItems: ObjectMetadataEntity[],
+  useCoreNaming = false,
 ) => {
   const taskObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.task,
@@ -17,7 +20,7 @@ export const tasksAssignedToMeView = (
   }
 
   return {
-    name: 'Assigned to Me',
+    name: useCoreNaming ? msg`Assigned to Me` : 'Assigned to Me',
     objectMetadataId: taskObjectMetadata.id,
     type: 'table',
     key: null,

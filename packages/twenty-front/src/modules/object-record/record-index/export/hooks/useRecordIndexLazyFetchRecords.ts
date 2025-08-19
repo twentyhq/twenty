@@ -3,6 +3,7 @@ import { type ColumnDefinition } from '@/object-record/record-table/types/Column
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
+import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
@@ -73,6 +74,10 @@ export const useRecordIndexLazyFetchRecords = ({
     contextStoreFiltersComponentState,
   );
 
+  const contextStoreFilterGroups = useRecoilComponentValue(
+    contextStoreFilterGroupsComponentState,
+  );
+
   const contextStoreAnyFieldFilterValue = useRecoilComponentValue(
     contextStoreAnyFieldFilterValueComponentState,
   );
@@ -83,13 +88,14 @@ export const useRecordIndexLazyFetchRecords = ({
     objectMetadataItem.nameSingular,
   );
 
-  const queryFilter = computeContextStoreFilters(
+  const queryFilter = computeContextStoreFilters({
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
+    contextStoreFilterGroups,
     objectMetadataItem,
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
-  );
+  });
 
   const finalColumns = [
     ...columns,

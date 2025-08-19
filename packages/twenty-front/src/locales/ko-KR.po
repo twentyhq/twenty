@@ -106,6 +106,7 @@ msgstr "{메시지}"
 #. js-lingui-id: 6j5rE1
 #: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
 #: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
+#: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
 msgid "{name}"
 msgstr "{name}"
 
@@ -118,6 +119,12 @@ msgstr "{roleLabel}는 {objectLabel} 기록을 {humanReadableAction}할 수 있�
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
 msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
 msgstr "{roleLabel}는 {objectLabel} 기록을 {humanReadableAction}할 수 없습니다."
+
+#. js-lingui-id: 32wPk/
+#. placeholder {0}: selectedOptionsCount <= 1 ? fixedText : pluralize(fixedText)
+#: src/modules/ui/input/components/MultiSelectControl.tsx
+msgid "{selectedOptionsCount} {0}"
+msgstr ""
 
 #. js-lingui-id: pDgeaz
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -343,9 +350,9 @@ msgid "Active API keys created by you or your team."
 msgstr "본인 또는 팀이 생성한 활성 API 키입니다."
 
 #. js-lingui-id: KKfos4
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerReadonly.tsx
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerReadonly.tsx
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
 msgid "Add a Trigger"
 msgstr ""
 
@@ -389,9 +396,13 @@ msgstr "폼에 입력란 추가"
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
-#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
 msgid "Add new"
 msgstr "새로 추가"
+
+#. js-lingui-id: ApsD9J
+#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
+msgid "Add New"
+msgstr ""
 
 #. js-lingui-id: erHjaG
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
@@ -399,7 +410,7 @@ msgid "Add node"
 msgstr ""
 
 #. js-lingui-id: 1Ltnvs
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Add Node"
 msgstr ""
 
@@ -584,7 +595,7 @@ msgid "All"
 msgstr "전체"
 
 #. js-lingui-id: 3saA7W
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx
+#: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSection.tsx
 msgid "All ({relationRecordsCount})"
 msgstr "전체 ({relationRecordsCount})"
 
@@ -904,10 +915,10 @@ msgstr "사람들에 대한 연락처를 자동으로 생성합니다."
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "이메일을 받거나 보낼 때 사람 레코드를 자동으로 생성"
 
-#. js-lingui-id: csDS2L
+#. js-lingui-id: lXkUEV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Available"
-msgstr "사용 가능"
+msgid "Availability"
+msgstr ""
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -1250,10 +1261,10 @@ msgstr "열 데이터는 다중 선택과 호환되지 않습니다."
 msgid "Columns not matched:"
 msgstr "일치하지 않는 열:"
 
-#. js-lingui-id: Icd+JO
+#. js-lingui-id: RyZt4H
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Command menu icon"
-msgstr "명령 메뉴 아이콘"
+msgid "Command Icon"
+msgstr ""
 
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -1918,7 +1929,7 @@ msgid "Delete API key"
 msgstr "API 키 삭제"
 
 #. js-lingui-id: YLfVFw
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Delete branch"
 msgstr ""
 
@@ -2081,6 +2092,11 @@ msgstr "초안 삭제"
 msgid "Display"
 msgstr "표시"
 
+#. js-lingui-id: r/aDR/
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Display a button in the top navbar to trigger this workflow"
+msgstr ""
+
 #. js-lingui-id: 8Vg8H7
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Display as a plain number or a percentage"
@@ -2101,6 +2117,11 @@ msgstr "여러 줄에 텍스트 표시"
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Do not import"
 msgstr "가져오지 않음"
+
+#. js-lingui-id: TvY/XA
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "Documentation"
+msgstr ""
 
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -2735,6 +2756,7 @@ msgstr "기능 플래그 및 대행"
 
 #. js-lingui-id: nrXDdR
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
 msgid "Field name"
 msgstr "필드 이름"
 
@@ -2742,6 +2764,11 @@ msgstr "필드 이름"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Field Name"
 msgstr "필드 이름"
+
+#. js-lingui-id: x07QTl
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+msgid "Field on destination"
+msgstr ""
 
 #. js-lingui-id: zXgopL
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -3023,11 +3050,6 @@ msgstr "건강 상태"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hebrew"
 msgstr "히브리어"
-
-#. js-lingui-id: D+zLDD
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
-msgid "Hidden"
-msgstr "숨김"
 
 #. js-lingui-id: em+S/U
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
@@ -3944,6 +3966,11 @@ msgstr "API 키 이름"
 msgid "Name of your workspace"
 msgstr "워크스페이스 이름"
 
+#. js-lingui-id: JxC/pi
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "Navbar"
+msgstr ""
+
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Navigate to next record"
@@ -4317,6 +4344,7 @@ msgstr "개체"
 
 #. js-lingui-id: Zrauom
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
 msgid "Object destination"
 msgstr "개체 대상"
 
@@ -4340,6 +4368,11 @@ msgstr "개체"
 #: src/pages/not-found/NotFound.tsx
 msgid "Off the beaten path"
 msgstr "잘 알려지지 않은 길"
+
+#. js-lingui-id: 4e9dd8
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "On which object(s) should this trigger be available"
+msgstr ""
 
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -4550,11 +4583,6 @@ msgstr "사진"
 msgid "Plan"
 msgstr "플랜"
 
-#. js-lingui-id: 0LrFTO
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
-msgid "Playground"
-msgstr "플레이그라운드"
-
 #. js-lingui-id: 90/XJz
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Please check your email for a verification link."
@@ -4751,6 +4779,7 @@ msgstr "키 재생성"
 
 #. js-lingui-id: UiAJoB
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
 msgid "Relation type"
 msgstr "관계 유형"
 
@@ -4788,7 +4817,7 @@ msgid "Remove as default"
 msgstr "기본으로 설정 해제"
 
 #. js-lingui-id: rn2/2V
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Remove filter"
 msgstr ""
 
@@ -5224,11 +5253,6 @@ msgstr "워크플로우들 보기"
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
 msgstr ""
-
-#. js-lingui-id: 5S/Gqz
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Select a record then open the ⌘K to trigger this workflow"
-msgstr "기록을 선택한 다음 ⌘K를 열어 이 워크플로를 트리거합니다."
 
 #. js-lingui-id: h4pFju
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -5876,6 +5900,11 @@ msgstr "조직의 이름"
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
 msgstr "찾고 계신 페이지는 이미 사라졌거나 존재하지 않습니다. 다시 정상화해 드리겠습니다"
 
+#. js-lingui-id: 3lMl10
+#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
+msgid "The selected record(s) will be passed to your workflow"
+msgstr ""
+
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "The values of this field"
@@ -6043,6 +6072,12 @@ msgstr "체험 기간이 만료되었습니다. 관리자에게 문의하세요.
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
 msgid "Trial expired. Please update your billing details."
 msgstr "시험 사용 기간이 만료되었습니다. 청구 정보를 업데이트하세요."
+
+#. js-lingui-id: H2Sfhg
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
+msgid "Trigger"
+msgstr ""
 
 #. js-lingui-id: EfDzVR
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -6361,11 +6396,6 @@ msgstr "보기 유형"
 msgid "Visibility"
 msgstr "가시성"
 
-#. js-lingui-id: oh8+os
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
-msgid "Visible"
-msgstr "보임"
-
 #. js-lingui-id: zYTdqe
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
@@ -6477,11 +6507,6 @@ msgstr "API 키 만료일."
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "When the key will be disabled"
 msgstr "키 비활성화 시기"
-
-#. js-lingui-id: e9sagb
-#: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
-msgid "Will return one {objectType} to the next step of this workflow"
-msgstr "이 워크플로의 다음 단계로 하나의 {objectType}을(를) 반환합니다."
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx

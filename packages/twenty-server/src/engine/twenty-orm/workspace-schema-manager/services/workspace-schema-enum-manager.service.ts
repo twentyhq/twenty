@@ -1,21 +1,34 @@
-import { Injectable } from '@nestjs/common';
-
 import { type QueryRunner } from 'typeorm';
 
 import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+  WorkspaceSchemaManagerException,
+  WorkspaceSchemaManagerExceptionCode,
+} from 'src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception';
+import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
+import { buildSqlColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util';
+import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration-runner/utils/compute-postgres-enum-name.util';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
 
-@Injectable()
+// TODO: upstream does not guarantee transactionality, implement IF EXISTS or equivalent for idempotency
 export class WorkspaceSchemaEnumManagerService {
-  async createEnum(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    enumName: string,
-    values: string[],
-  ): Promise<void> {
+  async createEnum({
+    queryRunner,
+    schemaName,
+    enumName,
+    values,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    enumName: string;
+    values: string[];
+  }): Promise<void> {
+    if (values.length === 0) {
+      throw new WorkspaceSchemaManagerException(
+        `Cannot create enum with no values`,
+        WorkspaceSchemaManagerExceptionCode.ENUM_OPERATION_FAILED,
+      );
+    }
+
     const sanitizedValues = values
       .map((value) => removeSqlDDLInjection(value.toString()))
       .map((value) => `'${value}'`)
@@ -28,11 +41,15 @@ export class WorkspaceSchemaEnumManagerService {
     await queryRunner.query(sql);
   }
 
-  async dropEnum(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    enumName: string,
-  ): Promise<void> {
+  async dropEnum({
+    queryRunner,
+    schemaName,
+    enumName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    enumName: string;
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeEnumName = removeSqlDDLInjection(enumName);
     const sql = `DROP TYPE IF EXISTS "${safeSchemaName}"."${safeEnumName}"`;
@@ -40,12 +57,17 @@ export class WorkspaceSchemaEnumManagerService {
     await queryRunner.query(sql);
   }
 
-  async renameEnum(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    oldEnumName: string,
-    newEnumName: string,
-  ): Promise<void> {
+  async renameEnum({
+    queryRunner,
+    schemaName,
+    oldEnumName,
+    newEnumName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    oldEnumName: string;
+    newEnumName: string;
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeOldEnumName = removeSqlDDLInjection(oldEnumName);
     const safeNewEnumName = removeSqlDDLInjection(newEnumName);
@@ -54,14 +76,21 @@ export class WorkspaceSchemaEnumManagerService {
     await queryRunner.query(sql);
   }
 
-  async addEnumValue(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    enumName: string,
-    value: string,
-    beforeValue?: string,
-    afterValue?: string,
-  ): Promise<void> {
+  async addEnumValue({
+    queryRunner,
+    schemaName,
+    enumName,
+    value,
+    beforeValue,
+    afterValue,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    enumName: string;
+    value: string;
+    beforeValue?: string;
+    afterValue?: string;
+  }): Promise<void> {
     const sanitizedValue = removeSqlDDLInjection(value);
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeEnumName = removeSqlDDLInjection(enumName);
@@ -80,13 +109,19 @@ export class WorkspaceSchemaEnumManagerService {
     await queryRunner.query(sql);
   }
 
-  async renameEnumValue(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    enumName: string,
-    oldValue: string,
-    newValue: string,
-  ): Promise<void> {
+  async renameEnumValue({
+    queryRunner,
+    schemaName,
+    enumName,
+    oldValue,
+    newValue,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    enumName: string;
+    oldValue: string;
+    newValue: string;
+  }): Promise<void> {
     const sanitizedOldValue = removeSqlDDLInjection(oldValue);
     const sanitizedNewValue = removeSqlDDLInjection(newValue);
     const safeSchemaName = removeSqlDDLInjection(schemaName);
@@ -96,145 +131,98 @@ export class WorkspaceSchemaEnumManagerService {
     await queryRunner.query(sql);
   }
 
-  async enumExists(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    enumName: string,
-  ): Promise<boolean> {
-    const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeEnumName = removeSqlDDLInjection(enumName);
-
-    const result = await queryRunner.query(
-      `SELECT EXISTS (
-        SELECT FROM pg_type t
-        JOIN pg_namespace n ON n.oid = t.typnamespace
-        WHERE n.nspname = $1 AND t.typname = $2 AND t.typtype = 'e'
-      )`,
-      [safeSchemaName, safeEnumName],
-    );
-
-    return result[0]?.exists || false;
-  }
-
-  // TODO: Not sure if we want to use that query or prefer to rely on the "from" values.
-  async getEnumValues(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    enumName: string,
-  ): Promise<string[]> {
-    const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeEnumName = removeSqlDDLInjection(enumName);
-
-    const result = await queryRunner.query(
-      `SELECT e.enumlabel as value
-       FROM pg_type t
-       JOIN pg_namespace n ON n.oid = t.typnamespace
-       JOIN pg_enum e ON t.oid = e.enumtypid
-       WHERE n.nspname = $1 AND t.typname = $2
-       ORDER BY e.enumsortorder`,
-      [safeSchemaName, safeEnumName],
-    );
-
-    return result.map((row: { value: string }) => row.value);
-  }
-
-  async getEnumNameForColumn(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    columnName: string,
-  ): Promise<string | null> {
-    const safeSchemaName = removeSqlDDLInjection(schemaName);
-    const safeTableName = removeSqlDDLInjection(tableName);
-    const safeColumnName = removeSqlDDLInjection(columnName);
-
-    const result = await queryRunner.query(
-      `SELECT udt_name, data_type 
-       FROM information_schema.columns 
-       WHERE table_schema = $1 AND table_name = $2 AND column_name = $3`,
-      [safeSchemaName, safeTableName, safeColumnName],
-    );
-
-    if (!result[0]) {
-      return null;
-    }
-
-    const enumTypeName =
-      result[0].data_type === 'ARRAY'
-        ? result[0].udt_name.replace(/^_/, '')
-        : result[0].udt_name;
-
-    return enumTypeName;
-  }
-
-  async alterEnumValues(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    columnName: string,
-    newValues: string[],
-    valueMapping?: Record<string, string>,
-  ): Promise<void> {
+  // TODO: optimize this to not create a temp enum and column if not necessary (e.g. using ADD VALUE)
+  async alterEnumValues({
+    queryRunner,
+    schemaName,
+    tableName,
+    columnDefinition,
+    enumValues,
+    oldToNewEnumOptionMap,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    columnDefinition: WorkspaceSchemaColumnDefinition;
+    enumValues: string[];
+    oldToNewEnumOptionMap: Record<string, string>;
+  }): Promise<void> {
     const isTransactionAlreadyActive = queryRunner.isTransactionActive;
 
     if (!isTransactionAlreadyActive) {
       await queryRunner.startTransaction();
     }
 
+    if (!enumValues || enumValues.length === 0) {
+      throw new WorkspaceSchemaManagerException(
+        `Cannot alter enum values for column ${columnDefinition.name} because it has no enum values`,
+        WorkspaceSchemaManagerExceptionCode.ENUM_OPERATION_FAILED,
+      );
+    }
+
     try {
-      const oldEnumName = await this.getEnumNameForColumn(
+      const columnName = columnDefinition.name;
+
+      const enumName = computePostgresEnumName({
+        tableName,
+        columnName,
+      });
+
+      const oldEnumName = `${enumName}_old`;
+
+      await this.renameEnum({
+        queryRunner,
+        schemaName,
+        oldEnumName: enumName,
+        newEnumName: oldEnumName,
+      });
+
+      await this.createEnum({
+        queryRunner,
+        schemaName,
+        enumName,
+        values: enumValues,
+      });
+
+      const oldColumnName = `${columnName}_old`;
+
+      await this.renameColumn({
         queryRunner,
         schemaName,
         tableName,
-        columnName,
-      );
+        oldColumnName: columnName,
+        newColumnName: oldColumnName,
+      });
 
-      if (!oldEnumName) {
-        throw new TwentyORMException(
-          `Enum type not found for column ${columnName}`,
-          TwentyORMExceptionCode.ENUM_TYPE_NAME_NOT_FOUND,
-        );
+      await this.createColumnUsingEnum({
+        queryRunner,
+        schemaName,
+        tableName,
+        columnDefinition,
+        enumTypeName: enumName,
+      });
+
+      if (
+        oldToNewEnumOptionMap &&
+        Object.keys(oldToNewEnumOptionMap).length > 0
+      ) {
+        await this.migrateEnumData({
+          queryRunner,
+          schemaName,
+          tableName,
+          oldColumnName,
+          newColumnName: columnName,
+          oldToNewEnumOptionMap,
+        });
       }
 
-      const tempEnumName = `${oldEnumName}_temp`;
-      const safeTableName = removeSqlDDLInjection(tableName);
-      const safeColumnName = removeSqlDDLInjection(columnName);
-      const newEnumName = `${safeTableName}_${safeColumnName}_enum`;
-      const oldColumnName = `old_${safeColumnName}`;
-
-      // Rename existing column and enum
-      await this.renameColumn(
+      await this.dropColumn({
         queryRunner,
         schemaName,
         tableName,
-        columnName,
-        oldColumnName,
-      );
-      await this.renameEnum(queryRunner, schemaName, oldEnumName, tempEnumName);
-
-      // Create new enum and column
-      await this.createEnum(queryRunner, schemaName, newEnumName, newValues);
-      await this.addEnumColumn(
-        queryRunner,
-        schemaName,
-        tableName,
-        columnName,
-        newEnumName,
-      );
-
-      // Migrate data
-      await this.migrateEnumData(
-        queryRunner,
-        schemaName,
-        tableName,
-        oldColumnName,
-        columnName,
-        valueMapping || {},
-      );
-
-      // Clean up
-      await this.dropColumn(queryRunner, schemaName, tableName, oldColumnName);
-      await this.dropEnum(queryRunner, schemaName, tempEnumName);
+        columnName: oldColumnName,
+      });
+      await this.dropEnum({ queryRunner, schemaName, enumName: oldEnumName });
 
       if (!isTransactionAlreadyActive) {
         await queryRunner.commitTransaction();
@@ -247,13 +235,19 @@ export class WorkspaceSchemaEnumManagerService {
     }
   }
 
-  private async renameColumn(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    oldColumnName: string,
-    newColumnName: string,
-  ): Promise<void> {
+  private async renameColumn({
+    queryRunner,
+    schemaName,
+    tableName,
+    oldColumnName,
+    newColumnName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    oldColumnName: string;
+    newColumnName: string;
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeOldColumnName = removeSqlDDLInjection(oldColumnName);
@@ -263,28 +257,43 @@ export class WorkspaceSchemaEnumManagerService {
     await queryRunner.query(sql);
   }
 
-  private async addEnumColumn(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    columnName: string,
-    enumTypeName: string,
-  ): Promise<void> {
+  private async createColumnUsingEnum({
+    queryRunner,
+    schemaName,
+    tableName,
+    columnDefinition,
+    enumTypeName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    columnDefinition: WorkspaceSchemaColumnDefinition;
+    enumTypeName: string;
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
-    const safeColumnName = removeSqlDDLInjection(columnName);
-    const safeEnumTypeName = removeSqlDDLInjection(enumTypeName);
-    const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ADD COLUMN "${safeColumnName}" "${safeSchemaName}"."${safeEnumTypeName}"`;
+
+    const columnDef = buildSqlColumnDefinition({
+      ...columnDefinition,
+      type: `"${safeSchemaName}"."${enumTypeName}"`,
+    });
+
+    const sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ADD COLUMN ${columnDef}`;
 
     await queryRunner.query(sql);
   }
 
-  private async dropColumn(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    columnName: string,
-  ): Promise<void> {
+  private async dropColumn({
+    queryRunner,
+    schemaName,
+    tableName,
+    columnName,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    columnName: string;
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeColumnName = removeSqlDDLInjection(columnName);
@@ -293,35 +302,57 @@ export class WorkspaceSchemaEnumManagerService {
     await queryRunner.query(sql);
   }
 
-  private async migrateEnumData(
-    queryRunner: QueryRunner,
-    schemaName: string,
-    tableName: string,
-    oldColumnName: string,
-    newColumnName: string,
-    valueMapping: Record<string, string>,
-  ): Promise<void> {
+  // TODO: explore USING clause to avoid the need for this function
+  private async migrateEnumData({
+    queryRunner,
+    schemaName,
+    tableName,
+    oldColumnName,
+    newColumnName,
+    oldToNewEnumOptionMap,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    oldColumnName: string;
+    newColumnName: string;
+    oldToNewEnumOptionMap: Record<string, string>;
+  }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeOldColumnName = removeSqlDDLInjection(oldColumnName);
     const safeNewColumnName = removeSqlDDLInjection(newColumnName);
 
-    const caseStatements = Object.entries(valueMapping)
+    const newEnumTypeName = computePostgresEnumName({
+      tableName,
+      columnName: newColumnName,
+    });
+
+    if (Object.keys(oldToNewEnumOptionMap).length === 0) {
+      return;
+    }
+
+    const caseStatements = Object.entries(oldToNewEnumOptionMap)
       .map(
-        ([oldVal, newVal]) =>
-          `WHEN '${removeSqlDDLInjection(oldVal)}' THEN '${removeSqlDDLInjection(newVal)}'`,
+        ([oldEnumOption, newEnumOption]) =>
+          `WHEN '${removeSqlDDLInjection(oldEnumOption)}' THEN '${removeSqlDDLInjection(newEnumOption)}'::"${safeSchemaName}"."${newEnumTypeName}"`,
       )
       .join(' ');
 
-    const updateSql = `
-      UPDATE "${safeSchemaName}"."${safeTableName}" 
-      SET "${safeNewColumnName}" = 
-        CASE "${safeOldColumnName}" 
-          ${caseStatements}
-          ELSE "${safeOldColumnName}"
-        END
-      WHERE "${safeOldColumnName}" IS NOT NULL`;
+    const mappedValuesCondition = Object.keys(oldToNewEnumOptionMap)
+      .map((oldValue) => `'${removeSqlDDLInjection(oldValue)}'`)
+      .join(', ');
 
-    await queryRunner.query(updateSql);
+    // Update rows with mapped enum values
+    const updateMappedSql = `
+        UPDATE "${safeSchemaName}"."${safeTableName}" 
+        SET "${safeNewColumnName}" = 
+          CASE "${safeOldColumnName}"::text 
+            ${caseStatements}
+          END
+        WHERE "${safeOldColumnName}" IS NOT NULL 
+          AND "${safeOldColumnName}"::text IN (${mappedValuesCondition})`;
+
+    await queryRunner.query(updateMappedSql);
   }
 }

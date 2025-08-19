@@ -9,8 +9,6 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
-import { RecordInlineCellCloseOnCommandMenuOpeningEffect } from '@/object-record/record-inline-cell/components/RecordInlineCellCloseOnCommandMenuOpeningEffect';
-import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import {
   AppTooltip,
   OverflowingTextWithTooltip,
@@ -47,12 +45,12 @@ const StyledValueContainer = styled.div<{ readonly: boolean }>`
   display: flex;
   min-width: 0;
   position: relative;
+  width: 100%;
 
   &:hover {
     ${({ readonly, theme }) =>
       readonly &&
       `
-      outline: 1px solid ${theme.border.color.medium};
       border-radius: ${theme.border.radius.sm};
       
       ${StyledIconContainer}, ${StyledLabelContainer} {
@@ -88,21 +86,11 @@ export const StyledSkeletonDiv = styled.div`
 `;
 
 export const RecordInlineCellContainer = () => {
-  const {
-    readonly,
-    IconLabel,
-    label,
-    labelWidth,
-    showLabel,
-    editModeContentOnly,
-  } = useRecordInlineCellContext();
+  const { readonly, IconLabel, label, labelWidth, showLabel } =
+    useRecordInlineCellContext();
 
-  const { isInlineCellInEditMode, openInlineCell } = useInlineCell();
-
-  const { recordId, fieldDefinition } = useContext(FieldContext);
-
-  const shouldContainerBeClickable =
-    !readonly && !editModeContentOnly && !isInlineCellInEditMode;
+  const { recordId, fieldDefinition, onMouseEnter, onMouseLeave, anchorId } =
+    useContext(FieldContext);
 
   if (isFieldText(fieldDefinition)) {
     assertFieldMetadata(FieldMetadataType.TEXT, isFieldText, fieldDefinition);
@@ -114,12 +102,14 @@ export const RecordInlineCellContainer = () => {
     if (!readonly) {
       setIsFocused(true);
     }
+    onMouseEnter?.();
   };
 
   const handleContainerMouseLeave = () => {
     if (!readonly) {
       setIsFocused(false);
     }
+    onMouseLeave?.();
   };
 
   const theme = useTheme();
@@ -133,7 +123,6 @@ export const RecordInlineCellContainer = () => {
       readonly={readonly ?? false}
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
-      onClick={shouldContainerBeClickable ? openInlineCell : undefined}
     >
       {(IconLabel || label) && (
         <StyledLabelAndIconContainer id={labelId}>
@@ -161,10 +150,8 @@ export const RecordInlineCellContainer = () => {
           )}
         </StyledLabelAndIconContainer>
       )}
-      {isInlineCellInEditMode && (
-        <RecordInlineCellCloseOnCommandMenuOpeningEffect />
-      )}
-      <StyledValueContainer readonly={readonly ?? false}>
+
+      <StyledValueContainer readonly={readonly ?? false} id={anchorId}>
         <RecordInlineCellValue />
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>
