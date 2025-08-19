@@ -6,10 +6,7 @@ import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlur
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
@@ -20,6 +17,7 @@ import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { type View } from '@/views/types/View';
@@ -106,33 +104,23 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
             recordIndexId: instanceId,
           }}
         >
-          <RecordFilterGroupsComponentInstanceContext.Provider
-            value={{ instanceId }}
+          <RecordComponentInstanceContextsWrapper
+            componentInstanceId={instanceId}
           >
-            <RecordFiltersComponentInstanceContext.Provider
-              value={{ instanceId }}
+            <ObjectFilterDropdownComponentInstanceContext.Provider
+              value={{ instanceId: VIEW_BAR_FILTER_DROPDOWN_ID }}
             >
-              <RecordSortsComponentInstanceContext.Provider
-                value={{ instanceId }}
+              <RecordTableComponentInstanceContext.Provider
+                value={{
+                  instanceId: instanceId,
+                }}
               >
-                <ObjectFilterDropdownComponentInstanceContext.Provider
-                  value={{ instanceId: VIEW_BAR_FILTER_DROPDOWN_ID }}
-                >
-                  <RecordTableComponentInstanceContext.Provider
-                    value={{
-                      instanceId: instanceId,
-                    }}
-                  >
-                    <ViewComponentInstanceContext.Provider
-                      value={{ instanceId }}
-                    >
-                      <Story />
-                    </ViewComponentInstanceContext.Provider>
-                  </RecordTableComponentInstanceContext.Provider>
-                </ObjectFilterDropdownComponentInstanceContext.Provider>
-              </RecordSortsComponentInstanceContext.Provider>
-            </RecordFiltersComponentInstanceContext.Provider>
-          </RecordFilterGroupsComponentInstanceContext.Provider>
+                <ViewComponentInstanceContext.Provider value={{ instanceId }}>
+                  <Story />
+                </ViewComponentInstanceContext.Provider>
+              </RecordTableComponentInstanceContext.Provider>
+            </ObjectFilterDropdownComponentInstanceContext.Provider>
+          </RecordComponentInstanceContextsWrapper>
         </RecordIndexContextProvider>
       );
     },

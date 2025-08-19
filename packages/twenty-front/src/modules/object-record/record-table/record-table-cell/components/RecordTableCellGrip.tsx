@@ -24,6 +24,9 @@ const StyledContainer = styled.div`
 const StyledIconWrapper = styled.div<{ isDragging: boolean }>`
   opacity: ${({ isDragging }) => (isDragging ? 1 : 0)};
   transition: opacity 0.1s;
+  svg path {
+    fill: ${({ theme }) => theme.border.color.strong};
+  }
 `;
 
 export const RecordTableCellGrip = () => {

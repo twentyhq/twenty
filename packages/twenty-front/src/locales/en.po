@@ -339,9 +339,9 @@ msgid "Active API keys created by you or your team."
 msgstr "Active API keys created by you or your team."
 
 #. js-lingui-id: KKfos4
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerReadonly.tsx
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerReadonly.tsx
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
 msgid "Add a Trigger"
 msgstr "Add a Trigger"
 
@@ -385,9 +385,13 @@ msgstr "Add inputs to your form"
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
-#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
 msgid "Add new"
 msgstr "Add new"
+
+#. js-lingui-id: ApsD9J
+#: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
+msgid "Add New"
+msgstr "Add New"
 
 #. js-lingui-id: erHjaG
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
@@ -395,7 +399,7 @@ msgid "Add node"
 msgstr "Add node"
 
 #. js-lingui-id: 1Ltnvs
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Add Node"
 msgstr "Add Node"
 
@@ -580,7 +584,7 @@ msgid "All"
 msgstr "All"
 
 #. js-lingui-id: 3saA7W
-#: src/modules/object-record/record-show/record-detail-section/components/RecordDetailRelationSection.tsx
+#: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSection.tsx
 msgid "All ({relationRecordsCount})"
 msgstr "All ({relationRecordsCount})"
 
@@ -1914,7 +1918,7 @@ msgid "Delete API key"
 msgstr "Delete API key"
 
 #. js-lingui-id: YLfVFw
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Delete branch"
 msgstr "Delete branch"
 
@@ -2102,6 +2106,11 @@ msgstr "Display text on multiple lines"
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "Do not import"
 msgstr "Do not import"
+
+#. js-lingui-id: TvY/XA
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "Documentation"
+msgstr "Documentation"
 
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -3024,11 +3033,6 @@ msgstr "Health Status"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Hebrew"
 msgstr "Hebrew"
-
-#. js-lingui-id: D+zLDD
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenFieldsContent.tsx
-msgid "Hidden"
-msgstr "Hidden"
 
 #. js-lingui-id: em+S/U
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
@@ -4561,11 +4565,6 @@ msgstr "Picture"
 msgid "Plan"
 msgstr "Plan"
 
-#. js-lingui-id: 0LrFTO
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
-msgid "Playground"
-msgstr "Playground"
-
 #. js-lingui-id: 90/XJz
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Please check your email for a verification link."
@@ -4799,7 +4798,7 @@ msgid "Remove as default"
 msgstr "Remove as default"
 
 #. js-lingui-id: rn2/2V
-#: src/modules/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Remove filter"
 msgstr "Remove filter"
 
@@ -6055,6 +6054,12 @@ msgstr "Trial expired. Please contact your admin"
 msgid "Trial expired. Please update your billing details."
 msgstr "Trial expired. Please update your billing details."
 
+#. js-lingui-id: H2Sfhg
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
+msgid "Trigger"
+msgstr "Trigger"
+
 #. js-lingui-id: EfDzVR
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
 msgid "Trigger at hour"
@@ -6371,11 +6376,6 @@ msgstr "View type"
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Visibility"
 msgstr "Visibility"
-
-#. js-lingui-id: oh8+os
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
-msgid "Visible"
-msgstr "Visible"
 
 #. js-lingui-id: zYTdqe
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx

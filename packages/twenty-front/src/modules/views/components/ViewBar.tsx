@@ -14,6 +14,7 @@ import { VIEW_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/cons
 import { ObjectSortDropdownComponentInstanceContext } from '@/object-record/object-sort-dropdown/states/context/ObjectSortDropdownComponentInstanceContext';
 import { ViewBarAnyFieldFilterEffect } from '@/views/components/ViewBarAnyFieldFilterEffect';
 import { ViewBarFilterDropdown } from '@/views/components/ViewBarFilterDropdown';
+import { ViewBarRecordFieldEffect } from '@/views/components/ViewBarRecordFieldEffect';
 import { ViewBarRecordFilterEffect } from '@/views/components/ViewBarRecordFilterEffect';
 import { ViewBarRecordFilterGroupEffect } from '@/views/components/ViewBarRecordFilterGroupEffect';
 import { ViewBarRecordSortEffect } from '@/views/components/ViewBarRecordSortEffect';
@@ -45,6 +46,7 @@ export const ViewBar = ({
     >
       <ViewBarRecordFilterGroupEffect />
       <ViewBarAnyFieldFilterEffect />
+      <ViewBarRecordFieldEffect />
       <ViewBarRecordFilterEffect />
       <ViewBarRecordSortEffect />
       <QueryParamsFiltersEffect />

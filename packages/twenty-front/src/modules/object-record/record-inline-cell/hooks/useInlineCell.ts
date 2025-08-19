@@ -1,12 +1,10 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
 import { useInitDraftValue } from '@/object-record/record-field/ui/hooks/useInitDraftValue';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
-import { isInlineCellInEditModeFamilyState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeFamilyState';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
@@ -22,10 +20,6 @@ export const useInlineCell = (
     recordFieldComponentInstanceIdFromProps,
   );
 
-  const [isInlineCellInEditMode, setIsInlineCellInEditMode] = useRecoilState(
-    isInlineCellInEditModeFamilyState(recordFieldComponentInstanceId),
-  );
-
   const { onOpenEditMode, onCloseEditMode } = useRecordInlineCellContext();
 
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
@@ -37,14 +31,12 @@ export const useInlineCell = (
 
   const closeInlineCell = () => {
     onCloseEditMode?.();
-    setIsInlineCellInEditMode(false);
 
     goBackToPreviousDropdownFocusId();
   };
 
   const openInlineCell = () => {
     onOpenEditMode?.();
-    setIsInlineCellInEditMode(true);
     initFieldInputDraftValue({
       recordId,
       fieldDefinition,
@@ -61,7 +53,6 @@ export const useInlineCell = (
   };
 
   return {
-    isInlineCellInEditMode,
     closeInlineCell,
     openInlineCell,
   };

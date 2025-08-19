@@ -1,5 +1,4 @@
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
@@ -10,10 +9,6 @@ import { IconPlus } from 'twenty-ui/display';
 
 export const RecordTableAddNew = () => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
-
-  const recordIds = useRecoilComponentValue(
-    recordIndexAllRecordIdsComponentSelector,
-  );
 
   const hasRecordTableFetchedAllRecords = useRecoilComponentValue(
     hasRecordTableFetchedAllRecordsComponentState,
@@ -35,15 +30,13 @@ export const RecordTableAddNew = () => {
 
   return (
     <RecordTableActionRow
-      draggableId="add-new-record"
-      draggableIndex={recordIds.length + 1}
-      LeftIcon={IconPlus}
-      text={t`Add new`}
       onClick={() => {
         createNewIndexRecord({
           position: 'last',
         });
       }}
+      LeftIcon={IconPlus}
+      text={t`Add New`}
     />
   );
 };

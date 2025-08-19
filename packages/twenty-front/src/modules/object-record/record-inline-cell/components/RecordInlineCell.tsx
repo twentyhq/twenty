@@ -15,13 +15,10 @@ import {
   type FieldInputEvent,
 } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { usePersistFieldFromFieldInputContext } from '@/object-record/record-field/ui/hooks/usePersistFieldFromFieldInputContext';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { isInlineCellInEditModeFamilyState } from '@/object-record/record-inline-cell/states/isInlineCellInEditModeFamilyState';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
@@ -82,23 +79,10 @@ export const RecordInlineCell = ({
   const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
-  const recordFieldComponentInstanceId = useAvailableComponentInstanceIdOrThrow(
-    RecordFieldComponentInstanceContext,
-  );
-
-  const setIsInlineCellInEditMode = useSetRecoilState(
-    isInlineCellInEditModeFamilyState(recordFieldComponentInstanceId),
-  );
-
   const closeInlineCell = useCallback(() => {
     onCloseEditMode();
-    setIsInlineCellInEditMode(false);
     goBackToPreviousDropdownFocusId();
-  }, [
-    onCloseEditMode,
-    setIsInlineCellInEditMode,
-    goBackToPreviousDropdownFocusId,
-  ]);
+  }, [onCloseEditMode, goBackToPreviousDropdownFocusId]);
 
   const { persistFieldFromFieldInputContext } =
     usePersistFieldFromFieldInputContext();

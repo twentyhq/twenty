@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { isObjectReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isObjectReadOnly';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -135,12 +136,16 @@ export const RecordTableHeaderCell = ({
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
     number | null
   >(null);
-  const [resizedFieldKey, setResizedFieldKey] = useState<string | null>(null);
+  const [resizedFieldMetadataItemId, setResizedFieldMetadataItemId] = useState<
+    string | null
+  >(null);
 
   const { handleColumnsChange } = useTableColumns({
     objectMetadataId: objectMetadataItem.id,
     recordTableId,
   });
+
+  const { updateRecordField } = useUpdateRecordField();
 
   const handleResizeHandlerStart = useCallback<PointerEventListener>(
     ({ x }) => {
@@ -162,7 +167,7 @@ export const RecordTableHeaderCell = ({
   const handleResizeHandlerEnd = useRecoilCallback(
     ({ snapshot, set }) =>
       async () => {
-        if (!resizedFieldKey) return;
+        if (!resizedFieldMetadataItemId) return;
 
         const resizeFieldOffset = getSnapshotValue(
           snapshot,
@@ -171,21 +176,26 @@ export const RecordTableHeaderCell = ({
 
         const nextWidth = Math.round(
           Math.max(
-            tableColumnsByKey[resizedFieldKey].size + resizeFieldOffset,
+            tableColumnsByKey[resizedFieldMetadataItemId].size +
+              resizeFieldOffset,
             COLUMN_MIN_WIDTH,
           ),
         );
 
         set(resizeFieldOffsetState, 0);
         setInitialPointerPositionX(null);
-        setResizedFieldKey(null);
+        setResizedFieldMetadataItemId(null);
 
-        if (nextWidth !== tableColumnsByKey[resizedFieldKey].size) {
+        if (nextWidth !== tableColumnsByKey[resizedFieldMetadataItemId].size) {
           const nextColumns = tableColumns.map((column) =>
-            column.fieldMetadataId === resizedFieldKey
+            column.fieldMetadataId === resizedFieldMetadataItemId
               ? { ...column, size: nextWidth }
               : column,
           );
+
+          updateRecordField(resizedFieldMetadataItemId, {
+            size: nextWidth,
+          });
 
           await handleColumnsChange({
             columns: nextColumns,
@@ -195,19 +205,20 @@ export const RecordTableHeaderCell = ({
         }
       },
     [
-      resizedFieldKey,
+      resizedFieldMetadataItemId,
       resizeFieldOffsetState,
       tableColumnsByKey,
-      setResizedFieldKey,
+      setResizedFieldMetadataItemId,
       tableColumns,
       handleColumnsChange,
       objectMetadataItem,
       recordTableId,
+      updateRecordField,
     ],
   );
 
   useTrackPointer({
-    shouldTrackPointer: resizedFieldKey !== null,
+    shouldTrackPointer: resizedFieldMetadataItemId !== null,
     onMouseDown: handleResizeHandlerStart,
     onMouseMove: handleResizeHandlerMove,
     onMouseUp: handleResizeHandlerEnd,
@@ -251,10 +262,12 @@ export const RecordTableHeaderCell = ({
   return (
     <StyledColumnHeaderCell
       key={column.fieldMetadataId}
-      isResizing={resizedFieldKey === column.fieldMetadataId}
+      isResizing={resizedFieldMetadataItemId === column.fieldMetadataId}
       columnWidth={Math.max(
         tableColumnsByKey[column.fieldMetadataId].size +
-          (resizedFieldKey === column.fieldMetadataId ? resizeFieldOffset : 0) +
+          (resizedFieldMetadataItemId === column.fieldMetadataId
+            ? resizeFieldOffset
+            : 0) +
           24,
         COLUMN_MIN_WIDTH,
       )}
@@ -286,7 +299,7 @@ export const RecordTableHeaderCell = ({
           className="cursor-col-resize"
           role="separator"
           onPointerDown={() => {
-            setResizedFieldKey(column.fieldMetadataId);
+            setResizedFieldMetadataItemId(column.fieldMetadataId);
           }}
         />
       )}

@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
+import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -17,6 +19,11 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
 
   const recordIndexFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
+    recordIndexId,
+  );
+
+  const recordIndexFilterGroups = useRecoilComponentValue(
+    currentRecordFilterGroupsComponentState,
     recordIndexId,
   );
 
@@ -68,13 +75,23 @@ export const RecordIndexFiltersToContextStoreEffect = () => {
     contextStoreFiltersComponentState,
   );
 
+  const setContextStoreFilterGroups = useSetRecoilComponentState(
+    contextStoreFilterGroupsComponentState,
+  );
+
   useEffect(() => {
     setContextStoreFilters(recordIndexFilters);
+    setContextStoreFilterGroups(recordIndexFilterGroups);
 
     return () => {
       setContextStoreFilters([]);
     };
-  }, [recordIndexFilters, setContextStoreFilters]);
+  }, [
+    recordIndexFilterGroups,
+    recordIndexFilters,
+    setContextStoreFilterGroups,
+    setContextStoreFilters,
+  ]);
 
   const setContextStoreAnyFieldFilterValue = useSetRecoilComponentState(
     contextStoreAnyFieldFilterValueComponentState,
