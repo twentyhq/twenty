@@ -12,11 +12,13 @@ import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
+import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { WorkflowVersionStepHttpRequestTestModule } from 'src/engine/metadata-modules/workflow-version-step-http-request-test/workflow-version-step-http-request-test.module';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -35,6 +37,7 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     TwentyORMModule,
     MessagingModule,
     PermissionsModule,
+    WorkflowVersionStepHttpRequestTestModule,
   ],
   controllers: [AiController, McpController],
   providers: [
@@ -46,6 +49,7 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     AIBillingService,
     McpService,
     SendEmailTool,
+    HttpTool,
   ],
   exports: [
     AiService,
@@ -56,6 +60,7 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     ToolRegistryService,
     McpService,
     SendEmailTool,
+    HttpTool,
   ],
 })
 export class AiModule {}

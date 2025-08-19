@@ -127,10 +127,18 @@ export const workflowHttpRequestActionSettingsSchema =
             z.number(),
             z.boolean(),
             z.null(),
-            z.array(z.union([z.string(), z.number(), z.boolean(), z.null()])),
+            z.array(
+              z.object({
+                path: z.string(),
+                filename: z.string(),
+              }),
+            ),
           ]),
         )
         .or(z.string())
+        .optional(),
+      bodyType: z
+        .enum(['keyValue', 'rawJson', 'FormData', 'Text', 'None'])
         .optional(),
     }),
   });

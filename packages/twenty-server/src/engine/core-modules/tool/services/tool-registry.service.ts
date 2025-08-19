@@ -11,9 +11,12 @@ import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/cons
 export class ToolRegistryService {
   private readonly toolFactories: Map<ToolType, () => Tool>;
 
-  constructor(private readonly sendEmailTool: SendEmailTool) {
+  constructor(
+    private readonly sendEmailTool: SendEmailTool,
+    private readonly httpTool: HttpTool,
+  ) {
     this.toolFactories = new Map<ToolType, () => Tool>([
-      [ToolType.HTTP_REQUEST, () => new HttpTool()],
+      [ToolType.HTTP_REQUEST, () => this.httpTool],
       [
         ToolType.SEND_EMAIL,
         () => ({

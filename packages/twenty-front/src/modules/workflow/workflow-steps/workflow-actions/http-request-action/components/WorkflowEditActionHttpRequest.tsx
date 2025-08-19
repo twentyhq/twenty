@@ -19,8 +19,11 @@ import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import { IconPlayerPlay, IconSettings, useIcons } from 'twenty-ui/display';
 import {
+  BODY_TYPES,
+  BodyType,
   HTTP_METHODS,
-  JSON_RESPONSE_PLACEHOLDER,
+  HttpRequestBody,
+  JSON_RESPONSE_PLACEHOLDER
 } from '../constants/HttpRequest';
 import { WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID } from '../constants/WorkflowHttpRequestTabListComponentId';
 import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
@@ -31,6 +34,7 @@ import { BodyInput } from './BodyInput';
 import { HttpRequestExecutionResult } from './HttpRequestExecutionResult';
 import { HttpRequestTestVariableInput } from './HttpRequestTestVariableInput';
 import { KeyValuePairInput } from './KeyValuePairInput';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
@@ -112,7 +116,14 @@ export const WorkflowEditActionHttpRequest = ({
       onActionUpdate: actionOptions.onActionUpdate,
       readonly: actionOptions.readonly === true,
     });
+const onBodyChange=(value: string | HttpRequestBody | undefined)=>{
+  handleFieldChange('body',value);
+}
+const onBodyTypeChange=(value?:string)=>{
+  if(!isDefined(value)||!BODY_TYPES.includes(value as BodyType))return;
+  handleFieldChange('bodyType',value);
 
+}
   const { testHttpRequest, isTesting, httpRequestTestData } =
     useTestHttpRequest(action.id);
 
@@ -188,8 +199,11 @@ export const WorkflowEditActionHttpRequest = ({
             {isMethodWithBody(formData.method) && (
               <BodyInput
                 defaultValue={formData.body}
-                onChange={(value) => handleFieldChange('body', value)}
+                onChange={(value, isBodyType) =>
+                  isBodyType?onBodyTypeChange(value):onBodyChange(value)
+                }
                 readonly={actionOptions.readonly}
+                bodyType={formData?.bodyType}
               />
             )}
 

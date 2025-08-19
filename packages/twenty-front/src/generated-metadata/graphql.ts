@@ -1423,6 +1423,7 @@ export type Mutation = {
   switchToYearlyInterval: BillingUpdateOutput;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
+  testHttpRequest: TestHttpResponseDto;
   trackAnalytics: Analytics;
   unsyncRemoteTable: RemoteTable;
   updateApiKey?: Maybe<ApiKey>;
@@ -1951,6 +1952,11 @@ export type MutationSyncRemoteTableArgs = {
 
 export type MutationSyncRemoteTableSchemaChangesArgs = {
   input: RemoteTableInput;
+};
+
+
+export type MutationTestHttpRequestArgs = {
+  input: WorkflowHttpRequestActionInputDto;
 };
 
 
@@ -3075,6 +3081,15 @@ export type SystemHealthService = {
   status: AdminPanelHealthServiceStatus;
 };
 
+export type TestHttpResponseDto = {
+  __typename?: 'TestHttpResponseDto';
+  data?: Maybe<Scalars['String']>;
+  error?: Maybe<Scalars['String']>;
+  headers?: Maybe<Scalars['JSONObject']>;
+  status?: Maybe<Scalars['Int']>;
+  statusText?: Maybe<Scalars['String']>;
+};
+
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
   conferenceLink: LinksMetadata;
@@ -3573,6 +3588,11 @@ export type WorkflowAction = {
   settings: Scalars['JSON'];
   type: Scalars['String'];
   valid: Scalars['Boolean'];
+};
+
+export type WorkflowHttpRequestActionInputDto = {
+  /** input for test http request */
+  input: Scalars['JSON'];
 };
 
 export type WorkflowRun = {

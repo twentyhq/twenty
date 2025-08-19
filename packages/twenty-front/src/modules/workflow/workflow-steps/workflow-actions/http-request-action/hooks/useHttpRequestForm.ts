@@ -23,6 +23,7 @@ export const useHttpRequestForm = ({
     method: action.settings.input.method,
     headers: action.settings.input.headers || {},
     body: action.settings.input.body,
+    bodyType: action.settings.input.bodyType,
   });
 
   const saveAction = useDebouncedCallback((formData: HttpRequestFormData) => {
@@ -39,6 +40,7 @@ export const useHttpRequestForm = ({
           method: formData.method,
           headers: formData.headers,
           body: formData.body,
+          bodyType: formData.bodyType,
         },
       },
     });
@@ -50,8 +52,14 @@ export const useHttpRequestForm = ({
   ) => {
     let newFormData = { ...formData, [field]: value };
 
-    if (field === 'method' && !isMethodWithBody(value as string)) {
+    if (
+      (field === 'method' && !isMethodWithBody(value as string)) ||
+      (field === 'bodyType' && formData.bodyType !== value)
+    ) {
       newFormData = { ...newFormData, body: undefined };
+      if (field === 'method') {
+        newFormData = { ...newFormData, bodyType: undefined };
+      }
     }
 
     if (field === 'method' && isMethodWithBody(value as string)) {

@@ -8,6 +8,8 @@ import { StepStatus, TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
 import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/serverless/drivers/constants/base-typescript-project-input-schema';
 import { type CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
@@ -15,6 +17,7 @@ import { type WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/work
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   WorkflowVersionStepException,
@@ -25,6 +28,9 @@ import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
+import { getAllPathsToDelete } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/getAllPathsToDelete';
+import { getDeletedPathsFromOldAndNewStepBody } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/getDeletedPathsFromOldAndNewStepBody';
+import { getPathsFromStepHttpRequestIfBodyTypeFormData } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/getPathsFromStepHttpRequestIfBodyTypeFormData';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
 import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
@@ -32,6 +38,7 @@ import {
   type WorkflowAction,
   WorkflowActionType,
   type WorkflowFormAction,
+  WorkflowHttpRequestAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
@@ -60,6 +67,7 @@ export class WorkflowVersionStepWorkspaceService {
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly fileService: FileService,
   ) {}
 
   async createWorkflowVersionStep({
@@ -129,6 +137,70 @@ export class WorkflowVersionStepWorkspaceService {
     });
   }
 
+  private async handleHttpRequestStepUpdate({
+    newStep,
+    lastStep,
+    workflowVersion,
+    workflowVersionRepository,
+    workspaceId,
+  }: {
+    newStep?: WorkflowHttpRequestAction;
+    lastStep: WorkflowHttpRequestAction;
+    workflowVersion: WorkflowVersionWorkspaceEntity;
+    workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
+    workspaceId: string;
+  }): Promise<void> {
+    const lastPaths = getPathsFromStepHttpRequestIfBodyTypeFormData(
+      lastStep.settings.input,
+    );
+
+    if (!isDefined(lastPaths) || lastPaths.length <= 0) return;
+
+    const newPaths = newStep
+      ? getPathsFromStepHttpRequestIfBodyTypeFormData(newStep.settings.input)
+      : null;
+
+    const pathsToDelete = getDeletedPathsFromOldAndNewStepBody(
+      lastPaths,
+      newPaths,
+    );
+
+    if (!isDefined(pathsToDelete) || pathsToDelete.length <= 0) return;
+
+    const workflowVersions = await workflowVersionRepository.find({
+      where: {
+        workflowId: workflowVersion.workflowId,
+      },
+    });
+
+    const allPathsToDelete = getAllPathsToDelete(
+      pathsToDelete,
+      workflowVersions,
+      lastStep.id,
+    );
+
+    const deletionPromises = allPathsToDelete.map(async (pathToDelete) => {
+      const { folderPath, filename } =
+        extractFolderPathAndFilename(pathToDelete);
+
+      if (!filename) {
+        return;
+      }
+
+      try {
+        await this.fileService.deleteFile({
+          workspaceId,
+          filename,
+          folderPath,
+        });
+      } catch {
+        return;
+      }
+    });
+
+    await Promise.all(deletionPromises);
+  }
+
   async updateWorkflowVersionStep({
     workspaceId,
     workflowVersionId,
@@ -166,6 +238,10 @@ export class WorkflowVersionStepWorkspaceService {
         WorkflowVersionStepExceptionCode.UNDEFINED,
       );
     }
+    const lastStep = workflowVersion.steps.find(
+      (stepTofind) => stepTofind.id === step.id,
+    );
+    const lastStepCopied = lastStep ? { ...lastStep } : undefined;
 
     const enrichedNewStep = await this.enrichOutputSchema({
       step,
@@ -183,6 +259,16 @@ export class WorkflowVersionStepWorkspaceService {
     await workflowVersionRepository.update(workflowVersion.id, {
       steps: updatedSteps,
     });
+
+    if (isDefined(lastStepCopied)) {
+      this.runWorkflowVersionStepDeletionSideEffects({
+        step: lastStepCopied,
+        workspaceId,
+        newStep: step,
+        workflowVersion,
+        workflowVersionRepository,
+      });
+    }
 
     return enrichedNewStep;
   }
@@ -409,9 +495,15 @@ export class WorkflowVersionStepWorkspaceService {
   private async runWorkflowVersionStepDeletionSideEffects({
     step,
     workspaceId,
+    newStep,
+    workflowVersion,
+    workflowVersionRepository,
   }: {
     step: WorkflowAction;
     workspaceId: string;
+    newStep?: WorkflowAction;
+    workflowVersion?: WorkflowVersionWorkspaceEntity;
+    workflowVersionRepository?: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
   }) {
     switch (step.type) {
       case WorkflowActionType.CODE: {
@@ -441,6 +533,17 @@ export class WorkflowVersionStepWorkspaceService {
         if (isDefined(agent)) {
           await this.agentService.deleteOneAgent(agent.id, workspaceId);
         }
+        break;
+      }
+      case WorkflowActionType.HTTP_REQUEST: {
+        if (!workflowVersion || !workflowVersionRepository) break;
+        await this.handleHttpRequestStepUpdate({
+          newStep: newStep ? (newStep as WorkflowHttpRequestAction) : undefined,
+          lastStep: step,
+          workflowVersion,
+          workflowVersionRepository,
+          workspaceId,
+        });
         break;
       }
     }

@@ -32,12 +32,25 @@ export type HttpMethodWithBody = (typeof METHODS_WITH_BODY)[number];
 export type HttpMethod = (typeof HTTP_METHODS)[number]['value'];
 
 export type HttpRequestBody = Record<string, any>;
+export type FormDataFile = {
+  path: string;
+  filename: string;
+};
+export const BODY_TYPES = [
+  'keyValue',
+  'rawJson',
+  'FormData',
+  'Text',
+  'None',
+] as const;
 
+export type BodyType = (typeof BODY_TYPES)[number];
 export type HttpRequestFormData = {
   url: string;
   method: HttpMethod;
   headers: Record<string, string>;
   body?: HttpRequestBody | string;
+  bodyType?: BodyType;
 };
 
 export {

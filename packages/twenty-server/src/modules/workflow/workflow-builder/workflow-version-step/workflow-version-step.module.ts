@@ -10,6 +10,7 @@ import { WorkflowSchemaModule } from 'src/modules/workflow/workflow-builder/work
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
+import { FileModule } from 'src/engine/core-modules/file/file.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workf
     WorkflowRunnerModule,
     WorkflowRunModule,
     WorkflowCommonModule,
+    FileModule,
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
   ],
   providers: [WorkflowVersionStepWorkspaceService],
