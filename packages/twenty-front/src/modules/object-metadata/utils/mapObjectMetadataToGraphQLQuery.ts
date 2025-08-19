@@ -48,7 +48,11 @@ export const mapObjectMetadataToGraphQLQuery = ({
 
   const manyToOneRelationFields = objectMetadataItem?.readableFields
     .filter((field) => field.isActive)
-    .filter((field) => field.type === FieldMetadataType.RELATION)
+    .filter(
+      (field) =>
+        field.type === FieldMetadataType.RELATION ||
+        field.type === FieldMetadataType.MORPH_RELATION,
+    )
     .filter((field) => isDefined(field.settings?.joinColumnName));
 
   const manyToOneRelationGqlFieldWithFieldMetadata =

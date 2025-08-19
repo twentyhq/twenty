@@ -6,16 +6,20 @@ import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataI
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
-import { isDefined } from 'twenty-shared/utils';
-import { type FieldMetadataItem } from '../types/FieldMetadataItem';
 import { type ObjectPermissions } from 'twenty-shared/types';
+import {
+  computeMorphRelationFieldJoinColumnName,
+  computeMorphRelationFieldName,
+  isDefined,
+} from 'twenty-shared/utils';
+import { type FieldMetadataItem } from '../types/FieldMetadataItem';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];
   gqlField: string;
   fieldMetadata: Pick<
     FieldMetadataItem,
-    'name' | 'type' | 'relation' | 'settings'
+    'name' | 'type' | 'relation' | 'morphRelations' | 'settings'
   >;
   relationRecordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
@@ -41,6 +45,99 @@ export const mapFieldMetadataToGraphQLQuery = ({
 
   if (fieldIsNonCompositeField) {
     return gqlField;
+  }
+
+  if (
+    fieldType === FieldMetadataType.MORPH_RELATION &&
+    fieldMetadata.relation?.type === RelationType.MANY_TO_ONE
+  ) {
+    return '';
+  }
+
+  if (
+    fieldType === FieldMetadataType.MORPH_RELATION &&
+    (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY ||
+      fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE)
+  ) {
+    let gqlMorphField = '';
+    for (const morphRelation of fieldMetadata.morphRelations ?? []) {
+      const relationFieldName = computeMorphRelationFieldName({
+        fieldName: fieldMetadata.name,
+        relationDirection: fieldMetadata.settings?.relationType,
+        nameSingular: morphRelation.targetObjectMetadata.nameSingular,
+        namePlural: morphRelation.targetObjectMetadata.namePlural,
+      });
+      const relationMetadataItem = objectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.id === morphRelation.targetObjectMetadata.id,
+      );
+
+      if (isUndefined(relationMetadataItem)) {
+        return '';
+      }
+
+      if (
+        isDefined(objectPermissionsByObjectMetadataId) &&
+        isDefined(relationMetadataItem.id)
+      ) {
+        if (!isDefined(morphRelation.targetObjectMetadata.id)) {
+          throw new Error(
+            `Target object metadata id not found with field metadata ${fieldMetadata.name}`,
+          );
+        }
+
+        const objectPermission = getObjectPermissionsForObject(
+          objectPermissionsByObjectMetadataId,
+          morphRelation.targetObjectMetadata.id,
+        );
+
+        if (!objectPermission.canReadObjectRecords) {
+          gqlMorphField += '';
+        }
+      }
+
+      const joinColumnName = computeMorphRelationFieldJoinColumnName({
+        name: fieldMetadata.name,
+        targetObjectMetadataNameSingular:
+          morphRelation.targetObjectMetadata.nameSingular,
+      });
+      if (gqlField === joinColumnName) {
+        gqlMorphField += `${gqlField}
+  `;
+        continue;
+      }
+
+      if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
+        gqlMorphField += `${relationFieldName}
+{
+  edges {
+    node ${mapObjectMetadataToGraphQLQuery({
+      objectMetadataItems,
+      objectMetadataItem: relationMetadataItem,
+      recordGqlFields: relationRecordGqlFields,
+      computeReferences,
+      isRootLevel: false,
+      objectPermissionsByObjectMetadataId,
+      isFieldsPermissionsEnabled,
+    })}
+  }
+}`;
+      }
+
+      if (fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE) {
+        gqlMorphField += `${relationFieldName}
+${mapObjectMetadataToGraphQLQuery({
+  objectMetadataItems,
+  objectMetadataItem: relationMetadataItem,
+  recordGqlFields: relationRecordGqlFields,
+  computeReferences,
+  isRootLevel: false,
+  objectPermissionsByObjectMetadataId,
+  isFieldsPermissionsEnabled,
+})}`;
+      }
+    }
+    return `${gqlMorphField}`;
   }
 
   if (
