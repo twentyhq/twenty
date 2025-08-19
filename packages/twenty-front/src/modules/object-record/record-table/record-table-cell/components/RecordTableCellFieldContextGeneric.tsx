@@ -1,7 +1,7 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
+import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { isRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isRecordFieldReadOnly';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/ui/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/ui/types/guards/isFieldRelationToOneObject';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -63,11 +63,10 @@ export const RecordTableCellFieldContextGeneric = ({
         isRecordFieldReadOnly: isRecordFieldReadOnly({
           isRecordReadOnly: isRecordReadOnly ?? false,
           objectPermissions,
-          fieldMetadataId: columnDefinition.fieldMetadataId,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          fieldName: columnDefinition.metadata.fieldName,
-          fieldType: columnDefinition.type,
-          isCustom: objectMetadataItem.isCustom,
+          fieldMetadataItem: {
+            id: columnDefinition.fieldMetadataId,
+            isUIReadOnly: columnDefinition.metadata.isUIReadOnly ?? false,
+          },
         }),
         isForbidden: !hasObjectReadPermissions,
       }}

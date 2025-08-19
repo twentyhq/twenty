@@ -72,6 +72,9 @@ export class ObjectMetadataDTO {
   isSystem: boolean;
 
   @FilterableField()
+  isUIReadOnly: boolean;
+
+  @FilterableField()
   isSearchable: boolean;
 
   @HideField()

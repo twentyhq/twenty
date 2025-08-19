@@ -13,6 +13,7 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -90,6 +91,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconVersions',
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsFieldUIReadOnly()
   lastPublishedVersionId: string | null;
 
   @WorkspaceField({
@@ -101,6 +103,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     options: WorkflowStatusOptions,
   })
   @WorkspaceIsNullable()
+  @WorkspaceIsFieldUIReadOnly()
   statuses: WorkflowStatus[] | null;
 
   @WorkspaceField({
@@ -140,6 +143,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkflowVersionWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   versions: Relation<WorkflowVersionWorkspaceEntity[]>;
 
   @WorkspaceRelation({
@@ -151,6 +155,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => WorkflowRunWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
+  @WorkspaceIsFieldUIReadOnly()
   runs: Relation<WorkflowRunWorkspaceEntity[]>;
 
   @WorkspaceRelation({
@@ -162,6 +167,7 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsSystem()
+  @WorkspaceIsFieldUIReadOnly()
   automatedTriggers: Relation<WorkflowAutomatedTriggerWorkspaceEntity[]>;
 
   @WorkspaceRelation({
@@ -194,5 +200,6 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCreativeCommonsSa',
     description: msg`The creator of the record`,
   })
+  @WorkspaceIsFieldUIReadOnly()
   createdBy: ActorMetadata;
 }

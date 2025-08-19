@@ -52,6 +52,12 @@ export function WorkspaceField<T extends FieldMetadataType>(
         object,
         propertyKey.toString(),
       ) ?? false;
+    const isUIReadOnly =
+      TypedReflect.getMetadata(
+        'workspace:is-field-ui-readonly-metadata-args',
+        object,
+        propertyKey.toString(),
+      ) ?? false;
     const gate = TypedReflect.getMetadata(
       'workspace:gate-metadata-args',
       object,
@@ -91,6 +97,7 @@ export function WorkspaceField<T extends FieldMetadataType>(
       isPrimary,
       isNullable,
       isSystem,
+      isUIReadOnly,
       gate,
       isDeprecated,
       isUnique,

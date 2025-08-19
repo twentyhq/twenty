@@ -1,12 +1,12 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import {
   FieldContext,
   type RecordUpdateHook,
   type RecordUpdateHookParams,
 } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useIsRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/useIsRecordFieldReadOnly';
 import { type ReactNode } from 'react';
 
 export const FieldContextProvider = ({

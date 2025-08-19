@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
@@ -5,7 +7,10 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export const notesAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
+export const notesAllView = (
+  objectMetadataItems: ObjectMetadataEntity[],
+  useCoreNaming = false,
+) => {
   const noteObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.note,
   );
@@ -15,7 +20,7 @@ export const notesAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
   }
 
   return {
-    name: 'All Notes',
+    name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Notes',
     objectMetadataId: noteObjectMetadata.id,
     type: 'table',
     key: 'INDEX',
