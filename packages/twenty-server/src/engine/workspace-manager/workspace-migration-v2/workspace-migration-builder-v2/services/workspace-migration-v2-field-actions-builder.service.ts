@@ -85,7 +85,8 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
       const validationErrors =
         await this.flatFieldMetadataValidatorService.validateFlatFieldMetadataUpdate(
           {
-            existingFlatObjectMetadataMaps: fromFlatObjectMetadataMaps,
+            existingFlatObjectMetadataMaps:
+              validateAndBuildResult.optimisticFlatObjectMetadataMaps,
             flatFieldMetadataToValidate: toFlatFieldMetadata,
             workspaceId,
             otherFlatObjectMetadataMapsToValidate: undefined,
