@@ -33,6 +33,7 @@ export const WorkflowStepFilterOperandSelect = ({
       stepFilterToUpsert: {
         ...stepFilter,
         operand,
+        value: '',
       },
     });
   };

@@ -8,4 +8,4 @@ const enumFieldTypes = [
 
 export type EnumFieldMetadataType = (typeof enumFieldTypes)[number];
 
-export const ENUM_FIELD_TYPES: EnumFieldMetadataType[] = [...enumFieldTypes];
+export const ENUM_FIELD_TYPES: FieldMetadataType[] = [...enumFieldTypes];

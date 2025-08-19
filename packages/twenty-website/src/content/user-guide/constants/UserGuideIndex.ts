@@ -32,6 +32,7 @@ export const USER_GUIDE_INDEX = {
       { fileName: 'api-webhooks' },
     ],
     Settings: [
+      { fileName: 'settings' },
       { fileName: 'permissions' },
     ],
     Other: [

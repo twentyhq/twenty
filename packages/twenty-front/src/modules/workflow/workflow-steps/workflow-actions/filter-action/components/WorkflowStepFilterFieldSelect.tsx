@@ -2,7 +2,7 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
-import { useGetFilterFieldMetadataItem } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useGetFilterFieldMetadataItem';
+import { useFilterFieldMetadataItem } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useFilterFieldMetadataItem';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { getViewFilterOperands } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/getStepFilterOperands';
@@ -15,6 +15,7 @@ import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type WorkflowStepFilterFieldSelectProps = {
@@ -50,7 +51,12 @@ export const WorkflowStepFilterFieldSelect = ({
     }),
   );
 
-  const { getFilterFieldMetadataItem } = useGetFilterFieldMetadataItem();
+  const { getIcon } = useIcons();
+
+  const {
+    fieldMetadataItem: filterFieldMetadataItem,
+    objectMetadataItem: filterObjectMetadataItem,
+  } = useFilterFieldMetadataItem(stepFilter.fieldMetadataId ?? '');
 
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
     shouldDisplayRecordFields,
@@ -66,7 +72,7 @@ export const WorkflowStepFilterFieldSelect = ({
           rawVariableName: variableName,
           part: 'stepId',
         });
-        const currentStepOutputSchema = snapshot
+        const [currentStepOutputSchema] = snapshot
           .getLoadable(
             stepsOutputSchemaFamilySelector({
               workflowVersionId,
@@ -81,35 +87,25 @@ export const WorkflowStepFilterFieldSelect = ({
           fieldMetadataId,
           compositeFieldSubFieldName,
         } = searchVariableThroughOutputSchema({
-          stepOutputSchema: currentStepOutputSchema?.[0],
+          stepOutputSchema: currentStepOutputSchema,
           rawVariableName: variableName,
           isFullRecord: false,
         });
 
-        const {
-          fieldMetadataItem: selectedFieldMetadataItem,
-          objectMetadataItem,
-        } = isDefined(fieldMetadataId)
-          ? getFilterFieldMetadataItem(fieldMetadataId)
-          : {
-              fieldMetadataItem: undefined,
-              objectMetadataItem: undefined,
-            };
-
         const filterType = isDefined(fieldMetadataId)
-          ? (selectedFieldMetadataItem?.type ?? 'unknown')
+          ? (filterFieldMetadataItem?.type ?? 'unknown')
           : variableType;
 
         const isFullRecord =
-          selectedFieldMetadataItem?.name === 'id' &&
-          isDefined(objectMetadataItem?.labelSingular);
+          filterFieldMetadataItem?.name === 'id' &&
+          isDefined(filterObjectMetadataItem?.labelSingular);
 
         upsertStepFilterSettings({
           stepFilterToUpsert: {
             ...stepFilter,
             stepOutputKey: variableName,
             displayValue: isFullRecord
-              ? objectMetadataItem.labelSingular
+              ? filterObjectMetadataItem.labelSingular
               : (variableLabel ?? ''),
             type: filterType ?? 'unknown',
             value: '',
@@ -126,7 +122,8 @@ export const WorkflowStepFilterFieldSelect = ({
       upsertStepFilterSettings,
       stepFilter,
       workflowVersionId,
-      getFilterFieldMetadataItem,
+      filterFieldMetadataItem,
+      filterObjectMetadataItem,
     ],
   );
 
@@ -144,13 +141,11 @@ export const WorkflowStepFilterFieldSelect = ({
   const label =
     isSelectedFieldNotFound || !isDefined(stepFilter.displayValue)
       ? t`Select a field from a previous step`
-      : stepFilter.displayValue;
+      : variableLabel;
 
   const dropdownId = `step-filter-field-${stepFilter.id}`;
 
-  const isReadonly = readonly ?? false;
-
-  if (isReadonly || noAvailableVariables) {
+  if (noAvailableVariables) {
     return (
       <Dropdown
         dropdownId={dropdownId}
@@ -158,9 +153,28 @@ export const WorkflowStepFilterFieldSelect = ({
           <SelectControl
             selectedOption={{
               value: stepFilter.stepOutputKey,
-              label: isReadonly
-                ? (label ?? '')
-                : t`No available fields to select`,
+              label: t`No available fields to select`,
+            }}
+            isDisabled={true}
+          />
+        }
+        dropdownComponents={[]}
+      />
+    );
+  }
+
+  if (readonly === true) {
+    return (
+      <Dropdown
+        dropdownId={dropdownId}
+        clickableComponent={
+          <SelectControl
+            selectedOption={{
+              value: stepFilter.stepOutputKey,
+              label,
+              Icon: filterFieldMetadataItem?.icon
+                ? getIcon(filterFieldMetadataItem.icon)
+                : undefined,
             }}
             isDisabled={true}
           />
@@ -174,12 +188,14 @@ export const WorkflowStepFilterFieldSelect = ({
     <WorkflowVariablesDropdown
       instanceId={dropdownId}
       onVariableSelect={handleChange}
-      disabled={readonly}
       clickableComponent={
         <SelectControl
           selectedOption={{
             value: stepFilter.stepOutputKey,
-            label,
+            label: label,
+            Icon: filterFieldMetadataItem?.icon
+              ? getIcon(filterFieldMetadataItem.icon)
+              : undefined,
           }}
           textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
         />

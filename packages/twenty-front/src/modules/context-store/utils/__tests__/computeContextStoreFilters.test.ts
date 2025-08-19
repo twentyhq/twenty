@@ -20,13 +20,14 @@ describe('computeContextStoreFilters', () => {
       selectedRecordIds: ['1', '2', '3'],
     };
 
-    const filters = computeContextStoreFilters(
+    const filters = computeContextStoreFilters({
       contextStoreTargetedRecordsRule,
-      [],
-      personObjectMetadataItem,
-      mockFilterValueDependencies,
-      '',
-    );
+      contextStoreFilters: [],
+      contextStoreFilterGroups: [],
+      objectMetadataItem: personObjectMetadataItem,
+      filterValueDependencies: mockFilterValueDependencies,
+      contextStoreAnyFieldFilterValue: '',
+    });
 
     expect(filters).toEqual({
       and: [
@@ -63,13 +64,14 @@ describe('computeContextStoreFilters', () => {
       },
     ];
 
-    const filters = computeContextStoreFilters(
+    const filters = computeContextStoreFilters({
       contextStoreTargetedRecordsRule,
       contextStoreFilters,
-      personObjectMetadataItem,
-      mockFilterValueDependencies,
-      '',
-    );
+      contextStoreFilterGroups: [],
+      objectMetadataItem: personObjectMetadataItem,
+      filterValueDependencies: mockFilterValueDependencies,
+      contextStoreAnyFieldFilterValue: '',
+    });
 
     expect(filters).toEqual({
       and: [
