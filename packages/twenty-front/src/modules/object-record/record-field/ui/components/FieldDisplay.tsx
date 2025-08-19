@@ -23,6 +23,12 @@ import { isFieldRelationFromManyObjects } from '@/object-record/record-field/ui/
 import { isFieldRelationToOneObject } from '@/object-record/record-field/ui/types/guards/isFieldRelationToOneObject';
 import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
+
+import { MorphRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/MorphRelationFromManyFieldDisplay';
+import { MorphRelationToOneFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/MorphRelationToOneFieldDisplay';
+import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
+import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
@@ -67,12 +73,24 @@ export const FieldDisplay = () => {
     return <ForbiddenFieldDisplay />;
   }
 
+  if (fieldDefinition.type === FieldMetadataType.MORPH_RELATION) {
+    // debugger;
+    console.log(
+      'fieldDefinition',
+      fieldDefinition,
+      isFieldMorphRelationManyToOne(fieldDefinition),
+    );
+  }
   return isChipDisplay ? (
     <ChipFieldDisplay />
   ) : isFieldRelationToOneObject(fieldDefinition) ? (
     <RelationToOneFieldDisplay />
   ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
     <RelationFromManyFieldDisplay />
+  ) : isFieldMorphRelationManyToOne(fieldDefinition) ? (
+    <MorphRelationToOneFieldDisplay />
+  ) : isFieldMorphRelationOneToMany(fieldDefinition) ? (
+    <MorphRelationFromManyFieldDisplay />
   ) : isFieldText(fieldDefinition) ? (
     <TextFieldDisplay />
   ) : isFieldUuid(fieldDefinition) ? (
