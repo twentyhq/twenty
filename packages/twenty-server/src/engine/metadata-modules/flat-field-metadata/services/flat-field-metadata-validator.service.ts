@@ -226,8 +226,8 @@ export class FlatFieldMetadataValidatorService {
       );
 
     if (
-      isRelationFieldAndRelationTargetObjectMetadataExists &&
-      isStandardMetadata(flatFieldMetadataToDelete)
+      isStandardMetadata(flatFieldMetadataToDelete) &&
+      !isRelationFieldAndRelationTargetObjectMetadataExists
     ) {
       errors.push(
         new FieldMetadataException(
@@ -238,8 +238,8 @@ export class FlatFieldMetadataValidatorService {
     }
 
     if (
-      isRelationFieldAndRelationTargetObjectMetadataExists &&
-      flatFieldMetadataToDelete.isActive
+      flatFieldMetadataToDelete.isActive &&
+      !isRelationFieldAndRelationTargetObjectMetadataExists
     ) {
       errors.push(
         new FieldMetadataException(
