@@ -199,7 +199,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         (field) => field.standardId === CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
       )?.id;
 
-      if (!labelIdentifierFieldMetadataId) {
+      if (!isDefined(labelIdentifierFieldMetadataId)) {
         throw new ObjectMetadataException(
           'Label identifier field metadata not created properly',
           ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD,

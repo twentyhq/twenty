@@ -4,5 +4,5 @@ export const FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE = [
   'label',
   'description',
   'isActive',
-  'standardOverrides'
+  'standardOverrides',
 ] as const satisfies FlatFieldMetadataPropertiesToCompare[];

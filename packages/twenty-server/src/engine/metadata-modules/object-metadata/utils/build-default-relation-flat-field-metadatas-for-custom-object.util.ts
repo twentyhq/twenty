@@ -1,30 +1,29 @@
-//   NOTE_FLAT_OBJECT_MOCK,
-//   TIMELINE_ACTIVITY_FLAT_OBJECT_MOCK,
-//   NOTE_TARGET_FLAT_OBJECT_MOCK,
-//   FAVORITE_FLAT_OBJECT_MOCK,
-//   ATTACHMENT_FLAT_OBJECT_MOCK,
-//   TASK_TARGET_FLAT_OBJECT_MOCK,
-//   FAVORITE_FOLDER_FLAT_OBJECT_MOCK,
+import { FieldMetadataType } from 'twenty-shared/types';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
+} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
 import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { fromFlatObjectMetadataToFlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/from-flat-object-metadata-to-flat-object-metadata-without-fields.util';
 import {
-    CUSTOM_OBJECT_STANDARD_FIELD_IDS,
-    STANDARD_OBJECT_FIELD_IDS,
+  CUSTOM_OBJECT_STANDARD_FIELD_IDS,
+  STANDARD_OBJECT_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { type STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { createRelationDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
+
 type FlatFieldMetadataRelationWithoutRelations = Omit<
   FlatFieldMetadata<FieldMetadataType.RELATION>,
   'flatRelationTargetFieldMetadata' | 'flatRelationTargetObjectMetadata'
@@ -119,6 +118,7 @@ const generateTargetFlatFieldMetadata = ({
     objectId: sourceFlatObjectMetadata.id,
     standardId: customStandardFieldId,
   });
+
   return {
     id: sourceFlatFieldMetadata.relationTargetFieldMetadataId,
     name: sourceFlatObjectMetadata.nameSingular,
@@ -158,25 +158,40 @@ const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
   'noteTarget',
   'taskTarget',
 ] as const satisfies (keyof typeof STANDARD_OBJECT_IDS)[];
+
 export type BuildDefaultRelationFieldsForCustomObjectArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   workspaceId: string;
   sourceFlatObjectMetadata: FlatObjectMetadata;
 };
-export const buildDefaultRelationFieldsForCustomObject = ({
+
+type SourceAndTargetFlatFieldMetadatasRecord = {
+  standardSourceFlatFieldMetadatas: FlatFieldMetadata[];
+  standardTargetFlatFieldMetadatas: FlatFieldMetadata[];
+};
+const EMPTY_SOURCE_AND_TARGET_FLAT_FIELD_METADATAS_RECORD: SourceAndTargetFlatFieldMetadatasRecord =
+  {
+    standardSourceFlatFieldMetadatas: [],
+    standardTargetFlatFieldMetadatas: [],
+  };
+
+export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
   existingFlatObjectMetadataMaps,
   sourceFlatObjectMetadata,
   workspaceId,
-}: BuildDefaultRelationFieldsForCustomObjectArgs): FlatFieldMetadata[] => {
-  return DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.flatMap<FlatFieldMetadata>(
-    (objectMetadataNameSingular) => {
+}: BuildDefaultRelationFieldsForCustomObjectArgs): SourceAndTargetFlatFieldMetadatasRecord => {
+  return DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.reduce(
+    (sourceAndTargetFlatFieldMetadatasRecord, objectMetadataNameSingular) => {
       const targetFlatObjectMetadataId =
         existingFlatObjectMetadataMaps.idByNameSingular[
           objectMetadataNameSingular
         ];
 
       if (!isDefined(targetFlatObjectMetadataId)) {
-        throw new Error('TODO prastoin custom exception');
+        throw new ObjectMetadataException(
+          `Standard target object metadata id ${targetFlatObjectMetadataId} not found in cache`,
+          ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+        );
       }
 
       const targetFlatObjectMetadata =
@@ -186,7 +201,10 @@ export const buildDefaultRelationFieldsForCustomObject = ({
         });
 
       if (!isDefined(targetFlatObjectMetadata)) {
-        throw new Error('TODO prastoin custom exception');
+        throw new ObjectMetadataException(
+          `Standard target object metadata of id ${targetFlatObjectMetadataId} not found in cache`,
+          ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+        );
       }
 
       const sourceFlatFieldMetadata = generateSourceFlatFieldMetadata({
@@ -202,32 +220,39 @@ export const buildDefaultRelationFieldsForCustomObject = ({
         workspaceId,
       });
 
-      return [
-        {
-          ...sourceFlatFieldMetadata,
-          flatRelationTargetFieldMetadata: {
-            ...targetFlatFieldMetadata,
-            flatRelationTargetFieldMetadata: null,
-            flatRelationTargetObjectMetadata: null,
-          },
-          flatRelationTargetObjectMetadata:
-            fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
-              sourceFlatObjectMetadata,
-            ),
-        },
-        {
-          ...targetFlatFieldMetadata,
-          flatRelationTargetFieldMetadata: {
+      return {
+        standardSourceFlatFieldMetadatas: [
+          ...sourceAndTargetFlatFieldMetadatasRecord.standardSourceFlatFieldMetadatas,
+          {
             ...sourceFlatFieldMetadata,
-            flatRelationTargetFieldMetadata: null,
-            flatRelationTargetObjectMetadata: null,
+            flatRelationTargetFieldMetadata: {
+              ...targetFlatFieldMetadata,
+              flatRelationTargetFieldMetadata: null,
+              flatRelationTargetObjectMetadata: null,
+            },
+            flatRelationTargetObjectMetadata:
+              fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
+                sourceFlatObjectMetadata,
+              ),
           },
-          flatRelationTargetObjectMetadata:
-            fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
-              targetFlatObjectMetadata,
-            ),
-        },
-      ];
+        ],
+        standardTargetFlatFieldMetadatas: [
+          ...sourceAndTargetFlatFieldMetadatasRecord.standardTargetFlatFieldMetadatas,
+          {
+            ...targetFlatFieldMetadata,
+            flatRelationTargetFieldMetadata: {
+              ...sourceFlatFieldMetadata,
+              flatRelationTargetFieldMetadata: null,
+              flatRelationTargetObjectMetadata: null,
+            },
+            flatRelationTargetObjectMetadata:
+              fromFlatObjectMetadataToFlatObjectMetadataWithoutFields(
+                targetFlatObjectMetadata,
+              ),
+          },
+        ],
+      };
     },
+    EMPTY_SOURCE_AND_TARGET_FLAT_FIELD_METADATAS_RECORD,
   );
 };

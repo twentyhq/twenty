@@ -3,14 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EMPTY_FLAT_OBJECT_METADATA_MAPS } from 'src/engine/metadata-modules/flat-object-metadata-maps/constant/empty-flat-object-metadata-maps.constant';
-import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
 import { getSubFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-or-throw.util';
 import { getSubFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps.util';
 import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { fromCreateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata.util';
+import { fromCreateObjectInputToFlatObjectMetadataMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-maps.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { fromUpdateObjectInputToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-update-object-input-to-flat-object-metadata.util';
@@ -184,26 +183,25 @@ export class ObjectMetadataServiceV2 {
         },
       );
 
-    const flatObjectMetadataToCreate =
-      fromCreateObjectInputToFlatObjectMetadata({
-        createObjectInput,
-        workspaceId,
-      });
+    const {
+      flatObjectMetadataMaps: toFlatObjectMetadataMaps,
+      objectMetadataToCreateId,
+    } = fromCreateObjectInputToFlatObjectMetadataMetadataMaps({
+      createObjectInput,
+      workspaceId,
+      existingFlatObjectMetadataMaps,
+    });
 
     const fromFlatObjectMetadataMaps =
       getSubFlatObjectMetadataMaps({
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        objectMetadataIds: [flatObjectMetadataToCreate.id],
+        objectMetadataIds: [objectMetadataToCreateId],
       }) ?? EMPTY_FLAT_OBJECT_METADATA_MAPS;
 
     await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
       {
         fromFlatObjectMetadataMaps,
-        toFlatObjectMetadataMaps:
-          addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
-            flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
-            flatObjectMetadata: flatObjectMetadataToCreate,
-          }),
+        toFlatObjectMetadataMaps,
         buildOptions: {
           isSystemBuild: false,
           inferDeletionFromMissingObjectFieldIndex: false,
@@ -222,7 +220,7 @@ export class ObjectMetadataServiceV2 {
       );
 
     const createdFlatObjectMetadata =
-      recomputedFlatObjectMetadataMaps.byId[flatObjectMetadataToCreate.id];
+      recomputedFlatObjectMetadataMaps.byId[objectMetadataToCreateId];
 
     if (!isDefined(createdFlatObjectMetadata)) {
       throw new ObjectMetadataException(
