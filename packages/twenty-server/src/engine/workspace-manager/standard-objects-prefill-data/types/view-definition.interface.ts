@@ -5,7 +5,7 @@ import { type ViewOpenRecordInType } from 'src/modules/view/standard-objects/vie
 
 export interface ViewDefinition {
   id?: string;
-  name: MessageDescriptor;
+  name: string | MessageDescriptor;
   objectMetadataId: string;
   type: string;
   key: string | null;

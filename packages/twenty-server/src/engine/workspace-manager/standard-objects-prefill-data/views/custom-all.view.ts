@@ -2,7 +2,10 @@ import { msg } from '@lingui/core/macro';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-export const customAllView = (objectMetadataItem: ObjectMetadataEntity) => {
+export const customAllView = (
+  objectMetadataItem: ObjectMetadataEntity,
+  useCoreNaming = false,
+) => {
   const nameField = objectMetadataItem.fields.find(
     (field) => field.name === 'name',
   );
@@ -18,7 +21,9 @@ export const customAllView = (objectMetadataItem: ObjectMetadataEntity) => {
   }
 
   return {
-    name: msg`All {objectLabelPlural}`,
+    name: useCoreNaming
+      ? msg`All {objectLabelPlural}`
+      : `All ${objectMetadataItem.labelPlural}`,
     objectMetadataId: objectMetadataItem.id,
     type: 'table',
     key: 'INDEX',

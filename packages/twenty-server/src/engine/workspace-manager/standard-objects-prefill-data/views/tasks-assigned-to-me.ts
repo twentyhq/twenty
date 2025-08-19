@@ -9,6 +9,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 
 export const tasksAssignedToMeView = (
   objectMetadataItems: ObjectMetadataEntity[],
+  useCoreNaming = false,
 ) => {
   const taskObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.task,
@@ -19,7 +20,7 @@ export const tasksAssignedToMeView = (
   }
 
   return {
-    name: msg`Assigned to Me`,
+    name: useCoreNaming ? msg`Assigned to Me` : 'Assigned to Me',
     objectMetadataId: taskObjectMetadata.id,
     type: 'table',
     key: null,

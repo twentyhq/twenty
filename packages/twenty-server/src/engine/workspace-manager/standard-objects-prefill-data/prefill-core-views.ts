@@ -1,3 +1,4 @@
+import { isString } from '@sniptt/guards';
 import { type ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared/types';
 import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
@@ -34,21 +35,21 @@ export const prefillCoreViews = async (
   );
 
   const customViews = customObjectMetadataItems.map((item) =>
-    customAllView(item),
+    customAllView(item, true),
   );
 
   const views = [
-    companiesAllView(objectMetadataItems),
-    peopleAllView(objectMetadataItems),
-    opportunitiesAllView(objectMetadataItems),
-    opportunitiesTableByStageView(objectMetadataItems),
-    notesAllView(objectMetadataItems),
-    tasksAllView(objectMetadataItems),
-    tasksAssignedToMeView(objectMetadataItems),
-    tasksByStatusView(objectMetadataItems),
-    workflowsAllView(objectMetadataItems),
-    workflowVersionsAllView(objectMetadataItems),
-    workflowRunsAllView(objectMetadataItems),
+    companiesAllView(objectMetadataItems, true),
+    peopleAllView(objectMetadataItems, true),
+    opportunitiesAllView(objectMetadataItems, true),
+    opportunitiesTableByStageView(objectMetadataItems, true),
+    notesAllView(objectMetadataItems, true),
+    tasksAllView(objectMetadataItems, true),
+    tasksAssignedToMeView(objectMetadataItems, true),
+    tasksByStatusView(objectMetadataItems, true),
+    workflowsAllView(objectMetadataItems, true),
+    workflowVersionsAllView(objectMetadataItems, true),
+    workflowRunsAllView(objectMetadataItems, true),
     ...customViews,
   ];
 
@@ -99,7 +100,7 @@ const createCoreViews = async (
       kanbanAggregateOperationFieldMetadataId,
     }) => ({
       id,
-      name: name.message ?? '',
+      name: isString(name) ? name : name.message || '',
       objectMetadataId,
       type: type === 'kanban' ? ViewType.KANBAN : ViewType.TABLE,
       key: key || undefined,

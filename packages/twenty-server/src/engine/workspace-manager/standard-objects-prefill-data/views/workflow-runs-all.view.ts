@@ -7,6 +7,7 @@ import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.wor
 
 export const workflowRunsAllView = (
   objectMetadataItems: ObjectMetadataEntity[],
+  useCoreNaming = false,
 ) => {
   const workflowRunObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.workflowRun,
@@ -17,7 +18,7 @@ export const workflowRunsAllView = (
   }
 
   return {
-    name: msg`All {objectLabelPlural}`,
+    name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Workflow Runs',
     objectMetadataId: workflowRunObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

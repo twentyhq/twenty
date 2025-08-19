@@ -8,7 +8,10 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export const peopleAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
+export const peopleAllView = (
+  objectMetadataItems: ObjectMetadataEntity[],
+  useCoreNaming = false,
+) => {
   const personObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.person,
   );
@@ -18,7 +21,7 @@ export const peopleAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
   }
 
   return {
-    name: msg`All {objectLabelPlural}`,
+    name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All People',
     objectMetadataId: personObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

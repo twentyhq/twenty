@@ -7,7 +7,10 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
-export const tasksAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
+export const tasksAllView = (
+  objectMetadataItems: ObjectMetadataEntity[],
+  useCoreNaming = false,
+) => {
   const taskObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.task,
   );
@@ -17,7 +20,7 @@ export const tasksAllView = (objectMetadataItems: ObjectMetadataEntity[]) => {
   }
 
   return {
-    name: msg`All {objectLabelPlural}`,
+    name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Tasks',
     objectMetadataId: taskObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

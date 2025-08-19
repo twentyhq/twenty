@@ -7,6 +7,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 
 export const opportunitiesByStageView = (
   objectMetadataItems: ObjectMetadataEntity[],
+  useCoreNaming = false,
 ) => {
   const opportunityObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.opportunity,
@@ -17,7 +18,7 @@ export const opportunitiesByStageView = (
   }
 
   return {
-    name: msg`By Stage`,
+    name: useCoreNaming ? msg`By Stage` : 'By Stage',
     objectMetadataId: opportunityObjectMetadata.id,
     type: 'kanban',
     key: null,

@@ -7,6 +7,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 
 export const opportunitiesAllView = (
   objectMetadataItems: ObjectMetadataEntity[],
+  useCoreNaming = false,
 ) => {
   const opportunityObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.opportunity,
@@ -17,7 +18,7 @@ export const opportunitiesAllView = (
   }
 
   return {
-    name: msg`All {objectLabelPlural}`,
+    name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Opportunities',
     objectMetadataId: opportunityObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

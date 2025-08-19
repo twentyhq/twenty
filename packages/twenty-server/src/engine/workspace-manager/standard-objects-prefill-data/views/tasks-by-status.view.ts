@@ -9,6 +9,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 
 export const tasksByStatusView = (
   objectMetadataItems: ObjectMetadataEntity[],
+  useCoreNaming = false,
 ) => {
   const taskObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.task,
@@ -19,7 +20,7 @@ export const tasksByStatusView = (
   }
 
   return {
-    name: msg`By Status`,
+    name: useCoreNaming ? msg`By Status` : 'By Status',
     objectMetadataId: taskObjectMetadata.id,
     type: 'kanban',
     key: null,
