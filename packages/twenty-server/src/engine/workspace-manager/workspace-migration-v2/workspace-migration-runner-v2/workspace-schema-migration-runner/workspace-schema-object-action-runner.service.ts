@@ -15,12 +15,13 @@ import {
 import { type RunnerMethodForActionType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/runner-method-for-action-type';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/generate-column-definitions.util';
-import { prepareWorkspaceSchemaContext } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/workspace-schema-context.util';
+
+import { prepareWorkspaceSchemaContext } from './utils/workspace-schema-context.util';
 import {
   collectEnumOperationsForObject,
   EnumOperation,
   executeBatchEnumOperations,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/workspace-schema-enum-operations.util';
+} from './utils/workspace-schema-enum-operations.util';
 
 @Injectable()
 export class WorkspaceSchemaObjectActionRunnerService
@@ -64,7 +65,7 @@ export class WorkspaceSchemaObjectActionRunnerService
     });
 
     await executeBatchEnumOperations({
-      enumOperations: enumOperations,
+      enumOperations,
       queryRunner,
       schemaName,
       workspaceSchemaManagerService: this.workspaceSchemaManagerService,
