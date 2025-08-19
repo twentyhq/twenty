@@ -69,7 +69,6 @@ export const SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_T
       ...fuzzedDefaultValueFailingTestCases,
       ...fuzzedOptionsStringFieldFailingTestCases,
       {
-        only: true,
         title: 'should fail with invalid option id',
         context: {
           input: {
