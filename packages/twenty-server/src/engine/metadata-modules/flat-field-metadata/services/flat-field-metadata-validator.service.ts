@@ -217,9 +217,9 @@ export class FlatFieldMetadataValidatorService {
       }
     }
 
-    const isRelationFieldAndRelationTargetObjectMetadataExists =
+    const isRelationFieldAndRelationTargetObjectMetadataHasBeenDeleted =
       isRelationFlatFieldMetadata(flatFieldMetadataToDelete) &&
-      isDefined(
+      !isDefined(
         existingFlatObjectMetadataMaps.byId[
           flatFieldMetadataToDelete.relationTargetObjectMetadataId
         ],
@@ -227,7 +227,7 @@ export class FlatFieldMetadataValidatorService {
 
     if (
       isStandardMetadata(flatFieldMetadataToDelete) &&
-      !isRelationFieldAndRelationTargetObjectMetadataExists
+      !isRelationFieldAndRelationTargetObjectMetadataHasBeenDeleted
     ) {
       errors.push(
         new FieldMetadataException(
@@ -239,7 +239,7 @@ export class FlatFieldMetadataValidatorService {
 
     if (
       flatFieldMetadataToDelete.isActive &&
-      !isRelationFieldAndRelationTargetObjectMetadataExists
+      !isRelationFieldAndRelationTargetObjectMetadataHasBeenDeleted
     ) {
       errors.push(
         new FieldMetadataException(
