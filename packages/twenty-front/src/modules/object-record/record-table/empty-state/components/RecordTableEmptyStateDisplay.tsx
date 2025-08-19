@@ -1,3 +1,4 @@
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { type IconComponent } from 'twenty-ui/display';
@@ -35,7 +36,13 @@ export const RecordTableEmptyStateDisplay = (
   props: RecordTableEmptyStateDisplayProps,
 ) => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
-  const isReadOnly = isObjectMetadataReadOnly(objectMetadataItem);
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+  const isReadOnly = isObjectMetadataReadOnly({
+    objectPermissions,
+    objectMetadataItem,
+  });
 
   return (
     <AnimatedPlaceholderEmptyContainer>

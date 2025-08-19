@@ -1,37 +1,26 @@
-import {
-  type IsFieldReadOnlyByPermissionParams,
-  isFieldReadOnlyByPermissions,
-} from '@/object-record/read-only/utils/internal/isFieldReadOnlyByPermissions';
-import { isFieldReadOnlyBySystem } from '@/object-record/read-only/utils/internal/isFieldReadOnlyBySystem';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
+import { type ObjectPermission } from '~/generated/graphql';
 
 type IsRecordFieldReadOnlyParams = {
   isRecordReadOnly: boolean;
-} & IsFieldReadOnlyByPermissionParams;
+  fieldMetadataItem: Pick<FieldMetadataItem, 'id' | 'isUIReadOnly'>;
+  objectPermissions: ObjectPermission;
+};
 
 export const isRecordFieldReadOnly = ({
-  isRecordReadOnly,
   objectPermissions,
-  fieldMetadataId,
-  fieldMetadataType,
-  isUIReadOnly,
+  isRecordReadOnly,
+  fieldMetadataItem,
 }: IsRecordFieldReadOnlyParams) => {
-  if (fieldMetadataType === FieldMetadataType.RAW_JSON) {
-    return false;
-  }
-
-  const fieldReadOnlyByPermissions = isFieldReadOnlyByPermissions({
+  const fieldReadOnlyByPermissions = isFieldMetadataReadOnlyByPermissions({
     objectPermissions,
-    fieldMetadataId,
-    fieldMetadataType,
-    isUIReadOnly,
-  });
-
-  const fieldReadOnlyBySystem = isFieldReadOnlyBySystem({
-    isUIReadOnly,
+    fieldMetadataId: fieldMetadataItem.id,
   });
 
   return (
-    isRecordReadOnly || fieldReadOnlyByPermissions || fieldReadOnlyBySystem
+    isRecordReadOnly ||
+    fieldMetadataItem.isUIReadOnly ||
+    fieldReadOnlyByPermissions
   );
 };

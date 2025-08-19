@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 
-import { isObjectReadOnly } from '@/object-record/read-only/utils/isObjectReadOnly';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -241,10 +241,9 @@ export const RecordTableHeaderCell = ({
     createNewIndexRecord();
   };
 
-  const isReadOnly = isObjectReadOnly({
+  const isReadOnly = isObjectMetadataReadOnly({
     objectPermissions,
-    isUIReadOnly:
-      objectMetadataItem.isUIReadOnly ?? column.metadata.isUIReadOnly ?? false,
+    objectMetadataItem,
   });
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;

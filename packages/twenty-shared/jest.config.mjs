@@ -1,6 +1,4 @@
-import { JestConfigWithTsJest } from 'ts-jest';
-
-const jestConfig: JestConfigWithTsJest = {
+const jestConfig = {
   silent: true,
   displayName: 'twenty-shared',
   preset: '../../jest.preset.js',

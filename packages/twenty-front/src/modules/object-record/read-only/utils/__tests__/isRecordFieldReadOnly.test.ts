@@ -20,6 +20,10 @@ describe('isRecordFieldReadOnly', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
       isRecordReadOnly: true,
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIReadOnly: false,
+      },
     });
 
     expect(result).toBe(true);
@@ -31,6 +35,10 @@ describe('isRecordFieldReadOnly', () => {
       objectPermissions: {
         ...mockObjectPermissions,
         canUpdateObjectRecords: false,
+      },
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIReadOnly: false,
       },
     });
 
@@ -46,6 +54,10 @@ describe('isRecordFieldReadOnly', () => {
           'field-123': { canUpdate: false },
         },
       },
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIReadOnly: false,
+      },
     });
 
     expect(result).toBe(true);
@@ -54,25 +66,22 @@ describe('isRecordFieldReadOnly', () => {
   it('should return true when field is marked as UI read-only', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
-      isUIReadOnly: true,
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIReadOnly: true,
+      },
     });
 
     expect(result).toBe(true);
   });
 
-  it('should return false for RAW_JSON fields even when marked as UI read-only', () => {
-    const result = isRecordFieldReadOnly({
-      ...mockParams,
-      fieldMetadataType: FieldMetadataType.RAW_JSON,
-      isUIReadOnly: true,
-    });
-
-    expect(result).toBe(false);
-  });
-
   it('should return false when all conditions allow editing', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIReadOnly: false,
+      },
     });
 
     expect(result).toBe(false);

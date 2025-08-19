@@ -1,7 +1,6 @@
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isObjectFieldUIReadOnly } from '@/object-record/read-only/utils/isObjectFieldUIReadOnly';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
@@ -71,11 +70,6 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
 
     const { upsertFieldPermissionInDraftRole } =
       useUpsertFieldPermissionInDraftRole(roleId);
-
-    const fieldMustBeReadableAndUpdatable = isObjectFieldUIReadOnly(
-      fieldMetadataItem,
-      objectMetadataItem,
-    );
 
     const handleSeeChange = () => {
       if (isDefined(fieldPermissionForThisFieldMetadataItem)) {
@@ -183,7 +177,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
         ) : (
           <TableCell>
             <OverridableCheckbox
-              disabled={fieldMustBeReadableAndUpdatable ?? false}
+              disabled={fieldMetadataItem.isUIReadOnly ?? false}
               checked={true}
               onChange={handleSeeChange}
               type={isReadRestricted ? 'override' : 'default'}
@@ -195,7 +189,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
         ) : (
           <TableCell align="left">
             <OverridableCheckbox
-              disabled={fieldMustBeReadableAndUpdatable ?? false}
+              disabled={fieldMetadataItem.isUIReadOnly ?? false}
               checked={true}
               onChange={handleUpdateChange}
               type={isUpdateRestricted ? 'override' : 'default'}

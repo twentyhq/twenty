@@ -10,7 +10,7 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "lingui.config.ts",
-    "jest.config.ts",
+    "jest.config.mjs",
     "vite.config.ts",
     "setupTests.ts"
   ],

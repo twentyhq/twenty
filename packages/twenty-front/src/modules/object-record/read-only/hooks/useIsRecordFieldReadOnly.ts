@@ -42,11 +42,6 @@ export const useIsRecordFieldReadOnly = ({
   return isRecordFieldReadOnly({
     isRecordReadOnly,
     objectPermissions,
-    fieldMetadataId,
-    fieldMetadataType: fieldMetadataItem.type,
-    isUIReadOnly:
-      objectMetadataItem.isUIReadOnly ??
-      fieldMetadataItem.isUIReadOnly ??
-      false,
+    fieldMetadataItem,
   });
 };
