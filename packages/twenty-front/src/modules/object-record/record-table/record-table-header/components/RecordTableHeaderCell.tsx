@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
-import { isObjectReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isObjectReadOnly';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
@@ -241,8 +241,9 @@ export const RecordTableHeaderCell = ({
     createNewIndexRecord();
   };
 
-  const isReadOnly = isObjectReadOnly({
+  const isReadOnly = isObjectMetadataReadOnly({
     objectPermissions,
+    objectMetadataItem,
   });
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;

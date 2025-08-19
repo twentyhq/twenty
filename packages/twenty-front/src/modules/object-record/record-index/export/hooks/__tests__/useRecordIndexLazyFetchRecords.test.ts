@@ -224,6 +224,7 @@ describe('useRecordData', () => {
                 fieldName: 'updatedAt',
                 isCustom: false,
                 isNullable: false,
+                isUIReadOnly: false,
                 objectMetadataNameSingular: 'person',
                 options: null,
                 placeHolder: 'Last update',
