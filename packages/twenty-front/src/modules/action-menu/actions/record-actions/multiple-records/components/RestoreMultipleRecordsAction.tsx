@@ -1,6 +1,7 @@
 import { ActionModal } from '@/action-menu/actions/components/ActionModal';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
@@ -39,6 +40,10 @@ export const RestoreMultipleRecordsAction = () => {
     contextStoreFiltersComponentState,
   );
 
+  const contextStoreFilterGroups = useRecoilComponentValue(
+    contextStoreFilterGroupsComponentState,
+  );
+
   const contextStoreAnyFieldFilterValue = useRecoilComponentValue(
     contextStoreAnyFieldFilterValueComponentState,
   );
@@ -50,13 +55,14 @@ export const RestoreMultipleRecordsAction = () => {
   };
 
   const graphqlFilter = {
-    ...computeContextStoreFilters(
+    ...computeContextStoreFilters({
       contextStoreTargetedRecordsRule,
       contextStoreFilters,
+      contextStoreFilterGroups,
       objectMetadataItem,
       filterValueDependencies,
       contextStoreAnyFieldFilterValue,
-    ),
+    }),
     ...deletedAtFilter,
   };
 

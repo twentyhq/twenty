@@ -13,6 +13,6 @@ const compositeFieldTypes = [
 
 export type CompositeFieldMetadataType = (typeof compositeFieldTypes)[number];
 
-export const COMPOSITE_FIELD_TYPES: CompositeFieldMetadataType[] = [
+export const COMPOSITE_FIELD_TYPES: FieldMetadataType[] = [
   ...compositeFieldTypes,
 ];

@@ -7,23 +7,14 @@ export const sanitizeDefaultValue = (
     return 'NULL';
   }
 
-  const allowedFunctions = [
-    'gen_random_uuid()',
-    'uuid_generate_v4()',
-    'now()',
-    'current_timestamp',
-    'current_date',
-    'current_time',
-    'localtime',
-    'localtimestamp',
-  ];
+  const allowedFunctions = ['public.uuid_generate_v4()', 'now()'];
 
   if (typeof defaultValue === 'string') {
     if (allowedFunctions.includes(defaultValue.toLowerCase())) {
       return defaultValue;
     }
 
-    return removeSqlDDLInjection(defaultValue);
+    return `'${removeSqlDDLInjection(defaultValue)}'`;
   }
 
   return defaultValue;

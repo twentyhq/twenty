@@ -50,17 +50,17 @@ export const Catalog: CatalogStory<Story, typeof MenuItemSelect> = {
         },
         {
           name: 'states',
-          values: ['default', 'hover', 'selected', 'hover+selected'],
+          values: ['default', 'hover', 'focused', 'hover+focused'],
           props: (state: string) => {
             switch (state) {
               case 'default':
                 return {};
               case 'hover':
                 return { className: 'hover' };
-              case 'selected':
-                return { selected: true };
-              case 'hover+selected':
-                return { className: 'hover', selected: true };
+              case 'focused':
+                return { focused: true };
+              case 'hover+focused':
+                return { className: 'hover', focused: true };
               default:
                 return {};
             }

@@ -9,7 +9,8 @@ export const WorkflowDiagramDefaultEdgeRun = ({
   sourceY,
   targetX,
   targetY,
-  data,
+  markerStart,
+  markerEnd,
 }: WorkflowDiagramDefaultEdgeRunProps) => {
   const [edgePath] = getBezierPath({
     sourceX,
@@ -20,8 +21,9 @@ export const WorkflowDiagramDefaultEdgeRun = ({
 
   return (
     <WorkflowRunDiagramBaseEdge
-      edgePath={edgePath}
-      edgeExecutionStatus={data?.edgeExecutionStatus}
+      path={edgePath}
+      markerStart={markerStart}
+      markerEnd={markerEnd}
     />
   );
 };
