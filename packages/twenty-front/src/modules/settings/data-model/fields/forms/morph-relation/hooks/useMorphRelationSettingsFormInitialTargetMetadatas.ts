@@ -1,10 +1,10 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
-import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations.util';
+import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useMorphRelationSettingsFormInitialValues = ({
+export const useMorphRelationSettingsFormInitialTargetMetadatas = ({
   fieldMetadataItem,
 }: {
   fieldMetadataItem?: Pick<FieldMetadataItem, 'type' | 'morphRelations'>;

@@ -136,12 +136,14 @@ export const SettingsDataModelObjectPreview = ({
     <>
       {objectMetadataItems.map((objectMetadataItem, index) => {
         selected++;
-        return (
+        return selected <= 3 ? (
           <SettingsDataModelObjectPreviewItem
             objectMetadataItem={objectMetadataItem}
             pluralizeLabel={pluralizeLabel}
             index={index}
           />
+        ) : (
+          <></>
         );
       })}
       {selected > 3 && (

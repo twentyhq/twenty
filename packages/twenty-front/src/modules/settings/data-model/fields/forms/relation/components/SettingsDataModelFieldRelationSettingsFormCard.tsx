@@ -5,12 +5,12 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
-import { SettingsDataModelFieldPreviewContent } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldPreviewContent';
-import { SettingsDataModelPreviewImage } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldPreviewImageCard';
 import {
   SettingsDataModelFieldRelationForm,
   type SettingsDataModelFieldRelationFormValues,
 } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
+import { SettingsDataModelFieldRelationPreviewContent } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationPreviewContent';
+import { SettingsDataModelRelationPreviewImage } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationPreviewImageCard';
 import { useRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/relation/hooks/useRelationSettingsFormInitialValues';
 import {
   SettingsDataModelFieldPreviewCard,
@@ -73,7 +73,7 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <SettingsDataModelFieldPreviewContent isMobile={isMobile}>
+        <SettingsDataModelFieldRelationPreviewContent isMobile={isMobile}>
           <StyledFieldPreviewCard
             fieldMetadataItem={{
               ...fieldMetadataItem,
@@ -88,7 +88,7 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
               watchFormValue('relation.type') === RelationType.MANY_TO_ONE
             }
           />
-          <SettingsDataModelPreviewImage
+          <SettingsDataModelRelationPreviewImage
             src={relationTypeConfig.imageSrc}
             flip={relationTypeConfig.isImageFlipped}
             alt={relationTypeConfig.label}
@@ -118,7 +118,7 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
               watchFormValue('relation.type') !== RelationType.MANY_TO_ONE
             }
           />
-        </SettingsDataModelFieldPreviewContent>
+        </SettingsDataModelFieldRelationPreviewContent>
       }
       form={
         <SettingsDataModelFieldRelationForm

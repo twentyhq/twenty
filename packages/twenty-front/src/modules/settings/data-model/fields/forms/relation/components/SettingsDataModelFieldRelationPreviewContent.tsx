@@ -7,7 +7,7 @@ const StyledPreviewContent = styled.div<{ isMobile: boolean }>`
   flex-direction: ${({ isMobile }) => (isMobile ? 'column' : 'row')};
 `;
 
-export const SettingsDataModelFieldPreviewContent = ({
+export const SettingsDataModelFieldRelationPreviewContent = ({
   isMobile,
   children,
 }: {

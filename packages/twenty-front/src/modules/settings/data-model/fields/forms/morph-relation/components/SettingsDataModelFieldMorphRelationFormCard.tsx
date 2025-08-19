@@ -9,11 +9,10 @@ import {
   SettingsDataModelFieldMorphRelationForm,
   type SettingsDataModelFieldMorphRelationFormValues,
 } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm';
-import { useMorphRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormInitialValues';
-import { fieldMetadataItemInitialRelationType } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemInitialRelationType.util';
-import { SettingsDataModelFieldPreviewContent } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldPreviewContent';
-
-import { SettingsDataModelPreviewImage } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldPreviewImageCard';
+import { useMorphRelationSettingsFormInitialTargetMetadatas } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormInitialTargetMetadatas';
+import { fieldMetadataItemInitialRelationType } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemInitialRelationType';
+import { SettingsDataModelFieldRelationPreviewContent } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationPreviewContent';
+import { SettingsDataModelRelationPreviewImage } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationPreviewImageCard';
 import {
   SettingsDataModelFieldPreviewCard,
   type SettingsDataModelFieldPreviewCardProps,
@@ -53,7 +52,7 @@ export const SettingsDataModelFieldMorphRelationFormCard = ({
   const initialRelationType =
     fieldMetadataItemInitialRelationType(fieldMetadataItem);
   const initialRelationObjectMetadataItems =
-    useMorphRelationSettingsFormInitialValues({
+    useMorphRelationSettingsFormInitialTargetMetadatas({
       fieldMetadataItem,
     });
 
@@ -114,7 +113,7 @@ export const SettingsDataModelFieldMorphRelationFormCard = ({
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <SettingsDataModelFieldPreviewContent isMobile={isMobile}>
+        <SettingsDataModelFieldRelationPreviewContent isMobile={isMobile}>
           <StyledFieldPreviewCard
             fieldMetadataItem={{
               ...fieldMetadataItem,
@@ -129,7 +128,7 @@ export const SettingsDataModelFieldMorphRelationFormCard = ({
               watchFormValue('relationType') === RelationType.MANY_TO_ONE
             }
           />
-          <SettingsDataModelPreviewImage
+          <SettingsDataModelRelationPreviewImage
             src={relationTypeConfig.imageSrc}
             flip={relationTypeConfig.isImageFlipped}
             alt={relationTypeConfig.label}
@@ -162,7 +161,7 @@ export const SettingsDataModelFieldMorphRelationFormCard = ({
               }
             />
           )}
-        </SettingsDataModelFieldPreviewContent>
+        </SettingsDataModelFieldRelationPreviewContent>
       }
       form={
         <SettingsDataModelFieldMorphRelationForm

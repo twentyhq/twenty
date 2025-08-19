@@ -6,12 +6,12 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { SettingsMorphRelationMultiSelect } from '@/settings/components/SettingsMorphRelationMultiSelect';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
-import { useMorphRelationSettingsFormDefaultIconOnDestination } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormDefaultIconOnDestination';
-import { useMorphRelationSettingsFormDefaultLabelOnDestination } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormDefaultLabelOnDestination';
-import { useMorphRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormInitialValues';
-import { fieldMetadataItemDisableFieldEdition } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemDisableFieldEdition.util';
-import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations.util';
-import { fieldMetadataItemInitialRelationType } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemInitialRelationType.util';
+import { useMorphRelationSettingsFormDefaultValuesOnDestination } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormDefaultValuesOnDestination';
+import { useMorphRelationSettingsFormInitialTargetMetadatas } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormInitialTargetMetadatas';
+import { fieldMetadataItemDisableFieldEdition } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemDisableFieldEdition';
+import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
+
+import { fieldMetadataItemInitialRelationType } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemInitialRelationType';
 import {
   RELATION_TYPE_OPTIONS,
   StyledInputsContainer,
@@ -56,20 +56,15 @@ export const SettingsDataModelFieldMorphRelationForm = ({
   const disableFieldEdition =
     fieldMetadataItemDisableFieldEdition(fieldMetadataItem);
   const initialRelationObjectMetadataItems =
-    useMorphRelationSettingsFormInitialValues({
+    useMorphRelationSettingsFormInitialTargetMetadatas({
       fieldMetadataItem,
     });
 
-  const defaultIconOnDestination =
-    useMorphRelationSettingsFormDefaultIconOnDestination({
-      fieldMetadataItem,
-      objectMetadataItem: initialRelationObjectMetadataItems[0],
-    });
   const initialRelationType =
     fieldMetadataItemInitialRelationType(fieldMetadataItem);
 
-  const defaultLabelOnDestination =
-    useMorphRelationSettingsFormDefaultLabelOnDestination({
+  const { label: defaultLabelOnDestination, icon: defaultIconOnDestination } =
+    useMorphRelationSettingsFormDefaultValuesOnDestination({
       fieldMetadataItem,
       objectMetadataItem: initialRelationObjectMetadataItems[0],
       relationType: initialRelationType,

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const StyledRelationImage = styled.img<{
+const StyledRelationImage = styled.img<{
   flip?: boolean;
   isMobile: boolean;
 }>`
@@ -18,7 +18,7 @@ export const StyledRelationImage = styled.img<{
   width: 54px;
 `;
 
-export const SettingsDataModelPreviewImage = ({
+export const SettingsDataModelRelationPreviewImage = ({
   isMobile,
   flip,
   src,

@@ -1,11 +1,11 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations.util';
+import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
 import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useMorphRelationSettingsFormDefaultLabelOnDestination = ({
+export const useMorphRelationSettingsFormDefaultValuesOnDestination = ({
   fieldMetadataItem,
   objectMetadataItem,
   relationType,
@@ -13,10 +13,13 @@ export const useMorphRelationSettingsFormDefaultLabelOnDestination = ({
   fieldMetadataItem?: Pick<FieldMetadataItem, 'type' | 'morphRelations'>;
   objectMetadataItem?: Pick<
     ObjectMetadataItem,
-    'id' | 'namePlural' | 'nameSingular'
+    'id' | 'namePlural' | 'nameSingular' | 'icon'
   >;
   relationType: RelationType;
-}): string => {
+}): {
+  icon: string;
+  label: string;
+} => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
   if (
@@ -32,15 +35,27 @@ export const useMorphRelationSettingsFormDefaultLabelOnDestination = ({
       const targetFieldMetadata = targetObjectMetadata?.fields.find(
         (field) => field.id === firstMorphRelation.targetFieldMetadata.id,
       );
-      return targetFieldMetadata?.label ?? '';
+
+      return {
+        icon: targetFieldMetadata?.icon ?? 'IconUsers',
+        label: targetFieldMetadata?.label ?? '',
+      };
     }
   }
 
   if (isDefined(objectMetadataItem)) {
-    return [RelationType.MANY_TO_ONE].includes(relationType)
+    const label = [RelationType.MANY_TO_ONE].includes(relationType)
       ? objectMetadataItem.namePlural
       : objectMetadataItem.nameSingular;
+
+    return {
+      icon: objectMetadataItem.icon ?? 'IconUsers',
+      label,
+    };
   }
 
-  return '';
+  return {
+    icon: 'IconUsers',
+    label: '',
+  };
 };
