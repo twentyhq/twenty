@@ -1,4 +1,4 @@
-import { isRecordReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isRecordReadOnly';
+import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
 
 describe('isRecordReadOnly', () => {
   it('should return false if record is not deleted and has update permissions', () => {

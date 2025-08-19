@@ -1,10 +1,10 @@
 import { useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { RecordDetailRelationSectionDropdownToMany } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSectionDropdownToMany';
 import { RecordDetailRelationSectionDropdownToOne } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSectionDropdownToOne';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useIsRecordReadOnly } from '@/object-record/record-field/ui/hooks/read-only/useIsRecordReadOnly';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RelationType } from '~/generated-metadata/graphql';
 

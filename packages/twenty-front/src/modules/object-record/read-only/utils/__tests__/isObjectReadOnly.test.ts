@@ -1,4 +1,4 @@
-import { isObjectReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isObjectReadOnly';
+import { isObjectReadOnly } from '@/object-record/read-only/utils/isObjectReadOnly';
 
 describe('isObjectReadOnly', () => {
   it('should return false if object is not read only', () => {

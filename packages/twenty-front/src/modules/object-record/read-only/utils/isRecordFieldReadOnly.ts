@@ -1,8 +1,8 @@
 import {
-  isFieldReadOnlyByPermissions,
   type IsFieldReadOnlyByPermissionParams,
-} from '@/object-record/record-field/ui/hooks/read-only/utils/internal/isFieldReadOnlyByPermissions';
-import { isFieldReadOnlyBySystem } from '@/object-record/record-field/ui/hooks/read-only/utils/internal/isFieldReadOnlyBySystem';
+  isFieldReadOnlyByPermissions,
+} from '@/object-record/read-only/utils/internal/isFieldReadOnlyByPermissions';
+import { isFieldReadOnlyBySystem } from '@/object-record/read-only/utils/internal/isFieldReadOnlyBySystem';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type IsRecordFieldReadOnlyParams = {

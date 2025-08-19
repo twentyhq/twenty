@@ -1,4 +1,4 @@
-import { isRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isRecordFieldReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 describe('isRecordFieldReadOnly', () => {

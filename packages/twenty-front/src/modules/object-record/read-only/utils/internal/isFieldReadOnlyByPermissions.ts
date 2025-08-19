@@ -1,4 +1,4 @@
-import { isObjectReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isObjectReadOnly';
+import { isObjectReadOnly } from '@/object-record/read-only/utils/isObjectReadOnly';
 import {
   type FieldMetadataType,
   type ObjectPermission,

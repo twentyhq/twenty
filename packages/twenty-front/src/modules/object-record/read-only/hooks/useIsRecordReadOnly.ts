@@ -1,6 +1,6 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { isRecordReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isRecordReadOnly';
+import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
 import { useIsRecordDeleted } from '@/object-record/record-field/ui/hooks/useIsRecordDeleted';
 
 type UseIsRecordReadOnlyParams = {
