@@ -1,4 +1,3 @@
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCardBodyContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBodyContainer';
@@ -28,8 +27,6 @@ export const RecordBoardCardBody = ({
   const { recordId, isRecordReadOnly } = useContext(RecordBoardCardContext);
 
   const { updateOneRecord, objectPermissions } = useContext(RecordBoardContext);
-
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
   const useUpdateOneRecordHook: RecordUpdateHook = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
