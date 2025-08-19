@@ -52,70 +52,101 @@ const StyledSeparator = styled.div`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
+type SettingsDataModelObjectSummaryItemProps = {
+  objectMetadataItem: Pick<
+    ObjectMetadataItem,
+    'icon' | 'labelSingular' | 'labelPlural' | 'isCustom' | 'isRemote'
+  >;
+  pluralizeLabel: boolean;
+  index: number;
+};
+
+const SettingsDataModelObjectSummaryItem = ({
+  objectMetadataItem,
+  pluralizeLabel = true,
+  index,
+}: SettingsDataModelObjectSummaryItemProps) => {
+  const theme = useTheme();
+  const { getIcon } = useIcons();
+  const ObjectIcon = getIcon(objectMetadataItem.icon);
+  const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
+
+  return (
+    <>
+      {index > 0 && <StyledSeparator />}
+      <StyledObjectSummary key={`${objectMetadataItem.labelSingular}-${index}`}>
+        <StyledObjectName>
+          <StyledIconContainer>
+            <ObjectIcon
+              size={theme.icon.size.sm}
+              stroke={theme.icon.stroke.md}
+            />
+          </StyledIconContainer>
+          <OverflowingTextWithTooltip
+            text={
+              pluralizeLabel
+                ? objectMetadataItem.labelPlural
+                : objectMetadataItem.labelSingular
+            }
+          />
+        </StyledObjectName>
+        <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
+      </StyledObjectSummary>
+    </>
+  );
+};
+
+const SettingsDataModelObjectSummaryOtherObjects = ({
+  selected,
+}: {
+  selected: number;
+}) => {
+  const theme = useTheme();
+  return (
+    <>
+      <StyledSeparator />
+      <StyledObjectSummary key={`other-objects`}>
+        <StyledObjectName>
+          <StyledIconContainer>
+            <IconBox
+              size={theme.icon.size.sm}
+              stroke={theme.icon.stroke.md}
+              color={theme.font.color.tertiary}
+            />
+          </StyledIconContainer>
+          <StyledOverflowingTextWithTooltip>
+            <OverflowingTextWithTooltip text={`Other objects`} />
+          </StyledOverflowingTextWithTooltip>
+        </StyledObjectName>
+        <StyledNumber>
+          <OverflowingTextWithTooltip text={`${selected - 3}`} />
+        </StyledNumber>
+      </StyledObjectSummary>
+    </>
+  );
+};
+
 export const SettingsDataModelObjectSummary = ({
-  className,
   objectMetadataItems,
   pluralizeLabel = true,
 }: SettingsDataModelObjectSummaryProps) => {
-  const theme = useTheme();
-
-  const { getIcon } = useIcons();
   let selected = 0;
-  const Components = objectMetadataItems.map((objectMetadataItem, index) => {
-    const ObjectIcon = getIcon(objectMetadataItem.icon);
-    const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
-    selected++;
 
-    return index < 3 ? (
-      <>
-        {index > 0 && <StyledSeparator />}
-        <StyledObjectSummary
-          className={className}
-          key={`${objectMetadataItem.labelSingular}-${index}`}
-        >
-          <StyledObjectName>
-            <StyledIconContainer>
-              <ObjectIcon
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.md}
-              />
-            </StyledIconContainer>
-            <OverflowingTextWithTooltip
-              text={
-                pluralizeLabel
-                  ? objectMetadataItem.labelPlural
-                  : objectMetadataItem.labelSingular
-              }
-            />
-          </StyledObjectName>
-          <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
-        </StyledObjectSummary>
-      </>
-    ) : null;
-  });
-  if (selected > 3) {
-    Components.push(
-      <>
-        <StyledSeparator />
-        <StyledObjectSummary className={className} key={`other-objects`}>
-          <StyledObjectName>
-            <StyledIconContainer>
-              <IconBox
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.md}
-                color={theme.font.color.tertiary}
-              />
-            </StyledIconContainer>
-            <StyledOverflowingTextWithTooltip>
-              <OverflowingTextWithTooltip text={`Other objects`} />
-            </StyledOverflowingTextWithTooltip>
-          </StyledObjectName>
-          <StyledNumber>
-            <OverflowingTextWithTooltip text={`${selected - 3}`} />
-          </StyledNumber>
-        </StyledObjectSummary>
-      </>,
-    );
-  }
-  return Components;
+  return (
+    <>
+      {objectMetadataItems.map((objectMetadataItem, index) => {
+        selected++;
+        return (
+          <SettingsDataModelObjectSummaryItem
+            objectMetadataItem={objectMetadataItem}
+            pluralizeLabel={pluralizeLabel}
+            index={index}
+          />
+        );
+      })}
+      {selected > 3 && (
+        <SettingsDataModelObjectSummaryOtherObjects selected={selected} />
+      )}
+    </>
+  );
 };
