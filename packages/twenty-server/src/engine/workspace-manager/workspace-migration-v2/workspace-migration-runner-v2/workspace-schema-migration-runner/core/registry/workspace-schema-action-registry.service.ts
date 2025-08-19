@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
-import { type WorkspaceMigrationActionService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner-v2/core/interfaces/workspace-migration-action-service.interface';
+import { type WorkspaceMigrationActionService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/interfaces/workspace-migration-action-service.interface';
 
 import {
   type WorkspaceMigrationActionTypeV2,
   type WorkspaceMigrationActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
-import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner-v2/core/decorators/workspace-migration-action-handler.decorator';
-import { type SchemaActionContext } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner-v2/core/types/schema-action-context.type';
+import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/decorators/workspace-migration-action-handler.decorator';
+import { type SchemaActionContext } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/types/schema-action-context.type';
 import {
   WorkspaceSchemaMigrationException,
   WorkspaceSchemaMigrationExceptionCode,
