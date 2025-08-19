@@ -6,7 +6,7 @@ export const fieldMetadataItemDisableFieldEdition = (
 ) => {
   const morphRelations = fieldMetadataItem?.morphRelations;
 
-  // to be updated with isCustom when available
+  // TODO: @guillim to be updated with isCustom when available
   return isDefined(morphRelations) && morphRelations.length > 0
     ? morphRelations.every(
         (morphRelation) => !morphRelation.targetFieldMetadata.isCustom,
