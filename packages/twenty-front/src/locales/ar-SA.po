@@ -120,6 +120,12 @@ msgstr "{roleLabel} يمكنه {humanReadableAction} سجلات {objectLabel}"
 msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
 msgstr "{roleLabel} لا يمكنه {humanReadableAction} سجلات {objectLabel}"
 
+#. js-lingui-id: 32wPk/
+#. placeholder {0}: selectedOptionsCount <= 1 ? fixedText : pluralize(fixedText)
+#: src/modules/ui/input/components/MultiSelectControl.tsx
+msgid "{selectedOptionsCount} {0}"
+msgstr ""
+
 #. js-lingui-id: pDgeaz
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "{title}"
@@ -2750,6 +2756,7 @@ msgstr "أعلام الميزات والانتحال"
 
 #. js-lingui-id: nrXDdR
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
 msgid "Field name"
 msgstr "اسم الحقل"
 
@@ -2757,6 +2764,11 @@ msgstr "اسم الحقل"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Field Name"
 msgstr "اسم الحقل"
+
+#. js-lingui-id: x07QTl
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
+msgid "Field on destination"
+msgstr ""
 
 #. js-lingui-id: zXgopL
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -4332,6 +4344,7 @@ msgstr "كائن"
 
 #. js-lingui-id: Zrauom
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
 msgid "Object destination"
 msgstr "وجهة الكائن"
 
@@ -4766,6 +4779,7 @@ msgstr "\\\\"
 
 #. js-lingui-id: UiAJoB
 #: src/modules/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm.tsx
+#: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
 msgid "Relation type"
 msgstr "نوع العلاقة"
 
