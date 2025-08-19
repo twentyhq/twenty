@@ -408,6 +408,23 @@ export const MKT_EMPLOYMENT_STATUS_FIELD_IDS = {
   staffMembers: '20202020-4f5a-6b7c-8d9e-0f1a2b3c4d5e',
 };
 
+export const MKT_STAFF_STATUS_HISTORY_FIELD_IDS = {
+  // reference fields
+  staffId: 'c9d0e1f2-a3b4-5c6d-7e8f-9a0b1c2d3e4f',
+  fromStatusId: 'd0e1f2a3-b4c5-6d7e-8f9a-0b1c2d3e4f5a',
+  toStatusId: 'e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b',
+  // change details
+  changeDate: 'f2a3b4c5-d6e7-8f9a-0b1c-2d3e4f5a6b7c',
+  changeReason: 'a3b4c5d6-e7f8-9a0b-1c2d-3e4f5a6b7c8d',
+  approvedBy: 'b4c5d6e7-f8a9-0b1c-2d3e-4f5a6b7c8d9e',
+  notes: 'c5d6e7f8-a9b0-1c2d-3e4f-5a6b7c8d9e0f',
+  // expected dates
+  expectedEndDate: 'd6e7f8a9-b0c1-2d3e-4f5a-6b7c8d9e0f1a',
+  actualEndDate: 'e7f8a9b0-c1d2-3e4f-5a6b-7c8d9e0f1a2b',
+  // standard fields
+  createdBy: 'f8a9b0c1-d2e3-4f5a-6b7c-8d9e0f1a2b3c',
+};
+
 export const MKT_DEPARTMENT_FIELD_IDS = {
   // department definition
   departmentCode: 'c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f',
@@ -433,49 +450,4 @@ export const MKT_DEPARTMENT_FIELD_IDS = {
   // standard fields
   position: 'f8a9b0c1-d2e3-4f5a-6b7c-8d9e0f1a2b3c',
   createdBy: 'a9b0c1d2-e3f4-5a6b-7c8d-9e0f1a2b3c4d',
-};
-
-export const MKT_STAFF_STATUS_HISTORY_FIELD_IDS = {
-  // reference fields
-  staffId: 'c9d0e1f2-a3b4-5c6d-7e8f-9a0b1c2d3e4f',
-  fromStatusId: 'd0e1f2a3-b4c5-6d7e-8f9a-0b1c2d3e4f5a',
-  toStatusId: 'e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b',
-  // change details
-  changeDate: 'f2a3b4c5-d6e7-8f9a-0b1c-2d3e4f5a6b7c',
-  changeReason: 'a3b4c5d6-e7f8-9a0b-1c2d-3e4f5a6b7c8d',
-  approvedBy: 'b4c5d6e7-f8a9-0b1c-2d3e-4f5a6b7c8d9e',
-  notes: 'c5d6e7f8-a9b0-1c2d-3e4f-5a6b7c8d9e0f',
-  // expected dates
-  expectedEndDate: 'd6e7f8a9-b0c1-2d3e-4f5a-6b7c8d9e0f1a',
-  actualEndDate: 'e7f8a9b0-c1d2-3e4f-5a6b-7c8d9e0f1a2b',
-  // standard fields
-  createdBy: 'f8a9b0c1-d2e3-4f5a-6b7c-8d9e0f1a2b3c',
-};
-
-export const MKT_STAFF_FIELD_IDS = {
-  // integration
-  person: 'b0c1d2e3-f4a5-6b7c-8d9e-0f1a2b3c4d5e',
-  userWorkspaceId: 'c1d2e3f4-a5b6-7c8d-9e0f-1a2b3c4d5e6f',
-  // basic info
-  employeeId: 'd2e3f4a5-b6c7-8d9e-0f1a-2b3c4d5e6f7a',
-  position: 'e3f4a5b6-c7d8-9e0f-1a2b-3c4d5e6f7a8b',
-  // relations
-  department: 'f4a5b6c7-d8e9-0f1a-2b3c-4d5e6f7a8b9c',
-  organizationLevel: 'a5b6c7d8-e9f0-1a2b-3c4d-5e6f7a8b9c0d',
-  teamLeader: 'b6c7d8e9-f0a1-2b3c-4d5e-6f7a8b9c0d1e',
-  // employment tracking
-  employmentStatus: 'c7d8e9f0-a1b2-3c4d-5e6f-7a8b9c0d1e2f',
-  statusStartDate: 'd8e9f0a1-b2c3-4d5e-6f7a-8b9c0d1e2f3a',
-  statusExpectedEndDate: 'e9f0a1b2-c3d4-5e6f-7a8b-9c0d1e2f3a4b',
-  // kpi configuration
-  hasKpiTracking: 'f0a1b2c3-d4e5-6f7a-8b9c-0d1e2f3a4b5c',
-  // access control
-  maxOrderValue: 'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
-  requiresApproval: 'b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e',
-  canAccessFinancialData: 'c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f',
-  // relations (inverse)
-  managedDepartment: 'd4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a',
-  teamMembers: 'e5f6a7b8-c9d0-1e2f-3a4b-5c6d7e8f9a0b',
-  // standard fields
-  createdBy: 'a7b8c9d0-e1f2-3a4b-5c6d-7e8f9a0b1c2d',
 };
