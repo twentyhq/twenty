@@ -334,3 +334,23 @@ export const MKT_RESELLER_TIER_HISTORY_FIELD_IDS = {
   position: 'e9afb0c1-d2e3-f4a5-b6fe-4f5a6b7c8d9e',
   createdBy: 'afb0c1d2-e3f4-a5b6-c7ff-5a6b7c8d9eaf',
 };
+
+export const MKT_ORGANIZATION_LEVEL_FIELD_IDS = {
+  // level definition
+  levelCode: 'e5f6a7b8-c9d0-1e2f-3a4b-5c6d7e8f9a0b',
+  levelName: 'f6a7b8c9-d0e1-2f3a-4b5c-6d7e8f9a0b1c',
+  levelNameEn: 'a7b8c9d0-e1f2-3a4b-5c6d-7e8f9a0b1c2d',
+  description: 'b8c9d0e1-f2a3-4b5c-6d7e-8f9a0b1c2d3e',
+  // hierarchy structure
+  hierarchyLevel: 'c9d0e1f2-a3b4-5c6d-7e8f-9a0b1c2d3e4f',
+  parentLevel: 'd0e1f2a3-b4c5-6d7e-8f9a-0b1c2d3e4f5a',
+  // business rules
+  defaultPermissions: 'e1f2a3b4-c5d6-7e8f-9a0b-1c2d3e4f5a6b',
+  accessLimitations: 'f2a3b4c5-d6e7-8f9a-0b1c-2d3e4f5a6b7c',
+  // display & status
+  displayOrder: 'a3b4c5d6-e7f8-9a0b-1c2d-3e4f5a6b7c8d',
+  isActive: 'b4c5d6e7-f8a9-0b1c-2d3e-4f5a6b7c8d9e',
+  // standard fields
+  position: 'd6e7f8a9-b0c1-2d3e-4f5a-6b7c8d9e0f1a',
+  createdBy: 'e7f8a9b0-c1d2-3e4f-5a6b-7c8d9e0f1a2b',
+};

@@ -26,4 +26,6 @@ export const MKT_OBJECT_IDS = {
   mktResellerTier: 'a1b2c3d4-e5f6-7a8b-9c0d-e1f2a3b4c5d6',
   mktReseller: 'b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e',
   mktResellerTierHistory: 'c3d4e5f6-a7b8-9c0d-e1f2-3a4b5c6d7e8f',
+  // organization
+  mktOrganizationLevel: 'd4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a',
 };
