@@ -172,6 +172,146 @@ Developer Support`);
     expect(result).toBe('');
   });
 
+  it('should preserve new lines in html email', () => {
+    const parsed: ParsedMail = {
+      attachments: [],
+      headers: new Map(),
+      headerLines: [],
+      html: `<html><head><style>
+  html, body {
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: #333;
+    background-color: #fff;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Ubuntu, Helvetica, Arial, sans-serif;
+    margin: 0;
+    -webkit-text-size-adjust: auto;
+    word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;
+  }
+
+  strong, b, .bold {
+    font-weight: 600;
+  }
+
+  body {
+    overflow-y: hidden;
+    word-break: break-word;
+    filter: invert(0.88);
+    --image-filter: grayscale(20%);
+  }
+  .theme-emoji {
+    filter: var(--image-filter) invert(0.88);
+  }
+
+  a {
+    color: #925b00;
+  }
+
+  a:hover {
+    color: #925b00;
+  }
+
+  a:visited {
+    color: #925b00;
+  }
+  
+  a img {
+    border-bottom: 0;
+  }
+
+  body.heightDetermined {
+    overflow-y: hidden;
+  }
+
+  div,pre {
+    max-width: 100%;
+  }
+
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  pre.flockmail-plaintext {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  img {
+    border: 0;
+  }
+  img:not([src*='.svg']) {
+    filter: var(--image-filter) invert(0.88);
+  }
+  .grayscale {
+    filter: var(--image-filter) invert(0.88);
+  }
+
+  search-match, .search-match {
+    background: #fff000;
+    border-radius: 4px;
+    box-shadow: 0 0.5px 0.5px rgba(0,0,0,0.25);
+    &.current-match {
+      background: #ff8b1a;
+    }
+  }
+
+  table {
+    word-break: initial;
+    border-collapse: collapse;
+  }
+
+  a.mk-unsubscribe:not([href]), a[fr-original-class=mk-unsubscribe]:not([href]) {
+    pointer-events: none !important;
+  }
+
+  p.MsoNormal, li.MsoNormal, div.MsoNormal {margin: 0px;}
+
+  ::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+  
+  ::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+    cursor: default;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    border-radius: 14px;
+    background-clip: content-box;
+    border: 3px solid transparent;
+    background: transparent;
+    box-shadow: inset 0 0 15px 15px rgba(136, 136, 136, 0.4);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    box-shadow: inset 0 0 15px 15px #bdbdbd;
+  }
+
+  </style></head><body><div id="inbox-html-wrapper"><div id="isPasted" fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Hi Sarah,</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">I wanted to quickly follow up regarding the Q3 marketing campaign results. &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">We’ve seen a 14% increase in engagement compared to last quarter, but conversions are still slightly below target. &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Let’s schedule a short call early next week to discuss adjustments before the Q4 push. &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Would Monday 10 AM work for you?</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Best regards, &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">John</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><img class="flm-open" width="0" height="0" style="border: 0px; width: 0px; height: 0px; max-width: 100vw;" data-open-tracking-src="{{track-read-receipt}}"></div></body></html>`,
+    };
+
+    const result = extractTextWithoutReplyQuotations(parsed);
+
+    expect(result).toEqual(`Hi Sarah,
+
+
+I wanted to quickly follow up regarding the Q3 marketing campaign results.  
+We’ve seen a 14% increase in engagement compared to last quarter, but conversions are still slightly below target.  
+
+
+Let’s schedule a short call early next week to discuss adjustments before the Q4 push.  
+Would Monday 10 AM work for you?
+
+
+Best regards,  
+John`);
+  });
+
   it('should prefer text over html when both are available', () => {
     const parsed: ParsedMail = {
       text: 'Plain text content\n\nOn 2023-01-01, user@example.com wrote:\n> Reply',

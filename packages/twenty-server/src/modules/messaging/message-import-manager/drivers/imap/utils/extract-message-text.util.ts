@@ -22,10 +22,12 @@ export const extractTextWithoutReplyQuotations = (
       dom.window.document,
     );
 
-    return convert(cleanedHtml, {
+    const text = convert(cleanedHtml, {
       wordwrap: false,
       preserveNewlines: true,
     }).trim();
+
+    return text.replace(/\u00A0/g, ' ');
   }
 
   return '';
