@@ -4,16 +4,10 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
-import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
-import { getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-out-of-flat-field-metadatas-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
-import {
-  ObjectMetadataException,
-  ObjectMetadataExceptionCode,
-} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { buildDefaultFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-flat-field-metadatas-for-custom-object.util';
 import { buildDefaultRelationFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-relation-flat-field-metadatas-for-custom-object.util';
 
@@ -27,8 +21,8 @@ export const fromCreateObjectInputToFlatObjectMetadataMetadataMaps = ({
   workspaceId,
   existingFlatObjectMetadataMaps,
 }: FromCreateObjectInputToFlatObjectMetadataMapsArgs): {
-  flatObjectMetadataMaps: FlatObjectMetadataMaps;
-  objectMetadataToCreateId: string;
+  flatObjectMetadataToCreate: FlatObjectMetadata;
+  relationTargetFlatFieldMetadatas: FlatFieldMetadata[];
 } => {
   const createObjectInput =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
@@ -51,7 +45,7 @@ export const fromCreateObjectInputToFlatObjectMetadataMetadataMaps = ({
       workspaceId,
     });
   const createdAt = new Date();
-  const flatObjectMetadata: FlatObjectMetadata = {
+  const flatObjectMetadataToCreate: FlatObjectMetadata = {
     createdAt,
     flatFieldMetadatas: [],
     updatedAt: createdAt,
@@ -83,46 +77,17 @@ export const fromCreateObjectInputToFlatObjectMetadataMetadataMaps = ({
   const { standardSourceFlatFieldMetadatas, standardTargetFlatFieldMetadatas } =
     buildDefaultRelationFlatFieldMetadatasForCustomObject({
       existingFlatObjectMetadataMaps,
-      sourceFlatObjectMetadata: flatObjectMetadata,
+      sourceFlatObjectMetadata: flatObjectMetadataToCreate,
       workspaceId,
     });
 
-  flatObjectMetadata.flatFieldMetadatas = [
+  flatObjectMetadataToCreate.flatFieldMetadatas = [
     ...Object.values(baseCustomFlatFieldMetadatas),
     ...standardSourceFlatFieldMetadatas,
   ];
 
-  try {
-    const existingFlatObjectMetadataMapsWithTargetRelationFlatFieldMetadatas =
-      standardTargetFlatFieldMetadatas.reduce(
-        (flatObjectMetadataMaps, flatFieldMetadata) =>
-          addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
-            flatFieldMetadata,
-            flatObjectMetadataMaps,
-          }),
-        existingFlatObjectMetadataMaps,
-      );
-
-    const flatObjectMetadataMapsWithStandardTargetRelationFlatFieldMetadatas =
-      getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatasOrThrow({
-        flatFieldMetadatas: standardTargetFlatFieldMetadatas,
-        flatObjectMetadataMaps:
-          existingFlatObjectMetadataMapsWithTargetRelationFlatFieldMetadatas,
-      });
-
-    return {
-      flatObjectMetadataMaps:
-        addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
-          flatObjectMetadata,
-          flatObjectMetadataMaps:
-            flatObjectMetadataMapsWithStandardTargetRelationFlatFieldMetadatas,
-        }),
-      objectMetadataToCreateId: objectMetadataId,
-    };
-  } catch {
-    throw new ObjectMetadataException(
-      'Existing flat object metadata maps does not contains standard objects, should never occur',
-      ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-    );
-  }
+  return {
+    flatObjectMetadataToCreate,
+    relationTargetFlatFieldMetadatas: standardTargetFlatFieldMetadatas,
+  };
 };

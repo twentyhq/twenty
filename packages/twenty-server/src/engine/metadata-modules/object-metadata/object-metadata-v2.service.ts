@@ -2,11 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { EMPTY_FLAT_OBJECT_METADATA_MAPS } from 'src/engine/metadata-modules/flat-object-metadata-maps/constant/empty-flat-object-metadata-maps.constant';
+import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
+import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
 import { getSubFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-or-throw.util';
-import { getSubFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps.util';
+import { getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-out-of-flat-field-metadatas-or-throw.util';
 import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-maps.util';
@@ -183,20 +184,55 @@ export class ObjectMetadataServiceV2 {
         },
       );
 
-    const {
-      flatObjectMetadataMaps: toFlatObjectMetadataMaps,
-      objectMetadataToCreateId,
-    } = fromCreateObjectInputToFlatObjectMetadataMetadataMaps({
-      createObjectInput,
-      workspaceId,
-      existingFlatObjectMetadataMaps,
-    });
+    const { flatObjectMetadataToCreate, relationTargetFlatFieldMetadatas } =
+      fromCreateObjectInputToFlatObjectMetadataMetadataMaps({
+        createObjectInput,
+        workspaceId,
+        existingFlatObjectMetadataMaps,
+      });
 
-    const fromFlatObjectMetadataMaps =
-      getSubFlatObjectMetadataMaps({
-        flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        objectMetadataIds: [objectMetadataToCreateId],
-      }) ?? EMPTY_FLAT_OBJECT_METADATA_MAPS;
+    const existingFlatObjectMetadataMapsWithTargetRelationFlatFieldMetadatas =
+      relationTargetFlatFieldMetadatas.reduce(
+        (flatObjectMetadataMaps, flatFieldMetadata) =>
+          addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+            flatFieldMetadata,
+            flatObjectMetadataMaps,
+          }),
+        existingFlatObjectMetadataMaps,
+      );
+
+    const flatObjectMetadataMapsWithTargetRelationFlatFieldMetadatas =
+      getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatasOrThrow({
+        flatFieldMetadatas: relationTargetFlatFieldMetadatas,
+        flatObjectMetadataMaps:
+          existingFlatObjectMetadataMapsWithTargetRelationFlatFieldMetadatas,
+      });
+
+    const toFlatObjectMetadataMaps =
+      addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow({
+        flatObjectMetadata: flatObjectMetadataToCreate,
+        flatObjectMetadataMaps:
+          flatObjectMetadataMapsWithTargetRelationFlatFieldMetadatas,
+      });
+
+    const impactedObjectMetadataIds = [
+      ...new Set(
+        relationTargetFlatFieldMetadatas.map(
+          ({ objectMetadataId }) => objectMetadataId,
+        ),
+      ),
+    ];
+    const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      objectMetadataIds: [
+        ...(isDefined(
+          existingFlatObjectMetadataMaps.byId[flatObjectMetadataToCreate.id],
+        )
+          ? [flatObjectMetadataToCreate.id]
+          : []),
+        ...impactedObjectMetadataIds,
+      ],
+    });
 
     await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
       {
@@ -220,7 +256,7 @@ export class ObjectMetadataServiceV2 {
       );
 
     const createdFlatObjectMetadata =
-      recomputedFlatObjectMetadataMaps.byId[objectMetadataToCreateId];
+      recomputedFlatObjectMetadataMaps.byId[flatObjectMetadataToCreate.id];
 
     if (!isDefined(createdFlatObjectMetadata)) {
       throw new ObjectMetadataException(
