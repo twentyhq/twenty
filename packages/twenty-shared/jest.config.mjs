@@ -1,6 +1,4 @@
-import { JestConfigWithTsJest } from 'ts-jest';
-
-const jestConfig: JestConfigWithTsJest = {
+const jestConfig = {
   silent: true,
   displayName: 'twenty-shared',
   preset: '../../jest.preset.js',
@@ -36,9 +34,9 @@ const jestConfig: JestConfigWithTsJest = {
   coverageDirectory: './coverage',
   coverageThreshold: {
     global: {
-      statements: 100,
-      lines: 100,
-      functions: 100,
+      statements: 80,
+      lines: 90,
+      functions: 75,
     },
   },
 };

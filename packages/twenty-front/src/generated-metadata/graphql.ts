@@ -640,6 +640,7 @@ export type CreateFieldInput = {
   isNullable?: InputMaybe<Scalars['Boolean']>;
   isRemoteCreation?: InputMaybe<Scalars['Boolean']>;
   isSystem?: InputMaybe<Scalars['Boolean']>;
+  isUIReadOnly?: InputMaybe<Scalars['Boolean']>;
   isUnique?: InputMaybe<Scalars['Boolean']>;
   label: Scalars['String'];
   morphRelationsCreationPayload?: InputMaybe<Array<Scalars['JSON']>>;
@@ -975,6 +976,7 @@ export type Field = {
   isLabelSyncedWithName?: Maybe<Scalars['Boolean']>;
   isNullable?: Maybe<Scalars['Boolean']>;
   isSystem?: Maybe<Scalars['Boolean']>;
+  isUIReadOnly?: Maybe<Scalars['Boolean']>;
   isUnique?: Maybe<Scalars['Boolean']>;
   label: Scalars['String'];
   morphRelations?: Maybe<Array<Relation>>;
@@ -1010,6 +1012,7 @@ export type FieldFilter = {
   isActive?: InputMaybe<BooleanFieldComparison>;
   isCustom?: InputMaybe<BooleanFieldComparison>;
   isSystem?: InputMaybe<BooleanFieldComparison>;
+  isUIReadOnly?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<FieldFilter>>;
 };
 
@@ -2158,6 +2161,7 @@ export type Object = {
   isRemote: Scalars['Boolean'];
   isSearchable: Scalars['Boolean'];
   isSystem: Scalars['Boolean'];
+  isUIReadOnly: Scalars['Boolean'];
   labelIdentifierFieldMetadataId?: Maybe<Scalars['UUID']>;
   labelPlural: Scalars['String'];
   labelSingular: Scalars['String'];
@@ -2212,6 +2216,7 @@ export type ObjectFilter = {
   isRemote?: InputMaybe<BooleanFieldComparison>;
   isSearchable?: InputMaybe<BooleanFieldComparison>;
   isSystem?: InputMaybe<BooleanFieldComparison>;
+  isUIReadOnly?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<ObjectFilter>>;
 };
 
@@ -3200,6 +3205,7 @@ export type UpdateFieldInput = {
   isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
   isNullable?: InputMaybe<Scalars['Boolean']>;
   isSystem?: InputMaybe<Scalars['Boolean']>;
+  isUIReadOnly?: InputMaybe<Scalars['Boolean']>;
   isUnique?: InputMaybe<Scalars['Boolean']>;
   label?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
@@ -4226,7 +4232,7 @@ export type DeleteOneFieldMetadataItemMutation = { __typename?: 'Mutation', dele
 export type ObjectMetadataItemsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ObjectMetadataItemsQuery = { __typename?: 'Query', objects: { __typename?: 'ObjectConnection', edges: Array<{ __typename?: 'ObjectEdge', node: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } };
+export type ObjectMetadataItemsQuery = { __typename?: 'Query', objects: { __typename?: 'ObjectConnection', edges: Array<{ __typename?: 'ObjectEdge', node: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, isUIReadOnly: boolean, createdAt: string, updatedAt: string, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, isSearchable: boolean, duplicateCriteria?: Array<Array<string>> | null, indexMetadataList: Array<{ __typename?: 'Index', id: string, createdAt: string, updatedAt: string, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, isCustom?: boolean | null, indexFieldMetadataList: Array<{ __typename?: 'IndexField', id: string, fieldMetadataId: string, createdAt: string, updatedAt: string, order: number }> }>, fieldsList: Array<{ __typename?: 'Field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isUIReadOnly?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: string, updatedAt: string, defaultValue?: any | null, options?: any | null, settings?: any | null, isLabelSyncedWithName?: boolean | null, relation?: { __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } } | null, morphRelations?: Array<{ __typename?: 'Relation', type: RelationType, sourceObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, targetObjectMetadata: { __typename?: 'Object', id: string, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'Field', id: string, name: string }, targetFieldMetadata: { __typename?: 'Field', id: string, name: string } }> | null }> } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } };
 
 export type SkipBookOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -7601,6 +7607,7 @@ export const ObjectMetadataItemsDocument = gql`
         isRemote
         isActive
         isSystem
+        isUIReadOnly
         createdAt
         updatedAt
         labelIdentifierFieldMetadataId
@@ -7636,6 +7643,7 @@ export const ObjectMetadataItemsDocument = gql`
           isCustom
           isActive
           isSystem
+          isUIReadOnly
           isNullable
           isUnique
           createdAt

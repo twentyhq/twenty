@@ -31,6 +31,7 @@ const objectMetadataItemWithPositionField: ObjectMetadataItem = {
   icon: 'icon',
   isActive: true,
   isSystem: false,
+  isUIReadOnly: false,
   isCustom: false,
   isRemote: false,
   isSearchable: false,
