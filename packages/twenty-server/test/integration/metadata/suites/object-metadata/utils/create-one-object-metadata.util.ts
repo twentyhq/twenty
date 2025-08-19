@@ -8,6 +8,7 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 
 export const createOneObjectMetadata = async ({
   input,
@@ -27,6 +28,13 @@ export const createOneObjectMetadata = async ({
     warnIfNoErrorButExpectedToFail({
       response,
       errorMessage: 'Object Metadata creation should have failed but did not',
+    });
+  }
+
+  if (expectToFail === false) {
+    warnIfErrorButNotExpectedToFail({
+      response,
+      errorMessage: 'Object Metadata creation have failed but should not',
     });
   }
 

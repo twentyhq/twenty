@@ -8,6 +8,7 @@ import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/
 
 import { type BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 
 export const findManyObjectMetadata = async ({
   input,
@@ -28,6 +29,13 @@ export const findManyObjectMetadata = async ({
     warnIfNoErrorButExpectedToFail({
       response,
       errorMessage: 'Object Metadata retrieval should have failed but did not',
+    });
+  }
+
+  if (expectToFail === false) {
+    warnIfErrorButNotExpectedToFail({
+      response,
+      errorMessage: 'Object Metadata retrieval have failed but should not',
     });
   }
 

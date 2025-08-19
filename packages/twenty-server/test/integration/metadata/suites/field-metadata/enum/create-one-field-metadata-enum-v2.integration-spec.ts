@@ -11,7 +11,8 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
-import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { eachTestingContextFilter } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -36,7 +37,8 @@ describe.each([FieldMetadataType.SELECT] as const)(
 
       await makeGraphqlAPIRequest(enablePermissionsQuery);
 
-      const { data } = await forceCreateOneObjectMetadata({
+      const { data } = await createOneObjectMetadata({
+        expectToFail: false,
         input: {
           labelSingular: LISTING_NAME_SINGULAR,
           labelPlural: LISTING_NAME_PLURAL,
@@ -47,11 +49,22 @@ describe.each([FieldMetadataType.SELECT] as const)(
         },
       });
 
+      console.log('*'.repeat(100));
+      console.log(data.createOneObject.id);
+      console.log('*'.repeat(100));
       createdObjectMetadataId = data.createOneObject.id;
     });
 
     afterAll(async () => {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: createdObjectMetadataId,
+          updatePayload: { isActive: false },
+        },
+      });
       await deleteOneObjectMetadata({
+        expectToFail: false,
         input: { idToDelete: createdObjectMetadataId },
       });
       const enablePermissionsQuery = updateFeatureFlagFactory(
@@ -67,7 +80,6 @@ describe.each([FieldMetadataType.SELECT] as const)(
       'Create $title',
       async ({ context: { input } }) => {
         const { data, errors } = await createOneFieldMetadata({
-          expectToFail: true,
           input: {
             objectMetadataId: createdObjectMetadataId,
             type: testedFieldMetadataType,
