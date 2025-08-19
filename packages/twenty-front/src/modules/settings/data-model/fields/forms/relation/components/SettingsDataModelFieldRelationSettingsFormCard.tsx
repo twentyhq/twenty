@@ -26,17 +26,20 @@ type SettingsDataModelFieldRelationSettingsFormCardProps = {
   relationFieldMetadataItem?: FieldMetadataItem;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
-const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
+export const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
   flex: 1 1 100%;
 `;
 
-const StyledPreviewContent = styled.div<{ isMobile: boolean }>`
+export const StyledPreviewContent = styled.div<{ isMobile: boolean }>`
   display: flex;
   gap: 6px;
   flex-direction: ${({ isMobile }) => (isMobile ? 'column' : 'row')};
 `;
 
-const StyledRelationImage = styled.img<{ flip?: boolean; isMobile: boolean }>`
+export const StyledRelationImage = styled.img<{
+  flip?: boolean;
+  isMobile: boolean;
+}>`
   transform: ${({ flip, isMobile }) => {
     let transform = '';
     if (isMobile) {
