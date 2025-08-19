@@ -196,7 +196,7 @@ export class StandardFieldFactory {
       isSystem:
         workspaceEntityMetadataArgs?.isSystem ||
         workspaceRelationMetadataArgs.isSystem,
-      isUIReadOnly: false,
+      isUIReadOnly: workspaceRelationMetadataArgs.isUIReadOnly,
       isNullable: true,
       isUnique: false,
       isActive: workspaceRelationMetadataArgs.isActive ?? true,
