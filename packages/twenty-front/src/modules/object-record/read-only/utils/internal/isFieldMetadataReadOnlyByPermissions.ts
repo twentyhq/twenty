@@ -14,7 +14,7 @@ export const isFieldMetadataReadOnlyByPermissions = ({
   }
 
   const fieldMetadataIsRestrictedForUpdate =
-    objectPermissions.restrictedFields[fieldMetadataId]?.canUpdate === false;
+    objectPermissions.restrictedFields?.[fieldMetadataId]?.canUpdate === false;
 
   return fieldMetadataIsRestrictedForUpdate;
 };
