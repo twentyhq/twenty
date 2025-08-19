@@ -2,8 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 
-import { IWorkflowToolProvider } from 'src/engine/core-modules/ai/interfaces/workflow-tool-provider.interface';
-
 import type { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import type { UpdateWorkflowVersionPositionsInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-positions-input.dto';
 import type { UpdateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-step-input.dto';
@@ -29,7 +27,7 @@ import {
 } from './workflow-tool-schemas';
 
 @Injectable()
-export class WorkflowToolWorkspaceService implements IWorkflowToolProvider {
+export class WorkflowToolWorkspaceService {
   private readonly logger = new Logger(WorkflowToolWorkspaceService.name);
 
   constructor(

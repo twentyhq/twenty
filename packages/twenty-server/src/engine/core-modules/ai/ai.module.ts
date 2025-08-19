@@ -21,11 +21,6 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
-import { WorkflowBuilderModule } from 'src/modules/workflow/workflow-builder/workflow-builder.module';
-import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/workflow-trigger.module';
-
-import { WORKFLOW_TOOL_PROVIDER } from './constants/workflow-tool.constants';
-import { WorkflowToolWorkspaceService } from './services/workflow-tool.workspace-service';
 
 @Global()
 @Module({
@@ -40,8 +35,6 @@ import { WorkflowToolWorkspaceService } from './services/workflow-tool.workspace
     TwentyORMModule,
     MessagingModule,
     PermissionsModule,
-    WorkflowBuilderModule,
-    WorkflowTriggerModule,
   ],
   controllers: [AiController, McpController],
   providers: [
@@ -53,11 +46,6 @@ import { WorkflowToolWorkspaceService } from './services/workflow-tool.workspace
     AIBillingService,
     McpService,
     SendEmailTool,
-    WorkflowToolWorkspaceService,
-    {
-      provide: WORKFLOW_TOOL_PROVIDER,
-      useClass: WorkflowToolWorkspaceService,
-    },
   ],
   exports: [
     AiService,
@@ -68,7 +56,6 @@ import { WorkflowToolWorkspaceService } from './services/workflow-tool.workspace
     ToolRegistryService,
     McpService,
     SendEmailTool,
-    WORKFLOW_TOOL_PROVIDER,
   ],
 })
 export class AiModule {}

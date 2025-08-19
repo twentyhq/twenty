@@ -1,15 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ToolSet } from 'ai';
 import { Repository } from 'typeorm';
 import { z } from 'zod';
 
-import { IWorkflowToolProvider } from 'src/engine/core-modules/ai/interfaces/workflow-tool-provider.interface';
-
-import { WORKFLOW_TOOL_PROVIDER } from 'src/engine/core-modules/ai/constants/workflow-tool.constants';
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
+import { WorkflowToolWorkspaceService as WorkflowToolService } from 'src/engine/core-modules/ai/services/workflow-tool.workspace-service';
 import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
 import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
@@ -28,8 +26,7 @@ export class AgentToolService {
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly toolService: ToolService,
     private readonly toolAdapterService: ToolAdapterService,
-    @Inject(WORKFLOW_TOOL_PROVIDER)
-    private readonly workflowToolService: IWorkflowToolProvider,
+    private readonly workflowToolService: WorkflowToolService,
   ) {}
 
   async generateToolsForAgent(
