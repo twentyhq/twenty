@@ -19,8 +19,8 @@ export const Default: Story = {
     disabled: false,
     selectSizeVariant: 'default',
     dropdownWidth: GenericDropdownContentWidth.Medium,
-    dropdownWidthAuto: false,
-    fullWidth: false,
+    dropdownWidthAuto: true,
+    fullWidth: true,
     label: 'Select objects',
     selectedObjectMetadataIds: [
       '4a45f524-b8cb-40e8-8450-28e402b442cf',
