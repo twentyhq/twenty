@@ -94,7 +94,8 @@ export class WorkspaceMigrationBuilderV2Service {
       await this.workspaceMigrationV2FieldActionsBuilderService.validateAndBuildFieldActions(
         {
           buildOptions,
-          fromFlatObjectMetadataMaps,
+          fromFlatObjectMetadataMaps:
+            objectActionsValidateAndBuildResult.optimisticFlatObjectMetadataMaps,
           toFlatObjectMetadataMaps,
           objectMetadataDeletedCreatedUpdatedFields,
         },
