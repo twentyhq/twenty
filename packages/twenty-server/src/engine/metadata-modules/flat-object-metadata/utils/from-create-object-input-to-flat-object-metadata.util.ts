@@ -1,12 +1,12 @@
 import {
   capitalize,
-  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
+  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
-import { buildDefaultFlatFieldMetadataForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-fields-for-custom-object.util';
+import { buildDefaultFieldsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-default-fields-for-custom-object.util';
 
 export const fromCreateObjectInputToFlatObjectMetadata = ({
   createObjectInput: rawCreateObjectInput,
@@ -31,10 +31,7 @@ export const fromCreateObjectInputToFlatObjectMetadata = ({
 
   const objectMetadataId = v4();
   const baseCustomFlatFieldMetadatas =
-    buildDefaultFlatFieldMetadataForCustomObject({
-      objectMetadataId,
-      workspaceId,
-    });
+    buildDefaultFieldsForCustomObject(workspaceId);
 
   const createdAt = new Date();
 
