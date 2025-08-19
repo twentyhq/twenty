@@ -261,7 +261,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
           targetObjectMetadata,
         });
 
-        const fieldMetadataNameWithId = `${fieldMetadata.name}Id`;
+        const fieldMetadataNameWithId = `${morphRelationFieldName}Id`;
 
         if (isDefined(objectRecord[fieldMetadataNameWithId])) {
           processedObjectRecord[fieldMetadataNameWithId] =
