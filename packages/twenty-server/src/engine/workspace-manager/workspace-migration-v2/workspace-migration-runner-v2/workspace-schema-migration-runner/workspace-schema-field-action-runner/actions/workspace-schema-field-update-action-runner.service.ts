@@ -1,157 +1,51 @@
 import { Injectable } from '@nestjs/common';
 
-import { type FromTo } from 'twenty-shared/types';
+import { type EnumFieldMetadataType, type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
-import { type FieldMetadataDefaultValueForAnyType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import { FieldMetadataDefaultValueForAnyType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import {
+  FieldMetadataComplexOption,
   FieldMetadataDefaultOption,
-  type FieldMetadataComplexOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { EnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/enum-field-metadata-type.type';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { unserializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/unserialize-default-value';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { isRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-flat-field-metadata.util';
-import { findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import {
-  type CreateFieldAction,
-  type DeleteFieldAction,
-  type UpdateFieldAction,
-  type WorkspaceMigrationFieldActionTypeV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
-import { type RunnerMethodForActionType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/runner-method-for-action-type';
-import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
+import { UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
+import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import {
   WorkspaceSchemaMigrationException,
   WorkspaceSchemaMigrationExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/exceptions/workspace-schema-migration.exception';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/generate-column-definitions.util';
-
-import {
-  prepareFieldWorkspaceSchemaContext,
-  prepareWorkspaceSchemaContext,
-} from './utils/workspace-schema-context.util';
+import { prepareFieldWorkspaceSchemaContext } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/workspace-schema-context.util';
 import {
   collectEnumOperationsForField,
   EnumOperation,
   executeBatchEnumOperations,
-} from './utils/workspace-schema-enum-operations.util';
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/workspace-schema-enum-operations.util';
 
 @Injectable()
-export class WorkspaceSchemaFieldActionRunnerService
-  implements
-    RunnerMethodForActionType<WorkspaceMigrationFieldActionTypeV2, 'schema'>
-{
+export class WorkspaceSchemaFieldUpdateActionRunnerService {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {}
 
-  runDeleteFieldSchemaMigration = async ({
+  public async run({
     action,
     queryRunner,
     flatObjectMetadataMaps,
-  }: WorkspaceMigrationActionRunnerArgs<DeleteFieldAction>) => {
-    const { objectMetadataId, fieldMetadataId } = action;
-    const { schemaName, tableName, fieldMetadata } =
-      prepareFieldWorkspaceSchemaContext({
-        flatObjectMetadataMaps,
-        objectMetadataId,
-        fieldMetadataId,
-      });
-
-    const flatObjectMetadata =
-      findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
-        flatObjectMetadataMaps,
-        objectMetadataId,
-      });
-
-    const columnDefinitions = generateColumnDefinitions({
-      flatFieldMetadata: fieldMetadata,
-      flatObjectMetadataWithoutFields: flatObjectMetadata,
-    });
-    const columnNamesToDrop = columnDefinitions.map((def) => def.name);
-
-    await this.workspaceSchemaManagerService.columnManager.dropColumns({
-      queryRunner,
-      schemaName,
-      tableName,
-      columnNames: columnNamesToDrop,
-    });
-
-    const enumOperations = collectEnumOperationsForField({
-      flatFieldMetadata: fieldMetadata,
-      tableName,
-      operation: EnumOperation.DROP,
-    });
-
-    await executeBatchEnumOperations({
-      enumOperations,
-      queryRunner,
-      schemaName,
-      workspaceSchemaManagerService: this.workspaceSchemaManagerService,
-    });
-
-    return;
-  };
-
-  runCreateFieldSchemaMigration = async ({
-    action,
-    queryRunner,
-    flatObjectMetadataMaps,
-  }: WorkspaceMigrationActionRunnerArgs<CreateFieldAction>) => {
-    const { flatFieldMetadata } = action;
-    const {
-      schemaName,
-      tableName,
-      flatObjectMetadataWithFlatFieldMaps: flatObjectMetadata,
-    } = prepareWorkspaceSchemaContext({
-      flatObjectMetadataMaps,
-      objectMetadataId: flatFieldMetadata.objectMetadataId,
-    });
-
-    const enumOperations = collectEnumOperationsForField({
-      flatFieldMetadata: flatFieldMetadata,
-      tableName,
-      operation: EnumOperation.CREATE,
-    });
-
-    await executeBatchEnumOperations({
-      enumOperations,
-      queryRunner,
-      schemaName,
-      workspaceSchemaManagerService: this.workspaceSchemaManagerService,
-    });
-
-    const columnDefinitions = generateColumnDefinitions({
-      flatFieldMetadata: flatFieldMetadata,
-      flatObjectMetadataWithoutFields: flatObjectMetadata,
-    });
-
-    await this.workspaceSchemaManagerService.columnManager.addColumns({
-      queryRunner,
-      schemaName,
-      tableName,
-      columnDefinitions,
-    });
-
-    return;
-  };
-
-  runUpdateFieldSchemaMigration = async ({
-    action,
-    queryRunner,
-    flatObjectMetadataMaps,
-  }: WorkspaceMigrationActionRunnerArgs<UpdateFieldAction>) => {
+  }: WorkspaceMigrationActionRunnerArgs<UpdateFieldAction>): Promise<void> {
     const { objectMetadataId, fieldMetadataId, updates } = action;
     const {
       schemaName,
@@ -202,9 +96,7 @@ export class WorkspaceSchemaFieldActionRunnerService
         optimisticFlatFieldMetadata.options = update.to ?? [];
       }
     }
-
-    return;
-  };
+  }
 
   private async handleFieldNameUpdate(
     queryRunner: QueryRunner,
