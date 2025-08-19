@@ -35,6 +35,7 @@ export abstract class BaseWorkspaceEntity {
       displayFormat: DateDisplayFormat.RELATIVE,
     },
   })
+  @WorkspaceIsFieldUIReadOnly()
   createdAt: string;
 
   @WorkspaceField({
@@ -48,6 +49,7 @@ export abstract class BaseWorkspaceEntity {
       displayFormat: DateDisplayFormat.RELATIVE,
     },
   })
+  @WorkspaceIsFieldUIReadOnly()
   updatedAt: string;
 
   @WorkspaceField({
