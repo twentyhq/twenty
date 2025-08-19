@@ -13,7 +13,7 @@ export type MessageLocation = {
 @Injectable()
 export class ImapMessageLocatorService {
   private readonly logger = new Logger(ImapMessageLocatorService.name);
-  private static readonly FETCH_BATCH_SIZE = 500;
+  private static readonly FETCH_BATCH_SIZE = 50;
 
   constructor(
     private readonly imapFindSentFolderService: ImapFindSentFolderService,
