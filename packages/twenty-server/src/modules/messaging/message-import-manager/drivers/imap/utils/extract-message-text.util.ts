@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import { JSDOM } from 'jsdom';
 import { type ParsedMail } from 'mailparser';
 import * as planer from 'planer';
@@ -10,9 +11,20 @@ export const extractTextWithoutReplyQuotations = (
   }
 
   if (parsed.html) {
-    const dom = new JSDOM(parsed.html);
+    const window = new JSDOM('').window;
+    const purify = DOMPurify(window);
+    const sanitizedHtml = purify.sanitize(parsed.html);
+    const dom = new JSDOM(sanitizedHtml, { runScripts: 'outside-only' });
 
-    return dom.window.document.body?.textContent || '';
+    const cleanedHtml = planer.extractFromHtml(
+      sanitizedHtml,
+      dom.window.document,
+    );
+
+    const textContent = new JSDOM(cleanedHtml, { runScripts: 'outside-only' })
+      .window.document.body?.textContent;
+
+    return textContent ?? '';
   }
 
   return '';
