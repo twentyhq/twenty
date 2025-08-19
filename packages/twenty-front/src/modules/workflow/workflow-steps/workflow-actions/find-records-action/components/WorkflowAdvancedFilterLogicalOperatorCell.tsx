@@ -42,7 +42,6 @@ export const WorkflowAdvancedFilterLogicalOperatorCell = ({
       ) : index === 1 ? (
         readonly ? (
           <Select
-            fullWidth
             dropdownWidth={GenericDropdownContentWidth.Narrow}
             dropdownId={`advanced-filter-logical-operator-${recordFilterGroup.id}`}
             value={recordFilterGroup.logicalOperator}
