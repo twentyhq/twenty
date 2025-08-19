@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { dirname, resolve } from 'path';
-import { pathsToModuleNameMapper, type JestConfigWithTsJest } from 'ts-jest';
+import { pathsToModuleNameMapper } from 'ts-jest';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -8,9 +8,12 @@ const __dirname = dirname(__filename);
 
 const tsConfigPath = resolve(__dirname, './tsconfig.spec.json');
 const tsConfig = JSON.parse(readFileSync(tsConfigPath, 'utf8'));
+
+// eslint-disable-next-line no-undef
 process.env.TZ = 'GMT';
+// eslint-disable-next-line no-undef
 process.env.LC_ALL = 'en_US.UTF-8';
-const jestConfig: JestConfigWithTsJest = {
+const jestConfig = {
   silent: true,
   // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
   // Prettier v3 will should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1

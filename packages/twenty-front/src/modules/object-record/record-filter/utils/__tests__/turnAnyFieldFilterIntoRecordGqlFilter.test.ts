@@ -132,6 +132,7 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   isRemote: false,
   isSearchable: true,
   isSystem: false,
+  isUIReadOnly: false,
   labelIdentifierFieldMetadataId: 'mock-id',
   labelPlural: 'Tests',
   labelSingular: 'Test',

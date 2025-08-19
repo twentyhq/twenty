@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { isWorkflowRunJsonField } from '@/object-record/record-field/ui/meta-types/utils/isWorkflowRunJsonField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -142,11 +141,7 @@ export const RawJsonFieldInput = () => {
     dependencies: [handleShiftTab, draftValue],
   });
 
-  const showEditingButton = !isWorkflowRunJsonField({
-    objectMetadataNameSingular:
-      fieldDefinition.metadata.objectMetadataNameSingular,
-    fieldName: fieldDefinition.metadata.fieldName,
-  });
+  const showEditingButton = !fieldDefinition.metadata.isUIReadOnly;
 
   const handleStartEditing = () => {
     setIsEditing(true);

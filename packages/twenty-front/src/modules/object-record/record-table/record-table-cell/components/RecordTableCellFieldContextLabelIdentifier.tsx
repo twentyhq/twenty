@@ -1,6 +1,6 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { isRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isRecordFieldReadOnly';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
@@ -70,13 +70,12 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
         isLabelIdentifierCompact,
         displayedMaxRows: 1,
         isRecordFieldReadOnly: isRecordFieldReadOnly({
-          objectPermissions,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          fieldName: columnDefinition.metadata.fieldName,
-          fieldType: columnDefinition.type,
-          isCustom: objectMetadataItem.isCustom,
-          fieldMetadataId: columnDefinition.fieldMetadataId,
           isRecordReadOnly: isRecordReadOnly ?? false,
+          objectPermissions,
+          fieldMetadataItem: {
+            id: columnDefinition.fieldMetadataId,
+            isUIReadOnly: columnDefinition.metadata.isUIReadOnly ?? false,
+          },
         }),
         maxWidth: columnDefinition.size,
         onRecordChipClick: () => {
