@@ -10,6 +10,7 @@ import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/wo
 import { type WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 import { applyWorkspaceMigrationActionOnFlatObjectMetadataMaps } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/apply-workspace-migration-action-on-flat-object-metadata-maps';
 import { WorkspaceMetadataMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-metadata-migration-runner/workspace-metadata-migration-runner-service';
+import { WorkspaceSchemaMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner-v2/workspace-schema-migration-runner-v2.service';
 import { WorkspaceSchemaMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/workspace-schema-migration-runner.service';
 
 @Injectable()
@@ -20,6 +21,7 @@ export class WorkspaceMigrationRunnerV2Service {
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    private readonly workspaceSchemaMigrationRunnerV2: WorkspaceSchemaMigrationRunnerV2Service,
     @InjectDataSource('core')
     private readonly coreDataSource: DataSource,
   ) {}
@@ -50,7 +52,7 @@ export class WorkspaceMigrationRunnerV2Service {
             queryRunner,
             action,
           }),
-          this.workspaceSchemaMigrationRunner.runWorkspaceSchemaMigration({
+          this.workspaceSchemaMigrationRunnerV2.runWorkspaceSchemaMigration({
             queryRunner,
             flatObjectMetadataMaps: optimisticFlatObjectMetadataMaps,
             action,
