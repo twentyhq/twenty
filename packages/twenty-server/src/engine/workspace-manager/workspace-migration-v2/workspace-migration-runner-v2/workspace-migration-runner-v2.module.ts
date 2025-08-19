@@ -12,8 +12,10 @@ import { WorkspaceMetadataIndexActionRunnerService } from 'src/engine/workspace-
 import { WorkspaceMetadataMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-metadata-migration-runner/workspace-metadata-migration-runner-service';
 import { WorkspaceMetadataObjectActionRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-metadata-migration-runner/workspace-metadata-object-action-runner.service';
 import { WorkspaceMigrationRunnerV2Service } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.service';
+import { WorkspaceSchemaFieldActionRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/workspace-schema-field-action-runner.service';
 import { WorkspaceSchemaIndexActionRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/workspace-schema-index-action-runner.service';
 import { WorkspaceSchemaMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/workspace-schema-migration-runner.service';
+import { WorkspaceSchemaObjectActionRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/workspace-schema-object-action-runner.service';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { WorkspaceSchemaMigrationRunnerService } from 'src/engine/workspace-mana
     WorkspaceMetadataMigrationRunnerService,
     WorkspaceSchemaMigrationRunnerService,
     WorkspaceMigrationRunnerV2Service,
+    WorkspaceSchemaObjectActionRunnerService,
+    WorkspaceSchemaFieldActionRunnerService,
   ],
   exports: [WorkspaceMigrationRunnerV2Service],
 })
