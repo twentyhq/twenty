@@ -20,6 +20,7 @@ export const throwOnFieldInputTranspilationsError: ThrowOnFieldInputTranspilatio
 
     if (failedInputTranspilationErrors.length > 0) {
       throw new MultipleMetadataValidationErrors(
+        // TODO
         failedInputTranspilationErrors,
         errorLabel,
       );

@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { t } from '@lingui/core/macro';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import {
   FieldMetadataException,
@@ -61,10 +62,14 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   if (!isDefined(rawCreationPayload)) {
     return {
       status: 'fail',
-      error: new FieldMetadataException(
-        `Relation creation payload is required`,
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      ),
+      error: {
+        error: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: `Relation creation payload is required`,
+        userFriendlyMessage: t`Relation creation payload is required`,
+        name: createFieldInput.name,
+        objectMetadataId: createFieldInput.objectMetadataId,
+        value: rawCreationPayload,
+      },
     };
   }
 
@@ -80,7 +85,14 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
     if (error instanceof FieldMetadataException) {
       return {
         status: 'fail',
-        error,
+        error: {
+          error: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+          message: `Relation creation payload is invalid ${JSON.stringify(relationCreationPayload)}`,
+          userFriendlyMessage: t`Invalid relation creation payload`,
+          name: createFieldInput.name,
+          objectMetadataId: createFieldInput.objectMetadataId,
+          value: relationCreationPayload,
+        },
       };
     } else {
       throw error;
@@ -95,10 +107,14 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   if (!isDefined(targetParentFlatObjectMetadata)) {
     return {
       status: 'fail',
-      error: new FieldMetadataException(
-        `Object metadata relation target not found for relation creation payload`,
-        FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-      ),
+      error: {
+        error: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+        message: `Object metadata relation target not found for relation creation payload`,
+        userFriendlyMessage: t`Object targetted by field to create not found`,
+        name: createFieldInput.name,
+        objectMetadataId: createFieldInput.objectMetadataId,
+        value: relationCreationPayload,
+      },
     };
   }
 

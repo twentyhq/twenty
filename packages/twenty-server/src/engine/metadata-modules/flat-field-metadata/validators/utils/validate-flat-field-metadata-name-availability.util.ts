@@ -1,16 +1,16 @@
 import { t } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { type FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-  InvalidMetadataException,
-  InvalidMetadataExceptionCode,
-} from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
+  FailedFlatFieldMetadataValidation,
+} from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { FlatFieldMetadataIdObjectIdAndName } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-id-object-id-and-name.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { InvalidMetadataExceptionCode } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 const getReservedCompositeFieldNames = (
   flatObjectMetadata: FlatObjectMetadata,
@@ -36,12 +36,13 @@ const getReservedCompositeFieldNames = (
 };
 
 export const validateFlatFieldMetadataNameAvailability = ({
-  name,
+  flatFieldMetadata: { name, id, objectMetadataId },
   flatObjectMetadata,
 }: {
-  name: string;
+  flatFieldMetadata: FlatFieldMetadataIdObjectIdAndName;
   flatObjectMetadata: FlatObjectMetadata;
-}): FailedFlatFieldMetadataValidationExceptions | undefined => {
+}): FailedFlatFieldMetadataValidation[] => {
+  const errors: FailedFlatFieldMetadataValidation[] = [];
   const reservedCompositeFieldsNames =
     getReservedCompositeFieldNames(flatObjectMetadata);
 
@@ -49,28 +50,29 @@ export const validateFlatFieldMetadataNameAvailability = ({
     flatObjectMetadata.flatFieldMetadatas.some(
       (field) =>
         field.name === name ||
-        (field.type === FieldMetadataType.RELATION && // Question: Should we also look for MORPH_RELATION field types ?
-          `${field.name}Id` === name),
+        (isRelationFieldMetadataType(field.type) && `${field.name}Id` === name),
     )
   ) {
-    return new InvalidMetadataException(
-      `Name "${name}" is not available as it is already used by another field`,
-      InvalidMetadataExceptionCode.NOT_AVAILABLE,
-      {
-        userFriendlyMessage: t`This name is not available as it is already used by another field`,
-      },
-    );
+    errors.push({
+      error: InvalidMetadataExceptionCode.NOT_AVAILABLE,
+      id,
+      message: `Name "${name}" is not available as it is already used by another field`,
+      name,
+      objectMetadataId,
+      userFriendlyMessage: t`Name "${name}" is not available as it is already used by another field`,
+    });
   }
 
   if (reservedCompositeFieldsNames.includes(name)) {
-    return new InvalidMetadataException(
-      `Name "${name}" is not available`,
-      InvalidMetadataExceptionCode.RESERVED_KEYWORD,
-      {
-        userFriendlyMessage: t`This name is not available.`,
-      },
-    );
+    errors.push({
+      error: InvalidMetadataExceptionCode.RESERVED_KEYWORD,
+      id,
+      message: `Name "${name}" is reserved composite field name`,
+      name,
+      objectMetadataId,
+      userFriendlyMessage: t`Name "${name}" is not available`,
+    });
   }
 
-  return undefined;
+  return errors;
 };

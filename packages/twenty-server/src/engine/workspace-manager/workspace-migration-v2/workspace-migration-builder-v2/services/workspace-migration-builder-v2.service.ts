@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { type FromTo } from 'twenty-shared/types';
 
-import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { FailedFlatObjectMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
 import { fromFlatObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-maps-to-flat-object-metadatas.util';
@@ -41,7 +41,7 @@ export class WorkspaceMigrationBuilderV2Service {
         status: 'fail';
         errors: (
           | FailedFlatObjectMetadataValidationExceptions
-          | FailedFlatFieldMetadataValidationExceptions
+          | FailedFlatFieldMetadataValidation
         )[];
       }
     | {

@@ -37,6 +37,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       });
 
     if (validateAndBuildResult.status === 'fail') {
+      // TODO
       throw new MultipleMetadataValidationErrors(
         validateAndBuildResult.errors,
         errorMessage,
