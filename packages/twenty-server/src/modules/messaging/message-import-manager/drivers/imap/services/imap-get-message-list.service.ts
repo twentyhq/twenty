@@ -4,7 +4,7 @@ import { FetchQueryObject, type ImapFlow } from 'imapflow';
 
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
-import { ImapFindSentMailboxService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-sent-mailbox.service';
+import { ImapFindSentFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-sent-folder.service';
 import { ImapHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-handle-error.service';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/imap/types/folders';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
@@ -19,7 +19,7 @@ export class ImapGetMessageListService {
 
   constructor(
     private readonly imapClientProvider: ImapClientProvider,
-    private readonly imapFindSentMailboxService: ImapFindSentMailboxService,
+    private readonly imapFindSentFolderService: ImapFindSentFolderService,
     private readonly imapHandleErrorService: ImapHandleErrorService,
   ) {}
 
@@ -35,17 +35,17 @@ export class ImapGetMessageListService {
 
       for (const folder of messageFolders) {
         this.logger.log(`Processing folder: ${folder.name}`);
-        const mailboxName = await this.getMailboxName(client, folder.name);
+        const folderName = await this.getFolderName(client, folder.name);
 
-        if (!mailboxName) {
-          this.logger.warn(`No mailbox name found for folder: ${folder.name}`);
+        if (!folderName) {
+          this.logger.warn(`No folder name found for folder: ${folder.name}`);
           continue;
         }
 
         try {
           const response = await this.getMessageList(
             client,
-            mailboxName,
+            folderName,
             folder,
           );
 
@@ -55,7 +55,7 @@ export class ImapGetMessageListService {
           });
         } catch (error) {
           this.logger.warn(
-            `Error fetching from folder ${folder.name} (${mailboxName}): ${error.message}. Continuing with other folders.`,
+            `Error fetching from folder ${folder.name} (${folderName}): ${error.message}. Continuing with other folders.`,
           );
 
           result.push({
@@ -93,12 +93,12 @@ export class ImapGetMessageListService {
 
   public async getMessageList(
     client: ImapFlow,
-    mailbox: string,
+    folder: string,
     messageFolder: Pick<MessageFolderWorkspaceEntity, 'syncCursor'>,
   ): Promise<GetOneMessageListResponse> {
-    const messages = await this.getMessagesFromMailbox(
+    const messages = await this.getMessagesFromFolder(
       client,
-      mailbox,
+      folder,
       messageFolder.syncCursor,
     );
 
@@ -118,7 +118,7 @@ export class ImapGetMessageListService {
     };
   }
 
-  private async getMailboxName(
+  private async getFolderName(
     client: ImapFlow,
     folderName: string,
   ): Promise<string | null> {
@@ -127,30 +127,30 @@ export class ImapGetMessageListService {
     }
 
     if (folderName === MessageFolderName.SENT_ITEMS) {
-      const sentMailbox =
-        await this.imapFindSentMailboxService.findSentMailbox(client);
+      const sentFolder =
+        await this.imapFindSentFolderService.findSentFolder(client);
 
-      if (!sentMailbox) {
+      if (!sentFolder) {
         this.logger.warn('SENT folder not found, skipping');
 
         return null;
       }
 
-      return sentMailbox;
+      return sentFolder;
     }
 
     return folderName;
   }
 
-  private async getMessagesFromMailbox(
+  private async getMessagesFromFolder(
     client: ImapFlow,
-    mailbox: string,
+    folder: string,
     cursor?: string,
   ): Promise<{ id: string; uid: string }[]> {
     let lock;
 
     try {
-      lock = await client.getMailboxLock(mailbox);
+      lock = await client.getMailboxLock(folder);
 
       const supportsUidPlus = client.capabilities.has('UIDPLUS');
       let sequence = '1:*';
@@ -166,7 +166,7 @@ export class ImapGetMessageListService {
       const messages: { id: string; uid: string }[] = [];
 
       this.logger.log(
-        `Fetching from mailbox: ${mailbox} with sequence: ${sequence} (UIDPLUS: ${supportsUidPlus})`,
+        `Fetching from folder: ${folder} with sequence: ${sequence} (UIDPLUS: ${supportsUidPlus})`,
       );
 
       const fetchOptions: FetchQueryObject = {
@@ -189,14 +189,12 @@ export class ImapGetMessageListService {
         }
       }
 
-      this.logger.log(
-        `Found ${messages.length} messages in mailbox: ${mailbox}`,
-      );
+      this.logger.log(`Found ${messages.length} messages in folder: ${folder}`);
 
       return messages;
     } catch (error) {
       this.logger.error(
-        `Error fetching from mailbox ${mailbox}: ${error.message}`,
+        `Error fetching from folder ${folder}: ${error.message}`,
         error.stack,
       );
 

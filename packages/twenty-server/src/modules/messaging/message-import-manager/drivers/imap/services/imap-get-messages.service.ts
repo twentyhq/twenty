@@ -1,15 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { JSDOM } from 'jsdom';
 import { type AddressObject, type ParsedMail } from 'mailparser';
-// @ts-expect-error legacy noImplicitAny
-import planer from 'planer';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { ImapFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-fetch-by-batch.service';
 import { type MessageFetchResult } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-processor.service';
+import { extractTextWithoutReplyQuotations } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-message-text.util';
 import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
@@ -73,7 +71,7 @@ export class ImapGetMessagesService {
     const messages = batchResults.map((result) => {
       if (!result.parsed) {
         this.logger.warn(
-          `Message ${result.messageId} could not be parsed - likely not found in current mailboxes`,
+          `Message ${result.messageId} could not be parsed - likely not found in current folders`,
         );
 
         return undefined;
@@ -115,7 +113,7 @@ export class ImapGetMessagesService {
     const fromHandle = fromAddresses.length > 0 ? fromAddresses[0].address : '';
 
     const textWithoutReplyQuotations =
-      this.extractTextWithoutReplyQuotations(parsed);
+      extractTextWithoutReplyQuotations(parsed);
 
     const direction = computeMessageDirection(fromHandle, connectedAccount);
     const text = sanitizeString(textWithoutReplyQuotations);
@@ -190,20 +188,6 @@ export class ImapGetMessagesService {
       ...formatAddressObjectAsParticipants(ccAddresses, 'cc'),
       ...formatAddressObjectAsParticipants(bccAddresses, 'bcc'),
     ];
-  }
-
-  private extractTextWithoutReplyQuotations(parsed: ParsedMail): string {
-    if (parsed.text) {
-      return planer.extractFrom(parsed.text, 'text/plain');
-    }
-
-    if (parsed.html) {
-      const dom = new JSDOM(parsed.html);
-
-      return dom.window.document.body?.textContent || '';
-    }
-
-    return '';
   }
 
   private extractAddresses(

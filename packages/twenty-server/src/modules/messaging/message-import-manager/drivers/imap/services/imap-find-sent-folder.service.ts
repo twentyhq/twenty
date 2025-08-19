@@ -14,10 +14,10 @@ import { ListResponse, type ImapFlow } from 'imapflow';
  * The regex pattern is inspired by imapsync's comprehensive folder mapping.
  */
 @Injectable()
-export class ImapFindSentMailboxService {
-  private readonly logger = new Logger(ImapFindSentMailboxService.name);
+export class ImapFindSentFolderService {
+  private readonly logger = new Logger(ImapFindSentFolderService.name);
 
-  public async findSentMailbox(client: ImapFlow): Promise<string | null> {
+  public async findSentFolder(client: ImapFlow): Promise<string | null> {
     try {
       const list = await client.list();
 
@@ -25,7 +25,7 @@ export class ImapFindSentMailboxService {
         `Available folders: ${list.map((item) => item.path).join(', ')}`,
       );
 
-      const specialUseSentFolder = await this.findSpecialUseSentFolder(
+      const specialUseSentFolder = await this.findSentFolderBySpecialUse(
         client,
         list,
       );
@@ -49,13 +49,13 @@ export class ImapFindSentMailboxService {
 
       return null;
     } catch (error) {
-      this.logger.warn(`Error listing mailboxes: ${error.message}`);
+      this.logger.warn(`Error listing folders: ${error.message}`);
 
       return null;
     }
   }
 
-  private async findSpecialUseSentFolder(
+  private async findSentFolderBySpecialUse(
     client: ImapFlow,
     list: ListResponse[],
   ): Promise<string | null> {
@@ -89,7 +89,7 @@ export class ImapFindSentMailboxService {
     client: ImapFlow,
     list: ListResponse[],
   ): Promise<string | null> {
-    const candidateFolders = this.getSentFolderCandidates(list);
+    const candidateFolders = this.getSentFolderCandidatesByRegex(list);
 
     for (const folder of candidateFolders) {
       const hasMessages = await this.validateFolderHasMessages(client, folder);
@@ -112,7 +112,7 @@ export class ImapFindSentMailboxService {
     return null;
   }
 
-  private getSentFolderCandidates(list: ListResponse[]): string[] {
+  private getSentFolderCandidatesByRegex(list: ListResponse[]): string[] {
     // Comprehensive regex pattern for legacy IMAP servers
     // Source: https://imapsync.lamiral.info/FAQ.d/FAQ.Folders_Mapping.txt
     // Based on imapsync's regextrans2 examples (originally "Sent|Sent Messages|Gesendet")

@@ -31,34 +31,34 @@ export class ImapMessageProcessorService {
 
     const results: MessageFetchResult[] = [];
 
-    const messagesByMailbox = new Map<string, MessageLocation[]>();
+    const messagesByFolder = new Map<string, MessageLocation[]>();
     const notFoundIds: string[] = [];
 
     for (const messageId of messageIds) {
       const location = messageLocations.get(messageId);
 
       if (location) {
-        const locations = messagesByMailbox.get(location.mailbox) || [];
+        const locations = messagesByFolder.get(location.folder) || [];
 
         locations.push(location);
-        messagesByMailbox.set(location.mailbox, locations);
+        messagesByFolder.set(location.folder, locations);
       } else {
         notFoundIds.push(messageId);
       }
     }
 
-    const fetchPromises = Array.from(messagesByMailbox.entries()).map(
-      ([mailbox, locations]) =>
-        this.fetchMessagesFromMailbox(locations, client, mailbox),
+    const fetchPromises = Array.from(messagesByFolder.entries()).map(
+      ([folder, locations]) =>
+        this.fetchMessagesFromFolder(locations, client, folder),
     );
 
-    const mailboxResults = await Promise.allSettled(fetchPromises);
+    const folderResults = await Promise.allSettled(fetchPromises);
 
-    for (const result of mailboxResults) {
+    for (const result of folderResults) {
       if (result.status === 'fulfilled') {
         results.push(...result.value);
       } else {
-        this.logger.error(`Mailbox batch fetch failed: ${result.reason}`);
+        this.logger.error(`Folder batch fetch failed: ${result.reason}`);
       }
     }
 
@@ -73,15 +73,15 @@ export class ImapMessageProcessorService {
     return results;
   }
 
-  private async fetchMessagesFromMailbox(
+  private async fetchMessagesFromFolder(
     messageLocations: MessageLocation[],
     client: ImapFlow,
-    mailbox: string,
+    folder: string,
   ): Promise<MessageFetchResult[]> {
     if (!messageLocations.length) return [];
 
     try {
-      const lock = await client.getMailboxLock(mailbox);
+      const lock = await client.getMailboxLock(folder);
 
       try {
         return await this.fetchMessagesWithUids(messageLocations, client);
@@ -90,7 +90,7 @@ export class ImapMessageProcessorService {
       }
     } catch (error) {
       this.logger.error(
-        `Failed to fetch messages from mailbox ${mailbox}: ${error.message}`,
+        `Failed to fetch messages from folder ${folder}: ${error.message}`,
       );
 
       return messageLocations.map((location) =>
