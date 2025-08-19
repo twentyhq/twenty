@@ -32,14 +32,10 @@ export class MktInvoiceService {
     }
   }
 
-  async customizeMktInvoiceRequest(
-    input: InputData,
-  ): Promise<void> {
+  async customizeMktInvoiceRequest(input: InputData): Promise<void> {
     if (input.name === '' || !input.name) {
       if (input.mktOrderId) {
-        input.name = await this.generateInvoiceNameFromOrder(
-          input.mktOrderId,
-        );
+        input.name = await this.generateInvoiceNameFromOrder(input.mktOrderId);
       }
     }
 
@@ -48,18 +44,14 @@ export class MktInvoiceService {
     }
 
     if (!input.amount && input.mktOrderId) {
-      input.amount = '0'; 
+      input.amount = '0';
     }
   }
 
-  private async generateInvoiceNameFromOrder(
-    orderId: string,
-  ): Promise<string> {
+  private async generateInvoiceNameFromOrder(orderId: string): Promise<string> {
     try {
       const orderItemName =
-        await this.updateInvoiceNameFromOrderItemDirectly(
-          orderId,
-        );
+        await this.updateInvoiceNameFromOrderItemDirectly(orderId);
 
       if (!orderItemName) {
         return this.generateInvoiceName(orderId);
@@ -91,16 +83,11 @@ export class MktInvoiceService {
     mktOrderId: string,
   ): Promise<string | null> {
     try {
-      const orderItemNames = await this.getAllOrderItemNames(
-        mktOrderId,
-      );
+      const orderItemNames = await this.getAllOrderItemNames(mktOrderId);
 
       return orderItemNames;
     } catch (error) {
-      console.error(
-        `MktInvoiceService: Error getting orderItem names:`,
-        error,
-      );
+      console.error(`MktInvoiceService: Error getting orderItem names:`, error);
 
       return null;
     }
@@ -110,10 +97,13 @@ export class MktInvoiceService {
     mktOrderId: string,
   ): Promise<string | null> {
     try {
-      const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+      const workspaceId =
+        this.scopedWorkspaceContextFactory.create().workspaceId;
 
       if (!workspaceId) {
-        throw new Error('No workspace id found from ScopedWorkspaceContextFactory');  
+        throw new Error(
+          'No workspace id found from ScopedWorkspaceContextFactory',
+        );
       }
 
       const orderItemRepository =
@@ -123,7 +113,7 @@ export class MktInvoiceService {
           { shouldBypassPermissionChecks: true },
         );
 
-        const orderItems = await orderItemRepository.find({
+      const orderItems = await orderItemRepository.find({
         where: {
           mktOrderId: mktOrderId,
           deletedAt: null as any,
