@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType, type FromTo } from 'twenty-shared/types';
+import { type FromTo } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
 import { type FieldMetadataDefaultValueForAnyType } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
@@ -17,9 +18,11 @@ import { unserializeDefaultValue } from 'src/engine/metadata-modules/field-metad
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
+import { isRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-flat-field-metadata.util';
 import { findFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
+import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import {
   type CreateFieldAction,
   type DeleteFieldAction,
@@ -28,6 +31,10 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { type RunnerMethodForActionType } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/runner-method-for-action-type';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
+import {
+  WorkspaceSchemaMigrationException,
+  WorkspaceSchemaMigrationExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/exceptions/workspace-schema-migration.exception';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/generate-column-definitions.util';
 
 import {
@@ -69,7 +76,7 @@ export class WorkspaceSchemaFieldActionRunnerService
       });
 
     const columnDefinitions = generateColumnDefinitions({
-      fieldMetadata,
+      flatFieldMetadata: fieldMetadata,
       flatObjectMetadataWithoutFields: flatObjectMetadata,
     });
     const columnNamesToDrop = columnDefinitions.map((def) => def.name);
@@ -126,7 +133,7 @@ export class WorkspaceSchemaFieldActionRunnerService
     });
 
     const columnDefinitions = generateColumnDefinitions({
-      fieldMetadata: flatFieldMetadata,
+      flatFieldMetadata: flatFieldMetadata,
       flatObjectMetadataWithoutFields: flatObjectMetadata,
     });
 
@@ -212,11 +219,11 @@ export class WorkspaceSchemaFieldActionRunnerService
       const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
 
       for (const property of compositeType.properties) {
-        if (
-          property.type === FieldMetadataType.RELATION ||
-          property.type === FieldMetadataType.MORPH_RELATION
-        ) {
-          continue;
+        if (isRelationFieldMetadataType(property.type)) {
+          throw new WorkspaceSchemaMigrationException(
+            'Relation field metadata in composite type is not supported yet',
+            WorkspaceSchemaMigrationExceptionCode.NOT_SUPPORTED,
+          );
         }
 
         const fromCompositeColumnName = computeCompositeColumnName(
@@ -237,6 +244,12 @@ export class WorkspaceSchemaFieldActionRunnerService
         });
       }
     } else {
+      if (isRelationFlatFieldMetadata(flatFieldMetadata)) {
+        throw new WorkspaceSchemaMigrationException(
+          'Relation field metadata name update is not supported yet',
+          WorkspaceSchemaMigrationExceptionCode.NOT_SUPPORTED,
+        );
+      }
       await this.workspaceSchemaManagerService.columnManager.renameColumn({
         queryRunner,
         schemaName,
@@ -276,11 +289,11 @@ export class WorkspaceSchemaFieldActionRunnerService
       const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
 
       for (const property of compositeType.properties) {
-        if (
-          property.type === FieldMetadataType.RELATION ||
-          property.type === FieldMetadataType.MORPH_RELATION
-        ) {
-          continue;
+        if (isRelationFieldMetadataType(property.type)) {
+          throw new WorkspaceSchemaMigrationException(
+            'Relation field metadata in composite type is not supported yet',
+            WorkspaceSchemaMigrationExceptionCode.NOT_SUPPORTED,
+          );
         }
 
         const compositeColumnName = computeCompositeColumnName(
@@ -333,32 +346,28 @@ export class WorkspaceSchemaFieldActionRunnerService
   ) {
     const fromOptionsById = new Map(
       (update.from ?? [])
-        .filter(
-          (opt: FieldMetadataDefaultOption | FieldMetadataComplexOption) =>
-            Boolean(opt.id),
-        )
-        .map((opt: FieldMetadataDefaultOption | FieldMetadataComplexOption) => [
-          opt.id,
-          opt,
-        ]),
+        .filter((opt) => isDefined(opt.id))
+        .map((opt) => [opt.id, opt]),
+    );
+
+    const toOptionsById = new Map(
+      (update.to ?? [])
+        .filter((opt) => isDefined(opt.id))
+        .map((opt) => [opt.id, opt]),
     );
 
     const valueMapping: Record<string, string> = {};
 
-    for (const toOption of flatFieldMetadata.options ?? []) {
-      if (!toOption.id) {
-        continue;
-      }
-
+    for (const toOption of toOptionsById.values()) {
       const fromOption = fromOptionsById.get(toOption.id);
 
-      if (fromOption && fromOption.value !== toOption.value) {
+      if (fromOption) {
         valueMapping[fromOption.value] = toOption.value;
       }
     }
 
     const enumColumnDefinitions = generateColumnDefinitions({
-      fieldMetadata: flatFieldMetadata,
+      flatFieldMetadata: flatFieldMetadata,
       flatObjectMetadataWithoutFields: flatObjectMetadata,
     });
 
@@ -368,6 +377,7 @@ export class WorkspaceSchemaFieldActionRunnerService
         schemaName,
         tableName,
         columnDefinition: enumColumnDefinition,
+        enumValues: update.to?.map((opt) => opt.value) ?? [],
         oldToNewEnumOptionMap: valueMapping,
       });
     }

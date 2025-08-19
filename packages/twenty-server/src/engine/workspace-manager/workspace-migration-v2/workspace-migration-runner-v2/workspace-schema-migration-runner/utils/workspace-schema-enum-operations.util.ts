@@ -1,7 +1,4 @@
-import {
-  type EnumFieldMetadataType,
-  type FieldMetadataType,
-} from 'twenty-shared/types';
+import { type FieldMetadataType } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
@@ -186,17 +183,17 @@ export const collectEnumOperationsForField = ({
 export const collectEnumOperationsForObject = ({
   tableName,
   operation,
-  enumFlatFieldMetadatas,
+  flatFieldMetadatas,
   options,
 }: {
   tableName: string;
   operation: EnumOperation;
-  enumFlatFieldMetadatas: FlatFieldMetadata<EnumFieldMetadataType>[];
+  flatFieldMetadatas: FlatFieldMetadata[];
   options?: { newTableName?: string; newFieldName?: string };
 }): EnumOperationSpec[] => {
-  return enumFlatFieldMetadatas.flatMap((enumFlatFieldMetadata) =>
+  return flatFieldMetadatas.flatMap((flatFieldMetadata) =>
     collectEnumOperationsForField({
-      flatFieldMetadata: enumFlatFieldMetadata,
+      flatFieldMetadata,
       tableName,
       operation,
       options,

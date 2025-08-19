@@ -33,7 +33,7 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
     return {
       relationType: RelationType.MANY_TO_ONE,
       onDelete: RelationOnDeleteAction.SET_NULL,
-      joinColumnName: fieldMetadataName,
+      joinColumnName: `${fieldMetadataName}Id`,
     };
   }
 
@@ -131,9 +131,9 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   const targetCreateFieldInput: CreateFieldInput = {
     icon: relationCreationPayload.targetFieldIcon ?? 'Icon123',
     label: relationCreationPayload.targetFieldLabel,
-    name: `${computeMetadataNameFromLabel(
+    name: computeMetadataNameFromLabel(
       relationCreationPayload.targetFieldLabel,
-    )}Id`,
+    ),
     objectMetadataId: targetParentFlatObjectMetadata.id,
     type: FieldMetadataType.RELATION,
     workspaceId,
