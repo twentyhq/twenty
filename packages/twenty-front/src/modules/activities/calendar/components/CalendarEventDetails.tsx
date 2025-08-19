@@ -7,7 +7,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { useIsRecordReadOnly } from '@/object-record/record-field/ui/hooks/read-only/useIsRecordReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
@@ -16,6 +15,7 @@ import { Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui/components';
 import { IconCalendarEvent } from 'twenty-ui/display';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 
 type CalendarEventDetailsProps = {
   calendarEvent: CalendarEvent;

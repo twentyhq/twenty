@@ -42,7 +42,7 @@ npx nx g @nx/react:component my-component
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "options": { "jestConfig": "packages/twenty-front/jest.config.ts" }
+      "options": { "jestConfig": "packages/twenty-front/jest.config.mjs" }
     }
   }
 }
