@@ -10,9 +10,10 @@ import { StepLogicalOperator, type StepFilterGroup } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
 const StyledText = styled.div`
-  height: ${({ theme }) => theme.spacing(8)};
-  display: flex;
   align-items: center;
+  color: ${({ theme }) => theme.font.color.primary};
+  display: flex;
+  height: ${({ theme }) => theme.spacing(8)};
 `;
 
 const StyledContainer = styled.div`
