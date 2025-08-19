@@ -11,12 +11,13 @@ import {
 } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm';
 import { useMorphRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormInitialValues';
 import { fieldMetadataItemInitialRelationType } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemInitialRelationType.util';
+import { SettingsDataModelFieldPreviewContent } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldPreviewContent';
+
+import { SettingsDataModelPreviewImage } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldPreviewImageCard';
 import {
-  StyledFieldPreviewCard,
-  StyledPreviewContent,
-  StyledRelationImage,
-} from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationSettingsFormCard';
-import { type SettingsDataModelFieldPreviewCardProps } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+  SettingsDataModelFieldPreviewCard,
+  type SettingsDataModelFieldPreviewCardProps,
+} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { SettingsDataModelMorphRelationFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelMorphRelationFieldPreviewCard';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from 'twenty-shared/utils';
@@ -26,10 +27,14 @@ import {
   type Relation,
 } from '~/generated-metadata/graphql';
 
-type SettingsDataModelFieldMorphRelationSettingsFormCardProps = {
+type SettingsDataModelFieldMorphRelationFormCardProps = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> &
     Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
+
+export const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
+  flex: 1 1 100%;
+`;
 
 const StyledMorphRelationFieldPreviewCard = styled(
   SettingsDataModelMorphRelationFieldPreviewCard,
@@ -37,10 +42,10 @@ const StyledMorphRelationFieldPreviewCard = styled(
   flex: 1 1 100%;
 `;
 
-export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
+export const SettingsDataModelFieldMorphRelationFormCard = ({
   fieldMetadataItem,
   objectMetadataItem,
-}: SettingsDataModelFieldMorphRelationSettingsFormCardProps) => {
+}: SettingsDataModelFieldMorphRelationFormCardProps) => {
   const { watch: watchFormValue } =
     useFormContext<SettingsDataModelFieldMorphRelationFormValues>();
   const { findObjectMetadataItemById } = useFilteredObjectMetadataItems();
@@ -109,7 +114,7 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <StyledPreviewContent isMobile={isMobile}>
+        <SettingsDataModelFieldPreviewContent isMobile={isMobile}>
           <StyledFieldPreviewCard
             fieldMetadataItem={{
               ...fieldMetadataItem,
@@ -124,7 +129,7 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
               watchFormValue('relationType') === RelationType.MANY_TO_ONE
             }
           />
-          <StyledRelationImage
+          <SettingsDataModelPreviewImage
             src={relationTypeConfig.imageSrc}
             flip={relationTypeConfig.isImageFlipped}
             alt={relationTypeConfig.label}
@@ -157,7 +162,7 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
               }
             />
           )}
-        </StyledPreviewContent>
+        </SettingsDataModelFieldPreviewContent>
       }
       form={
         <SettingsDataModelFieldMorphRelationForm
