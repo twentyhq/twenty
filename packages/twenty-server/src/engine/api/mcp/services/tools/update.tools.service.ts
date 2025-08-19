@@ -8,6 +8,7 @@ import { MetadataQueryBuilderFactory } from 'src/engine/api/rest/metadata/query-
 import { MCPMetadataToolsService } from 'src/engine/api/mcp/services/tools/mcp-metadata-tools.service';
 import { validationSchemaManager } from 'src/engine/api/mcp/utils/get-json-schema';
 import { type ObjectName } from 'src/engine/api/rest/metadata/types/metadata-entity.type';
+import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 
 @Injectable()
 export class UpdateToolsService {
@@ -42,9 +43,16 @@ export class UpdateToolsService {
         name: 'update-object-metadata',
         description: 'Update an object metadata',
         inputSchema:
-          this.mCPMetadataToolsService.mergeSchemaWithCommonProperties(
-            validationSchemaManager.getSchemas().UpdateOneObjectInput,
-          ),
+          this.mCPMetadataToolsService.mergeSchemaWithCommonProperties({
+            ...validationSchemaManager.getSchemas().UpdateOneObjectInput,
+            properties: {
+              ...validationSchemaManager.getSchemas().UpdateOneObjectInput
+                .properties,
+              update:
+                validationSchemaManager.getSchemas().UpdateObjectPayload
+                  .properties!,
+            },
+          }),
         execute: (request: Request) => this.execute(request, 'objects'),
       },
     ];
