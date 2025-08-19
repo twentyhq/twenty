@@ -10,6 +10,7 @@ import {
   type SettingsDataModelFieldMorphRelationFormValues,
 } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm';
 import { useMorphRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormInitialValues';
+import { fieldMetadataItemInitialRelationType } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemInitialRelationType.util';
 import {
   StyledFieldPreviewCard,
   StyledPreviewContent,
@@ -45,16 +46,18 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
     useFormContext<SettingsDataModelFieldMorphRelationFormValues>();
   const { findObjectMetadataItemById } = useFilteredObjectMetadataItems();
   const isMobile = useIsMobile();
-  const { initialRelationObjectMetadataItems, initialRelationType } =
+  const initialRelationType =
+    fieldMetadataItemInitialRelationType(fieldMetadataItem);
+  const initialRelationObjectMetadataItems =
     useMorphRelationSettingsFormInitialValues({
       fieldMetadataItem,
     });
 
   const initialRelationFieldMetadataItem = {
-    icon: initialRelationObjectMetadataItems[0].icon ?? 'IconUsers',
+    icon: initialRelationObjectMetadataItems[0].icon,
     label: [RelationType.MANY_TO_ONE].includes(initialRelationType)
-      ? initialRelationObjectMetadataItems[0].labelPlural
-      : initialRelationObjectMetadataItems[0].labelSingular,
+      ? initialRelationObjectMetadataItems[0].namePlural
+      : initialRelationObjectMetadataItems[0].nameSingular,
   };
   const initialRelationObjectMetadataItem =
     initialRelationObjectMetadataItems[0];
@@ -134,7 +137,7 @@ export const SettingsDataModelFieldMorphRelationSettingsFormCard = ({
                 ...initialRelationFieldMetadataItem,
                 icon: watchFormValue(
                   'iconOnDestination',
-                  initialRelationFieldMetadataItem.icon,
+                  initialRelationFieldMetadataItem.icon ?? undefined,
                 ),
                 label:
                   watchFormValue(

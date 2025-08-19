@@ -1,11 +1,8 @@
-import { useMemo } from 'react';
-
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useGetMorphRelationMetadata } from '@/object-metadata/hooks/useGetMorphRelationMetadata';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
+import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations.util';
 import { isDefined } from 'twenty-shared/utils';
-import { RelationType } from '~/generated-metadata/graphql';
 
 export const useMorphRelationSettingsFormInitialValues = ({
   fieldMetadataItem,
@@ -14,47 +11,37 @@ export const useMorphRelationSettingsFormInitialValues = ({
 }) => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
-  const getMorphRelationMetadata = useGetMorphRelationMetadata();
-  const morphRelations = fieldMetadataItem
-    ? getMorphRelationMetadata({ fieldMetadataItem })
-    : null;
-  const initialRelationObjectMetadataItems = useMemo(() => {
-    const availableItems = activeObjectMetadataItems
-      .filter(isObjectMetadataAvailableForRelation)
-      .sort((a, b) => a.labelSingular.localeCompare(b.labelSingular));
-    const firstInitialObjectCandidate =
-      morphRelations?.[0]?.relationObjectMetadataItem ?? availableItems[0];
-    if (!isDefined(firstInitialObjectCandidate)) {
-      throw new Error(
-        'Relation Form initialization error: invariant violated – no valid object available for relation (this should never happen).',
-      );
-    }
-    const secondInitialObjectCandidate =
-      morphRelations?.[1]?.relationObjectMetadataItem ?? availableItems[1];
-    if (!isDefined(secondInitialObjectCandidate)) {
-      throw new Error(
-        'Relation Form initialization error: invariant violated – no valid object available for relation (this should never happen).',
-      );
-    }
-
-    return [firstInitialObjectCandidate, secondInitialObjectCandidate];
-  }, [activeObjectMetadataItems, morphRelations]);
-
-  if (isDefined(morphRelations) && morphRelations.length > 0) {
-    return {
-      disableFieldEdition: true,
-      disableRelationEdition: true,
-      initialRelationObjectMetadataItems: morphRelations.map(
-        (morphRelation) => morphRelation.relationObjectMetadataItem,
-      ),
-      initialRelationType: morphRelations[0].relationType,
-    };
+  if (
+    isDefined(fieldMetadataItem) &&
+    fieldMetadataItemHasMorphRelations(fieldMetadataItem)
+  ) {
+    return (
+      fieldMetadataItem.morphRelations?.map((morphRelation) => {
+        return {
+          ...morphRelation.targetObjectMetadata,
+          icon: activeObjectMetadataItems.find(
+            (item) => item.id === morphRelation.targetObjectMetadata.id,
+          )?.icon,
+        };
+      }) ?? []
+    );
   }
 
-  return {
-    disableFieldEdition: false,
-    disableRelationEdition: false,
-    initialRelationObjectMetadataItems,
-    initialRelationType: RelationType.ONE_TO_MANY,
-  };
+  const availableItems = activeObjectMetadataItems
+    .filter(isObjectMetadataAvailableForRelation)
+    .sort((a, b) => a.labelSingular.localeCompare(b.labelSingular));
+  const firstInitialObjectCandidate = availableItems[0];
+  if (!isDefined(firstInitialObjectCandidate)) {
+    throw new Error(
+      'Relation Form initialization error: invariant violated – no valid object available for relation (this should never happen).',
+    );
+  }
+  const secondInitialObjectCandidate = availableItems[1];
+  if (!isDefined(secondInitialObjectCandidate)) {
+    throw new Error(
+      'Relation Form initialization error: invariant violated – no valid object available for relation (this should never happen).',
+    );
+  }
+
+  return [firstInitialObjectCandidate, secondInitialObjectCandidate];
 };

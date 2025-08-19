@@ -3,11 +3,15 @@ import { z } from 'zod';
 
 import { StyledContainer } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenuStyles';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsMorphRelationMultiSelect } from '@/settings/components/SettingsMorphRelationMultiSelect';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
+import { useMorphRelationSettingsFormDefaultIconOnDestination } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormDefaultIconOnDestination';
+import { useMorphRelationSettingsFormDefaultLabelOnDestination } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormDefaultLabelOnDestination';
 import { useMorphRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormInitialValues';
+import { fieldMetadataItemDisableFieldEdition } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemDisableFieldEdition.util';
+import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations.util';
+import { fieldMetadataItemInitialRelationType } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemInitialRelationType.util';
 import {
   RELATION_TYPE_OPTIONS,
   StyledInputsContainer,
@@ -19,7 +23,7 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useLingui } from '@lingui/react/macro';
-import { RelationType } from '~/generated-metadata/graphql';
+import { type RelationType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldMorphRelationFormSchema = z.object({
   morphRelationObjectMetadataIds: z.array(z.string().uuid()).min(2),
@@ -45,20 +49,31 @@ export const SettingsDataModelFieldMorphRelationForm = ({
   const { control } =
     useFormContext<SettingsDataModelFieldMorphRelationFormValues>();
 
-  const {
-    disableFieldEdition,
-    disableRelationEdition,
-    initialRelationObjectMetadataItems,
-    initialRelationType,
-  } = useMorphRelationSettingsFormInitialValues({
-    fieldMetadataItem,
-  });
+  const morphRelationPreviouslyCreated =
+    fieldMetadataItemHasMorphRelations(fieldMetadataItem);
 
-  const getLabel = (relationObjectMetadataItem: ObjectMetadataItem) => {
-    return [RelationType.MANY_TO_ONE].includes(initialRelationType)
-      ? relationObjectMetadataItem.labelPlural
-      : relationObjectMetadataItem.labelSingular;
-  };
+  const disableRelationEdition = !!morphRelationPreviouslyCreated;
+  const disableFieldEdition =
+    fieldMetadataItemDisableFieldEdition(fieldMetadataItem);
+  const initialRelationObjectMetadataItems =
+    useMorphRelationSettingsFormInitialValues({
+      fieldMetadataItem,
+    });
+
+  const defaultIconOnDestination =
+    useMorphRelationSettingsFormDefaultIconOnDestination({
+      fieldMetadataItem,
+      objectMetadataItem: initialRelationObjectMetadataItems[0],
+    });
+  const initialRelationType =
+    fieldMetadataItemInitialRelationType(fieldMetadataItem);
+
+  const defaultLabelOnDestination =
+    useMorphRelationSettingsFormDefaultLabelOnDestination({
+      fieldMetadataItem,
+      objectMetadataItem: initialRelationObjectMetadataItems[0],
+      relationType: initialRelationType,
+    });
 
   const initialMorphRelationsObjectMetadataIds =
     initialRelationObjectMetadataItems.map(
@@ -108,9 +123,7 @@ export const SettingsDataModelFieldMorphRelationForm = ({
         <Controller
           name="iconOnDestination"
           control={control}
-          defaultValue={
-            initialRelationObjectMetadataItems[0].icon ?? 'IconUsers'
-          }
+          defaultValue={defaultIconOnDestination}
           render={({ field: { onChange, value } }) => (
             <IconPicker
               disabled={disableFieldEdition}
@@ -124,7 +137,7 @@ export const SettingsDataModelFieldMorphRelationForm = ({
         <Controller
           name="targetFieldLabel"
           control={control}
-          defaultValue={getLabel(initialRelationObjectMetadataItems[0])}
+          defaultValue={defaultLabelOnDestination}
           render={({ field: { onChange, value } }) => (
             <SettingsTextInput
               instanceId="relation-field-label"
