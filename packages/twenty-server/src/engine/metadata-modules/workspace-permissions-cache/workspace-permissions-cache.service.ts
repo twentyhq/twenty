@@ -28,6 +28,11 @@ type CacheResult<T, U> = {
 
 export const USER_WORKSPACE_ROLE_MAP = 'User workspace role map';
 export const ROLES_PERMISSIONS = 'Roles permissions';
+const WORKFLOW_STANDARD_OBJECT_IDS = [
+  STANDARD_OBJECT_IDS.workflow,
+  STANDARD_OBJECT_IDS.workflowRun,
+  STANDARD_OBJECT_IDS.workflowVersion,
+] as const;
 
 @Injectable()
 export class WorkspacePermissionsCacheService {
@@ -213,11 +218,9 @@ export class WorkspacePermissionsCacheService {
 
         if (
           standardId &&
-          [
-            STANDARD_OBJECT_IDS.workflow,
-            STANDARD_OBJECT_IDS.workflowRun,
-            STANDARD_OBJECT_IDS.workflowVersion,
-          ].includes(standardId)
+          WORKFLOW_STANDARD_OBJECT_IDS.includes(
+            standardId as (typeof WORKFLOW_STANDARD_OBJECT_IDS)[number],
+          )
         ) {
           const hasWorkflowsPermissions = this.hasWorkflowsPermissions(role);
 
