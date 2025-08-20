@@ -1,4 +1,9 @@
-import { isObject, isString } from '@sniptt/guards';
+import {
+  isNonEmptyArray,
+  isNonEmptyString,
+  isObject,
+  isString,
+} from '@sniptt/guards';
 import {
   type StepFilter,
   type StepFilterGroup,
@@ -122,10 +127,10 @@ function evaluateTextAndArrayFilter(filter: ResolvedFilter): boolean {
     case ViewFilterOperand.DoesNotContain:
       return !contains(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IsEmpty:
-      return isEmptyTextOrArray(filter.leftOperand);
+      return !isNotEmptyTextOrArray(filter.leftOperand);
 
     case ViewFilterOperand.IsNotEmpty:
-      return !isEmptyTextOrArray(filter.leftOperand);
+      return isNotEmptyTextOrArray(filter.leftOperand);
 
     default:
       throw new Error(
@@ -134,13 +139,8 @@ function evaluateTextAndArrayFilter(filter: ResolvedFilter): boolean {
   }
 }
 
-function isEmptyTextOrArray(value: unknown): boolean {
-  return (
-    value === null ||
-    value === undefined ||
-    value === '' ||
-    (Array.isArray(value) && value.length === 0)
-  );
+function isNotEmptyTextOrArray(value: unknown): boolean {
+  return isNonEmptyString(value) || isNonEmptyArray(value);
 }
 
 function evaluateBooleanFilter(filter: ResolvedFilter): boolean {
