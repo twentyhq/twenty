@@ -30,4 +30,6 @@ export const MKT_OBJECT_IDS = {
   mktOrganizationLevel: 'd4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a',
   mktEmploymentStatus: 'e5f6a7b8-c9d0-1e2f-3a4b-5c6d7e8f9a0b',
   mktDepartment: 'f6a7b8c9-d0e1-2f3a-4b5c-6d7e8f9a0b1c',
+  mktStaff: 'a7b8c9d0-e1f2-3a4b-5c6d-7e8f9a0b1c2d',
+  mktStaffStatusHistory: 'b8c9d0e1-f2a3-4b5c-6d7e-8f9a0b1c2d3e',
 };

@@ -20,10 +20,6 @@ export const prefillMktDepartments = async (
     .getRawMany();
 
   if (existingDepartments.length === 0) {
-    console.log(
-      `🌱 Seeding ${MKT_DEPARTMENT_DATA_SEEDS.length} departments into ${tableName}`,
-    );
-
     // Prepare data with JSON stringification for complex fields
     const seedData = MKT_DEPARTMENT_DATA_SEEDS.map((department) => ({
       ...department,
@@ -39,13 +35,5 @@ export const prefillMktDepartments = async (
       .into(tableName, MKT_DEPARTMENT_DATA_SEED_COLUMNS)
       .values(seedData)
       .execute();
-
-    console.log(
-      `✅ Successfully seeded ${MKT_DEPARTMENT_DATA_SEEDS.length} departments`,
-    );
-  } else {
-    console.log(
-      `ℹ️ Departments already exist in ${tableName}, skipping seeding`,
-    );
   }
 };
