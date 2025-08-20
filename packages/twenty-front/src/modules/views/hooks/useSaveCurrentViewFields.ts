@@ -22,7 +22,7 @@ export const useSaveCurrentViewFields = () => {
 
   const saveViewFields = useRecoilCallback(
     ({ set, snapshot }) =>
-      async (viewFieldsToSave: ViewField[]) => {
+      async (viewFieldsToSave: Omit<ViewField, 'definition'>[]) => {
         const currentViewId = snapshot
           .getLoadable(currentViewIdCallbackState)
           .getValue();
