@@ -3,6 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
@@ -126,6 +127,7 @@ describe('WorkflowVersionStepWorkspaceService', () => {
         { provide: WorkflowRunnerWorkspaceService, useValue: {} },
         { provide: WorkflowCommonWorkspaceService, useValue: {} },
         { provide: ScopedWorkspaceContextFactory, useValue: {} },
+        { provide: FileService, useValue: {} },
       ],
     }).compile();
 

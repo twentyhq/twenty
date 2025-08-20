@@ -6,6 +6,7 @@ import { type Repository } from 'typeorm';
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
+import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
 import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
@@ -95,6 +96,12 @@ export const createAgentToolTestModule =
           useValue: {
             description: 'mock',
             parameters: {},
+            execute: jest.fn(),
+          },
+        },
+        {
+          provide: HttpTool,
+          useValue: {
             execute: jest.fn(),
           },
         },
