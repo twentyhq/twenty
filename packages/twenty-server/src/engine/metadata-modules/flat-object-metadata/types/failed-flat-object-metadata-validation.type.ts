@@ -4,9 +4,7 @@ import { ObjectMetadataMinimalInformation } from 'src/engine/metadata-modules/fl
 
 export type FailedFlatObjectMetadataValidation = {
   type: 'object';
-  errors: (
-    | FlatObjectMetadataValidationError
-    | FailedFlatFieldMetadataValidation
-  )[];
+  objectLevelErrors: FlatObjectMetadataValidationError[];
+  fieldLevelErrors: FailedFlatFieldMetadataValidation[];
   objectMinimalInformation: Partial<ObjectMetadataMinimalInformation>;
 };

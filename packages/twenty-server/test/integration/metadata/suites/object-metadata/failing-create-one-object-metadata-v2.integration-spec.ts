@@ -6,11 +6,11 @@ import {
 } from 'twenty-shared/testing';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
 type CreateObjectInputPayload = Omit<
   CreateObjectInput,
@@ -39,7 +39,6 @@ const failingNamesCreationTestsUseCase: CreateOneObjectMetadataItemTestingContex
       context: { namePlural: 'users' },
     },
     {
-      only: true,
       title: 'when nameSingular is not camelCased',
       context: { nameSingular: 'Not_Camel_Case' },
     },
@@ -159,10 +158,9 @@ describe('Object metadata creation should fail v2', () => {
       });
 
       expect(errors.length).toBe(1);
-      const firstError = errors[0];
-
-      expect(firstError.extensions.code).toBe(ErrorCode.BAD_USER_INPUT);
-      expect(firstError.message).toMatchSnapshot();
+      expect(errors[0]).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny(errors[0]),
+      );
     },
   );
 });
