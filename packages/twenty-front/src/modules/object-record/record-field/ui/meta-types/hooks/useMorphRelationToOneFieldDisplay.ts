@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
@@ -34,7 +34,7 @@ export const useMorphRelationToOneFieldDisplay = () => {
   );
 
   const button = fieldDefinition.editButtonIcon;
-  // debugger;
+
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const computedFieldNames = fieldDefinition.metadata.morphRelations.map(
@@ -47,10 +47,40 @@ export const useMorphRelationToOneFieldDisplay = () => {
       }),
   );
 
-  const fieldValues = useRecordFieldValues<ObjectRecord[]>(
-    recordId,
-    computedFieldNames,
+  const fieldValues = useRecordFieldValues<
+    {
+      values: ObjectRecord[];
+      fieldName: string;
+    }[]
+  >(recordId, computedFieldNames)?.filter((fieldValue) =>
+    isDefined(fieldValue.values),
   );
+
+  if (!isDefined(fieldValues)) {
+    return {
+      fieldDefinition,
+      fieldValues: [],
+      maxWidth: maxWidth,
+      recordId,
+      generateRecordChipData: () => ({
+        recordId: '',
+        objectNameSingular: '',
+      }),
+    };
+  }
+
+  const fieldValuesFlattened = fieldValues?.flatMap((fieldValue) => {
+    if (isArray(fieldValue.values)) {
+      return fieldValue.values.map((value) => ({
+        fieldName: fieldValue.fieldName,
+        value,
+      }));
+    }
+    return {
+      fieldName: fieldValue.fieldName,
+      value: fieldValue.values,
+    };
+  });
 
   const maxWidthForField =
     isDefined(button) && isDefined(maxWidth)
@@ -80,7 +110,7 @@ export const useMorphRelationToOneFieldDisplay = () => {
 
   return {
     fieldDefinition,
-    fieldValues,
+    fieldValues: fieldValuesFlattened,
     maxWidth: maxWidthForField,
     recordId,
     generateRecordChipData,

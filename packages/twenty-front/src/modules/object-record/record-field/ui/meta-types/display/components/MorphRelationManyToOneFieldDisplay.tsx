@@ -15,25 +15,30 @@ export const MorphRelationManyToOneFieldDisplay = () => {
     return null;
   }
 
-  const fieldValue = fieldValues.filter(isDefined).pop();
+  const fieldValue = fieldValues
+    .filter((fieldValue) => isDefined(fieldValue.value))
+    .pop();
 
-  if (!isDefined(fieldValue)) {
+  if (!isDefined(fieldValue?.value)) {
     return null;
   }
 
+  const morphRelationSelected = fieldDefinition.metadata.morphRelations.find(
+    (morphRelation) =>
+      morphRelation.targetObjectMetadata.nameSingular === fieldValue.fieldName,
+  );
+
   const isWorkspaceMemberFieldMetadataRelation =
-    fieldDefinition.metadata.morphRelations.some(
-      (morphRelation) =>
-        morphRelation.targetObjectMetadata.nameSingular ===
-        CoreObjectNameSingular.WorkspaceMember,
-    );
-  const recordChipData = generateRecordChipData(fieldValue);
+    morphRelationSelected?.targetObjectMetadata.nameSingular ===
+    CoreObjectNameSingular.WorkspaceMember;
+
+  const recordChipData = generateRecordChipData(fieldValue.value);
 
   return (
     <RecordChip
       key={recordChipData.recordId}
       objectNameSingular={recordChipData.objectNameSingular}
-      record={fieldValue}
+      record={fieldValue.value}
       forceDisableClick={
         isWorkspaceMemberFieldMetadataRelation || disableChipClick
       }

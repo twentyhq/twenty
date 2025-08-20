@@ -8,6 +8,9 @@ export const recordFieldsStoreFamilySelector = selectorFamily({
     <T>({ fieldNames, recordId }: { fieldNames: string[]; recordId: string }) =>
     ({ get }) => {
       const record = get(recordStoreFamilyState(recordId));
-      return fieldNames.map((fieldName) => record?.[fieldName] as T);
+      return fieldNames.map((fieldName) => ({
+        values: record?.[fieldName] as T,
+        fieldName,
+      }));
     },
 });

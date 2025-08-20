@@ -8,28 +8,23 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const MorphRelationOneToManyFieldDisplay = () => {
-  console.log('MorphRelationFromManyFieldDisplay');
-  const { fieldValue, fieldDefinition, generateRecordChipData } =
-    useMorphRelationFromManyFieldDisplay();
+  const { fieldValues } = useMorphRelationFromManyFieldDisplay();
   const { isFocused } = useFieldFocus();
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
 
-  console.log(fieldDefinition);
-  console.log('fieldValue', fieldValue);
-
-  if (!fieldValue) {
+  if (!fieldValues) {
     return null;
   }
 
   return (
     <ExpandableList isChipCountDisplayed={isFocused}>
-      {fieldValue.filter(isDefined).map((record) => {
-        const recordChipData = generateRecordChipData(record);
+      {fieldValues.filter(isDefined).map((record) => {
+        const recordChipData = record.generateRecordChipData(record.value);
         return (
           <RecordChip
             key={recordChipData.recordId}
             objectNameSingular={recordChipData.objectNameSingular}
-            record={record}
+            record={record.value}
             forceDisableClick={disableChipClick}
             triggerEvent={triggerEvent}
           />
