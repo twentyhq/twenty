@@ -72,7 +72,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,
         message: 'Label identifier field metadata id does not exist',
-        userFriendlyMessage: t`Object related to updated field doesnot have a label identifier`,
+        userFriendlyMessage: t`Object related to updated field does not have a label identifier`,
       });
     }
 
@@ -282,7 +282,7 @@ export class FlatFieldMetadataValidatorService {
         )
       ) {
         validationResult.errors.push({
-          code: FieldMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED,
+          code: FieldMetadataExceptionCode.FIELD_ALREADY_EXISTS,
           message: 'Field with same id already exists in object',
           userFriendlyMessage: t`Field already exists`,
         });
@@ -290,7 +290,7 @@ export class FlatFieldMetadataValidatorService {
 
       if (parentFlatObjectMetadata.isRemote === true) {
         validationResult.errors.push({
-          code: FieldMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED,
+          code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
           message: 'Remote objects are read-only',
           userFriendlyMessage: t`Remote objects are not production ready yet`,
         });

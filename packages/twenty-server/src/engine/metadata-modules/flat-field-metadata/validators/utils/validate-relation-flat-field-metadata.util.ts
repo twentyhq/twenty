@@ -47,7 +47,7 @@ export const validateRelationFlatFieldMetadata = async ({
       message: isDefined(otherFlatObjectMetadataMapsToValidate)
         ? 'Relation target object metadata not found in both existing and about to be created object metadatas'
         : 'Relation target object metadata not found',
-      userFriendlyMessage: t`Object targetted by the relation not found`,
+      userFriendlyMessage: t`Object targeted by the relation not found`,
       value: relationTargetObjectMetadataId,
     });
   }

@@ -16,7 +16,6 @@ export const runFlatFieldMetadataValidators = <T>({
       return {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message,
-        userFriendlyMessage: message,
         value: elementToValidate,
       };
     }

@@ -21,7 +21,7 @@ export class WorkspaceMigrationBuilderExceptionV2Interceptor
     return next.handle().pipe(
       catchError((error) => {
         if (!(error instanceof WorkspaceMigrationBuilderExceptionV2)) {
-          throw new error();
+          throw error;
         }
 
         const { errors, summary } =

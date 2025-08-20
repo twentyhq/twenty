@@ -17,7 +17,6 @@ export const runFlatObjectMetadataValidators = <T>({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message,
         value: elementToValidate,
-        userFriendlyMessage: message,
       };
     }
 

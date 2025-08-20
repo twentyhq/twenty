@@ -35,7 +35,6 @@ export const fieldMetadataGraphqlApiExceptionHandler = (error: Error) => {
       case FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND:
       case FieldMetadataExceptionCode.RESERVED_KEYWORD:
       case FieldMetadataExceptionCode.NOT_AVAILABLE:
-      case FieldMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED:
       case FieldMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL:
         throw error;
       default: {

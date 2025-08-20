@@ -64,7 +64,7 @@ export class FlatFieldMetadataTypeValidatorService {
             {
               code: FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION,
               message: 'Morph relation feature flag is disabled',
-              userFriendlyMessage: t`Morh relation fields are disabled for your workspace`,
+              userFriendlyMessage: t`Morph relation fields are disabled for your workspace`,
             },
           ];
         }

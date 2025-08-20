@@ -15,7 +15,7 @@ import { FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/f
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { areFlatObjectMetadataNamesSyncedWithLabels } from 'src/engine/metadata-modules/flat-object-metadata/utils/are-flat-object-metadata-names-synced-with-labels.util';
 import { computeRelationTargetFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/compute-relation-target-flat-object-metadata-maps.util';
-import { getDefaultObjectMetadataValidationType } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-default-object-metadata-validation.type';
+import { getDefaultFailedFlatObjectMetadataValidation } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-default-failed-flat-object-metadata-validation.type';
 import { validateFlatObjectMetadataIdentifiers } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util';
 import { validateFlatObjectMetadataLabel } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util';
 import { validateFlatObjectMetadataNames } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util';
@@ -37,7 +37,7 @@ export class FlatObjectMetadataValidatorService {
     existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
     updatedFlatObjectMetadata: FlatObjectMetadata;
   }): FailedFlatObjectMetadataValidation {
-    const validationResult = getDefaultObjectMetadataValidationType({
+    const validationResult = getDefaultFailedFlatObjectMetadataValidation({
       objectMinimalInformation: {
         id: updatedFlatObjectMetadata.id,
       },
@@ -84,7 +84,7 @@ export class FlatObjectMetadataValidatorService {
     objectMetadataToDeleteId: string;
     buildOptions: WorkspaceMigrationV2BuilderOptions;
   }): FailedFlatObjectMetadataValidation {
-    const validationResult = getDefaultObjectMetadataValidationType({
+    const validationResult = getDefaultFailedFlatObjectMetadataValidation({
       objectMinimalInformation: {
         id: objectMetadataToDeleteId,
       },
@@ -147,7 +147,7 @@ export class FlatObjectMetadataValidatorService {
     flatObjectMetadataToValidate: FlatObjectMetadata;
     otherFlatObjectMetadataMapsToValidate?: FlatObjectMetadataMaps;
   }): Promise<FailedFlatObjectMetadataValidation> {
-    const validationResult = getDefaultObjectMetadataValidationType({
+    const validationResult = getDefaultFailedFlatObjectMetadataValidation({
       objectMinimalInformation: {
         id: flatObjectMetadataToValidate.id,
         namePlural: flatObjectMetadataToValidate.namePlural,

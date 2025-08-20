@@ -106,7 +106,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
       error: {
         code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
         message: `Object metadata relation target not found for relation creation payload`,
-        userFriendlyMessage: t`Object targetted by field to create not found`,
+        userFriendlyMessage: t`Object targeted by field to create not found`,
         value: relationCreationPayload,
       },
     };

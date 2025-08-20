@@ -12,7 +12,6 @@ exports[`Object metadata creation should fail v2 when labelPlural contains only 
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Object label is too short",
-              "userFriendlyMessage": "Object label is too short",
               "value": "",
             },
           ],
@@ -48,7 +47,6 @@ exports[`Object metadata creation should fail v2 when labelPlural exceeds maximu
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Object label is too long",
-              "userFriendlyMessage": "Object label is too long",
               "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             },
           ],
@@ -84,7 +82,6 @@ exports[`Object metadata creation should fail v2 when labelPlural is empty 1`] =
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Object label is too short",
-              "userFriendlyMessage": "Object label is too short",
               "value": "",
             },
           ],
@@ -120,7 +117,6 @@ exports[`Object metadata creation should fail v2 when labelSingular contains onl
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Object label is too short",
-              "userFriendlyMessage": "Object label is too short",
               "value": "",
             },
           ],
@@ -156,7 +152,6 @@ exports[`Object metadata creation should fail v2 when labelSingular exceeds maxi
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Object label is too long",
-              "userFriendlyMessage": "Object label is too long",
               "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
             },
           ],
@@ -192,7 +187,6 @@ exports[`Object metadata creation should fail v2 when labelSingular is empty 1`]
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Object label is too short",
-              "userFriendlyMessage": "Object label is too short",
               "value": "",
             },
           ],
@@ -364,7 +358,6 @@ exports[`Object metadata creation should fail v2 when name exceeds maximum lengt
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is too long",
-              "userFriendlyMessage": "Name is too long",
               "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             },
           ],
@@ -400,7 +393,6 @@ exports[`Object metadata creation should fail v2 when namePlural has invalid cha
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "μ",
             },
           ],
@@ -436,7 +428,6 @@ exports[`Object metadata creation should fail v2 when namePlural is a reserved k
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "The name is not available",
-              "userFriendlyMessage": "The name is not available",
               "value": "users",
             },
           ],
@@ -472,13 +463,11 @@ exports[`Object metadata creation should fail v2 when namePlural is an empty str
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is too short",
-              "userFriendlyMessage": "Name is too short",
               "value": "",
             },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "",
             },
           ],
@@ -514,13 +503,11 @@ exports[`Object metadata creation should fail v2 when namePlural is not camelCas
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
               "value": "Not_Camel_Case",
             },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "Not_Camel_Case",
             },
           ],
@@ -652,13 +639,11 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
               "value": "a a",
             },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "a a",
             },
           ],
@@ -790,13 +775,11 @@ exports[`Object metadata creation should fail v2 when nameSingular contains only
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is too short",
-              "userFriendlyMessage": "Name is too short",
               "value": "",
             },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "",
             },
           ],
@@ -898,7 +881,6 @@ exports[`Object metadata creation should fail v2 when nameSingular has invalid c
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "μ",
             },
           ],
@@ -1000,7 +982,6 @@ exports[`Object metadata creation should fail v2 when nameSingular is a reserved
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "The name is not available",
-              "userFriendlyMessage": "The name is not available",
               "value": "user",
             },
           ],
@@ -1132,13 +1113,11 @@ exports[`Object metadata creation should fail v2 when nameSingular is an empty s
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is too short",
-              "userFriendlyMessage": "Name is too short",
               "value": "",
             },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "",
             },
           ],
@@ -1270,13 +1249,11 @@ exports[`Object metadata creation should fail v2 when nameSingular is not camelC
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name should be in camelCase",
-              "userFriendlyMessage": "Name should be in camelCase",
               "value": "Not_Camel_Case",
             },
             {
               "code": "INVALID_OBJECT_INPUT",
               "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
-              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
               "value": "Not_Camel_Case",
             },
           ],

@@ -82,7 +82,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     return {
       status: 'fail',
       error: {
-        code: FieldMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED,
+        code: FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
         message: 'Remote objects are read-only',
       },
     };
