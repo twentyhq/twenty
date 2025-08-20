@@ -71,6 +71,10 @@ import {
   MKT_EMPLOYMENT_STATUS_DATA_SEED_COLUMNS,
   MKT_EMPLOYMENT_STATUS_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-employment-status-data-seeds.constants';
+import {
+  MKT_STAFF_STATUS_HISTORY_DATA_SEED_COLUMNS,
+  MKT_STAFF_STATUS_HISTORY_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-staff-status-history-data-seeds.constants';
 
 export const MKT_RECORD_SEEDS_CONFIGS = [
   // Product configs
@@ -166,5 +170,10 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     tableName: 'mktEmploymentStatus',
     pgColumns: MKT_EMPLOYMENT_STATUS_DATA_SEED_COLUMNS,
     recordSeeds: MKT_EMPLOYMENT_STATUS_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktStaffStatusHistory',
+    pgColumns: MKT_STAFF_STATUS_HISTORY_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_STAFF_STATUS_HISTORY_DATA_SEEDS,
   },
 ];

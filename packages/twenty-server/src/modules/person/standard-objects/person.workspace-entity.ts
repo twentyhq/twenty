@@ -40,6 +40,7 @@ import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/not
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { MktStaffStatusHistoryWorkspaceEntity } from 'src/mkt-core/mkt-staff-status-history/mkt-staff-status-history.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
@@ -306,4 +307,57 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
+
+  @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.organizationLevelId,
+    type: FieldMetadataType.TEXT,
+    label: msg`Organization Level ID`,
+    description: msg`Reference to organization level`,
+    icon: 'IconBuildings',
+  })
+  @WorkspaceIsNullable()
+  organizationLevelId: string | null;
+
+  @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.employmentStatusId,
+    type: FieldMetadataType.TEXT,
+    label: msg`Employment Status ID`,
+    description: msg`Reference to employment status`,
+    icon: 'IconUserCheck',
+  })
+  @WorkspaceIsNullable()
+  employmentStatusId: string | null;
+
+  @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.statusStartDate,
+    type: FieldMetadataType.DATE_TIME,
+    label: msg`Status Start Date`,
+    description: msg`Date when current employment status started`,
+    icon: 'IconCalendarEvent',
+  })
+  @WorkspaceIsNullable()
+  statusStartDate: string | null;
+
+  @WorkspaceField({
+    standardId: PERSON_STANDARD_FIELD_IDS.statusExpectedEndDate,
+    type: FieldMetadataType.DATE,
+    label: msg`Status Expected End Date`,
+    description: msg`Expected end date for current employment status`,
+    icon: 'IconCalendarDue',
+  })
+  @WorkspaceIsNullable()
+  statusExpectedEndDate: string | null;
+
+  @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.staffStatusHistories,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Staff Status Histories`,
+    description: msg`Staff employment status change history`,
+    icon: 'IconHistory',
+    inverseSideTarget: () => MktStaffStatusHistoryWorkspaceEntity,
+    inverseSideFieldKey: 'staff',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  staffStatusHistories: Relation<MktStaffStatusHistoryWorkspaceEntity[]>;
 }

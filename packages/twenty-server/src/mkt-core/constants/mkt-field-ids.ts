@@ -353,6 +353,8 @@ export const MKT_ORGANIZATION_LEVEL_FIELD_IDS = {
   // standard fields
   position: 'd6e7f8a9-b0c1-2d3e-4f5a-6b7c8d9e0f1a',
   createdBy: 'e7f8a9b0-c1d2-3e4f-5a6b-7c8d9e0f1a2b',
+  // relations
+  staffMembers: '20202020-5a6b-7c8d-9e0f-1a2b3c4d5e6f',
 };
 
 export const MKT_EMPLOYMENT_STATUS_FIELD_IDS = {
@@ -376,6 +378,8 @@ export const MKT_EMPLOYMENT_STATUS_FIELD_IDS = {
   // standard fields
   position: 'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
   createdBy: 'b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e',
+  // relations
+  staffMembers: '20202020-4f5a-6b7c-8d9e-0f1a2b3c4d5e',
 };
 
 export const MKT_DEPARTMENT_FIELD_IDS = {

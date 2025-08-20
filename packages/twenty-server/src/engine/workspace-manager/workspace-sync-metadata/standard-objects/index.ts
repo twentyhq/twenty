@@ -1,4 +1,7 @@
-import { MKT_WORKSPACE_ENTITIES } from 'src/mkt-core/enums/mkt.workspace.entities';
+import {
+  MKT_FINAL_WORKSPACE_ENTITIES,
+  MKT_WORKSPACE_ENTITIES,
+} from 'src/mkt-core/enums/mkt.workspace.entities';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
@@ -77,4 +80,5 @@ export const standardObjectMetadataDefinitions = [
   ApiKeyWorkspaceEntity,
   WebhookWorkspaceEntity,
   MktOrderWorkspaceEntity,
+  ...MKT_FINAL_WORKSPACE_ENTITIES,
 ];

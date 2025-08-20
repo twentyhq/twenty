@@ -1,14 +1,21 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MKT_STAFF_STATUS_HISTORY_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @WorkspaceEntity({
   standardId: MKT_OBJECT_IDS.mktStaffStatusHistory,
@@ -21,14 +28,20 @@ import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 })
 @WorkspaceIsSearchable()
 export class MktStaffStatusHistoryWorkspaceEntity extends BaseWorkspaceEntity {
-  // Reference fields
-  @WorkspaceField({
+  // Relations
+  @WorkspaceRelation({
     standardId: MKT_STAFF_STATUS_HISTORY_FIELD_IDS.staffId,
-    type: FieldMetadataType.TEXT,
-    label: msg`Staff ID`,
-    description: msg`Reference to staff member`,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Staff`,
+    description: msg`Staff member this history belongs to`,
     icon: 'IconUser',
+    inverseSideTarget: () => PersonWorkspaceEntity,
+    inverseSideFieldKey: 'staffStatusHistories',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
+  staff: Relation<PersonWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('staff')
   staffId: string;
 
   @WorkspaceField({
