@@ -122,25 +122,25 @@ function evaluateTextAndArrayFilter(filter: ResolvedFilter): boolean {
     case ViewFilterOperand.DoesNotContain:
       return !contains(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IsEmpty:
-      return (
-        filter.leftOperand === null ||
-        filter.leftOperand === undefined ||
-        filter.leftOperand === '' ||
-        (Array.isArray(filter.leftOperand) && filter.leftOperand.length === 0)
-      );
+      return isEmptyTextOrArray(filter.leftOperand);
 
     case ViewFilterOperand.IsNotEmpty:
-      return (
-        filter.leftOperand !== null &&
-        filter.leftOperand !== undefined &&
-        filter.leftOperand !== '' &&
-        (!Array.isArray(filter.leftOperand) || filter.leftOperand.length > 0)
-      );
+      return !isEmptyTextOrArray(filter.leftOperand);
+
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for this filter type`,
       );
   }
+}
+
+function isEmptyTextOrArray(value: unknown): boolean {
+  return (
+    value === null ||
+    value === undefined ||
+    value === '' ||
+    (Array.isArray(value) && value.length === 0)
+  );
 }
 
 function evaluateBooleanFilter(filter: ResolvedFilter): boolean {
@@ -346,20 +346,10 @@ function evaluateSelectFilter(filter: ResolvedFilter): boolean {
     case ViewFilterOperand.IsNot:
       return !contains(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IsEmpty:
-      return (
-        filter.leftOperand === null ||
-        filter.leftOperand === undefined ||
-        filter.leftOperand === '' ||
-        (Array.isArray(filter.leftOperand) && filter.leftOperand.length === 0)
-      );
+      return isEmptyTextOrArray(filter.leftOperand);
 
     case ViewFilterOperand.IsNotEmpty:
-      return (
-        filter.leftOperand !== null &&
-        filter.leftOperand !== undefined &&
-        filter.leftOperand !== '' &&
-        (!Array.isArray(filter.leftOperand) || filter.leftOperand.length > 0)
-      );
+      return !isEmptyTextOrArray(filter.leftOperand);
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for select filter`,

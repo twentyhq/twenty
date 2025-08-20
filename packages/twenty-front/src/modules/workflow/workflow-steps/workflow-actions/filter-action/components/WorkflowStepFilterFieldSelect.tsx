@@ -55,10 +55,8 @@ export const WorkflowStepFilterFieldSelect = ({
 
   const { getFilterFieldMetadataItem } = useGetFilterFieldMetadataItem();
 
-  const {
-    fieldMetadataItem: filterFieldMetadataItem,
-    objectMetadataItem: filterObjectMetadataItem,
-  } = getFilterFieldMetadataItem(stepFilter.fieldMetadataId ?? '');
+  const { fieldMetadataItem: filterFieldMetadataItem } =
+    getFilterFieldMetadataItem(stepFilter.fieldMetadataId ?? '');
 
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
     shouldDisplayRecordFields,
@@ -131,8 +129,7 @@ export const WorkflowStepFilterFieldSelect = ({
       upsertStepFilterSettings,
       stepFilter,
       workflowVersionId,
-      filterFieldMetadataItem,
-      filterObjectMetadataItem,
+      getFilterFieldMetadataItem,
     ],
   );
 
