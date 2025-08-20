@@ -245,13 +245,14 @@ export class ObjectMetadataServiceV2 {
             inferDeletionFromMissingObjectFieldIndex: false,
           },
           workspaceId,
-          errorMessage:
-            'Multiple validation errors occurred while creating object',
         },
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(validateAndBuildResult);
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while creating object',
+      );
     }
 
     const { flatObjectMetadataMaps: recomputedFlatObjectMetadataMaps } =
