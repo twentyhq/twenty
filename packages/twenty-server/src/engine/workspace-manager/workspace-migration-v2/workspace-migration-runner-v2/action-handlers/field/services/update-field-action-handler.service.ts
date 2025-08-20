@@ -27,9 +27,9 @@ import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-s
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import {
-  WorkspaceSchemaMigrationException,
-  WorkspaceSchemaMigrationExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-schema-migration.exception';
+  WorkspaceMigrationRunnerException,
+  WorkspaceMigrationRunnerExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { fromWorkspaceMigrationUpdateActionToPartialEntity } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/from-workspace-migration-update-action-to-partial-field-or-object-entity.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/generate-column-definitions.util';
@@ -152,9 +152,9 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
       for (const property of compositeType.properties) {
         if (isRelationFieldMetadataType(property.type)) {
-          throw new WorkspaceSchemaMigrationException(
+          throw new WorkspaceMigrationRunnerException(
             'Relation field metadata in composite type is not supported yet',
-            WorkspaceSchemaMigrationExceptionCode.NOT_SUPPORTED,
+            WorkspaceMigrationRunnerExceptionCode.NOT_SUPPORTED,
           );
         }
 
@@ -177,9 +177,9 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       }
     } else {
       if (isRelationFlatFieldMetadata(flatFieldMetadata)) {
-        throw new WorkspaceSchemaMigrationException(
+        throw new WorkspaceMigrationRunnerException(
           'Relation field metadata name update is not supported yet',
-          WorkspaceSchemaMigrationExceptionCode.NOT_SUPPORTED,
+          WorkspaceMigrationRunnerExceptionCode.NOT_SUPPORTED,
         );
       }
       await this.workspaceSchemaManagerService.columnManager.renameColumn({
@@ -222,9 +222,9 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
 
       for (const property of compositeType.properties) {
         if (isRelationFieldMetadataType(property.type)) {
-          throw new WorkspaceSchemaMigrationException(
+          throw new WorkspaceMigrationRunnerException(
             'Relation field metadata in composite type is not supported yet',
-            WorkspaceSchemaMigrationExceptionCode.NOT_SUPPORTED,
+            WorkspaceMigrationRunnerExceptionCode.NOT_SUPPORTED,
           );
         }
 

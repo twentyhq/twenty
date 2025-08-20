@@ -10,9 +10,9 @@ import {
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/workspace-schema-migration-runner-action-handlers.module';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/constants/workspace-migration-action-handler-metadata-key.constant';
 import {
-  WorkspaceSchemaMigrationException,
-  WorkspaceSchemaMigrationExceptionCode,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-schema-migration.exception';
+  WorkspaceMigrationRunnerException,
+  WorkspaceMigrationRunnerExceptionCode,
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 
 @Injectable()
@@ -58,9 +58,9 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
     const handler = this.actionHandlers.get(actionType);
 
     if (!handler) {
-      throw new WorkspaceSchemaMigrationException(
+      throw new WorkspaceMigrationRunnerException(
         `No migration runner action handler found for action: ${actionType}`,
-        WorkspaceSchemaMigrationExceptionCode.INVALID_ACTION_TYPE,
+        WorkspaceMigrationRunnerExceptionCode.INVALID_ACTION_TYPE,
       );
     }
 
