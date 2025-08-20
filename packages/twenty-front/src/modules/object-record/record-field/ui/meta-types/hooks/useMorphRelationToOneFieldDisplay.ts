@@ -2,18 +2,19 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateDefaultRecordChipData';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { useRecordFieldValues } from '@/object-record/record-store/contexts/RecordFieldValuesSelectorContext';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from 'twenty-shared/utils';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 export const useMorphRelationToOneFieldDisplay = () => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
@@ -36,9 +37,19 @@ export const useMorphRelationToOneFieldDisplay = () => {
   // debugger;
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue<ObjectRecord | undefined>(
+  const computedFieldNames = fieldDefinition.metadata.morphRelations.map(
+    (morphRelation) =>
+      computeMorphRelationFieldName({
+        fieldName,
+        relationDirection: RelationType.MANY_TO_ONE,
+        nameSingular: morphRelation.targetObjectMetadata.nameSingular,
+        namePlural: morphRelation.targetObjectMetadata.namePlural,
+      }),
+  );
+
+  const fieldValues = useRecordFieldValues<ObjectRecord[]>(
     recordId,
-    fieldName,
+    computedFieldNames,
   );
 
   const maxWidthForField =
@@ -69,7 +80,7 @@ export const useMorphRelationToOneFieldDisplay = () => {
 
   return {
     fieldDefinition,
-    fieldValue,
+    fieldValues,
     maxWidth: maxWidthForField,
     recordId,
     generateRecordChipData,

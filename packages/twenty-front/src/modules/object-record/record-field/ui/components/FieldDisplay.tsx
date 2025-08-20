@@ -24,8 +24,8 @@ import { isFieldRelationToOneObject } from '@/object-record/record-field/ui/type
 import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
 
-import { MorphRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/MorphRelationFromManyFieldDisplay';
-import { MorphRelationToOneFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/MorphRelationToOneFieldDisplay';
+import { MorphRelationManyToOneFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/MorphRelationManyToOneFieldDisplay';
+import { MorphRelationOneToManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/MorphRelationOneToManyFieldDisplay';
 import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
 import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
 import { isDefined } from 'twenty-shared/utils';
@@ -79,9 +79,9 @@ export const FieldDisplay = () => {
   ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
     <RelationFromManyFieldDisplay />
   ) : isFieldMorphRelationManyToOne(fieldDefinition) ? (
-    <MorphRelationToOneFieldDisplay />
+    <MorphRelationManyToOneFieldDisplay />
   ) : isFieldMorphRelationOneToMany(fieldDefinition) ? (
-    <MorphRelationFromManyFieldDisplay />
+    <MorphRelationOneToManyFieldDisplay />
   ) : isFieldText(fieldDefinition) ? (
     <TextFieldDisplay />
   ) : isFieldUuid(fieldDefinition) ? (

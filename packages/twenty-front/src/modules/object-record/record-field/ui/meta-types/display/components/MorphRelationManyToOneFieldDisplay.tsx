@@ -4,12 +4,17 @@ import { useMorphRelationToOneFieldDisplay } from '@/object-record/record-field/
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const MorphRelationToOneFieldDisplay = () => {
-  // debugger;
-  const { fieldValue, fieldDefinition, generateRecordChipData } =
+export const MorphRelationManyToOneFieldDisplay = () => {
+  const { fieldValues, fieldDefinition, generateRecordChipData } =
     useMorphRelationToOneFieldDisplay();
 
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
+
+  if (!isDefined(fieldValues)) {
+    return null;
+  }
+
+  const fieldValue = fieldValues.filter(isDefined).pop();
 
   if (
     !isDefined(fieldValue) ||
