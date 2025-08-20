@@ -39,7 +39,7 @@ export class McpService {
     }
   }
 
-  handleInitialize(requestId: string | number | null) {
+  handleInitialize(requestId: string | number) {
     return wrapJsonRpcResponse(requestId, {
       result: {
         capabilities: {
@@ -129,7 +129,7 @@ export class McpService {
   }
 
   private async handleToolCall(
-    id: string | number | null,
+    id: string | number,
     toolSet: ToolSet,
     params: Record<string, unknown>,
   ) {
@@ -161,7 +161,7 @@ export class McpService {
     );
   }
 
-  private handleToolsListing(id: string | number | null, toolSet: ToolSet) {
+  private handleToolsListing(id: string | number, toolSet: ToolSet) {
     const toolsArray = Object.entries(toolSet)
       .filter(([, def]) => !!def.parameters.jsonSchema)
       .map(([name, def]) => ({
