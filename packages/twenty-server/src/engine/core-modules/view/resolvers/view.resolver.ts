@@ -9,9 +9,9 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { i18n } from '@lingui/core';
 import { isDefined } from 'twenty-shared/utils';
 
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
@@ -28,7 +28,10 @@ import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modul
 @UseFilters(ViewGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
 export class ViewResolver {
-  constructor(private readonly viewService: ViewService) {}
+  constructor(
+    private readonly viewService: ViewService,
+    private readonly i18nService: I18nService,
+  ) {}
 
   @ResolveField(() => String)
   async name(
@@ -57,8 +60,12 @@ export class ViewResolver {
         );
 
         const messageId = generateMessageId(view.name);
-        const translatedTemplate = i18n._(messageId, {
-          objectLabelPlural: translatedObjectLabel,
+        const translatedTemplate = this.i18nService.translateMessage({
+          messageId,
+          values: {
+            objectLabelPlural: translatedObjectLabel,
+          },
+          locale: context.req.locale,
         });
 
         if (translatedTemplate !== messageId) {
@@ -74,7 +81,10 @@ export class ViewResolver {
     }
 
     const messageId = generateMessageId(view.name);
-    const translatedMessage = i18n._(messageId);
+    const translatedMessage = this.i18nService.translateMessage({
+      messageId,
+      locale: context.req.locale,
+    });
 
     return translatedMessage !== messageId ? translatedMessage : view.name;
   }
