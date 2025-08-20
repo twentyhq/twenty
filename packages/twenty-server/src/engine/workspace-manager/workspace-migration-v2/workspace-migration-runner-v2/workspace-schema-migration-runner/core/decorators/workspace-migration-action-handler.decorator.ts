@@ -5,9 +5,9 @@ import { type WorkspaceMigrationActionTypeV2 } from 'src/engine/workspace-manage
 export const WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA =
   'workspace_migration_action_handler';
 
-export function WorkspaceMigrationActionHandler(
-  actionType: WorkspaceMigrationActionTypeV2,
-): ClassDecorator {
+export function WorkspaceMigrationActionHandler<
+  T extends WorkspaceMigrationActionTypeV2,
+>(actionType: T): ClassDecorator {
   return (target: Function) => {
     Injectable()(target);
     SetMetadata(

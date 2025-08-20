@@ -19,7 +19,7 @@ import {
 export class WorkspaceSchemaActionRegistryService implements OnModuleInit {
   private readonly actionHandlers = new Map<
     WorkspaceMigrationActionTypeV2,
-    WorkspaceMigrationActionService
+    WorkspaceMigrationActionService<WorkspaceMigrationActionTypeV2>
   >();
 
   constructor(private readonly discoveryService: DiscoveryService) {}
@@ -59,7 +59,7 @@ export class WorkspaceSchemaActionRegistryService implements OnModuleInit {
 
     if (!handler) {
       throw new WorkspaceSchemaMigrationException(
-        `No handler found for action: ${actionType}`,
+        `No migration runner action handler found for action: ${actionType}`,
         WorkspaceSchemaMigrationExceptionCode.INVALID_ACTION_TYPE,
       );
     }
