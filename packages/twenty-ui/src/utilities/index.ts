@@ -12,6 +12,7 @@ export { AnimatedContainer } from './animation/components/AnimatedContainer';
 export { AnimatedEaseIn } from './animation/components/AnimatedEaseIn';
 export { AnimatedEaseInOut } from './animation/components/AnimatedEaseInOut';
 export { AnimatedFadeOut } from './animation/components/AnimatedFadeOut';
+export { AnimatedRotate } from './animation/components/AnimatedRotate';
 export { AnimatedTextWord } from './animation/components/AnimatedTextWord';
 export { AnimatedTranslation } from './animation/components/AnimatedTranslation';
 export { stringToHslColor } from './color/utils/stringToHslColor';
