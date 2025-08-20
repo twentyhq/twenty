@@ -79,25 +79,29 @@ export const useTestHttpRequest = (actionId: string) => {
   const callFetchRequest = async (
     url: string,
     headers: Record<string, string>,
-    body: any,
     method: string,
+    body?: any,
     bodyType?: BodyType,
   ): Promise<HttpRequestTestData['output']> => {
     let defaultContentType: string | undefined;
-    if (bodyType === 'rawJson' || bodyType === 'keyValue') {
-      defaultContentType = 'application/json';
-    } else if (bodyType === 'Text') {
-      defaultContentType = 'text/plain';
-    } else if (bodyType !== 'FormData') {
-      defaultContentType = 'application/json';
+    const isMethodWithBodyAndNoEmpty =
+    ['POST', 'PUT', 'PATCH'].includes(method) &&isDefined( body);
+    if (isMethodWithBodyAndNoEmpty && isDefined(bodyType)) {
+      if (bodyType === 'rawJson' || bodyType === 'keyValue') {
+        defaultContentType = 'application/json';
+      } else if (bodyType === 'Text') {
+        defaultContentType = 'text/plain';
+      }
     }
     const requestOptions: RequestInit = {
       method: method,
-      ...(defaultContentType ? { 'Content-Type': defaultContentType } : {}),
-      ...headers,
+      headers:{
+      ...(defaultContentType ? { 'content-type': defaultContentType } : {}),
+      ...headers
+      }
     };
 
-    if (['POST', 'PUT', 'PATCH'].includes(method) && body !== undefined) {
+    if (isMethodWithBodyAndNoEmpty) {
       requestOptions.body =
         typeof body === 'string' ? body : JSON.stringify(body);
     }
@@ -162,8 +166,8 @@ export const useTestHttpRequest = (actionId: string) => {
         output = await callFetchRequest(
           substitutedUrl as string,
           substitutedHeaders as Record<string, string>,
-          substitutedBody,
           httpRequestFormData.method,
+          substitutedBody,
           httpRequestFormData.bodyType,
         );
       }
