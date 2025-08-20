@@ -12,6 +12,7 @@ import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-han
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { AGENT_HANDOFF_DESCRIPTION_TEMPLATE } from 'src/engine/metadata-modules/agent/constants/agent-handoff-description.const';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { WorkflowToolWorkspaceService as WorkflowToolService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 import { camelCase } from 'src/utils/camel-case';
 
 @Injectable()
@@ -24,6 +25,7 @@ export class AgentToolService {
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly toolService: ToolService,
     private readonly toolAdapterService: ToolAdapterService,
+    private readonly workflowToolService: WorkflowToolService,
   ) {}
 
   async generateToolsForAgent(
@@ -61,10 +63,14 @@ export class AgentToolService {
       workspaceId,
     );
 
+    const workflowTools =
+      this.workflowToolService.generateWorkflowTools(workspaceId);
+
     return {
       ...databaseTools,
       ...actionTools,
       ...handoffTools,
+      ...workflowTools,
     };
   }
 

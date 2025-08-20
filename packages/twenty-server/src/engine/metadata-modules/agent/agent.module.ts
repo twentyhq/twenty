@@ -18,6 +18,7 @@ import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { AgentChatMessageEntity } from './agent-chat-message.entity';
 import { AgentChatThreadEntity } from './agent-chat-thread.entity';
@@ -61,6 +62,7 @@ import { AgentService } from './agent.service';
     WorkspaceCacheStorageModule,
     TokenModule,
     DomainManagerModule,
+    WorkflowToolsModule,
   ],
   controllers: [AgentChatController],
   providers: [

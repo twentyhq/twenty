@@ -10,9 +10,6 @@ import { WorkflowVersionEdgeWorkspaceService } from 'src/modules/workflow/workfl
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { WorkflowVersionWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version/workflow-version.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
-
 import {
   activateWorkflowVersionSchema,
   computeStepOutputSchemaSchema,
@@ -24,7 +21,9 @@ import {
   deleteWorkflowVersionStepSchema,
   updateWorkflowVersionPositionsSchema,
   updateWorkflowVersionStepSchema,
-} from './workflow-tool-schemas';
+} from 'src/modules/workflow/workflow-tools/schemas/workflow-tool-schemas';
+import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 
 @Injectable()
 export class WorkflowToolWorkspaceService {
