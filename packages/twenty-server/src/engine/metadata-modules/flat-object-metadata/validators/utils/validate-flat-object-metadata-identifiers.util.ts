@@ -1,19 +1,19 @@
 import { t } from '@lingui/core/macro';
 import {
-  isDefined,
-  isLabelIdentifierFieldMetadataTypes,
+    isDefined,
+    isLabelIdentifierFieldMetadataTypes,
 } from 'twenty-shared/utils';
 
+import { type FailedFlatObjectMetadataValidation } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-  ObjectMetadataException,
-  ObjectMetadataExceptionCode,
+    ObjectMetadataExceptionCode
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 
 export const validateFlatObjectMetadataIdentifiers = (
   flatObjectMetadata: FlatObjectMetadata,
 ) => {
-  const errors: ObjectMetadataException[] = [];
+  const errors: FailedFlatObjectMetadataValidation[] = [];
 
   const { labelIdentifierFieldMetadataId, imageIdentifierFieldMetadataId } =
     flatObjectMetadata;
@@ -25,25 +25,23 @@ export const validateFlatObjectMetadataIdentifiers = (
     );
 
     if (!isDefined(flatFieldMetadata)) {
-      errors.push(
-        new ObjectMetadataException(
-          'labelIdentifierFieldMetadataId validation failed: related field metadata not found',
-          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-          {
-            userFriendlyMessage: t`Field declared as label identifier not found`,
-          },
-        ),
-      );
+      errors.push({
+        error: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        message: 'labelIdentifierFieldMetadataId validation failed: related field metadata not found',
+        userFriendlyMessage: t`Field declared as label identifier not found`,
+        id: flatObjectMetadata.id,
+        nameSingular: flatObjectMetadata.nameSingular,
+        namePlural: flatObjectMetadata.namePlural,
+      });
     } else if (!isLabelIdentifierFieldMetadataTypes(flatFieldMetadata.type)) {
-      errors.push(
-        new ObjectMetadataException(
-          'labelIdentifierFieldMetadataId validation failed: field type not compatible',
-          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-          {
-            userFriendlyMessage: t`Field cannot be used as label identifier`,
-          },
-        ),
-      );
+      errors.push({
+        error: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        message: 'labelIdentifierFieldMetadataId validation failed: field type not compatible',
+        userFriendlyMessage: t`Field cannot be used as label identifier`,
+        id: flatObjectMetadata.id,
+        nameSingular: flatObjectMetadata.nameSingular,
+        namePlural: flatObjectMetadata.namePlural,
+      });
     }
   }
 
@@ -54,15 +52,14 @@ export const validateFlatObjectMetadataIdentifiers = (
     );
 
     if (!isDefined(relatedFlatFieldMetadata)) {
-      errors.push(
-        new ObjectMetadataException(
-          'imageIdentifierFieldMetadataId validation failed: related field metadata not found',
-          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-          {
-            userFriendlyMessage: t`Field declared as image identifier not found`,
-          },
-        ),
-      );
+      errors.push({
+        error: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        message: 'imageIdentifierFieldMetadataId validation failed: related field metadata not found',
+        userFriendlyMessage: t`Field declared as image identifier not found`,
+        id: flatObjectMetadata.id,
+        nameSingular: flatObjectMetadata.nameSingular,
+        namePlural: flatObjectMetadata.namePlural,
+      });
     }
   }
 
