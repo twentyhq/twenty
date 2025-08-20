@@ -6,6 +6,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
+import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
@@ -14,18 +15,17 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MKT_ORDER_ITEM_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
+import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
 import { MktProductWorkspaceEntity } from 'src/mkt-core/product/standard-objects/mkt-product.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const SEARCH_FIELDS_FOR_ORDER_ITEM: FieldTypeAndNameMetadata[] = [
   { name: 'name', type: FieldMetadataType.TEXT },
@@ -67,6 +67,7 @@ export class MktOrderItemWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Quantity of the product`,
     icon: 'IconNumbers',
   })
+  @WorkspaceIsNullable()
   quantity: number;
 
   @WorkspaceField({
@@ -78,6 +79,51 @@ export class MktOrderItemWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   unitPrice?: number;
+
+  @WorkspaceField({
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.snapshotProductName,
+    type: FieldMetadataType.TEXT,
+    label: msg`Snapshot Product Name`,
+    description: msg`Snapshot product name`,
+  })
+  @WorkspaceIsNullable()
+  snapshotProductName: string;
+
+  @WorkspaceField({
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.unitName,
+    type: FieldMetadataType.TEXT,
+    label: msg`Unit Name`,
+    description: msg`Unit name`,
+  })
+  @WorkspaceIsNullable()
+  unitName: string;
+
+  @WorkspaceField({
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.taxPercentage,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Tax Percentage`,
+    description: msg`Tax percentage for this line item`,
+  })
+  @WorkspaceIsNullable()
+  taxPercentage: number;
+
+  @WorkspaceField({
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.taxAmount,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Tax Amount`,
+    description: msg`Tax amount for this line item`,
+  })
+  @WorkspaceIsNullable()
+  taxAmount: number;
+
+  @WorkspaceField({
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.totalAmountWithTax,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Total Amount with Tax`,
+    description: msg`Total amount with tax for this line item`,
+  })
+  @WorkspaceIsNullable()
+  totalAmountWithTax: number;
 
   @WorkspaceField({
     standardId: MKT_ORDER_ITEM_FIELD_IDS.totalPrice,
