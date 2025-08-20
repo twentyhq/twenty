@@ -1,8 +1,10 @@
+import { SetMetadata } from '@nestjs/common';
+
 import {
   type ExtractAction,
   type WorkspaceMigrationActionTypeV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
-import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/decorators/workspace-migration-runner-action-handler.decorator';
+import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/constants/workspace-migration-action-handler-metadata-key.constant';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 
 export interface WorkspaceMigrationRunnerActionHandlerService<
@@ -35,11 +37,22 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   }
 }
 
-export function createWorkspaceMigrationRunnerActionHandler<
-  T extends WorkspaceMigrationActionTypeV2,
->(actionType: T) {
-  @WorkspaceMigrationRunnerActionHandler(actionType)
-  abstract class ActionServiceBase extends BaseWorkspaceMigrationRunnerActionHandlerService<T> {}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Constructor<T = {}> = new (...args: any[]) => T;
 
-  return ActionServiceBase;
+export function WorkspaceMigrationRunnerActionHandler<
+  T extends WorkspaceMigrationActionTypeV2,
+>(
+  actionType: T,
+): Constructor<BaseWorkspaceMigrationRunnerActionHandlerService<T>> {
+  abstract class ActionHandlerService extends BaseWorkspaceMigrationRunnerActionHandlerService<T> {}
+
+  SetMetadata(
+    WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY,
+    actionType,
+  )(ActionHandlerService);
+
+  return ActionHandlerService as Constructor<
+    BaseWorkspaceMigrationRunnerActionHandlerService<T>
+  >;
 }

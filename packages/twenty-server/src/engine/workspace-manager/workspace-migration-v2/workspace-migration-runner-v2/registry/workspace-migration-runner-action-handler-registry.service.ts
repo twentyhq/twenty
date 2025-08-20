@@ -8,7 +8,7 @@ import {
   type WorkspaceMigrationActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/action-handlers/workspace-schema-migration-runner-action-handlers.module';
-import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/decorators/workspace-migration-runner-action-handler.decorator';
+import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/constants/workspace-migration-action-handler-metadata-key.constant';
 import {
   WorkspaceSchemaMigrationException,
   WorkspaceSchemaMigrationExceptionCode,
@@ -41,7 +41,7 @@ export class WorkspaceMigrationRunnerActionHandlerRegistryService
       if (!instance || !metatype) return;
 
       const actionType = Reflect.getMetadata(
-        WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA,
+        WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA_KEY,
         metatype,
       );
 
