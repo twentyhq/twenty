@@ -1,9 +1,8 @@
-import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { FlatFieldMetadataIdObjectIdAndName } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-id-object-id-and-name.type';
+import { type FieldMetadataMinimalInformation } from 'src/engine/metadata-modules/flat-field-metadata/types/field-metadata-minimal-information.type';
+import { FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 
 export type FailedFlatFieldMetadataValidation = {
-  error: FieldMetadataExceptionCode; // strictly type
-  message: string;
-  userFriendlyMessage?: string;
-  value?: any; // TODO use generic
-} & Partial<FlatFieldMetadataIdObjectIdAndName>;
+  type: 'field';
+  errors: FlatFieldMetadataValidationError[];
+  fieldMinimalInformation: Partial<FieldMetadataMinimalInformation>;
+};

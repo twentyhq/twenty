@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'class-validator';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { t } from '@lingui/core/macro';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
@@ -11,8 +11,8 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { ValidateOneFieldMetadataArgs } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
-import { FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { type FlatFieldMetadataTypeValidator } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
+import { FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { isEnumValidateOneFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-validate-one-field-metadata-args.util';
 import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util';
 import { validateRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-flat-field-metadata.util';
@@ -52,10 +52,7 @@ export class FlatFieldMetadataTypeValidatorService {
       LINKS: async (_args) => {
         return [];
       },
-      MORPH_RELATION: async ({
-        workspaceId,
-        flatFieldMetadataToValidate: { id, objectMetadataId, name },
-      }) => {
+      MORPH_RELATION: async ({ workspaceId }) => {
         const isMorphRelationEnabled =
           await this.featureFlagService.isFeatureEnabled(
             FeatureFlagKey.IS_MORPH_RELATION_ENABLED,
@@ -65,12 +62,8 @@ export class FlatFieldMetadataTypeValidatorService {
         if (!isMorphRelationEnabled) {
           return [
             {
-              error:
-                FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION,
-              id,
+              code: FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION,
               message: 'Morph relation feature flag is disabled',
-              name,
-              objectMetadataId,
               userFriendlyMessage: t`Morh relation fields are disabled for your workspace`,
             },
           ];
@@ -149,7 +142,7 @@ export class FlatFieldMetadataTypeValidatorService {
     workspaceId,
     otherFlatObjectMetadataMapsToValidate,
   }: ValidateOneFieldMetadataArgs<T>): Promise<
-    FailedFlatFieldMetadataValidation[]
+    FlatFieldMetadataValidationError[]
   > {
     const fieldMetadataTypeValidator =
       this.FIELD_METADATA_TYPE_VALIDATOR_HASHMAP[
@@ -159,12 +152,9 @@ export class FlatFieldMetadataTypeValidatorService {
     if (!isDefined(fieldMetadataTypeValidator)) {
       return [
         {
-          error:
-            FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION,
-          id: flatFieldMetadataToValidate.id,
+          code: FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION,
           message: `Unsupported field metadata type ${flatFieldMetadataToValidate.type}`,
-          name: flatFieldMetadataToValidate.name,
-          objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
+          value: flatFieldMetadataToValidate.type,
           userFriendlyMessage: t`Unsupported field metadata type ${flatFieldMetadataToValidate.type}`,
         },
       ];

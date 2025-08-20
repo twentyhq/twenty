@@ -17,10 +17,8 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type ValidateOneFieldMetadataArgs } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
-import {
-  FailedFlatFieldMetadataValidation,
-} from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
-import { FlatFieldMetadataIdObjectIdAndName } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-id-object-id-and-name.type';
+import { type FieldMetadataMinimalInformation } from 'src/engine/metadata-modules/flat-field-metadata/types/field-metadata-minimal-information.type';
+import { FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { runFlatFieldMetadataValidators } from 'src/engine/metadata-modules/flat-field-metadata/utils/run-flat-field-metadata-validators.util';
 import { type FlatMetadataValidator } from 'src/engine/metadata-modules/types/flat-metadata-validator.type';
@@ -30,13 +28,7 @@ import {
 } from 'src/engine/metadata-modules/utils/validate-database-identifier-length.utils';
 import { isSnakeCaseString } from 'src/utils/is-snake-case-string';
 
-const validateMetadataOptionId = ({
-  fieldMetadataNameIdObjectMetadataId,
-  sanitizedId,
-}: {
-  sanitizedId?: string;
-  fieldMetadataNameIdObjectMetadataId: FlatFieldMetadataIdObjectIdAndName;
-}) => {
+const validateMetadataOptionId = (sanitizedId?: string) => {
   const validators: FlatMetadataValidator<string>[] = [
     {
       validator: (id) => !isDefined(id),
@@ -51,17 +43,10 @@ const validateMetadataOptionId = ({
   return runFlatFieldMetadataValidators({
     elementToValidate: sanitizedId,
     validators,
-    fieldMetadataNameIdObjectMetadataId,
   });
 };
 
-const validateMetadataOptionLabel = ({
-  fieldMetadataNameIdObjectMetadataId,
-  sanitizedLabel,
-}: {
-  sanitizedLabel: string;
-  fieldMetadataNameIdObjectMetadataId: FlatFieldMetadataIdObjectIdAndName;
-}) => {
+const validateMetadataOptionLabel = (sanitizedLabel: string) => {
   const validators: FlatMetadataValidator<string>[] = [
     {
       validator: (label) => !isDefined(label),
@@ -87,18 +72,11 @@ const validateMetadataOptionLabel = ({
 
   return runFlatFieldMetadataValidators({
     elementToValidate: sanitizedLabel,
-    fieldMetadataNameIdObjectMetadataId,
     validators,
   });
 };
 
-const validateMetadataOptionValue = ({
-  fieldMetadataNameIdObjectMetadataId,
-  sanitizedValue,
-}: {
-  sanitizedValue: string;
-  fieldMetadataNameIdObjectMetadataId: FlatFieldMetadataIdObjectIdAndName;
-}) => {
+const validateMetadataOptionValue = (sanitizedValue: string) => {
   const validators: FlatMetadataValidator<string>[] = [
     {
       validator: (value) => !isDefined(value),
@@ -121,17 +99,12 @@ const validateMetadataOptionValue = ({
   return runFlatFieldMetadataValidators({
     elementToValidate: sanitizedValue,
     validators,
-    fieldMetadataNameIdObjectMetadataId,
   });
 };
 
-const validateDuplicates = ({
-  fieldMetadataNameIdObjectMetadataId,
-  options,
-}: {
-  options: FieldMetadataOptions<EnumFieldMetadataType>;
-  fieldMetadataNameIdObjectMetadataId: FlatFieldMetadataIdObjectIdAndName;
-}) => {
+const validateDuplicates = (
+  options: FieldMetadataOptions<EnumFieldMetadataType>,
+) => {
   const fieldsToCheckForDuplicates = [
     'position',
     'id',
@@ -153,73 +126,59 @@ const validateDuplicates = ({
   return runFlatFieldMetadataValidators({
     elementToValidate: options,
     validators: duplicatedValidators,
-    fieldMetadataNameIdObjectMetadataId,
   });
 };
 
 const validateFieldMetadataInputOptions = <T extends EnumFieldMetadataType>(
   flatFieldMetadata: FlatFieldMetadata<T>,
-): FailedFlatFieldMetadataValidation[] => {
+): FlatFieldMetadataValidationError[] => {
   const { options } = flatFieldMetadata;
 
-  const fieldMetadataNameIdObjectMetadataId: FlatFieldMetadataIdObjectIdAndName =
+  const fieldMetadataNameIdObjectMetadataId: FieldMetadataMinimalInformation =
     {
       id: flatFieldMetadata.id,
       objectMetadataId: flatFieldMetadata.objectMetadataId,
       name: flatFieldMetadata.name,
     };
+
   if (!isDefined(options) || options.length === 0) {
     return [
       {
-        error: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: 'Options are required for enum fields',
-        ...fieldMetadataNameIdObjectMetadataId,
         userFriendlyMessage: t`Options are required for enum fields`,
+        value: options,
       },
     ];
   }
 
   const optionsValidationErrors = options.flatMap((option) =>
     [
-      validateMetadataOptionId({
-        sanitizedId: option.id,
-        fieldMetadataNameIdObjectMetadataId,
-      }),
-      validateMetadataOptionValue({
-        sanitizedValue: option.value,
-        fieldMetadataNameIdObjectMetadataId,
-      }),
-      validateMetadataOptionLabel({
-        sanitizedLabel: option.label,
-        fieldMetadataNameIdObjectMetadataId,
-      }),
+      validateMetadataOptionId(option.id),
+      validateMetadataOptionValue(option.value),
+      validateMetadataOptionLabel(option.label),
     ].flat(),
   );
 
-  const duplicatedValidationErrors = validateDuplicates({
-    options,
-    fieldMetadataNameIdObjectMetadataId,
-  });
+  const duplicatedValidationErrors = validateDuplicates(options);
 
   return [...optionsValidationErrors, ...duplicatedValidationErrors];
 };
 
 const validateSelectDefaultValue = ({
   defaultValue,
-  fieldMetadataNameIdObjectMetadataId,
   options,
 }: {
   options: FieldMetadataOptions<EnumFieldMetadataType>;
   defaultValue: string | string[];
-  fieldMetadataNameIdObjectMetadataId: FlatFieldMetadataIdObjectIdAndName;
-}): FailedFlatFieldMetadataValidation[] => {
+}): FlatFieldMetadataValidationError[] => {
   if (typeof defaultValue !== 'string') {
     return [
       {
-        error: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: `Default value for select must be a string got ${defaultValue}`,
         userFriendlyMessage: t`Default value must be a string`,
-        ...fieldMetadataNameIdObjectMetadataId,
+        value: defaultValue,
       },
     ];
   }
@@ -241,26 +200,23 @@ const validateSelectDefaultValue = ({
   return runFlatFieldMetadataValidators({
     elementToValidate: defaultValue,
     validators,
-    fieldMetadataNameIdObjectMetadataId,
   });
 };
 
 const validateMultiSelectDefaultValue = ({
-  fieldMetadataNameIdObjectMetadataId,
   multiSelectDefaultValue,
   options,
 }: {
   options: FieldMetadataOptions<EnumFieldMetadataType>;
   multiSelectDefaultValue: unknown;
-  fieldMetadataNameIdObjectMetadataId: FlatFieldMetadataIdObjectIdAndName;
-}): FailedFlatFieldMetadataValidation[] => {
+}): FlatFieldMetadataValidationError[] => {
   if (!Array.isArray(multiSelectDefaultValue)) {
     return [
       {
-        error: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         userFriendlyMessage: t`Multi-select field default value must be an array`,
         message: `Default value for multi-select must be an array got ${multiSelectDefaultValue}`,
-        ...fieldMetadataNameIdObjectMetadataId,
+        value: multiSelectDefaultValue,
       },
     ];
   }
@@ -280,13 +236,11 @@ const validateMultiSelectDefaultValue = ({
     runFlatFieldMetadataValidators({
       elementToValidate: multiSelectDefaultValue,
       validators,
-      fieldMetadataNameIdObjectMetadataId,
     }),
     multiSelectDefaultValue.flatMap((defaultValue) =>
       validateSelectDefaultValue({
         defaultValue,
         options,
-        fieldMetadataNameIdObjectMetadataId,
       }),
     ),
   ].flat();
@@ -296,31 +250,21 @@ const validateFieldMetadataDefaultValue = ({
   defaultValue,
   options,
   type,
-  name,
-  id,
-  objectMetadataId,
 }: Omit<FlatFieldMetadata<EnumFieldMetadataType>, 'defaultValue'> &
   NonNullableRequired<
     Pick<FlatFieldMetadata<EnumFieldMetadataType>, 'defaultValue'>
   >) => {
-  const fieldMetadataNameIdObjectMetadataId = {
-    id,
-    name,
-    objectMetadataId,
-  };
   switch (type) {
     case FieldMetadataType.SELECT:
     case FieldMetadataType.RATING:
       return validateSelectDefaultValue({
         defaultValue,
         options,
-        fieldMetadataNameIdObjectMetadataId,
       });
     case FieldMetadataType.MULTI_SELECT:
       return validateMultiSelectDefaultValue({
         multiSelectDefaultValue: defaultValue,
         options,
-        fieldMetadataNameIdObjectMetadataId,
       });
     default: {
       assertUnreachable(
@@ -333,7 +277,7 @@ const validateFieldMetadataDefaultValue = ({
 
 export const validateEnumSelectFlatFieldMetadata = ({
   flatFieldMetadataToValidate,
-}: ValidateOneFieldMetadataArgs<EnumFieldMetadataType>): FailedFlatFieldMetadataValidation[] => {
+}: ValidateOneFieldMetadataArgs<EnumFieldMetadataType>): FlatFieldMetadataValidationError[] => {
   const optionsValidationErrors = validateFieldMetadataInputOptions(
     flatFieldMetadataToValidate,
   );
