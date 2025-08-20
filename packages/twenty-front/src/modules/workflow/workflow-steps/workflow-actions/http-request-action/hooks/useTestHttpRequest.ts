@@ -11,7 +11,6 @@ import {
   type MutationTestHttpRequestArgs,
   type TestHttpResponseDto,
 } from '~/generated-metadata/graphql';
-import { type BodyType } from '../constants/HttpRequest';
 
 const convertFlatVariablesToNestedContext = (flatVariables: {
   [variablePath: string]: any;
@@ -81,49 +80,42 @@ export const useTestHttpRequest = (actionId: string) => {
     headers: Record<string, string>,
     method: string,
     body?: any,
-    bodyType?: BodyType,
   ): Promise<HttpRequestTestData['output']> => {
-    let defaultContentType: string | undefined;
-    const isMethodWithBodyAndNoEmpty =
-      ['POST', 'PUT', 'PATCH'].includes(method) && isDefined(body);
-    if (isMethodWithBodyAndNoEmpty && isDefined(bodyType)) {
-      if (bodyType === 'rawJson' || bodyType === 'keyValue') {
-        defaultContentType = 'application/json';
-      } else if (bodyType === 'Text') {
-        defaultContentType = 'text/plain';
-      }
-    }
     const requestOptions: RequestInit = {
       method: method,
-      headers: {
-        ...(defaultContentType ? { 'content-type': defaultContentType } : {}),
-        ...headers,
-      },
+      headers: headers as Record<string, string>,
     };
-
-    if (isMethodWithBodyAndNoEmpty) {
-      requestOptions.body =
-        typeof body === 'string' ? body : JSON.stringify(body);
+    if (['POST', 'PUT', 'PATCH'].includes(method)) {
+      if (body !== undefined) {
+        if (typeof body === 'string') {
+          requestOptions.body = body;
+        } else {
+          requestOptions.body = JSON.stringify(body);
+        }
+      }
     }
-    const result = await fetch(url, requestOptions);
+
+    const response = await fetch(url as string, requestOptions);
 
     let responseData: string;
-    const contentType = result.headers.get('content-type');
+    const contentType = response.headers.get('content-type');
 
-    if (contentType?.includes('application/json') === true) {
-      const jsonData = await result.json();
+    if (contentType !== null && contentType.includes('application/json')) {
+      const jsonData = await response.json();
       responseData = JSON.stringify(jsonData, null, 2);
     } else {
-      responseData = await result.text();
+      responseData = await response.text();
     }
 
     const responseHeaders: Record<string, string> = {};
-    result.headers.forEach((value, key) => (responseHeaders[key] = value));
+    response.headers.forEach((value, key) => {
+      responseHeaders[key] = value;
+    });
 
     return {
       data: responseData,
-      status: result.status,
-      statusText: result.statusText,
+      status: response.status,
+      statusText: response.statusText,
       headers: responseHeaders,
       error: undefined,
     };
@@ -168,7 +160,6 @@ export const useTestHttpRequest = (actionId: string) => {
           substitutedHeaders as Record<string, string>,
           httpRequestFormData.method,
           substitutedBody,
-          httpRequestFormData.bodyType,
         );
       }
       const contentType = output?.headers?.['content-type'];
