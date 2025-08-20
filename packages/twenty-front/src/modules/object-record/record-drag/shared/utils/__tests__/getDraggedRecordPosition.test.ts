@@ -1,4 +1,4 @@
-import { getDraggedRecordPosition } from '../getDraggedRecordPosition';
+import { getDraggedRecordPosition } from '@/object-record/record-drag/shared/utils/getDraggedRecordPosition';
 
 describe('getDraggedRecordPosition', () => {
   it('when both records defined and positive, should return the average of the two positions', () => {
