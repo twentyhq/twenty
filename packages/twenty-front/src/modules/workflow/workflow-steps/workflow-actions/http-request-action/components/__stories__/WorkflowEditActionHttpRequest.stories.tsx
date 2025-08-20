@@ -55,7 +55,7 @@ const CONFIGURED_ACTION: WorkflowHttpRequestAction = {
         name: 'Test',
         value: 123,
       },
-      bodyType: 'keyValue',
+      bodyType: 'rawJson',
     },
     outputSchema: {},
     errorHandlingOptions: {
@@ -224,7 +224,7 @@ export const WithObjectStringBody: Story = {
   "oh": "backend",
   "amazing": "database {{${MOCKED_STEP_ID}.salary}}"
 }`,
-          bodyType: 'rawJson',
+          bodyType: 'keyValue',
         },
         outputSchema: {},
         errorHandlingOptions: {

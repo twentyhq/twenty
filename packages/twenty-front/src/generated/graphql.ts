@@ -3419,7 +3419,7 @@ export type WorkflowAction = {
 };
 
 export type WorkflowHttpRequestActionInputDto = {
-  /** input for test http request */
+  /** Input for HTTP request workflow action testing */
   input: Scalars['JSON'];
 };
 

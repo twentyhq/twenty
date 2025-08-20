@@ -3,6 +3,7 @@ import {
   WorkflowStepExecutionResult,
 } from '@/workflow/components/WorkflowStepExecutionResult';
 import type { HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
+import { isDefined } from 'twenty-shared/utils';
 
 export const HttpRequestExecutionResult = ({
   httpRequestTestData,
@@ -15,13 +16,13 @@ export const HttpRequestExecutionResult = ({
     httpRequestTestData.output.data || httpRequestTestData.output.error || '';
 
   const isSuccess =
-    httpRequestTestData.output.status !== undefined &&
+    isDefined(httpRequestTestData.output.status) &&
     httpRequestTestData.output.status >= 200 &&
     httpRequestTestData.output.status < 400;
 
   const isError =
-    httpRequestTestData.output.error !== undefined ||
-    (httpRequestTestData.output.status !== undefined &&
+    isDefined(httpRequestTestData.output.error) ||
+    (isDefined(httpRequestTestData.output.status) &&
       httpRequestTestData.output.status >= 400);
 
   const status: ExecutionStatus = {
