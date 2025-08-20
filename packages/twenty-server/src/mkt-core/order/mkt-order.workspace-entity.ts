@@ -23,10 +23,10 @@ import {
 import { MKT_ORDER_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktContractWorkspaceEntity } from 'src/mkt-core/contract/mkt-contract.workspace-entity';
+import { MktInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/mkt-invoice.workspace-entity';
 import { MktLicenseWorkspaceEntity } from 'src/mkt-core/license/mkt-license.workspace-entity';
 import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { MktInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/mkt-invoice.workspace-entity';
 
 import { ORDER_STATUS_OPTIONS, OrderStatus } from './constants';
 
@@ -105,6 +105,30 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   note?: string;
+
+  @WorkspaceField({
+    standardId: MKT_ORDER_FIELD_IDS.subtotal,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Subtotal`,
+  })
+  @WorkspaceIsNullable()
+  subtotal?: number;
+
+  @WorkspaceField({
+    standardId: MKT_ORDER_FIELD_IDS.tax,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Tax`,
+  })
+  @WorkspaceIsNullable()
+  tax?: number;
+
+  @WorkspaceField({
+    standardId: MKT_ORDER_FIELD_IDS.discount,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Discount`,
+  })
+  @WorkspaceIsNullable()
+  discount?: number;
 
   @WorkspaceField({
     standardId: MKT_ORDER_FIELD_IDS.requireContract,

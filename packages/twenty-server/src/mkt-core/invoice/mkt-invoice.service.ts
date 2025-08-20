@@ -2,15 +2,30 @@ import { Injectable } from '@nestjs/common';
 
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { MKT_INVOICE_STATUS } from 'src/mkt-core/invoice/mkt-invoice.workspace-entity';
+import { SInvoiceIntegrationService } from 'src/mkt-core/invoice/s-invoice.integration.service';
 import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
 
-type InputData = {
-  id: string;
+type sInvoiceType = {
+  id?: string;
   name?: string;
-  mktOrderId?: string;
-  status?: string;
   amount?: string;
+  status?: string;
+  vat?: number;
+  totalAmount?: number;
+  sInvoiceCode?: string;
+  sentAt?: string;
+  supplierTaxCode?: string | null;
+  invoiceType?: string;
+  templateCode?: string;
+  invoiceSeries?: string;
+  invoiceNo?: string;
+  transactionUuid?: string;
+  issueDate?: string;
+  totalWithoutTax?: number;
+  totalTax?: number;
+  totalWithTax?: number;
+  taxInWords?: string;
+  mktOrderId?: string;
 };
 
 @Injectable()
@@ -18,11 +33,12 @@ export class MktInvoiceService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
+    private readonly sInvoiceIntegrationService: SInvoiceIntegrationService,
   ) {}
 
   async customizeGraphQLRequest(
     operationName: string,
-    variables: { input: InputData },
+    variables: { input: sInvoiceType },
   ): Promise<void> {
     if (!variables || !variables.input) {
       return;
@@ -32,19 +48,17 @@ export class MktInvoiceService {
     }
   }
 
-  async customizeMktInvoiceRequest(input: InputData): Promise<void> {
+  async customizeMktInvoiceRequest(input: sInvoiceType): Promise<void> {
     if (input.name === '' || !input.name) {
       if (input.mktOrderId) {
         input.name = await this.generateInvoiceNameFromOrder(input.mktOrderId);
+        const sInvoice: sInvoiceType =
+          await this.sInvoiceIntegrationService.createInvoiceForOrder(
+            input.mktOrderId,
+          );
+
+        Object.assign(input, sInvoice);
       }
-    }
-
-    if (!input.status) {
-      input.status = MKT_INVOICE_STATUS.DRAFT;
-    }
-
-    if (!input.amount && input.mktOrderId) {
-      input.amount = '0';
     }
   }
 
