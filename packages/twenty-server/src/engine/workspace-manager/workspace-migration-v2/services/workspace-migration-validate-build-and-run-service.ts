@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { MultipleMetadataValidationErrors } from 'src/engine/core-modules/error/multiple-metadata-validation-errors';
 import {
+  FailedWorkspaceMigrationBuildResult,
   WorkspaceMigrationBuildArgs,
   WorkspaceMigrationBuilderV2Service,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
@@ -22,10 +22,9 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     private readonly workspaceMigrationRunnerV2Service: WorkspaceMigrationRunnerV2Service,
   ) {}
 
-  public async validateBuildAndRunWorkspaceMigration({
-    errorMessage,
-    ...builderArgs
-  }: WorkspaceMigrationBuildArgs & { errorMessage: string }) {
+  public async validateBuildAndRunWorkspaceMigration(
+    builderArgs: WorkspaceMigrationBuildArgs,
+  ): Promise<FailedWorkspaceMigrationBuildResult | undefined> {
     const validateAndBuildResult = await this.workspaceMigrationBuilderV2Service
       .validateAndBuild(builderArgs)
       .catch((error) => {
@@ -37,10 +36,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       });
 
     if (validateAndBuildResult.status === 'fail') {
-      throw new MultipleMetadataValidationErrors(
-        validateAndBuildResult.errors,
-        errorMessage,
-      );
+      return validateAndBuildResult;
     }
 
     await this.workspaceMigrationRunnerV2Service

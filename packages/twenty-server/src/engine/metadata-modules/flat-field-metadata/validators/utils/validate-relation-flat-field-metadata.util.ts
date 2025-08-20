@@ -1,40 +1,40 @@
+import { t } from '@lingui/core/macro';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
-import {
-  FieldMetadataException,
-  FieldMetadataExceptionCode,
-} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type ValidateOneFieldMetadataArgs } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
-import { type FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 
 export const validateRelationFlatFieldMetadata = async ({
   existingFlatObjectMetadataMaps,
-  flatFieldMetadataToValidate: {
-    relationTargetFieldMetadataId,
-    relationTargetObjectMetadataId,
-  },
+  flatFieldMetadataToValidate,
   otherFlatObjectMetadataMapsToValidate,
 }: ValidateOneFieldMetadataArgs<FieldMetadataType.RELATION>): Promise<
-  FailedFlatFieldMetadataValidationExceptions[]
+  FlatFieldMetadataValidationError[]
 > => {
+  const { relationTargetFieldMetadataId, relationTargetObjectMetadataId } =
+    flatFieldMetadataToValidate;
+
   const uuidsValidation = [
     relationTargetObjectMetadataId,
     relationTargetFieldMetadataId,
-  ].flatMap<FieldMetadataException>((id) =>
+  ].flatMap<FlatFieldMetadataValidationError>((id) =>
     isValidUuid(id)
       ? []
-      : new FieldMetadataException(
-          `Invalid uuid ${id}`,
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        ),
+      : {
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          message: `Invalid uuid ${id}`,
+          userFriendlyMessage: t`Invalid uuid ${id}`,
+          value: id,
+        },
   );
 
   if (uuidsValidation.length > 0) {
     return uuidsValidation;
   }
 
-  const errors: FailedFlatFieldMetadataValidationExceptions[] = [];
+  const errors: FlatFieldMetadataValidationError[] = [];
 
   const targetRelationFlatObjectMetadata =
     otherFlatObjectMetadataMapsToValidate?.byId[
@@ -42,14 +42,14 @@ export const validateRelationFlatFieldMetadata = async ({
     ] ?? existingFlatObjectMetadataMaps.byId[relationTargetObjectMetadataId];
 
   if (!isDefined(targetRelationFlatObjectMetadata)) {
-    errors.push(
-      new FieldMetadataException(
-        isDefined(otherFlatObjectMetadataMapsToValidate)
-          ? 'Relation target object metadata not found in both existing and about to be created object metadatas'
-          : 'Relation target object metadata not found',
-        FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-      ),
-    );
+    errors.push({
+      code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      message: isDefined(otherFlatObjectMetadataMapsToValidate)
+        ? 'Relation target object metadata not found in both existing and about to be created object metadatas'
+        : 'Relation target object metadata not found',
+      userFriendlyMessage: t`Object targeted by the relation not found`,
+      value: relationTargetObjectMetadataId,
+    });
   }
 
   const targetRelationFlatFieldMetadata =
@@ -59,14 +59,14 @@ export const validateRelationFlatFieldMetadata = async ({
     isDefined(targetRelationFlatObjectMetadata) &&
     !isDefined(targetRelationFlatFieldMetadata)
   ) {
-    errors.push(
-      new FieldMetadataException(
-        isDefined(otherFlatObjectMetadataMapsToValidate)
-          ? 'Relation field target metadata not found in both existing and about to be created field metadatas'
-          : 'Relation field target metadata not found',
-        FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
-      ),
-    );
+    errors.push({
+      code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+      message: isDefined(otherFlatObjectMetadataMapsToValidate)
+        ? 'Relation field target metadata not found in both existing and about to be created field metadatas'
+        : 'Relation field target metadata not found',
+      userFriendlyMessage: t`Relation field target metadata not found`,
+      value: relationTargetFieldMetadataId,
+    });
   }
 
   return errors;
