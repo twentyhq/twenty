@@ -57,19 +57,11 @@ const stringify = (value: any): string => {
   return JSON.stringify(value);
 };
 
-const parseJSON = (value: string): object => {
-  try {
-    return JSON.parse(value);
-  } catch {
-    throw new ValidationError(`Value is not valid JSON: ${value}`);
-  }
-};
-
 export const RawJSONScalar = new GraphQLScalarType({
   name: 'RawJSONScalar',
   description:
     'The `RawJSONScalar` scalar type represents JSON values, but stringifies inputs and parses outputs.',
-  serialize: parseJSON,
+  serialize: (value: unknown) => value,
   parseValue: stringify,
   parseLiteral: (ast, variables) => {
     if (ast.kind === Kind.STRING) {

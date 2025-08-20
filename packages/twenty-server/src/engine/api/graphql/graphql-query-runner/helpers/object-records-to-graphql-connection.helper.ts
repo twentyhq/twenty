@@ -376,8 +376,6 @@ export class ObjectRecordsToGraphqlConnectionHelper {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private formatFieldValue(value: any, fieldType: FieldMetadataType) {
     switch (fieldType) {
-      case FieldMetadataType.RAW_JSON:
-        return value ? JSON.stringify(value) : value;
       case FieldMetadataType.DATE:
       case FieldMetadataType.DATE_TIME:
         return value instanceof Date ? value.toISOString() : value;
