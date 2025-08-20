@@ -15,7 +15,10 @@ export const useFilteredObjectMetadataItems = () => {
   );
 
   const activeObjectMetadataItems = useMemo(
-    () => objectMetadataItems.filter(({ isActive }) => isActive),
+    () =>
+      objectMetadataItems
+        .filter(({ isActive }) => isActive)
+        .sort((a, b) => a.labelSingular.localeCompare(b.labelSingular)),
     [objectMetadataItems],
   );
 

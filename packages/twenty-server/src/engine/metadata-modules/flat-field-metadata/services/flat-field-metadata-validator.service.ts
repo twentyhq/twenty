@@ -16,6 +16,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
@@ -28,6 +29,7 @@ import {
   InvalidMetadataException,
   InvalidMetadataExceptionCode,
 } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
+import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 
 export type ValidateOneFieldMetadataArgs<
   T extends FieldMetadataType = FieldMetadataType,
@@ -215,7 +217,18 @@ export class FlatFieldMetadataValidatorService {
       }
     }
 
-    if (!flatFieldMetadataToDelete.isCustom) {
+    const isRelationFieldAndRelationTargetObjectMetadataHasBeenDeleted =
+      isRelationFlatFieldMetadata(flatFieldMetadataToDelete) &&
+      !isDefined(
+        existingFlatObjectMetadataMaps.byId[
+          flatFieldMetadataToDelete.relationTargetObjectMetadataId
+        ],
+      );
+
+    if (
+      isStandardMetadata(flatFieldMetadataToDelete) &&
+      !isRelationFieldAndRelationTargetObjectMetadataHasBeenDeleted
+    ) {
       errors.push(
         new FieldMetadataException(
           "Standard Fields can't be deleted",
@@ -224,7 +237,10 @@ export class FlatFieldMetadataValidatorService {
       );
     }
 
-    if (flatFieldMetadataToDelete.isActive) {
+    if (
+      flatFieldMetadataToDelete.isActive &&
+      !isRelationFieldAndRelationTargetObjectMetadataHasBeenDeleted
+    ) {
       errors.push(
         new FieldMetadataException(
           "Active fields can't be deleted",

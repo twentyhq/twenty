@@ -18,6 +18,7 @@ import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/Workflo
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
+import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
@@ -181,7 +182,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
           });
         }}
         Icon={getIcon(headerIcon)}
-        iconColor={theme.font.color.tertiary}
+        iconColor={getTriggerIconColor({ theme, triggerType: trigger.type })}
         initialTitle={defaultLabel}
         headerType={headerType}
         disabled={triggerOptions.readonly}

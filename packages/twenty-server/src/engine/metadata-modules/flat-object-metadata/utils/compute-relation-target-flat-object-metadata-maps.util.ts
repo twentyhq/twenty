@@ -1,6 +1,6 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type RelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/relation-field-metadata-type.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findRelationFlatFieldMetadataTargetFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
@@ -10,9 +10,7 @@ export const computeRelationTargetFlatObjectMetadataMaps = ({
   flatFieldMetadata,
   flatObjectMetadataMaps,
 }: {
-  flatFieldMetadata: FlatFieldMetadata<
-    FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
-  >;
+  flatFieldMetadata: FlatFieldMetadata<RelationFieldMetadataType>;
   flatObjectMetadataMaps: FlatObjectMetadataMaps;
 }): FlatObjectMetadataMaps | undefined => {
   const relationTargetFlatFieldMetadata =

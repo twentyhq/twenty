@@ -1,3 +1,4 @@
+import { isString } from '@sniptt/guards';
 import { type ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared/types';
 import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
@@ -14,7 +15,7 @@ import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-
 import { customAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
-import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
+import { opportunitiesTableByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view';
 import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksAssignedToMeView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me';
@@ -34,21 +35,21 @@ export const prefillCoreViews = async (
   );
 
   const customViews = customObjectMetadataItems.map((item) =>
-    customAllView(item),
+    customAllView(item, true),
   );
 
   const views = [
-    companiesAllView(objectMetadataItems),
-    peopleAllView(objectMetadataItems),
-    opportunitiesAllView(objectMetadataItems),
-    opportunitiesByStageView(objectMetadataItems),
-    notesAllView(objectMetadataItems),
-    tasksAllView(objectMetadataItems),
-    tasksAssignedToMeView(objectMetadataItems),
-    tasksByStatusView(objectMetadataItems),
-    workflowsAllView(objectMetadataItems),
-    workflowVersionsAllView(objectMetadataItems),
-    workflowRunsAllView(objectMetadataItems),
+    companiesAllView(objectMetadataItems, true),
+    peopleAllView(objectMetadataItems, true),
+    opportunitiesAllView(objectMetadataItems, true),
+    opportunitiesTableByStageView(objectMetadataItems, true),
+    notesAllView(objectMetadataItems, true),
+    tasksAllView(objectMetadataItems, true),
+    tasksAssignedToMeView(objectMetadataItems, true),
+    tasksByStatusView(objectMetadataItems, true),
+    workflowsAllView(objectMetadataItems, true),
+    workflowVersionsAllView(objectMetadataItems, true),
+    workflowRunsAllView(objectMetadataItems, true),
     ...customViews,
   ];
 
@@ -93,18 +94,20 @@ const createCoreViews = async (
       key,
       position,
       icon,
+      isCustom,
       openRecordIn,
       kanbanAggregateOperation,
       kanbanAggregateOperationFieldMetadataId,
     }) => ({
       id,
-      name,
+      name: isString(name) ? name : name.message || '',
       objectMetadataId,
       type: type === 'kanban' ? ViewType.KANBAN : ViewType.TABLE,
       key: key || undefined,
       position,
       icon,
       isCompact: false,
+      isCustom: isCustom ?? false,
       openRecordIn:
         openRecordIn === 'SIDE_PANEL'
           ? ViewOpenRecordIn.SIDE_PANEL

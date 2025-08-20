@@ -31,11 +31,7 @@ export const buildSqlColumnDefinition = (
     parts.push('UNIQUE');
   }
 
-  if (
-    isDefined(column.default) &&
-    column.default !== '' &&
-    column.type !== 'tsvector'
-  ) {
+  if (isDefined(column.default) && column.type !== 'tsvector') {
     const safeDefault = sanitizeDefaultValue(column.default);
 
     parts.push(`DEFAULT ${safeDefault}`);

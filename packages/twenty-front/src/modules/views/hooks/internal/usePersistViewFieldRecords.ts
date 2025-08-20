@@ -38,7 +38,10 @@ export const usePersistViewFieldRecords = () => {
   const apolloCoreClient = useApolloCoreClient();
 
   const createViewFieldRecords = useCallback(
-    (viewFieldsToCreate: ViewField[], view: GraphQLView) => {
+    (
+      viewFieldsToCreate: Omit<ViewField, 'definition'>[],
+      view: GraphQLView,
+    ) => {
       if (!viewFieldsToCreate.length) return;
       return Promise.all(
         viewFieldsToCreate.map((viewField) =>
@@ -80,7 +83,7 @@ export const usePersistViewFieldRecords = () => {
   );
 
   const updateViewFieldRecords = useCallback(
-    (viewFieldsToUpdate: ViewField[]) => {
+    (viewFieldsToUpdate: Omit<ViewField, 'definition'>[]) => {
       if (!viewFieldsToUpdate.length) return;
 
       return Promise.all(

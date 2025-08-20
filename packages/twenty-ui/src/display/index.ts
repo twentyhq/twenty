@@ -295,6 +295,8 @@ export {
   IconPhoto,
   IconPhotoUp,
   IconPilcrow,
+  IconPinned,
+  IconPinnedOff,
   IconPlayerPause,
   IconPlayerPlay,
   IconPlayerStop,
@@ -371,6 +373,8 @@ export {
   IconTrash,
   IconTrashOff,
   IconTrashX,
+  IconTrendingDown,
+  IconTrendingUp,
   IconTypography,
   IconUnlink,
   IconUpload,
@@ -389,8 +393,6 @@ export {
   IconWebhook,
   IconWorld,
   IconX,
-  IconPinned,
-  IconPinnedOff,
 } from './icon/components/TablerIcons';
 export { useIcons } from './icon/hooks/useIcons';
 export { IconsProvider } from './icon/providers/IconsProvider';

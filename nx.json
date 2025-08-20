@@ -104,7 +104,7 @@
       ],
       "outputs": ["{projectRoot}/coverage"],
       "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts",
+        "jestConfig": "{projectRoot}/jest.config.mjs",
         "coverage": true,
         "coverageReporters": ["text-summary"],
         "cacheDirectory": "../../.cache/jest/{projectRoot}"

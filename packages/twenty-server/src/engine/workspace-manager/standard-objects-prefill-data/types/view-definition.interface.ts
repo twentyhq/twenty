@@ -1,14 +1,17 @@
+import { type MessageDescriptor } from '@lingui/core';
+
 import { type AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { type ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 export interface ViewDefinition {
   id?: string;
-  name: string;
+  name: string | MessageDescriptor;
   objectMetadataId: string;
   type: string;
   key: string | null;
   position: number;
   icon?: string;
+  isCustom?: boolean;
   openRecordIn?: ViewOpenRecordInType;
   kanbanFieldMetadataId?: string;
   kanbanAggregateOperation?: AggregateOperations;
