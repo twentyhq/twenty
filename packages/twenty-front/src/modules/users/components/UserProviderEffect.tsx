@@ -17,12 +17,8 @@ import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
-import { arePrefetchViewsLoadedState } from '@/prefetch/states/arePrefetchViewsLoaded';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { AppPath } from '@/types/AppPath';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
-import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
-import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
 import { useEffect } from 'react';
@@ -36,7 +32,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const UserProviderEffect = () => {
@@ -85,23 +80,6 @@ export const UserProviderEffect = () => {
       isMatchingLocation(location, AppPath.Verify) ||
       isMatchingLocation(location, AppPath.VerifyEmail),
   });
-
-  const setPrefetchViewsState = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (views: CoreViewWithRelations[]) => {
-        const existingViews = snapshot
-          .getLoadable(prefetchViewsState)
-          .getValue();
-
-        const convertedViews = views.map(convertCoreViewToView);
-
-        if (!isDeeplyEqual(existingViews, convertedViews)) {
-          set(prefetchViewsState, convertedViews);
-          set(arePrefetchViewsLoadedState, true);
-        }
-      },
-    [],
-  );
 
   useEffect(() => {
     if (!queryLoading) {
@@ -204,14 +182,6 @@ export const UserProviderEffect = () => {
     setCurrentWorkspaceMembersWithDeleted,
     updateLocaleCatalog,
   ]);
-
-  const views = queryData?.currentUser.currentWorkspace?.views;
-
-  useEffect(() => {
-    if (isDefined(views)) {
-      setPrefetchViewsState(views);
-    }
-  }, [views, setPrefetchViewsState]);
 
   return <></>;
 };
