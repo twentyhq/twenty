@@ -208,7 +208,7 @@ export class PermissionsService {
     );
   }
 
-  private checkRolePermissions(
+  public checkRolePermissions(
     role: RoleEntity,
     setting: PermissionFlagType,
   ): boolean {

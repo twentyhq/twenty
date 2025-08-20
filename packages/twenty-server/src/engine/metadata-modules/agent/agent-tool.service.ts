@@ -11,6 +11,8 @@ import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/a
 import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { AGENT_HANDOFF_DESCRIPTION_TEMPLATE } from 'src/engine/metadata-modules/agent/constants/agent-handoff-description.const';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkflowToolWorkspaceService as WorkflowToolService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 import { camelCase } from 'src/utils/camel-case';
@@ -26,6 +28,7 @@ export class AgentToolService {
     private readonly toolService: ToolService,
     private readonly toolAdapterService: ToolAdapterService,
     private readonly workflowToolService: WorkflowToolService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   async generateToolsForAgent(
@@ -63,8 +66,9 @@ export class AgentToolService {
       workspaceId,
     );
 
-    const workflowTools =
-      this.workflowToolService.generateWorkflowTools(workspaceId);
+    const workflowTools = await this.generateWorkflowTools(role, workspaceId);
+
+    console.log({ workflowTools });
 
     return {
       ...databaseTools,
@@ -133,5 +137,21 @@ export class AgentToolService {
     }, {});
 
     return handoffTools;
+  }
+
+  private async generateWorkflowTools(
+    role: RoleEntity,
+    workspaceId: string,
+  ): Promise<ToolSet> {
+    const hasWorkflowPermission = this.permissionsService.checkRolePermissions(
+      role,
+      PermissionFlagType.WORKFLOWS,
+    );
+
+    if (!hasWorkflowPermission) {
+      return {};
+    }
+
+    return this.workflowToolService.generateWorkflowTools(workspaceId);
   }
 }
