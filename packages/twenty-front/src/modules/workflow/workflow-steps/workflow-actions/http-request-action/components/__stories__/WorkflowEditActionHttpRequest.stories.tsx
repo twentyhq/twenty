@@ -173,7 +173,7 @@ export const WithArrayStringBody: Story = {
   "backend",
   "database"
 ]`,
-          bodyType: 'rawJson',
+          bodyType: 'keyValue',
         },
         outputSchema: {},
         errorHandlingOptions: {
@@ -281,6 +281,7 @@ export const WithArrayContainingNonStringVariablesBody: Story = {
   {{${MOCKED_STEP_ID}.salary}},
   "database"
 ]`,
+bodyType:'rawJson'
         },
         outputSchema: {},
         errorHandlingOptions: {
