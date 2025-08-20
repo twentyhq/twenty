@@ -1,4 +1,5 @@
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { type AnimationDuration } from '@ui/theme';
 import { type HTMLMotionProps, motion } from 'framer-motion';
 
@@ -9,6 +10,12 @@ type AnimatedRotateProps = Omit<
   duration?: AnimationDuration;
   animateOnHover?: boolean;
 };
+
+const StyledMotionDiv = styled(motion.div)`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+`;
 
 export const AnimatedRotate = ({
   children,
@@ -24,7 +31,7 @@ export const AnimatedRotate = ({
   };
 
   return (
-    <motion.div
+    <StyledMotionDiv
       initial={initial}
       animate={animate}
       transition={transition}
@@ -41,6 +48,6 @@ export const AnimatedRotate = ({
       }
     >
       {children}
-    </motion.div>
+    </StyledMotionDiv>
   );
 };
