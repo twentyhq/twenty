@@ -1,4 +1,5 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { WorkflowActionMenuItems } from '@/command-menu/pages/workflow/action/components/WorkflowActionMenuItems';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -12,19 +13,18 @@ import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/componen
 import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
+import { AI_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/AIActions';
 import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/CoreActions';
 import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useTheme } from '@emotion/react';
+import { useLingui } from '@lingui/react/macro';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { useTheme } from '@emotion/react';
-import { WorkflowActionMenuItems } from '@/command-menu/pages/workflow/action/components/WorkflowActionMenuItems';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';
-import { AI_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/AIActions';
-import { useLingui } from '@lingui/react/macro';
 
 export const CommandMenuWorkflowSelectActionContent = ({
   workflow,
@@ -99,23 +99,23 @@ export const CommandMenuWorkflowSelectActionContent = ({
       <RightDrawerWorkflowSelectStepTitle>
         {t`Data`}
       </RightDrawerWorkflowSelectStepTitle>
-        {WorkflowActionMenuItems(RECORD_ACTIONS, theme, handleCreateStep)}
+      {WorkflowActionMenuItems(RECORD_ACTIONS, theme, handleCreateStep)}
       {isAiEnabled && (
-            <>
-              <RightDrawerWorkflowSelectStepTitle>
-                {t`AI`}
-              </RightDrawerWorkflowSelectStepTitle>
-              {WorkflowActionMenuItems(AI_ACTIONS, theme, handleCreateStep)}
-            </>
-          )}
+        <>
+          <RightDrawerWorkflowSelectStepTitle>
+            {t`AI`}
+          </RightDrawerWorkflowSelectStepTitle>
+          {WorkflowActionMenuItems(AI_ACTIONS, theme, handleCreateStep)}
+        </>
+      )}
       <RightDrawerWorkflowSelectStepTitle>
         {t`Core`}
       </RightDrawerWorkflowSelectStepTitle>
-        {WorkflowActionMenuItems(CORE_ACTIONS, theme, handleCreateStep)}  
+      {WorkflowActionMenuItems(CORE_ACTIONS, theme, handleCreateStep)}
       <RightDrawerWorkflowSelectStepTitle>
         {t`Human Input`}
       </RightDrawerWorkflowSelectStepTitle>
-        {WorkflowActionMenuItems(HUMAN_INPUT_ACTIONS, theme, handleCreateStep)}
+      {WorkflowActionMenuItems(HUMAN_INPUT_ACTIONS, theme, handleCreateStep)}
     </RightDrawerStepListContainer>
   );
 };
