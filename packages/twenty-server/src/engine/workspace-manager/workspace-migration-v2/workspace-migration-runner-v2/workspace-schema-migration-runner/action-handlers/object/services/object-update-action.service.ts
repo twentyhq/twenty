@@ -6,8 +6,8 @@ import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { type UpdateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
+import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { WorkspaceMigrationActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/decorators/workspace-migration-action-handler.decorator';
-import { type SchemaActionContext } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/types/schema-action-context.type';
 import { prepareWorkspaceSchemaContext } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/workspace-schema-context.util';
 import {
   collectEnumOperationsForObject,
@@ -17,14 +17,14 @@ import {
 
 @WorkspaceMigrationActionHandler('update_object')
 export class ObjectUpdateActionService
-  implements WorkspaceMigrationActionService<UpdateObjectAction>
+  implements WorkspaceMigrationActionService
 {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {}
 
   async execute(
-    context: SchemaActionContext<UpdateObjectAction>,
+    context: WorkspaceMigrationActionRunnerArgs<UpdateObjectAction>,
   ): Promise<void> {
     const { action, queryRunner, flatObjectMetadataMaps } = context;
     const { objectMetadataId, updates } = action;

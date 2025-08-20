@@ -21,8 +21,8 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
+import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { WorkspaceMigrationActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/decorators/workspace-migration-action-handler.decorator';
-import { type SchemaActionContext } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/types/schema-action-context.type';
 import {
   WorkspaceSchemaMigrationException,
   WorkspaceSchemaMigrationExceptionCode,
@@ -37,14 +37,14 @@ import {
 
 @WorkspaceMigrationActionHandler('update_field')
 export class FieldUpdateActionService
-  implements WorkspaceMigrationActionService<UpdateFieldAction>
+  implements WorkspaceMigrationActionService
 {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {}
 
   async execute(
-    context: SchemaActionContext<UpdateFieldAction>,
+    context: WorkspaceMigrationActionRunnerArgs<UpdateFieldAction>,
   ): Promise<void> {
     const { action, queryRunner, flatObjectMetadataMaps } = context;
     const { objectMetadataId, fieldMetadataId, updates } = action;

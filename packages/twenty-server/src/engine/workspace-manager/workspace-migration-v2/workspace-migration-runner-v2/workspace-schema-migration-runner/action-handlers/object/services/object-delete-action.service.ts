@@ -5,8 +5,8 @@ import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-f
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type DeleteObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
+import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { WorkspaceMigrationActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/decorators/workspace-migration-action-handler.decorator';
-import { type SchemaActionContext } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/types/schema-action-context.type';
 import { prepareWorkspaceSchemaContext } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/workspace-schema-context.util';
 import {
   collectEnumOperationsForObject,
@@ -16,14 +16,14 @@ import {
 
 @WorkspaceMigrationActionHandler('delete_object')
 export class ObjectDeleteActionService
-  implements WorkspaceMigrationActionService<DeleteObjectAction>
+  implements WorkspaceMigrationActionService
 {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {}
 
   async execute(
-    context: SchemaActionContext<DeleteObjectAction>,
+    context: WorkspaceMigrationActionRunnerArgs<DeleteObjectAction>,
   ): Promise<void> {
     const { action, queryRunner, flatObjectMetadataMaps } = context;
     const { objectMetadataId } = action;

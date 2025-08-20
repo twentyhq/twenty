@@ -7,9 +7,9 @@ import {
   type WorkspaceMigrationActionTypeV2,
   type WorkspaceMigrationActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
+import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/decorators/workspace-migration-action-handler.decorator';
-import { type SchemaActionContext } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/types/schema-action-context.type';
 import {
   WorkspaceSchemaMigrationException,
   WorkspaceSchemaMigrationExceptionCode,
@@ -53,7 +53,7 @@ export class WorkspaceSchemaActionRegistryService implements OnModuleInit {
 
   async executeAction<T extends WorkspaceMigrationActionV2>(
     actionType: WorkspaceMigrationActionTypeV2,
-    context: SchemaActionContext<T>,
+    context: WorkspaceMigrationActionRunnerArgs<T>,
   ): Promise<void> {
     const handler = this.actionHandlers.get(actionType);
 

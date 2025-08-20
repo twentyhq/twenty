@@ -2,8 +2,8 @@ import { type WorkspaceMigrationActionService } from 'src/engine/workspace-manag
 
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
+import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { WorkspaceMigrationActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/decorators/workspace-migration-action-handler.decorator';
-import { type SchemaActionContext } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/types/schema-action-context.type';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/generate-column-definitions.util';
 import { prepareWorkspaceSchemaContext } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/workspace-schema-context.util';
 import {
@@ -14,14 +14,14 @@ import {
 
 @WorkspaceMigrationActionHandler('create_field')
 export class FieldCreateActionService
-  implements WorkspaceMigrationActionService<CreateFieldAction>
+  implements WorkspaceMigrationActionService
 {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {}
 
   async execute(
-    context: SchemaActionContext<CreateFieldAction>,
+    context: WorkspaceMigrationActionRunnerArgs<CreateFieldAction>,
   ): Promise<void> {
     const { action, queryRunner, flatObjectMetadataMaps } = context;
     const { flatFieldMetadata } = action;

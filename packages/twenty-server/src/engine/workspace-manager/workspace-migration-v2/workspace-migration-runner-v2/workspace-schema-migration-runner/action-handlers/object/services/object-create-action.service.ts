@@ -7,8 +7,8 @@ import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-s
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { type CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
+import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 import { WorkspaceMigrationActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/decorators/workspace-migration-action-handler.decorator';
-import { type SchemaActionContext } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/types/schema-action-context.type';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/utils/generate-column-definitions.util';
 import {
   collectEnumOperationsForObject,
@@ -18,14 +18,14 @@ import {
 
 @WorkspaceMigrationActionHandler('create_object')
 export class ObjectCreateActionService
-  implements WorkspaceMigrationActionService<CreateObjectAction>
+  implements WorkspaceMigrationActionService
 {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {}
 
   async execute(
-    context: SchemaActionContext<CreateObjectAction>,
+    context: WorkspaceMigrationActionRunnerArgs<CreateObjectAction>,
   ): Promise<void> {
     const { action, queryRunner } = context;
     const { flatObjectMetadataWithoutFields, createFieldActions } = action;
