@@ -1,6 +1,5 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFieldMetadataItemByIdOrThrow';
+import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
@@ -58,6 +57,9 @@ export const WorkflowStepFilterFieldSelect = ({
   const { fieldMetadataItem: filterFieldMetadataItem } =
     useFieldMetadataItemById(stepFilter.fieldMetadataId ?? '');
 
+  const { getFieldMetadataItemByIdOrThrow } =
+    useGetFieldMetadataItemByIdOrThrow();
+
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
     shouldDisplayRecordFields,
     shouldDisplayRecordObjects,
@@ -81,10 +83,6 @@ export const WorkflowStepFilterFieldSelect = ({
           )
           .getValue();
 
-        const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState)
-          .getValue();
-
         const {
           variableLabel,
           variableType,
@@ -100,10 +98,7 @@ export const WorkflowStepFilterFieldSelect = ({
           fieldMetadataItem: filterFieldMetadataItem,
           objectMetadataItem: filterObjectMetadataItem,
         } = isDefined(fieldMetadataId)
-          ? getFieldMetadataItemByIdOrThrow({
-              fieldMetadataId,
-              objectMetadataItems,
-            })
+          ? getFieldMetadataItemByIdOrThrow(fieldMetadataId)
           : { fieldMetadataItem: undefined, objectMetadataItem: undefined };
 
         const filterType = isDefined(fieldMetadataId)
