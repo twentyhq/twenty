@@ -29,7 +29,7 @@ export class MCPMetadataToolsService {
           items: {
             type: 'string',
             description:
-              'Names of field properties to include in the response for field entities. ',
+              'Names of field properties to include in the response for field entities.',
             examples: [
               'type',
               'name',
