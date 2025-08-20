@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { DiscoveryService } from '@nestjs/core';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { DiscoveryOptions, DiscoveryService } from '@nestjs/core';
 
 import { type WorkspaceMigrationActionService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/interfaces/workspace-migration-action-service.interface';
 
@@ -7,6 +7,7 @@ import {
   type WorkspaceMigrationActionTypeV2,
   type WorkspaceMigrationActionV2,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-action-common-v2';
+import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
 import { WORKSPACE_MIGRATION_ACTION_HANDLER_METADATA } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/decorators/workspace-migration-action-handler.decorator';
 import { type SchemaActionContext } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/types/schema-action-context.type';
 import {
@@ -15,18 +16,24 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/exceptions/workspace-schema-migration.exception';
 
 @Injectable()
-export class WorkspaceSchemaActionRegistryService {
+export class WorkspaceSchemaActionRegistryService implements OnModuleInit {
   private readonly actionHandlers = new Map<
     WorkspaceMigrationActionTypeV2,
     WorkspaceMigrationActionService
   >();
 
-  constructor(private readonly discoveryService: DiscoveryService) {
+  constructor(private readonly discoveryService: DiscoveryService) {}
+
+  async onModuleInit() {
     this.discoverAndRegisterHandlers();
   }
 
   private discoverAndRegisterHandlers(): void {
-    const providers = this.discoveryService.getProviders();
+    const discoveryOptions: DiscoveryOptions = {
+      include: [WorkspaceSchemaMigrationRunnerActionHandlersModule],
+    };
+
+    const providers = this.discoveryService.getProviders(discoveryOptions);
 
     providers.forEach((wrapper) => {
       const { instance, metatype } = wrapper;
