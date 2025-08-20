@@ -23,8 +23,8 @@ describe('getActionIcon', () => {
     });
   });
 
-  it('should return undefined for unknown action type', () => {
+  it('should return IconDefault for unknown action type', () => {
     // @ts-expect-error Testing invalid action type
-    expect(getActionIcon('UNKNOWN_ACTION')).toBeUndefined();
+    expect(getActionIcon('UNKNOWN_ACTION')).toBe('IconDefault');
   });
 });
