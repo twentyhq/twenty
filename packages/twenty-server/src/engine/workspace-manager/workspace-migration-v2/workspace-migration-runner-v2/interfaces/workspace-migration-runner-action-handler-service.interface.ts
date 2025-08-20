@@ -37,14 +37,9 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Constructor<T = {}> = new (...args: any[]) => T;
-
 export function WorkspaceMigrationRunnerActionHandler<
   T extends WorkspaceMigrationActionTypeV2,
->(
-  actionType: T,
-): Constructor<BaseWorkspaceMigrationRunnerActionHandlerService<T>> {
+>(actionType: T): typeof BaseWorkspaceMigrationRunnerActionHandlerService<T> {
   abstract class ActionHandlerService extends BaseWorkspaceMigrationRunnerActionHandlerService<T> {}
 
   SetMetadata(
@@ -52,7 +47,5 @@ export function WorkspaceMigrationRunnerActionHandler<
     actionType,
   )(ActionHandlerService);
 
-  return ActionHandlerService as Constructor<
-    BaseWorkspaceMigrationRunnerActionHandlerService<T>
-  >;
+  return ActionHandlerService;
 }
