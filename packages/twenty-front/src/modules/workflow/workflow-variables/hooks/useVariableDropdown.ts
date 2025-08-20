@@ -13,7 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import {
   type BaseOutputSchema,
-  type LinkOutputSchema,
+  type CodeOutputSchema,
   type StepOutputSchema,
 } from '../types/StepOutputSchema';
 import { getCurrentSubStepFromPath } from '../utils/getCurrentSubStepFromPath';
@@ -99,7 +99,7 @@ export const useVariableDropdown = ({
     };
 
     const handleSelectLinkOutputSchema = (
-      linkOutputSchema: LinkOutputSchema,
+      linkOutputSchema: CodeOutputSchema,
     ) => {
       if (!isDefined(workflowVisualizerWorkflowId)) {
         throw new Error('Workflow ID must be configured');
@@ -137,7 +137,7 @@ export const useVariableDropdown = ({
     if (isLinkOutputSchema(currentSubStep)) {
       handleSelectLinkOutputSchema(currentSubStep);
     } else if (isRecordOutputSchema(currentSubStep)) {
-      handleSelectBaseOutputSchema(currentSubStep.fields);
+      throw new Error('Record output schema not supported');
     } else if (isBaseOutputSchema(currentSubStep)) {
       handleSelectBaseOutputSchema(currentSubStep);
     }

@@ -2,17 +2,26 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import {
+  type BaseOutputSchema,
+  type FieldLeaf,
+  type FieldNode,
+  type RecordOutputSchema,
+  type StepOutputSchema,
+} from '@/workflow/workflow-variables/types/StepOutputSchema';
 
 import { useGetObjectMetadataItemById } from '@/object-metadata/hooks/useGetObjectMetadataItemById';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
+import { generateFakeValue } from '@/workflow/workflow-variables/utils/generateFakeValue';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
+import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronLeft,
@@ -20,60 +29,161 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { useVariableDropdown } from '../hooks/useVariableDropdown';
 
-type WorkflowVariablesDropdownAllItemsProps = {
+type WorkflowVariablesDropdownRecordProps = {
   step: StepOutputSchema;
+  recordOutputSchema: RecordOutputSchema;
   onSelect: (value: string) => void;
   onBack: () => void;
-  shouldEnableSelectRelationObject?: boolean;
 };
 
-export const WorkflowVariablesDropdownAllItems = ({
+const getCurrentSubStepFromPath = (
+  recordOutputSchema: RecordOutputSchema,
+  path: string[],
+): RecordOutputSchema | FieldLeaf | FieldNode => {
+  let currentSubStep: RecordOutputSchema | FieldLeaf | FieldNode =
+    recordOutputSchema;
+  for (const key of path) {
+    if (isRecordOutputSchema(currentSubStep)) {
+      currentSubStep = currentSubStep.fields[key];
+    } else {
+      currentSubStep = currentSubStep[key];
+    }
+  }
+
+  return currentSubStep;
+};
+
+const getFakeValueFromType = (type: FieldMetadataType) => {
+  const fakeValue = generateFakeValue(type, 'FieldMetadataType');
+
+  return fakeValue ? String(fakeValue) : '';
+};
+
+export const WorkflowVariablesDropdownRecord = ({
   step,
+  recordOutputSchema,
   onSelect,
   onBack,
-  shouldEnableSelectRelationObject,
-}: WorkflowVariablesDropdownAllItemsProps) => {
+}: WorkflowVariablesDropdownRecordProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const {
-    searchInputValue,
-    setSearchInputValue,
-    handleSelectField,
-    goBack,
-    filteredOptions,
-    currentPath,
-  } = useVariableDropdown({
-    step,
-    onSelect,
-    onBack,
-  });
 
+  const [currentPath, setCurrentPath] = useState<string[]>([]);
+  const [searchInputValue, setSearchInputValue] = useState('');
   const { getObjectMetadataItemById } = useGetObjectMetadataItemById();
 
-  const getDisplayedSubStepObject = () => {
-    const currentSubStep = getCurrentSubStepFromPath(step, currentPath);
+  const getDisplayedSubStepFields = () => {
+    const currentSubStep = getCurrentSubStepFromPath(
+      recordOutputSchema,
+      currentPath,
+    );
 
-    if (!isRecordOutputSchema(currentSubStep)) {
-      return;
+    if (isRecordOutputSchema(currentSubStep)) {
+      return currentSubStep.fields;
     }
+
+    return currentSubStep;
+  };
+
+  const handleSelectField = (key: string) => {
+    const currentSubStep = getCurrentSubStepFromPath(
+      recordOutputSchema,
+      currentPath,
+    );
+
+    const handleSelectRecordOutputSchema = ({
+      currentSubStep,
+    }: {
+      currentSubStep: RecordOutputSchema;
+    }) => {
+      if (!currentSubStep.fields[key]?.isLeaf) {
+        setCurrentPath([...currentPath, key]);
+        setSearchInputValue('');
+      } else {
+        onSelect(
+          getVariableTemplateFromPath({
+            stepId: step.id,
+            path: [...currentPath, key],
+          }),
+        );
+      }
+    };
+
+    const handleSelectBaseOutputSchema = ({
+      currentSubStep,
+    }: {
+      currentSubStep: BaseOutputSchema;
+    }) => {
+      if (!currentSubStep[key]?.isLeaf) {
+        setCurrentPath([...currentPath, key]);
+        setSearchInputValue('');
+      } else {
+        onSelect(
+          getVariableTemplateFromPath({
+            stepId: step.id,
+            path: [...currentPath, key],
+          }),
+        );
+      }
+
+      if (isBaseOutputSchema(currentSubStep)) {
+        handleSelectBaseOutputSchema({
+          currentSubStep,
+        });
+      } else {
+        handleSelectRecordOutputSchema({
+          currentSubStep,
+        });
+      }
+    };
+
+    if (isRecordOutputSchema(currentSubStep)) {
+      handleSelectRecordOutputSchema({
+        currentSubStep,
+      });
+    } else if (isBaseOutputSchema(currentSubStep)) {
+      handleSelectBaseOutputSchema({
+        currentSubStep,
+      });
+    }
+  };
+
+  const goBack = () => {
+    if (currentPath.length === 0) {
+      onBack();
+    } else {
+      setCurrentPath(currentPath.slice(0, -1));
+    }
+  };
+
+  const displayedFields = getDisplayedSubStepFields();
+  const options = displayedFields ? Object.entries(displayedFields) : [];
+
+  const filteredOptions = searchInputValue
+    ? options.filter(([key]) =>
+        key.toLowerCase().includes(searchInputValue.toLowerCase()),
+      )
+    : options;
+
+  const getDisplayedSubStepObject = () => {
+    const currentSubStep = getCurrentSubStepFromPath(
+      recordOutputSchema,
+      currentPath,
+    );
 
     return currentSubStep.object;
   };
 
   const handleSelectObject = () => {
-    const currentSubStep = getCurrentSubStepFromPath(step, currentPath);
-
-    if (!isRecordOutputSchema(currentSubStep)) {
-      return;
-    }
+    const currentSubStep = getCurrentSubStepFromPath(
+      recordOutputSchema,
+      currentPath,
+    );
 
     const isRelationField = currentSubStep.object.isRelationField ?? false;
-    const isRelationObjectSelectable =
-      shouldEnableSelectRelationObject ?? false;
 
-    if (isRelationField && isRelationObjectSelectable) {
+    if (isRelationField) {
       onSelect(
         getVariableTemplateFromPath({
           stepId: step.id,
@@ -134,11 +244,10 @@ export const WorkflowVariablesDropdownAllItems = ({
             selected={false}
             focused={false}
             onClick={handleSelectObject}
-            text={objectMetadataItem?.labelSingular || ''}
+            text={objectMetadataItem.labelSingular}
             hasSubMenu={false}
             LeftIcon={
-              isDefined(objectMetadataItem) &&
-              isDefined(objectMetadataItem.icon)
+              objectMetadataItem.icon
                 ? getIcon(objectMetadataItem.icon)
                 : undefined
             }
@@ -154,12 +263,10 @@ export const WorkflowVariablesDropdownAllItems = ({
             selected={false}
             focused={false}
             onClick={() => handleSelectField(key)}
-            text={subStep.label || key}
+            text={subStep.label ?? key}
             hasSubMenu={!subStep.isLeaf}
             LeftIcon={subStep.icon ? getIcon(subStep.icon) : undefined}
-            contextualText={
-              subStep.isLeaf ? subStep?.value?.toString() : undefined
-            }
+            contextualText={getFakeValueFromType(subStep.type)}
           />
         ))}
       </DropdownMenuItemsContainer>

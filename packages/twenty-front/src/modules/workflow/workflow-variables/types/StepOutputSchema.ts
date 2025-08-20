@@ -1,25 +1,49 @@
-import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import { type FieldMetadataType } from 'twenty-shared/types';
 
-type Leaf = {
+type BaseLeaf = {
   isLeaf: true;
-  type?: InputSchemaPropertyType;
-  icon?: string;
+  type: 'string' | 'number' | 'boolean' | 'unknown' | 'array';
   label?: string;
-  description?: string;
-  value: any;
-  fieldMetadataId?: string;
-  isCompositeSubField?: boolean;
+  icon?: string;
 };
 
-type Node = {
+type BaseNode = {
   isLeaf: false;
-  type?: InputSchemaPropertyType;
-  icon?: string;
+  type: 'object';
+  value: BaseOutputSchema;
   label?: string;
-  value: OutputSchema;
-  description?: string;
-  fieldMetadataId?: string;
-  isCompositeSubField?: boolean;
+  icon?: string;
+};
+
+export type BaseOutputSchema = Record<string, BaseLeaf | BaseNode>;
+
+export type FieldLeaf = {
+  isLeaf: true;
+  fieldMetadataId: string;
+  isCompositeSubField: boolean;
+  type: FieldMetadataType;
+  label?: string;
+  icon?: string;
+};
+
+export type FieldNode = {
+  isLeaf: false;
+  fieldMetadataId: string;
+  type: FieldMetadataType;
+  value: RecordOutputSchema;
+  label?: string;
+  icon?: string;
+};
+
+export type RecordOutputSchema = {
+  object: {
+    objectMetadataId: string;
+    isRelationField?: boolean;
+    nameSingular?: string;
+    icon?: string;
+  };
+  fields: Record<string, FieldLeaf | FieldNode>;
+  _outputSchemaType: 'RECORD';
 };
 
 type Link = {
@@ -29,36 +53,54 @@ type Link = {
   label?: string;
 };
 
-export type BaseOutputSchema = Record<string, Leaf | Node>;
-
-export type FieldOutputSchema = (Leaf | Node) & {
-  fieldMetadataId: string;
-};
-
-export type RecordOutputSchema = {
-  object: {
-    nameSingular: string;
-    fieldIdName: string;
-    objectMetadataId: string;
-    isRelationField?: boolean;
-  } & Leaf;
-  fields: Record<string, FieldOutputSchema>;
-  _outputSchemaType: 'RECORD';
-};
-
-export type LinkOutputSchema = {
+export type CodeOutputSchema = {
   link: Link;
-  _outputSchemaType: 'LINK';
 };
 
-export type OutputSchema =
-  | BaseOutputSchema
-  | RecordOutputSchema
-  | LinkOutputSchema;
+export type CreateRecordOutputSchema = RecordOutputSchema;
+
+export type UpdateRecordOutputSchema = RecordOutputSchema;
+
+export type DeleteRecordOutputSchema = RecordOutputSchema;
+
+export type FindRecordsOutputSchema = {
+  first: RecordOutputSchema;
+  last: RecordOutputSchema;
+  count: number;
+};
+
+export type SendEmailOutputSchema = {
+  success: boolean;
+};
+
+export type FormFieldLeaf = {
+  isLeaf: true;
+  type: FieldMetadataType;
+};
+
+export type FormFieldNode = RecordOutputSchema;
+
+export type HttpOutputSchema = {};
+
+export type AiAgentOutputSchema = {};
+
+export type FilterOutputSchema = {};
+
+export type FormOutputSchema = Record<string, FormFieldLeaf | FormFieldNode>;
 
 export type StepOutputSchema = {
   id: string;
   name: string;
   icon?: string;
-  outputSchema: OutputSchema;
+  outputSchema:
+    | CreateRecordOutputSchema
+    | UpdateRecordOutputSchema
+    | DeleteRecordOutputSchema
+    | FindRecordsOutputSchema
+    | SendEmailOutputSchema
+    | FormOutputSchema
+    | CodeOutputSchema
+    | HttpOutputSchema
+    | AiAgentOutputSchema
+    | FilterOutputSchema;
 };

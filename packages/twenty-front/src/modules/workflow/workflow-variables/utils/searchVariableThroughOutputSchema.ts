@@ -1,17 +1,14 @@
 import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from '@/workflow/workflow-variables/constants/CaptureAllVariableTagInnerRegex';
-import {
-  type OutputSchema,
-  type StepOutputSchema,
-} from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
 import { isLinkOutputSchema } from '@/workflow/workflow-variables/utils/isLinkOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
 import { isDefined } from 'twenty-shared/utils';
 
 type VariableInfo = {
-  variableLabel: string | undefined;
-  variablePathLabel: string | undefined;
-  variableType?: string | undefined;
+  label: string | undefined;
+  pathLabel: string | undefined;
+  type?: string | undefined;
   fieldMetadataId?: string | undefined;
   compositeFieldSubFieldName?: string | undefined;
 };

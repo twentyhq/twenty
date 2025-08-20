@@ -1,7 +1,7 @@
 import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
+import { useVariableInfo } from '@/workflow/workflow-variables/hooks/useVariableInfo';
 import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
-import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -88,23 +88,23 @@ export const VariableChip = ({
     rawVariableName,
     part: 'stepId',
   });
-  const stepsOutputSchema = useRecoilValue(
+  const [stepOutputSchema] = useRecoilValue(
     stepsOutputSchemaFamilySelector({
       workflowVersionId,
       stepIds: [stepId],
     }),
   );
 
-  if (!isDefined(stepId)) {
-    return null;
-  }
-
-  const { variableLabel, variablePathLabel } =
-    searchVariableThroughOutputSchema({
-      stepOutputSchema: stepsOutputSchema?.[0],
+  const { label: variableLabel, pathLabel: variablePathLabel } =
+    useVariableInfo({
+      stepOutputSchema,
       rawVariableName,
       isFullRecord,
     });
+
+  if (!isDefined(stepId)) {
+    return null;
+  }
 
   const isVariableNotFound = !isDefined(variableLabel);
   const label = isVariableNotFound ? t`Not Found` : variableLabel;
