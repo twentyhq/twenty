@@ -49,7 +49,7 @@ export class MCPMetadataService {
     }
   }
 
-  handleInitialize(requestId: string | number | null) {
+  handleInitialize(requestId: string | number) {
     return wrapJsonRpcResponse(requestId, {
       result: {
         capabilities: {
