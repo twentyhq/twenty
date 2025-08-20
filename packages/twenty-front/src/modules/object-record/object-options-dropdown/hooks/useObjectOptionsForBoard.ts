@@ -248,6 +248,7 @@ export const useObjectOptionsForBoard = ({
       setRecordIndexFieldDefinitions,
       saveViewFields,
       recordIndexFieldDefinitions,
+      availableColumnDefinitions,
     ],
   );
 
