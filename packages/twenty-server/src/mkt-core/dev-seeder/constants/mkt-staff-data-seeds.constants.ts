@@ -23,7 +23,7 @@ type MktStaffDataSeed = {
   employeeId: string;
   position: MktStaffPosition;
   // Business References
-  departmentId: string; // Reference to MKT_DEPARTMENT_DATA_SEEDS_IDS
+  departmentId: string | null; // Reference to MKT_DEPARTMENT_DATA_SEEDS_IDS
   organizationLevelId: string; // Reference to MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS
   employmentStatusId: string; // Reference to MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS
   // Team hierarchy
@@ -75,7 +75,6 @@ export const MKT_STAFF_DATA_SEEDS_IDS = {
 };
 
 // Need to reference the seeds IDs from other entities
-import { MKT_DEPARTMENT_DATA_SEEDS_IDS } from './mkt-department-data-seeds.constants';
 import { MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS } from './mkt-organization-level-data-seeds.constants';
 import { MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS } from './mkt-employment-status-data-seeds.constants';
 
@@ -87,7 +86,7 @@ export const MKT_STAFF_DATA_SEEDS: MktStaffDataSeed[] = [
     personId: null,
     employeeId: 'EMP-SALES-001',
     position: MktStaffPosition.SALES_MANAGER,
-    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.SALES,
+    departmentId: null,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.MANAGER,
     employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PERMANENT,
     teamLeaderId: null, // Top level
@@ -104,7 +103,7 @@ export const MKT_STAFF_DATA_SEEDS: MktStaffDataSeed[] = [
     personId: null,
     employeeId: 'EMP-SALES-002',
     position: MktStaffPosition.SALES_REP,
-    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.SALES,
+    departmentId: null,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.SENIOR_STAFF,
     employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PERMANENT,
     teamLeaderId: MKT_STAFF_DATA_SEEDS_IDS.SALES_MANAGER,
@@ -121,7 +120,7 @@ export const MKT_STAFF_DATA_SEEDS: MktStaffDataSeed[] = [
     workspaceMemberId: null, // Will be set during user account creation
     employeeId: 'EMP-SALES-003',
     position: MktStaffPosition.SALES_REP,
-    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.SALES,
+    departmentId: null,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.SENIOR_STAFF,
     teamLeaderId: MKT_STAFF_DATA_SEEDS_IDS.SALES_MANAGER,
     employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PROBATION,
@@ -140,7 +139,7 @@ export const MKT_STAFF_DATA_SEEDS: MktStaffDataSeed[] = [
     workspaceMemberId: null, // Will be set during user account creation
     employeeId: 'EMP-SUP-001',
     position: MktStaffPosition.SUPPORT_MANAGER,
-    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.SUPPORT,
+    departmentId: null,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.MANAGER,
     teamLeaderId: null,
     employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PERMANENT,
@@ -157,7 +156,7 @@ export const MKT_STAFF_DATA_SEEDS: MktStaffDataSeed[] = [
     workspaceMemberId: null, // Will be set during user account creation
     employeeId: 'EMP-SUP-002',
     position: MktStaffPosition.SUPPORT_AGENT,
-    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.SUPPORT,
+    departmentId: null,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.SENIOR_STAFF,
     teamLeaderId: MKT_STAFF_DATA_SEEDS_IDS.SUPPORT_MANAGER,
     employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PERMANENT,
@@ -174,7 +173,7 @@ export const MKT_STAFF_DATA_SEEDS: MktStaffDataSeed[] = [
     workspaceMemberId: null, // Will be set during user account creation
     employeeId: 'EMP-SUP-003',
     position: MktStaffPosition.SUPPORT_AGENT,
-    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.SUPPORT,
+    departmentId: null,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.SENIOR_STAFF,
     teamLeaderId: MKT_STAFF_DATA_SEEDS_IDS.SUPPORT_MANAGER,
     employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.CONTRACT,
@@ -193,7 +192,7 @@ export const MKT_STAFF_DATA_SEEDS: MktStaffDataSeed[] = [
     workspaceMemberId: null, // Will be set during user account creation
     employeeId: 'EMP-FIN-001',
     position: MktStaffPosition.FINANCE_MANAGER,
-    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.ACCOUNTING,
+    departmentId: null,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.MANAGER,
     teamLeaderId: null,
     employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PERMANENT,
@@ -210,7 +209,7 @@ export const MKT_STAFF_DATA_SEEDS: MktStaffDataSeed[] = [
     workspaceMemberId: null, // Will be set during user account creation
     employeeId: 'EMP-FIN-002',
     position: MktStaffPosition.ACCOUNTANT,
-    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.ACCOUNTING,
+    departmentId: null,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.SENIOR_STAFF,
     teamLeaderId: MKT_STAFF_DATA_SEEDS_IDS.FINANCE_MANAGER,
     employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PERMANENT,
@@ -229,7 +228,7 @@ export const MKT_STAFF_DATA_SEEDS: MktStaffDataSeed[] = [
     workspaceMemberId: null, // Will be set during user account creation
     employeeId: 'EMP-HR-001',
     position: MktStaffPosition.HR_MANAGER,
-    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.HR,
+    departmentId: null,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.MANAGER,
     teamLeaderId: null,
     employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PERMANENT,
@@ -246,7 +245,7 @@ export const MKT_STAFF_DATA_SEEDS: MktStaffDataSeed[] = [
     workspaceMemberId: null, // Will be set during user account creation
     employeeId: 'EMP-HR-002',
     position: MktStaffPosition.HR_SPECIALIST,
-    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.HR,
+    departmentId: null,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.SENIOR_STAFF,
     teamLeaderId: MKT_STAFF_DATA_SEEDS_IDS.HR_MANAGER,
     employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PERMANENT,
@@ -265,7 +264,7 @@ export const MKT_STAFF_DATA_SEEDS: MktStaffDataSeed[] = [
     workspaceMemberId: null, // Will be set during user account creation
     employeeId: 'EMP-TECH-001',
     position: MktStaffPosition.TECH_LEAD,
-    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.TECH,
+    departmentId: null,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.MANAGER,
     teamLeaderId: null,
     employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PERMANENT,
@@ -282,7 +281,7 @@ export const MKT_STAFF_DATA_SEEDS: MktStaffDataSeed[] = [
     workspaceMemberId: null, // Will be set during user account creation
     employeeId: 'EMP-TECH-002',
     position: MktStaffPosition.DEVELOPER,
-    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.TECH,
+    departmentId: null,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.SENIOR_STAFF,
     teamLeaderId: MKT_STAFF_DATA_SEEDS_IDS.TECH_LEAD,
     employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PERMANENT,
@@ -301,7 +300,7 @@ export const MKT_STAFF_DATA_SEEDS: MktStaffDataSeed[] = [
     workspaceMemberId: null, // Will be set during user account creation
     employeeId: 'EMP-ADM-001',
     position: MktStaffPosition.ADMIN_MANAGER,
-    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.ADMIN,
+    departmentId: null,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.MANAGER,
     teamLeaderId: null,
     employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PERMANENT,
@@ -318,7 +317,7 @@ export const MKT_STAFF_DATA_SEEDS: MktStaffDataSeed[] = [
     workspaceMemberId: null, // Will be set during user account creation
     employeeId: 'EMP-ADM-002',
     position: MktStaffPosition.ADMIN_STAFF,
-    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.ADMIN,
+    departmentId: null,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.SENIOR_STAFF,
     teamLeaderId: MKT_STAFF_DATA_SEEDS_IDS.ADMIN_MANAGER,
     employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PERMANENT,

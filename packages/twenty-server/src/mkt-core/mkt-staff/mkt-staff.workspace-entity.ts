@@ -70,6 +70,7 @@ export class MktStaffWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`Department this staff belongs to`,
     icon: 'IconBuilding',
   })
+  @WorkspaceIsNullable()
   departmentId: string;
 
   @WorkspaceField({
