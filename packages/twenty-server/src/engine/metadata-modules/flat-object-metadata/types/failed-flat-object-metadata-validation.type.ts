@@ -1,9 +1,12 @@
-import { type FlatObjectMetadataIdAndNames } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-id-and-names.type';
-import { type ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
+import { FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
+import { ObjectMetadataMinimalInformation } from 'src/engine/metadata-modules/flat-object-metadata/types/object-metadata-minimal-information.type';
 
 export type FailedFlatObjectMetadataValidation = {
-  error: ObjectMetadataExceptionCode;
-  message: string;
-  userFriendlyMessage?: string;
-  value?: any; // TODO use generic
-} & Partial<FlatObjectMetadataIdAndNames>;
+  type: 'object';
+  errors: (
+    | FlatObjectMetadataValidationError
+    | FlatFieldMetadataValidationError
+  )[];
+  objectMinimalInformation: Partial<ObjectMetadataMinimalInformation>;
+};

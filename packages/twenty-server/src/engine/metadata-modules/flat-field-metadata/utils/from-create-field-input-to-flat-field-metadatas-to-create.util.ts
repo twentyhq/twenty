@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   assertUnreachable,
@@ -5,7 +6,6 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { t } from '@lingui/core/macro';
 
 import { type FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
@@ -36,9 +36,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     return {
       status: 'fail',
       error: {
-        error: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        name: rawCreateFieldInput.name,
-        objectMetadataId: rawCreateFieldInput.objectMetadataId,
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: "Remote fields aren't supported",
       },
     };
@@ -55,9 +53,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     return {
       status: 'fail',
       error: {
-        error: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-        name: rawCreateFieldInput.name,
-        objectMetadataId: rawCreateFieldInput.objectMetadataId,
+        code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         message: 'Provided object metadata id does not exist',
         userFriendlyMessage: t`Created field metadata, parent object metadata not found`,
       },
@@ -127,9 +123,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
       return {
         status: 'fail',
         error: {
-          error: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          name: rawCreateFieldInput.name,
-          objectMetadataId: rawCreateFieldInput.objectMetadataId,
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           message: 'TS Vector is not supported for field creation',
         },
       };

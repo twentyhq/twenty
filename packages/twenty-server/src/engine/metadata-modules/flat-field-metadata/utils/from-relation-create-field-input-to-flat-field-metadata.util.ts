@@ -1,10 +1,10 @@
+import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { t } from '@lingui/core/macro';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -63,11 +63,9 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
     return {
       status: 'fail',
       error: {
-        error: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
         message: `Relation creation payload is required`,
         userFriendlyMessage: t`Relation creation payload is required`,
-        name: createFieldInput.name,
-        objectMetadataId: createFieldInput.objectMetadataId,
         value: rawCreationPayload,
       },
     };
@@ -86,11 +84,9 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
       return {
         status: 'fail',
         error: {
-          error: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+          code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
           message: `Relation creation payload is invalid ${JSON.stringify(relationCreationPayload)}`,
           userFriendlyMessage: t`Invalid relation creation payload`,
-          name: createFieldInput.name,
-          objectMetadataId: createFieldInput.objectMetadataId,
           value: relationCreationPayload,
         },
       };
@@ -108,11 +104,9 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
     return {
       status: 'fail',
       error: {
-        error: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+        code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
         message: `Object metadata relation target not found for relation creation payload`,
         userFriendlyMessage: t`Object targetted by field to create not found`,
-        name: createFieldInput.name,
-        objectMetadataId: createFieldInput.objectMetadataId,
         value: relationCreationPayload,
       },
     };

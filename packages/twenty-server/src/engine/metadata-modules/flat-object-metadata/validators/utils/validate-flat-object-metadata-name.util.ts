@@ -1,8 +1,8 @@
 import { t } from '@lingui/core/macro';
 
-import { type FailedFlatObjectMetadataValidation } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
-import { type FlatObjectMetadataIdAndNames } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-id-and-names.type';
+import { FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type ObjectMetadataMinimalInformation } from 'src/engine/metadata-modules/flat-object-metadata/types/object-metadata-minimal-information.type';
 import { runFlatObjectMetadataValidators } from 'src/engine/metadata-modules/flat-object-metadata/utils/run-flat-object-metadata-validators.util';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { METADATA_NAME_VALIDATORS } from 'src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants';
@@ -10,17 +10,15 @@ import { METADATA_NAME_VALIDATORS } from 'src/engine/metadata-modules/utils/cons
 export const validateFlatObjectMetadataNames = ({
   namePlural,
   nameSingular,
-  ...flatObjectMetadataIdAndNames
 }: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'> &
-  FlatObjectMetadataIdAndNames) => {
-  const errors: FailedFlatObjectMetadataValidation[] = [];
+  ObjectMetadataMinimalInformation) => {
+  const errors: FlatObjectMetadataValidationError[] = [];
 
   errors.push(
     ...[nameSingular, namePlural].flatMap((name) =>
       runFlatObjectMetadataValidators({
         elementToValidate: name,
         validators: METADATA_NAME_VALIDATORS,
-        flatObjectMetadataIdAndNames,
       }),
     ),
   );
@@ -30,10 +28,9 @@ export const validateFlatObjectMetadataNames = ({
 
   if (namesAreIdentical) {
     errors.push({
-      error: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+      code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
       message: t`The singular and plural names cannot be the same for an object`,
-      nameSingular,
-      namePlural,
+      value: namePlural,
     });
   }
 

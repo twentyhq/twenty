@@ -10,7 +10,6 @@ import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-me
 import { type FieldMetadataStandardOverridesProperties } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-standard-overrides-properties.type';
 import { FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-properties-to-compare.constant';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
-import { type FieldMetadataMinimalInformation } from 'src/engine/metadata-modules/flat-field-metadata/types/field-metadata-minimal-information.type';
 import { type FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-properties-to-compare.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
@@ -56,23 +55,13 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     return {
       status: 'fail',
       error: {
-        error: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+        code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
         message: 'Field metadata to update not found',
         userFriendlyMessage: t`Field metadata to update not found`,
-        id: updateFieldInputInformalProperties.id,
-        objectMetadataId: updateFieldInputInformalProperties.objectMetadataId,
-        name: updatedEditableFieldProperties.name,
       },
     };
   }
 
-  const fieldMetadataNameIdObjectMetadataId: FieldMetadataMinimalInformation =
-    {
-      id: relatedFlatFieldMetadata.id,
-      name:
-        updatedEditableFieldProperties.name ?? relatedFlatFieldMetadata.name,
-      objectMetadataId: relatedFlatFieldMetadata.objectMetadataId,
-    };
   const flatObjectMetadataWithFlatFieldMaps =
     existingFlatObjectMetadataMaps.byId[
       relatedFlatFieldMetadata.objectMetadataId
@@ -82,7 +71,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     return {
       status: 'fail',
       error: {
-        error: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+        code: FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
         message: 'Field metadata to update object metadata not found',
         userFriendlyMessage: t`Field metadata to update object metadata not found`,
       },
@@ -93,9 +82,8 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     return {
       status: 'fail',
       error: {
-        error: FieldMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED,
+        code: FieldMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED,
         message: 'Remote objects are read-only',
-        ...fieldMetadataNameIdObjectMetadataId,
       },
     };
   }
@@ -113,10 +101,9 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       return {
         status: 'fail',
         error: {
-          error: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           message: `Cannot update standard field metadata properties: ${invalidUpdatedProperties.join(', ')}`,
           userFriendlyMessage: t`Cannot update standard field properties: ${invalidUpdatedProperties.join(', ')}`,
-          ...fieldMetadataNameIdObjectMetadataId,
         },
       };
     }

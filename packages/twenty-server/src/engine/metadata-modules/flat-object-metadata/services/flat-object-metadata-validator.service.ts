@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import { errors } from 'openid-client';
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { isRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-flat-field-metadata.util';
@@ -11,6 +12,7 @@ import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
 import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
 import { FailedFlatObjectMetadataValidation } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
+import { FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { areFlatObjectMetadataNamesSyncedWithLabels } from 'src/engine/metadata-modules/flat-object-metadata/utils/are-flat-object-metadata-names-synced-with-labels.util';
 import { computeRelationTargetFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/compute-relation-target-flat-object-metadata-maps.util';
@@ -34,20 +36,20 @@ export class FlatObjectMetadataValidatorService {
   }: {
     existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
     updatedFlatObjectMetadata: FlatObjectMetadata;
-  }): FailedFlatObjectMetadataValidation[] {
+  }): FlatObjectMetadataValidationError[] {
     const existingFlatObjectMetadata =
       existingFlatObjectMetadataMaps.byId[updatedFlatObjectMetadata.id];
 
     if (!isDefined(existingFlatObjectMetadata)) {
       return [
         {
-          error: ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+          code: ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
           message: t`Object to update not found`,
-          id: updatedFlatObjectMetadata.id,
+          userFriendlyMessage: t`Object to update not found`,
         },
       ];
     }
-    const errors: FailedFlatObjectMetadataValidation[] = [];
+    const errors: FlatObjectMetadataValidationError[] = [];
 
     errors.push(
       ...this.validateFlatObjectMetadataNameAndLabels({
@@ -71,26 +73,37 @@ export class FlatObjectMetadataValidatorService {
     existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
     objectMetadataToDeleteId: string;
     buildOptions: WorkspaceMigrationV2BuilderOptions;
-  }): FailedFlatObjectMetadataValidation[] {
-    const errors: FailedFlatObjectMetadataValidation[] = [];
+  }): FlatObjectMetadataValidationError {
+    const validationResult: FailedFlatObjectMetadataValidation = {
+      errors: [],
+      objectMinimalInformation: {
+        id: objectMetadataToDeleteId,
+      },
+      type: 'object',
+    };
 
     const flatObjectMetadataToDelete =
       existingFlatObjectMetadataMaps.byId[objectMetadataToDeleteId];
 
     if (!isDefined(flatObjectMetadataToDelete)) {
       errors.push({
-        error: ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        code: ObjectMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
         message: t`Object to delete not found`,
-        id: objectMetadataToDeleteId,
+        userFriendlyMessage: t`Object to delete not found`,
+        value: objectMetadataToDeleteId,
       });
     } else {
+      validationResult.objectMinimalInformation = {
+        id: flatObjectMetadataToDelete.id,
+        namePlural: flatObjectMetadataToDelete.namePlural,
+        nameSingular: flatObjectMetadataToDelete.nameSingular,
+      };
+
       if (flatObjectMetadataToDelete.isRemote) {
         errors.push({
-          error: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+          code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           message: t`Remote objects are not supported yet`,
-          id: flatObjectMetadataToDelete.id,
-          nameSingular: flatObjectMetadataToDelete.nameSingular,
-          namePlural: flatObjectMetadataToDelete.namePlural,
+          userFriendlyMessage: t`Remote objects are not supported yet`,
         });
       }
 
@@ -99,21 +112,17 @@ export class FlatObjectMetadataValidatorService {
         isStandardMetadata(flatObjectMetadataToDelete)
       ) {
         errors.push({
-          error: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+          code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           message: t`Standard objects cannot be deleted`,
-          id: flatObjectMetadataToDelete.id,
-          nameSingular: flatObjectMetadataToDelete.nameSingular,
-          namePlural: flatObjectMetadataToDelete.namePlural,
+          userFriendlyMessage: t`Standard objects cannot be deleted`,
         });
       }
 
       if (!buildOptions.isSystemBuild && flatObjectMetadataToDelete.isActive) {
         errors.push({
-          error: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+          code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
           message: t`Active objects cannot be deleted`,
-          id: flatObjectMetadataToDelete.id,
-          nameSingular: flatObjectMetadataToDelete.nameSingular,
-          namePlural: flatObjectMetadataToDelete.namePlural,
+          userFriendlyMessage: t`Active objects cannot be deleted`,
         });
       }
     }
@@ -129,13 +138,16 @@ export class FlatObjectMetadataValidatorService {
     existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
     flatObjectMetadataToValidate: FlatObjectMetadata;
     otherFlatObjectMetadataMapsToValidate?: FlatObjectMetadataMaps;
-  }): Promise<
-    (FailedFlatObjectMetadataValidation | FailedFlatFieldMetadataValidation)[]
-  > {
-    const errors: (
-      | FailedFlatObjectMetadataValidation
-      | FailedFlatFieldMetadataValidation
-    )[] = [];
+  }): Promise<FailedFlatObjectMetadataValidation> {
+    const validationResult: FailedFlatObjectMetadataValidation = {
+      errors: [],
+      objectMinimalInformation: {
+        id: flatObjectMetadataToValidate.id,
+        namePlural: flatObjectMetadataToValidate.namePlural,
+        nameSingular: flatObjectMetadataToValidate.nameSingular,
+      },
+      type: 'object',
+    };
 
     if (
       isDefined(
@@ -146,19 +158,17 @@ export class FlatObjectMetadataValidatorService {
       )
     ) {
       errors.push({
-        error: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message: t`Object with same id already exists`,
-        id: flatObjectMetadataToValidate.id,
+        userFriendlyMessage: t`Object with same id already exists`,
       });
     }
 
     if (flatObjectMetadataToValidate.isRemote) {
       errors.push({
-        error: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message: t`Remote objects are not supported yet`,
-        id: flatObjectMetadataToValidate.id,
-        nameSingular: flatObjectMetadataToValidate.nameSingular,
-        namePlural: flatObjectMetadataToValidate.namePlural,
+        userFriendlyMessage: t`Remote objects are not supported yet`,
       });
     }
 
@@ -200,8 +210,8 @@ export class FlatObjectMetadataValidatorService {
           },
         );
 
-      if (flatFieldValidatorErrors.length > 0) {
-        allFlatFieldMetadatasValidationErrors.push(...flatFieldValidatorErrors);
+      if (flatFieldValidatorErrors.errors.length > 0) {
+        allFlatFieldMetadatasValidationErrors.push(flatFieldValidatorErrors);
         continue;
       }
 
@@ -216,7 +226,7 @@ export class FlatObjectMetadataValidatorService {
       errors.push(...allFlatFieldMetadatasValidationErrors);
     }
 
-    return errors;
+    return validationResult;
   }
 
   private validateFlatObjectMetadataNameAndLabels({
@@ -225,8 +235,8 @@ export class FlatObjectMetadataValidatorService {
   }: {
     flatObjectMetadataToValidate: FlatObjectMetadata;
     existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-  }): FailedFlatObjectMetadataValidation[] {
-    const errors: FailedFlatObjectMetadataValidation[] = [];
+  }): FlatObjectMetadataValidationError[] {
+    const errors: FlatObjectMetadataValidationError[] = [];
 
     errors.push(
       ...validateFlatObjectMetadataNames({
@@ -247,11 +257,9 @@ export class FlatObjectMetadataValidatorService {
       !areFlatObjectMetadataNamesSyncedWithLabels(flatObjectMetadataToValidate)
     ) {
       errors.push({
-        error: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
         message: t`Names are not synced with labels`,
-        id: flatObjectMetadataToValidate.id,
-        nameSingular: flatObjectMetadataToValidate.nameSingular,
-        namePlural: flatObjectMetadataToValidate.namePlural,
+        userFriendlyMessage: t`Names are not synced with labels`,
       });
     }
 
@@ -264,12 +272,9 @@ export class FlatObjectMetadataValidatorService {
       })
     ) {
       errors.push({
-        error: ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,
+        code: ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,
         message: 'Object already exists',
         userFriendlyMessage: t`Object already exists`,
-        id: flatObjectMetadataToValidate.id,
-        nameSingular: flatObjectMetadataToValidate.nameSingular,
-        namePlural: flatObjectMetadataToValidate.namePlural,
       });
     }
 
