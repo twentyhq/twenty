@@ -33,7 +33,6 @@ export const useMorphRelationFromManyFieldDisplay = () => {
   const button = fieldDefinition.editButtonIcon;
 
   const fieldName = fieldDefinition.metadata.fieldName;
-  // debugger;
   const fieldValue = useRecordFieldValue<ObjectRecord[] | undefined>(
     recordId,
     fieldName,
