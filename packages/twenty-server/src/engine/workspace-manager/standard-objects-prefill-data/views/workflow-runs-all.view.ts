@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WORKFLOW_RUN_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -5,6 +7,7 @@ import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.wor
 
 export const workflowRunsAllView = (
   objectMetadataItems: ObjectMetadataEntity[],
+  useCoreNaming = false,
 ) => {
   const workflowRunObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.workflowRun,
@@ -15,7 +18,7 @@ export const workflowRunsAllView = (
   }
 
   return {
-    name: 'All Workflow Runs',
+    name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Workflow Runs',
     objectMetadataId: workflowRunObjectMetadata.id,
     type: 'table',
     key: 'INDEX',

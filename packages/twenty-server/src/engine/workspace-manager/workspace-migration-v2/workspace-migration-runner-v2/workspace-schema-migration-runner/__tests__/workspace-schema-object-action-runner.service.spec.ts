@@ -4,6 +4,7 @@ import { type QueryRunner } from 'typeorm';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceSchemaObjectActionRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/workspace-schema-object-action-runner.service';
 
 describe('WorkspaceSchemaObjectActionRunner', () => {
@@ -13,6 +14,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
 
   const mockWorkspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
   const mockObjectMetadataId = '20202020-1c25-4d02-bf25-6aeccf7ea418';
+  const mockSchemaName = getWorkspaceSchemaName(mockWorkspaceId);
 
   const createMockFlatObjectMetadataMaps = (
     objectMetadata: any,
@@ -121,7 +123,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         mockSchemaManagerService.tableManager.dropTable,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         tableName: '_task',
       });
 
@@ -133,14 +135,14 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         mockSchemaManagerService.enumManager.dropEnum,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         enumName: '_task_status_enum',
       });
       expect(
         mockSchemaManagerService.enumManager.dropEnum,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         enumName: '_task_priority_enum',
       });
     });
@@ -202,7 +204,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         mockSchemaManagerService.tableManager.dropTable,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         tableName: '_project',
       });
 
@@ -214,7 +216,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         mockSchemaManagerService.enumManager.dropEnum,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         enumName: '_project_tags_enum',
       });
     });
@@ -253,7 +255,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         mockSchemaManagerService.tableManager.dropTable,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         tableName: '_simpleObject',
       });
 
@@ -350,7 +352,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         mockSchemaManagerService.tableManager.createTable,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         tableName: '_article',
         columnDefinitions: [
           // TEXT field column
@@ -361,17 +363,15 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
             isArray: false,
             isUnique: false,
             default: null,
-            enumValues: undefined,
           },
           // SELECT field column
           {
             name: 'status',
-            type: '_article_status_enum',
+            type: `"${mockSchemaName}"."_article_status_enum"`,
             isNullable: true,
             isArray: false,
             isUnique: false,
             default: null,
-            enumValues: ['DRAFT', 'PUBLISHED'],
           },
           // CURRENCY field columns (2 composite columns)
           {
@@ -397,7 +397,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         mockSchemaManagerService.enumManager.createEnum,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         enumName: '_article_status_enum',
         values: ['DRAFT', 'PUBLISHED'],
       });
@@ -449,13 +449,13 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         mockSchemaManagerService.tableManager.createTable,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         tableName: '_company',
         columnDefinitions: [
           {
             name: 'headquartersAddressStreet1',
             type: 'text',
-            isNullable: false,
+            isNullable: true,
             isUnique: false,
             default: null,
             isArray: false,
@@ -463,7 +463,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
           {
             name: 'headquartersAddressStreet2',
             type: 'text',
-            isNullable: false,
+            isNullable: true,
             isUnique: false,
             default: null,
             isArray: false,
@@ -471,7 +471,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
           {
             name: 'headquartersAddressCity',
             type: 'text',
-            isNullable: false,
+            isNullable: true,
             isUnique: false,
             default: null,
             isArray: false,
@@ -479,7 +479,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
           {
             name: 'headquartersAddressPostcode',
             type: 'text',
-            isNullable: false,
+            isNullable: true,
             isUnique: false,
             default: null,
             isArray: false,
@@ -487,7 +487,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
           {
             name: 'headquartersAddressState',
             type: 'text',
-            isNullable: false,
+            isNullable: true,
             isUnique: false,
             default: null,
             isArray: false,
@@ -495,7 +495,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
           {
             name: 'headquartersAddressCountry',
             type: 'text',
-            isNullable: false,
+            isNullable: true,
             isUnique: false,
             default: null,
             isArray: false,
@@ -503,7 +503,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
           {
             name: 'headquartersAddressLat',
             type: 'numeric',
-            isNullable: false,
+            isNullable: true,
             isUnique: false,
             default: null,
             isArray: false,
@@ -511,7 +511,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
           {
             name: 'headquartersAddressLng',
             type: 'numeric',
-            isNullable: false,
+            isNullable: true,
             isUnique: false,
             default: null,
             isArray: false,
@@ -555,7 +555,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         mockSchemaManagerService.tableManager.createTable,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         tableName: '_emptyObject',
         columnDefinitions: [], // Empty columns array
       });
@@ -629,7 +629,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         mockSchemaManagerService.tableManager.renameTable,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         oldTableName: '_blogPost',
         newTableName: '_article',
       });
@@ -642,7 +642,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         mockSchemaManagerService.enumManager.renameEnum,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         oldEnumName: '_blogPost_category_enum',
         newEnumName: '_article_category_enum',
       });
@@ -650,7 +650,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         mockSchemaManagerService.enumManager.renameEnum,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         oldEnumName: '_blogPost_tags_enum',
         newEnumName: '_article_tags_enum',
       });
@@ -751,7 +751,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         mockSchemaManagerService.tableManager.renameTable,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         oldTableName: '_oldEntity',
         newTableName: '_newEntity',
       });
@@ -764,7 +764,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         mockSchemaManagerService.enumManager.renameEnum,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         oldEnumName: '_oldEntity_status_enum',
         newEnumName: '_newEntity_status_enum',
       });
@@ -810,7 +810,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         mockSchemaManagerService.tableManager.createTable,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         tableName: '_testObject',
         columnDefinitions: [],
       });
@@ -859,7 +859,7 @@ describe('WorkspaceSchemaObjectActionRunner', () => {
         mockSchemaManagerService.tableManager.renameTable,
       ).toHaveBeenCalledWith({
         queryRunner: mockQueryRunner,
-        schemaName: 'workspace_1wgvd1injqtife6y4rvfbu3h5',
+        schemaName: mockSchemaName,
         oldTableName: '_emptyFieldsObject',
         newTableName: '_renamedEmptyFieldsObject',
       });

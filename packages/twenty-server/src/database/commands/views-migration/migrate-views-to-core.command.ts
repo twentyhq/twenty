@@ -247,9 +247,15 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     workspaceId: string,
     queryRunner: QueryRunner,
   ): Promise<void> {
+    let viewName = workspaceView.name;
+
+    if (workspaceView.key === 'INDEX' && !viewName.includes('{')) {
+      viewName = 'All {objectLabelPlural}';
+    }
+
     const coreView: Partial<View> = {
       id: workspaceView.id,
-      name: workspaceView.name,
+      name: viewName,
       objectMetadataId: workspaceView.objectMetadataId,
       type: workspaceView.type === 'table' ? ViewType.TABLE : ViewType.KANBAN,
       key:
@@ -259,6 +265,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       icon: workspaceView.icon,
       position: workspaceView.position,
       isCompact: workspaceView.isCompact,
+      isCustom: workspaceView.key !== 'INDEX',
       openRecordIn:
         workspaceView.openRecordIn === 'SIDE_PANEL'
           ? ViewOpenRecordIn.SIDE_PANEL

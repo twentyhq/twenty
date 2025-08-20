@@ -4,9 +4,10 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useRecoilCallback } from 'recoil';
 
-export const useUpsertRecordField = () => {
+export const useUpsertRecordField = (recordTableId?: string) => {
   const currentRecordFieldsCallbackState = useRecoilComponentCallbackState(
     currentRecordFieldsComponentState,
+    recordTableId,
   );
 
   const upsertRecordField = useRecoilCallback(

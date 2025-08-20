@@ -38,6 +38,9 @@ export class ViewDTO {
   @Field({ nullable: false, defaultValue: false })
   isCompact: boolean;
 
+  @Field({ nullable: false, defaultValue: false })
+  isCustom: boolean;
+
   @Field(() => ViewOpenRecordIn, {
     nullable: false,
     defaultValue: ViewOpenRecordIn.SIDE_PANEL,

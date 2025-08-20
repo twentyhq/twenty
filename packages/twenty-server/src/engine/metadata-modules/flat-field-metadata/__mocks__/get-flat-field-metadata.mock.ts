@@ -13,7 +13,7 @@ type FlatFieldMetadataOverrides<
 export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
   overrides: FlatFieldMetadataOverrides<T>,
 ): FlatFieldMetadata => {
-  const createdAt = new Date();
+  const createdAt = '2024-01-01T00:00:00.000Z' as unknown as Date;
 
   return {
     createdAt,
@@ -30,6 +30,7 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     label: 'flat field metadata label',
     isNullable: true,
     isUnique: false,
+    isUIReadOnly: false,
     isLabelSyncedWithName: false,
     isSystem: false,
     standardId: null,

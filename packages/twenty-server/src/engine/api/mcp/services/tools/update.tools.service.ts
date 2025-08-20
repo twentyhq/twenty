@@ -24,17 +24,26 @@ export class UpdateToolsService {
         inputSchema:
           this.mCPMetadataToolsService.mergeSchemaWithCommonProperties({
             ...validationSchemaManager.getSchemas().UpdateOneFieldMetadataInput,
-            properties: omit(
-              validationSchemaManager.getSchemas().FieldMetadataDTO.properties,
-              [
-                'id',
-                'type',
-                'createdAt',
-                'updatedAt',
-                'isCustom',
-                'standardOverrides',
-              ],
-            ),
+            required: ['id'],
+            properties: {
+              ...omit(
+                validationSchemaManager.getSchemas().UpdateOneFieldMetadataInput
+                  .properties,
+                ['update'],
+              ),
+              ...omit(
+                validationSchemaManager.getSchemas().FieldMetadataDTO
+                  .properties,
+                [
+                  'id',
+                  'type',
+                  'createdAt',
+                  'updatedAt',
+                  'isCustom',
+                  'standardOverrides',
+                ],
+              ),
+            },
           }),
         execute: (request: Request) => this.execute(request, 'fields'),
       },
@@ -42,9 +51,19 @@ export class UpdateToolsService {
         name: 'update-object-metadata',
         description: 'Update an object metadata',
         inputSchema:
-          this.mCPMetadataToolsService.mergeSchemaWithCommonProperties(
-            validationSchemaManager.getSchemas().UpdateOneObjectInput,
-          ),
+          this.mCPMetadataToolsService.mergeSchemaWithCommonProperties({
+            ...validationSchemaManager.getSchemas().UpdateOneObjectInput,
+            required: ['id'],
+            properties: {
+              ...omit(
+                validationSchemaManager.getSchemas().UpdateOneObjectInput
+                  .properties,
+                ['update'],
+              ),
+              ...validationSchemaManager.getSchemas().UpdateObjectPayload
+                .properties,
+            },
+          }),
         execute: (request: Request) => this.execute(request, 'objects'),
       },
     ];

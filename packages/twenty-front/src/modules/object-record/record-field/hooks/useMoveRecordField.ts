@@ -1,14 +1,26 @@
+import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
+import { useUpdateTableColumn } from '@/object-record/record-field/hooks/useUpdateTableColumn';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
+import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { useRecoilCallback } from 'recoil';
+import { sortByProperty } from '~/utils/array/sortByProperty';
 
-export const useMoveRecordField = () => {
+export const useMoveRecordField = (recordTableId?: string) => {
   const currentRecordFieldsCallbackState = useRecoilComponentCallbackState(
     currentRecordFieldsComponentState,
+    recordTableId,
   );
 
+  const { saveViewFields } = useSaveCurrentViewFields();
+
+  const { updateRecordField } = useUpdateRecordField(recordTableId);
+
+  const { updateTableColumn } = useUpdateTableColumn(recordTableId);
+
   const moveRecordField = useRecoilCallback(
-    ({ set, snapshot }) =>
+    ({ snapshot }) =>
       ({
         direction,
         fieldMetadataItemIdToMove,
@@ -20,7 +32,11 @@ export const useMoveRecordField = () => {
           .getLoadable(currentRecordFieldsCallbackState)
           .getValue();
 
-        const indexOfRecordFieldToMove = currentRecordFields.findIndex(
+        const sortedRecordFields = currentRecordFields.toSorted(
+          sortByProperty('position'),
+        );
+
+        const indexOfRecordFieldToMove = sortedRecordFields.findIndex(
           (recordField) =>
             recordField.fieldMetadataItemId === fieldMetadataItemIdToMove,
         );
@@ -29,7 +45,7 @@ export const useMoveRecordField = () => {
           return;
         }
 
-        const newRecordFields = [...currentRecordFields];
+        const newRecordFields = [...sortedRecordFields];
 
         const targetArrayIndex =
           direction === 'before'
@@ -50,20 +66,40 @@ export const useMoveRecordField = () => {
           const targetRecordFieldNewPosition = currentRecordField.position;
           const currentRecordFieldNewPosition = targetRecordField.position;
 
-          newRecordFields[indexOfRecordFieldToMove] = {
-            ...newRecordFields[indexOfRecordFieldToMove],
-            position: currentRecordFieldNewPosition,
-          };
-
-          newRecordFields[targetRecordFieldNewPosition] = {
-            ...newRecordFields[targetRecordFieldNewPosition],
+          updateRecordField(targetRecordField.fieldMetadataItemId, {
             position: targetRecordFieldNewPosition,
-          };
+          });
 
-          set(currentRecordFieldsCallbackState, newRecordFields);
+          updateRecordField(currentRecordField.fieldMetadataItemId, {
+            position: currentRecordFieldNewPosition,
+          });
+
+          saveViewFields([
+            mapRecordFieldToViewField({
+              ...targetRecordField,
+              position: targetRecordFieldNewPosition,
+            }),
+            mapRecordFieldToViewField({
+              ...currentRecordField,
+              position: currentRecordFieldNewPosition,
+            }),
+          ]);
+
+          updateTableColumn(targetRecordField.fieldMetadataItemId, {
+            position: targetRecordFieldNewPosition,
+          });
+
+          updateTableColumn(currentRecordField.fieldMetadataItemId, {
+            position: currentRecordFieldNewPosition,
+          });
         }
       },
-    [currentRecordFieldsCallbackState],
+    [
+      currentRecordFieldsCallbackState,
+      updateTableColumn,
+      saveViewFields,
+      updateRecordField,
+    ],
   );
 
   return { moveRecordField };

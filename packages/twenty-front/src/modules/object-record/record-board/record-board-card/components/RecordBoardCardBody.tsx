@@ -1,3 +1,4 @@
+import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCardBodyContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBodyContainer';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
@@ -10,7 +11,6 @@ import {
   type RecordUpdateHook,
   type RecordUpdateHookParams,
 } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { isRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isRecordFieldReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFieldButtonIcon } from '@/object-record/record-field/ui/utils/getFieldButtonIcon';
@@ -45,12 +45,10 @@ export const RecordBoardCardBody = ({
       isRecordFieldReadOnly: isRecordFieldReadOnly({
         isRecordReadOnly,
         objectPermissions,
-        fieldMetadataId: fieldDefinition.fieldMetadataId,
-        fieldName: fieldDefinition.metadata.fieldName,
-        fieldType: fieldDefinition.type,
-        isCustom: fieldDefinition.metadata.isCustom,
-        objectNameSingular:
-          fieldDefinition.metadata.objectMetadataNameSingular ?? '',
+        fieldMetadataItem: {
+          id: fieldDefinition.fieldMetadataId,
+          isUIReadOnly: fieldDefinition.metadata.isUIReadOnly ?? false,
+        },
       }),
     }),
   );

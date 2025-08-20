@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
 import { ViewFieldController } from 'src/engine/core-modules/view/controllers/view-field.controller';
 import { ViewFilterGroupController } from 'src/engine/core-modules/view/controllers/view-filter-group.controller';
 import { ViewFilterController } from 'src/engine/core-modules/view/controllers/view-filter.controller';
@@ -25,6 +27,7 @@ import { ViewFilterService } from 'src/engine/core-modules/view/services/view-fi
 import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
 import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
+import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 
 @Module({
@@ -33,7 +36,10 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
       [View, ViewField, ViewFilter, ViewFilterGroup, ViewGroup, ViewSort],
       'core',
     ),
+    AuthModule,
+    I18nModule,
     WorkspaceCacheStorageModule,
+    WorkspaceMetadataCacheModule,
   ],
   controllers: [
     ViewController,

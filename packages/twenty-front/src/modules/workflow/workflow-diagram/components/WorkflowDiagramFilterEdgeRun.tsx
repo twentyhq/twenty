@@ -63,6 +63,8 @@ export const WorkflowDiagramFilterEdgeRun = ({
   targetX,
   targetY,
   data,
+  markerStart,
+  markerEnd,
 }: WorkflowDiagramFilterEdgeRunProps) => {
   assertFilterEdgeDataOrThrow(data);
 
@@ -98,8 +100,9 @@ export const WorkflowDiagramFilterEdgeRun = ({
   return (
     <>
       <WorkflowRunDiagramBaseEdge
-        edgePath={edgePath}
-        edgeExecutionStatus={data.edgeExecutionStatus}
+        path={edgePath}
+        markerStart={markerStart}
+        markerEnd={markerEnd}
       />
 
       <EdgeLabelRenderer>

@@ -7,6 +7,6 @@ const relationFieldTypes = [
 
 export type RelationFieldMetadataType = (typeof relationFieldTypes)[number];
 
-export const RELATION_FIELD_TYPES: RelationFieldMetadataType[] = [
+export const RELATION_FIELD_TYPES: FieldMetadataType[] = [
   ...relationFieldTypes,
 ];
