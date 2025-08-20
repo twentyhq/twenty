@@ -63,6 +63,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       isLabelSyncedWithName: createObjectInput.isLabelSyncedWithName ?? false,
       isRemote: createObjectInput.isRemote ?? false,
       isSearchable: true,
+      isUIReadOnly: false,
       isSystem: false,
       labelIdentifierFieldMetadataId: baseCustomFlatFieldMetadatas.nameField.id,
       labelPlural: capitalize(createObjectInput.labelPlural),

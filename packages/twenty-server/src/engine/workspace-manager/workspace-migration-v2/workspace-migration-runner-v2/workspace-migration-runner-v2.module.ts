@@ -32,12 +32,6 @@ import { WorkspaceSchemaMigrationRunnerModule } from 'src/engine/workspace-manag
     WorkspaceMetadataMigrationRunnerService,
     WorkspaceMigrationRunnerV2Service,
   ],
-  exports: [
-    WorkspaceMigrationRunnerV2Service,
-    WorkspaceMetadataObjectActionRunnerService,
-    WorkspaceMetadataIndexActionRunnerService,
-    WorkspaceMetadataFieldActionRunnerService,
-    WorkspaceMetadataMigrationRunnerService,
-  ],
+  exports: [WorkspaceMigrationRunnerV2Service],
 })
 export class WorkspaceMigrationRunnerV2Module {}

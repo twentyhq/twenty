@@ -8,6 +8,7 @@ import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.en
 import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldListener } from 'src/modules/view/listeners/view-field.listener';
 import { ViewFilterGroupListener } from 'src/modules/view/listeners/view-filter-group.listener';
 import { ViewFilterListener } from 'src/modules/view/listeners/view-filter.listener';
@@ -29,6 +30,7 @@ import { ViewService } from 'src/modules/view/services/view.service';
       [View, ViewField, ViewFilter, ViewFilterGroup, ViewGroup, ViewSort],
       'core',
     ),
+    TypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
     FeatureFlagModule,
   ],
 

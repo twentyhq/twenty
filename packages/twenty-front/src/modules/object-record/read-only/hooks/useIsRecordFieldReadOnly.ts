@@ -1,8 +1,8 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useIsRecordReadOnly } from '@/object-record/record-field/ui/hooks/read-only/useIsRecordReadOnly';
-import { isRecordFieldReadOnly } from '@/object-record/record-field/ui/hooks/read-only/utils/isRecordFieldReadOnly';
+import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 
 export type UseFieldIsReadOnlyParams = {
   fieldMetadataId: string;
@@ -42,10 +42,6 @@ export const useIsRecordFieldReadOnly = ({
   return isRecordFieldReadOnly({
     isRecordReadOnly,
     objectPermissions,
-    fieldMetadataId,
-    objectNameSingular: objectMetadataItem.nameSingular,
-    fieldName: fieldMetadataItem.name,
-    fieldType: fieldMetadataItem.type,
-    isCustom: fieldMetadataItem.isCustom ?? false,
+    fieldMetadataItem,
   });
 };

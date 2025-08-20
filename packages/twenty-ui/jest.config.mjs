@@ -1,9 +1,15 @@
-import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
+import { readFileSync } from 'fs';
+import { dirname, resolve } from 'path';
+import { pathsToModuleNameMapper } from 'ts-jest';
+import { fileURLToPath } from 'url';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const tsConfig = require('./tsconfig.json');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-const jestConfig: JestConfigWithTsJest = {
+const tsConfigPath = resolve(__dirname, './tsconfig.json');
+const tsConfig = JSON.parse(readFileSync(tsConfigPath, 'utf8'));
+
+const jestConfig = {
   displayName: 'twenty-ui',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['./setupTests.ts'],
