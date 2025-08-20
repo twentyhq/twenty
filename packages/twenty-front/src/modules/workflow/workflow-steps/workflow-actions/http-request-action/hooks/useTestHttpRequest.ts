@@ -92,10 +92,10 @@ export const useTestHttpRequest = (actionId: string) => {
       defaultContentType = 'application/json';
     }
     const requestOptions: RequestInit = {
-        method: method,
-        ...(defaultContentType ? { 'Content-Type': defaultContentType } : {}),
-        ...headers
-      };
+      method: method,
+      ...(defaultContentType ? { 'Content-Type': defaultContentType } : {}),
+      ...headers,
+    };
 
     if (['POST', 'PUT', 'PATCH'].includes(method) && body !== undefined) {
       requestOptions.body =
@@ -146,8 +146,8 @@ export const useTestHttpRequest = (actionId: string) => {
         nestedVariableContext,
       );
       let output: HttpRequestTestData['output'];
-     
-    if (
+
+      if (
         httpRequestFormData.bodyType === 'FormData' &&
         ['POST', 'PUT', 'PATCH'].includes(httpRequestFormData.method)
       ) {

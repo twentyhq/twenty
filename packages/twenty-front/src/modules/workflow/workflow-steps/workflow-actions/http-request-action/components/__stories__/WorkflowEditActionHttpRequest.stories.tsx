@@ -281,7 +281,7 @@ export const WithArrayContainingNonStringVariablesBody: Story = {
   {{${MOCKED_STEP_ID}.salary}},
   "database"
 ]`,
-bodyType:'rawJson'
+          bodyType: 'rawJson',
         },
         outputSchema: {},
         errorHandlingOptions: {
