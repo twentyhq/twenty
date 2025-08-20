@@ -57,7 +57,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const { recordTableId } = useRecordTableContextOrThrow();
 
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
-    useTableColumns({ objectMetadataId, recordTableId });
+    useTableColumns({ recordTableId });
 
   const dropdownId = column.fieldMetadataId + '-header';
 
@@ -86,7 +86,10 @@ export const RecordTableColumnHeadDropdownMenu = ({
 
   const handleColumnVisibility = () => {
     closeDropdownAndToggleScroll();
-    handleColumnVisibilityChange(column);
+    handleColumnVisibilityChange({
+      ...column,
+      isVisible: false,
+    });
   };
 
   const handleToggleColumnSort = useHandleToggleColumnSort({

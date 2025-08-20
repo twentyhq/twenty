@@ -24,6 +24,8 @@ export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export type { ObjectsPermissionsByRoleIdDeprecated } from './ObjectsPermissionsByRoleIdDeprecated';
 export type { ObjectsPermissionsDeprecated } from './ObjectsPermissionsDeprecated';
 export type { RelationAndMorphRelationFieldMetadataType } from './RelationAndMorphRelationFieldMetadataType';
+export type { RelationCreationPayload } from './RelationCreationPayload';
+export { RelationType } from './RelationType';
 export type {
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,

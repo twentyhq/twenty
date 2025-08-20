@@ -27,5 +27,5 @@ export class JsonRpc {
 
   @IsOptional()
   @Validate(IsNumberOrString)
-  id: string | number | null;
+  id: string | number;
 }

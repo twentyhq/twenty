@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
-import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-flat-field-metadata.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
@@ -178,14 +177,7 @@ export class FlatObjectMetadataValidatorService {
 
     for (const flatFieldMetadataToValidate of flatObjectMetadataToValidate.flatFieldMetadatas) {
       const relationTargetFlatObjectMetadataMaps =
-        (isFlatFieldMetadataEntityOfType(
-          flatFieldMetadataToValidate,
-          FieldMetadataType.RELATION,
-        ) ||
-          isFlatFieldMetadataEntityOfType(
-            flatFieldMetadataToValidate,
-            FieldMetadataType.MORPH_RELATION,
-          )) &&
+        isRelationFlatFieldMetadata(flatFieldMetadataToValidate) &&
         isDefined(otherFlatObjectMetadataMapsToValidate)
           ? computeRelationTargetFlatObjectMetadataMaps({
               flatFieldMetadata: flatFieldMetadataToValidate,

@@ -13,6 +13,7 @@ import { OTHER_TRIGGER_TYPES } from '@/workflow/workflow-trigger/constants/Other
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/getTriggerDefaultDefinition';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useTheme } from '@emotion/react';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
@@ -67,30 +68,39 @@ export const CommandMenuWorkflowSelectTriggerTypeContent = ({
     };
   };
 
+  const theme = useTheme();
+
   return (
     <RightDrawerStepListContainer>
       <RightDrawerWorkflowSelectStepTitle>
         Data
       </RightDrawerWorkflowSelectStepTitle>
-      {DATABASE_TRIGGER_TYPES.map((action) => (
-        <MenuItemCommand
-          key={action.defaultLabel}
-          LeftIcon={getIcon(action.icon)}
-          text={action.defaultLabel}
-          onClick={handleTriggerTypeClick(action)}
-        />
-      ))}
+      {DATABASE_TRIGGER_TYPES.map((action) => {
+        const Icon = getIcon(action.icon);
+        return (
+          <MenuItemCommand
+            key={action.defaultLabel}
+            LeftIcon={() => <Icon color={theme.color.blue} />}
+            text={action.defaultLabel}
+            onClick={handleTriggerTypeClick(action)}
+          />
+        );
+      })}
+
       <RightDrawerWorkflowSelectStepTitle>
         Others
       </RightDrawerWorkflowSelectStepTitle>
-      {OTHER_TRIGGER_TYPES.map((action) => (
-        <MenuItemCommand
-          key={action.defaultLabel}
-          LeftIcon={getIcon(action.icon)}
-          text={action.defaultLabel}
-          onClick={handleTriggerTypeClick(action)}
-        />
-      ))}
+      {OTHER_TRIGGER_TYPES.map((action) => {
+        const Icon = getIcon(action.icon);
+        return (
+          <MenuItemCommand
+            key={action.defaultLabel}
+            LeftIcon={() => <Icon color={theme.color.purple} />}
+            text={action.defaultLabel}
+            onClick={handleTriggerTypeClick(action)}
+          />
+        );
+      })}
     </RightDrawerStepListContainer>
   );
 };

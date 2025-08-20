@@ -49,14 +49,17 @@ export class WorkspaceSchemaObjectActionRunnerService
       tableName,
     });
 
-    const enumFlatFieldMetadatas = Object.values(
+    const enumOrCompositeFlatFieldMetadatas = Object.values(
       flatObjectMetadataWithFlatFieldMaps.fieldsById,
     )
       .filter((field): field is FlatFieldMetadata => field != null)
-      .filter((field) => isEnumFlatFieldMetadata(field));
+      .filter(
+        (field) =>
+          isEnumFlatFieldMetadata(field) || isCompositeFlatFieldMetadata(field),
+      );
 
     const enumOperations = collectEnumOperationsForObject({
-      flatFieldMetadatas: enumFlatFieldMetadatas,
+      flatFieldMetadatas: enumOrCompositeFlatFieldMetadatas,
       tableName,
       operation: EnumOperation.DROP,
     });
