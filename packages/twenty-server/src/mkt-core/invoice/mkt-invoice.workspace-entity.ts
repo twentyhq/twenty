@@ -117,13 +117,13 @@ export class MktInvoiceWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MKT_INVOICE_FIELD_IDS.vat,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.NUMBER,
     label: msg`Invoice VAT`,
     description: msg`Invoice VAT`,
     icon: 'IconFileText',
   })
   @WorkspaceIsNullable()
-  vat?: string;
+  vat?: number;
 
   @WorkspaceField({
     standardId: MKT_INVOICE_FIELD_IDS.sInvoiceCode,
@@ -146,14 +146,124 @@ export class MktInvoiceWorkspaceEntity extends BaseWorkspaceEntity {
   sentAt?: string;
 
   @WorkspaceField({
-    standardId: MKT_INVOICE_FIELD_IDS.totalAmount,
+    standardId: MKT_INVOICE_FIELD_IDS.supplierTaxCode,
     type: FieldMetadataType.TEXT,
+    label: msg`Supplier Tax Code`,
+    description: msg`Supplier tax code`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  supplierTaxCode?: string;
+
+  @WorkspaceField({
+    standardId: MKT_INVOICE_FIELD_IDS.invoiceType,
+    type: FieldMetadataType.TEXT,
+    label: msg`Invoice Type`,
+    description: msg`Invoice type`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  invoiceType?: string;
+
+  @WorkspaceField({
+    standardId: MKT_INVOICE_FIELD_IDS.templateCode,
+    type: FieldMetadataType.TEXT,
+    label: msg`Template Code`,
+    description: msg`Template code`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  templateCode?: string;
+
+  @WorkspaceField({
+    standardId: MKT_INVOICE_FIELD_IDS.invoiceSeries,
+    type: FieldMetadataType.TEXT,
+    label: msg`Invoice Series`,
+    description: msg`Invoice series`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  invoiceSeries?: string;
+
+  @WorkspaceField({
+    standardId: MKT_INVOICE_FIELD_IDS.invoiceNo,
+    type: FieldMetadataType.TEXT,
+    label: msg`Invoice No`,
+    description: msg`Invoice no`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  invoiceNo?: string;
+
+  @WorkspaceField({
+    standardId: MKT_INVOICE_FIELD_IDS.transactionUuid,
+    type: FieldMetadataType.TEXT,
+    label: msg`Transaction UUID`,
+    description: msg`Transaction UUID`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  transactionUuid?: string;
+
+  @WorkspaceField({
+    standardId: MKT_INVOICE_FIELD_IDS.issueDate,
+    type: FieldMetadataType.TEXT,
+    label: msg`Issue Date`,
+    description: msg`Issue date`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  issueDate?: string;
+
+  @WorkspaceField({
+    standardId: MKT_INVOICE_FIELD_IDS.totalWithoutTax,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Total Without Tax`,
+    description: msg`Total without tax`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  totalWithoutTax?: number;
+
+  @WorkspaceField({
+    standardId: MKT_INVOICE_FIELD_IDS.totalTax,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Total Tax`,
+    description: msg`Total tax`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  totalTax?: number;
+
+  @WorkspaceField({
+    standardId: MKT_INVOICE_FIELD_IDS.totalWithTax,
+    type: FieldMetadataType.NUMBER,
+    label: msg`Total With Tax`,
+    description: msg`Total with tax`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  totalWithTax?: number;
+
+  @WorkspaceField({
+    standardId: MKT_INVOICE_FIELD_IDS.taxInWords,
+    type: FieldMetadataType.TEXT,
+    label: msg`Tax In Words`,
+    description: msg`Tax in words`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  taxInWords?: string;
+
+  @WorkspaceField({
+    standardId: MKT_INVOICE_FIELD_IDS.totalAmount,
+    type: FieldMetadataType.NUMBER,
     label: msg`Total Amount`,
     description: msg`Invoice total amount`,
     icon: 'IconClock',
   })
   @WorkspaceIsNullable()
-  totalAmount?: string;
+  totalAmount?: number;
 
   @WorkspaceRelation({
     standardId: MKT_INVOICE_FIELD_IDS.mktOrder,
