@@ -1,3 +1,4 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useMorphRelationToOneFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useMorphRelationToOneFieldDisplay';
@@ -16,20 +17,16 @@ export const MorphRelationManyToOneFieldDisplay = () => {
 
   const fieldValue = fieldValues.filter(isDefined).pop();
 
-  if (
-    !isDefined(fieldValue) ||
-    !isDefined(
-      fieldDefinition?.metadata.morphRelations[0].targetObjectMetadata
-        .nameSingular,
-    )
-  ) {
+  if (!isDefined(fieldValue)) {
     return null;
   }
 
-  // todo @guillim : adjust this to handle workspaemembers
-  const isWorkspaceMemberFieldMetadataRelation = false;
-  //   fieldDefinition.metadata.relationObjectMetadataNameSingular ===
-  //   CoreObjectNameSingular.WorkspaceMember;
+  const isWorkspaceMemberFieldMetadataRelation =
+    fieldDefinition.metadata.morphRelations.some(
+      (morphRelation) =>
+        morphRelation.targetObjectMetadata.nameSingular ===
+        CoreObjectNameSingular.WorkspaceMember,
+    );
   const recordChipData = generateRecordChipData(fieldValue);
 
   return (
