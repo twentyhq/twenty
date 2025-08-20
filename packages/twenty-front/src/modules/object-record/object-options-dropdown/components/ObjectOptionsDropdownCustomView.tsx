@@ -29,13 +29,13 @@ import {
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 
-interface ObjectOptionsDropdownMenuContentCustomProps {
+interface ObjectOptionsDropdownCustomViewProps {
   onBackToDefault?: () => void;
 }
 
-export const ObjectOptionsDropdownMenuContentCustom = ({
+export const ObjectOptionsDropdownCustomView = ({
   onBackToDefault,
-}: ObjectOptionsDropdownMenuContentCustomProps) => {
+}: ObjectOptionsDropdownCustomViewProps) => {
   const { t } = useLingui();
   const { recordIndexId, objectMetadataItem, onContentChange, closeDropdown } =
     useObjectOptionsDropdown();
