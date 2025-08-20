@@ -20,6 +20,19 @@ export type WorkspaceMigrationV2BuilderOptions = {
   isSystemBuild: boolean;
 };
 
+type SuccessfulWorkspaceMigrationBuildResult = {
+  status: 'success';
+  workspaceMigration: WorkspaceMigrationV2;
+};
+
+export type FailedWorkspaceMigrationBuildResult = {
+  status: 'fail';
+  errors: (
+    | FailedFlatObjectMetadataValidation
+    | FailedFlatFieldMetadataValidation
+  )[];
+};
+
 export type WorkspaceMigrationBuildArgs = {
   workspaceId: string;
   buildOptions: WorkspaceMigrationV2BuilderOptions;
@@ -37,17 +50,8 @@ export class WorkspaceMigrationBuilderV2Service {
     workspaceId,
     buildOptions,
   }: WorkspaceMigrationBuildArgs): Promise<
-    | {
-        status: 'fail';
-        errors: (
-          | FailedFlatObjectMetadataValidation
-          | FailedFlatFieldMetadataValidation
-        )[];
-      }
-    | {
-        status: 'success';
-        workspaceMigration: WorkspaceMigrationV2;
-      }
+    | SuccessfulWorkspaceMigrationBuildResult
+    | FailedWorkspaceMigrationBuildResult
   > {
     const fromFlatObjectMetadatas =
       fromFlatObjectMetadataMapsToFlatObjectMetadatas(

@@ -26,6 +26,7 @@ import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadat
 import { getSubFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-or-throw.util';
 import { replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration-v2/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
@@ -236,19 +237,24 @@ export class FieldMetadataServiceV2 {
       }),
     );
 
-    await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-      {
-        fromFlatObjectMetadataMaps,
-        toFlatObjectMetadataMaps,
-        buildOptions: {
-          isSystemBuild: false,
-          inferDeletionFromMissingObjectFieldIndex: false,
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          fromFlatObjectMetadataMaps,
+          toFlatObjectMetadataMaps,
+          buildOptions: {
+            isSystemBuild: false,
+            inferDeletionFromMissingObjectFieldIndex: false,
+          },
+          workspaceId,
+          errorMessage:
+            'Multiple validation errors occurred while creating fields',
         },
-        workspaceId,
-        errorMessage:
-          'Multiple validation errors occurred while creating fields',
-      },
-    );
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(validateAndBuildResult);
+    }
 
     return this.fieldMetadataRepository.find({
       where: {
