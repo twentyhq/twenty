@@ -2,14 +2,12 @@ import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import {
-  FailedFlatFieldMetadataValidation,
-} from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { FlatFieldMetadataIdObjectIdAndName } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-id-object-id-and-name.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { InvalidMetadataExceptionCode } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 const getReservedCompositeFieldNames = (
@@ -54,7 +52,7 @@ export const validateFlatFieldMetadataNameAvailability = ({
     )
   ) {
     errors.push({
-      error: InvalidMetadataExceptionCode.NOT_AVAILABLE,
+      error: FieldMetadataExceptionCode.NOT_AVAILABLE,
       id,
       message: `Name "${name}" is not available as it is already used by another field`,
       name,
@@ -65,7 +63,7 @@ export const validateFlatFieldMetadataNameAvailability = ({
 
   if (reservedCompositeFieldsNames.includes(name)) {
     errors.push({
-      error: InvalidMetadataExceptionCode.RESERVED_KEYWORD,
+      error: FieldMetadataExceptionCode.RESERVED_KEYWORD,
       id,
       message: `Name "${name}" is reserved composite field name`,
       name,

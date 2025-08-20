@@ -21,8 +21,6 @@ import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-m
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
-import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { InvalidMetadataExceptionCode } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 
 export type ValidateOneFieldMetadataArgs<
@@ -298,7 +296,7 @@ export class FlatFieldMetadataValidatorService {
         )
       ) {
         errors.push({
-          error: ObjectMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED,
+          error: FieldMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED,
           message: 'Field with same id already exists in object',
           userFriendlyMessage: t`Field already exists`,
           ...flatFieldMetadataIdObjectIdAndName,
@@ -307,7 +305,7 @@ export class FlatFieldMetadataValidatorService {
 
       if (parentFlatObjectMetadata.isRemote === true) {
         errors.push({
-          error: ObjectMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED,
+          error: FieldMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED,
           message: 'Remote objects are read-only',
           userFriendlyMessage: t`Remote objects are not production ready yet`,
           ...flatFieldMetadataIdObjectIdAndName,
@@ -327,7 +325,7 @@ export class FlatFieldMetadataValidatorService {
       !isFlatFieldMetadataNameSyncedWithLabel(flatFieldMetadataToValidate)
     ) {
       errors.push({
-        error: InvalidMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,
+        error: FieldMetadataExceptionCode.NAME_NOT_SYNCED_WITH_LABEL,
         message: `Name is not synced with label`,
         userFriendlyMessage: t`Field name is not synced with field label`,
         ...flatFieldMetadataIdObjectIdAndName,

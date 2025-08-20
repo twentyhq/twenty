@@ -1,15 +1,8 @@
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { FlatFieldMetadataIdObjectIdAndName } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-id-object-id-and-name.type';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatMetadataValidator } from 'src/engine/metadata-modules/types/flat-metadata-validator.type';
-
-export type FailedFlatFieldMetadataValidation = {
-  error: string; // strictly type
-  message: string;
-  userFriendlyMessage?: string;
-  value?: any; // TODO use generic
-} & Pick<FlatFieldMetadata, 'id' | 'objectMetadataId' | 'name'>;
 
 export const runFlatFieldMetadataValidators = <T>({
   elementToValidate,

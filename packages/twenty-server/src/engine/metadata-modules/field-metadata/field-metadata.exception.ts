@@ -19,4 +19,11 @@ export const FieldMetadataExceptionCode = appendCommonExceptionCode({
     'LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND',
   UNCOVERED_FIELD_METADATA_TYPE_VALIDATION:
     'UNCOVERED_FIELD_METADATA_TYPE_VALIDATION',
+  RESERVED_KEYWORD: 'RESERVED_KEYWORD',
+  NOT_AVAILABLE: 'NOT_AVAILABLE',
+  OBJECT_MUTATION_NOT_ALLOWED: 'OBJECT_MUTATION_NOT_ALLOWED',
+  NAME_NOT_SYNCED_WITH_LABEL: 'NAME_NOT_SYNCED_WITH_LABEL'
 } as const);
+
+export type FieldMetadataExceptionCode =
+  (typeof FieldMetadataExceptionCode)[keyof typeof FieldMetadataExceptionCode];
