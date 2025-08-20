@@ -12,6 +12,7 @@ export const fromFailedFlatObjectMetadataValidationToValidationErrorObjectRespon
       fromFailedFlatFieldMetadataValidationToValidationErrorFieldResponse,
     );
     const objectResponseError: ValidationErrorObjectResponse = {
+      operation: failedFlatObjectMetadataValidation.type,
       fields,
       id,
       namePlural,

@@ -9,6 +9,7 @@ export const fromFailedFlatFieldMetadataValidationToValidationErrorFieldResponse
       failedFlatFieldMetadataValidation.fieldMinimalInformation;
 
     return {
+      operation: failedFlatFieldMetadataValidation.type,
       id,
       name,
       errors: failedFlatFieldMetadataValidation.errors,
