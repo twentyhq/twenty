@@ -57,31 +57,12 @@ const stringify = (value: any): string => {
   return JSON.stringify(value);
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const parseJSON = (value: any): unknown => {
-  if (value === null || value === undefined) {
-    return value;
+const parseJSON = (value: string): object => {
+  try {
+    return JSON.parse(value);
+  } catch {
+    throw new ValidationError(`Value is not valid JSON: ${value}`);
   }
-
-  const valueType = typeof value;
-
-  if (valueType === 'string') {
-    try {
-      return JSON.parse(value as string);
-    } catch {
-      throw new ValidationError(`Value is not valid JSON: ${value}`);
-    }
-  }
-
-  if (
-    valueType === 'object' ||
-    valueType === 'number' ||
-    valueType === 'boolean'
-  ) {
-    return value;
-  }
-
-  return value;
 };
 
 export const RawJSONScalar = new GraphQLScalarType({

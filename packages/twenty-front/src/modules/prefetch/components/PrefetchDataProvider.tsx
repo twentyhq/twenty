@@ -6,7 +6,7 @@ export const PrefetchDataProvider = ({ children }: React.PropsWithChildren) => {
   return (
     <>
       <PrefetchRunFavoriteQueriesEffect />
-      {<PrefetchRunViewQueryEffect />}
+      <PrefetchRunViewQueryEffect />
       {children}
     </>
   );
