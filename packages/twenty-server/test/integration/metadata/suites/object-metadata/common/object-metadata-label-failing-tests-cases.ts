@@ -1,5 +1,6 @@
-import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
-import { EachTestingContext } from 'twenty-shared/testing';
+import { type EachTestingContext } from 'twenty-shared/testing';
+
+import { type CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 
 export const OBJECT_METADATA_LABEL_FAILING_TEST_CASES: EachTestingContext<
   Partial<Omit<CreateObjectInput, 'workspaceId' | 'dataSourceId'>>
