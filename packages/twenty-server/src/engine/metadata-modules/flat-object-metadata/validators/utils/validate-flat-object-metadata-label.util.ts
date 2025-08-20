@@ -43,6 +43,7 @@ export const validateFlatObjectMetadataLabel = ({
   if (labelsAreIdentical) {
     errors.push({
       code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+      userFriendlyMessage: `The singular and plural labels cannot be the same for an object`,
       message: t`The singular and plural labels cannot be the same for an object`,
       value: labelSingular,
     });
