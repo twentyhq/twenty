@@ -20,12 +20,13 @@ export const throwOnFieldInputTranspilationsError: ThrowOnFieldInputTranspilatio
     );
 
     if (failedInputTranspilationErrors.length > 0) {
+      // We should create a dedicated exceptions instead of hacking through the WorkspaceMigrationBuilderExceptionV2
       throw new WorkspaceMigrationBuilderExceptionV2(
         {
           errors: [
             {
               errors: failedInputTranspilationErrors,
-              type: 'field',
+              type: 'create_field',
               fieldMinimalInformation: {},
             },
           ],

@@ -217,7 +217,6 @@ export class FieldMetadataServiceV2 {
       )
     ).flat();
 
-    // TODO handle prastoin
     throwOnFieldInputTranspilationsError(
       allInputTranspilationsResults,
       'Multiple validation errors occurred while creating field',

@@ -1,3 +1,4 @@
+import { isFailedFlatObjectMetadataValidation } from 'src/engine/metadata-modules/flat-object-metadata/utils/is-failed-flat-object-metadata-validation.util';
 import { type WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { type ValidationErrorResponse } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/types/validate-error-response.type';
 import { fromFailedFlatFieldMetadataValidationToValidationErrorFieldResponse } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/utils/from-failed-flat-field-metadata-validation-to-validation-error-field-response.util';
@@ -20,7 +21,7 @@ export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
 
   return workspaceMigrationBuilderException.failedWorkspaceMigrationBuildResult.errors.reduce<ValidationErrorResponse>(
     ({ errors, summary }, failedValidationError) => {
-      if (failedValidationError.type === 'object') {
+      if (isFailedFlatObjectMetadataValidation(failedValidationError)) {
         const errorObjectResponse =
           fromFailedFlatObjectMetadataValidationToValidationErrorObjectResponse(
             failedValidationError,

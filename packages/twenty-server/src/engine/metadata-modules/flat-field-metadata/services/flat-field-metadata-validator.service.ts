@@ -41,7 +41,7 @@ export class FlatFieldMetadataValidatorService {
     workspaceId,
   }: ValidateOneFieldMetadataArgs<T>): Promise<FailedFlatFieldMetadataValidation> {
     const validationResult: FailedFlatFieldMetadataValidation = {
-      type: 'field',
+      type: 'update_field',
       errors: [],
       fieldMinimalInformation: {
         id: updatedFlatFieldMetadata.id,
@@ -174,7 +174,7 @@ export class FlatFieldMetadataValidatorService {
     existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   }): FailedFlatFieldMetadataValidation {
     const validationResult: FailedFlatFieldMetadataValidation = {
-      type: 'field',
+      type: 'delete_field',
       errors: [],
       fieldMinimalInformation: {
         id: flatFieldMetadataToDelete.id,
@@ -256,7 +256,7 @@ export class FlatFieldMetadataValidatorService {
         name: flatFieldMetadataToValidate.name,
         objectMetadataId: flatFieldMetadataToValidate.objectMetadataId,
       },
-      type: 'field',
+      type: 'create_field',
     };
 
     const parentFlatObjectMetadata =

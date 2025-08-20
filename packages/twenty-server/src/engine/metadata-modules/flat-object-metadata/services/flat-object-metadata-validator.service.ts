@@ -38,6 +38,7 @@ export class FlatObjectMetadataValidatorService {
     updatedFlatObjectMetadata: FlatObjectMetadata;
   }): FailedFlatObjectMetadataValidation {
     const validationResult = getDefaultFailedFlatObjectMetadataValidation({
+      type: 'update_object',
       objectMinimalInformation: {
         id: updatedFlatObjectMetadata.id,
       },
@@ -85,6 +86,7 @@ export class FlatObjectMetadataValidatorService {
     buildOptions: WorkspaceMigrationV2BuilderOptions;
   }): FailedFlatObjectMetadataValidation {
     const validationResult = getDefaultFailedFlatObjectMetadataValidation({
+      type: 'delete_object',
       objectMinimalInformation: {
         id: objectMetadataToDeleteId,
       },
@@ -148,6 +150,7 @@ export class FlatObjectMetadataValidatorService {
     otherFlatObjectMetadataMapsToValidate?: FlatObjectMetadataMaps;
   }): Promise<FailedFlatObjectMetadataValidation> {
     const validationResult = getDefaultFailedFlatObjectMetadataValidation({
+      type: 'create_object',
       objectMinimalInformation: {
         id: flatObjectMetadataToValidate.id,
         namePlural: flatObjectMetadataToValidate.namePlural,
