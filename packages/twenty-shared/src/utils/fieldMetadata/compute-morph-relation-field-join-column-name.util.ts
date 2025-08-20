@@ -1,5 +1,4 @@
-import { capitalize } from "@/utils/strings";
-
+import { capitalize } from '@/utils/strings';
 
 type ComputeMorphRelationFieldJoinColumnNameArgs = {
   name: string;
