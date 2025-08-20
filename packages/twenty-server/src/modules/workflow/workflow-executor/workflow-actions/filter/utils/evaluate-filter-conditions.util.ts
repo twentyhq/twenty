@@ -21,7 +21,6 @@ function evaluateFilter(filter: ResolvedFilter): boolean {
     case 'DATE_TIME':
       return evaluateDateFilter(filter);
     case 'TEXT':
-    case 'SELECT':
     case 'MULTI_SELECT':
     case 'FULL_NAME':
     case 'EMAILS':
@@ -31,6 +30,8 @@ function evaluateFilter(filter: ResolvedFilter): boolean {
     case 'ARRAY':
     case 'RAW_JSON':
       return evaluateTextAndArrayFilter(filter);
+    case 'SELECT':
+      return evaluateSelectFilter(filter);
     case 'BOOLEAN':
       return evaluateBooleanFilter(filter);
     case 'UUID':
@@ -334,6 +335,34 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for ${filter.type} filter type`,
+      );
+  }
+}
+
+function evaluateSelectFilter(filter: ResolvedFilter): boolean {
+  switch (filter.operand) {
+    case ViewFilterOperand.Is:
+      return contains(filter.leftOperand, filter.rightOperand);
+    case ViewFilterOperand.IsNot:
+      return !contains(filter.leftOperand, filter.rightOperand);
+    case ViewFilterOperand.IsEmpty:
+      return (
+        filter.leftOperand === null ||
+        filter.leftOperand === undefined ||
+        filter.leftOperand === '' ||
+        (Array.isArray(filter.leftOperand) && filter.leftOperand.length === 0)
+      );
+
+    case ViewFilterOperand.IsNotEmpty:
+      return (
+        filter.leftOperand !== null &&
+        filter.leftOperand !== undefined &&
+        filter.leftOperand !== '' &&
+        (!Array.isArray(filter.leftOperand) || filter.leftOperand.length > 0)
+      );
+    default:
+      throw new Error(
+        `Operand ${filter.operand} not supported for select filter`,
       );
   }
 }

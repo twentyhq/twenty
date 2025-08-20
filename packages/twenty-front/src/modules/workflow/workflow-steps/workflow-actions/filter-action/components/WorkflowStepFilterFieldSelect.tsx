@@ -2,7 +2,7 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
-import { useFilterFieldMetadataItem } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useFilterFieldMetadataItem';
+import { useGetFilterFieldMetadataItem } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useGetFilterFieldMetadataItem';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { getViewFilterOperands } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/getStepFilterOperands';
@@ -53,10 +53,12 @@ export const WorkflowStepFilterFieldSelect = ({
 
   const { getIcon } = useIcons();
 
+  const { getFilterFieldMetadataItem } = useGetFilterFieldMetadataItem();
+
   const {
     fieldMetadataItem: filterFieldMetadataItem,
     objectMetadataItem: filterObjectMetadataItem,
-  } = useFilterFieldMetadataItem(stepFilter.fieldMetadataId ?? '');
+  } = getFilterFieldMetadataItem(stepFilter.fieldMetadataId ?? '');
 
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
     shouldDisplayRecordFields,
@@ -91,6 +93,13 @@ export const WorkflowStepFilterFieldSelect = ({
           rawVariableName: variableName,
           isFullRecord: false,
         });
+
+        const {
+          fieldMetadataItem: filterFieldMetadataItem,
+          objectMetadataItem: filterObjectMetadataItem,
+        } = isDefined(fieldMetadataId)
+          ? getFilterFieldMetadataItem(fieldMetadataId)
+          : { fieldMetadataItem: undefined, objectMetadataItem: undefined };
 
         const filterType = isDefined(fieldMetadataId)
           ? (filterFieldMetadataItem?.type ?? 'unknown')
