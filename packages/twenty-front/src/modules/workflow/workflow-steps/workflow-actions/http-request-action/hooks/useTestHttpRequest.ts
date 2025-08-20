@@ -85,7 +85,7 @@ export const useTestHttpRequest = (actionId: string) => {
   ): Promise<HttpRequestTestData['output']> => {
     let defaultContentType: string | undefined;
     const isMethodWithBodyAndNoEmpty =
-    ['POST', 'PUT', 'PATCH'].includes(method) &&isDefined( body);
+      ['POST', 'PUT', 'PATCH'].includes(method) && isDefined(body);
     if (isMethodWithBodyAndNoEmpty && isDefined(bodyType)) {
       if (bodyType === 'rawJson' || bodyType === 'keyValue') {
         defaultContentType = 'application/json';
@@ -95,10 +95,10 @@ export const useTestHttpRequest = (actionId: string) => {
     }
     const requestOptions: RequestInit = {
       method: method,
-      headers:{
-      ...(defaultContentType ? { 'content-type': defaultContentType } : {}),
-      ...headers
-      }
+      headers: {
+        ...(defaultContentType ? { 'content-type': defaultContentType } : {}),
+        ...headers,
+      },
     };
 
     if (isMethodWithBodyAndNoEmpty) {
