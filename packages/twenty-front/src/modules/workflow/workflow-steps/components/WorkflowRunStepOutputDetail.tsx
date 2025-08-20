@@ -56,7 +56,10 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
       : getActionIcon(stepDefinition.definition.type);
   const headerIconColor =
     stepDefinition.type === 'trigger'
-      ? getTriggerIconColor({ theme })
+      ? getTriggerIconColor({
+          theme,
+          triggerType: stepDefinition.definition.type,
+        })
       : getActionIconColorOrThrow({
           theme,
           actionType: stepDefinition.definition.type,

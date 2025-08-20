@@ -15,6 +15,7 @@ import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/uti
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { getTriggerHeaderType } from '@/workflow/workflow-trigger/utils/getTriggerHeaderType';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
+import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -103,7 +104,7 @@ export const WorkflowEditTriggerManualForm = ({
           });
         }}
         Icon={getIcon(headerIcon)}
-        iconColor={theme.font.color.tertiary}
+        iconColor={getTriggerIconColor({ theme, triggerType: trigger.type })}
         initialTitle={headerTitle}
         headerType={headerType}
         disabled={triggerOptions.readonly}
