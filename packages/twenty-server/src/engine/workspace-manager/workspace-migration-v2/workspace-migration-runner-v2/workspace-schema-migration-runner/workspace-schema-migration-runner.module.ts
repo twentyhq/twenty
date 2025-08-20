@@ -10,7 +10,7 @@ import { ObjectCreateActionService } from 'src/engine/workspace-manager/workspac
 import { ObjectDeleteActionService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/action-handlers/object/services/object-delete-action.service';
 import { ObjectUpdateActionService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/action-handlers/object/services/object-update-action.service';
 import { WorkspaceSchemaActionRegistryService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/core/registry/workspace-schema-action-registry.service';
-import { WorkspaceSchemaMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/services/workspace-schema-migration-runner-v2.service';
+import { WorkspaceSchemaMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-schema-migration-runner/services/workspace-schema-migration-runner.service';
 
 @Module({
   imports: [DiscoveryModule],
