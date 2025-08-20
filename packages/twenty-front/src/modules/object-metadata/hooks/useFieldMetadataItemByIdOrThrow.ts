@@ -1,11 +1,11 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
+import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFieldMetadataItemByIdOrThrow';
 import { useRecoilValue } from 'recoil';
 
-export const useFieldMetadataItemById = (fieldMetadataId: string) => {
+export const useFieldMetadataItemByIdOrThrow = (fieldMetadataId: string) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  return getFieldMetadataItemById({
+  return getFieldMetadataItemByIdOrThrow({
     fieldMetadataId,
     objectMetadataItems,
   });

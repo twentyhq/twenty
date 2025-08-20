@@ -1,6 +1,6 @@
 import { type DropResult, type ResponderProvided } from '@hello-pangea/dnd';
 
-import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
+import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useObjectOptionsForTable } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForTable';
@@ -32,7 +32,8 @@ export const ViewFieldsVisibleDropdownSection = () => {
       viewBarId: recordIndexId,
     });
 
-  const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
+  const { getFieldMetadataItemByIdOrThrow } =
+    useGetFieldMetadataItemByIdOrThrow();
 
   const handleReorderFields =
     viewType === ViewType.Kanban
@@ -93,7 +94,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                     index +
                     (isDefined(fieldMetadataItemLabelIdentifier) ? 1 : 0);
 
-                  const fieldMetadataItem = getFieldMetadataItemById(
+                  const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
                     recordField.fieldMetadataItemId,
                   );
 
