@@ -233,6 +233,8 @@ export {
   IconPhoto,
   IconPhotoUp,
   IconPilcrow,
+  IconPinned,
+  IconPinnedOff,
   IconPlayerPause,
   IconPlayerPlay,
   IconPlayerStop,
@@ -309,6 +311,8 @@ export {
   IconTrash,
   IconTrashOff,
   IconTrashX,
+  IconTrendingDown,
+  IconTrendingUp,
   IconTypography,
   IconUnlink,
   IconUpload,
@@ -327,8 +331,6 @@ export {
   IconWebhook,
   IconWorld,
   IconX,
-  IconPinned,
-  IconPinnedOff,
 } from '@tabler/icons-react';
 
 export type { IconProps as TablerIconsProps } from '@tabler/icons-react';
