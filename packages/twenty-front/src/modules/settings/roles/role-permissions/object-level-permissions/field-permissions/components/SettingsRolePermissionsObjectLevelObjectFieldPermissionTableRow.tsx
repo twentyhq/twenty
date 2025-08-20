@@ -136,42 +136,16 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
       hasRestriction &&
       fieldPermissionForThisFieldMetadataItem?.canUpdateFieldValue === false;
 
-    const { objectReadIsRestricted, objectUpdateIsRestricted } =
+    const { cannotAllowFieldReadRestrict, cannotAllowFieldUpdateRestrict } =
       useObjectPermissionDerivedStates({
         roleId,
         objectMetadataItemId: objectMetadataItem.id,
       });
 
-    const readCell = (
-      <TableCell>
-        <OverridableCheckbox
-          disabled={fieldMetadataItem.isUIReadOnly ?? false}
-          checked={true}
-          onChange={handleSeeChange}
-          type={isReadRestricted ? 'override' : 'default'}
-        />
-      </TableCell>
-    );
-
-    const updateCell = (
-      <TableCell align="left">
-        <OverridableCheckbox
-          disabled={fieldMetadataItem.isUIReadOnly ?? false}
-          checked={true}
-          onChange={handleUpdateChange}
-          type={isUpdateRestricted ? 'override' : 'default'}
-        />
-      </TableCell>
-    );
-
-    const emptyCell = <TableCell key="empty-cell" />;
-
-    const readAndUpdateCells: React.ReactNode[] = [];
-
-    if (objectReadIsRestricted) readAndUpdateCells.push(emptyCell);
-    else if (objectUpdateIsRestricted)
-      readAndUpdateCells.push(emptyCell, readCell);
-    else readAndUpdateCells.push(readCell, updateCell);
+    const shouldShowSeeTableHeader = !cannotAllowFieldReadRestrict;
+    const shouldShowUpdateTableHeader =
+      !cannotAllowFieldReadRestrict && !cannotAllowFieldUpdateRestrict;
+    const shouldShowEmptyTableHeader = cannotAllowFieldUpdateRestrict;
 
     return (
       <StyledObjectFieldTableRow>
@@ -203,7 +177,29 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
             value={fieldType as SettingsFieldType}
           />
         </TableCell>
-        <>{readAndUpdateCells}</>
+        <>
+          {shouldShowEmptyTableHeader && <TableCell />}
+          {shouldShowSeeTableHeader && (
+            <TableCell>
+              <OverridableCheckbox
+                disabled={fieldMetadataItem.isUIReadOnly ?? false}
+                checked={true}
+                onChange={handleSeeChange}
+                type={isReadRestricted ? 'override' : 'default'}
+              />
+            </TableCell>
+          )}
+          {shouldShowUpdateTableHeader && (
+            <TableCell align="left">
+              <OverridableCheckbox
+                disabled={fieldMetadataItem.isUIReadOnly ?? false}
+                checked={true}
+                onChange={handleUpdateChange}
+                type={isUpdateRestricted ? 'override' : 'default'}
+              />
+            </TableCell>
+          )}
+        </>
       </StyledObjectFieldTableRow>
     );
   };
