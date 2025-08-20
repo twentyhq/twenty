@@ -63,19 +63,25 @@ export class ObjectMetadataServiceV2 {
         flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
       });
 
-    await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-      {
-        fromFlatObjectMetadataMaps,
-        toFlatObjectMetadataMaps,
-        buildOptions: {
-          isSystemBuild: false,
-          inferDeletionFromMissingObjectFieldIndex: false,
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          fromFlatObjectMetadataMaps,
+          toFlatObjectMetadataMaps,
+          buildOptions: {
+            isSystemBuild: false,
+            inferDeletionFromMissingObjectFieldIndex: false,
+          },
+          workspaceId,
         },
-        workspaceId,
-        errorMessage:
-          'Multiple validation errors occurred while updating object',
-      },
-    );
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while updating object',
+      );
+    }
 
     const { flatObjectMetadataMaps: recomputedFlatObjectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
@@ -152,19 +158,25 @@ export class ObjectMetadataServiceV2 {
         }),
       );
 
-    await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-      {
-        fromFlatObjectMetadataMaps,
-        toFlatObjectMetadataMaps,
-        buildOptions: {
-          inferDeletionFromMissingObjectFieldIndex: true,
-          isSystemBuild: false,
+    const validateAndBuildResult =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+        {
+          fromFlatObjectMetadataMaps,
+          toFlatObjectMetadataMaps,
+          buildOptions: {
+            inferDeletionFromMissingObjectFieldIndex: true,
+            isSystemBuild: false,
+          },
+          workspaceId,
         },
-        workspaceId,
-        errorMessage:
-          'Multiple validation errors occurred while deleting object',
-      },
-    );
+      );
+
+    if (isDefined(validateAndBuildResult)) {
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while deleting object',
+      );
+    }
 
     return fromFlatObjectMetadataToObjectMetadataDto(
       flatObjectMetadataToDelete,
