@@ -1,8 +1,8 @@
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { randomUUID } from 'crypto';
 
-import axios,{ AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -55,9 +55,7 @@ export class SInvoiceIntegrationService {
   private readonly username =
     process.env.S_INVOICE_USERNAME || '0100109106-507';
   private readonly password = process.env.S_INVOICE_PASSWORD || '123456';
-  private readonly cookieToken =
-    process.env.S_INVOICE_COOKIE ||
-    '';
+  private readonly cookieToken = process.env.S_INVOICE_COOKIE || '';
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
