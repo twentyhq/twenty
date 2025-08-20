@@ -17,7 +17,7 @@ export class CreateViewInput {
   @Field(() => ViewType, { nullable: true, defaultValue: ViewType.TABLE })
   type?: ViewType;
 
-  @Field(() => ViewKey, { nullable: true, defaultValue: ViewKey.INDEX })
+  @Field(() => ViewKey, { nullable: true })
   key?: ViewKey;
 
   @Field({ nullable: false })
