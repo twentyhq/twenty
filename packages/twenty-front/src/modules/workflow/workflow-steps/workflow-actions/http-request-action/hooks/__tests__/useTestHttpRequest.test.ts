@@ -1,4 +1,5 @@
 import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import React from 'react';
 import { RecoilRoot } from 'recoil';
@@ -77,7 +78,11 @@ describe('useTestHttpRequest', () => {
   };
 
   const wrapper = ({ children }: { children: React.ReactNode }) =>
-    React.createElement(RecoilRoot, null, children);
+    React.createElement(
+      RecoilRoot,
+      null,
+      React.createElement(MockedProvider, null, children),
+    );
 
   beforeEach(() => {
     jest.clearAllMocks();

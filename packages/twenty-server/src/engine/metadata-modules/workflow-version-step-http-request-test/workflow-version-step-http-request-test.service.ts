@@ -158,7 +158,6 @@ export class WorkflowVersionStepHttpRequestTestService {
         error: undefined,
       };
     } catch (error) {
-
       return {
         status: undefined,
         statusText: undefined,

@@ -20,10 +20,10 @@ import { useEffect } from 'react';
 import { IconPlayerPlay, IconSettings, useIcons } from 'twenty-ui/display';
 import {
   BODY_TYPES,
-  BodyType,
+  type BodyType,
   HTTP_METHODS,
-  HttpRequestBody,
-  JSON_RESPONSE_PLACEHOLDER
+  type HttpRequestBody,
+  JSON_RESPONSE_PLACEHOLDER,
 } from '../constants/HttpRequest';
 import { WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID } from '../constants/WorkflowHttpRequestTabListComponentId';
 import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
@@ -116,14 +116,13 @@ export const WorkflowEditActionHttpRequest = ({
       onActionUpdate: actionOptions.onActionUpdate,
       readonly: actionOptions.readonly === true,
     });
-const onBodyChange=(value: string | HttpRequestBody | undefined)=>{
-  handleFieldChange('body',value);
-}
-const onBodyTypeChange=(value?:string)=>{
-  if(!isDefined(value)||!BODY_TYPES.includes(value as BodyType))return;
-  handleFieldChange('bodyType',value);
-
-}
+  const onBodyChange = (value: string | HttpRequestBody | undefined) => {
+    handleFieldChange('body', value);
+  };
+  const onBodyTypeChange = (value?: string) => {
+    if (!isDefined(value) || !BODY_TYPES.includes(value as BodyType)) return;
+    handleFieldChange('bodyType', value);
+  };
   const { testHttpRequest, isTesting, httpRequestTestData } =
     useTestHttpRequest(action.id);
 
@@ -200,7 +199,7 @@ const onBodyTypeChange=(value?:string)=>{
               <BodyInput
                 defaultValue={formData.body}
                 onChange={(value, isBodyType) =>
-                  isBodyType?onBodyTypeChange(value):onBodyChange(value)
+                  isBodyType ? onBodyTypeChange(value) : onBodyChange(value)
                 }
                 readonly={actionOptions.readonly}
                 bodyType={formData?.bodyType}

@@ -2,16 +2,16 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { HTTP_REQUEST_MUTATION } from '@/workflow/workflow-steps/workflow-actions/http-request-action/graphqlMutation/httpRequestMutation';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
-import { HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
+import { type HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { resolveInput } from 'twenty-shared/utils';
+import { isDefined, resolveInput } from 'twenty-shared/utils';
 import {
-  MutationTestHttpRequestArgs,
-  TestHttpResponseDto,
+  type MutationTestHttpRequestArgs,
+  type TestHttpResponseDto,
 } from '~/generated-metadata/graphql';
-import { BodyType } from '../constants/HttpRequest';
+import { type BodyType } from '../constants/HttpRequest';
 
 const convertFlatVariablesToNestedContext = (flatVariables: {
   [variablePath: string]: any;
@@ -52,7 +52,7 @@ export const useTestHttpRequest = (actionId: string) => {
   });
   const callGraphQLMutation = async (
     url: string,
-    headers: Record<string, any>,
+    headers: Record<string, string>,
     body: any,
     method: string,
     bodyType?: string,
@@ -66,7 +66,7 @@ export const useTestHttpRequest = (actionId: string) => {
     });
     const data = result.data?.testHttpRequest;
 
-    if (data?.error) throw new Error(data.error);
+    if (isDefined(data?.error)) throw new Error(data.error);
 
     return {
       data: data?.data,
@@ -88,6 +88,8 @@ export const useTestHttpRequest = (actionId: string) => {
       defaultContentType = 'application/json';
     } else if (bodyType === 'Text') {
       defaultContentType = 'text/plain';
+    } else if (bodyType !== 'FormData') {
+      defaultContentType = 'application/json';
     }
     const requestOptions: RequestInit = {
         method: method,
@@ -104,7 +106,7 @@ export const useTestHttpRequest = (actionId: string) => {
     let responseData: string;
     const contentType = result.headers.get('content-type');
 
-    if (contentType?.includes('application/json')) {
+    if (contentType?.includes('application/json') === true) {
       const jsonData = await result.json();
       responseData = JSON.stringify(jsonData, null, 2);
     } else {
@@ -151,7 +153,7 @@ export const useTestHttpRequest = (actionId: string) => {
       ) {
         output = await callGraphQLMutation(
           substitutedUrl as string,
-          substitutedHeaders as Record<string, any>,
+          substitutedHeaders as Record<string, string>,
           substitutedBody,
           httpRequestFormData.method,
           httpRequestFormData.bodyType,

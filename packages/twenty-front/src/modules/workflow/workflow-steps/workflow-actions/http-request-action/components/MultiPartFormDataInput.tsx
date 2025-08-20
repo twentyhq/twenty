@@ -3,7 +3,7 @@ import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-ty
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Select } from '@/ui/input/components/Select';
-import { FormDataFile } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { type FormDataFile } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -11,7 +11,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/display';
-import { Button, SelectOption } from 'twenty-ui/input';
+import { Button, type SelectOption } from 'twenty-ui/input';
 import { v4 } from 'uuid';
 import { useUploadFileMutation } from '~/generated-metadata/graphql';
 import { FileFolder } from '~/generated/graphql';
@@ -277,7 +277,7 @@ export const MultiPartFormDataInput = ({
                 <FormTextFieldInput
                   placeholder={keyPlaceholder}
                   readonly={readonly}
-                  defaultValue={pair.key}
+                  defaultValue={pair.key || ''}
                   onChange={(value) =>
                     handlePairChange(pair.id, 'key', value ?? '')
                   }
@@ -289,7 +289,9 @@ export const MultiPartFormDataInput = ({
               <FormTextFieldInput
                 placeholder={`select value`}
                 readonly={readonly}
-                defaultValue={typeof pair.value === 'string' ? pair.value : ''}
+                defaultValue={
+                  typeof pair.value === 'string' ? (pair.value as string) : ''
+                }
                 onChange={(value) =>
                   handlePairChange(pair.id, 'value', value ?? '')
                 }

@@ -4,9 +4,9 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Select } from '@/ui/input/components/Select';
 import {
-  BodyType,
+  type BodyType,
   DEFAULT_JSON_BODY_PLACEHOLDER,
-  FormDataFile,
+  type FormDataFile,
   type HttpRequestBody,
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { parseHttpJsonBodyWithoutVariablesOrThrow } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/parseHttpJsonBodyWithoutVariablesOrThrow';
@@ -30,7 +30,6 @@ const StyledSelectDropdown = styled(Select)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 const StyledNoBodyMessage = styled.div`
-
   font-size: 14px;
   padding: ${({ theme }) => theme.spacing(2)};
   text-align: left;
@@ -125,7 +124,7 @@ export const BodyInput = ({
   };
 
   const handleBlur = () => {
-    if (bodyTypeValue  === 'rawJson') {
+    if (bodyTypeValue === 'rawJson') {
       validateJson(jsonString);
     }
   };
@@ -180,7 +179,7 @@ export const BodyInput = ({
             placeholder={'enter text'}
             readonly={readonly}
             defaultValue={textValue}
-            onChange={(value:string) => handleChangeTextValue(value)}
+            onChange={(value: string) => handleChangeTextValue(value)}
             VariablePicker={WorkflowVariablePicker}
           />
         ) : bodyTypeValue === 'None' ? (

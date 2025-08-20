@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { getPathsFromStepHttpRequestIfBodyTypeFormData } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/getPathsFromStepHttpRequestIfBodyTypeFormData';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
