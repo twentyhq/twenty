@@ -49,13 +49,6 @@ export const mapFieldMetadataToGraphQLQuery = ({
 
   if (
     fieldType === FieldMetadataType.MORPH_RELATION &&
-    fieldMetadata.relation?.type === RelationType.MANY_TO_ONE
-  ) {
-    return '';
-  }
-
-  if (
-    fieldType === FieldMetadataType.MORPH_RELATION &&
     (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY ||
       fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE)
   ) {
