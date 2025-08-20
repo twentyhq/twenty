@@ -3,7 +3,6 @@ import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThro
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowRunStepJsonContainer } from '@/workflow/workflow-steps/components/WorkflowRunStepJsonContainer';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
-import { getWorkflowPreviousStepId } from '@/workflow/workflow-steps/utils/getWorkflowPreviousStepId';
 import { getWorkflowRunStepContext } from '@/workflow/workflow-steps/utils/getWorkflowRunStepContext';
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import { getActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow';
@@ -14,13 +13,13 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBrackets, useIcons } from 'twenty-ui/display';
 import {
-  GetJsonNodeHighlighting,
+  type GetJsonNodeHighlighting,
   JsonNestedNode,
   JsonTreeContextProvider,
-  ShouldExpandNodeInitiallyProps,
+  type ShouldExpandNodeInitiallyProps,
 } from 'twenty-ui/json-visualizer';
+import { type JsonValue } from 'type-fest';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { JsonValue } from 'type-fest';
 
 export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   const { t, i18n } = useLingui();
@@ -45,20 +44,12 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
     return null;
   }
 
-  const previousStepId = getWorkflowPreviousStepId({
-    stepId,
-    steps: workflowRun.state.flow.steps,
-  });
-
-  if (previousStepId === undefined) {
-    return null;
-  }
-
   const stepDefinition = getStepDefinitionOrThrow({
     stepId,
     trigger: workflowRun.state.flow.trigger,
     steps: workflowRun.state.flow.steps,
   });
+
   if (stepDefinition?.type !== 'action') {
     throw new Error('The input tab must be rendered with an action step.');
   }
@@ -85,6 +76,8 @@ export const WorkflowRunStepInputDetail = ({ stepId }: { stepId: string }) => {
   if (stepContext.length === 0) {
     throw new Error('The input tab must be rendered with a non-empty context.');
   }
+
+  const previousStepId = stepContext[stepContext.length - 1].id;
 
   const getNodeHighlighting: GetJsonNodeHighlighting = (keyPath: string) => {
     if (variablesUsedInStep.has(keyPath)) {

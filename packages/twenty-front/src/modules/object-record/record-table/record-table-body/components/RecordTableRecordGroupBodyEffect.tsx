@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
+import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
 import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexHasFetchedAllRecordsByGroupComponentState';
@@ -10,8 +10,8 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosition';
-import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const RecordTableRecordGroupBodyEffect = () => {
@@ -22,7 +22,7 @@ export const RecordTableRecordGroupBodyEffect = () => {
     recordTableId,
   });
 
-  const setIsRecordTableInitialLoading = useSetRecoilComponentStateV2(
+  const setIsRecordTableInitialLoading = useSetRecoilComponentState(
     isRecordTableInitialLoadingComponentState,
   );
 
@@ -32,7 +32,7 @@ export const RecordTableRecordGroupBodyEffect = () => {
     useRecordIndexTableQuery(objectNameSingular);
 
   const setHasRecordFetchedAllRecordsComponents =
-    useSetRecoilComponentFamilyStateV2(
+    useSetRecoilComponentFamilyState(
       recordIndexHasFetchedAllRecordsByGroupComponentState,
       recordGroupId,
     );

@@ -9,6 +9,12 @@
     "src/**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "lingui.config.ts"
+    "lingui.config.ts",
+    "jest.config.mjs",
+    "vite.config.ts",
+    "setupTests.ts"
+  ],
+  "exclude": [
+    "src/testing/**/*"
   ]
 }

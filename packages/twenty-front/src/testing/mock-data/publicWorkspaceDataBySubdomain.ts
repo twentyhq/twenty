@@ -1,4 +1,4 @@
-import { GetPublicWorkspaceDataByDomainQuery } from '~/generated-metadata/graphql';
+import { type GetPublicWorkspaceDataByDomainQuery } from '~/generated-metadata/graphql';
 
 export const mockedPublicWorkspaceDataBySubdomain: GetPublicWorkspaceDataByDomainQuery['getPublicWorkspaceDataByDomain'] =
   {

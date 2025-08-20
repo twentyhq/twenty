@@ -1,14 +1,14 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
-import { ColorSampleVariant } from '@ui/display';
+import { type ColorSampleVariant } from '@ui/display';
 import {
   CatalogDecorator,
-  CatalogDimension,
-  CatalogOptions,
-  CatalogStory,
+  type CatalogDimension,
+  type CatalogOptions,
+  type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { MAIN_COLOR_NAMES, ThemeColor } from '@ui/theme';
+import { MAIN_COLOR_NAMES, type ThemeColor } from '@ui/theme';
 import { MenuItemSelectColor } from '../MenuItemSelectColor';
 
 const meta: Meta<typeof MenuItemSelectColor> = {

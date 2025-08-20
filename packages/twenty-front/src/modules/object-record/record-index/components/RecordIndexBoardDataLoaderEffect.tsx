@@ -7,8 +7,8 @@ import { recordBoardFieldDefinitionsComponentState } from '@/object-record/recor
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 
 type RecordIndexBoardDataLoaderEffectProps = {
   recordBoardId: string;
@@ -25,17 +25,17 @@ export const RecordIndexBoardDataLoaderEffect = ({
     recordIndexIsCompactModeActiveState,
   );
 
-  const setRecordBoardFieldDefinitions = useSetRecoilComponentStateV2(
+  const setRecordBoardFieldDefinitions = useSetRecoilComponentState(
     recordBoardFieldDefinitionsComponentState,
     recordBoardId,
   );
 
-  const selectedRecordIds = useRecoilComponentValueV2(
+  const selectedRecordIds = useRecoilComponentValue(
     recordBoardSelectedRecordIdsComponentSelector,
     recordBoardId,
   );
 
-  const setIsCompactModeActive = useSetRecoilComponentStateV2(
+  const setIsCompactModeActive = useSetRecoilComponentState(
     isRecordBoardCompactModeActiveComponentState,
     recordBoardId,
   );
@@ -48,7 +48,7 @@ export const RecordIndexBoardDataLoaderEffect = ({
     setRecordBoardFieldDefinitions(recordIndexFieldDefinitions);
   }, [recordIndexFieldDefinitions, setRecordBoardFieldDefinitions]);
 
-  const setContextStoreTargetedRecords = useSetRecoilComponentStateV2(
+  const setContextStoreTargetedRecords = useSetRecoilComponentState(
     contextStoreTargetedRecordsRuleComponentState,
   );
 

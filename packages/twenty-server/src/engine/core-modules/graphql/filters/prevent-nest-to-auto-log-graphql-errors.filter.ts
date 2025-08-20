@@ -1,4 +1,8 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import {
+  type ArgumentsHost,
+  Catch,
+  type ExceptionFilter,
+} from '@nestjs/common';
 
 import { GraphQLError } from 'graphql';
 

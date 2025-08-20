@@ -1,15 +1,8 @@
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
 import { renderHook } from '@testing-library/react';
 
 const mockUpdateWorkflowVersionStep = jest.fn();
-const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
-
-jest.mock('recoil', () => ({
-  useRecoilValue: () => 'parent-step-id',
-  useSetRecoilState: () => jest.fn(),
-  atom: (params: any) => params,
-}));
+const mockGetUpdatableWorkflowVersion = jest.fn();
 
 jest.mock(
   '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep',
@@ -20,35 +13,24 @@ jest.mock(
   }),
 );
 
-jest.mock('@/workflow/hooks/useCreateDraftFromWorkflowVersion', () => ({
-  useCreateDraftFromWorkflowVersion: () => ({
-    createDraftFromWorkflowVersion: mockCreateDraftFromWorkflowVersion,
+jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
+  useGetUpdatableWorkflowVersionOrThrow: () => ({
+    getUpdatableWorkflowVersion: mockGetUpdatableWorkflowVersion,
   }),
 }));
 
 describe('useUpdateStep', () => {
-  const mockWorkflow = {
-    id: '123',
-    currentVersion: {
-      id: '456',
-      status: 'DRAFT',
-      steps: [],
-      trigger: { type: 'manual' },
-    },
-    versions: [],
-  };
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-  it('should update step in draft version', async () => {
-    const { result } = renderHook(() =>
-      useUpdateStep({
-        workflow: mockWorkflow as unknown as WorkflowWithCurrentVersion,
-      }),
-    );
-    await result.current.updateStep({
+  it('should update step in workflow version', async () => {
+    const mockWorkflowVersionId = 'version-123';
+    const mockStep = {
       id: '1',
       name: 'name',
       valid: true,
-      type: 'CODE',
+      type: 'CODE' as const,
       settings: {
         input: {
           serverlessFunctionId: 'id',
@@ -65,8 +47,17 @@ describe('useUpdateStep', () => {
           },
         },
       },
-    });
+    };
 
-    expect(mockUpdateWorkflowVersionStep).toHaveBeenCalled();
+    mockGetUpdatableWorkflowVersion.mockResolvedValue(mockWorkflowVersionId);
+
+    const { result } = renderHook(() => useUpdateStep());
+    await result.current.updateStep(mockStep);
+
+    expect(mockGetUpdatableWorkflowVersion).toHaveBeenCalled();
+    expect(mockUpdateWorkflowVersionStep).toHaveBeenCalledWith({
+      workflowVersionId: mockWorkflowVersionId,
+      step: mockStep,
+    });
   });
 });

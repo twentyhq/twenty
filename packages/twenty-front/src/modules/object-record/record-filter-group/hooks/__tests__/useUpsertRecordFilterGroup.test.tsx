@@ -3,9 +3,9 @@ import { act } from 'react';
 
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
@@ -16,7 +16,7 @@ describe('useUpsertRecordFilterGroup', () => {
   it('should add a new record filter group', () => {
     const { result } = renderHook(
       () => {
-        const currentRecordFilterGroups = useRecoilComponentValueV2(
+        const currentRecordFilterGroups = useRecoilComponentValue(
           currentRecordFilterGroupsComponentState,
         );
 
@@ -48,7 +48,7 @@ describe('useUpsertRecordFilterGroup', () => {
   it('should update an existing record filter group', () => {
     const { result } = renderHook(
       () => {
-        const currentRecordFilterGroups = useRecoilComponentValueV2(
+        const currentRecordFilterGroups = useRecoilComponentValue(
           currentRecordFilterGroupsComponentState,
         );
 

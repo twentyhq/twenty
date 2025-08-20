@@ -13,7 +13,7 @@ import {
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { type FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsObjectFieldInactiveActionDropdownProps = {
   isCustomField?: boolean;
@@ -21,17 +21,17 @@ type SettingsObjectFieldInactiveActionDropdownProps = {
   onActivate: () => void;
   onEdit: () => void;
   onDelete: () => void;
-  scopeKey: string;
+  fieldMetadataItemId: string;
 };
 
 export const SettingsObjectFieldInactiveActionDropdown = ({
   onActivate,
-  scopeKey,
+  fieldMetadataItemId,
   onDelete,
   onEdit,
   isCustomField,
 }: SettingsObjectFieldInactiveActionDropdownProps) => {
-  const dropdownId = `${scopeKey}-settings-field-disabled-action-dropdown`;
+  const dropdownId = `${fieldMetadataItemId}-settings-field-disabled-action-dropdown`;
 
   const { closeDropdown } = useCloseDropdown();
 

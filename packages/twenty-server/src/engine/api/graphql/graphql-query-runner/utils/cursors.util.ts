@@ -1,8 +1,8 @@
 import {
-  ObjectRecord,
-  ObjectRecordOrderBy,
+  type ObjectRecord,
+  type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { type FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -17,7 +17,7 @@ export interface CursorData {
 export const decodeCursor = <T = CursorData>(cursor: string): T => {
   try {
     return JSON.parse(Buffer.from(cursor, 'base64').toString());
-  } catch (err) {
+  } catch {
     throw new GraphqlQueryRunnerException(
       `Invalid cursor: ${cursor}`,
       GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
@@ -53,7 +53,6 @@ export const encodeCursorData = (cursorData: CursorData) => {
 };
 
 export const getCursor = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   args: FindManyResolverArgs<any, any>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

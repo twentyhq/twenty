@@ -1,11 +1,11 @@
-import { Meta } from '@storybook/react';
+import { type Meta } from '@storybook/react';
 
 import { mockRsiValues } from '@/spreadsheet-import/__mocks__/mockRsiValues';
 import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
 import { SpreadSheetImportModalWrapper } from '@/spreadsheet-import/components/SpreadSheetImportModalWrapper';
 import { UploadStep } from '@/spreadsheet-import/steps/components/UploadStep/UploadStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
-import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
+import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { RecoilRoot } from 'recoil';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
@@ -44,7 +44,9 @@ const meta: Meta<typeof UploadStep> = {
 export default meta;
 
 export const Default = () => (
-  <DialogManagerScope dialogComponentInstanceId="dialog-manager">
+  <DialogComponentInstanceContext.Provider
+    value={{ instanceId: 'dialog-manager' }}
+  >
     <ReactSpreadsheetImportContextProvider values={mockRsiValues}>
       <SpreadSheetImportModalWrapper modalId="upload-step" onClose={() => null}>
         <UploadStep
@@ -57,5 +59,5 @@ export const Default = () => (
         />
       </SpreadSheetImportModalWrapper>
     </ReactSpreadsheetImportContextProvider>
-  </DialogManagerScope>
+  </DialogComponentInstanceContext.Provider>
 );

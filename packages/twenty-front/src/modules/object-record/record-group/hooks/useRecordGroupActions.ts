@@ -4,14 +4,14 @@ import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/use
 import { useReorderRecordGroups } from '@/object-record/record-group/hooks/useReorderRecordGroups';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
-import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
+import { type RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { useHasSettingsPermission } from '@/settings/roles/hooks/useHasSettingsPermission';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPath } from '@/types/SettingsPath';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { ViewType } from '@/views/types/ViewType';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type ViewType } from '@/views/types/ViewType';
 import { t } from '@lingui/core/macro';
 import { isUndefined } from '@sniptt/guards';
 import { useCallback, useContext } from 'react';
@@ -24,7 +24,7 @@ import {
   IconEyeOff,
   IconSettings,
 } from 'twenty-ui/display';
-import { SettingPermissionType } from '~/generated/graphql';
+import { PermissionFlagType } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type UseRecordGroupActionsParams = {
@@ -47,7 +47,7 @@ export const useRecordGroupActions = ({
     objectNameSingular,
   });
 
-  const recordGroupFieldMetadata = useRecoilComponentValueV2(
+  const recordGroupFieldMetadata = useRecoilComponentValue(
     recordGroupFieldMetadataComponentState,
   );
 
@@ -60,7 +60,7 @@ export const useRecordGroupActions = ({
     navigationMemorizedUrlState,
   );
 
-  const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
+  const visibleRecordGroupIds = useRecoilComponentFamilyValue(
     visibleRecordGroupIdsComponentFamilySelector,
     viewType,
   );
@@ -90,8 +90,8 @@ export const useRecordGroupActions = ({
     recordGroupFieldMetadata,
   ]);
 
-  const hasAccessToDataModelSettings = useHasSettingsPermission(
-    SettingPermissionType.DATA_MODEL,
+  const hasAccessToDataModelSettings = useHasPermissionFlag(
+    PermissionFlagType.DATA_MODEL,
   );
   const currentIndex = visibleRecordGroupIds.findIndex(
     (id) => id === recordGroupDefinition.id,

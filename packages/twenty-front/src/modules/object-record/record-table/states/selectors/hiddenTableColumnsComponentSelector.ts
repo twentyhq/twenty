@@ -1,10 +1,10 @@
 import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
+import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
-export const hiddenTableColumnsComponentSelector = createComponentSelectorV2({
+export const hiddenTableColumnsComponentSelector = createComponentSelector({
   key: 'hiddenTableColumnsComponentSelector',
   componentInstanceContext: RecordTableComponentInstanceContext,
   get:

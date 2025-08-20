@@ -1,6 +1,6 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
@@ -11,7 +11,7 @@ import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldM
 export const useColumnDefinitionsFromFieldMetadata = (
   objectMetadataItem: ObjectMetadataItem,
 ) => {
-  const activeFieldMetadataItems = objectMetadataItem.fields.filter(
+  const activeFieldMetadataItems = objectMetadataItem.readableFields.filter(
     ({ isActive, isSystem }) => isActive && !isSystem,
   );
 
@@ -27,6 +27,8 @@ export const useColumnDefinitionsFromFieldMetadata = (
     }),
   );
 
+  const restrictedFieldMetadataIds: string[] = [];
+
   const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
     activeFieldMetadataItems
       .map((field, index) =>
@@ -37,6 +39,9 @@ export const useColumnDefinitionsFromFieldMetadata = (
         }),
       )
       .filter(filterAvailableTableColumns)
+      .filter((column) => {
+        return !restrictedFieldMetadataIds.includes(column.fieldMetadataId);
+      })
       .map((column) => {
         const existsInFilterDefinitions = filterableFieldMetadataItems.some(
           (fieldMetadataItem) =>

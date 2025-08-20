@@ -6,7 +6,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { removeEmptyLinks } from 'src/engine/core-modules/record-transformer/utils/remove-empty-links';
-import { LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
+import { type LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
 export type LinksFieldGraphQLInput =
   | {

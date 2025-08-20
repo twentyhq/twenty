@@ -1,4 +1,4 @@
-import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
@@ -12,11 +12,11 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import {
+  IconAt,
   IconCalendarEvent,
   IconDotsVertical,
   IconMail,
   IconRefresh,
-  IconSettings,
   IconTrash,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
@@ -27,12 +27,13 @@ type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
 };
 
-const DELETE_ACCOUNT_MODAL_ID = 'delete-account-modal';
-
 export const SettingsAccountsRowDropdownMenu = ({
   account,
 }: SettingsAccountsRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${account.id}`;
+  const deleteAccountModalId = `delete-account-modal-${account.id}`;
+  const accountHandle = account.handle;
+
   const { t } = useLingui();
   const { openModal } = useModal();
 
@@ -63,7 +64,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                 ConnectedAccountProvider.IMAP_SMTP_CALDAV && (
                 <MenuItem
                   text={t`Connection settings`}
-                  LeftIcon={IconSettings}
+                  LeftIcon={IconAt}
                   onClick={() => {
                     navigate(SettingsPath.EditImapSmtpCaldavConnection, {
                       connectedAccountId: account.id,
@@ -104,7 +105,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                 text={t`Remove account`}
                 onClick={() => {
                   closeDropdown(dropdownId);
-                  openModal(DELETE_ACCOUNT_MODAL_ID);
+                  openModal(deleteAccountModalId);
                 }}
               />
             </DropdownMenuItemsContainer>
@@ -112,11 +113,12 @@ export const SettingsAccountsRowDropdownMenu = ({
         }
       />
       <ConfirmationModal
-        modalId={DELETE_ACCOUNT_MODAL_ID}
+        modalId={deleteAccountModalId}
         title={t`Data deletion`}
         subtitle={
           <Trans>
-            All emails and events linked to this account will be deleted
+            All emails and events linked to this account ({accountHandle}) will
+            be deleted
           </Trans>
         }
         onConfirmClick={deleteAccount}

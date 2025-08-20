@@ -1,10 +1,10 @@
-import { FieldMetadataDefaultSerializableValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import { type FieldMetadataDefaultSerializableValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 export const unserializeDefaultValue = (
   serializedDefaultValue: FieldMetadataDefaultSerializableValue,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any => {
-  if (serializedDefaultValue === null) {
+  if (serializedDefaultValue === undefined || serializedDefaultValue === null) {
     return null;
   }
 

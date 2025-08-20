@@ -18,6 +18,7 @@ export type Scalars = {
   DateTime: string;
   JSON: any;
   JSONObject: any;
+  RawJSONScalar: any;
   UUID: any;
   Upload: any;
 };
@@ -31,7 +32,7 @@ export type AdminPanelHealthServiceData = {
   description: Scalars['String'];
   details?: Maybe<Scalars['String']>;
   errorMessage?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: HealthIndicatorId;
   label: Scalars['String'];
   queues?: Maybe<Array<AdminPanelWorkerQueueHealth>>;
   status: AdminPanelHealthServiceStatus;
@@ -44,7 +45,7 @@ export enum AdminPanelHealthServiceStatus {
 
 export type AdminPanelWorkerQueueHealth = {
   __typename?: 'AdminPanelWorkerQueueHealth';
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   queueName: Scalars['String'];
   status: AdminPanelHealthServiceStatus;
 };
@@ -53,7 +54,10 @@ export type Agent = {
   __typename?: 'Agent';
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
+  icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
+  isCustom: Scalars['Boolean'];
+  label: Scalars['String'];
   modelId: Scalars['String'];
   name: Scalars['String'];
   prompt: Scalars['String'];
@@ -81,10 +85,32 @@ export type AgentChatThread = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type AgentHandoffDto = {
+  __typename?: 'AgentHandoffDTO';
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  toAgent: Agent;
+};
+
 export type AgentIdInput = {
   /** The id of the agent. */
   id: Scalars['UUID'];
 };
+
+export enum AggregateOperations {
+  AVG = 'AVG',
+  COUNT = 'COUNT',
+  COUNT_EMPTY = 'COUNT_EMPTY',
+  COUNT_FALSE = 'COUNT_FALSE',
+  COUNT_NOT_EMPTY = 'COUNT_NOT_EMPTY',
+  COUNT_TRUE = 'COUNT_TRUE',
+  COUNT_UNIQUE_VALUES = 'COUNT_UNIQUE_VALUES',
+  MAX = 'MAX',
+  MIN = 'MIN',
+  PERCENTAGE_EMPTY = 'PERCENTAGE_EMPTY',
+  PERCENTAGE_NOT_EMPTY = 'PERCENTAGE_NOT_EMPTY',
+  SUM = 'SUM'
+}
 
 export type Analytics = {
   __typename?: 'Analytics';
@@ -109,9 +135,10 @@ export type ApiKey = {
   id: Scalars['UUID'];
   name: Scalars['String'];
   revokedAt?: Maybe<Scalars['DateTime']>;
+  role?: Maybe<Role>;
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
-  workspaceId: Scalars['String'];
+  workspaceId: Scalars['UUID'];
 };
 
 export type ApiKeyToken = {
@@ -161,7 +188,7 @@ export type AuthToken = {
 
 export type AuthTokenPair = {
   __typename?: 'AuthTokenPair';
-  accessToken: AuthToken;
+  accessOrWorkspaceAgnosticToken: AuthToken;
   refreshToken: AuthToken;
 };
 
@@ -175,10 +202,16 @@ export type AuthorizeApp = {
   redirectUrl: Scalars['String'];
 };
 
+export type AutocompleteResultDto = {
+  __typename?: 'AutocompleteResultDto';
+  placeId: Scalars['String'];
+  text: Scalars['String'];
+};
+
 export type AvailableWorkspace = {
   __typename?: 'AvailableWorkspace';
   displayName?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   inviteHash?: Maybe<Scalars['String']>;
   loginToken?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
@@ -439,10 +472,10 @@ export type ConfigVariablesOutput = {
 
 export type ConnectedImapSmtpCaldavAccount = {
   __typename?: 'ConnectedImapSmtpCaldavAccount';
-  accountOwnerId: Scalars['String'];
+  accountOwnerId: Scalars['UUID'];
   connectionParameters?: Maybe<ImapSmtpCaldavConnectionParameters>;
   handle: Scalars['String'];
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   provider: Scalars['String'];
 };
 
@@ -463,14 +496,123 @@ export type ConnectionParametersOutput = {
   username?: Maybe<Scalars['String']>;
 };
 
+export type CoreView = {
+  __typename?: 'CoreView';
+  anyFieldFilterValue?: Maybe<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  icon: Scalars['String'];
+  id: Scalars['UUID'];
+  isCompact: Scalars['Boolean'];
+  isCustom: Scalars['Boolean'];
+  kanbanAggregateOperation?: Maybe<AggregateOperations>;
+  kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']>;
+  key?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
+  openRecordIn: ViewOpenRecordIn;
+  position: Scalars['Float'];
+  type: ViewType;
+  updatedAt: Scalars['DateTime'];
+  workspaceId: Scalars['UUID'];
+};
+
+export type CoreViewField = {
+  __typename?: 'CoreViewField';
+  aggregateOperation?: Maybe<AggregateOperations>;
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  isVisible: Scalars['Boolean'];
+  position: Scalars['Float'];
+  size: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
+
+export type CoreViewFilter = {
+  __typename?: 'CoreViewFilter';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  operand: ViewFilterOperand;
+  positionInViewFilterGroup?: Maybe<Scalars['Float']>;
+  subFieldName?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+  value: Scalars['RawJSONScalar'];
+  viewFilterGroupId?: Maybe<Scalars['UUID']>;
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
+
+export type CoreViewFilterGroup = {
+  __typename?: 'CoreViewFilterGroup';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['UUID'];
+  logicalOperator: ViewFilterGroupLogicalOperator;
+  parentViewFilterGroupId?: Maybe<Scalars['UUID']>;
+  positionInViewFilterGroup?: Maybe<Scalars['Float']>;
+  updatedAt: Scalars['DateTime'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
+
+export type CoreViewGroup = {
+  __typename?: 'CoreViewGroup';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  fieldMetadataId: Scalars['UUID'];
+  fieldValue: Scalars['String'];
+  id: Scalars['UUID'];
+  isVisible: Scalars['Boolean'];
+  position: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
+
+export type CoreViewSort = {
+  __typename?: 'CoreViewSort';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  direction: ViewSortDirection;
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  updatedAt: Scalars['DateTime'];
+  viewId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
+};
+
 export type CreateAgentChatThreadInput = {
   agentId: Scalars['UUID'];
+};
+
+export type CreateAgentHandoffInput = {
+  description?: InputMaybe<Scalars['String']>;
+  fromAgentId: Scalars['UUID'];
+  toAgentId: Scalars['UUID'];
+};
+
+export type CreateAgentInput = {
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  label: Scalars['String'];
+  modelId: Scalars['String'];
+  name?: InputMaybe<Scalars['String']>;
+  prompt: Scalars['String'];
+  responseFormat?: InputMaybe<Scalars['JSON']>;
+  roleId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type CreateApiKeyDto = {
   expiresAt: Scalars['String'];
   name: Scalars['String'];
   revokedAt?: InputMaybe<Scalars['String']>;
+  roleId: Scalars['UUID'];
 };
 
 export type CreateApprovedAccessDomainInput = {
@@ -480,9 +622,9 @@ export type CreateApprovedAccessDomainInput = {
 
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
-  workflowId: Scalars['String'];
+  workflowId: Scalars['UUID'];
   /** Workflow version ID */
-  workflowVersionIdToCopy: Scalars['String'];
+  workflowVersionIdToCopy: Scalars['UUID'];
 };
 
 export type CreateFieldInput = {
@@ -495,11 +637,12 @@ export type CreateFieldInput = {
   isNullable?: InputMaybe<Scalars['Boolean']>;
   isRemoteCreation?: InputMaybe<Scalars['Boolean']>;
   isSystem?: InputMaybe<Scalars['Boolean']>;
+  isUIReadOnly?: InputMaybe<Scalars['Boolean']>;
   isUnique?: InputMaybe<Scalars['Boolean']>;
   label: Scalars['String'];
   morphRelationsCreationPayload?: InputMaybe<Array<Scalars['JSON']>>;
   name: Scalars['String'];
-  objectMetadataId: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
   options?: InputMaybe<Scalars['JSON']>;
   relationCreationPayload?: InputMaybe<Scalars['JSON']>;
   settings?: InputMaybe<Scalars['JSON']>;
@@ -512,6 +655,7 @@ export type CreateOneFieldMetadataInput = {
 };
 
 export type CreateRoleInput = {
+  canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
   canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
@@ -529,6 +673,60 @@ export type CreateServerlessFunctionInput = {
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };
 
+export type CreateViewFieldInput = {
+  aggregateOperation?: InputMaybe<AggregateOperations>;
+  fieldMetadataId: Scalars['UUID'];
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  position?: InputMaybe<Scalars['Float']>;
+  size?: InputMaybe<Scalars['Float']>;
+  viewId: Scalars['UUID'];
+};
+
+export type CreateViewFilterGroupInput = {
+  logicalOperator?: InputMaybe<ViewFilterGroupLogicalOperator>;
+  parentViewFilterGroupId?: InputMaybe<Scalars['UUID']>;
+  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
+  viewId: Scalars['UUID'];
+};
+
+export type CreateViewFilterInput = {
+  fieldMetadataId: Scalars['UUID'];
+  operand?: InputMaybe<ViewFilterOperand>;
+  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
+  subFieldName?: InputMaybe<Scalars['String']>;
+  value: Scalars['RawJSONScalar'];
+  viewFilterGroupId?: InputMaybe<Scalars['UUID']>;
+  viewId: Scalars['UUID'];
+};
+
+export type CreateViewGroupInput = {
+  fieldMetadataId: Scalars['UUID'];
+  fieldValue: Scalars['String'];
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  position?: InputMaybe<Scalars['Float']>;
+  viewId: Scalars['UUID'];
+};
+
+export type CreateViewInput = {
+  anyFieldFilterValue?: InputMaybe<Scalars['String']>;
+  icon: Scalars['String'];
+  isCompact?: InputMaybe<Scalars['Boolean']>;
+  kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
+  kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  key?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
+  openRecordIn?: InputMaybe<ViewOpenRecordIn>;
+  position?: InputMaybe<Scalars['Float']>;
+  type?: InputMaybe<ViewType>;
+};
+
+export type CreateViewSortInput = {
+  direction?: InputMaybe<ViewSortDirection>;
+  fieldMetadataId: Scalars['UUID'];
+  viewId: Scalars['UUID'];
+};
+
 export type CreateWebhookDto = {
   description?: InputMaybe<Scalars['String']>;
   operations: Array<Scalars['String']>;
@@ -536,15 +734,26 @@ export type CreateWebhookDto = {
   targetUrl: Scalars['String'];
 };
 
+export type CreateWorkflowVersionEdgeInput = {
+  /** Workflow version source step ID */
+  source: Scalars['String'];
+  /** Workflow version target step ID */
+  target: Scalars['String'];
+  /** Workflow version ID */
+  workflowVersionId: Scalars['String'];
+};
+
 export type CreateWorkflowVersionStepInput = {
   /** Next step ID */
-  nextStepId?: InputMaybe<Scalars['String']>;
+  nextStepId?: InputMaybe<Scalars['UUID']>;
   /** Parent step ID */
   parentStepId?: InputMaybe<Scalars['String']>;
+  /** Step position */
+  position?: InputMaybe<WorkflowStepPositionInput>;
   /** New step type */
   stepType: Scalars['String'];
   /** Workflow version ID */
-  workflowVersionId: Scalars['String'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type CursorPaging = {
@@ -570,7 +779,7 @@ export type CustomDomainRecord = {
 export type CustomDomainValidRecords = {
   __typename?: 'CustomDomainValidRecords';
   customDomain: Scalars['String'];
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   records: Array<CustomDomainRecord>;
 };
 
@@ -595,7 +804,7 @@ export type DateFilter = {
 };
 
 export type DeleteApprovedAccessDomainInput = {
-  id: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 export type DeleteOneFieldInput = {
@@ -609,12 +818,12 @@ export type DeleteOneObjectInput = {
 };
 
 export type DeleteSsoInput = {
-  identityProviderId: Scalars['String'];
+  identityProviderId: Scalars['UUID'];
 };
 
 export type DeleteSsoOutput = {
   __typename?: 'DeleteSsoOutput';
-  identityProviderId: Scalars['String'];
+  identityProviderId: Scalars['UUID'];
 };
 
 export type DeleteTwoFactorAuthenticationMethodOutput = {
@@ -624,14 +833,14 @@ export type DeleteTwoFactorAuthenticationMethodOutput = {
 };
 
 export type DeleteWebhookDto = {
-  id: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 export type DeleteWorkflowVersionStepInput = {
   /** Step to delete ID */
   stepId: Scalars['String'];
   /** Workflow version ID */
-  workflowVersionId: Scalars['String'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type DeletedWorkspaceMember = {
@@ -640,7 +849,7 @@ export type DeletedWorkspaceMember = {
   id: Scalars['UUID'];
   name: FullName;
   userEmail: Scalars['String'];
-  userWorkspaceId?: Maybe<Scalars['String']>;
+  userWorkspaceId?: Maybe<Scalars['UUID']>;
 };
 
 /** Schema update on a table */
@@ -652,13 +861,13 @@ export enum DistantTableUpdate {
 }
 
 export type EditSsoInput = {
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   status: SsoIdentityProviderStatus;
 };
 
 export type EditSsoOutput = {
   __typename?: 'EditSsoOutput';
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   issuer: Scalars['String'];
   name: Scalars['String'];
   status: SsoIdentityProviderStatus;
@@ -691,7 +900,7 @@ export type FeatureFlag = {
   id: Scalars['UUID'];
   key: FeatureFlagKey;
   value: Scalars['Boolean'];
-  workspaceId: Scalars['String'];
+  workspaceId: Scalars['UUID'];
 };
 
 export type FeatureFlagDto = {
@@ -703,7 +912,8 @@ export type FeatureFlagDto = {
 export enum FeatureFlagKey {
   IS_AIRTABLE_INTEGRATION_ENABLED = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IS_AI_ENABLED = 'IS_AI_ENABLED',
-  IS_ANY_FIELD_SEARCH_ENABLED = 'IS_ANY_FIELD_SEARCH_ENABLED',
+  IS_API_KEY_ROLES_ENABLED = 'IS_API_KEY_ROLES_ENABLED',
+  IS_CORE_VIEW_ENABLED = 'IS_CORE_VIEW_ENABLED',
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
   IS_FIELDS_PERMISSIONS_ENABLED = 'IS_FIELDS_PERMISSIONS_ENABLED',
   IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
@@ -714,8 +924,9 @@ export enum FeatureFlagKey {
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_TWO_FACTOR_AUTHENTICATION_ENABLED = 'IS_TWO_FACTOR_AUTHENTICATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
+  IS_WORKFLOW_BRANCH_ENABLED = 'IS_WORKFLOW_BRANCH_ENABLED',
   IS_WORKFLOW_FILTERING_ENABLED = 'IS_WORKFLOW_FILTERING_ENABLED',
-  IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED = 'IS_WORKSPACE_API_KEY_WEBHOOK_GRAPHQL_ENABLED'
+  IS_WORKSPACE_MIGRATION_V2_ENABLED = 'IS_WORKSPACE_MIGRATION_V2_ENABLED'
 }
 
 export type Field = {
@@ -730,6 +941,7 @@ export type Field = {
   isLabelSyncedWithName?: Maybe<Scalars['Boolean']>;
   isNullable?: Maybe<Scalars['Boolean']>;
   isSystem?: Maybe<Scalars['Boolean']>;
+  isUIReadOnly?: Maybe<Scalars['Boolean']>;
   isUnique?: Maybe<Scalars['Boolean']>;
   label: Scalars['String'];
   morphRelations?: Maybe<Array<Relation>>;
@@ -765,6 +977,7 @@ export type FieldFilter = {
   isActive?: InputMaybe<BooleanFieldComparison>;
   isCustom?: InputMaybe<BooleanFieldComparison>;
   isSystem?: InputMaybe<BooleanFieldComparison>;
+  isUIReadOnly?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<FieldFilter>>;
 };
 
@@ -801,25 +1014,25 @@ export type FieldPermission = {
   __typename?: 'FieldPermission';
   canReadFieldValue?: Maybe<Scalars['Boolean']>;
   canUpdateFieldValue?: Maybe<Scalars['Boolean']>;
-  fieldMetadataId: Scalars['String'];
-  id: Scalars['String'];
-  objectMetadataId: Scalars['String'];
-  roleId: Scalars['String'];
+  fieldMetadataId: Scalars['UUID'];
+  id: Scalars['UUID'];
+  objectMetadataId: Scalars['UUID'];
+  roleId: Scalars['UUID'];
 };
 
 export type FieldPermissionInput = {
   canReadFieldValue?: InputMaybe<Scalars['Boolean']>;
   canUpdateFieldValue?: InputMaybe<Scalars['Boolean']>;
-  fieldMetadataId: Scalars['String'];
-  objectMetadataId: Scalars['String'];
+  fieldMetadataId: Scalars['UUID'];
+  objectMetadataId: Scalars['UUID'];
 };
 
 export type File = {
   __typename?: 'File';
   createdAt: Scalars['DateTime'];
   fullPath: Scalars['String'];
-  id: Scalars['ID'];
-  messageId?: Maybe<Scalars['ID']>;
+  id: Scalars['UUID'];
+  messageId?: Maybe<Scalars['UUID']>;
   name: Scalars['String'];
   size: Scalars['Float'];
   type: Scalars['String'];
@@ -841,7 +1054,7 @@ export enum FilterIs {
 
 export type FindAvailableSsoidpOutput = {
   __typename?: 'FindAvailableSSOIDPOutput';
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   issuer: Scalars['String'];
   name: Scalars['String'];
   status: SsoIdentityProviderStatus;
@@ -856,18 +1069,18 @@ export type FullName = {
 };
 
 export type GetApiKeyDto = {
-  id: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 export type GetAuthorizationUrlForSsoInput = {
-  identityProviderId: Scalars['String'];
+  identityProviderId: Scalars['UUID'];
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
 };
 
 export type GetAuthorizationUrlForSsoOutput = {
   __typename?: 'GetAuthorizationUrlForSSOOutput';
   authorizationURL: Scalars['String'];
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   type: Scalars['String'];
 };
 
@@ -885,7 +1098,7 @@ export type GetServerlessFunctionSourceCodeInput = {
 };
 
 export type GetWebhookDto = {
-  id: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 export enum HealthIndicatorId {
@@ -1039,6 +1252,12 @@ export type LinksMetadata = {
   secondaryLinks?: Maybe<Array<LinkMetadata>>;
 };
 
+export type LocationDto = {
+  __typename?: 'LocationDto';
+  lat?: Maybe<Scalars['Float']>;
+  lng?: Maybe<Scalars['Float']>;
+};
+
 export type LoginToken = {
   __typename?: 'LoginToken';
   loginToken: AuthToken;
@@ -1062,18 +1281,27 @@ export type Mutation = {
   activateWorkflowVersion: Scalars['Boolean'];
   activateWorkspace: Workspace;
   assignRoleToAgent: Scalars['Boolean'];
+  assignRoleToApiKey: Scalars['Boolean'];
   authorizeApp: AuthorizeApp;
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
   createAgentChatThread: AgentChatThread;
+  createAgentHandoff: Scalars['Boolean'];
   createApiKey: ApiKey;
   createApprovedAccessDomain: ApprovedAccessDomain;
+  createCoreView: CoreView;
+  createCoreViewField: CoreViewField;
+  createCoreViewFilter: CoreViewFilter;
+  createCoreViewFilterGroup: CoreViewFilterGroup;
+  createCoreViewGroup: CoreViewGroup;
+  createCoreViewSort: CoreViewSort;
   createDatabaseConfigVariable: Scalars['Boolean'];
   createDraftFromWorkflowVersion: WorkflowVersion;
   createFile: File;
   createOIDCIdentityProvider: SetupSsoOutput;
   createObjectEvent: Analytics;
+  createOneAgent: Agent;
   createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
@@ -1081,12 +1309,20 @@ export type Mutation = {
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWebhook: Webhook;
-  createWorkflowVersionStep: WorkflowAction;
+  createWorkflowVersionEdge: WorkflowVersionStepChanges;
+  createWorkflowVersionStep: WorkflowVersionStepChanges;
   deactivateWorkflowVersion: Scalars['Boolean'];
   deleteApprovedAccessDomain: Scalars['Boolean'];
+  deleteCoreView: Scalars['Boolean'];
+  deleteCoreViewField: Scalars['Boolean'];
+  deleteCoreViewFilter: Scalars['Boolean'];
+  deleteCoreViewFilterGroup: Scalars['Boolean'];
+  deleteCoreViewGroup: Scalars['Boolean'];
+  deleteCoreViewSort: Scalars['Boolean'];
   deleteCurrentWorkspace: Workspace;
   deleteDatabaseConfigVariable: Scalars['Boolean'];
   deleteFile: File;
+  deleteOneAgent: Agent;
   deleteOneField: Field;
   deleteOneObject: Object;
   deleteOneRole: Scalars['String'];
@@ -1095,8 +1331,15 @@ export type Mutation = {
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
   deleteWebhook: Scalars['Boolean'];
-  deleteWorkflowVersionStep: WorkflowAction;
+  deleteWorkflowVersionEdge: WorkflowVersionStepChanges;
+  deleteWorkflowVersionStep: WorkflowVersionStepChanges;
   deleteWorkspaceInvitation: Scalars['String'];
+  destroyCoreView: Scalars['Boolean'];
+  destroyCoreViewField: Scalars['Boolean'];
+  destroyCoreViewFilter: Scalars['Boolean'];
+  destroyCoreViewFilterGroup: Scalars['Boolean'];
+  destroyCoreViewGroup: Scalars['Boolean'];
+  destroyCoreViewSort: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -1110,10 +1353,12 @@ export type Mutation = {
   getAuthorizationUrlForSSO: GetAuthorizationUrlForSsoOutput;
   getLoginTokenFromCredentials: LoginToken;
   getLoginTokenFromEmailVerificationToken: GetLoginTokenFromEmailVerificationTokenOutput;
+  getWorkspaceAgnosticTokenFromEmailVerificationToken: AvailableWorkspacesAndAccessTokensOutput;
   impersonate: ImpersonateOutput;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioningOutput;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioningOutput;
   publishServerlessFunction: ServerlessFunction;
+  removeAgentHandoff: Scalars['Boolean'];
   removeRoleFromAgent: Scalars['Boolean'];
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
@@ -1133,6 +1378,12 @@ export type Mutation = {
   switchToYearlyInterval: BillingUpdateOutput;
   trackAnalytics: Analytics;
   updateApiKey?: Maybe<ApiKey>;
+  updateCoreView: CoreView;
+  updateCoreViewField: CoreViewField;
+  updateCoreViewFilter: CoreViewFilter;
+  updateCoreViewFilterGroup: CoreViewFilterGroup;
+  updateCoreViewGroup: CoreViewGroup;
+  updateCoreViewSort: CoreViewSort;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateLabPublicFeatureFlag: FeatureFlagDto;
   updateOneAgent: Agent;
@@ -1143,6 +1394,7 @@ export type Mutation = {
   updatePasswordViaResetToken: InvalidatePassword;
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
+  updateWorkflowVersionPositions: Scalars['Boolean'];
   updateWorkflowVersionStep: WorkflowAction;
   updateWorkspace: Workspace;
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
@@ -1153,7 +1405,7 @@ export type Mutation = {
   uploadWorkspaceLogo: SignedFileDto;
   upsertFieldPermissions: Array<FieldPermission>;
   upsertObjectPermissions: Array<ObjectPermission>;
-  upsertSettingPermissions: Array<SettingPermission>;
+  upsertPermissionFlags: Array<PermissionFlag>;
   userLookupAdminPanel: UserLookup;
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethodOutput;
@@ -1161,7 +1413,7 @@ export type Mutation = {
 
 
 export type MutationActivateWorkflowVersionArgs = {
-  workflowVersionId: Scalars['String'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 
@@ -1172,6 +1424,12 @@ export type MutationActivateWorkspaceArgs = {
 
 export type MutationAssignRoleToAgentArgs = {
   agentId: Scalars['UUID'];
+  roleId: Scalars['UUID'];
+};
+
+
+export type MutationAssignRoleToApiKeyArgs = {
+  apiKeyId: Scalars['UUID'];
   roleId: Scalars['UUID'];
 };
 
@@ -1201,6 +1459,11 @@ export type MutationCreateAgentChatThreadArgs = {
 };
 
 
+export type MutationCreateAgentHandoffArgs = {
+  input: CreateAgentHandoffInput;
+};
+
+
 export type MutationCreateApiKeyArgs = {
   input: CreateApiKeyDto;
 };
@@ -1208,6 +1471,36 @@ export type MutationCreateApiKeyArgs = {
 
 export type MutationCreateApprovedAccessDomainArgs = {
   input: CreateApprovedAccessDomainInput;
+};
+
+
+export type MutationCreateCoreViewArgs = {
+  input: CreateViewInput;
+};
+
+
+export type MutationCreateCoreViewFieldArgs = {
+  input: CreateViewFieldInput;
+};
+
+
+export type MutationCreateCoreViewFilterArgs = {
+  input: CreateViewFilterInput;
+};
+
+
+export type MutationCreateCoreViewFilterGroupArgs = {
+  input: CreateViewFilterGroupInput;
+};
+
+
+export type MutationCreateCoreViewGroupArgs = {
+  input: CreateViewGroupInput;
+};
+
+
+export type MutationCreateCoreViewSortArgs = {
+  input: CreateViewSortInput;
 };
 
 
@@ -1234,9 +1527,14 @@ export type MutationCreateOidcIdentityProviderArgs = {
 
 export type MutationCreateObjectEventArgs = {
   event: Scalars['String'];
-  objectMetadataId: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
   properties?: InputMaybe<Scalars['JSON']>;
-  recordId: Scalars['String'];
+  recordId: Scalars['UUID'];
+};
+
+
+export type MutationCreateOneAgentArgs = {
+  input: CreateAgentInput;
 };
 
 
@@ -1265,18 +1563,53 @@ export type MutationCreateWebhookArgs = {
 };
 
 
+export type MutationCreateWorkflowVersionEdgeArgs = {
+  input: CreateWorkflowVersionEdgeInput;
+};
+
+
 export type MutationCreateWorkflowVersionStepArgs = {
   input: CreateWorkflowVersionStepInput;
 };
 
 
 export type MutationDeactivateWorkflowVersionArgs = {
-  workflowVersionId: Scalars['String'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 
 export type MutationDeleteApprovedAccessDomainArgs = {
   input: DeleteApprovedAccessDomainInput;
+};
+
+
+export type MutationDeleteCoreViewArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteCoreViewFieldArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteCoreViewFilterArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteCoreViewFilterGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteCoreViewGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDeleteCoreViewSortArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -1286,7 +1619,12 @@ export type MutationDeleteDatabaseConfigVariableArgs = {
 
 
 export type MutationDeleteFileArgs = {
-  fileId: Scalars['String'];
+  fileId: Scalars['UUID'];
+};
+
+
+export type MutationDeleteOneAgentArgs = {
+  input: AgentIdInput;
 };
 
 
@@ -1301,7 +1639,7 @@ export type MutationDeleteOneObjectArgs = {
 
 
 export type MutationDeleteOneRoleArgs = {
-  roleId: Scalars['String'];
+  roleId: Scalars['UUID'];
 };
 
 
@@ -1325,6 +1663,11 @@ export type MutationDeleteWebhookArgs = {
 };
 
 
+export type MutationDeleteWorkflowVersionEdgeArgs = {
+  input: CreateWorkflowVersionEdgeInput;
+};
+
+
 export type MutationDeleteWorkflowVersionStepArgs = {
   input: DeleteWorkflowVersionStepInput;
 };
@@ -1335,6 +1678,36 @@ export type MutationDeleteWorkspaceInvitationArgs = {
 };
 
 
+export type MutationDestroyCoreViewArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewFieldArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewFilterArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewFilterGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyCoreViewSortArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationEditSsoIdentityProviderArgs = {
   input: EditSsoInput;
 };
@@ -1342,7 +1715,7 @@ export type MutationEditSsoIdentityProviderArgs = {
 
 export type MutationEmailPasswordResetLinkArgs = {
   email: Scalars['String'];
-  workspaceId: Scalars['String'];
+  workspaceId: Scalars['UUID'];
 };
 
 
@@ -1352,7 +1725,7 @@ export type MutationExecuteOneServerlessFunctionArgs = {
 
 
 export type MutationGenerateApiKeyTokenArgs = {
-  apiKeyId: Scalars['String'];
+  apiKeyId: Scalars['UUID'];
   expiresAt: Scalars['String'];
 };
 
@@ -1379,8 +1752,10 @@ export type MutationGetAuthorizationUrlForSsoArgs = {
 export type MutationGetLoginTokenFromCredentialsArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
   origin: Scalars['String'];
   password: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1392,9 +1767,16 @@ export type MutationGetLoginTokenFromEmailVerificationTokenArgs = {
 };
 
 
+export type MutationGetWorkspaceAgnosticTokenFromEmailVerificationTokenArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
+  email: Scalars['String'];
+  emailVerificationToken: Scalars['String'];
+};
+
+
 export type MutationImpersonateArgs = {
-  userId: Scalars['String'];
-  workspaceId: Scalars['String'];
+  userId: Scalars['UUID'];
+  workspaceId: Scalars['UUID'];
 };
 
 
@@ -1406,6 +1788,11 @@ export type MutationInitiateOtpProvisioningArgs = {
 
 export type MutationPublishServerlessFunctionArgs = {
   input: PublishServerlessFunctionInput;
+};
+
+
+export type MutationRemoveAgentHandoffArgs = {
+  input: RemoveAgentHandoffInput;
 };
 
 
@@ -1441,10 +1828,10 @@ export type MutationRunWorkflowVersionArgs = {
 
 
 export type MutationSaveImapSmtpCaldavAccountArgs = {
-  accountOwnerId: Scalars['String'];
+  accountOwnerId: Scalars['UUID'];
   connectionParameters: EmailAccountConnectionParameters;
   handle: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['UUID']>;
 };
 
 
@@ -1456,14 +1843,18 @@ export type MutationSendInvitationsArgs = {
 export type MutationSignInArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 };
 
 
 export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
+  locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1472,8 +1863,8 @@ export type MutationSignUpInWorkspaceArgs = {
   email: Scalars['String'];
   locale?: InputMaybe<Scalars['String']>;
   password: Scalars['String'];
-  verifyEmailNextPath?: InputMaybe<Scalars['String']>;
-  workspaceId?: InputMaybe<Scalars['String']>;
+  verifyEmailRedirectPath?: InputMaybe<Scalars['String']>;
+  workspaceId?: InputMaybe<Scalars['UUID']>;
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
   workspacePersonalInviteToken?: InputMaybe<Scalars['String']>;
 };
@@ -1494,6 +1885,42 @@ export type MutationTrackAnalyticsArgs = {
 
 export type MutationUpdateApiKeyArgs = {
   input: UpdateApiKeyDto;
+};
+
+
+export type MutationUpdateCoreViewArgs = {
+  id: Scalars['String'];
+  input: UpdateViewInput;
+};
+
+
+export type MutationUpdateCoreViewFieldArgs = {
+  id: Scalars['String'];
+  input: UpdateViewFieldInput;
+};
+
+
+export type MutationUpdateCoreViewFilterArgs = {
+  id: Scalars['String'];
+  input: UpdateViewFilterInput;
+};
+
+
+export type MutationUpdateCoreViewFilterGroupArgs = {
+  id: Scalars['String'];
+  input: UpdateViewFilterGroupInput;
+};
+
+
+export type MutationUpdateCoreViewGroupArgs = {
+  id: Scalars['String'];
+  input: UpdateViewGroupInput;
+};
+
+
+export type MutationUpdateCoreViewSortArgs = {
+  id: Scalars['String'];
+  input: UpdateViewSortInput;
 };
 
 
@@ -1549,6 +1976,11 @@ export type MutationUpdateWorkflowRunStepArgs = {
 };
 
 
+export type MutationUpdateWorkflowVersionPositionsArgs = {
+  input: UpdateWorkflowVersionPositionsInput;
+};
+
+
 export type MutationUpdateWorkflowVersionStepArgs = {
   input: UpdateWorkflowVersionStepInput;
 };
@@ -1562,13 +1994,13 @@ export type MutationUpdateWorkspaceArgs = {
 export type MutationUpdateWorkspaceFeatureFlagArgs = {
   featureFlag: Scalars['String'];
   value: Scalars['Boolean'];
-  workspaceId: Scalars['String'];
+  workspaceId: Scalars['UUID'];
 };
 
 
 export type MutationUpdateWorkspaceMemberRoleArgs = {
-  roleId: Scalars['String'];
-  workspaceMemberId: Scalars['String'];
+  roleId: Scalars['UUID'];
+  workspaceMemberId: Scalars['UUID'];
 };
 
 
@@ -1604,8 +2036,8 @@ export type MutationUpsertObjectPermissionsArgs = {
 };
 
 
-export type MutationUpsertSettingPermissionsArgs = {
-  upsertSettingPermissionsInput: UpsertSettingPermissionsInput;
+export type MutationUpsertPermissionFlagsArgs = {
+  upsertPermissionFlagsInput: UpsertPermissionFlagsInput;
 };
 
 
@@ -1626,14 +2058,13 @@ export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs 
 export type Object = {
   __typename?: 'Object';
   createdAt: Scalars['DateTime'];
-  dataSourceId: Scalars['String'];
   description?: Maybe<Scalars['String']>;
   duplicateCriteria?: Maybe<Array<Array<Scalars['String']>>>;
   fields: ObjectFieldsConnection;
   fieldsList: Array<Field>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
-  imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
+  imageIdentifierFieldMetadataId?: Maybe<Scalars['UUID']>;
   indexMetadataList: Array<Index>;
   indexMetadatas: ObjectIndexMetadatasConnection;
   isActive: Scalars['Boolean'];
@@ -1642,7 +2073,8 @@ export type Object = {
   isRemote: Scalars['Boolean'];
   isSearchable: Scalars['Boolean'];
   isSystem: Scalars['Boolean'];
-  labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
+  isUIReadOnly: Scalars['Boolean'];
+  labelIdentifierFieldMetadataId?: Maybe<Scalars['UUID']>;
   labelPlural: Scalars['String'];
   labelSingular: Scalars['String'];
   namePlural: Scalars['String'];
@@ -1696,6 +2128,7 @@ export type ObjectFilter = {
   isRemote?: InputMaybe<BooleanFieldComparison>;
   isSearchable?: InputMaybe<BooleanFieldComparison>;
   isSystem?: InputMaybe<BooleanFieldComparison>;
+  isUIReadOnly?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<ObjectFilter>>;
 };
 
@@ -1713,7 +2146,8 @@ export type ObjectPermission = {
   canReadObjectRecords?: Maybe<Scalars['Boolean']>;
   canSoftDeleteObjectRecords?: Maybe<Scalars['Boolean']>;
   canUpdateObjectRecords?: Maybe<Scalars['Boolean']>;
-  objectMetadataId: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
+  restrictedFields?: Maybe<Scalars['JSON']>;
 };
 
 export type ObjectPermissionInput = {
@@ -1721,7 +2155,7 @@ export type ObjectPermissionInput = {
   canReadObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']>;
-  objectMetadataId: Scalars['String'];
+  objectMetadataId: Scalars['UUID'];
 };
 
 export type ObjectRecordFilterInput = {
@@ -1755,7 +2189,7 @@ export type OnDbEventDto = {
 export type OnDbEventInput = {
   action?: InputMaybe<DatabaseEventAction>;
   objectNameSingular?: InputMaybe<Scalars['String']>;
-  recordId?: InputMaybe<Scalars['String']>;
+  recordId?: InputMaybe<Scalars['UUID']>;
 };
 
 /** Onboarding status */
@@ -1787,6 +2221,27 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['ConnectionCursor']>;
 };
 
+export type PermissionFlag = {
+  __typename?: 'PermissionFlag';
+  flag: PermissionFlagType;
+  id: Scalars['UUID'];
+  roleId: Scalars['UUID'];
+};
+
+export enum PermissionFlagType {
+  ADMIN_PANEL = 'ADMIN_PANEL',
+  API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
+  DATA_MODEL = 'DATA_MODEL',
+  EXPORT_CSV = 'EXPORT_CSV',
+  IMPORT_CSV = 'IMPORT_CSV',
+  ROLES = 'ROLES',
+  SECURITY = 'SECURITY',
+  SEND_EMAIL_TOOL = 'SEND_EMAIL_TOOL',
+  WORKFLOWS = 'WORKFLOWS',
+  WORKSPACE = 'WORKSPACE',
+  WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
+}
+
 export enum PermissionsOnAllObjectRecords {
   DESTROY_ALL_OBJECT_RECORDS = 'DESTROY_ALL_OBJECT_RECORDS',
   READ_ALL_OBJECT_RECORDS = 'READ_ALL_OBJECT_RECORDS',
@@ -1794,12 +2249,21 @@ export enum PermissionsOnAllObjectRecords {
   UPDATE_ALL_OBJECT_RECORDS = 'UPDATE_ALL_OBJECT_RECORDS'
 }
 
+export type PlaceDetailsResultDto = {
+  __typename?: 'PlaceDetailsResultDto';
+  city?: Maybe<Scalars['String']>;
+  country?: Maybe<Scalars['String']>;
+  location?: Maybe<LocationDto>;
+  postcode?: Maybe<Scalars['String']>;
+  state?: Maybe<Scalars['String']>;
+};
+
 export type PostgresCredentials = {
   __typename?: 'PostgresCredentials';
   id: Scalars['UUID'];
   password: Scalars['String'];
   user: Scalars['String'];
-  workspaceId: Scalars['String'];
+  workspaceId: Scalars['UUID'];
 };
 
 export type PublicFeatureFlag = {
@@ -1819,7 +2283,7 @@ export type PublicWorkspaceDataOutput = {
   __typename?: 'PublicWorkspaceDataOutput';
   authProviders: AuthProviders;
   displayName?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   logo?: Maybe<Scalars['String']>;
   workspaceUrls: WorkspaceUrls;
 };
@@ -1843,15 +2307,32 @@ export type Query = {
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
+  findAgentHandoffTargets: Array<Agent>;
+  findAgentHandoffs: Array<AgentHandoffDto>;
+  findManyAgents: Array<Agent>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
   findOneAgent: Agent;
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  getAddressDetails: PlaceDetailsResultDto;
   getApprovedAccessDomains: Array<ApprovedAccessDomain>;
+  getAutoCompleteAddress: Array<AutocompleteResultDto>;
   getAvailablePackages: Scalars['JSON'];
   getConfigVariablesGrouped: ConfigVariablesOutput;
   getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount;
+  getCoreView?: Maybe<CoreView>;
+  getCoreViewField?: Maybe<CoreViewField>;
+  getCoreViewFields: Array<CoreViewField>;
+  getCoreViewFilter?: Maybe<CoreViewFilter>;
+  getCoreViewFilterGroup?: Maybe<CoreViewFilterGroup>;
+  getCoreViewFilterGroups: Array<CoreViewFilterGroup>;
+  getCoreViewFilters: Array<CoreViewFilter>;
+  getCoreViewGroup?: Maybe<CoreViewGroup>;
+  getCoreViewGroups: Array<CoreViewGroup>;
+  getCoreViewSort?: Maybe<CoreViewSort>;
+  getCoreViewSorts: Array<CoreViewSort>;
+  getCoreViews: Array<CoreView>;
   getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
@@ -1863,8 +2344,10 @@ export type Query = {
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']>;
   getSystemHealthStatus: SystemHealth;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
+  getTimelineCalendarEventsFromOpportunityId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
+  getTimelineThreadsFromOpportunityId: TimelineThreadsWithTotal;
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   index: Index;
   indexMetadatas: IndexConnection;
@@ -1880,17 +2363,17 @@ export type Query = {
 
 
 export type QueryAgentChatMessagesArgs = {
-  threadId: Scalars['String'];
+  threadId: Scalars['UUID'];
 };
 
 
 export type QueryAgentChatThreadArgs = {
-  id: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 
 export type QueryAgentChatThreadsArgs = {
-  agentId: Scalars['String'];
+  agentId: Scalars['UUID'];
 };
 
 
@@ -1915,6 +2398,16 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 };
 
 
+export type QueryFindAgentHandoffTargetsArgs = {
+  input: AgentIdInput;
+};
+
+
+export type QueryFindAgentHandoffsArgs = {
+  input: AgentIdInput;
+};
+
+
 export type QueryFindOneAgentArgs = {
   input: AgentIdInput;
 };
@@ -1930,13 +2423,87 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 };
 
 
+export type QueryGetAddressDetailsArgs = {
+  placeId: Scalars['String'];
+  token: Scalars['String'];
+};
+
+
+export type QueryGetAutoCompleteAddressArgs = {
+  address: Scalars['String'];
+  country?: InputMaybe<Scalars['String']>;
+  isFieldCity?: InputMaybe<Scalars['Boolean']>;
+  token: Scalars['String'];
+};
+
+
 export type QueryGetAvailablePackagesArgs = {
   input: ServerlessFunctionIdInput;
 };
 
 
 export type QueryGetConnectedImapSmtpCaldavAccountArgs = {
+  id: Scalars['UUID'];
+};
+
+
+export type QueryGetCoreViewArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewFieldArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewFieldsArgs = {
+  viewId: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewFilterArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewFilterGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewFilterGroupsArgs = {
+  viewId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryGetCoreViewFiltersArgs = {
+  viewId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryGetCoreViewGroupArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewGroupsArgs = {
+  viewId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryGetCoreViewSortArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetCoreViewSortsArgs = {
+  viewId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryGetCoreViewsArgs = {
+  objectMetadataId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -1973,6 +2540,13 @@ export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
 };
 
 
+export type QueryGetTimelineCalendarEventsFromOpportunityIdArgs = {
+  opportunityId: Scalars['UUID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+};
+
+
 export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
@@ -1982,6 +2556,13 @@ export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
 
 export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   companyId: Scalars['UUID'];
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+};
+
+
+export type QueryGetTimelineThreadsFromOpportunityIdArgs = {
+  opportunityId: Scalars['UUID'];
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
 };
@@ -2031,7 +2612,7 @@ export type QueueMetricsDataPoint = {
 export type QueueMetricsSeries = {
   __typename?: 'QueueMetricsSeries';
   data: Array<QueueMetricsDataPoint>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 export enum QueueMetricsTimeRange {
@@ -2060,10 +2641,10 @@ export enum RelationType {
 export type RemoteServer = {
   __typename?: 'RemoteServer';
   createdAt: Scalars['DateTime'];
-  foreignDataWrapperId: Scalars['ID'];
+  foreignDataWrapperId: Scalars['UUID'];
   foreignDataWrapperOptions?: Maybe<Scalars['JSON']>;
   foreignDataWrapperType: Scalars['String'];
-  id: Scalars['ID'];
+  id: Scalars['UUID'];
   label: Scalars['String'];
   schema?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
@@ -2085,29 +2666,37 @@ export enum RemoteTableStatus {
   SYNCED = 'SYNCED'
 }
 
+export type RemoveAgentHandoffInput = {
+  fromAgentId: Scalars['UUID'];
+  toAgentId: Scalars['UUID'];
+};
+
 export type ResendEmailVerificationTokenOutput = {
   __typename?: 'ResendEmailVerificationTokenOutput';
   success: Scalars['Boolean'];
 };
 
 export type RevokeApiKeyDto = {
-  id: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 export type Role = {
   __typename?: 'Role';
+  canAccessAllTools: Scalars['Boolean'];
   canDestroyAllObjectRecords: Scalars['Boolean'];
   canReadAllObjectRecords: Scalars['Boolean'];
   canSoftDeleteAllObjectRecords: Scalars['Boolean'];
   canUpdateAllObjectRecords: Scalars['Boolean'];
   canUpdateAllSettings: Scalars['Boolean'];
   description?: Maybe<Scalars['String']>;
+  fieldPermissions?: Maybe<Array<FieldPermission>>;
   icon?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   isEditable: Scalars['Boolean'];
   label: Scalars['String'];
   objectPermissions?: Maybe<Array<ObjectPermission>>;
-  settingPermissions?: Maybe<Array<SettingPermission>>;
+  permissionFlags?: Maybe<Array<PermissionFlag>>;
+  standardId?: Maybe<Scalars['UUID']>;
   workspaceMembers: Array<WorkspaceMember>;
 };
 
@@ -2115,14 +2704,14 @@ export type RunWorkflowVersionInput = {
   /** Execution result in JSON format */
   payload?: InputMaybe<Scalars['JSON']>;
   /** Workflow run ID */
-  workflowRunId?: InputMaybe<Scalars['String']>;
+  workflowRunId?: InputMaybe<Scalars['UUID']>;
   /** Workflow version ID */
-  workflowVersionId: Scalars['String'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type SsoConnection = {
   __typename?: 'SSOConnection';
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   issuer: Scalars['String'];
   name: Scalars['String'];
   status: SsoIdentityProviderStatus;
@@ -2131,7 +2720,7 @@ export type SsoConnection = {
 
 export type SsoIdentityProvider = {
   __typename?: 'SSOIdentityProvider';
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   issuer: Scalars['String'];
   name: Scalars['String'];
   status: SsoIdentityProviderStatus;
@@ -2149,7 +2738,7 @@ export type SearchRecord = {
   imageUrl?: Maybe<Scalars['String']>;
   label: Scalars['String'];
   objectNameSingular: Scalars['String'];
-  recordId: Scalars['String'];
+  recordId: Scalars['UUID'];
   tsRank: Scalars['Float'];
   tsRankCD: Scalars['Float'];
 };
@@ -2227,24 +2816,6 @@ export type ServerlessFunctionIdInput = {
   id: Scalars['ID'];
 };
 
-export type SettingPermission = {
-  __typename?: 'SettingPermission';
-  id: Scalars['String'];
-  roleId: Scalars['String'];
-  setting: SettingPermissionType;
-};
-
-export enum SettingPermissionType {
-  ADMIN_PANEL = 'ADMIN_PANEL',
-  API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
-  DATA_MODEL = 'DATA_MODEL',
-  ROLES = 'ROLES',
-  SECURITY = 'SECURITY',
-  WORKFLOWS = 'WORKFLOWS',
-  WORKSPACE = 'WORKSPACE',
-  WORKSPACE_MEMBERS = 'WORKSPACE_MEMBERS'
-}
-
 export type SetupOidcSsoInput = {
   clientID: Scalars['String'];
   clientSecret: Scalars['String'];
@@ -2255,7 +2826,7 @@ export type SetupOidcSsoInput = {
 export type SetupSamlSsoInput = {
   certificate: Scalars['String'];
   fingerprint?: InputMaybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   issuer: Scalars['String'];
   name: Scalars['String'];
   ssoURL: Scalars['String'];
@@ -2263,7 +2834,7 @@ export type SetupSamlSsoInput = {
 
 export type SetupSsoOutput = {
   __typename?: 'SetupSsoOutput';
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   issuer: Scalars['String'];
   name: Scalars['String'];
   status: SsoIdentityProviderStatus;
@@ -2293,10 +2864,10 @@ export type StandardOverrides = {
 export type SubmitFormStepInput = {
   /** Form response in JSON format */
   response: Scalars['JSON'];
-  /** Workflow version ID */
-  stepId: Scalars['String'];
+  /** Workflow step ID */
+  stepId: Scalars['UUID'];
   /** Workflow run ID */
-  workflowRunId: Scalars['String'];
+  workflowRunId: Scalars['UUID'];
 };
 
 export type Subscription = {
@@ -2456,16 +3027,19 @@ export type UuidFilterComparison = {
 
 export type UpdateAgentInput = {
   description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
   id: Scalars['UUID'];
+  label: Scalars['String'];
   modelId: Scalars['String'];
   name: Scalars['String'];
   prompt: Scalars['String'];
   responseFormat?: InputMaybe<Scalars['JSON']>;
+  roleId?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UpdateApiKeyDto = {
   expiresAt?: InputMaybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   name?: InputMaybe<Scalars['String']>;
   revokedAt?: InputMaybe<Scalars['String']>;
 };
@@ -2478,6 +3052,7 @@ export type UpdateFieldInput = {
   isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
   isNullable?: InputMaybe<Scalars['Boolean']>;
   isSystem?: InputMaybe<Scalars['Boolean']>;
+  isUIReadOnly?: InputMaybe<Scalars['Boolean']>;
   isUnique?: InputMaybe<Scalars['Boolean']>;
   label?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
@@ -2493,10 +3068,10 @@ export type UpdateLabPublicFeatureFlagInput = {
 export type UpdateObjectPayload = {
   description?: InputMaybe<Scalars['String']>;
   icon?: InputMaybe<Scalars['String']>;
-  imageIdentifierFieldMetadataId?: InputMaybe<Scalars['String']>;
+  imageIdentifierFieldMetadataId?: InputMaybe<Scalars['UUID']>;
   isActive?: InputMaybe<Scalars['Boolean']>;
   isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
-  labelIdentifierFieldMetadataId?: InputMaybe<Scalars['String']>;
+  labelIdentifierFieldMetadataId?: InputMaybe<Scalars['UUID']>;
   labelPlural?: InputMaybe<Scalars['String']>;
   labelSingular?: InputMaybe<Scalars['String']>;
   namePlural?: InputMaybe<Scalars['String']>;
@@ -2524,6 +3099,7 @@ export type UpdateRoleInput = {
 };
 
 export type UpdateRolePayload = {
+  canAccessAllTools?: InputMaybe<Scalars['Boolean']>;
   canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
   canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']>;
@@ -2543,9 +3119,61 @@ export type UpdateServerlessFunctionInput = {
   timeoutSeconds?: InputMaybe<Scalars['Float']>;
 };
 
+export type UpdateViewFieldInput = {
+  aggregateOperation?: InputMaybe<AggregateOperations>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  position?: InputMaybe<Scalars['Float']>;
+  size?: InputMaybe<Scalars['Float']>;
+};
+
+export type UpdateViewFilterGroupInput = {
+  logicalOperator?: InputMaybe<ViewFilterGroupLogicalOperator>;
+  parentViewFilterGroupId?: InputMaybe<Scalars['UUID']>;
+  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
+  viewId?: InputMaybe<Scalars['UUID']>;
+};
+
+export type UpdateViewFilterInput = {
+  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  operand?: InputMaybe<ViewFilterOperand>;
+  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
+  subFieldName?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['RawJSONScalar']>;
+  viewFilterGroupId?: InputMaybe<Scalars['UUID']>;
+  viewId?: InputMaybe<Scalars['UUID']>;
+};
+
+export type UpdateViewGroupInput = {
+  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  fieldValue?: InputMaybe<Scalars['String']>;
+  isVisible?: InputMaybe<Scalars['Boolean']>;
+  position?: InputMaybe<Scalars['Float']>;
+  viewId?: InputMaybe<Scalars['UUID']>;
+};
+
+export type UpdateViewInput = {
+  anyFieldFilterValue?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isCompact?: InputMaybe<Scalars['Boolean']>;
+  kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
+  kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  key?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  openRecordIn?: InputMaybe<ViewOpenRecordIn>;
+  position?: InputMaybe<Scalars['Float']>;
+  type?: InputMaybe<ViewType>;
+};
+
+export type UpdateViewSortInput = {
+  direction?: InputMaybe<ViewSortDirection>;
+  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  viewId?: InputMaybe<Scalars['UUID']>;
+};
+
 export type UpdateWebhookDto = {
   description?: InputMaybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   operations?: InputMaybe<Array<Scalars['String']>>;
   secret?: InputMaybe<Scalars['String']>;
   targetUrl?: InputMaybe<Scalars['String']>;
@@ -2555,20 +3183,27 @@ export type UpdateWorkflowRunStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON'];
   /** Workflow run ID */
-  workflowRunId: Scalars['String'];
+  workflowRunId: Scalars['UUID'];
+};
+
+export type UpdateWorkflowVersionPositionsInput = {
+  /** Workflow version updated positions */
+  positions: Array<WorkflowStepPositionUpdateInput>;
+  /** Workflow version ID */
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type UpdateWorkflowVersionStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON'];
   /** Workflow version ID */
-  workflowVersionId: Scalars['String'];
+  workflowVersionId: Scalars['UUID'];
 };
 
 export type UpdateWorkspaceInput = {
   allowImpersonation?: InputMaybe<Scalars['Boolean']>;
   customDomain?: InputMaybe<Scalars['String']>;
-  defaultRoleId?: InputMaybe<Scalars['String']>;
+  defaultRoleId?: InputMaybe<Scalars['UUID']>;
   displayName?: InputMaybe<Scalars['String']>;
   inviteHash?: InputMaybe<Scalars['String']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']>;
@@ -2582,17 +3217,17 @@ export type UpdateWorkspaceInput = {
 
 export type UpsertFieldPermissionsInput = {
   fieldPermissions: Array<FieldPermissionInput>;
-  roleId: Scalars['String'];
+  roleId: Scalars['UUID'];
 };
 
 export type UpsertObjectPermissionsInput = {
   objectPermissions: Array<ObjectPermissionInput>;
-  roleId: Scalars['String'];
+  roleId: Scalars['UUID'];
 };
 
-export type UpsertSettingPermissionsInput = {
-  roleId: Scalars['String'];
-  settingPermissionKeys: Array<SettingPermissionType>;
+export type UpsertPermissionFlagsInput = {
+  permissionFlagKeys: Array<PermissionFlagType>;
+  roleId: Scalars['UUID'];
 };
 
 export type User = {
@@ -2636,7 +3271,7 @@ export type UserInfo = {
   __typename?: 'UserInfo';
   email: Scalars['String'];
   firstName?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   lastName?: Maybe<Scalars['String']>;
 };
 
@@ -2660,24 +3295,24 @@ export type UserWorkspace = {
   objectPermissions?: Maybe<Array<ObjectPermission>>;
   /** @deprecated Use objectPermissions instead */
   objectRecordsPermissions?: Maybe<Array<PermissionsOnAllObjectRecords>>;
-  settingsPermissions?: Maybe<Array<SettingPermissionType>>;
+  permissionFlags?: Maybe<Array<PermissionFlagType>>;
   twoFactorAuthenticationMethodSummary?: Maybe<Array<TwoFactorAuthenticationMethodDto>>;
   updatedAt: Scalars['DateTime'];
   user: User;
-  userId: Scalars['String'];
+  userId: Scalars['UUID'];
   workspace?: Maybe<Workspace>;
-  workspaceId: Scalars['String'];
+  workspaceId: Scalars['UUID'];
 };
 
 export type ValidateApprovedAccessDomainInput = {
-  approvedAccessDomainId: Scalars['String'];
+  approvedAccessDomainId: Scalars['UUID'];
   validationToken: Scalars['String'];
 };
 
 export type ValidatePasswordResetToken = {
   __typename?: 'ValidatePasswordResetToken';
   email: Scalars['String'];
-  id: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 export type VerifyTwoFactorAuthenticationMethodOutput = {
@@ -2691,6 +3326,46 @@ export type VersionInfo = {
   latestVersion: Scalars['String'];
 };
 
+export enum ViewFilterGroupLogicalOperator {
+  AND = 'AND',
+  NOT = 'NOT',
+  OR = 'OR'
+}
+
+export enum ViewFilterOperand {
+  CONTAINS = 'CONTAINS',
+  DOES_NOT_CONTAIN = 'DOES_NOT_CONTAIN',
+  GREATER_THAN_OR_EQUAL = 'GREATER_THAN_OR_EQUAL',
+  IS = 'IS',
+  IS_AFTER = 'IS_AFTER',
+  IS_BEFORE = 'IS_BEFORE',
+  IS_EMPTY = 'IS_EMPTY',
+  IS_IN_FUTURE = 'IS_IN_FUTURE',
+  IS_IN_PAST = 'IS_IN_PAST',
+  IS_NOT = 'IS_NOT',
+  IS_NOT_EMPTY = 'IS_NOT_EMPTY',
+  IS_NOT_NULL = 'IS_NOT_NULL',
+  IS_RELATIVE = 'IS_RELATIVE',
+  IS_TODAY = 'IS_TODAY',
+  LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL',
+  VECTOR_SEARCH = 'VECTOR_SEARCH'
+}
+
+export enum ViewOpenRecordIn {
+  RECORD_PAGE = 'RECORD_PAGE',
+  SIDE_PANEL = 'SIDE_PANEL'
+}
+
+export enum ViewSortDirection {
+  ASC = 'ASC',
+  DESC = 'DESC'
+}
+
+export enum ViewType {
+  KANBAN = 'KANBAN',
+  TABLE = 'TABLE'
+}
+
 export type Webhook = {
   __typename?: 'Webhook';
   createdAt: Scalars['DateTime'];
@@ -2702,7 +3377,7 @@ export type Webhook = {
   targetUrl: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   workspace: Workspace;
-  workspaceId: Scalars['String'];
+  workspaceId: Scalars['UUID'];
 };
 
 export type WorkerQueueMetrics = {
@@ -2722,6 +3397,7 @@ export type WorkflowAction = {
   id: Scalars['UUID'];
   name: Scalars['String'];
   nextStepIds?: Maybe<Array<Scalars['UUID']>>;
+  position?: Maybe<WorkflowStepPosition>;
   settings: Scalars['JSON'];
   type: Scalars['String'];
   valid: Scalars['Boolean'];
@@ -2732,9 +3408,35 @@ export type WorkflowRun = {
   workflowRunId: Scalars['UUID'];
 };
 
+export type WorkflowStepPosition = {
+  __typename?: 'WorkflowStepPosition';
+  x: Scalars['Float'];
+  y: Scalars['Float'];
+};
+
+export type WorkflowStepPositionInput = {
+  x: Scalars['Float'];
+  y: Scalars['Float'];
+};
+
+export type WorkflowStepPositionUpdateInput = {
+  /** Step or trigger ID */
+  id: Scalars['String'];
+  /** Position of the step or trigger */
+  position: WorkflowStepPositionInput;
+};
+
 export type WorkflowVersion = {
   __typename?: 'WorkflowVersion';
   id: Scalars['UUID'];
+};
+
+export type WorkflowVersionStepChanges = {
+  __typename?: 'WorkflowVersionStepChanges';
+  createdStep?: Maybe<WorkflowAction>;
+  deletedStepIds?: Maybe<Array<Scalars['String']>>;
+  stepsNextStepIds?: Maybe<Scalars['JSON']>;
+  triggerNextStepIds?: Maybe<Array<Scalars['String']>>;
 };
 
 export type Workspace = {
@@ -2790,7 +3492,7 @@ export type WorkspaceInfo = {
   __typename?: 'WorkspaceInfo';
   allowImpersonation: Scalars['Boolean'];
   featureFlags: Array<FeatureFlag>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   logo?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   totalUsers: Scalars['Float'];
@@ -2812,6 +3514,7 @@ export type WorkspaceInviteHashValid = {
 export type WorkspaceMember = {
   __typename?: 'WorkspaceMember';
   avatarUrl?: Maybe<Scalars['String']>;
+  calendarStartDay?: Maybe<Scalars['Int']>;
   colorScheme: Scalars['String'];
   dateFormat?: Maybe<WorkspaceMemberDateFormatEnum>;
   id: Scalars['UUID'];
@@ -2821,7 +3524,7 @@ export type WorkspaceMember = {
   timeFormat?: Maybe<WorkspaceMemberTimeFormatEnum>;
   timeZone?: Maybe<Scalars['String']>;
   userEmail: Scalars['String'];
-  userWorkspaceId?: Maybe<Scalars['String']>;
+  userWorkspaceId?: Maybe<Scalars['UUID']>;
 };
 
 /** Date format as Month first, Day first, Year first or system as default */
@@ -2842,7 +3545,7 @@ export enum WorkspaceMemberTimeFormatEnum {
 export type WorkspaceNameAndId = {
   __typename?: 'WorkspaceNameAndId';
   displayName?: Maybe<Scalars['String']>;
-  id: Scalars['String'];
+  id: Scalars['UUID'];
 };
 
 export type WorkspaceUrls = {
@@ -2853,7 +3556,7 @@ export type WorkspaceUrls = {
 
 export type WorkspaceUrlsAndId = {
   __typename?: 'WorkspaceUrlsAndId';
-  id: Scalars['String'];
+  id: Scalars['UUID'];
   workspaceUrls: WorkspaceUrls;
 };
 
@@ -2867,7 +3570,7 @@ export type SearchQueryVariables = Exact<{
 }>;
 
 
-export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: string, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
+export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: any, objectNameSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
 
 export type OnDbEventSubscriptionVariables = Exact<{
   input: OnDbEventInput;

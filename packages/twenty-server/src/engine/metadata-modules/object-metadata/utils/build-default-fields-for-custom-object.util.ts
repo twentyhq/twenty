@@ -1,7 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
@@ -22,6 +22,7 @@ export const buildDefaultFieldsForCustomObject = (
     isActive: true,
     isCustom: false,
     isSystem: true,
+    isUIReadOnly: true,
     workspaceId,
     defaultValue: 'uuid',
   },
@@ -36,6 +37,7 @@ export const buildDefaultFieldsForCustomObject = (
     isNullable: false,
     isActive: true,
     isCustom: false,
+    isUIReadOnly: false,
     workspaceId,
     defaultValue: "'Untitled'",
   },
@@ -50,6 +52,7 @@ export const buildDefaultFieldsForCustomObject = (
     isNullable: false,
     isActive: true,
     isCustom: false,
+    isUIReadOnly: false,
     workspaceId,
     defaultValue: 'now',
   },
@@ -65,6 +68,7 @@ export const buildDefaultFieldsForCustomObject = (
     isActive: true,
     isCustom: false,
     isSystem: false,
+    isUIReadOnly: false,
     workspaceId,
     defaultValue: 'now',
   },
@@ -80,6 +84,7 @@ export const buildDefaultFieldsForCustomObject = (
     isActive: true,
     isCustom: false,
     isSystem: false,
+    isUIReadOnly: true,
     workspaceId,
     defaultValue: null,
   },
@@ -95,6 +100,7 @@ export const buildDefaultFieldsForCustomObject = (
     isActive: true,
     isCustom: false,
     isSystem: false,
+    isUIReadOnly: true,
     workspaceId,
     defaultValue: { name: "''", source: "'MANUAL'" },
   },
@@ -110,6 +116,7 @@ export const buildDefaultFieldsForCustomObject = (
     isActive: true,
     isCustom: false,
     isSystem: true,
+    isUIReadOnly: false,
     workspaceId,
     defaultValue: 0,
   },

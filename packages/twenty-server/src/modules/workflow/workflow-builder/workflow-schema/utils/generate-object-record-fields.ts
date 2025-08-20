@@ -1,10 +1,10 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { FieldOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
-import { generateFakeField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field';
+import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { type FieldOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
+import { generateFakeRecordField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-record-field';
 import { shouldGenerateFieldFakeValue } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/should-generate-field-fake-value';
 
 const MAXIMUM_DEPTH = 1;
@@ -25,7 +25,7 @@ export const generateObjectRecordFields = ({
       }
 
       if (field.type !== FieldMetadataType.RELATION) {
-        acc[field.name] = generateFakeField({
+        acc[field.name] = generateFakeRecordField({
           type: field.type,
           label: field.label,
           icon: field.icon ?? undefined,
@@ -52,6 +52,7 @@ export const generateObjectRecordFields = ({
           isLeaf: false,
           icon: field.icon ?? undefined,
           label: field.label,
+          type: field.type,
           fieldMetadataId: field.id,
           value: generateFakeObjectRecord({
             objectMetadataInfo: {
@@ -59,6 +60,7 @@ export const generateObjectRecordFields = ({
               objectMetadataMaps: objectMetadataInfo.objectMetadataMaps,
             },
             depth: depth + 1,
+            isRelationField: true,
           }),
         };
       }

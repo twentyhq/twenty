@@ -8,7 +8,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { logError } from '~/utils/logError';
 
 const StyledComboInputContainer = styled.div`
@@ -114,7 +114,7 @@ export const NameFields = ({
 
   return (
     <StyledComboInputContainer>
-      <TextInput
+      <SettingsTextInput
         instanceId={firstNameTextInputId}
         label={t`First Name`}
         value={firstName}
@@ -122,7 +122,7 @@ export const NameFields = ({
         placeholder="Tim"
         fullWidth
       />
-      <TextInput
+      <SettingsTextInput
         instanceId={lastNameTextInputId}
         label={t`Last Name`}
         value={lastName}

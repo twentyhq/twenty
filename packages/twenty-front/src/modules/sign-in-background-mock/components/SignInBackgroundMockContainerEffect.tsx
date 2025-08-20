@@ -4,11 +4,11 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useSetAvailableTableColumns } from '@/object-record/record-table/hooks/useSetAvailableTableColumns';
 import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTableColumns';
 import { SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockColumnDefinitions';
 import { SIGN_IN_BACKGROUND_MOCK_VIEW_FIELDS } from '@/sign-in-background-mock/constants/SignInBackgroundMockViewFields';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useInitViewBar } from '@/views/hooks/useInitViewBar';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 
@@ -26,14 +26,13 @@ export const SignInBackgroundMockContainerEffect = ({
   const [
     contextStoreCurrentObjectMetadataItemId,
     setContextStoreCurrentObjectMetadataItemId,
-  ] = useRecoilComponentStateV2(
+  ] = useRecoilComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const { setAvailableTableColumns } = useRecordTable({
-    recordTableId,
-  });
+  const { setAvailableTableColumns } =
+    useSetAvailableTableColumns(recordTableId);
 
   const { setTableColumns } = useSetTableColumns();
 
@@ -61,6 +60,7 @@ export const SignInBackgroundMockContainerEffect = ({
         columnDefinitions: SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS,
       }),
       recordTableId,
+      objectMetadataItem.id,
     );
 
     if (contextStoreCurrentObjectMetadataItemId !== objectMetadataItem.id) {

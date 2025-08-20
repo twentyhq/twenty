@@ -2,13 +2,14 @@ import styled from '@emotion/styled';
 
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { Checkbox } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
@@ -34,23 +35,26 @@ const StyledColumnHeaderCell = styled.th<{
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {
-  const allRowsSelectedStatus = useRecoilComponentValueV2(
+  const allRowsSelectedStatus = useRecoilComponentValue(
     allRowsSelectedStatusComponentSelector,
   );
-  const { selectAllRows, resetTableRowSelection, setHasUserSelectedAllRows } =
-    useRecordTable();
+
+  const { selectAllRows } = useSelectAllRows();
+
+  const { resetTableRowSelection } = useResetTableRowSelection();
+
   const checked =
     allRowsSelectedStatus === 'all' || allRowsSelectedStatus === 'some';
   const indeterminate = allRowsSelectedStatus === 'some';
 
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const isRecordTableInitialLoading = useRecoilComponentValueV2(
+  const isRecordTableInitialLoading = useRecoilComponentValue(
     isRecordTableInitialLoadingComponentState,
     recordTableId,
   );
 
-  const allRecordIds = useRecoilComponentValueV2(
+  const allRecordIds = useRecoilComponentValue(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
@@ -60,20 +64,18 @@ export const RecordTableHeaderCheckboxColumn = () => {
 
   const onChange = () => {
     if (checked) {
-      setHasUserSelectedAllRows(false);
       resetTableRowSelection();
     } else {
-      setHasUserSelectedAllRows(true);
       selectAllRows();
     }
   };
 
-  const isFirstRowActive = useRecoilComponentFamilyValueV2(
+  const isFirstRowActive = useRecoilComponentFamilyValue(
     isRecordTableRowActiveComponentFamilyState,
     0,
   );
 
-  const isFirstRowFocused = useRecoilComponentFamilyValueV2(
+  const isFirstRowFocused = useRecoilComponentFamilyValue(
     isRecordTableRowFocusedComponentFamilyState,
     0,
   );

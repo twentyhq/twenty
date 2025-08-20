@@ -1,7 +1,7 @@
 import {
-  WorkflowAction,
+  type WorkflowAction,
   WorkflowActionType,
-  WorkflowSendEmailAction,
+  type WorkflowSendEmailAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export const isWorkflowSendEmailAction = (

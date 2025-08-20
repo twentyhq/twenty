@@ -1,4 +1,4 @@
-import { MessageDescriptor } from '@lingui/core';
+import { type MessageDescriptor } from '@lingui/core';
 
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
@@ -42,6 +42,11 @@ export function WorkspaceEntity(
         'workspace:is-searchable-metadata-args',
         target,
       ) ?? false;
+    const isUIReadOnly =
+      TypedReflect.getMetadata(
+        'workspace:is-object-ui-readonly-metadata-args',
+        target,
+      ) ?? false;
 
     const objectName = convertClassNameToObjectMetadataName(target.name);
 
@@ -60,6 +65,7 @@ export function WorkspaceEntity(
       shortcut: options.shortcut,
       isAuditLogged,
       isSystem,
+      isUIReadOnly,
       gate,
       duplicateCriteria,
       isSearchable,

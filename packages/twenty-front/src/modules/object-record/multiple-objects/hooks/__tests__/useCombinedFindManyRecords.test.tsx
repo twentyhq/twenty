@@ -3,12 +3,12 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
-import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
+import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { type RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 jest.mock(
   '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery',

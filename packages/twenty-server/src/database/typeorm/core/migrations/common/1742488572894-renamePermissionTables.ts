@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class RenamePermissionTables1742488572894 implements MigrationInterface {
   name = 'RenamePermissionTables1742488572894';

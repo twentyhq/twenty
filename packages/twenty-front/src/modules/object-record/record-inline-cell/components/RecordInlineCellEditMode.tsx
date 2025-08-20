@@ -1,19 +1,19 @@
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
-import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
-import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
+import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
+import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import {
-  MiddlewareState,
   autoUpdate,
   flip,
   offset,
   useFloating,
+  type MiddlewareState,
 } from '@floating-ui/react';
 import { useContext } from 'react';
 import { createPortal } from 'react-dom';
@@ -42,12 +42,12 @@ export const RecordInlineCellEditMode = ({
     RecordFieldComponentInstanceContext,
   );
 
-  const setFieldInputLayoutDirection = useSetRecoilComponentStateV2(
+  const setFieldInputLayoutDirection = useSetRecoilComponentState(
     recordFieldInputLayoutDirectionComponentState,
     recordFieldComponentInstanceId,
   );
 
-  const setFieldInputLayoutDirectionLoading = useSetRecoilComponentStateV2(
+  const setFieldInputLayoutDirectionLoading = useSetRecoilComponentState(
     recordFieldInputLayoutDirectionLoadingComponentState,
     recordFieldComponentInstanceId,
   );
@@ -63,7 +63,7 @@ export const RecordInlineCellEditMode = ({
     },
   };
 
-  const isFieldInError = useRecoilComponentValueV2(
+  const isFieldInError = useRecoilComponentValue(
     recordFieldInputIsFieldInErrorComponentState,
   );
 
@@ -92,17 +92,19 @@ export const RecordInlineCellEditMode = ({
       ref={refs.setReference}
       data-testid="inline-cell-edit-mode-container"
     >
-      {createPortal(
-        <OverlayContainer
-          ref={refs.setFloating}
-          style={floatingStyles}
-          borderRadius="sm"
-          hasDangerBorder={isFieldInError}
-        >
-          {children}
-        </OverlayContainer>,
-        document.body,
-      )}
+      <>
+        {createPortal(
+          <OverlayContainer
+            ref={refs.setFloating}
+            style={floatingStyles}
+            borderRadius="sm"
+            hasDangerBorder={isFieldInError}
+          >
+            {children}
+          </OverlayContainer>,
+          document.body,
+        )}
+      </>
     </StyledInlineCellEditModeContainer>
   );
 };

@@ -1,10 +1,10 @@
-import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
+import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 import { StepFilterGroupsComponentInstanceContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/StepFilterGroupsComponentInstanceContext';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/currentStepFilterGroupsComponentState';
 import { isDefined } from 'twenty-shared/utils';
 
 export const rootLevelStepFilterGroupComponentSelector =
-  createComponentSelectorV2({
+  createComponentSelector({
     key: 'rootLevelStepFilterGroupComponentSelector',
     get:
       ({ instanceId }) =>

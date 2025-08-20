@@ -1,4 +1,4 @@
-import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 
 export type RecordGqlOperationFindDuplicatesResult = {
   [objectNamePlural: string]: RecordGqlConnection[];

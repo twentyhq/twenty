@@ -1,15 +1,15 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
-import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
-import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
+import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { isFieldRelationFromManyObjects } from '@/object-record/record-field/ui/types/guards/isFieldRelationFromManyObjects';
+import { isFieldRelationToOneObject } from '@/object-record/record-field/ui/types/guards/isFieldRelationToOneObject';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { ReactNode, useContext } from 'react';
+import { useContext, type ReactNode } from 'react';
 
 type RecordTableCellFieldContextGenericProps = {
   children: ReactNode;
@@ -18,25 +18,15 @@ type RecordTableCellFieldContextGenericProps = {
 export const RecordTableCellFieldContextGeneric = ({
   children,
 }: RecordTableCellFieldContextGenericProps) => {
-  const { recordId, isReadOnly: isTableRowReadOnly } =
-    useRecordTableRowContextOrThrow();
+  const { recordId, isRecordReadOnly } = useRecordTableRowContextOrThrow();
 
-  const { objectMetadataItem } = useRecordTableContextOrThrow();
+  const { objectMetadataItem, objectPermissions } =
+    useRecordTableContextOrThrow();
   const { indexIdentifierUrl, objectPermissionsByObjectMetadataId } =
     useRecordIndexContextOrThrow();
   const { columnDefinition } = useContext(RecordTableCellContext);
 
-  const isFieldReadOnly = useIsFieldValueReadOnly({
-    fieldDefinition: columnDefinition,
-    isRecordReadOnly: isTableRowReadOnly ?? false,
-  });
-
   const updateRecord = useContext(RecordUpdateContext);
-
-  const objectPermissions = getObjectPermissionsForObject(
-    objectPermissionsByObjectMetadataId,
-    objectMetadataItem.id,
-  );
 
   let hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
 
@@ -70,7 +60,14 @@ export const RecordTableCellFieldContextGeneric = ({
           objectMetadataItem,
         }),
         displayedMaxRows: 1,
-        isReadOnly: isFieldReadOnly,
+        isRecordFieldReadOnly: isRecordFieldReadOnly({
+          isRecordReadOnly: isRecordReadOnly ?? false,
+          objectPermissions,
+          fieldMetadataItem: {
+            id: columnDefinition.fieldMetadataId,
+            isUIReadOnly: columnDefinition.metadata.isUIReadOnly ?? false,
+          },
+        }),
         isForbidden: !hasObjectReadPermissions,
       }}
     >

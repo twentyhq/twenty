@@ -1,6 +1,6 @@
 import {
-  OutputSchema,
-  RecordOutputSchema,
+  type OutputSchema,
+  type RecordOutputSchema,
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 
 export const isRecordOutputSchema = (

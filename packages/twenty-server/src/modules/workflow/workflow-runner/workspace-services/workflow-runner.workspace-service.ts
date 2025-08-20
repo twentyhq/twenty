@@ -4,7 +4,7 @@ import { BillingUsageService } from 'src/engine/core-modules/billing/services/bi
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
+import { type ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
@@ -56,7 +56,7 @@ export class WorkflowRunnerWorkspaceService {
       });
 
     const remainingRunsToEnqueueCount =
-      await this.workflowRunQueueWorkspaceService.getRemainingRunsToEnqueueCount(
+      await this.workflowRunQueueWorkspaceService.getRemainingRunsToEnqueueCountFromCache(
         workspaceId,
       );
 

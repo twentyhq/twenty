@@ -1,13 +1,12 @@
-import { Object as GeneratedObject } from '~/generated-metadata/graphql';
+import { type Object as GeneratedObject } from '~/generated-metadata/graphql';
 
-import { IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
-import { FieldMetadataItem } from './FieldMetadataItem';
+import { type IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
+import { type FieldMetadataItem } from './FieldMetadataItem';
 
 export type ObjectMetadataItem = Omit<
   GeneratedObject,
   | '__typename'
   | 'fields'
-  | 'dataSourceId'
   | 'indexMetadatas'
   | 'labelIdentifierFieldMetadataId'
   | 'fieldsList'
@@ -15,6 +14,8 @@ export type ObjectMetadataItem = Omit<
 > & {
   __typename?: string;
   fields: FieldMetadataItem[];
+  readableFields: FieldMetadataItem[];
+  updatableFields: FieldMetadataItem[];
   labelIdentifierFieldMetadataId: string;
   indexMetadatas: IndexMetadataItem[];
 };

@@ -1,9 +1,9 @@
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
+import { createComponentSelector } from '@/ui/utilities/state/component-state/utils/createComponentSelector';
 
-export const unselectedRowIdsComponentSelector = createComponentSelectorV2<
+export const unselectedRowIdsComponentSelector = createComponentSelector<
   string[]
 >({
   key: 'unselectedRowIdsComponentSelector',

@@ -48,6 +48,16 @@ msgstr "(System) Views"
 msgid "{fieldName} and {fieldName}Id cannot be both provided."
 msgstr "{fieldName} and {fieldName}Id cannot be both provided."
 
+#. js-lingui-id: ZkHTHm
+#: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
+msgid "{fieldType} fields cannot be unique."
+msgstr "{fieldType} fields cannot be unique."
+
+#. js-lingui-id: wapGcj
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "{message}"
+msgstr "{message}"
+
 #. js-lingui-id: 8haj+G
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
 msgid "{name} should be in camelCase"
@@ -113,11 +123,6 @@ msgstr "A task"
 msgid "A task target"
 msgstr "A task target"
 
-#. js-lingui-id: HTSJFW
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "A webhook"
-msgstr "A webhook"
-
 #. js-lingui-id: ZIN9Ga
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "A workflow"
@@ -127,11 +132,6 @@ msgstr "A workflow"
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "A workflow automated trigger"
 msgstr "A workflow automated trigger"
-
-#. js-lingui-id: juBVjt
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-#~ msgid "A workflow event listener"
-#~ msgstr "A workflow event listener"
 
 #. js-lingui-id: 1+xDbI
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -180,6 +180,11 @@ msgstr "Action needed to prevent workspace deletion"
 msgid "Action Needed to Reset Password"
 msgstr "Action Needed to Reset Password"
 
+#. js-lingui-id: 0N5kF6
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Active objects cannot be deleted"
+msgstr "Active objects cannot be deleted"
+
 #. js-lingui-id: Du6bPw
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Address"
@@ -211,25 +216,28 @@ msgstr "Aggregate operation"
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "Aggregated / filtered event to be displayed on the timeline"
 
+#. js-lingui-id: pdOYzu
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
+msgid "All {objectLabelPlural}"
+msgstr "All {objectLabelPlural}"
+
 #. js-lingui-id: hehnjM
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "Amount"
 msgstr "Amount"
 
-#. js-lingui-id: qeHcQj
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "An API key"
-msgstr "An API key"
-
 #. js-lingui-id: MjyFvC
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
 msgid "An attachment"
 msgstr "An attachment"
-
-#. js-lingui-id: +bL++X
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "An audit log of actions performed in the system"
-#~ msgstr "An audit log of actions performed in the system"
 
 #. js-lingui-id: XyOToQ
 #: src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util.ts
@@ -237,11 +245,6 @@ msgstr "An attachment"
 #: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
 msgid "An error occurred."
 msgstr "An error occurred."
-
-#. js-lingui-id: muVHgL
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#~ msgid "An event related to user behavior"
-#~ msgstr "An event related to user behavior"
 
 #. js-lingui-id: bZq8rL
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -253,30 +256,11 @@ msgstr "An opportunity"
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 msgstr "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 
-#. js-lingui-id: yRnk5W
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "API Key"
-msgstr "API Key"
-
-#. js-lingui-id: FfSJ1Y
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "API Keys"
-msgstr "API Keys"
-
-#. js-lingui-id: puNs/l
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "ApiKey expiration date"
-msgstr "ApiKey expiration date"
-
-#. js-lingui-id: YHiNxr
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "ApiKey name"
-msgstr "ApiKey name"
-
-#. js-lingui-id: xrndTt
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "ApiKey revocation date"
-msgstr "ApiKey revocation date"
+#. js-lingui-id: 6wr+2Z
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+#: src/modules/view/standard-objects/view.workspace-entity.ts
+msgid "Any field filter value"
+msgstr "Any field filter value"
 
 #. js-lingui-id: DGW5iN
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -298,6 +282,11 @@ msgstr "ARR"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Assigned tasks"
 msgstr "Assigned tasks"
+
+#. js-lingui-id: kZ7PLo
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me.ts
+msgid "Assigned to Me"
+msgstr "Assigned to Me"
 
 #. js-lingui-id: ojKCLU
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -395,22 +384,6 @@ msgstr "Attachments linked to the opportunity"
 msgid "Attachments tied to the {label}"
 msgstr "Attachments tied to the {label}"
 
-#. js-lingui-id: ilRCh1
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "Audit Log"
-#~ msgstr "Audit Log"
-
-#. js-lingui-id: EPEFrH
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "Audit Logs"
-#~ msgstr "Audit Logs"
-
-#. js-lingui-id: RqCC/0
-#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
-#~ msgid "Audit Logs linked to the workspace member"
-#~ msgstr "Audit Logs linked to the workspace member"
-
 #. js-lingui-id: cNBqH+
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
@@ -462,16 +435,6 @@ msgstr "Avatar"
 msgid "Avatar Url"
 msgstr "Avatar Url"
 
-#. js-lingui-id: 20B9kW
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#~ msgid "Behavioral Event"
-#~ msgstr "Behavioral Event"
-
-#. js-lingui-id: Jeh/Q/
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#~ msgid "Behavioral Events"
-#~ msgstr "Behavioral Events"
-
 #. js-lingui-id: K1172m
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
@@ -495,11 +458,16 @@ msgstr "Blocklists"
 msgid "Body"
 msgstr "Body"
 
-#. js-lingui-id: Nl8eMw
-#: src/modules/task/standard-objects/task.workspace-entity.ts
-#: src/modules/note/standard-objects/note.workspace-entity.ts
-#~ msgid "Body (deprecated)"
-#~ msgstr "Body (deprecated)"
+#. js-lingui-id: 6+byWT
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
+msgid "By Stage"
+msgstr "By Stage"
+
+#. js-lingui-id: jQX8V+
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view.ts
+msgid "By Status"
+msgstr "By Status"
 
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -564,6 +532,11 @@ msgstr "Calendar Event Participants"
 msgid "Calendar events"
 msgstr "Calendar events"
 
+#. js-lingui-id: eSaCR/
+#: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
+msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
+msgstr "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
+
 #. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Cannot activate non-draft or non-last-published version"
@@ -580,6 +553,7 @@ msgid "Cannot create workflow version with status other than draft"
 msgstr "Cannot create workflow version with status other than draft"
 
 #. js-lingui-id: AQyr9X
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Cannot delete, please update the label identifier field first"
 msgstr "Cannot delete, please update the label identifier field first"
@@ -588,6 +562,11 @@ msgstr "Cannot delete, please update the label identifier field first"
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot disable non-active workflow version"
 msgstr "Cannot disable non-active workflow version"
+
+#. js-lingui-id: otFZos
+#: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
+msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
+msgstr "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
 
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
@@ -739,12 +718,6 @@ msgstr "Contact’s phone numbers"
 msgid "Contact’s X/Twitter account"
 msgstr "Contact’s X/Twitter account"
 
-#. js-lingui-id: M73whl
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#~ msgid "Context"
-#~ msgstr "Context"
-
 #. js-lingui-id: NCIYDF
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -801,7 +774,6 @@ msgid "Describes if the view is in compact mode"
 msgstr "Describes if the view is in compact mode"
 
 #. js-lingui-id: Nu4oKW
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Description"
@@ -841,6 +813,11 @@ msgstr "Domain Name"
 msgid "Due Date"
 msgstr "Due Date"
 
+#. js-lingui-id: BXtAxc
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Duplicated option {field}"
+msgstr "Duplicated option {field}"
+
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Email already verified."
@@ -879,16 +856,15 @@ msgstr "Employees"
 msgid "End Date"
 msgstr "End Date"
 
+#. js-lingui-id: hcogQc
+#: src/engine/core-modules/domain-manager/validator/cloudflare.validate.ts
+msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
+msgstr "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
+
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event company"
 msgstr "Event company"
-
-#. js-lingui-id: FJ7QI4
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "Event context"
-#~ msgstr "Event context"
 
 #. js-lingui-id: kJDmsI
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -909,22 +885,11 @@ msgstr "Event external ID"
 msgid "Event ID"
 msgstr "Event ID"
 
-#. js-lingui-id: 81maJp
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#~ msgid "Event Listeners"
-#~ msgstr "Event Listeners"
-
 #. js-lingui-id: PYs3rP
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Event name"
 msgstr "Event name"
-
-#. js-lingui-id: evIGwh
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "Event name/type"
-#~ msgstr "Event name/type"
 
 #. js-lingui-id: vv99Wu
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1009,11 +974,6 @@ msgstr "Executed by"
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
 msgstr "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
-
-#. js-lingui-id: sZg7s1
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "Expiration date"
-msgstr "Expiration date"
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1168,6 +1128,21 @@ msgstr "Favorites linked to the workspace member"
 msgid "Favorites tied to the {label}"
 msgstr "Favorites tied to the {label}"
 
+#. js-lingui-id: Hg95ys
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
+msgid "Field cannot be used as label identifier"
+msgstr "Field cannot be used as label identifier"
+
+#. js-lingui-id: F6OLoA
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
+msgid "Field declared as image identifier not found"
+msgstr "Field declared as image identifier not found"
+
+#. js-lingui-id: 75hHpn
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
+msgid "Field declared as label identifier not found"
+msgstr "Field declared as label identifier not found"
+
 #. js-lingui-id: nSFFML
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts
@@ -1192,15 +1167,30 @@ msgstr "Field used for full-text search"
 msgid "Field Value"
 msgstr "Field Value"
 
-#. js-lingui-id: 3oQ73E
-#: src/modules/workflow/workflow-executor/workflow-actions/filter/utils/get-previous-step-output.util.ts
-#~ msgid "Filter action must have a previous step"
-#~ msgstr "Filter action must have a previous step"
+#. js-lingui-id: Sof2+k
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "FieldMetadataId is required to create a view field."
+msgstr "FieldMetadataId is required to create a view field."
 
-#. js-lingui-id: Zllikb
-#: src/modules/workflow/workflow-executor/workflow-actions/filter/utils/get-previous-step-output.util.ts
-#~ msgid "Filter action must have only one previous step"
-#~ msgstr "Filter action must have only one previous step"
+#. js-lingui-id: NTyTR5
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+msgid "FieldMetadataId is required to create a view filter group."
+msgstr "FieldMetadataId is required to create a view filter group."
+
+#. js-lingui-id: Ya6oU7
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+msgid "FieldMetadataId is required to create a view filter."
+msgstr "FieldMetadataId is required to create a view filter."
+
+#. js-lingui-id: DU4jcg
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+msgid "FieldMetadataId is required to create a view group."
+msgstr "FieldMetadataId is required to create a view group."
+
+#. js-lingui-id: snEXuU
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "FieldMetadataId is required to create a view sort."
+msgstr "FieldMetadataId is required to create a view sort."
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1293,11 +1283,6 @@ msgstr "Id"
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
-
-#. js-lingui-id: NrA0WZ
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#~ msgid "If the event is related to a particular object"
-#~ msgstr "If the event is related to a particular object"
 
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
@@ -1416,17 +1401,6 @@ msgstr "Join your team on Twenty"
 msgid "JSON object containing custom connection parameters"
 msgstr "JSON object containing custom connection parameters"
 
-#. js-lingui-id: shbh25
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "Json object to provide context (user, device, workspace, etc.)"
-#~ msgstr "Json object to provide context (user, device, workspace, etc.)"
-
-#. js-lingui-id: HgJ9jQ
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#~ msgid "Json object to provide output of the workflow run"
-#~ msgstr "Json object to provide output of the workflow run"
-
 #. js-lingui-id: AQuLwi
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 msgid "Json object to provide steps"
@@ -1458,11 +1432,13 @@ msgid "Label is required"
 msgstr "Label is required"
 
 #. js-lingui-id: 4EGmy6
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not be empty"
 msgstr "Label must not be empty"
 
 #. js-lingui-id: k731jp
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Label must not contain a comma"
 msgstr "Label must not contain a comma"
@@ -1512,11 +1488,6 @@ msgstr "Last update"
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 msgid "Linked Object Metadata Id"
 msgstr "Linked Object Metadata Id"
-
-#. js-lingui-id: PV1Nm7
-#: src/modules/person/standard-objects/person.workspace-entity.ts
-#~ msgid "Linked Opportunities"
-#~ msgstr "Linked Opportunities"
 
 #. js-lingui-id: 6YiMr4
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1726,7 +1697,6 @@ msgstr "Missing required fields: at least one unique constraint have to be fully
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
 #: src/modules/company/standard-objects/company.workspace-entity.ts
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 #: src/engine/twenty-orm/custom.workspace-entity.ts
 msgid "Name"
@@ -1742,10 +1712,31 @@ msgstr "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side
 msgid "Name is not available, it may be duplicating another field's name."
 msgstr "Name is not available, it may be duplicating another field's name."
 
+#. js-lingui-id: Aam+mb
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Name is not synced with label."
+msgstr "Name is not synced with label."
+
+#. js-lingui-id: Ny5wFU
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
+msgstr "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
+
+#. js-lingui-id: zjh2SJ
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "Name is too long"
+msgstr "Name is too long"
+
 #. js-lingui-id: 0MobB1
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils.ts
 msgid "Name is too long: it exceeds the 63 characters limit."
 msgstr "Name is too long: it exceeds the 63 characters limit."
+
+#. js-lingui-id: go/Vg1
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "Name is too short"
+msgstr "Name is too short"
 
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -1756,6 +1747,16 @@ msgstr "Name of the favorite folder"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Name of the workflow run"
 msgstr "Name of the workflow run"
+
+#. js-lingui-id: P+jdmX
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "Name should be in camelCase"
+msgstr "Name should be in camelCase"
+
+#. js-lingui-id: Dr0xtb
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Names are not synced with labels"
+msgstr "Names are not synced with labels"
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1892,31 +1893,44 @@ msgstr "Number of employees in the company"
 
 #. js-lingui-id: ECRKYR
 #: src/engine/metadata-modules/utils/validate-no-other-object-with-same-name-exists-or-throw.util.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Object already exists"
 msgstr "Object already exists"
 
-#. js-lingui-id: hhe7Ce
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#~ msgid "Object id"
-#~ msgstr "Object id"
+#. js-lingui-id: wLX74t
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
+msgid "Object label is too long"
+msgstr "Object label is too long"
 
-#. js-lingui-id: dnPgTI
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "Object metadata id"
-#~ msgstr "Object metadata id"
+#. js-lingui-id: nmhjwk
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
+msgid "Object label is too short"
+msgstr "Object label is too short"
 
 #. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Object Metadata Id"
 msgstr "Object Metadata Id"
 
-#. js-lingui-id: afsWF6
-#: src/modules/timeline/standard-objects/behavioral-event.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "Object name"
-#~ msgstr "Object name"
+#. js-lingui-id: bMeJkW
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Object to delete not found"
+msgstr "Object to delete not found"
+
+#. js-lingui-id: pQ5dZU
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Object to update not found"
+msgstr "Object to update not found"
+
+#. js-lingui-id: cdjRFZ
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Object with same id already exists"
+msgstr "Object with same id already exists"
+
+#. js-lingui-id: 53pIyA
+#: src/engine/core-modules/view/exceptions/view.exception.ts
+msgid "ObjectMetadataId is required to create a view."
+msgstr "ObjectMetadataId is required to create a view."
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1927,16 +1941,6 @@ msgstr "Open Record In"
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Operand"
 msgstr "Operand"
-
-#. js-lingui-id: FZg3wM
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Operation"
-msgstr "Operation"
-
-#. js-lingui-id: B1MDds
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Operations"
-msgstr "Operations"
 
 #. js-lingui-id: 4MyDFl
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1995,32 +1999,48 @@ msgstr "Opportunity record position"
 msgid "Opportunity stage"
 msgstr "Opportunity stage"
 
+#. js-lingui-id: 2mFkfl
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Option id is invalid"
+msgstr "Option id is invalid"
+
+#. js-lingui-id: MniXaX
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Option id is required"
+msgstr "Option id is required"
+
 #. js-lingui-id: //eyK1
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label \"{sanitizedLabel}\" is beneath 1 character"
 msgstr "Option label \"{sanitizedLabel}\" is beneath 1 character"
 
 #. js-lingui-id: mTFS0z
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label exceeds 63 characters"
 msgstr "Option label exceeds 63 characters"
 
 #. js-lingui-id: +E9N4m
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label is required"
 msgstr "Option label is required"
 
 #. js-lingui-id: nQqNzE
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value \"{sanitizedValue}\" is beneath 1 character"
 msgstr "Option value \"{sanitizedValue}\" is beneath 1 character"
 
 #. js-lingui-id: 5m/1Hh
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value exceeds 63 characters"
 msgstr "Option value exceeds 63 characters"
 
 #. js-lingui-id: /wsRPd
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value is required"
 msgstr "Option value is required"
@@ -2030,16 +2050,6 @@ msgstr "Option value is required"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Optional aggregate operation"
 msgstr "Optional aggregate operation"
-
-#. js-lingui-id: kdClJ/
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
-msgstr "Optional secret used to compute the HMAC signature for webhook payloads. This secret is shared between Twenty and the webhook consumer to authenticate webhook requests."
-
-#. js-lingui-id: gh06VD
-#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#~ msgid "Output"
-#~ msgstr "Output"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
@@ -2182,12 +2192,6 @@ msgstr "provider"
 msgid "Received At"
 msgstr "Received At"
 
-#. js-lingui-id: 4Tvtbu
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#: src/modules/timeline/standard-objects/audit-log.workspace-entity.ts
-#~ msgid "Record id"
-#~ msgstr "Record id"
-
 #. js-lingui-id: 9gXJw8
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity.ts
@@ -2210,6 +2214,12 @@ msgstr "Related user email address"
 msgid "Relations"
 msgstr "Relations"
 
+#. js-lingui-id: yVxtzR
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Remote objects are not supported yet"
+msgstr "Remote objects are not supported yet"
+
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
 msgid "Request has expired, please try again."
@@ -2220,11 +2230,6 @@ msgstr "Request has expired, please try again."
 #: src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity.ts
 msgid "Response Status"
 msgstr "Response Status"
-
-#. js-lingui-id: MCWKAU
-#: src/modules/api-key/standard-objects/api-key.workspace-entity.ts
-msgid "Revocation date"
-msgstr "Revocation date"
 
 #. js-lingui-id: GDvlUT
 #: src/modules/messaging/common/standard-objects/message-participant.workspace-entity.ts
@@ -2249,11 +2254,6 @@ msgstr "Scopes"
 msgid "Search vector"
 msgstr "Search vector"
 
-#. js-lingui-id: 8VEDbV
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Secret"
-msgstr "Secret"
-
 #. js-lingui-id: Tz0i8g
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "Settings"
@@ -2269,11 +2269,21 @@ msgstr "Size"
 msgid "Stage"
 msgstr "Stage"
 
+#. js-lingui-id: Ptv+nG
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+msgid "Standard objects cannot be deleted"
+msgstr "Standard objects cannot be deleted"
+
 #. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Start Date"
 msgstr "Start Date"
+
+#. js-lingui-id: amGzX5
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "Start of the week"
+msgstr "Start of the week"
 
 #. js-lingui-id: RS0o7b
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2301,7 +2311,7 @@ msgid "Statuses cannot be set manually."
 msgstr "Statuses cannot be set manually."
 
 #. js-lingui-id: u+rv4L
-#: src/modules/workflow/workflow-builder/workflow-step/workflow-version-step.workspace-service.ts
+#: src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service.ts
 msgid "Step is not a form"
 msgstr "Step is not a form"
 
@@ -2362,11 +2372,6 @@ msgstr "Sync status"
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Target object metadata not found for {connectFieldName}"
 msgstr "Target object metadata not found for {connectFieldName}"
-
-#. js-lingui-id: 4SHJe4
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Target Url"
-msgstr "Target Url"
 
 #. js-lingui-id: Q3P/4s
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -2553,10 +2558,25 @@ msgstr "The folder this favorite belongs to"
 msgid "The initial version of a workflow can not be deleted"
 msgstr "The initial version of a workflow can not be deleted"
 
+#. js-lingui-id: YTftFF
+#: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
+msgid "The name is not available"
+msgstr "The name is not available"
+
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
 msgid "The opportunity name"
 msgstr "The opportunity name"
+
+#. js-lingui-id: H1tAJD
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
+msgid "The singular and plural labels cannot be the same for an object"
+msgstr "The singular and plural labels cannot be the same for an object"
+
+#. js-lingui-id: FOEWHl
+#: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
+msgid "The singular and plural names cannot be the same for an object"
+msgstr "The singular and plural names cannot be the same for an object"
 
 #. js-lingui-id: 5N6QtE
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
@@ -2567,11 +2587,6 @@ msgstr "The workflow automated trigger settings"
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
 msgid "The workflow automated trigger type"
 msgstr "The workflow automated trigger type"
-
-#. js-lingui-id: 7mPrpl
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-#~ msgid "The workflow event listener name"
-#~ msgstr "The workflow event listener name"
 
 #. js-lingui-id: od0omS
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -2595,12 +2610,14 @@ msgstr "The workflow version status"
 
 #. js-lingui-id: NbABJb
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "This name is not available as it is already used by another field"
 msgstr "This name is not available as it is already used by another field"
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "This name is not available."
 msgstr "This name is not available."
 
@@ -2705,6 +2722,12 @@ msgstr "Title"
 msgid "Type"
 msgstr "Type"
 
+#. js-lingui-id: RBJNRI
+#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
+#: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
+msgid "Unique field cannot have a default value"
+msgstr "Unique field cannot have a default value"
+
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
@@ -2741,10 +2764,20 @@ msgstr "User is not part of the workspace"
 msgid "User time zone"
 msgstr "User time zone"
 
+#. js-lingui-id: VkcC68
+#: src/engine/core-modules/auth/services/auth.service.ts
+msgid "User was not created with email/password"
+msgstr "User was not created with email/password"
+
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred date format"
 msgstr "User's preferred date format"
+
+#. js-lingui-id: Uce+A8
+#: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
+msgid "User's preferred start day of the week"
+msgstr "User's preferred start day of the week"
 
 #. js-lingui-id: kJuoKm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2755,6 +2788,11 @@ msgstr "User's preferred time format"
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
 msgid "Value"
 msgstr "Value"
+
+#. js-lingui-id: UBPzFQ
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
+msgstr "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -2970,6 +3008,31 @@ msgstr "View target object"
 msgid "View type"
 msgstr "View type"
 
+#. js-lingui-id: l88nXn
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "ViewId is required to create a view field."
+msgstr "ViewId is required to create a view field."
+
+#. js-lingui-id: 9XMTpT
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+msgid "ViewId is required to create a view filter group."
+msgstr "ViewId is required to create a view filter group."
+
+#. js-lingui-id: pCCxli
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+msgid "ViewId is required to create a view filter."
+msgstr "ViewId is required to create a view filter."
+
+#. js-lingui-id: 1X1RW5
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+msgid "ViewId is required to create a view group."
+msgstr "ViewId is required to create a view group."
+
+#. js-lingui-id: uGUFcy
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "ViewId is required to create a view sort."
+msgstr "ViewId is required to create a view sort."
+
 #. js-lingui-id: 1I6UoR
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Views"
@@ -2989,30 +3052,10 @@ msgstr "Visibility"
 msgid "Visible"
 msgstr "Visible"
 
-#. js-lingui-id: TRDppN
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Webhook"
-msgstr "Webhook"
-
-#. js-lingui-id: fyB2Wp
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Webhook operation"
-msgstr "Webhook operation"
-
-#. js-lingui-id: gONLmX
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Webhook operations"
-msgstr "Webhook operations"
-
-#. js-lingui-id: cPoSTF
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Webhook target url"
-msgstr "Webhook target url"
-
-#. js-lingui-id: v1kQyJ
-#: src/modules/webhook/standard-objects/webhook.workspace-entity.ts
-msgid "Webhooks"
-msgstr "Webhooks"
+#. js-lingui-id: xvV2NJ
+#: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
+msgid "We are experiencing a temporary issue with our database. Please try again later."
+msgstr "We are experiencing a temporary issue with our database. Please try again later."
 
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
@@ -3036,11 +3079,6 @@ msgstr "Workflow"
 msgid "Workflow automated triggers linked to the workflow."
 msgstr "Workflow automated triggers linked to the workflow."
 
-#. js-lingui-id: E03XpH
-#: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
-#~ msgid "Workflow event listeners linked to the workflow."
-#~ msgstr "Workflow event listeners linked to the workflow."
-
 #. js-lingui-id: vwSkSW
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow linked to the run."
@@ -3062,6 +3100,12 @@ msgstr "Workflow Run"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run ended at"
 msgstr "Workflow run ended at"
+
+#. js-lingui-id: NKQlas
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+#: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
+msgid "Workflow run enqueued at"
+msgstr "Workflow run enqueued at"
 
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -3156,21 +3200,6 @@ msgstr "WorkflowAutomatedTrigger workflow"
 msgid "WorkflowAutomatedTriggers"
 msgstr "WorkflowAutomatedTriggers"
 
-#. js-lingui-id: ENOy6I
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-#~ msgid "WorkflowEventListener"
-#~ msgstr "WorkflowEventListener"
-
-#. js-lingui-id: HN90FO
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-#~ msgid "WorkflowEventListener workflow"
-#~ msgstr "WorkflowEventListener workflow"
-
-#. js-lingui-id: 3JA9se
-#: src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity.ts
-#~ msgid "WorkflowEventListeners"
-#~ msgstr "WorkflowEventListeners"
-
 #. js-lingui-id: woYYQq
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Workflows"
@@ -3226,6 +3255,36 @@ msgstr "Workspace member position"
 msgid "Workspace Members"
 msgstr "Workspace Members"
 
+#. js-lingui-id: kjLpTn
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "WorkspaceId is required to create a view field."
+msgstr "WorkspaceId is required to create a view field."
+
+#. js-lingui-id: zWj6VZ
+#: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
+msgid "WorkspaceId is required to create a view filter group."
+msgstr "WorkspaceId is required to create a view filter group."
+
+#. js-lingui-id: jQMXtD
+#: src/engine/core-modules/view/exceptions/view-filter.exception.ts
+msgid "WorkspaceId is required to create a view filter."
+msgstr "WorkspaceId is required to create a view filter."
+
+#. js-lingui-id: NAoJAX
+#: src/engine/core-modules/view/exceptions/view-group.exception.ts
+msgid "WorkspaceId is required to create a view group."
+msgstr "WorkspaceId is required to create a view group."
+
+#. js-lingui-id: hU1QaN
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "WorkspaceId is required to create a view sort."
+msgstr "WorkspaceId is required to create a view sort."
+
+#. js-lingui-id: jtb/lI
+#: src/engine/core-modules/view/exceptions/view.exception.ts
+msgid "WorkspaceId is required to create a view."
+msgstr "WorkspaceId is required to create a view."
+
 #. js-lingui-id: EtzFC0
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts
@@ -3248,6 +3307,11 @@ msgstr "X"
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
 msgid "You must be authenticated to perform this action."
 msgstr "You must be authenticated to perform this action."
+
+#. js-lingui-id: 8pqpv/
+#: src/engine/core-modules/graphql/hooks/use-graphql-error-handler.hook.ts
+msgid "Your app version is out of date. Please refresh the page to continue."
+msgstr "Your app version is out of date. Please refresh the page to continue."
 
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts

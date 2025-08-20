@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useActivities } from '@/activities/hooks/useActivities';
@@ -47,7 +47,7 @@ jest.mock('@/activities/hooks/useActivities', () => ({
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <ObjectFilterDropdownComponentInstanceContext.Provider
-      value={{ instanceId: 'entity-tasks-filter-scope' }}
+      value={{ instanceId: 'entity-tasks-filter-instance' }}
     >
       {children}
     </ObjectFilterDropdownComponentInstanceContext.Provider>

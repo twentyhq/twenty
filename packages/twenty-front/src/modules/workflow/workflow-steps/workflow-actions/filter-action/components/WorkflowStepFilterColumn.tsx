@@ -7,7 +7,7 @@ import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-ac
 import { WorkflowAdvancedFilterDropdownColumn } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterDropdownColumn';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { StepFilter, StepFilterGroup } from 'twenty-shared/src/types';
+import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 
 type WorkflowStepFilterColumnProps = {
   stepFilterGroup: StepFilterGroup;

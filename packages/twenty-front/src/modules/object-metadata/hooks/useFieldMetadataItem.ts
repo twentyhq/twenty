@@ -1,8 +1,9 @@
-import { Field, RelationType } from '~/generated-metadata/graphql';
+import { type Field } from '~/generated-metadata/graphql';
 
-import { FieldMetadataItem } from '../types/FieldMetadataItem';
+import { type FieldMetadataItem } from '../types/FieldMetadataItem';
 import { formatFieldMetadataItemInput } from '../utils/formatFieldMetadataItemInput';
 
+import { type RelationCreationPayload } from 'twenty-shared/types';
 import { useCreateOneFieldMetadataItem } from './useCreateOneFieldMetadataItem';
 import { useDeleteOneFieldMetadataItem } from './useDeleteOneFieldMetadataItem';
 import { useUpdateOneFieldMetadataItem } from './useUpdateOneFieldMetadataItem';
@@ -26,12 +27,8 @@ export const useFieldMetadataItem = () => {
       | 'isLabelSyncedWithName'
     > & {
       objectMetadataId: string;
-      relationCreationPayload?: {
-        type: RelationType;
-        targetObjectMetadataId: string;
-        targetFieldLabel: string;
-        targetFieldIcon: string;
-      };
+      relationCreationPayload?: RelationCreationPayload;
+      morphRelationsCreationPayload?: RelationCreationPayload[];
     },
   ) => {
     const formattedInput = formatFieldMetadataItemInput(input);
@@ -44,6 +41,7 @@ export const useFieldMetadataItem = () => {
       name: formattedInput.name ?? '',
       isLabelSyncedWithName: formattedInput.isLabelSyncedWithName ?? true,
       relationCreationPayload: input.relationCreationPayload,
+      morphRelationsCreationPayload: input.morphRelationsCreationPayload,
     });
   };
 

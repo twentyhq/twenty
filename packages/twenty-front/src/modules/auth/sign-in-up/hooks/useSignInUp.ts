@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
-import { SubmitHandler, UseFormReturn } from 'react-hook-form';
+import { type SubmitHandler, type UseFormReturn } from 'react-hook-form';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 
-import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import {
   SignInUpStep,
@@ -130,7 +130,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           );
         }
 
-        const verifyEmailNextPath = buildAppPathWithQueryParams(
+        const verifyEmailRedirectPath = buildAppPathWithQueryParams(
           AppPath.PlanRequired,
           await buildSearchParamsFromUrlSyncedStates(),
         );
@@ -141,7 +141,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           workspaceInviteHash,
           workspacePersonalInviteToken,
           captchaToken: token,
-          verifyEmailNextPath,
+          verifyEmailRedirectPath,
         });
       } catch (error: any) {
         enqueueErrorSnackBar({

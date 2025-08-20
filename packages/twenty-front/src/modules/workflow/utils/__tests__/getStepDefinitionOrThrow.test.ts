@@ -1,5 +1,8 @@
-import { WorkflowAction, WorkflowTrigger } from '@/workflow/types/Workflow';
-import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
+import {
+  type WorkflowAction,
+  type WorkflowTrigger,
+} from '@/workflow/types/Workflow';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { getStepDefinitionOrThrow } from '../getStepDefinitionOrThrow';
 
 describe('getStepDefinitionOrThrow', () => {

@@ -7,15 +7,16 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
+import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { MatchParticipantService } from 'src/modules/match-participant/match-participant.service';
 
 export type CalendarEventParticipantMatchParticipantJobData = {
   workspaceId: string;
-  isPrimaryEmail: boolean;
-  email: string;
-  personId?: string;
-  workspaceMemberId?: string;
+  participantMatching: {
+    personIds: string[];
+    personEmails: string[];
+    workspaceMemberIds: string[];
+  };
 };
 
 @Processor({
@@ -33,8 +34,7 @@ export class CalendarEventParticipantMatchParticipantJob {
   async handle(
     data: CalendarEventParticipantMatchParticipantJobData,
   ): Promise<void> {
-    const { workspaceId, isPrimaryEmail, email, personId, workspaceMemberId } =
-      data;
+    const { workspaceId, participantMatching } = data;
 
     const workspace = await this.workspaceRepository.findOne({
       where: {
@@ -46,23 +46,21 @@ export class CalendarEventParticipantMatchParticipantJob {
       return;
     }
 
-    if (personId) {
-      await this.matchParticipantService.matchParticipantsAfterPersonCreation({
-        handle: email,
-        isPrimaryEmail,
+    if (
+      participantMatching.personIds.length > 0 ||
+      participantMatching.personEmails.length > 0
+    ) {
+      await this.matchParticipantService.matchParticipantsForPeople({
         objectMetadataName: 'calendarEventParticipant',
-        personId,
+        participantMatching,
       });
     }
 
-    if (workspaceMemberId) {
-      await this.matchParticipantService.matchParticipantsAfterWorkspaceMemberCreation(
-        {
-          handle: email,
-          objectMetadataName: 'calendarEventParticipant',
-          workspaceMemberId,
-        },
-      );
+    if (participantMatching.workspaceMemberIds.length > 0) {
+      await this.matchParticipantService.matchParticipantsForWorkspaceMembers({
+        objectMetadataName: 'calendarEventParticipant',
+        participantMatching,
+      });
     }
   }
 }

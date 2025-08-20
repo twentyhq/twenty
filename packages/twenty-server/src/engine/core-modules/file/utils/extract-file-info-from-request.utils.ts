@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import { type Request } from 'express';
 
 import { fileFolderConfigs } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 

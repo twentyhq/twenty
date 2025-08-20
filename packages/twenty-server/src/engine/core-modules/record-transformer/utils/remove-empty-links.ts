@@ -5,7 +5,7 @@ import {
   RecordTransformerException,
   RecordTransformerExceptionCode,
 } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
-import { LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
+import { type LinkMetadataNullable } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
 export const removeEmptyLinks = ({
   primaryLinkUrl,
@@ -47,7 +47,7 @@ export const removeEmptyLinks = ({
     }
   }
 
-  const firstLink = filteredLinks.at(0);
+  const firstLink = filteredLinks[0];
   const otherLinks = filteredLinks.slice(1);
 
   return {

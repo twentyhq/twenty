@@ -3,19 +3,19 @@ import { renderHook } from '@testing-library/react';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { View } from '@/views/types/View';
-import { ViewFilter } from '@/views/types/ViewFilter';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type View } from '@/views/types/View';
+import { type ViewFilter } from '@/views/types/ViewFilter';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
 import { act } from 'react';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '../useApplyCurrentViewFiltersToCurrentRecordFilters';
 
 const mockObjectMetadataItemNameSingular = 'company';
@@ -70,7 +70,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
           useApplyCurrentViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useRecoilComponentValueV2(
+        const currentFilters = useRecoilComponentValue(
           currentRecordFiltersComponentState,
         );
 
@@ -118,7 +118,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
           useApplyCurrentViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useRecoilComponentValueV2(
+        const currentFilters = useRecoilComponentValue(
           currentRecordFiltersComponentState,
         );
 
@@ -159,7 +159,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         const { applyCurrentViewFiltersToCurrentRecordFilters } =
           useApplyCurrentViewFiltersToCurrentRecordFilters();
 
-        const currentFilters = useRecoilComponentValueV2(
+        const currentFilters = useRecoilComponentValue(
           currentRecordFiltersComponentState,
         );
 

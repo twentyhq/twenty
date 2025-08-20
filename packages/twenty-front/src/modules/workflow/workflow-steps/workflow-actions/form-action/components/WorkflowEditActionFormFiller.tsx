@@ -1,16 +1,16 @@
 import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { useCommandMenuHistory } from '@/command-menu/hooks/useCommandMenuHistory';
-import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
-import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
-import { useWorkflowStepContextOrThrow } from '@/workflow/states/context/WorkflowStepContext';
-import { WorkflowFormAction } from '@/workflow/types/Workflow';
+import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
+import { type WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/workflow-steps/components/WorkflowStepHeader';
 import { useUpdateWorkflowRunStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowRunStep';
 import { useSubmitFormStep } from '@/workflow/workflow-steps/workflow-actions/form-action/hooks/useSubmitFormStep';
-import { WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
+import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useTheme } from '@emotion/react';
@@ -36,16 +36,12 @@ export const WorkflowEditActionFormFiller = ({
   const { getIcon } = useIcons();
   const { submitFormStep } = useSubmitFormStep();
   const [formData, setFormData] = useState<FormData>(action.settings.input);
-  const { workflowRunId } = useWorkflowStepContextOrThrow();
+  const workflowRunId = useWorkflowRunIdOrThrow();
   const { goBackFromCommandMenu } = useCommandMenuHistory();
   const { updateWorkflowRunStep } = useUpdateWorkflowRunStep();
   const [error, setError] = useState<string | undefined>(undefined);
+
   const canSubmit = !actionOptions.readonly && !isDefined(error);
-
-  if (!isDefined(workflowRunId)) {
-    throw new Error('Form filler action must be used in a workflow run');
-  }
-
   const headerTitle = isDefined(action.name) ? action.name : `Form`;
   const headerIcon = getActionIcon(action.type);
 

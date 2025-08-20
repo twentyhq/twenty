@@ -1,6 +1,9 @@
-import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
+import {
+  type WorkflowStep,
+  type WorkflowTrigger,
+} from '@/workflow/types/Workflow';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { StepStatus, WorkflowRunStepInfos } from 'twenty-shared/workflow';
+import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
 import { generateWorkflowRunDiagram } from '../generateWorkflowRunDiagram';
 
@@ -17,6 +20,7 @@ describe('generateWorkflowRunDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step1'],
     };
 
     const steps: WorkflowStep[] = [
@@ -101,6 +105,7 @@ describe('generateWorkflowRunDiagram', () => {
       steps,
       stepInfos,
       isWorkflowFilteringEnabled: true,
+      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -114,8 +119,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-0",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "trigger",
         "target": "step1",
@@ -128,8 +133,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-1",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step1",
         "target": "step2",
@@ -142,8 +147,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-2",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step2",
         "target": "step3",
@@ -153,10 +158,16 @@ describe('generateWorkflowRunDiagram', () => {
     "nodes": [
       {
         "data": {
+          "hasNextStepIds": true,
           "icon": "IconPlaylistAdd",
           "name": "Company created",
           "nodeType": "trigger",
+          "position": {
+            "x": 0,
+            "y": 0,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "trigger",
           "triggerType": "DATABASE_EVENT",
         },
         "id": "trigger",
@@ -168,9 +179,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 1",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 150,
+          },
           "runStatus": "FAILED",
+          "stepId": "step1",
         },
         "id": "step1",
         "position": {
@@ -181,9 +198,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 2",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 300,
+          },
           "runStatus": "NOT_STARTED",
+          "stepId": "step2",
         },
         "id": "step2",
         "position": {
@@ -194,9 +217,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": false,
           "name": "Step 3",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 450,
+          },
           "runStatus": "NOT_STARTED",
+          "stepId": "step3",
         },
         "id": "step3",
         "position": {
@@ -219,6 +248,7 @@ describe('generateWorkflowRunDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step1'],
     };
 
     const steps: WorkflowStep[] = [
@@ -305,6 +335,7 @@ describe('generateWorkflowRunDiagram', () => {
       steps,
       stepInfos,
       isWorkflowFilteringEnabled: true,
+      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -318,8 +349,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-3",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "trigger",
         "target": "step1",
@@ -332,8 +363,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-4",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step1",
         "target": "step2",
@@ -346,8 +377,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-5",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step2",
         "target": "step3",
@@ -357,10 +388,16 @@ describe('generateWorkflowRunDiagram', () => {
     "nodes": [
       {
         "data": {
+          "hasNextStepIds": true,
           "icon": "IconPlaylistAdd",
           "name": "Company created",
           "nodeType": "trigger",
+          "position": {
+            "x": 0,
+            "y": 0,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "trigger",
           "triggerType": "DATABASE_EVENT",
         },
         "id": "trigger",
@@ -372,9 +409,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 1",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 150,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "step1",
         },
         "id": "step1",
         "position": {
@@ -385,9 +428,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 2",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 300,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "step2",
         },
         "id": "step2",
         "position": {
@@ -398,9 +447,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": false,
           "name": "Step 3",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 450,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "step3",
         },
         "id": "step3",
         "position": {
@@ -423,6 +478,7 @@ describe('generateWorkflowRunDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step1'],
     };
 
     const steps: WorkflowStep[] = [
@@ -509,6 +565,7 @@ describe('generateWorkflowRunDiagram', () => {
       steps,
       stepInfos,
       isWorkflowFilteringEnabled: true,
+      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -522,8 +579,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-6",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "trigger",
         "target": "step1",
@@ -536,8 +593,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-7",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step1",
         "target": "step2",
@@ -550,8 +607,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-8",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step2",
         "target": "step3",
@@ -561,10 +618,16 @@ describe('generateWorkflowRunDiagram', () => {
     "nodes": [
       {
         "data": {
+          "hasNextStepIds": true,
           "icon": "IconPlaylistAdd",
           "name": "Company created",
           "nodeType": "trigger",
+          "position": {
+            "x": 0,
+            "y": 0,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "trigger",
           "triggerType": "DATABASE_EVENT",
         },
         "id": "trigger",
@@ -576,9 +639,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 1",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 150,
+          },
           "runStatus": "RUNNING",
+          "stepId": "step1",
         },
         "id": "step1",
         "position": {
@@ -589,9 +658,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 2",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 300,
+          },
           "runStatus": "NOT_STARTED",
+          "stepId": "step2",
         },
         "id": "step2",
         "position": {
@@ -602,9 +677,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": false,
           "name": "Step 3",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 450,
+          },
           "runStatus": "NOT_STARTED",
+          "stepId": "step3",
         },
         "id": "step3",
         "position": {
@@ -627,6 +708,7 @@ describe('generateWorkflowRunDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step1'],
     };
 
     const steps: WorkflowStep[] = [
@@ -732,6 +814,7 @@ describe('generateWorkflowRunDiagram', () => {
       steps,
       stepInfos,
       isWorkflowFilteringEnabled: true,
+      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -745,8 +828,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-9",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "trigger",
         "target": "step1",
@@ -759,8 +842,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-10",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step1",
         "target": "step2",
@@ -773,8 +856,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-11",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step2",
         "target": "step3",
@@ -787,8 +870,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-12",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step3",
         "target": "step4",
@@ -798,10 +881,16 @@ describe('generateWorkflowRunDiagram', () => {
     "nodes": [
       {
         "data": {
+          "hasNextStepIds": true,
           "icon": "IconPlaylistAdd",
           "name": "Company created",
           "nodeType": "trigger",
+          "position": {
+            "x": 0,
+            "y": 0,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "trigger",
           "triggerType": "DATABASE_EVENT",
         },
         "id": "trigger",
@@ -813,9 +902,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 1",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 150,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "step1",
         },
         "id": "step1",
         "position": {
@@ -826,9 +921,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 2",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 300,
+          },
           "runStatus": "RUNNING",
+          "stepId": "step2",
         },
         "id": "step2",
         "position": {
@@ -839,9 +940,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": true,
           "name": "Step 3",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 450,
+          },
           "runStatus": "NOT_STARTED",
+          "stepId": "step3",
         },
         "id": "step3",
         "position": {
@@ -852,9 +959,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "CODE",
+          "hasNextStepIds": false,
           "name": "Step 4",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 600,
+          },
           "runStatus": "NOT_STARTED",
+          "stepId": "step4",
         },
         "id": "step4",
         "position": {
@@ -877,6 +990,7 @@ describe('generateWorkflowRunDiagram', () => {
         eventName: 'company.created',
         outputSchema: {},
       },
+      nextStepIds: ['step1'],
     };
     const steps: WorkflowStep[] = [
       {
@@ -929,6 +1043,7 @@ describe('generateWorkflowRunDiagram', () => {
       steps,
       stepInfos,
       isWorkflowFilteringEnabled: true,
+      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -942,8 +1057,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-13",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "trigger",
         "target": "step1",
@@ -953,10 +1068,16 @@ describe('generateWorkflowRunDiagram', () => {
     "nodes": [
       {
         "data": {
+          "hasNextStepIds": true,
           "icon": "IconPlaylistAdd",
           "name": "Company created",
           "nodeType": "trigger",
+          "position": {
+            "x": 0,
+            "y": 0,
+          },
           "runStatus": "SUCCESS",
+          "stepId": "trigger",
           "triggerType": "DATABASE_EVENT",
         },
         "id": "trigger",
@@ -968,9 +1089,15 @@ describe('generateWorkflowRunDiagram', () => {
       {
         "data": {
           "actionType": "FORM",
+          "hasNextStepIds": false,
           "name": "Step 1",
           "nodeType": "action",
+          "position": {
+            "x": 0,
+            "y": 150,
+          },
           "runStatus": "PENDING",
+          "stepId": "step1",
         },
         "id": "step1",
         "position": {
@@ -983,9 +1110,15 @@ describe('generateWorkflowRunDiagram', () => {
   "stepToOpenByDefault": {
     "data": {
       "actionType": "FORM",
+      "hasNextStepIds": false,
       "name": "Step 1",
       "nodeType": "action",
+      "position": {
+        "x": 0,
+        "y": 150,
+      },
       "runStatus": "PENDING",
+      "stepId": "step1",
     },
     "id": "step1",
   },

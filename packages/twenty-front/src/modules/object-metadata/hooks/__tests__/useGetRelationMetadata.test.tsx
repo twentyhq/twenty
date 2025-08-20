@@ -1,11 +1,11 @@
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
-import { ReactNode, useEffect } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>

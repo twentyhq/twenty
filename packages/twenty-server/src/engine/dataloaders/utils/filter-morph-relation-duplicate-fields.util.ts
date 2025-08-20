@@ -1,4 +1,4 @@
-import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
 export const filterMorphRelationDuplicateFieldsDTO = (
   fields: FieldMetadataDTO[],

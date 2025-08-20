@@ -1,6 +1,6 @@
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
-import { SnackBarProps } from '../components/SnackBar';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { type SnackBarProps } from '../components/SnackBar';
 
 export type SnackBarOptions = SnackBarProps & {
   id: string;
@@ -12,7 +12,7 @@ export type SnackBarState = {
 };
 
 export const snackBarInternalComponentState =
-  createComponentStateV2<SnackBarState>({
+  createComponentState<SnackBarState>({
     key: 'snackBarState',
     defaultValue: {
       maxQueue: 3,

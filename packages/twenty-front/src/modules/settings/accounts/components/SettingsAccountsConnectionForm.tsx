@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { Control, Controller } from 'react-hook-form';
+import { type Control, Controller } from 'react-hook-form';
 
 import { Select } from '@/ui/input/components/Select';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
-import { ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
+import { type ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
@@ -68,13 +68,9 @@ export const SettingsAccountsConnectionForm = ({
 }: SettingsAccountsConnectionFormProps) => {
   const { t } = useLingui();
 
-  const getTitle = () => {
-    return isEditing ? t`Edit Email Account` : t`New Email Account`;
-  };
-
   const getDescription = () => {
     if (isEditing) {
-      return t`Update your email account configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed.`;
+      return t`Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed.`;
     }
     return t`You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync).`;
   };
@@ -83,13 +79,13 @@ export const SettingsAccountsConnectionForm = ({
 
   return (
     <Section>
-      <H2Title title={getTitle()} description={getDescription()} />
+      <H2Title title={t`Mail Account`} description={getDescription()} />
       <StyledFormContainer>
         <Controller
           name="handle"
           control={control}
           render={({ field, fieldState }) => (
-            <TextInput
+            <SettingsTextInput
               instanceId="email-address-connection-form"
               label={t`Email Address`}
               placeholder={t`john.doe@example.com`}
@@ -104,8 +100,7 @@ export const SettingsAccountsConnectionForm = ({
           <StyledSectionHeader>
             <StyledSectionTitle>{t`IMAP Configuration`}</StyledSectionTitle>
             <StyledSectionDescription>
-              {t`Configure IMAP settings to receive and sync your emails.`}
-              <br />
+              {t`Configure IMAP settings to receive and sync your emails.`}{' '}
               {t`Leave blank if you don't need to import emails.`}
             </StyledSectionDescription>
           </StyledSectionHeader>
@@ -114,7 +109,7 @@ export const SettingsAccountsConnectionForm = ({
             name="IMAP.host"
             control={control}
             render={({ field, fieldState }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="imap-host-connection-form"
                 label={t`IMAP Server`}
                 placeholder={t`imap.example.com`}
@@ -129,7 +124,7 @@ export const SettingsAccountsConnectionForm = ({
             name="IMAP.password"
             control={control}
             render={({ field, fieldState }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="imap-password-connection-form"
                 label={t`IMAP Password`}
                 placeholder={t`••••••••`}
@@ -147,7 +142,7 @@ export const SettingsAccountsConnectionForm = ({
                 name="IMAP.port"
                 control={control}
                 render={({ field, fieldState }) => (
-                  <TextInput
+                  <SettingsTextInput
                     instanceId="imap-port-connection-form"
                     label={t`IMAP Port`}
                     type="number"
@@ -187,8 +182,7 @@ export const SettingsAccountsConnectionForm = ({
           <StyledSectionHeader>
             <StyledSectionTitle>{t`SMTP Configuration`}</StyledSectionTitle>
             <StyledSectionDescription>
-              {t`Configure SMTP settings to send emails from your account.`}
-              <br />
+              {t`Configure SMTP settings to send emails from your account.`}{' '}
               {t`Leave blank if you don't need to send emails.`}
             </StyledSectionDescription>
           </StyledSectionHeader>
@@ -197,7 +191,7 @@ export const SettingsAccountsConnectionForm = ({
             name="SMTP.host"
             control={control}
             render={({ field, fieldState }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="smtp-host-connection-form"
                 label={t`SMTP Server`}
                 placeholder={t`smtp.example.com`}
@@ -212,7 +206,7 @@ export const SettingsAccountsConnectionForm = ({
             name="SMTP.password"
             control={control}
             render={({ field, fieldState }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="smtp-password-connection-form"
                 label={t`SMTP Password`}
                 placeholder={t`••••••••`}
@@ -230,7 +224,7 @@ export const SettingsAccountsConnectionForm = ({
                 name="SMTP.port"
                 control={control}
                 render={({ field, fieldState }) => (
-                  <TextInput
+                  <SettingsTextInput
                     instanceId="smtp-port-connection-form"
                     label={t`SMTP Port`}
                     type="number"
@@ -270,8 +264,7 @@ export const SettingsAccountsConnectionForm = ({
           <StyledSectionHeader>
             <StyledSectionTitle>{t`CalDAV Configuration`}</StyledSectionTitle>
             <StyledSectionDescription>
-              {t`Configure CalDAV settings to sync your calendar events.`}
-              <br />
+              {t`Configure CalDAV settings to sync your calendar events.`}{' '}
               {t`Leave blank if you don't need calendar sync.`}
             </StyledSectionDescription>
           </StyledSectionHeader>
@@ -280,7 +273,7 @@ export const SettingsAccountsConnectionForm = ({
             name="CALDAV.host"
             control={control}
             render={({ field, fieldState }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="caldav-host-connection-form"
                 label={t`CalDAV Server`}
                 placeholder={t`caldav.example.com`}
@@ -295,7 +288,7 @@ export const SettingsAccountsConnectionForm = ({
             name="CALDAV.username"
             control={control}
             render={({ field, fieldState }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="caldav-username-connection-form"
                 label={t`CalDAV Username`}
                 placeholder={t`john.doe`}
@@ -311,7 +304,7 @@ export const SettingsAccountsConnectionForm = ({
             name="CALDAV.password"
             control={control}
             render={({ field, fieldState }) => (
-              <TextInput
+              <SettingsTextInput
                 instanceId="caldav-password-connection-form"
                 label={t`CalDAV Password`}
                 placeholder={t`••••••••`}

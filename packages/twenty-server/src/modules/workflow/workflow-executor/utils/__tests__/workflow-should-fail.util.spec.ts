@@ -1,7 +1,7 @@
 import { StepStatus } from 'twenty-shared/workflow';
 
 import { workflowShouldFail } from 'src/modules/workflow/workflow-executor/utils/workflow-should-fail.util';
-import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 describe('workflowShouldFail', () => {
   it('should return true if a failed step exists', () => {

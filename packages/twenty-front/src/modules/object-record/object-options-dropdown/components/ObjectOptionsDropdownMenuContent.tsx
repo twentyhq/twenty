@@ -2,18 +2,16 @@ import { ObjectOptionsDropdownMenuContentCustom } from '@/object-record/object-o
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { ViewKey } from '@/views/types/ViewKey';
-import { ViewType } from '@/views/types/ViewType';
-import { useTheme } from '@emotion/react';
+import { type ViewKey } from '@/views/types/ViewKey';
+import { type ViewType } from '@/views/types/ViewType';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -25,6 +23,7 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 interface CurrentView {
   id: string;
@@ -69,16 +68,13 @@ export const ObjectOptionsDropdownMenuContent = () => {
     viewBarId: recordIndexId,
   });
 
-  const theme = useTheme();
-  const { enqueueSuccessSnackBar } = useSnackBar();
-
   const selectableItemIdArray = [
     'Fields',
     'Copy link to view',
     'Create custom view',
   ];
 
-  const selectedItemId = useRecoilComponentValueV2(
+  const selectedItemId = useRecoilComponentValue(
     selectedItemIdComponentState,
     OBJECT_OPTIONS_DROPDOWN_ID,
   );
@@ -86,6 +82,8 @@ export const ObjectOptionsDropdownMenuContent = () => {
   const handleCreateCustomView = () => {
     setShowCustomView(true);
   };
+
+  const { copyToClipboard } = useCopyToClipboard();
 
   if (showCustomView) {
     return (
@@ -125,28 +123,14 @@ export const ObjectOptionsDropdownMenuContent = () => {
             itemId="Copy link to view"
             onEnter={() => {
               const currentUrl = window.location.href;
-              navigator.clipboard.writeText(currentUrl);
-              enqueueSuccessSnackBar({
-                message: t`Link copied to clipboard`,
-                options: {
-                  icon: <IconCopy size={theme.icon.size.md} />,
-                  duration: 2000,
-                },
-              });
+              copyToClipboard(currentUrl, t`Link copied to clipboard`);
             }}
           >
             <MenuItem
               focused={selectedItemId === 'Copy link to view'}
               onClick={() => {
                 const currentUrl = window.location.href;
-                navigator.clipboard.writeText(currentUrl);
-                enqueueSuccessSnackBar({
-                  message: t`Link copied to clipboard`,
-                  options: {
-                    icon: <IconCopy size={theme.icon.size.md} />,
-                    duration: 2000,
-                  },
-                });
+                copyToClipboard(currentUrl, t`Link copied to clipboard`);
               }}
               LeftIcon={IconCopy}
               text={t`Copy link to view`}

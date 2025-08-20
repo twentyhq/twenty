@@ -12,12 +12,13 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 import { WorkspaceCustomEntity } from 'src/engine/twenty-orm/decorators/workspace-custom-entity.decorator';
 import { WorkspaceFieldIndex } from 'src/engine/twenty-orm/decorators/workspace-field-index.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsFieldUIReadOnly } from 'src/engine/twenty-orm/decorators/workspace-is-field-ui-readonly.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import {
-  FieldTypeAndNameMetadata,
+  type FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
@@ -52,6 +53,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
     defaultValue: 0,
   })
   @WorkspaceIsSystem()
+  @WorkspaceIsFieldUIReadOnly()
   position: number;
 
   @WorkspaceField({
@@ -61,6 +63,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconCreativeCommonsSa',
     description: msg`The creator of the record`,
   })
+  @WorkspaceIsFieldUIReadOnly()
   createdBy: ActorMetadata;
 
   @WorkspaceRelation({
@@ -158,6 +161,7 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
+  @WorkspaceIsFieldUIReadOnly()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
 }

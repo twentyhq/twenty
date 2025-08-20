@@ -1,9 +1,14 @@
 import { useAddRootStepFilter } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useAddRootStepFilter';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconFilter } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+
+const StyledButton = styled(Button)`
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
 
 export const WorkflowStepFilterAddRootStepFilterButton = () => {
   const { t } = useLingui();
@@ -11,7 +16,7 @@ export const WorkflowStepFilterAddRootStepFilterButton = () => {
   const { addRootStepFilter } = useAddRootStepFilter();
 
   return (
-    <Button
+    <StyledButton
       Icon={IconFilter}
       size="small"
       variant="secondary"

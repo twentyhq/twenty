@@ -1,4 +1,4 @@
-import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 
 const mockStep = {
@@ -19,16 +19,42 @@ const mockStep = {
           objectMetadataId: '123',
         },
         fields: {
-          name: { label: 'Name', value: 'Twenty', isLeaf: true },
+          name: {
+            label: 'Name',
+            value: 'Twenty',
+            isLeaf: true,
+            fieldMetadataId: '123e4567-e89b-12d3-a456-426614174001',
+          },
           address: {
-            label: 'Address',
-            value: {
-              street: { label: 'Street', value: '123 Main St', isLeaf: true },
-              city: { label: 'City', value: 'New York', isLeaf: true },
-              state: { label: 'State', value: 'NY', isLeaf: true },
-              zip: { label: 'Zip', value: '10001', isLeaf: true },
-            },
             isLeaf: false,
+            label: 'Address',
+            fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+            value: {
+              street: {
+                label: 'Street',
+                value: '123 Main St',
+                isLeaf: true,
+                fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+              },
+              city: {
+                label: 'City',
+                value: 'New York',
+                isLeaf: true,
+                fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+              },
+              state: {
+                label: 'State',
+                value: 'NY',
+                isLeaf: true,
+                fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+              },
+              zip: {
+                label: 'Zip',
+                value: '10001',
+                isLeaf: true,
+                fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+              },
+            },
           },
         },
         _outputSchemaType: 'RECORD',

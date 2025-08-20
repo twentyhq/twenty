@@ -1,6 +1,6 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
@@ -11,9 +11,9 @@ import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/co
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { ReactNode, useContext } from 'react';
+import { useContext, type ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -26,8 +26,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
 }: RecordTableCellFieldContextLabelIdentifierProps) => {
   const { indexIdentifierUrl, objectPermissionsByObjectMetadataId } =
     useRecordIndexContextOrThrow();
-  const { recordId, isReadOnly: isTableRowReadOnly } =
-    useRecordTableRowContextOrThrow();
+  const { recordId, isRecordReadOnly } = useRecordTableRowContextOrThrow();
 
   const { columnDefinition } = useContext(RecordTableCellContext);
   const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
@@ -36,14 +35,9 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
   const isMobile = useIsMobile();
-  const isRecordTableScrolledLeftComponent = useRecoilComponentValueV2(
+  const isRecordTableScrolledLeftComponent = useRecoilComponentValue(
     isRecordTableScrolledLeftComponentState,
   );
-
-  const isFieldReadOnly = useIsFieldValueReadOnly({
-    fieldDefinition: columnDefinition,
-    isRecordReadOnly: isTableRowReadOnly ?? false,
-  });
 
   const objectPermissions = getObjectPermissionsForObject(
     objectPermissionsByObjectMetadataId,
@@ -75,7 +69,14 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
         isLabelIdentifier: true,
         isLabelIdentifierCompact,
         displayedMaxRows: 1,
-        isReadOnly: isFieldReadOnly,
+        isRecordFieldReadOnly: isRecordFieldReadOnly({
+          isRecordReadOnly: isRecordReadOnly ?? false,
+          objectPermissions,
+          fieldMetadataItem: {
+            id: columnDefinition.fieldMetadataId,
+            isUIReadOnly: columnDefinition.metadata.isUIReadOnly ?? false,
+          },
+        }),
         maxWidth: columnDefinition.size,
         onRecordChipClick: () => {
           activateRecordTableRow(rowIndex);

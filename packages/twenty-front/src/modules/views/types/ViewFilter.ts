@@ -1,5 +1,5 @@
-import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
+import { type ViewFilterOperand } from 'twenty-shared/types';
 
 export type ViewFilter = {
   __typename: 'ViewFilter';

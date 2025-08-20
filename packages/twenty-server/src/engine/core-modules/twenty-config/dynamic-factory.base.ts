@@ -1,8 +1,8 @@
 import { createHash } from 'crypto';
 
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
-import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 export abstract class DriverFactoryBase<TDriver> {

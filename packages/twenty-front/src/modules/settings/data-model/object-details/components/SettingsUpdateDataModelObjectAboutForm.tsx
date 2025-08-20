@@ -1,8 +1,8 @@
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import {
-  SettingsDataModelObjectAboutFormValues,
+  type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -95,8 +95,9 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
 
     if (!objectMetadataItem.isCustom) {
       const {
-        nameSingular: _,
-        namePlural: __,
+        nameSingular: _nameSingular,
+        namePlural: _namePlural,
+        isLabelSyncedWithName: _isLabelSyncedWithName,
         ...payloadWithoutNames
       } = updatePayload;
 

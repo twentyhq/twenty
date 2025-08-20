@@ -1,23 +1,27 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
+import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
+import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { EachTestingContext } from 'twenty-shared/testing';
+
+const fields = [
+  {
+    name: 'name',
+    updatedAt: '2021-01-01',
+    createdAt: '2021-01-01',
+    id: '20202020-18b3-4099-86e3-c46b2d5d42f2',
+    type: FieldMetadataType.POSITION,
+    label: 'label',
+  },
+];
 
 const objectMetadataItemWithPositionField: ObjectMetadataItem = {
   id: 'object1',
-  fields: [
-    {
-      name: 'name',
-      updatedAt: '2021-01-01',
-      createdAt: '2021-01-01',
-      id: '20202020-18b3-4099-86e3-c46b2d5d42f2',
-      type: FieldMetadataType.POSITION,
-      label: 'label',
-    },
-  ],
+  fields,
+  readableFields: fields,
+  updatableFields: fields,
   indexMetadatas: [],
   createdAt: '2021-01-01',
   updatedAt: '2021-01-01',
@@ -27,6 +31,7 @@ const objectMetadataItemWithPositionField: ObjectMetadataItem = {
   icon: 'icon',
   isActive: true,
   isSystem: false,
+  isUIReadOnly: false,
   isCustom: false,
   isRemote: false,
   isSearchable: false,

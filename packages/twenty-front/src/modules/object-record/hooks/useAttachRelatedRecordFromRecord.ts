@@ -7,7 +7,7 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 
 type useAttachRelatedRecordFromRecordProps = {
@@ -25,7 +25,7 @@ export const useAttachRelatedRecordFromRecord = ({
     objectNameSingular: recordObjectNameSingular,
   });
 
-  const fieldOnObject = objectMetadataItem.fields.find((field) => {
+  const fieldOnObject = objectMetadataItem.readableFields.find((field) => {
     return field.name === fieldNameOnRecordObject;
   });
 

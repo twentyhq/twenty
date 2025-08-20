@@ -1,5 +1,6 @@
-import { Catch, ExceptionFilter } from '@nestjs/common';
+import { Catch, type ExceptionFilter } from '@nestjs/common';
 
+import { assertUnreachable } from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
 
 import {
@@ -26,9 +27,7 @@ export class TwoFactorAuthenticationExceptionFilter implements ExceptionFilter {
       case TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_METHOD_ALREADY_PROVISIONED:
         throw new ForbiddenError(exception);
       default: {
-        const _exhaustiveCheck: never = exception.code;
-
-        throw exception;
+        assertUnreachable(exception.code);
       }
     }
   }

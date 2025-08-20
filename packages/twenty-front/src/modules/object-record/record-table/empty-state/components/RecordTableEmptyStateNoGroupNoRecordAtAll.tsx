@@ -17,18 +17,18 @@ export const RecordTableEmptyStateNoGroupNoRecordAtAll = () => {
     createNewIndexRecord();
   };
 
-  const objectLabel = useObjectLabel(objectMetadataItem);
+  const objectLabelSingular = useObjectLabel(objectMetadataItem);
 
-  const buttonTitle = `Add a ${objectLabel}`;
+  const buttonTitle = `Add a ${objectLabelSingular}`;
 
   const title = getEmptyStateTitle(
     objectMetadataItem.nameSingular,
-    objectLabel,
+    objectLabelSingular,
   );
 
   const subTitle = getEmptyStateSubTitle(
     objectMetadataItem.nameSingular,
-    objectLabel,
+    objectLabelSingular,
   );
 
   return (

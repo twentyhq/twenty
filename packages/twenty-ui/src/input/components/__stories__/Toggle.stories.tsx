@@ -1,13 +1,13 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import {
   CatalogDecorator,
-  CatalogStory,
+  type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
 import { MAIN_COLORS } from '@ui/theme';
 import { useState } from 'react';
 
-import { Toggle, ToggleSize } from '../Toggle';
+import { Toggle, type ToggleSize } from '../Toggle';
 
 type InteractiveToggleProps = {
   initialValue?: boolean;

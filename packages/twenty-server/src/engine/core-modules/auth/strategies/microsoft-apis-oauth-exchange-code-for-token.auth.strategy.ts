@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { VerifyCallback } from 'passport-google-oauth20';
+import { type VerifyCallback } from 'passport-google-oauth20';
 
 import { MicrosoftAPIsOauthCommonStrategy } from 'src/engine/core-modules/auth/strategies/microsoft-apis-oauth-common.auth.strategy';
-import { MicrosoftAPIsRequest } from 'src/engine/core-modules/auth/types/microsoft-api-request.type';
+import { type MicrosoftAPIsRequest } from 'src/engine/core-modules/auth/types/microsoft-api-request.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type MicrosoftAPIScopeConfig = {

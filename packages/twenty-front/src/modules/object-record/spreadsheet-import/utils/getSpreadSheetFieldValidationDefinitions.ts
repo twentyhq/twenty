@@ -1,7 +1,7 @@
-import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
-import { isFieldRatingValue } from '@/object-record/record-field/types/guards/isFieldRatingValue';
-import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
-import { SpreadsheetImportFieldValidationDefinition } from '@/spreadsheet-import/types';
+import { RATING_VALUES } from '@/object-record/record-field/ui/meta-types/constants/RatingValues';
+import { isFieldRatingValue } from '@/object-record/record-field/ui/types/guards/isFieldRatingValue';
+import { emailSchema } from '@/object-record/record-field/ui/validation-schemas/emailSchema';
+import { type SpreadsheetImportFieldValidationDefinition } from '@/spreadsheet-import/types';
 import { t } from '@lingui/core/macro';
 import { isDate, isString } from '@sniptt/guards';
 import { parsePhoneNumberWithError } from 'libphonenumber-js';

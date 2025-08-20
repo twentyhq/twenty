@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddHasReachedCurrentPeriodCapColumnInBillingSubscriptionItemTable1743577268972
   implements MigrationInterface

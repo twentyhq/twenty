@@ -1,12 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { DataSource, Repository } from 'typeorm';
+import { type DataSource, type Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import { type ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
@@ -14,20 +14,20 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import {
   FileUploadService,
-  SignedFilesResult,
+  type SignedFilesResult,
 } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 describe('UserWorkspaceService', () => {
   let service: UserWorkspaceService;
@@ -278,6 +278,37 @@ describe('UserWorkspaceService', () => {
         isExistingUser: false,
         pictureUrl: undefined,
       });
+
+      expect(userWorkspaceRepository.save).toHaveBeenCalledWith(userWorkspace);
+      expect(result).toEqual(userWorkspace);
+    });
+
+    it("should create a user workspace without a default avatar url if it's a new user with an empty picture url", async () => {
+      const userId = 'user-id';
+      const workspaceId = 'workspace-id';
+      const userWorkspace = { userId, workspaceId } as UserWorkspace;
+
+      jest
+        .spyOn(userWorkspaceRepository, 'create')
+        .mockReturnValue(userWorkspace);
+      jest
+        .spyOn(userWorkspaceRepository, 'save')
+        .mockResolvedValue(userWorkspace);
+
+      const uploadImageFromUrlSpy = jest
+        .spyOn(fileUploadService, 'uploadImageFromUrl')
+        .mockResolvedValue({
+          files: [{ path: 'path/to/file', token: 'token' }],
+        } as SignedFilesResult);
+
+      const result = await service.create({
+        userId,
+        workspaceId,
+        isExistingUser: false,
+        pictureUrl: '',
+      });
+
+      expect(uploadImageFromUrlSpy).not.toHaveBeenCalled();
 
       expect(userWorkspaceRepository.create).toHaveBeenCalledWith({
         userId,
@@ -805,7 +836,7 @@ describe('UserWorkspaceService', () => {
           userId,
           workspaceId,
         },
-        relations: ['workspace'],
+        relations: ['twoFactorAuthenticationMethods'],
       });
       expect(result).toEqual(userWorkspace);
     });

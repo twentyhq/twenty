@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  AuthProvider,
-  AuthProviderCallback,
+  type AuthProvider,
+  type AuthProviderCallback,
   Client,
 } from '@microsoft/microsoft-graph-client';
 

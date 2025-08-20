@@ -1,6 +1,7 @@
-import { SerializableParam } from 'recoil';
+import { type ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { type SerializableParam } from 'recoil';
 
-export type ComponentFamilyStateKey<FamilyKey extends SerializableParam> = {
-  scopeId: string;
-  familyKey: FamilyKey;
-};
+export type ComponentFamilyStateKey<FamilyKey extends SerializableParam> =
+  ComponentStateKey & {
+    familyKey: FamilyKey;
+  };

@@ -1,56 +1,62 @@
-/* eslint-disable @nx/workspace-no-hardcoded-colors */
-import { Theme } from '@emotion/react';
+import { type Theme } from '@emotion/react';
+import { COLOR } from 'twenty-ui/theme';
 import { getTriggerIconColor } from '../getTriggerIconColor';
 
 describe('getTriggerIconColor', () => {
   const mockTheme: Theme = {
-    font: {
-      color: {
-        primary: '#2c2c2c',
-        secondary: '#666666',
-        tertiary: '#999999',
-        light: '#cccccc',
-      },
+    color: {
+      blue: COLOR.blue,
+      purple: COLOR.purple,
     },
   } as unknown as Theme;
 
-  it('returns the tertiary font color from theme', () => {
-    const result = getTriggerIconColor({ theme: mockTheme });
+  it('returns the blue color for database event from theme', () => {
+    const result = getTriggerIconColor({
+      theme: mockTheme,
+      triggerType: 'DATABASE_EVENT',
+    });
 
-    expect(result).toBe('#999999');
+    expect(result).toBe(COLOR.blue);
+  });
+
+  it('returns the purple color for cron from theme', () => {
+    const result = getTriggerIconColor({
+      theme: mockTheme,
+      triggerType: 'CRON',
+    });
+
+    expect(result).toBe(COLOR.purple);
   });
 
   it('works with different theme configurations', () => {
     const differentTheme: Theme = {
-      font: {
-        color: {
-          primary: '#000000',
-          secondary: '#444444',
-          tertiary: '#888888',
-          light: '#ffffff',
-        },
+      color: {
+        blue: COLOR.blue,
+        purple: COLOR.purple,
       },
     } as unknown as Theme;
 
-    const result = getTriggerIconColor({ theme: differentTheme });
+    const result = getTriggerIconColor({
+      theme: differentTheme,
+      triggerType: 'DATABASE_EVENT',
+    });
 
-    expect(result).toBe('#888888');
+    expect(result).toBe(COLOR.blue);
   });
 
-  it('maintains reference to theme.font.color.tertiary', () => {
+  it('maintains reference to theme.color.blue', () => {
     const customTheme: Theme = {
-      font: {
-        color: {
-          primary: '#111111',
-          secondary: '#333333',
-          tertiary: '#custom-tertiary-color',
-          light: '#eeeeee',
-        },
+      color: {
+        blue: COLOR.blue,
+        purple: COLOR.purple,
       },
     } as unknown as Theme;
 
-    const result = getTriggerIconColor({ theme: customTheme });
+    const result = getTriggerIconColor({
+      theme: customTheme,
+      triggerType: 'DATABASE_EVENT',
+    });
 
-    expect(result).toBe('#custom-tertiary-color');
+    expect(result).toBe(COLOR.blue);
   });
 });

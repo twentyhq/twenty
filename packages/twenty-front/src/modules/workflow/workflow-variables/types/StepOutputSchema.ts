@@ -1,4 +1,4 @@
-import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 
 type Leaf = {
   isLeaf: true;
@@ -8,6 +8,7 @@ type Leaf = {
   description?: string;
   value: any;
   fieldMetadataId?: string;
+  isCompositeSubField?: boolean;
 };
 
 type Node = {
@@ -18,6 +19,7 @@ type Node = {
   value: OutputSchema;
   description?: string;
   fieldMetadataId?: string;
+  isCompositeSubField?: boolean;
 };
 
 type Link = {
@@ -29,13 +31,18 @@ type Link = {
 
 export type BaseOutputSchema = Record<string, Leaf | Node>;
 
+export type FieldOutputSchema = (Leaf | Node) & {
+  fieldMetadataId: string;
+};
+
 export type RecordOutputSchema = {
   object: {
     nameSingular: string;
     fieldIdName: string;
     objectMetadataId: string;
+    isRelationField?: boolean;
   } & Leaf;
-  fields: BaseOutputSchema;
+  fields: Record<string, FieldOutputSchema>;
   _outputSchemaType: 'RECORD';
 };
 

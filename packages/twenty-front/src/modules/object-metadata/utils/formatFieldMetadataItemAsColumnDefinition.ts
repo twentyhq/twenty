@@ -1,10 +1,10 @@
 import {
-  FieldMetadataItemAsFieldDefinitionProps,
   formatFieldMetadataItemAsFieldDefinition,
+  type FieldMetadataItemAsFieldDefinitionProps,
 } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
 type FieldMetadataItemAsColumnDefinitionProps = {
   position: number;

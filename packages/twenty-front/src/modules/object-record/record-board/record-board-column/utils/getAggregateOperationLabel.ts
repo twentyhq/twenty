@@ -1,7 +1,7 @@
 import { CustomError } from '@/error-handler/CustomError';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { DateAggregateOperations } from '@/object-record/record-table/constants/DateAggregateOperations';
-import { ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
+import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { t } from '@lingui/core/macro';
 
 export const getAggregateOperationLabel = (

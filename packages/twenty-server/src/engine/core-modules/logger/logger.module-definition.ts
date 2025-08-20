@@ -1,6 +1,6 @@
 import { ConfigurableModuleBuilder } from '@nestjs/common';
 
-import { LoggerModuleOptions } from 'src/engine/core-modules/logger/interfaces';
+import { type LoggerModuleOptions } from 'src/engine/core-modules/logger/interfaces';
 
 export const {
   ConfigurableModuleClass,

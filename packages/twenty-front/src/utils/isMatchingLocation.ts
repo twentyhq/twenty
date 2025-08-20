@@ -1,6 +1,6 @@
-import { Location, matchPath } from 'react-router-dom';
+import { type Location, matchPath } from 'react-router-dom';
 
-import { AppBasePath } from '@/types/AppBasePath';
+import { type AppBasePath } from '@/types/AppBasePath';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 

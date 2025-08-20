@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
-import { MouseEvent } from 'react';
+import { type MouseEvent } from 'react';
 
-import { IconComponent } from '@ui/display';
+import { type IconComponent } from '@ui/display';
 import { HOVER_BACKGROUND } from '@ui/theme';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledMenuItemLeftContent } from '../internals/components/StyledMenuItemBase';
@@ -40,6 +40,7 @@ const StyledSuggestionMenuItem = styled.li<{
 
   background: ${({ selected, theme }) =>
     selected ? theme.background.transparent.medium : ''};
+  color: ${({ theme }) => theme.font.color.secondary};
 
   ${HOVER_BACKGROUND};
 

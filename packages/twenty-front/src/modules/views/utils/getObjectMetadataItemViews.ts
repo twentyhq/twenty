@@ -1,4 +1,4 @@
-import { GraphQLView } from '@/views/types/GraphQLView';
+import { type GraphQLView } from '@/views/types/GraphQLView';
 
 export const getObjectMetadataItemViews = (
   viewObjectMetadataId: string,

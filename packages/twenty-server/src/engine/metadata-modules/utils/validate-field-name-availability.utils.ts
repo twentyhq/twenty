@@ -4,7 +4,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import {
   InvalidMetadataException,
   InvalidMetadataExceptionCode,
@@ -31,10 +31,14 @@ const getReservedCompositeFieldNames = (
   return reservedCompositeFieldsNames;
 };
 
-export const validateFieldNameAvailabilityOrThrow = (
-  name: string,
-  objectMetadata: ObjectMetadataItemWithFieldMaps,
-) => {
+type ValidateFieldNameAvailabilityOrThrowArgs = {
+  name: string;
+  objectMetadata: ObjectMetadataItemWithFieldMaps;
+};
+export const validateFieldNameAvailabilityOrThrow = ({
+  name,
+  objectMetadata,
+}: ValidateFieldNameAvailabilityOrThrowArgs) => {
   const reservedCompositeFieldsNames =
     getReservedCompositeFieldNames(objectMetadata);
 

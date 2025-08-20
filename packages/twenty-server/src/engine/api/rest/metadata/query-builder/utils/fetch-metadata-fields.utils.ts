@@ -1,10 +1,12 @@
-import { Selectors } from 'src/engine/api/rest/metadata/types/metadata-query.type';
+import { hasSelectAllFieldsSelector } from 'src/engine/api/rest/metadata/query-builder/utils/has-select-all-fields-selector.util';
+import { type Selectors } from 'src/engine/api/rest/metadata/types/metadata-query.type';
 
 export const fetchMetadataFields = (
   objectNamePlural: string,
   selector: Selectors,
 ) => {
   const defaultFields = `
+    id
     type
     name
     label
@@ -41,14 +43,15 @@ export const fetchMetadataFields = (
     }
   `;
 
-  const fieldsSelection = selector?.fields?.join('\n') ?? defaultFields;
+  const fieldsSelection = hasSelectAllFieldsSelector(selector)
+    ? defaultFields
+    : (selector?.fields?.join('\n') ?? defaultFields);
 
   switch (objectNamePlural) {
     case 'objects': {
       const objectsSelection =
         selector?.objects?.join('\n') ??
         `
-        dataSourceId
         nameSingular
         namePlural
         labelSingular

@@ -1,4 +1,4 @@
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { WorkflowVariablesDropdown } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdown';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -41,7 +41,8 @@ export const WorkflowVariablePicker: VariablePickerComponent = ({
   disabled,
   multiline,
   onVariableSelect,
-  objectNameSingularToSelect,
+  shouldDisplayRecordObjects = false,
+  shouldDisplayRecordFields = true,
 }) => {
   return (
     <StyledSearchVariablesDropdownContainer
@@ -52,7 +53,8 @@ export const WorkflowVariablePicker: VariablePickerComponent = ({
         instanceId={instanceId}
         onVariableSelect={onVariableSelect}
         disabled={disabled}
-        objectNameSingularToSelect={objectNameSingularToSelect}
+        shouldDisplayRecordObjects={shouldDisplayRecordObjects}
+        shouldDisplayRecordFields={shouldDisplayRecordFields}
         multiline={multiline}
       />
     </StyledSearchVariablesDropdownContainer>

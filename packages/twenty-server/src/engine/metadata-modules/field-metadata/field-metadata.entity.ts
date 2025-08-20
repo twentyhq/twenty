@@ -1,4 +1,4 @@
-import { FieldMetadataType, IsExactly } from 'twenty-shared/types';
+import { type FieldMetadataType } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
@@ -17,19 +17,11 @@ import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-met
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
-import { FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
+import { type FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
+import { AssignTypeIfIsRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-relation-field-metadata-type.type';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
-
-type IsRelationType<Ttype, T extends FieldMetadataType = FieldMetadataType> =
-  IsExactly<T, FieldMetadataType> extends true
-    ? null | Ttype // Could be improved to be | unknown
-    : T extends FieldMetadataType.RELATION
-      ? Ttype
-      : T extends FieldMetadataType.MORPH_RELATION
-        ? Ttype
-        : never;
 
 @Entity('fieldMetadata')
 @Index(
@@ -111,6 +103,9 @@ export class FieldMetadataEntity<
   @Column({ default: false })
   isSystem: boolean;
 
+  @Column({ default: false })
+  isUIReadOnly: boolean;
+
   // Is this really nullable ?
   @Column({ nullable: true, default: true, type: 'boolean' })
   isNullable: boolean | null;
@@ -127,7 +122,10 @@ export class FieldMetadataEntity<
   isLabelSyncedWithName: boolean;
 
   @Column({ nullable: true, type: 'uuid' })
-  relationTargetFieldMetadataId: IsRelationType<string, T>;
+  relationTargetFieldMetadataId: AssignTypeIfIsRelationFieldMetadataType<
+    string,
+    T
+  >;
 
   @OneToOne(
     () => FieldMetadataEntity,
@@ -136,10 +134,16 @@ export class FieldMetadataEntity<
     { nullable: true },
   )
   @JoinColumn({ name: 'relationTargetFieldMetadataId' })
-  relationTargetFieldMetadata: IsRelationType<Relation<FieldMetadataEntity>, T>;
+  relationTargetFieldMetadata: AssignTypeIfIsRelationFieldMetadataType<
+    Relation<FieldMetadataEntity>,
+    T
+  >;
 
   @Column({ nullable: true, type: 'uuid' })
-  relationTargetObjectMetadataId: IsRelationType<string, T>;
+  relationTargetObjectMetadataId: AssignTypeIfIsRelationFieldMetadataType<
+    string,
+    T
+  >;
 
   @ManyToOne(
     () => ObjectMetadataEntity,
@@ -148,7 +152,7 @@ export class FieldMetadataEntity<
     { onDelete: 'CASCADE', nullable: true },
   )
   @JoinColumn({ name: 'relationTargetObjectMetadataId' })
-  relationTargetObjectMetadata: IsRelationType<
+  relationTargetObjectMetadata: AssignTypeIfIsRelationFieldMetadataType<
     Relation<ObjectMetadataEntity>,
     T
   >;

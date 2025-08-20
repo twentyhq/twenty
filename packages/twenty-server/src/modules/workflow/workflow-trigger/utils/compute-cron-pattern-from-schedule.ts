@@ -5,7 +5,7 @@ import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { WorkflowCronTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { type WorkflowCronTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 const validatePattern = (pattern: string) => {
   const cronValidator = cron(pattern);

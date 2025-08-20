@@ -1,18 +1,19 @@
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/currentStepFiltersComponentState';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { StepFilter, StepFilterGroup } from 'twenty-shared/types';
+import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useUpsertStepFilterSettings = () => {
-  const currentStepFilterGroupsCallbackState =
-    useRecoilComponentCallbackStateV2(currentStepFilterGroupsComponentState);
+  const currentStepFilterGroupsCallbackState = useRecoilComponentCallbackState(
+    currentStepFilterGroupsComponentState,
+  );
 
-  const currentStepFiltersCallbackState = useRecoilComponentCallbackStateV2(
+  const currentStepFiltersCallbackState = useRecoilComponentCallbackState(
     currentStepFiltersComponentState,
   );
   const { onFilterSettingsUpdate } = useContext(WorkflowStepFilterContext);

@@ -1,8 +1,8 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
 
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getRecordNodeFromRecord } from '../getRecordNodeFromRecord';
 
 const peopleMock = getPeopleRecordConnectionMock();

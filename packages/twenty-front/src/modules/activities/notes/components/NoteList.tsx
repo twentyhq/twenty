@@ -1,14 +1,14 @@
-import { ReactElement } from 'react';
+import { type ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { Note } from '@/activities/types/Note';
+import { type Note } from '@/activities/types/Note';
 
 import { NoteCard } from './NoteCard';
 
 type NoteListProps = {
   title: string;
   notes: Note[];
-  button?: ReactElement | false;
+  button?: ReactElement | false | null;
 };
 
 const StyledContainer = styled.div`

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class TransferMetadataToCore1743085000788 implements MigrationInterface {
   name = 'TransferMetadataToCore1743085000788';

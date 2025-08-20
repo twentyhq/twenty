@@ -1,24 +1,24 @@
-import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/states/recordFieldInputIsFieldInErrorComponentState';
-import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionComponentState';
-import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/states/recordFieldInputLayoutDirectionLoadingComponentState';
+import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
+import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
+import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import {
-  MiddlewareState,
   autoUpdate,
   flip,
   offset,
   useFloating,
+  type MiddlewareState,
 } from '@floating-ui/react';
-import { ReactElement, useContext } from 'react';
+import { useContext, type ReactElement } from 'react';
 
 const StyledEditableCellEditModeContainer = styled.div<{
   isFieldInputOnly: boolean;
@@ -47,19 +47,19 @@ export type RecordTableCellEditModeProps = {
 export const RecordTableCellEditMode = ({
   children,
 }: RecordTableCellEditModeProps) => {
-  const isFieldInError = useRecoilComponentValueV2(
+  const isFieldInError = useRecoilComponentValue(
     recordFieldInputIsFieldInErrorComponentState,
   );
 
   const recordFieldComponentInstanceId = useAvailableComponentInstanceIdOrThrow(
     RecordFieldComponentInstanceContext,
   );
-  const setFieldInputLayoutDirection = useSetRecoilComponentStateV2(
+  const setFieldInputLayoutDirection = useSetRecoilComponentState(
     recordFieldInputLayoutDirectionComponentState,
     recordFieldComponentInstanceId,
   );
 
-  const setFieldInputLayoutDirectionLoading = useSetRecoilComponentStateV2(
+  const setFieldInputLayoutDirectionLoading = useSetRecoilComponentState(
     recordFieldInputLayoutDirectionLoadingComponentState,
     recordFieldComponentInstanceId,
   );

@@ -2,10 +2,10 @@ import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath'
 import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
 import { useGetOneServerlessFunction } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunction';
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
-import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { serverlessFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/serverlessFunctionTestDataFamilyState';
+import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { FindOneServerlessFunctionSourceCodeQuery } from '~/generated-metadata/graphql';
+import { type FindOneServerlessFunctionSourceCodeQuery } from '~/generated-metadata/graphql';
 
 export type ServerlessFunctionNewFormValues = {
   name: string;

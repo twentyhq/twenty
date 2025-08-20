@@ -1,4 +1,4 @@
-import { ReactNode, useContext } from 'react';
+import { type ReactNode, useContext } from 'react';
 import { createPortal } from 'react-dom';
 
 import { ActionDisplay } from '@/action-menu/actions/display/components/ActionDisplay';
@@ -8,8 +8,8 @@ import { useCloseActionMenu } from '@/action-menu/hooks/useCloseActionMenu';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { ButtonAccent } from 'twenty-ui/input';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { type ButtonAccent } from 'twenty-ui/input';
 
 export type ActionModalProps = {
   title: string;
@@ -49,7 +49,7 @@ export const ActionModal = ({
 
   const modalId = `${actionConfig?.key}-action-modal-${actionMenuType}`;
 
-  const isModalOpened = useRecoilComponentValueV2(
+  const isModalOpened = useRecoilComponentValue(
     isModalOpenedComponentState,
     modalId,
   );

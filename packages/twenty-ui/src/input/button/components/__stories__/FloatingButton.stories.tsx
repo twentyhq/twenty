@@ -1,11 +1,11 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { IconSearch } from '@ui/display';
 import {
   CatalogDecorator,
-  CatalogStory,
+  type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { FloatingButton, FloatingButtonSize } from '../FloatingButton';
+import { FloatingButton, type FloatingButtonSize } from '../FloatingButton';
 
 const meta: Meta<typeof FloatingButton> = {
   title: 'UI/Input/Button/FloatingButton',

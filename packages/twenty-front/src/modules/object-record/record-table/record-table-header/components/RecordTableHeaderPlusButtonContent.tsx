@@ -2,18 +2,18 @@ import { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useLingui } from '@lingui/react/macro';
 import { IconSettings, useIcons } from 'twenty-ui/display';
 import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
@@ -21,21 +21,23 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { t } = useLingui();
-  const { objectMetadataItem } = useRecordTableContextOrThrow();
+  const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
 
   const { closeDropdown } = useCloseDropdown();
 
-  const hiddenTableColumns = useRecoilComponentValueV2(
+  const hiddenTableColumns = useRecoilComponentValue(
     hiddenTableColumnsComponentSelector,
   );
 
   const { getIcon } = useIcons();
-  const { handleColumnVisibilityChange } = useTableColumns();
+  const { handleColumnVisibilityChange } = useTableColumns({
+    recordTableId,
+  });
 
   const handleAddColumn = useCallback(
     (column: ColumnDefinition<FieldMetadata>) => {
       closeDropdown();
-      handleColumnVisibilityChange(column);
+      handleColumnVisibilityChange({ ...column, isVisible: true });
     },
     [handleColumnVisibilityChange, closeDropdown],
   );

@@ -1,9 +1,9 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ColorSample, ColorSampleProps } from '@ui/display';
+import { ColorSample, type ColorSampleProps } from '@ui/display';
 import {
   LightIconButton,
-  LightIconButtonProps,
+  type LightIconButtonProps,
 } from '@ui/input/button/components/LightIconButton';
 
 type ColorPickerButtonProps = Pick<ColorSampleProps, 'colorName'> &

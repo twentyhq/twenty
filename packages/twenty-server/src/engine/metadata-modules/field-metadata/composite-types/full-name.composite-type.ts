@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
+import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 
 export const fullNameCompositeType: CompositeType = {
   type: FieldMetadataType.FULL_NAME,
@@ -10,14 +10,14 @@ export const fullNameCompositeType: CompositeType = {
       type: FieldMetadataType.TEXT,
       hidden: false,
       isRequired: false,
-      isIncludedInUniqueConstraint: true,
+      isIncludedInUniqueConstraint: false,
     },
     {
       name: 'lastName',
       type: FieldMetadataType.TEXT,
       hidden: false,
       isRequired: false,
-      isIncludedInUniqueConstraint: true,
+      isIncludedInUniqueConstraint: false,
     },
   ],
 };

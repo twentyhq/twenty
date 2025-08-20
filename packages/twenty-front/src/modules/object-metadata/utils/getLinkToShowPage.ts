@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const getLinkToShowPage = (
   objectNameSingular: string,

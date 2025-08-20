@@ -1,25 +1,26 @@
 import { useState } from 'react';
-import { ReadonlyDeep } from 'type-fest';
+import { type ReadonlyDeep } from 'type-fest';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
-import { getSubFieldOptionKey } from '@/object-record/spreadsheet-import/utils/getSubFieldOptionKey';
 import { MatchColumnSelectFieldSelectDropdownContent } from '@/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent';
 import { MatchColumnSelectSubFieldSelectDropdownContent } from '@/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent';
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
+import { type SpreadsheetImportFieldOption } from '@/spreadsheet-import/types/SpreadsheetImportFieldOption';
+import { hasNestedFields } from '@/spreadsheet-import/utils/spreadsheetImportHasNestedFields';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 
 interface MatchColumnToFieldSelectProps {
   columnIndex: string;
   onChange: (value: ReadonlyDeep<SelectOption> | null) => void;
   value?: ReadonlyDeep<SelectOption>;
-  options: readonly ReadonlyDeep<SelectOption>[];
+  options: readonly Readonly<SpreadsheetImportFieldOption>[];
   suggestedOptions: readonly ReadonlyDeep<SelectOption>[];
   placeholder?: string;
 }
@@ -37,7 +38,7 @@ export const MatchColumnToFieldSelect = ({
   placeholder,
   columnIndex,
 }: MatchColumnToFieldSelectProps) => {
-  const dropdownId = `match-column-select-v2-dropdown-${columnIndex}`;
+  const dropdownId = `match-column-select-dropdown-${columnIndex}`;
   const { closeDropdown } = useCloseDropdown();
   const [selectedFieldMetadataItem, setSelectedFieldMetadataItem] =
     useState<FieldMetadataItem | null>(null);
@@ -70,12 +71,7 @@ export const MatchColumnToFieldSelect = ({
     }
 
     const correspondingOption = options.find((option) => {
-      const optionKey = getSubFieldOptionKey(
-        selectedFieldMetadataItem,
-        subFieldNameSelected,
-      );
-
-      return option.value === optionKey;
+      return option.value === subFieldNameSelected;
     });
 
     if (isDefined(correspondingOption)) {
@@ -112,9 +108,9 @@ export const MatchColumnToFieldSelect = ({
     closeDropdown(dropdownId);
   };
 
-  const shouldShowSubField =
+  const shouldShowNestedField =
     isDefined(selectedFieldMetadataItem) &&
-    isCompositeFieldType(selectedFieldMetadataItem.type);
+    hasNestedFields(selectedFieldMetadataItem);
 
   return (
     <Dropdown
@@ -129,7 +125,7 @@ export const MatchColumnToFieldSelect = ({
         />
       }
       dropdownComponents={
-        shouldShowSubField ? (
+        shouldShowNestedField ? (
           <MatchColumnSelectSubFieldSelectDropdownContent
             fieldMetadataItem={selectedFieldMetadataItem}
             onSubFieldSelect={handleSubFieldSelect}

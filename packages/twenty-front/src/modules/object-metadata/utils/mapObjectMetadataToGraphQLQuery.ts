@@ -1,23 +1,26 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
 import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueried';
-import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ObjectPermission } from '~/generated-metadata/graphql';
 
 type MapObjectMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: Pick<
     ObjectMetadataItem,
-    'nameSingular' | 'fields' | 'id'
+    'nameSingular' | 'fields' | 'id' | 'readableFields'
   >;
   recordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
   isRootLevel?: boolean;
-  objectPermissionsByObjectMetadataId: Record<string, ObjectPermission>;
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >;
+  isFieldsPermissionsEnabled?: boolean;
 };
 
 export const mapObjectMetadataToGraphQLQuery = ({
@@ -27,6 +30,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
   computeReferences = false,
   isRootLevel = true,
   objectPermissionsByObjectMetadataId,
+  isFieldsPermissionsEnabled = false,
 }: MapObjectMetadataToGraphQLQueryArgs): string => {
   if (
     !isRootLevel &&
@@ -42,7 +46,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
     }
   }
 
-  const manyToOneRelationFields = objectMetadataItem?.fields
+  const manyToOneRelationFields = objectMetadataItem?.readableFields
     .filter((field) => field.isActive)
     .filter((field) => field.type === FieldMetadataType.RELATION)
     .filter((field) => isDefined(field.settings?.joinColumnName));
@@ -54,7 +58,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
     }));
 
   const gqlFieldWithFieldMetadataThatCouldBeQueried = [
-    ...objectMetadataItem.fields
+    ...objectMetadataItem.readableFields
       .filter((fieldMetadata) => fieldMetadata.isActive)
       .map((fieldMetadata) => ({
         gqlField: fieldMetadata.name,
@@ -99,6 +103,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
         relationRecordGqlFields,
         computeReferences,
         objectPermissionsByObjectMetadataId,
+        isFieldsPermissionsEnabled,
       });
     })
     .filter((field) => field !== '')

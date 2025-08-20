@@ -9,10 +9,9 @@ import { CommandMenuMessageThreadIntermediaryMessages } from '@/command-menu/pag
 import { useEmailThreadInCommandMenu } from '@/command-menu/pages/message-thread/hooks/useEmailThreadInCommandMenu';
 import { messageThreadComponentState } from '@/command-menu/pages/message-thread/states/messageThreadComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { IconArrowBackUp } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 
@@ -49,7 +48,7 @@ const ALLOWED_REPLY_PROVIDERS = [
 ];
 
 export const CommandMenuMessageThreadPage = () => {
-  const setMessageThread = useSetRecoilComponentStateV2(
+  const setMessageThread = useSetRecoilComponentState(
     messageThreadComponentState,
   );
 

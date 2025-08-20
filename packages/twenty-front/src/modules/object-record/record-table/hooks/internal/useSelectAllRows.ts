@@ -2,26 +2,33 @@ import { useRecoilCallback } from 'recoil';
 
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 
 export const useSelectAllRows = (recordTableId?: string) => {
-  const allRowsSelectedStatusSelector = useRecoilComponentCallbackStateV2(
+  const hasUserSelectedAllRowsCallbackState = useRecoilComponentCallbackState(
+    hasUserSelectedAllRowsComponentState,
+    recordTableId,
+  );
+
+  const allRowsSelectedStatusSelector = useRecoilComponentCallbackState(
     allRowsSelectedStatusComponentSelector,
     recordTableId,
   );
-  const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
+
+  const isRowSelectedFamilyState = useRecoilComponentCallbackState(
     isRowSelectedComponentFamilyState,
     recordTableId,
   );
-  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackStateV2(
+  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackState(
     recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
 
-  const resetTableRowSelection = useResetTableRowSelection(recordTableId);
+  const { resetTableRowSelection } = useResetTableRowSelection(recordTableId);
 
   const selectAllRows = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -47,12 +54,15 @@ export const useSelectAllRows = (recordTableId?: string) => {
 
           set(isRowSelectedFamilyState(recordId), isSelected);
         }
+
+        set(hasUserSelectedAllRowsCallbackState, true);
       },
     [
       allRowsSelectedStatusSelector,
       recordIndexAllRecordIdsSelector,
       resetTableRowSelection,
       isRowSelectedFamilyState,
+      hasUserSelectedAllRowsCallbackState,
     ],
   );
 

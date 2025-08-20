@@ -1,7 +1,6 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { expect } from '@storybook/jest';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import type { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/testing-library';
+import { expect, within } from '@storybook/test';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { WorkflowFieldsMultiSelect } from '../WorkflowEditUpdateEventFieldsMultiSelect';
 
@@ -16,6 +15,51 @@ const meta: Meta<typeof WorkflowFieldsMultiSelect> = {
 export default meta;
 type Story = StoryObj<typeof WorkflowFieldsMultiSelect>;
 
+const fields = [
+  {
+    id: '1',
+    name: 'name',
+    label: 'Name',
+    type: FieldMetadataType.TEXT,
+    description: 'Company name',
+    isCustom: false,
+    isActive: true,
+    isSystem: false,
+    isUIReadOnly: false,
+    isNullable: false,
+    createdAt: '',
+    updatedAt: '',
+  },
+  {
+    id: '2',
+    name: 'domainName',
+    label: 'Domain Name',
+    type: FieldMetadataType.TEXT,
+    description: 'Company domain name',
+    isCustom: false,
+    isActive: true,
+    isSystem: false,
+    isUIReadOnly: false,
+    isNullable: true,
+    createdAt: '',
+    updatedAt: '',
+  },
+  {
+    id: '3',
+    name: 'employees',
+    label: 'Employees',
+    type: FieldMetadataType.NUMBER,
+    description: 'Number of employees',
+    isCustom: false,
+    isActive: true,
+    isSystem: false,
+    isUIReadOnly: false,
+    isNullable: true,
+    createdAt: '',
+    updatedAt: '',
+  },
+];
+
 const mockObjectMetadataItem: ObjectMetadataItem = {
   id: '1',
   nameSingular: 'company',
@@ -25,6 +69,7 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   description: 'A company',
   icon: 'IconBuilding',
   isSystem: false,
+  isUIReadOnly: false,
   isCustom: false,
   isActive: true,
   createdAt: '',
@@ -34,47 +79,9 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   isSearchable: true,
   labelIdentifierFieldMetadataId: '1',
   indexMetadatas: [],
-  fields: [
-    {
-      id: '1',
-      name: 'name',
-      label: 'Name',
-      type: FieldMetadataType.TEXT,
-      description: 'Company name',
-      isCustom: false,
-      isActive: true,
-      isSystem: false,
-      isNullable: false,
-      createdAt: '',
-      updatedAt: '',
-    },
-    {
-      id: '2',
-      name: 'domainName',
-      label: 'Domain Name',
-      type: FieldMetadataType.TEXT,
-      description: 'Company domain name',
-      isCustom: false,
-      isActive: true,
-      isSystem: false,
-      isNullable: true,
-      createdAt: '',
-      updatedAt: '',
-    },
-    {
-      id: '3',
-      name: 'employees',
-      label: 'Employees',
-      type: FieldMetadataType.NUMBER,
-      description: 'Number of employees',
-      isCustom: false,
-      isActive: true,
-      isSystem: false,
-      isNullable: true,
-      createdAt: '',
-      updatedAt: '',
-    },
-  ],
+  fields: fields,
+  readableFields: fields,
+  updatableFields: fields,
 };
 
 export const Default: Story = {

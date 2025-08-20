@@ -1,8 +1,8 @@
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { vectorSearchInputComponentState } from '@/views/states/vectorSearchInputComponentState';
 
 export const useClearVectorSearchInput = () => {
-  const setVectorSearchInputValue = useSetRecoilComponentStateV2(
+  const setVectorSearchInputValue = useSetRecoilComponentState(
     vectorSearchInputComponentState,
   );
 

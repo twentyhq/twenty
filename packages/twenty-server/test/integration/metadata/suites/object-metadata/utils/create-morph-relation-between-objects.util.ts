@@ -1,10 +1,11 @@
-import { CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
+import { type CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { type RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export const createMorphRelationBetweenObjects = async ({
   objectMetadataId,
@@ -51,13 +52,6 @@ export const createMorphRelationBetweenObjects = async ({
     ],
   };
 
-  // TODO: add morphRelations to the query once available
-  // morphRelations {
-  //   type
-  //   targetFieldMetadata {
-  //     id
-  //   }
-  // }
   const {
     data: { createOneField: createdFieldPerson },
   } = await createOneFieldMetadata({
@@ -72,9 +66,26 @@ export const createMorphRelationBetweenObjects = async ({
               id
               nameSingular
             }
+            morphRelations {
+              type
+              targetFieldMetadata {
+                id
+              }
+              targetObjectMetadata {
+                id
+              }
+              sourceFieldMetadata {
+                id
+              }
+              sourceObjectMetadata {
+                id
+              }
+            }
           `,
     expectToFail: false,
   });
 
-  return createdFieldPerson as FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>;
+  return createdFieldPerson as FieldMetadataEntity<FieldMetadataType.MORPH_RELATION> & {
+    morphRelations: RelationDTO[];
+  };
 };

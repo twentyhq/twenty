@@ -1,10 +1,10 @@
 import { i18n } from '@lingui/core';
 import { isNonEmptyString } from '@sniptt/guards';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
-import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 
 export const resolveObjectMetadataStandardOverride = (
   objectMetadata: Pick<
@@ -19,6 +19,8 @@ export const resolveObjectMetadataStandardOverride = (
   labelKey: 'labelPlural' | 'labelSingular' | 'description' | 'icon',
   locale: keyof typeof APP_LOCALES | undefined,
 ): string => {
+  const safeLocale = locale ?? SOURCE_LOCALE;
+
   if (objectMetadata.isCustom) {
     return objectMetadata[labelKey] ?? '';
   }
@@ -32,11 +34,10 @@ export const resolveObjectMetadataStandardOverride = (
 
   if (
     isDefined(objectMetadata.standardOverrides?.translations) &&
-    isDefined(locale) &&
     labelKey !== 'icon'
   ) {
     const translationValue =
-      objectMetadata.standardOverrides.translations[locale]?.[labelKey];
+      objectMetadata.standardOverrides.translations[safeLocale]?.[labelKey];
 
     if (isDefined(translationValue)) {
       return translationValue;
@@ -44,7 +45,7 @@ export const resolveObjectMetadataStandardOverride = (
   }
 
   if (
-    locale === SOURCE_LOCALE &&
+    safeLocale === SOURCE_LOCALE &&
     isNonEmptyString(objectMetadata.standardOverrides?.[labelKey])
   ) {
     return objectMetadata.standardOverrides[labelKey] ?? '';

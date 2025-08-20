@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SettingPermissionType } from '~/generated/graphql';
+import { PermissionFlagType } from '~/generated/graphql';
 
 const SettingsApiKeys = lazy(() =>
   import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
@@ -143,6 +143,18 @@ const SettingsServerlessFunctionsNew = lazy(() =>
 const SettingsWorkspace = lazy(() =>
   import('~/pages/settings/SettingsWorkspace').then((module) => ({
     default: module.SettingsWorkspace,
+  })),
+);
+
+const SettingsAI = lazy(() =>
+  import('~/pages/settings/ai/SettingsAI').then((module) => ({
+    default: module.SettingsAI,
+  })),
+);
+
+const SettingsAgentForm = lazy(() =>
+  import('~/pages/settings/ai/SettingsAgentForm').then((module) => ({
+    default: module.SettingsAgentForm,
   })),
 );
 
@@ -405,18 +417,27 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.WORKSPACE}
+            settingsPermission={PermissionFlagType.WORKSPACE}
           />
         }
       >
         <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
+        <Route path={SettingsPath.AI} element={<SettingsAI />} />
+        <Route
+          path={SettingsPath.AINewAgent}
+          element={<SettingsAgentForm mode="create" />}
+        />
+        <Route
+          path={SettingsPath.AIAgentDetail}
+          element={<SettingsAgentForm mode="edit" />}
+        />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
         <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
       </Route>
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.WORKSPACE_MEMBERS}
+            settingsPermission={PermissionFlagType.WORKSPACE_MEMBERS}
           />
         }
       >
@@ -428,7 +449,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.DATA_MODEL}
+            settingsPermission={PermissionFlagType.DATA_MODEL}
           />
         }
       >
@@ -458,7 +479,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.ROLES}
+            settingsPermission={PermissionFlagType.ROLES}
           />
         }
       >
@@ -480,7 +501,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.API_KEYS_AND_WEBHOOKS}
+            settingsPermission={PermissionFlagType.API_KEYS_AND_WEBHOOKS}
           />
         }
       >
@@ -555,7 +576,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.SECURITY}
+            settingsPermission={PermissionFlagType.SECURITY}
           />
         }
       >
@@ -587,7 +608,7 @@ export const SettingsRoutes = ({
       <Route
         element={
           <SettingsProtectedRouteWrapper
-            settingsPermission={SettingPermissionType.WORKSPACE}
+            settingsPermission={PermissionFlagType.WORKSPACE}
           />
         }
       >

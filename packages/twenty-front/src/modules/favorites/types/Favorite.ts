@@ -1,4 +1,4 @@
-import { AvatarType } from 'twenty-ui/display';
+import { type AvatarType } from 'twenty-ui/display';
 export type Favorite = {
   id: string;
   position: number;

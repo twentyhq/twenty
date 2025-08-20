@@ -1,12 +1,12 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { generateFakeField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field';
+import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
+import { generateFakeRecordField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-record-field';
 import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-object-record-fields';
 import { shouldGenerateFieldFakeValue } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/should-generate-field-fake-value';
-import { mockObjectMetadataItemsWithFieldMaps } from 'src/engine/core-modules/__mocks__/mockObjectMetadataItemsWithFieldMaps';
 
 jest.mock(
-  'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-field',
+  'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-record-field',
 );
 jest.mock(
   'src/modules/workflow/workflow-builder/workflow-schema/utils/should-generate-field-fake-value',
@@ -42,7 +42,7 @@ describe('generateObjectRecordFields', () => {
       (field) => field.type !== FieldMetadataType.RELATION,
     );
 
-    (generateFakeField as jest.Mock).mockImplementation(
+    (generateFakeRecordField as jest.Mock).mockImplementation(
       ({ type, label, icon }) => ({
         type,
         label,
@@ -69,7 +69,7 @@ describe('generateObjectRecordFields', () => {
     });
 
     expect(shouldGenerateFieldFakeValue).toHaveBeenCalledTimes(2);
-    expect(generateFakeField).toHaveBeenCalledTimes(2);
+    expect(generateFakeRecordField).toHaveBeenCalledTimes(2);
   });
 
   it('should return empty object when no valid fields', () => {
@@ -79,6 +79,6 @@ describe('generateObjectRecordFields', () => {
 
     expect(result).toEqual({});
     expect(shouldGenerateFieldFakeValue).toHaveBeenCalledTimes(2);
-    expect(generateFakeField).not.toHaveBeenCalled();
+    expect(generateFakeRecordField).not.toHaveBeenCalled();
   });
 });

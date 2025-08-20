@@ -1,6 +1,11 @@
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { msg } from '@lingui/core/macro';
 
-export const customAllView = (objectMetadataItem: ObjectMetadataEntity) => {
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+
+export const customAllView = (
+  objectMetadataItem: ObjectMetadataEntity,
+  useCoreNaming = false,
+) => {
   const nameField = objectMetadataItem.fields.find(
     (field) => field.name === 'name',
   );
@@ -16,12 +21,15 @@ export const customAllView = (objectMetadataItem: ObjectMetadataEntity) => {
   }
 
   return {
-    name: `All ${objectMetadataItem.namePlural}`,
+    name: useCoreNaming
+      ? msg`All {objectLabelPlural}`
+      : `All ${objectMetadataItem.labelPlural}`,
     objectMetadataId: objectMetadataItem.id,
     type: 'table',
     key: 'INDEX',
     position: 0,
     icon: 'IconList',
+    isCustom: false,
     kanbanFieldMetadataId: '',
     filters: [],
     fields: [

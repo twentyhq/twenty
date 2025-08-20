@@ -1,9 +1,9 @@
 import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
-import { createComponentFamilySelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelectorV2';
+import { createComponentFamilySelector } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelector';
 
 export const isSelectedItemIdComponentFamilySelector =
-  createComponentFamilySelectorV2<boolean, string>({
+  createComponentFamilySelector<boolean, string>({
     key: 'isSelectedItemIdComponentFamilySelector',
     componentInstanceContext: SelectableListComponentInstanceContext,
     get:

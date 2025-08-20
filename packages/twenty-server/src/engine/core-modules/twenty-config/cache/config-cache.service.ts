@@ -1,9 +1,9 @@
-import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, type OnModuleDestroy } from '@nestjs/common';
 
 import {
-  ConfigCacheEntry,
-  ConfigKey,
-  ConfigValue,
+  type ConfigCacheEntry,
+  type ConfigKey,
+  type ConfigValue,
 } from './interfaces/config-cache-entry.interface';
 
 @Injectable()

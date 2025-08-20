@@ -5,17 +5,16 @@ import { calendarBookingPageIdState } from '@/client-config/states/calendarBooki
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
 import {
   Controller,
-  SubmitHandler,
+  type SubmitHandler,
   useFieldArray,
   useForm,
 } from 'react-hook-form';
@@ -26,6 +25,7 @@ import { IconCopy, SeparatorLineText } from 'twenty-ui/display';
 import { LightButton, MainButton } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { z } from 'zod';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useCreateWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 
 const StyledAnimatedContainer = styled.div`
@@ -63,7 +63,7 @@ type FormInput = z.infer<typeof validationSchema>;
 
 export const InviteTeam = () => {
   const { t } = useLingui();
-  const theme = useTheme();
+  const { copyToClipboard } = useCopyToClipboard();
   const { enqueueSuccessSnackBar } = useSnackBar();
   const { sendInvitation } = useCreateWorkspaceInvitation();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
@@ -118,14 +118,7 @@ export const InviteTeam = () => {
   const copyInviteLink = () => {
     if (isDefined(currentWorkspace?.inviteHash)) {
       const inviteLink = `${window.location.origin}/invite/${currentWorkspace?.inviteHash}`;
-      navigator.clipboard.writeText(inviteLink);
-      enqueueSuccessSnackBar({
-        message: t`Link copied to clipboard`,
-        options: {
-          icon: <IconCopy size={theme.icon.size.md} />,
-          duration: 2000,
-        },
-      });
+      copyToClipboard(inviteLink, t`Link copied to clipboard`);
     }
   };
 
@@ -188,7 +181,7 @@ export const InviteTeam = () => {
               field: { onChange, onBlur, value },
               fieldState: { error },
             }) => (
-              <TextInputV2
+              <TextInput
                 autoFocus={index === 0}
                 type="email"
                 value={value}

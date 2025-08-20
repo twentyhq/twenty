@@ -1,5 +1,5 @@
-import { ThemeType } from '@ui/theme';
-import { editor } from 'monaco-editor';
+import { type ThemeType } from '@ui/theme';
+import { type editor } from 'monaco-editor';
 
 export const getBaseCodeEditorTheme = ({
   theme,
@@ -27,7 +27,6 @@ export const getBaseCodeEditorTheme = ({
       },
     ],
     colors: {
-      // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
       'editor.background': '#00000000',
       'editorCursor.foreground': theme.font.color.primary,
       'editorLineNumber.foreground': theme.font.color.extraLight,

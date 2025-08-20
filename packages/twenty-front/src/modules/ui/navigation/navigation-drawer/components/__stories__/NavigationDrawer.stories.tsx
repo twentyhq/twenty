@@ -1,6 +1,5 @@
-import { expect } from '@storybook/jest';
-import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { expect, within } from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
@@ -12,8 +11,8 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { PrefetchLoadedDecorator } from '~/testing/decorators/PrefetchLoadedDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';

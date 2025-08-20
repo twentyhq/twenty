@@ -3,23 +3,24 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
 import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroupRecords';
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
-import { GraphQLView } from '@/views/types/GraphQLView';
-import { View } from '@/views/types/View';
-import { ViewGroup } from '@/views/types/ViewGroup';
-import { ViewSort } from '@/views/types/ViewSort';
+import { type GraphQLView } from '@/views/types/GraphQLView';
+import { type View } from '@/views/types/View';
+import { type ViewGroup } from '@/views/types/ViewGroup';
+import { type ViewSort } from '@/views/types/ViewSort';
 import { ViewType } from '@/views/types/ViewType';
 import { duplicateViewFiltersAndViewFilterGroups } from '@/views/utils/duplicateViewFiltersAndViewFilterGroups';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
@@ -31,7 +32,7 @@ import { v4 } from 'uuid';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
-  const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
+  const currentViewIdCallbackState = useRecoilComponentCallbackState(
     contextStoreCurrentViewIdComponentState,
     viewBarComponentId,
   );
@@ -39,6 +40,10 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { createOneRecord } = useCreateOneRecord<View>({
     objectNameSingular: CoreObjectNameSingular.View,
   });
+
+  const anyFieldFilterValue = useRecoilComponentValue(
+    anyFieldFilterValueComponentState,
+  );
 
   const { createViewFieldRecords } = usePersistViewFieldRecords();
 
@@ -57,15 +62,15 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
     fetchPolicy: 'network-only',
   });
 
-  const currentRecordFilterGroups = useRecoilComponentValueV2(
+  const currentRecordFilterGroups = useRecoilComponentValue(
     currentRecordFilterGroupsComponentState,
   );
 
-  const currentRecordSorts = useRecoilComponentValueV2(
+  const currentRecordSorts = useRecoilComponentValue(
     currentRecordSortsComponentState,
   );
 
-  const currentRecordFilters = useRecoilComponentValueV2(
+  const currentRecordFilters = useRecoilComponentValue(
     currentRecordFiltersComponentState,
   );
 
@@ -126,6 +131,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           type: type ?? sourceView.type,
           objectMetadataId: sourceView.objectMetadataId,
           openRecordIn: sourceView.openRecordIn,
+          anyFieldFilterValue: anyFieldFilterValue,
         });
 
         if (isUndefinedOrNull(newView)) {
@@ -209,6 +215,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         set(isPersistingViewFieldsState, false);
       },
     [
+      anyFieldFilterValue,
       currentViewIdCallbackState,
       createOneRecord,
       createViewFieldRecords,

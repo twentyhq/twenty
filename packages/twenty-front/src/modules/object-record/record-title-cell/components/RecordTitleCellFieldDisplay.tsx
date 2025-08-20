@@ -1,9 +1,9 @@
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
-import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
+import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import { RecordTitleCellSingleTextDisplayMode } from '@/object-record/record-title-cell/components/RecordTitleCellTextFieldDisplay';
 import { RecordTitleFullNameFieldDisplay } from '@/object-record/record-title-cell/components/RecordTitleFullNameFieldDisplay';
-import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
+import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { useContext } from 'react';
 
 export const RecordTitleCellFieldDisplay = ({

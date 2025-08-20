@@ -1,5 +1,5 @@
 import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
-import { Role } from '~/generated/graphql';
+import { type Role } from '~/generated/graphql';
 
 export const settingsDraftRoleFamilyState = createFamilyState<Role, string>({
   key: 'settingsDraftRoleFamilyState',
@@ -13,9 +13,11 @@ export const settingsDraftRoleFamilyState = createFamilyState<Role, string>({
     canSoftDeleteAllObjectRecords: false,
     canUpdateAllObjectRecords: false,
     canUpdateAllSettings: false,
+    canAccessAllTools: false,
     isEditable: false,
     workspaceMembers: [],
-    settingPermissions: [],
+    permissionFlags: [],
     objectPermissions: [],
+    fieldPermissions: [],
   },
 });

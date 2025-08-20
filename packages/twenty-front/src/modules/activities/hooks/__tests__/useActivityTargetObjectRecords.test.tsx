@@ -1,17 +1,17 @@
 import { gql, InMemoryCache } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { SnackBarComponentInstanceContextProvider } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarComponentInstanceContextProvider';
+import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const cache = new InMemoryCache();
 
@@ -114,9 +114,11 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <MockedProvider cache={cache}>
       <JestObjectMetadataItemSetter>
-        <SnackBarComponentInstanceContextProvider snackBarComponentInstanceId="snack-bar-manager">
+        <SnackBarComponentInstanceContext.Provider
+          value={{ instanceId: 'snack-bar-manager' }}
+        >
           {children}
-        </SnackBarComponentInstanceContextProvider>
+        </SnackBarComponentInstanceContext.Provider>
       </JestObjectMetadataItemSetter>
     </MockedProvider>
   </RecoilRoot>

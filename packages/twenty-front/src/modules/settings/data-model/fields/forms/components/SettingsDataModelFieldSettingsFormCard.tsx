@@ -2,19 +2,23 @@ import styled from '@emotion/styled';
 import omit from 'lodash.omit';
 import { z } from 'zod';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { settingsDataModelFieldAddressFormSchema } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm';
 import { SettingsDataModelFieldAddressSettingsFormCard } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressSettingsFormCard';
 import { settingsDataModelFieldBooleanFormSchema } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm';
 import { SettingsDataModelFieldBooleanSettingsFormCard } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanSettingsFormCard';
-import { settingsDataModelFieldtextFormSchema } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm';
+import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
+import { settingsDataModelFieldTextFormSchema } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm';
 import { SettingsDataModelFieldTextSettingsFormCard } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextSettingsFormCard';
 import { settingsDataModelFieldCurrencyFormSchema } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
 import { SettingsDataModelFieldCurrencySettingsFormCard } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencySettingsFormCard';
 import { settingsDataModelFieldDateFormSchema } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
 import { SettingsDataModelFieldDateSettingsFormCard } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateSettingsFormCard';
+import { settingsDataModelFieldMorphRelationFormSchema } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm';
+
+import { SettingsDataModelFieldMorphRelationFormCard } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationFormCard';
 import { settingsDataModelFieldNumberFormSchema } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
 import { SettingsDataModelFieldNumberSettingsFormCard } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberSettingsFormCard';
 import { settingsDataModelFieldPhonesFormSchema } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';
@@ -28,9 +32,13 @@ import {
 import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectSettingsFormCard';
 import {
   SettingsDataModelFieldPreviewCard,
-  SettingsDataModelFieldPreviewCardProps,
+  type SettingsDataModelFieldPreviewCardProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+
+const isUniqueFieldFormSchema = z.object({
+  isUnique: z.boolean().nullable().default(false),
+});
 
 const booleanFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.BOOLEAN) })
@@ -42,15 +50,21 @@ const currencyFieldFormSchema = z
 
 const dateFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.DATE) })
-  .merge(settingsDataModelFieldDateFormSchema);
+  .merge(settingsDataModelFieldDateFormSchema)
+  .merge(isUniqueFieldFormSchema);
 
 const dateTimeFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.DATE_TIME) })
-  .merge(settingsDataModelFieldDateFormSchema);
+  .merge(settingsDataModelFieldDateFormSchema)
+  .merge(isUniqueFieldFormSchema);
 
 const relationFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.RELATION) })
   .merge(settingsDataModelFieldRelationFormSchema);
+
+const morphRelationFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.MORPH_RELATION) })
+  .merge(settingsDataModelFieldMorphRelationFormSchema);
 
 const selectFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.SELECT) })
@@ -62,11 +76,13 @@ const multiSelectFieldFormSchema = z
 
 const numberFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.NUMBER) })
-  .merge(settingsDataModelFieldNumberFormSchema);
+  .merge(settingsDataModelFieldNumberFormSchema)
+  .merge(isUniqueFieldFormSchema);
 
 const textFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.TEXT) })
-  .merge(settingsDataModelFieldtextFormSchema);
+  .merge(settingsDataModelFieldTextFormSchema)
+  .merge(isUniqueFieldFormSchema);
 
 const addressFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.ADDRESS) })
@@ -74,27 +90,31 @@ const addressFieldFormSchema = z
 
 const phonesFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.PHONES) })
-  .merge(settingsDataModelFieldPhonesFormSchema);
+  .merge(settingsDataModelFieldPhonesFormSchema)
+  .merge(isUniqueFieldFormSchema);
 
-const otherFieldsFormSchema = z.object({
-  type: z.enum(
-    Object.keys(
-      omit(SETTINGS_FIELD_TYPE_CONFIGS, [
-        FieldMetadataType.BOOLEAN,
-        FieldMetadataType.CURRENCY,
-        FieldMetadataType.RELATION,
-        FieldMetadataType.SELECT,
-        FieldMetadataType.MULTI_SELECT,
-        FieldMetadataType.DATE,
-        FieldMetadataType.DATE_TIME,
-        FieldMetadataType.NUMBER,
-        FieldMetadataType.ADDRESS,
-        FieldMetadataType.PHONES,
-        FieldMetadataType.TEXT,
-      ]),
-    ) as [FieldMetadataType, ...FieldMetadataType[]],
-  ),
-});
+const otherFieldsFormSchema = z
+  .object({
+    type: z.enum(
+      Object.keys(
+        omit(SETTINGS_FIELD_TYPE_CONFIGS, [
+          FieldMetadataType.BOOLEAN,
+          FieldMetadataType.CURRENCY,
+          FieldMetadataType.RELATION,
+          FieldMetadataType.MORPH_RELATION,
+          FieldMetadataType.SELECT,
+          FieldMetadataType.MULTI_SELECT,
+          FieldMetadataType.DATE,
+          FieldMetadataType.DATE_TIME,
+          FieldMetadataType.NUMBER,
+          FieldMetadataType.ADDRESS,
+          FieldMetadataType.PHONES,
+          FieldMetadataType.TEXT,
+        ]),
+      ) as [FieldMetadataType, ...FieldMetadataType[]],
+    ),
+  })
+  .merge(isUniqueFieldFormSchema);
 
 export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
   'type',
@@ -104,6 +124,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     dateFieldFormSchema,
     dateTimeFieldFormSchema,
     relationFieldFormSchema,
+    morphRelationFieldFormSchema,
     selectFieldFormSchema,
     multiSelectFieldFormSchema,
     numberFieldFormSchema,
@@ -142,8 +163,10 @@ const previewableTypes = [
   FieldMetadataType.RATING,
   FieldMetadataType.RAW_JSON,
   FieldMetadataType.RELATION,
+  FieldMetadataType.MORPH_RELATION,
   FieldMetadataType.SELECT,
   FieldMetadataType.TEXT,
+  FieldMetadataType.UUID,
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({
@@ -187,6 +210,15 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.RELATION) {
     return (
       <SettingsDataModelFieldRelationSettingsFormCard
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
+
+  if (fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION) {
+    return (
+      <SettingsDataModelFieldMorphRelationFormCard
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />
@@ -245,6 +277,12 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     <SettingsDataModelPreviewFormCard
       preview={
         <StyledFieldPreviewCard
+          fieldMetadataItem={fieldMetadataItem}
+          objectMetadataItem={objectMetadataItem}
+        />
+      }
+      form={
+        <SettingsDataModelFieldIsUniqueForm
           fieldMetadataItem={fieldMetadataItem}
           objectMetadataItem={objectMetadataItem}
         />

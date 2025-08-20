@@ -1,10 +1,10 @@
 import { SubMatchingSelectRowLeftSelect } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectRowLeftSelect';
 import { SubMatchingSelectRowRightDropdown } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectRowRightDropdown';
 import {
-  SpreadsheetMatchedSelectColumn,
-  SpreadsheetMatchedSelectOptionsColumn,
+  type SpreadsheetMatchedSelectColumn,
+  type SpreadsheetMatchedSelectOptionsColumn,
 } from '@/spreadsheet-import/types/SpreadsheetColumn';
-import { SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
+import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 import styled from '@emotion/styled';
 
 const StyledRowContainer = styled.div`
@@ -15,23 +15,23 @@ const StyledRowContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-interface SubMatchingSelectRowProps<T> {
-  option: SpreadsheetMatchedOptions<T> | Partial<SpreadsheetMatchedOptions<T>>;
+interface SubMatchingSelectRowProps {
+  option: SpreadsheetMatchedOptions | Partial<SpreadsheetMatchedOptions>;
   column:
-    | SpreadsheetMatchedSelectColumn<T>
-    | SpreadsheetMatchedSelectOptionsColumn<T>;
-  onSubChange: (val: T, index: number, option: string) => void;
+    | SpreadsheetMatchedSelectColumn
+    | SpreadsheetMatchedSelectOptionsColumn;
+  onSubChange: (val: string, index: number, option: string) => void;
   placeholder: string;
   selectedOption?:
-    | SpreadsheetMatchedOptions<T>
-    | Partial<SpreadsheetMatchedOptions<T>>;
+    | SpreadsheetMatchedOptions
+    | Partial<SpreadsheetMatchedOptions>;
 }
-export const SubMatchingSelectRow = <T extends string>({
+export const SubMatchingSelectRow = ({
   option,
   column,
   onSubChange,
   placeholder,
-}: SubMatchingSelectRowProps<T>) => {
+}: SubMatchingSelectRowProps) => {
   return (
     <StyledRowContainer>
       <SubMatchingSelectRowLeftSelect option={option} />

@@ -1,6 +1,6 @@
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getSelectFieldPreviewValue } from '../getSelectFieldPreviewValue';
 
 const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(

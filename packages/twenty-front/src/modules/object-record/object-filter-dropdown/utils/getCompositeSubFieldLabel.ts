@@ -1,5 +1,5 @@
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
-import { CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
+import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 
 export const getCompositeSubFieldLabel = (
   compositeFieldType: CompositeFieldType,

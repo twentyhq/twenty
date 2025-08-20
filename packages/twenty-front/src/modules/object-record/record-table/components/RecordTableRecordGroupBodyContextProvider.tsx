@@ -5,13 +5,13 @@ import { useRecordTableMoveFocusedCell } from '@/object-record/record-table/hook
 import { useCloseRecordTableCellInGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellInGroup';
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
 import {
-  OpenTableCellArgs,
-  useOpenRecordTableCellV2,
-} from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+  type OpenTableCellArgs,
+  useOpenRecordTableCell,
+} from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { useTriggerActionMenuDropdown } from '@/object-record/record-table/record-table-cell/hooks/useTriggerActionMenuDropdown';
-import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
-import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
-import { ReactNode } from 'react';
+import { type MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
+import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { type ReactNode } from 'react';
 
 type RecordTableRecordGroupBodyContextProviderProps = {
   recordGroupId: string;
@@ -23,7 +23,7 @@ export const RecordTableRecordGroupBodyContextProvider = ({
 }: RecordTableRecordGroupBodyContextProviderProps) => {
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const { openTableCell } = useOpenRecordTableCellV2(recordTableId);
+  const { openTableCell } = useOpenRecordTableCell(recordTableId);
 
   const handleOpenTableCell = (args: OpenTableCellArgs) => {
     openTableCell(args);

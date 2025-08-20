@@ -1,24 +1,16 @@
 import { useEffect } from 'react';
 
-import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { focusedRecordBoardCardIndexesComponentState } from '@/object-record/record-board/states/focusedRecordBoardCardIndexesComponentState';
 import { isRecordBoardCardFocusActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCardFocusActiveComponentState';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const RecordBoardScrollToFocusedCardEffect = () => {
-  const recordBoardId = useAvailableScopeIdOrThrow(
-    RecordBoardScopeInternalContext,
-  );
-
-  const focusedCardIndexes = useRecoilComponentValueV2(
+  const focusedCardIndexes = useRecoilComponentValue(
     focusedRecordBoardCardIndexesComponentState,
-    recordBoardId,
   );
 
-  const isFocusActive = useRecoilComponentValueV2(
+  const isFocusActive = useRecoilComponentValue(
     isRecordBoardCardFocusActiveComponentState,
-    recordBoardId,
   );
 
   useEffect(() => {

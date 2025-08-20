@@ -1,7 +1,7 @@
 import { StepStatus } from 'twenty-shared/workflow';
 
 import {
-  WorkflowAction,
+  type WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.util';

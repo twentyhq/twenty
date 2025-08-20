@@ -1,8 +1,8 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconCheck, IconChevronRight, IconComponent } from '@ui/display';
-import { ReactNode } from 'react';
+import { IconCheck, IconChevronRight, type IconComponent } from '@ui/display';
+import { type ReactNode } from 'react';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledMenuItemBase } from '../internals/components/StyledMenuItemBase';
 
@@ -24,7 +24,7 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
       `;
     } else if (focused === true) {
       return css`
-        background: ${theme.background.transparent.light};
+        background: transparent;
       `;
     }
   }}

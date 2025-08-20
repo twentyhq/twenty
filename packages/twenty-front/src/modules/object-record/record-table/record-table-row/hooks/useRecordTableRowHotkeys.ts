@@ -1,9 +1,10 @@
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
 import { useActiveRecordTableRow } from '@/object-record/record-table/hooks/useActiveRecordTableRow';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { getRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/utils/getRecordTableCellFocusId';
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
@@ -12,8 +13,8 @@ import { isRecordTableRowFocusActiveComponentState } from '@/object-record/recor
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { Key } from 'ts-key-enum';
 
 export const useRecordTableRowHotkeys = (focusId: string) => {
@@ -26,7 +27,7 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
 
   const { activateRecordTableRow } = useActiveRecordTableRow();
 
-  const setIsRowFocusActive = useSetRecoilComponentStateV2(
+  const setIsRowFocusActive = useSetRecoilComponentState(
     isRecordTableRowFocusActiveComponentState,
   );
 
@@ -81,13 +82,11 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     });
   };
 
-  const { resetTableRowSelection } = useRecordTable({
-    recordTableId,
-  });
+  const { resetTableRowSelection } = useResetTableRowSelection(recordTableId);
 
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
 
-  const isAtLeastOneRecordSelected = useRecoilComponentValueV2(
+  const isAtLeastOneRecordSelected = useRecoilComponentValue(
     isAtLeastOneTableRowSelectedSelector,
   );
 
@@ -133,12 +132,9 @@ export const useRecordTableRowHotkeys = (focusId: string) => {
     dependencies: [handleEscape],
   });
 
-  const { selectAllRows, setHasUserSelectedAllRows } = useRecordTable({
-    recordTableId,
-  });
+  const { selectAllRows } = useSelectAllRows();
 
   const handleSelectAllRows = () => {
-    setHasUserSelectedAllRows(true);
     selectAllRows();
   };
 

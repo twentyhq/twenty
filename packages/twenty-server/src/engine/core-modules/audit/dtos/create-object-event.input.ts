@@ -1,8 +1,15 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TrackEventName } from 'src/engine/core-modules/audit/types/events.type';
 
 @ArgsType()
@@ -12,14 +19,14 @@ export class CreateObjectEventInput {
   @IsString()
   event: TrackEventName;
 
-  @Field(() => String)
+  @Field(() => UUIDScalarType)
   @IsNotEmpty()
-  @IsString()
+  @IsUUID()
   recordId: string;
 
-  @Field(() => String)
+  @Field(() => UUIDScalarType)
   @IsNotEmpty()
-  @IsString()
+  @IsUUID()
   objectMetadataId: string;
 
   @Field(() => GraphQLJSON, { nullable: true })

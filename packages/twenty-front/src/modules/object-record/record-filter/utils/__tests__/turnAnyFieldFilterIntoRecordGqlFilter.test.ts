@@ -1,5 +1,5 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { filterSelectOptionsOfFieldMetadataItem } from '@/object-record/record-filter/utils/filterSelectOptionsOfFieldMetadataItem';
 import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -132,12 +132,15 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   isRemote: false,
   isSearchable: true,
   isSystem: false,
+  isUIReadOnly: false,
   labelIdentifierFieldMetadataId: 'mock-id',
   labelPlural: 'Tests',
   labelSingular: 'Test',
   nameSingular: 'test',
   namePlural: 'tests',
   fields: [],
+  readableFields: [],
+  updatableFields: [],
 };
 
 const mockObjectMetadataItemWithAllFields: ObjectMetadataItem = {

@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
+import { type GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
 
-import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
+import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
 
 import { EdgeTypeFactory } from './edge-type.factory';
 import {
-  ObjectTypeDefinition,
+  type ObjectTypeDefinition,
   ObjectTypeDefinitionKind,
 } from './object-type-definition.factory';
 
@@ -42,10 +42,9 @@ export class EdgeTypeDefinitionFactory {
   private generateFields(
     objectMetadata: ObjectMetadataEntity,
     options: WorkspaceBuildSchemaOptions,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): GraphQLFieldConfigMap<any, any> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const fields: GraphQLFieldConfigMap<any, any> = {};
 

@@ -7,10 +7,14 @@ import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPr
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/Messaging';
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromCompanyId';
 import { getTimelineThreadsFromPersonId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromPersonId';
+import { getTimelineThreadsFromOpportunityId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromOpportunityId';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { TimelineThread, TimelineThreadsWithTotal } from '~/generated/graphql';
+import {
+  type TimelineThread,
+  type TimelineThreadsWithTotal,
+} from '~/generated/graphql';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -48,7 +52,13 @@ export const EmailThreads = ({
   const [query, queryName] =
     targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person
       ? [getTimelineThreadsFromPersonId, 'getTimelineThreadsFromPersonId']
-      : [getTimelineThreadsFromCompanyId, 'getTimelineThreadsFromCompanyId'];
+      : targetableObject.targetObjectNameSingular ===
+          CoreObjectNameSingular.Company
+        ? [getTimelineThreadsFromCompanyId, 'getTimelineThreadsFromCompanyId']
+        : [
+            getTimelineThreadsFromOpportunityId,
+            'getTimelineThreadsFromOpportunityId',
+          ];
 
   const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords } =
     useCustomResolver<TimelineThreadsWithTotal>(

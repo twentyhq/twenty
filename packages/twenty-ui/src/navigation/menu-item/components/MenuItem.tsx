@@ -1,15 +1,20 @@
 import { useTheme } from '@emotion/react';
-import { IconChevronRight, IconComponent } from '@ui/display';
-import { LightIconButtonProps } from '@ui/input/button/components/LightIconButton';
+import { IconChevronRight, type IconComponent } from '@ui/display';
+import { type LightIconButtonProps } from '@ui/input/button/components/LightIconButton';
 import { LightIconButtonGroup } from '@ui/input/button/components/LightIconButtonGroup';
-import { FunctionComponent, MouseEvent, ReactElement, ReactNode } from 'react';
+import {
+  type FunctionComponent,
+  type MouseEvent,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledHoverableMenuItemBase,
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
-import { MenuItemAccent } from '../types/MenuItemAccent';
+import { type MenuItemAccent } from '../types/MenuItemAccent';
 
 export type MenuItemIconButton = {
   Wrapper?: FunctionComponent<{ iconButton: ReactElement }>;

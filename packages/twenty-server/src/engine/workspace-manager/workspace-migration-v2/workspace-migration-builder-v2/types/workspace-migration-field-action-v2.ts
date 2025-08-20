@@ -1,31 +1,33 @@
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { FlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-field-metadata';
-import { FlatObjectMetadataWithoutFields } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-object-metadata';
-import { FromTo } from 'src/engine/workspace-manager/workspace-migration-v2/types/from-to.type';
-import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/workspace-manager/workspace-migration-v2/utils/flat-field-metadata-comparator.util';
+import { type FromTo } from 'twenty-shared/types';
 
-export type FieldAndObjectMetadataWorkspaceMigrationInput = {
-  flatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadata: FlatObjectMetadataWithoutFields;
-};
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-properties-to-compare.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+
 export type CreateFieldAction = {
   type: 'create_field';
-} & FieldAndObjectMetadataWorkspaceMigrationInput;
+  flatFieldMetadata: FlatFieldMetadata;
+};
 
 export type UpdateFieldAction = {
   type: 'update_field';
-  updates: Partial<
+  workspaceId: string;
+  fieldMetadataId: string;
+  objectMetadataId: string;
+  updates: Array<
     {
       [P in FlatFieldMetadataPropertiesToCompare]: {
         property: P;
       } & FromTo<FieldMetadataEntity[P]>;
     }[FlatFieldMetadataPropertiesToCompare]
-  >[];
-} & FieldAndObjectMetadataWorkspaceMigrationInput;
+  >;
+};
 
 export type DeleteFieldAction = {
   type: 'delete_field';
-} & FieldAndObjectMetadataWorkspaceMigrationInput;
+  fieldMetadataId: string;
+  objectMetadataId: string;
+};
 
 export type WorkspaceMigrationFieldActionV2 =
   | CreateFieldAction

@@ -15,8 +15,9 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getPeopleRecordConnectionMock } from '~/testing/mock-data/people';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 
 const mockCopyContextStoreStates = jest.fn();
 jest.mock(
@@ -81,6 +82,12 @@ describe('useSetGlobalCommandMenuContext', () => {
           }),
         );
 
+        const filterGroups = useRecoilValue(
+          contextStoreFilterGroupsComponentState.atomFamily({
+            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          }),
+        );
+
         const anyFieldFilterValue = useRecoilValue(
           contextStoreAnyFieldFilterValueComponentState.atomFamily({
             instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
@@ -104,6 +111,7 @@ describe('useSetGlobalCommandMenuContext', () => {
           targetedRecordsRule,
           numberOfSelectedRecords,
           filters,
+          filterGroups,
           currentViewType,
           commandMenuPageInfo,
           hasUserSelectedCommand,

@@ -1,4 +1,4 @@
-import { OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
+import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 
 export enum WorkflowTriggerType {
   DATABASE_EVENT = 'DATABASE_EVENT',
@@ -16,6 +16,11 @@ type BaseTrigger = {
   name: string;
   type: WorkflowTriggerType;
   settings: BaseWorkflowTriggerSettings;
+  nextStepIds?: string[];
+  position?: {
+    x: number;
+    y: number;
+  };
 };
 
 export type WorkflowDatabaseEventTrigger = BaseTrigger & {
@@ -24,11 +29,6 @@ export type WorkflowDatabaseEventTrigger = BaseTrigger & {
     eventName: string;
   };
 };
-
-export enum WorkflowManualTriggerAvailability {
-  EVERYWHERE = 'EVERYWHERE',
-  WHEN_RECORD_SELECTED = 'WHEN_RECORD_SELECTED',
-}
 
 export type WorkflowManualTrigger = BaseTrigger & {
   type: WorkflowTriggerType.MANUAL;
@@ -76,8 +76,6 @@ export type WorkflowWebhookTrigger = BaseTrigger & {
         }
     );
 };
-
-export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
 
 export type WorkflowTrigger =
   | WorkflowDatabaseEventTrigger

@@ -1,10 +1,10 @@
 import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
 import { agentChatSelectedFilesComponentState } from '@/ai/states/agentChatSelectedFilesComponentState';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import styled from '@emotion/styled';
 import React, { useRef } from 'react';
 import { IconPaperclip } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
 const StyledFileUploadContainer = styled.div`
   display: flex;
@@ -17,7 +17,7 @@ const StyledFileInput = styled.input`
 `;
 
 export const AgentChatFileUploadButton = ({ agentId }: { agentId: string }) => {
-  const setAgentChatSelectedFiles = useSetRecoilComponentStateV2(
+  const setAgentChatSelectedFiles = useSetRecoilComponentState(
     agentChatSelectedFilesComponentState,
     agentId,
   );

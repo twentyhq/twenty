@@ -1,8 +1,7 @@
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useGetViewGroupsFilters = (): RecordFilter[] => {

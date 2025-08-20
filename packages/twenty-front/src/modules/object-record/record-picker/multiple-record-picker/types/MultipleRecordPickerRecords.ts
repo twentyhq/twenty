@@ -1,4 +1,4 @@
-import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
+import { type SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 
 export type MultipleRecordPickerRecords<
   CustomRecordForRecordPicker extends SingleRecordPickerRecord,

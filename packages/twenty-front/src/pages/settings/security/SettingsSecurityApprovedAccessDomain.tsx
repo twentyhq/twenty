@@ -2,7 +2,7 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { ApolloError } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -115,7 +115,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 field: { onChange, value },
                 fieldState: { error },
               }) => (
-                <TextInput
+                <SettingsTextInput
                   instanceId="approved-access-domain"
                   autoFocus
                   autoComplete="off"
@@ -140,7 +140,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 field: { onChange, value },
                 fieldState: { error },
               }) => (
-                <TextInput
+                <SettingsTextInput
                   instanceId="approved-access-domain-email"
                   autoComplete="off"
                   value={value.split('@')[0]}

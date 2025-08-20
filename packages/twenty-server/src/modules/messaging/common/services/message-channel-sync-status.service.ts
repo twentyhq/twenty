@@ -9,12 +9,12 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import {
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
-  MessageChannelWorkspaceEntity,
+  type MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
@@ -159,7 +159,7 @@ export class MessageChannelSyncStatusService {
     });
   }
 
-  public async markAsFailedAndFlushMessagesToImport(
+  public async markAsFailed(
     messageChannelIds: string[],
     workspaceId: string,
     syncStatus:
@@ -168,12 +168,6 @@ export class MessageChannelSyncStatusService {
   ) {
     if (!messageChannelIds.length) {
       return;
-    }
-
-    for (const messageChannelId of messageChannelIds) {
-      await this.cacheStorage.del(
-        `messages-to-import:${workspaceId}:${messageChannelId}`,
-      );
     }
 
     const messageChannelRepository =

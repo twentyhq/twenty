@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 export class AddEnumOptions1700663879152 implements MigrationInterface {
   name = 'AddEnumOptions1700663879152';

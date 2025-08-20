@@ -1,6 +1,6 @@
 import {
-  DynamicModule,
-  MiddlewareConsumer,
+  type DynamicModule,
+  type MiddlewareConsumer,
   Module,
   RequestMethod,
 } from '@nestjs/common';
@@ -11,7 +11,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { existsSync } from 'fs';
 import { join } from 'path';
 
-import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
+import { YogaDriver, type YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { SentryModule } from '@sentry/nestjs/setup';
 
 import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';

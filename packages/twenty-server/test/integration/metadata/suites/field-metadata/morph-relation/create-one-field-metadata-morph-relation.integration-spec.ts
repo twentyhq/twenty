@@ -2,7 +2,7 @@ import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { EachTestingContext } from 'twenty-shared/testing';
+import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -138,11 +138,17 @@ describe('createOne FieldMetadataService morph relation fields', () => {
 
     expect(createdField.id).toBeDefined();
     expect(createdField.name).toBe('owner');
-    // expect(createdField.relation).toBeUndefined();
-    // expect(createdField.morphRelations[0].type).toBe(
-    //   contextPayload.relationType,
-    // );
-    // expect(createdField.morphRelations[0].targetFieldMetadata.id).toBeDefined();
+
+    const morphRelationTargetIds = createdField.morphRelations.map(
+      (relation) => relation.targetObjectMetadata.id,
+    );
+
+    expect(morphRelationTargetIds).toContain(
+      contextPayload.firstTargetObjectMetadataId,
+    );
+    expect(morphRelationTargetIds).toContain(
+      contextPayload.secondTargetObjectMetadataId,
+    );
 
     const isManyToOne =
       contextPayload.relationType === RelationType.MANY_TO_ONE;
@@ -154,8 +160,6 @@ describe('createOne FieldMetadataService morph relation fields', () => {
     } else {
       expect(createdField.settings?.joinColumnName).toBeUndefined();
     }
-
-    // TODO: check the morphrelation targets are created correctly (wait for Query Morph Relations)
 
     await deleteOneFieldMetadata({
       input: { idToDelete: createdField.id },

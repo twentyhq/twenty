@@ -6,14 +6,14 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { UPDATE_WORKFLOW_RUN_STEP } from '@/workflow/graphql/mutations/updateWorkflowRunStep';
-import { WorkflowRun } from '@/workflow/types/Workflow';
+import { type WorkflowRun } from '@/workflow/types/Workflow';
 import { useMutation } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  UpdateWorkflowRunStepInput,
-  UpdateWorkflowRunStepMutation,
-  UpdateWorkflowRunStepMutationVariables,
-  WorkflowAction,
+  type UpdateWorkflowRunStepInput,
+  type UpdateWorkflowRunStepMutation,
+  type UpdateWorkflowRunStepMutationVariables,
+  type WorkflowAction,
 } from '~/generated-metadata/graphql';
 
 export const useUpdateWorkflowRunStep = () => {

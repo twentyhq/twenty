@@ -1,8 +1,8 @@
 import {
-  ActorMetadata,
+  type ActorMetadata,
   FieldActorSource,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
+import { type FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 
 type BuildCreatedByFromFullNameMetadataArgs = {
   workspaceMemberId: string;

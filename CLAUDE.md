@@ -28,7 +28,7 @@ npx nx run twenty-server:test:integration:with-db-reset  # Integration tests wit
 
 # Storybook
 npx nx storybook:build twenty-front         # Build Storybook
-npx nx storybook:serve-and-test:static     # Run Storybook tests
+npx nx storybook:serve-and-test:static twenty-front     # Run Storybook tests
 ```
 
 ### Code Quality
@@ -89,7 +89,6 @@ packages/
 ├── twenty-ui/             # Shared UI components library
 ├── twenty-shared/         # Common types and utilities
 ├── twenty-emails/         # Email templates with React Email
-├── twenty-chrome-extension/  # Chrome extension
 ├── twenty-website/        # Next.js documentation website
 ├── twenty-zapier/         # Zapier integration
 └── twenty-e2e-testing/    # Playwright E2E tests

@@ -2,9 +2,9 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
-import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { hasInitializedCurrentRecordFilterGroupsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFilterGroupsComponentFamilyState';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { useEffect } from 'react';
@@ -12,7 +12,7 @@ import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const ViewBarRecordFilterGroupEffect = () => {
-  const currentViewId = useRecoilComponentValueV2(
+  const currentViewId = useRecoilComponentValue(
     contextStoreCurrentViewIdComponentState,
   );
 
@@ -27,14 +27,14 @@ export const ViewBarRecordFilterGroupEffect = () => {
   const [
     hasInitializedCurrentRecordFilterGroups,
     setHasInitializedCurrentRecordFilterGroups,
-  ] = useRecoilComponentFamilyStateV2(
+  ] = useRecoilComponentFamilyState(
     hasInitializedCurrentRecordFilterGroupsComponentFamilyState,
     {
       viewId: currentViewId ?? undefined,
     },
   );
 
-  const setCurrentRecordFilterGroups = useSetRecoilComponentStateV2(
+  const setCurrentRecordFilterGroups = useSetRecoilComponentState(
     currentRecordFilterGroupsComponentState,
   );
 

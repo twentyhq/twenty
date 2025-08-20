@@ -1,8 +1,8 @@
-import { ReactNode, useEffect, useRef } from 'react';
+import { type ReactNode, useEffect, useRef } from 'react';
 
 import { SelectableListItemHotkeyEffect } from '@/ui/layout/selectable-list/components/SelectableListItemHotkeyEffect';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -25,7 +25,7 @@ export const SelectableListItem = ({
   children,
   onEnter,
 }: SelectableListItemProps) => {
-  const isSelectedItemId = useRecoilComponentFamilyValueV2(
+  const isSelectedItemId = useRecoilComponentFamilyValue(
     isSelectedItemIdComponentFamilySelector,
     itemId,
   );
@@ -35,8 +35,8 @@ export const SelectableListItem = ({
   useEffect(() => {
     if (isSelectedItemId) {
       listItemRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
+        behavior: 'auto',
+        block: 'start',
       });
     }
   }, [isSelectedItemId]);

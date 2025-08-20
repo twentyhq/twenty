@@ -5,19 +5,17 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
+import { type CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
 import {
-  UpdateRoleInput,
-  UpdateRolePayload,
+  type UpdateRoleInput,
+  type UpdateRolePayload,
 } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { isArgDefinedIfProvidedOrThrow } from 'src/engine/metadata-modules/utils/is-arg-defined-if-provided-or-throw.util';
@@ -29,8 +27,6 @@ export class RoleService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetsEntity, 'core')
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly userRoleService: UserRoleService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
   ) {}
@@ -40,7 +36,12 @@ export class RoleService {
       where: {
         workspaceId,
       },
-      relations: ['roleTargets', 'settingPermissions', 'objectPermissions'],
+      relations: {
+        roleTargets: true,
+        permissionFlags: true,
+        objectPermissions: true,
+        fieldPermissions: true,
+      },
     });
   }
 
@@ -53,7 +54,12 @@ export class RoleService {
         id,
         workspaceId,
       },
-      relations: ['roleTargets', 'settingPermissions'],
+      relations: {
+        roleTargets: true,
+        permissionFlags: true,
+        objectPermissions: true,
+        fieldPermissions: true,
+      },
     });
   }
 
@@ -72,6 +78,7 @@ export class RoleService {
       description: input.description,
       icon: input.icon,
       canUpdateAllSettings: input.canUpdateAllSettings,
+      canAccessAllTools: input.canAccessAllTools,
       canReadAllObjectRecords: input.canReadAllObjectRecords,
       canUpdateAllObjectRecords: input.canUpdateAllObjectRecords,
       canSoftDeleteAllObjectRecords: input.canSoftDeleteAllObjectRecords,
@@ -111,6 +118,10 @@ export class RoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_FOUND,
         PermissionsExceptionCode.ROLE_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            'The role you are looking for could not be found. It may have been deleted or you may not have access to it.',
+        },
       );
     }
 
@@ -131,25 +142,6 @@ export class RoleService {
     });
 
     return { ...existingRole, ...updatedRole };
-  }
-
-  public async createAdminRole({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<RoleEntity> {
-    return this.roleRepository.save({
-      label: ADMIN_ROLE_LABEL,
-      description: 'Admin role',
-      icon: 'IconUserCog',
-      canUpdateAllSettings: true,
-      canReadAllObjectRecords: true,
-      canUpdateAllObjectRecords: true,
-      canSoftDeleteAllObjectRecords: true,
-      canDestroyAllObjectRecords: true,
-      isEditable: false,
-      workspaceId,
-    });
   }
 
   public async deleteRole(
@@ -173,6 +165,10 @@ export class RoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.DEFAULT_ROLE_NOT_FOUND,
         PermissionsExceptionCode.DEFAULT_ROLE_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            'The default role for this workspace could not be found. Please contact support for assistance.',
+        },
       );
     }
 
@@ -209,6 +205,7 @@ export class RoleService {
       description: 'Member role',
       icon: 'IconUser',
       canUpdateAllSettings: false,
+      canAccessAllTools: true,
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: true,
       canSoftDeleteAllObjectRecords: true,
@@ -229,6 +226,7 @@ export class RoleService {
       description: 'Guest role',
       icon: 'IconUser',
       canUpdateAllSettings: false,
+      canAccessAllTools: false,
       canReadAllObjectRecords: true,
       canUpdateAllObjectRecords: false,
       canSoftDeleteAllObjectRecords: false,
@@ -250,6 +248,7 @@ export class RoleService {
     const keysToValidate = [
       'label',
       'canUpdateAllSettings',
+      'canAccessAllTools',
       'canReadAllObjectRecords',
       'canUpdateAllObjectRecords',
       'canSoftDeleteAllObjectRecords',
@@ -268,6 +267,10 @@ export class RoleService {
         throw new PermissionsException(
           error.message,
           PermissionsExceptionCode.INVALID_ARG,
+          {
+            userFriendlyMessage:
+              'Some of the information provided is invalid. Please check your input and try again.',
+          },
         );
       }
     }
@@ -287,7 +290,7 @@ export class RoleService {
         throw new PermissionsException(
           PermissionsExceptionMessage.ROLE_LABEL_ALREADY_EXISTS,
           PermissionsExceptionCode.ROLE_LABEL_ALREADY_EXISTS,
-          t`A role with this label already exists.`,
+          { userFriendlyMessage: t`A role with this label already exists.` },
         );
       }
     }
@@ -331,6 +334,10 @@ export class RoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION,
         PermissionsExceptionCode.CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION,
+        {
+          userFriendlyMessage:
+            'You cannot grant edit permissions without also granting read permissions. Please enable read access first.',
+        },
       );
     }
   }
@@ -386,6 +393,10 @@ export class RoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_EDITABLE,
         PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+        {
+          userFriendlyMessage:
+            'This role cannot be modified because it is a system role. Only custom roles can be edited.',
+        },
       );
     }
   }
@@ -401,6 +412,10 @@ export class RoleService {
       throw new PermissionsException(
         PermissionsExceptionMessage.DEFAULT_ROLE_CANNOT_BE_DELETED,
         PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED,
+        {
+          userFriendlyMessage:
+            'The default role cannot be deleted as it is required for the workspace to function properly.',
+        },
       );
     }
   }

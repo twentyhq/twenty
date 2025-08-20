@@ -3,18 +3,23 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { QueryRunner, Repository } from 'typeorm';
+import { type QueryRunner, Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { computeMorphRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-join-column-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import {
+  ObjectMetadataException,
+  ObjectMetadataExceptionCode,
+} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
 import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
-import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import {
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
   STANDARD_OBJECT_FIELD_IDS,
@@ -23,7 +28,7 @@ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sy
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { createRelationDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
-const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
+export const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
   STANDARD_OBJECT_IDS.timelineActivity,
   STANDARD_OBJECT_IDS.favorite,
   STANDARD_OBJECT_IDS.attachment,
@@ -411,5 +416,109 @@ export class ObjectMetadataFieldRelationService {
       label: sourceObjectMetadata.labelSingular,
       description,
     };
+  }
+
+  private validateFieldMetadataTypeIsMorphRelation = (
+    fieldMetadatas: FieldMetadataEntity[],
+  ): fieldMetadatas is Array<
+    FieldMetadataEntity & FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>
+  > => {
+    return fieldMetadatas.every(
+      (fieldMetadata) =>
+        fieldMetadata.type === FieldMetadataType.MORPH_RELATION,
+    );
+  };
+
+  public async findTargetMorphRelationFieldMetadatas(
+    objectMetadataId: string,
+  ): Promise<FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>[]> {
+    const fieldMetadatas = await this.fieldMetadataRepository.find({
+      where: {
+        relationTargetObjectMetadataId: objectMetadataId,
+        type: FieldMetadataType.MORPH_RELATION,
+      },
+      relations: {
+        relationTargetObjectMetadata: true,
+        object: true,
+      },
+    });
+
+    if (!this.validateFieldMetadataTypeIsMorphRelation(fieldMetadatas)) {
+      throw new ObjectMetadataException(
+        'Invalid field metadata type. Expected MORPH_RELATION only',
+        ObjectMetadataExceptionCode.INVALID_ORM_OUTPUT,
+      );
+    }
+
+    return fieldMetadatas;
+  }
+
+  public async updateMorphRelationsJoinColumnName({
+    existingObjectMetadata,
+    objectMetadataForUpdate,
+    queryRunner,
+  }: {
+    existingObjectMetadata: Pick<
+      ObjectMetadataItemWithFieldMaps,
+      'nameSingular' | 'isCustom' | 'id' | 'labelPlural' | 'icon' | 'fieldsById'
+    >;
+    objectMetadataForUpdate: Pick<
+      ObjectMetadataItemWithFieldMaps,
+      | 'nameSingular'
+      | 'isCustom'
+      | 'workspaceId'
+      | 'id'
+      | 'labelSingular'
+      | 'labelPlural'
+      | 'icon'
+      | 'fieldsById'
+    >;
+    queryRunner: QueryRunner;
+  }): Promise<
+    {
+      fieldMetadata: FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>;
+      newJoinColumnName: string;
+    }[]
+  > {
+    const fieldMetadataRepository =
+      queryRunner.manager.getRepository(FieldMetadataEntity);
+
+    const morphRelationFieldMetadataTargets =
+      await this.findTargetMorphRelationFieldMetadatas(
+        existingObjectMetadata.id,
+      );
+    const morphRelationFieldMetadataToUpdate =
+      morphRelationFieldMetadataTargets.filter(
+        (morphRelationFieldMetadata) =>
+          morphRelationFieldMetadata.settings?.relationType ===
+          RelationType.MANY_TO_ONE,
+      );
+
+    const morphRelationFieldMetadataToUpdateWithNewJoinColumnName = [];
+
+    if (morphRelationFieldMetadataToUpdate.length > 0) {
+      for (const morphRelationFieldMetadata of morphRelationFieldMetadataToUpdate) {
+        const newJoinColumnName = computeMorphRelationFieldJoinColumnName({
+          name: morphRelationFieldMetadata.name,
+          targetObjectMetadataNameSingular:
+            objectMetadataForUpdate.nameSingular,
+        });
+
+        await fieldMetadataRepository.save({
+          ...morphRelationFieldMetadata,
+          settings: {
+            ...morphRelationFieldMetadata.settings,
+            joinColumnName: newJoinColumnName,
+          },
+        });
+
+        morphRelationFieldMetadataToUpdateWithNewJoinColumnName.push({
+          fieldMetadata: morphRelationFieldMetadata,
+          newJoinColumnName,
+        });
+      }
+    }
+
+    return morphRelationFieldMetadataToUpdateWithNewJoinColumnName;
   }
 }

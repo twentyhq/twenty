@@ -1,15 +1,16 @@
-import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { type IconComponent } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-  AnimatedPlaceholderType,
+  type AnimatedPlaceholderType,
 } from 'twenty-ui/layout';
-import { Button } from 'twenty-ui/input';
-import { IconComponent } from 'twenty-ui/display';
 
 type RecordTableEmptyStateDisplayButtonComponentProps = {
   buttonComponent?: React.ReactNode;
@@ -35,7 +36,13 @@ export const RecordTableEmptyStateDisplay = (
   props: RecordTableEmptyStateDisplayProps,
 ) => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
-  const isReadOnly = isObjectMetadataReadOnly(objectMetadataItem);
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+  const isReadOnly = isObjectMetadataReadOnly({
+    objectPermissions,
+    objectMetadataItem,
+  });
 
   return (
     <AnimatedPlaceholderEmptyContainer>

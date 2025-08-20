@@ -18,7 +18,6 @@ export const availableFieldMetadataItemsForFilterFamilySelector =
         const objectMetadataItem = objectMetadataItems.find(
           (item) => item.id === objectMetadataItemId,
         );
-
         if (!isDefined(objectMetadataItem)) {
           return [];
         }
@@ -34,8 +33,9 @@ export const availableFieldMetadataItemsForFilterFamilySelector =
           });
 
         const availableFieldMetadataItemsForFilter =
-          objectMetadataItem.fields.filter(filterFilterableFieldMetadataItems);
-
+          objectMetadataItem.readableFields.filter(
+            filterFilterableFieldMetadataItems,
+          );
         return availableFieldMetadataItemsForFilter;
       },
   });

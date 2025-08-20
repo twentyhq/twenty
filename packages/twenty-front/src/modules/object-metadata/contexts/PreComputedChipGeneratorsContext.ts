@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 
-import { RecordChipData } from '@/object-record/record-field/types/RecordChipData';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type RecordChipData } from '@/object-record/record-field/ui/types/RecordChipData';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export type ChipGeneratorPerObjectNameSingularPerFieldName = Record<
   string,

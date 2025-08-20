@@ -2,7 +2,6 @@
 
 import { Field } from '@nestjs/graphql';
 
-import Stripe from 'stripe';
 import {
   Column,
   CreateDateColumn,
@@ -13,6 +12,8 @@ import {
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
+
+import type Stripe from 'stripe';
 
 import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';

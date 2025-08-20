@@ -1,27 +1,32 @@
-import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
 import {
-  WorkflowDiagramEdgeData,
-  WorkflowDiagramEdgeType,
-  WorkflowRunDiagram,
-  WorkflowRunDiagramNode,
-  WorkflowRunDiagramStepNodeData,
+  type WorkflowStep,
+  type WorkflowTrigger,
+} from '@/workflow/types/Workflow';
+import {
+  type WorkflowDiagramEdgeData,
+  type WorkflowDiagramEdgeType,
+  type WorkflowRunDiagram,
+  type WorkflowRunDiagramNode,
+  type WorkflowRunDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { generateWorkflowDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowDiagram';
 import { isStepNode } from '@/workflow/workflow-diagram/utils/isStepNode';
 import { transformFilterNodesAsEdges } from '@/workflow/workflow-diagram/utils/transformFilterNodesAsEdges';
 import { isDefined } from 'twenty-shared/utils';
-import { StepStatus, WorkflowRunStepInfos } from 'twenty-shared/workflow';
+import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 export const generateWorkflowRunDiagram = ({
   trigger,
   steps,
   stepInfos,
   isWorkflowFilteringEnabled,
+  isWorkflowBranchEnabled,
 }: {
   trigger: WorkflowTrigger;
   steps: Array<WorkflowStep>;
   stepInfos: WorkflowRunStepInfos | undefined;
   isWorkflowFilteringEnabled: boolean;
+  isWorkflowBranchEnabled: boolean;
 }): {
   diagram: WorkflowRunDiagram;
   stepToOpenByDefault:
@@ -116,6 +121,7 @@ export const generateWorkflowRunDiagram = ({
       nodes: workflowRunDiagramNodes,
       edges: workflowRunDiagramEdges,
       defaultFilterEdgeType: 'filter--run',
+      isWorkflowBranchEnabled,
     }),
     stepToOpenByDefault,
   };

@@ -1,26 +1,29 @@
-import { Expect, HasAllProperties } from 'twenty-shared/testing';
-import { FieldMetadataType, NullablePartial } from 'twenty-shared/types';
-import { Relation as TypeOrmRelation } from 'typeorm';
+import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
+import {
+  type FieldMetadataType,
+  type NullablePartial,
+} from 'twenty-shared/types';
+import { type Relation as TypeOrmRelation } from 'typeorm';
 
 import {
-  AllFieldMetadataSettings,
-  FieldMetadataDateSettings,
-  FieldMetadataDateTimeSettings,
-  FieldMetadataNumberSettings,
-  FieldMetadataRelationSettings,
-  FieldMetadataTextSettings,
-} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
-import {
-  FieldMetadataDefaultValueForAnyType,
-  FieldMetadataDefaultValueForType,
+  type FieldMetadataDefaultValueForAnyType,
+  type FieldMetadataDefaultValueForType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import {
+  type AllFieldMetadataSettings,
+  type FieldMetadataDateSettings,
+  type FieldMetadataDateTimeSettings,
+  type FieldMetadataNumberSettings,
+  type FieldMetadataRelationSettings,
+  type FieldMetadataTextSettings,
+} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import {
-  FieldMetadataComplexOption,
-  FieldMetadataDefaultOption,
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 type DefinedRelationRecord = {
   relationTargetFieldMetadataId: string;
@@ -30,10 +33,10 @@ type DefinedRelationRecord = {
 };
 
 type NotDefinedRelationRecord = {
-  relationTargetFieldMetadataId: never;
-  relationTargetFieldMetadata: never;
-  relationTargetObjectMetadataId: never;
-  relationTargetObjectMetadata: never;
+  relationTargetFieldMetadataId: never | null;
+  relationTargetFieldMetadata: never | null;
+  relationTargetObjectMetadataId: never | null;
+  relationTargetObjectMetadata: never | null;
 };
 
 type AbstractFieldMetadata = FieldMetadataEntity<FieldMetadataType>;
@@ -82,7 +85,7 @@ type RelationFieldMetadata = FieldMetadataEntity<FieldMetadataType.RELATION>;
 type MorphRelationFieldMetadata =
   FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>;
 
-// eslint-disable-next-line unused-imports/no-unused-vars, @typescript-eslint/no-unused-vars
+// eslint-disable-next-line unused-imports/no-unused-vars
 type RelationAssertions = [
   Expect<HasAllProperties<UUIDFieldMetadata, NotDefinedRelationRecord>>,
   Expect<HasAllProperties<TextFieldMetadata, NotDefinedRelationRecord>>,
@@ -115,23 +118,27 @@ type RelationAssertions = [
   >,
 ];
 
-// eslint-disable-next-line unused-imports/no-unused-vars, @typescript-eslint/no-unused-vars
+type NotDefinedSettings = {
+  settings: never | null;
+};
+
+// eslint-disable-next-line unused-imports/no-unused-vars
 type SettingsAssertions = [
-  Expect<HasAllProperties<CurrencyFieldMetadata, { settings: never }>>,
-  Expect<HasAllProperties<FullNameFieldMetadata, { settings: never }>>,
-  Expect<HasAllProperties<RatingFieldMetadata, { settings: never }>>,
-  Expect<HasAllProperties<SelectFieldMetadata, { settings: never }>>,
-  Expect<HasAllProperties<MultiSelectFieldMetadata, { settings: never }>>,
-  Expect<HasAllProperties<PositionFieldMetadata, { settings: never }>>,
-  Expect<HasAllProperties<RawJsonFieldMetadata, { settings: never }>>,
-  Expect<HasAllProperties<RichTextFieldMetadata, { settings: never }>>,
-  Expect<HasAllProperties<ActorFieldMetadata, { settings: never }>>,
-  Expect<HasAllProperties<ArrayFieldMetadata, { settings: never }>>,
-  Expect<HasAllProperties<PhonesFieldMetadata, { settings: never }>>,
-  Expect<HasAllProperties<EmailsFieldMetadata, { settings: never }>>,
-  Expect<HasAllProperties<LinksFieldMetadata, { settings: never }>>,
-  Expect<HasAllProperties<UUIDFieldMetadata, { settings: never }>>,
-  Expect<HasAllProperties<BooleanFieldMetadata, { settings: never }>>,
+  Expect<HasAllProperties<CurrencyFieldMetadata, NotDefinedSettings>>,
+  Expect<HasAllProperties<FullNameFieldMetadata, NotDefinedSettings>>,
+  Expect<HasAllProperties<RatingFieldMetadata, NotDefinedSettings>>,
+  Expect<HasAllProperties<SelectFieldMetadata, NotDefinedSettings>>,
+  Expect<HasAllProperties<MultiSelectFieldMetadata, NotDefinedSettings>>,
+  Expect<HasAllProperties<PositionFieldMetadata, NotDefinedSettings>>,
+  Expect<HasAllProperties<RawJsonFieldMetadata, NotDefinedSettings>>,
+  Expect<HasAllProperties<RichTextFieldMetadata, NotDefinedSettings>>,
+  Expect<HasAllProperties<ActorFieldMetadata, NotDefinedSettings>>,
+  Expect<HasAllProperties<ArrayFieldMetadata, NotDefinedSettings>>,
+  Expect<HasAllProperties<PhonesFieldMetadata, NotDefinedSettings>>,
+  Expect<HasAllProperties<EmailsFieldMetadata, NotDefinedSettings>>,
+  Expect<HasAllProperties<LinksFieldMetadata, NotDefinedSettings>>,
+  Expect<HasAllProperties<UUIDFieldMetadata, NotDefinedSettings>>,
+  Expect<HasAllProperties<BooleanFieldMetadata, NotDefinedSettings>>,
 
   Expect<
     HasAllProperties<
@@ -161,7 +168,7 @@ type SettingsAssertions = [
   Expect<
     HasAllProperties<
       RelationFieldMetadata,
-      { settings: FieldMetadataRelationSettings | null }
+      { settings: FieldMetadataRelationSettings }
     >
   >,
   Expect<
@@ -179,7 +186,7 @@ type SettingsAssertions = [
   >,
 ];
 
-// eslint-disable-next-line unused-imports/no-unused-vars, @typescript-eslint/no-unused-vars
+// eslint-disable-next-line unused-imports/no-unused-vars
 type DefaultValueAssertions = [
   Expect<
     HasAllProperties<
@@ -328,8 +335,12 @@ type DefaultValueAssertions = [
     >
   >,
 
-  Expect<HasAllProperties<RelationFieldMetadata, { defaultValue: never }>>,
-  Expect<HasAllProperties<MorphRelationFieldMetadata, { defaultValue: never }>>,
+  Expect<
+    HasAllProperties<RelationFieldMetadata, { defaultValue: never | null }>
+  >,
+  Expect<
+    HasAllProperties<MorphRelationFieldMetadata, { defaultValue: never | null }>
+  >,
 
   Expect<
     HasAllProperties<
@@ -339,7 +350,11 @@ type DefaultValueAssertions = [
   >,
 ];
 
-// eslint-disable-next-line unused-imports/no-unused-vars, @typescript-eslint/no-unused-vars
+type NotDefinedOptions = {
+  options: never | null;
+};
+
+// eslint-disable-next-line unused-imports/no-unused-vars
 type OptionsAssertions = [
   Expect<
     HasAllProperties<
@@ -360,25 +375,24 @@ type OptionsAssertions = [
     >
   >,
 
-  Expect<HasAllProperties<UUIDFieldMetadata, { options: never }>>,
-  Expect<HasAllProperties<TextFieldMetadata, { options: never }>>,
-  Expect<HasAllProperties<NumberFieldMetadata, { options: never }>>,
-  Expect<HasAllProperties<BooleanFieldMetadata, { options: never }>>,
-  Expect<HasAllProperties<DateFieldMetadata, { options: never }>>,
-  Expect<HasAllProperties<DateTimeFieldMetadata, { options: never }>>,
-  Expect<HasAllProperties<CurrencyFieldMetadata, { options: never }>>,
-  Expect<HasAllProperties<FullNameFieldMetadata, { options: never }>>,
-  Expect<HasAllProperties<PositionFieldMetadata, { options: never }>>,
-  Expect<HasAllProperties<RawJsonFieldMetadata, { options: never }>>,
-  Expect<HasAllProperties<RichTextFieldMetadata, { options: never }>>,
-  Expect<HasAllProperties<ActorFieldMetadata, { options: never }>>,
-  Expect<HasAllProperties<ArrayFieldMetadata, { options: never }>>,
-  Expect<HasAllProperties<PhonesFieldMetadata, { options: never }>>,
-  Expect<HasAllProperties<EmailsFieldMetadata, { options: never }>>,
-  Expect<HasAllProperties<LinksFieldMetadata, { options: never }>>,
-
-  Expect<HasAllProperties<RelationFieldMetadata, { options: never }>>,
-  Expect<HasAllProperties<MorphRelationFieldMetadata, { options: never }>>,
+  Expect<HasAllProperties<UUIDFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<TextFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<NumberFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<BooleanFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<DateFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<DateTimeFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<CurrencyFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<FullNameFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<PositionFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<RawJsonFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<RichTextFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<ActorFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<ArrayFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<PhonesFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<EmailsFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<LinksFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<RelationFieldMetadata, NotDefinedOptions>>,
+  Expect<HasAllProperties<MorphRelationFieldMetadata, NotDefinedOptions>>,
 
   Expect<
     HasAllProperties<

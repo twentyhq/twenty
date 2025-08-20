@@ -1,19 +1,19 @@
 import styled from '@emotion/styled';
 // @ts-expect-error // Todo: remove usage of react-data-grid
-import { Column, useRowSelection } from 'react-data-grid';
+import { type Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';
 
 import {
-  ImportedStructuredRow,
-  SpreadsheetImportFields,
+  type ImportedStructuredRow,
+  type SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
 import camelCase from 'lodash.camelcase';
 import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
 import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
-import { ImportedStructuredRowMetadata } from '../types';
+import { type ImportedStructuredRowMetadata } from '../types';
 
 const StyledHeaderContainer = styled.div`
   align-items: center;
@@ -71,9 +71,9 @@ const formatSafeId = (columnKey: string) => {
   return camelCase(columnKey.replace('(', '').replace(')', ''));
 };
 
-export const generateColumns = <T extends string>(
-  fields: SpreadsheetImportFields<T>,
-): Column<ImportedStructuredRow<T> & ImportedStructuredRowMetadata>[] => [
+export const generateColumns = (
+  fields: SpreadsheetImportFields,
+): Column<ImportedStructuredRow & ImportedStructuredRowMetadata>[] => [
   {
     key: SELECT_COLUMN_KEY,
     name: '',
@@ -108,7 +108,7 @@ export const generateColumns = <T extends string>(
   ...fields.map(
     (
       column,
-    ): Column<ImportedStructuredRow<T> & ImportedStructuredRowMetadata> => ({
+    ): Column<ImportedStructuredRow & ImportedStructuredRowMetadata> => ({
       key: column.key,
       name: column.label,
       minWidth: 150,
@@ -118,21 +118,23 @@ export const generateColumns = <T extends string>(
           <StyledHeaderLabel id={formatSafeId(column.key)}>
             {column.label}
           </StyledHeaderLabel>
-          {column.description &&
-            createPortal(
-              <AppTooltip
-                anchorSelect={`#${formatSafeId(column.key)}`}
-                place="top"
-                content={column.description}
-              />,
-              document.body,
-            )}
+          <>
+            {column.description &&
+              createPortal(
+                <AppTooltip
+                  anchorSelect={`#${formatSafeId(column.key)}`}
+                  place="top"
+                  content={column.description}
+                />,
+                document.body,
+              )}
+          </>
         </StyledHeaderContainer>
       ),
       editable: column.fieldType.type !== 'checkbox',
       // Todo: remove usage of react-data-grid
       editor: ({ row, onRowChange, onClose }: any) => {
-        const columnKey = column.key as keyof (ImportedStructuredRow<T> &
+        const columnKey = column.key as keyof (ImportedStructuredRow &
           ImportedStructuredRowMetadata);
         let component;
 
@@ -147,7 +149,7 @@ export const generateColumns = <T extends string>(
           }
           default:
             component = (
-              <TextInput
+              <SettingsTextInput
                 instanceId={`validation-${column.key}-${row.__index}`}
                 value={row[columnKey] as string}
                 onChange={(value: string) => {
@@ -166,7 +168,7 @@ export const generateColumns = <T extends string>(
       },
       // Todo: remove usage of react-data-grid
       formatter: ({ row, onRowChange }: { row: any; onRowChange: any }) => {
-        const columnKey = column.key as keyof (ImportedStructuredRow<T> &
+        const columnKey = column.key as keyof (ImportedStructuredRow &
           ImportedStructuredRowMetadata);
         let component;
 
@@ -197,7 +199,7 @@ export const generateColumns = <T extends string>(
                 id={formatSafeId(`${columnKey}-${row.__index}`)}
               >
                 {column.fieldType.options.find(
-                  (option) => option.value === row[columnKey as T],
+                  (option) => option.value === row[columnKey],
                 )?.label || null}
               </StyledDefaultContainer>
             );

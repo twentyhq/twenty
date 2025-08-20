@@ -11,7 +11,7 @@ import { SettingsObjectCoverImage } from '@/settings/data-model/objects/componen
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { SettingsPath } from '@/types/SettingsPath';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -33,14 +33,14 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
-import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
+import { type SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-const StyledSearchInput = styled(TextInput)`
+const StyledSearchInput = styled(SettingsTextInput)`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
@@ -235,7 +235,7 @@ export const SettingsObjects = () => {
                             isCustomObject={
                               objectSettingsItem.objectMetadataItem.isCustom
                             }
-                            scopeKey={
+                            objectMetadataItemNamePlural={
                               objectSettingsItem.objectMetadataItem.namePlural
                             }
                             onActivate={() =>

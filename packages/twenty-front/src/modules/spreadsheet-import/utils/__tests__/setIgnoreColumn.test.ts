@@ -1,10 +1,10 @@
-import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 
 describe('setIgnoreColumn', () => {
   it('should return a column with type "ignored"', () => {
-    const column: SpreadsheetColumn<'John'> = {
+    const column: SpreadsheetColumn = {
       index: 0,
       header: 'Name',
       type: SpreadsheetColumnType.matched,

@@ -1,4 +1,4 @@
-import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -56,10 +56,7 @@ export const SettingsAccounts = () => {
                 title={t`Connected accounts`}
                 description={t`Manage your internet accounts.`}
               />
-              <SettingsAccountsConnectedAccountsListCard
-                accounts={accounts}
-                loading={loading}
-              />
+              <SettingsAccountsConnectedAccountsListCard accounts={accounts} />
             </Section>
             <SettingsAccountsBlocklistSection />
             <SettingsAccountsSettingsSection />

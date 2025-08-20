@@ -1,11 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { EachTestingContext } from 'twenty-shared/testing';
-import { Repository } from 'typeorm';
+import { type EachTestingContext } from 'twenty-shared/testing';
+import { type Repository } from 'typeorm';
 
 import { UpgradeCommandRunner } from 'src/database/commands/command-runners/upgrade.command-runner';
-import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
+import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';

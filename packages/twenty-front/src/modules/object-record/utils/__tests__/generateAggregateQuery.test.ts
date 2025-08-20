@@ -1,4 +1,4 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { generateAggregateQuery } from '../generateAggregateQuery';
 
 describe('generateAggregateQuery', () => {
@@ -16,10 +16,13 @@ describe('generateAggregateQuery', () => {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       fields: [],
+      readableFields: [],
+      updatableFields: [],
       indexMetadatas: [],
       isLabelSyncedWithName: true,
       isRemote: false,
       isSystem: false,
+      isUIReadOnly: false,
     };
 
     const mockRecordGqlFields = {
@@ -55,10 +58,13 @@ describe('generateAggregateQuery', () => {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       fields: [],
+      readableFields: [],
+      updatableFields: [],
       indexMetadatas: [],
       isLabelSyncedWithName: true,
       isRemote: false,
       isSystem: false,
+      isUIReadOnly: false,
     };
 
     const mockRecordGqlFields = {

@@ -1,8 +1,8 @@
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
-  RecordUpdateHook,
-  RecordUpdateHookParams,
-} from '@/object-record/record-field/contexts/FieldContext';
+  type RecordUpdateHook,
+  type RecordUpdateHookParams,
+} from '@/object-record/record-field/ui/contexts/FieldContext';
 import {
   FileFolder,
   useUploadImageMutation,

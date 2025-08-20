@@ -1,27 +1,26 @@
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { RecoilComponentState } from '@/ui/utilities/state/component-state/types/RecoilComponentState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { type ComponentState } from '@/ui/utilities/state/component-state/types/ComponentState';
+import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { useRecoilState } from 'recoil';
 
 export const useRecoilComponentState = <StateType>(
-  componentState: RecoilComponentState<StateType>,
-  componentId?: string,
+  componentState: ComponentState<StateType>,
+  instanceIdFromProps?: string,
 ) => {
-  const componentContext = (window as any).componentContextStateMap?.get(
+  const componentInstanceContext = globalComponentInstanceContextMap.get(
     componentState.key,
   );
 
-  if (!componentContext) {
+  if (!componentInstanceContext) {
     throw new Error(
-      `Component context for key "${componentState.key}" is not defined`,
+      `Instance context for key "${componentState.key}" is not defined`,
     );
   }
 
-  const internalComponentId = useAvailableScopeIdOrThrow(
-    componentContext,
-    componentId,
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    componentInstanceContext,
+    instanceIdFromProps,
   );
 
-  return useRecoilState(
-    componentState.atomFamily({ scopeId: internalComponentId }),
-  );
+  return useRecoilState(componentState.atomFamily({ instanceId }));
 };

@@ -1,5 +1,5 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
+import { type RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
 
 export const findAllViewsOperationSignatureFactory: RecordGqlOperationSignatureFactory =
   () => ({
@@ -25,5 +25,6 @@ export const findAllViewsOperationSignatureFactory: RecordGqlOperationSignatureF
       viewSorts: true,
       viewFields: true,
       viewGroups: true,
+      anyFieldFilterValue: true,
     },
   });

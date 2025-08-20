@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-import { ImportedRow } from '@/spreadsheet-import/types';
+import { type ImportedRow } from '@/spreadsheet-import/types';
 
-import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
@@ -29,15 +29,15 @@ const StyledExample = styled.span`
   white-space: nowrap;
 `;
 
-type UserTableColumnProps<T extends string> = {
-  column: SpreadsheetColumn<T>;
+type UserTableColumnProps = {
+  column: SpreadsheetColumn;
   importedRow: ImportedRow;
 };
 
-export const UserTableColumn = <T extends string>({
+export const UserTableColumn = ({
   column,
   importedRow,
-}: UserTableColumnProps<T>) => {
+}: UserTableColumnProps) => {
   const { header } = column;
   const firstDefinedValue = importedRow.find(isDefined);
 

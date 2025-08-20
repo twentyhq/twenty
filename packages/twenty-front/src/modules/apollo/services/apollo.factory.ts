@@ -1,13 +1,13 @@
 import {
   ApolloClient,
-  ApolloClientOptions,
+  type ApolloClientOptions,
   ApolloLink,
-  FetchResult,
+  type FetchResult,
   fromPromise,
-  Observable,
-  Operation,
-  ServerError,
-  ServerParseError,
+  type Observable,
+  type Operation,
+  type ServerError,
+  type ServerParseError,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
@@ -16,24 +16,25 @@ import { RestLink } from 'apollo-link-rest';
 import { createUploadLink } from 'apollo-upload-client';
 
 import { renewToken } from '@/auth/services/AuthService';
-import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import { AuthTokenPair } from '~/generated/graphql';
+import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
+import { type AuthTokenPair } from '~/generated/graphql';
 import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { i18n } from '@lingui/core';
+import { t } from '@lingui/core/macro';
 import {
-  DefinitionNode,
-  DirectiveNode,
-  GraphQLFormattedError,
-  SelectionNode,
+  type DefinitionNode,
+  type DirectiveNode,
+  type GraphQLFormattedError,
+  type SelectionNode,
 } from 'graphql';
 import isEmpty from 'lodash.isempty';
 import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { ApolloManager } from '../types/apolloManager.interface';
+import { type ApolloManager } from '../types/apolloManager.interface';
 import { getTokenPair } from '../utils/getTokenPair';
 import { loggerLink } from '../utils/loggerLink';
 import { StreamingRestLink } from '../utils/streamingRestLink';
@@ -45,16 +46,19 @@ export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
   onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
   onUnauthenticatedError?: () => void;
+  onAppVersionMismatch?: (message: string) => void;
   currentWorkspaceMember: CurrentWorkspaceMember | null;
   currentWorkspace: CurrentWorkspace | null;
   extraLinks?: ApolloLink[];
   isDebugMode?: boolean;
+  appVersion?: string;
 }
 
 export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
   private client: ApolloClient<TCacheShape>;
   private currentWorkspaceMember: CurrentWorkspaceMember | null = null;
   private currentWorkspace: CurrentWorkspace | null = null;
+  private appVersion?: string;
 
   constructor(opts: Options<TCacheShape>) {
     const {
@@ -63,15 +67,18 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
       onNetworkError,
       onTokenPairChange,
       onUnauthenticatedError,
+      onAppVersionMismatch,
       currentWorkspaceMember,
       currentWorkspace,
       extraLinks,
       isDebugMode,
+      appVersion,
       ...options
     } = opts;
 
     this.currentWorkspaceMember = currentWorkspaceMember;
     this.currentWorkspace = currentWorkspace;
+    this.appVersion = appVersion;
 
     const buildApolloLink = (): ApolloLink => {
       const uploadLink = createUploadLink({
@@ -98,19 +105,20 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
           };
         }
 
+        const token = tokenPair.accessOrWorkspaceAgnosticToken?.token;
+
         return {
           headers: {
             ...headers,
             ...options.headers,
-            authorization: tokenPair.accessToken.token
-              ? `Bearer ${tokenPair.accessToken.token}`
-              : '',
+            authorization: token ? `Bearer ${token}` : '',
             ...(this.currentWorkspaceMember?.locale
               ? { 'x-locale': this.currentWorkspaceMember.locale }
               : { 'x-locale': i18n.locale }),
             ...(this.currentWorkspace?.metadataVersion && {
               'X-Schema-Version': `${this.currentWorkspace.metadataVersion}`,
             }),
+            ...(this.appVersion && { 'X-App-Version': this.appVersion }),
           },
         };
       });
@@ -158,6 +166,13 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
               }
 
               switch (graphQLError?.extensions?.code) {
+                case 'APP_VERSION_MISMATCH': {
+                  onAppVersionMismatch?.(
+                    (graphQLError.extensions?.userFriendlyMessage as string) ||
+                      t`Your app version is out of date. Please refresh the page.`,
+                  );
+                  return;
+                }
                 case 'UNAUTHENTICATED': {
                   return handleTokenRenewal(operation, forward);
                 }
@@ -287,6 +302,10 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
 
   updateCurrentWorkspace(workspace: CurrentWorkspace | null) {
     this.currentWorkspace = workspace;
+  }
+
+  updateAppVersion(appVersion?: string) {
+    this.appVersion = appVersion;
   }
 
   getClient() {

@@ -3,8 +3,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import Stripe from 'stripe';
 import { Repository } from 'typeorm';
+
+import type Stripe from 'stripe';
 
 import { transformStripePriceEventToDatabasePrice } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-price-event-to-database-price.util';
 import {

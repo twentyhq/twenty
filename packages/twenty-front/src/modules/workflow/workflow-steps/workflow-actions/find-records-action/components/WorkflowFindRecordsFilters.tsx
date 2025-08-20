@@ -1,5 +1,5 @@
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
@@ -8,12 +8,12 @@ import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/adva
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { WorkflowAdvancedFilterRecordFilterColumn } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterRecordFilterColumn';
 import { WorkflowAdvancedFilterRecordFilterGroupColumn } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterRecordFilterGroupColumn';
-import { FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
+import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords';
 import { WorkflowFindRecordsAddFilterButton } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsAddFilterButton';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
@@ -42,7 +42,7 @@ export const WorkflowFindRecordsFilters = ({
   onChange: (filter: FindRecordsActionFilter) => void;
   readonly?: boolean;
 }) => {
-  const rootRecordFilterGroup = useRecoilComponentValueV2(
+  const rootRecordFilterGroup = useRecoilComponentValue(
     rootLevelRecordFilterGroupComponentSelector,
   );
 
@@ -65,9 +65,9 @@ export const WorkflowFindRecordsFilters = ({
     ) ?? availableFieldMetadataItemsForFilter[0];
 
   const currentRecordFilterGroupsCallbackState =
-    useRecoilComponentCallbackStateV2(currentRecordFilterGroupsComponentState);
+    useRecoilComponentCallbackState(currentRecordFilterGroupsComponentState);
 
-  const currentRecordFiltersCallbackState = useRecoilComponentCallbackStateV2(
+  const currentRecordFiltersCallbackState = useRecoilComponentCallbackState(
     currentRecordFiltersComponentState,
   );
 

@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { Request } from 'express';
+import { type Request } from 'express';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
+import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 
 @Injectable()
 export class RestApiDeleteOneHandler extends RestApiBaseHandler {
@@ -18,7 +19,7 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
     const { objectMetadata, repository, restrictedFields } =
       await this.getRepositoryAndMetadataOrFail(request);
 
-    const selectOptions = this.getSelectOptionsFromRestrictedFields({
+    const selectOptions = getAllSelectableFields({
       restrictedFields,
       objectMetadata,
     });
@@ -28,7 +29,9 @@ export class RestApiDeleteOneHandler extends RestApiBaseHandler {
       select: selectOptions,
     });
 
-    await repository.delete(recordId);
+    const columnsToReturnForDelete: string[] = [];
+
+    await repository.delete(recordId, undefined, columnsToReturnForDelete);
 
     return this.formatResult({
       operation: 'delete',

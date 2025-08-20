@@ -1,9 +1,9 @@
-import { MessageDescriptor } from '@lingui/core';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type MessageDescriptor } from '@lingui/core';
+import { type FieldMetadataType } from 'twenty-shared/types';
 
-import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
-import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
-import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { type FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import { type FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
+import { type FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/validate-name-and-label-are-sync-or-throw.util';
@@ -52,6 +52,12 @@ export function WorkspaceField<T extends FieldMetadataType>(
         object,
         propertyKey.toString(),
       ) ?? false;
+    const isUIReadOnly =
+      TypedReflect.getMetadata(
+        'workspace:is-field-ui-readonly-metadata-args',
+        object,
+        propertyKey.toString(),
+      ) ?? false;
     const gate = TypedReflect.getMetadata(
       'workspace:gate-metadata-args',
       object,
@@ -91,6 +97,7 @@ export function WorkspaceField<T extends FieldMetadataType>(
       isPrimary,
       isNullable,
       isSystem,
+      isUIReadOnly,
       gate,
       isDeprecated,
       isUnique,

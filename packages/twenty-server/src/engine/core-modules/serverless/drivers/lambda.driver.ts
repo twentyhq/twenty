@@ -3,18 +3,18 @@ import { join } from 'path';
 
 import {
   CreateFunctionCommand,
-  CreateFunctionCommandInput,
+  type CreateFunctionCommandInput,
   DeleteFunctionCommand,
   GetFunctionCommand,
   InvokeCommand,
-  InvokeCommandInput,
+  type InvokeCommandInput,
   Lambda,
-  LambdaClientConfig,
+  type LambdaClientConfig,
   ListLayerVersionsCommand,
-  ListLayerVersionsCommandInput,
+  type ListLayerVersionsCommandInput,
   LogType,
   PublishLayerVersionCommand,
-  PublishLayerVersionCommandInput,
+  type PublishLayerVersionCommandInput,
   ResourceNotFoundException,
   waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
@@ -23,11 +23,11 @@ import { isDefined } from 'twenty-shared/utils';
 import ts, { transpileModule } from 'typescript';
 
 import {
-  ServerlessDriver,
-  ServerlessExecuteResult,
+  type ServerlessDriver,
+  type ServerlessExecuteResult,
 } from 'src/engine/core-modules/serverless/drivers/interfaces/serverless-driver.interface';
 
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { type FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { readFileContent } from 'src/engine/core-modules/file-storage/utils/read-file-content';
 import { COMMON_LAYER_NAME } from 'src/engine/core-modules/serverless/drivers/constants/common-layer-name';
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
@@ -41,7 +41,7 @@ import {
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ServerlessFunctionExecutionStatus } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-execution-result.dto';
 import {
-  ServerlessFunctionEntity,
+  type ServerlessFunctionEntity,
   ServerlessFunctionRuntime,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import {

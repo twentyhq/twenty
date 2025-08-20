@@ -1,27 +1,27 @@
 import { CustomError } from '@/error-handler/CustomError';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import {
-  ActorFilter,
-  AddressFilter,
-  ArrayFilter,
-  CurrencyFilter,
-  DateFilter,
-  FloatFilter,
-  MultiSelectFilter,
-  PhonesFilter,
-  RatingFilter,
-  RawJsonFilter,
-  RecordGqlOperationFilter,
-  RelationFilter,
-  SelectFilter,
-  StringFilter,
+  type ActorFilter,
+  type AddressFilter,
+  type ArrayFilter,
+  type CurrencyFilter,
+  type DateFilter,
+  type FloatFilter,
+  type MultiSelectFilter,
+  type PhonesFilter,
+  type RatingFilter,
+  type RawJsonFilter,
+  type RecordGqlOperationFilter,
+  type RelationFilter,
+  type SelectFilter,
+  type StringFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { computeEmptyGqlOperationFilterForEmails } from '@/object-record/record-filter/utils/compute-empty-record-gql-operation-filter/for-composite-field/computeEmptyGqlOperationFilterForEmails';
 import { computeEmptyGqlOperationFilterForLinks } from '@/object-record/record-filter/utils/compute-empty-record-gql-operation-filter/for-composite-field/computeEmptyGqlOperationFilterForLinks';
 import { isNonEmptyString } from '@sniptt/guards';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
-import { Field } from '~/generated/graphql';
+import { ViewFilterOperand } from 'twenty-shared/types';
+import { type Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
 type GetEmptyRecordGqlOperationFilterParams = {

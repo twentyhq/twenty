@@ -10,8 +10,8 @@ import {
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { convertCentsToBillingCredits } from 'src/engine/core-modules/ai/utils/convert-cents-to-billing-credits.util';
 import {
-  ClientAIModelConfig,
-  ClientConfig,
+  type ClientAIModelConfig,
+  type ClientConfig,
 } from 'src/engine/core-modules/client-config/client-config.entity';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { PUBLIC_FEATURE_FLAGS } from 'src/engine/core-modules/feature-flag/constants/public-feature-flag.const';
@@ -66,6 +66,7 @@ export class ClientConfigService {
     }
 
     const clientConfig: ClientConfig = {
+      appVersion: this.twentyConfigService.get('APP_VERSION'),
       billing: {
         isBillingEnabled: this.twentyConfigService.get('IS_BILLING_ENABLED'),
         billingUrl: this.twentyConfigService.get('BILLING_PLAN_REQUIRED_LINK'),

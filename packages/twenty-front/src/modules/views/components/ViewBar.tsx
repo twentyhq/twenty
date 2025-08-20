@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { ObjectSortDropdownButton } from '@/object-record/object-sort-dropdown/components/ObjectSortDropdownButton';
@@ -12,7 +12,9 @@ import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDro
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { VIEW_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ViewSortDropdownId';
 import { ObjectSortDropdownComponentInstanceContext } from '@/object-record/object-sort-dropdown/states/context/ObjectSortDropdownComponentInstanceContext';
+import { ViewBarAnyFieldFilterEffect } from '@/views/components/ViewBarAnyFieldFilterEffect';
 import { ViewBarFilterDropdown } from '@/views/components/ViewBarFilterDropdown';
+import { ViewBarRecordFieldEffect } from '@/views/components/ViewBarRecordFieldEffect';
 import { ViewBarRecordFilterEffect } from '@/views/components/ViewBarRecordFilterEffect';
 import { ViewBarRecordFilterGroupEffect } from '@/views/components/ViewBarRecordFilterGroupEffect';
 import { ViewBarRecordSortEffect } from '@/views/components/ViewBarRecordSortEffect';
@@ -43,6 +45,8 @@ export const ViewBar = ({
       value={{ instanceId: VIEW_SORT_DROPDOWN_ID }}
     >
       <ViewBarRecordFilterGroupEffect />
+      <ViewBarAnyFieldFilterEffect />
+      <ViewBarRecordFieldEffect />
       <ViewBarRecordFilterEffect />
       <ViewBarRecordSortEffect />
       <QueryParamsFiltersEffect />

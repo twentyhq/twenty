@@ -36,7 +36,7 @@ export class ApiKey {
   @Column({ type: 'timestamptz', nullable: true })
   revokedAt?: Date | null;
 
-  @Field()
+  @Field(() => UUIDScalarType)
   @Column('uuid')
   workspaceId: string;
 

@@ -1,11 +1,11 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
@@ -20,7 +20,7 @@ import { RecordTableRowContextProvider } from '@/object-record/record-table/cont
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { mockPerformance } from './mock';
 
 const RelationFieldValueSetterEffect = () => {
@@ -45,7 +45,7 @@ const RelationFieldValueSetterEffect = () => {
 };
 
 const meta: Meta = {
-  title: 'RecordIndex/Table/RecordTableCell',
+  title: 'Modules/ObjectRecord/RecordTable/RecordTableCell',
   decorators: [
     MemoryRouterDecorator,
     ChipGeneratorsDecorator,
@@ -70,12 +70,12 @@ const meta: Meta = {
               visibleTableColumns: mockPerformance.visibleTableColumns as any,
               objectNameSingular:
                 mockPerformance.objectMetadataItem.nameSingular,
+              objectPermissions: {
+                objectMetadataId: mockPerformance.objectMetadataItem.id,
+              },
             }}
           >
-            <RecordTableComponentInstance
-              recordTableId="asd"
-              onColumnsChange={() => {}}
-            >
+            <RecordTableComponentInstance recordTableId="asd">
               <RecordTableBodyContextProvider
                 value={{
                   onOpenTableCell: () => {},
@@ -120,7 +120,7 @@ const meta: Meta = {
                           fieldDefinition: {
                             ...mockPerformance.fieldDefinition,
                           },
-                          isReadOnly: false,
+                          isRecordFieldReadOnly: false,
                         }}
                       >
                         <RelationFieldValueSetterEffect />

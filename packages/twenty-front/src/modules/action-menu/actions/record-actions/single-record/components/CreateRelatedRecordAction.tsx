@@ -3,13 +3,14 @@ import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
+import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
+import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { isDefined } from 'twenty-shared/utils';
 
 interface CreateRelatedRecordActionProps {
@@ -106,7 +107,11 @@ export const CreateRelatedRecordAction = ({
       openRecordTitleCell({
         recordId: createdRecord.id,
         fieldName: labelIdentifierFieldMetadataItem.name,
-        containerType: RecordTitleCellContainerType.ShowPage,
+        instanceId: getRecordFieldInputInstanceId({
+          recordId: createdRecord.id,
+          fieldName: labelIdentifierFieldMetadataItem.name,
+          prefix: RecordTitleCellContainerType.ShowPage,
+        }),
       });
     }
   };

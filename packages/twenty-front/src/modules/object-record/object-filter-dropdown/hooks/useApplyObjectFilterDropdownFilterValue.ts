@@ -2,19 +2,19 @@ import { useUpsertObjectFilterDropdownCurrentFilter } from '@/object-record/obje
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { useCreateRecordFilterFromObjectFilterDropdownCurrentStates } from '@/object-record/record-filter/hooks/useCreateRecordFilterFromObjectFilterDropdownCurrentStates';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useApplyObjectFilterDropdownFilterValue = () => {
   const objectFilterDropdownCurrentRecordFilterCallbackState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       objectFilterDropdownCurrentRecordFilterComponentState,
     );
 
   const fieldMetadataItemUsedInDropdownCallbackState =
-    useRecoilComponentCallbackStateV2(
+    useRecoilComponentCallbackState(
       fieldMetadataItemUsedInDropdownComponentSelector,
     );
 

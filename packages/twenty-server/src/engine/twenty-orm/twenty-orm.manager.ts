@@ -1,13 +1,13 @@
-import { Injectable, Type } from '@nestjs/common';
+import { Injectable, type Type } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { ObjectLiteral, Repository } from 'typeorm';
+import { type ObjectLiteral, Repository } from 'typeorm';
 
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class TwentyORMManager {
   async getRepository<T extends ObjectLiteral>(
     workspaceEntityOrObjectMetadataName: Type<T> | string,
   ): Promise<WorkspaceRepository<T>> {
-    const { workspaceId, userWorkspaceId, isExecutedByApiKey } =
+    const { workspaceId, userWorkspaceId, apiKeyId } =
       this.scopedWorkspaceContextFactory.create();
 
     let objectMetadataName: string;
@@ -61,13 +61,20 @@ export class TwentyORMManager {
       });
 
       roleId = roleTarget?.roleId;
-    }
+    } else if (isDefined(apiKeyId)) {
+      const roleTarget = await this.roleTargetsRepository.findOne({
+        where: {
+          apiKeyId,
+          workspaceId,
+        },
+      });
 
-    const shouldBypassPermissionChecks = !!isExecutedByApiKey;
+      roleId = roleTarget?.roleId;
+    }
 
     return workspaceDataSource.getRepository<T>(
       objectMetadataName,
-      shouldBypassPermissionChecks,
+      false,
       roleId,
     );
   }

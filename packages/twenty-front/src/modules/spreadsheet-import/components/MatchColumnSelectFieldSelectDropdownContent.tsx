@@ -1,8 +1,8 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldMetadataTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFieldMetadataTypeLabel';
-import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import { hasNestedFields } from '@/spreadsheet-import/utils/spreadsheetImportHasNestedFields';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -17,9 +17,9 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { IconForbid, IconX, useIcons } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { ReadonlyDeep } from 'type-fest';
+import { type ReadonlyDeep } from 'type-fest';
 
 const StyledContainer = styled.div`
   max-height: 360px;
@@ -139,7 +139,7 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
                 LeftIcon={getIcon(field.icon)}
                 text={field.label}
                 contextualText={getFieldMetadataTypeLabel(field.type)}
-                hasSubMenu={isCompositeFieldType(field.type)}
+                hasSubMenu={hasNestedFields(field)}
               />
             ))}
           </DropdownMenuItemsContainer>

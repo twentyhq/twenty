@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 
 export const objectShowPageTargetableObjectState =
   atom<ActivityTargetableObject | null>({

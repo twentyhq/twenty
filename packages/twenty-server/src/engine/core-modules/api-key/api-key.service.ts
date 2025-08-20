@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Repository } from 'typeorm';
+import { DataSource, IsNull, Repository } from 'typeorm';
 
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/api-key.exception';
-import { ApiKeyToken } from 'src/engine/core-modules/auth/dto/token.entity';
+import { type ApiKeyToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
@@ -18,12 +19,34 @@ export class ApiKeyService {
     @InjectRepository(ApiKey, 'core')
     private readonly apiKeyRepository: Repository<ApiKey>,
     private readonly jwtWrapperService: JwtWrapperService,
+    private readonly apiKeyRoleService: ApiKeyRoleService,
+    @InjectDataSource('core')
+    private readonly dataSource: DataSource,
   ) {}
 
-  async create(apiKeyData: Partial<ApiKey>): Promise<ApiKey> {
-    const apiKey = this.apiKeyRepository.create(apiKeyData);
+  async create(
+    apiKeyData: Partial<ApiKey> & { roleId: string },
+  ): Promise<ApiKey> {
+    const { roleId, ...apiKeyFields } = apiKeyData;
 
-    return await this.apiKeyRepository.save(apiKey);
+    return await this.dataSource
+      .transaction(async (manager) => {
+        const apiKey = manager.create(ApiKey, apiKeyFields);
+        const savedApiKey = await manager.save(apiKey);
+
+        await this.apiKeyRoleService.assignRoleToApiKeyWithManager(manager, {
+          apiKeyId: savedApiKey.id,
+          roleId,
+          workspaceId: savedApiKey.workspaceId,
+        });
+
+        return savedApiKey;
+      })
+      .then(async (savedApiKey) => {
+        await this.apiKeyRoleService.recomputeCache(savedApiKey.workspaceId);
+
+        return savedApiKey;
+      });
   }
 
   async findById(id: string, workspaceId: string): Promise<ApiKey | null> {

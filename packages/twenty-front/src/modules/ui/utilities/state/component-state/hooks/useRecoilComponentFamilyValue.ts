@@ -1,35 +1,52 @@
-import { SerializableParam, useRecoilValue } from 'recoil';
-
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { ComponentFamilyState } from '@/ui/utilities/state/component-state/types/ComponentFamilyState';
+/* eslint-disable react-hooks/rules-of-hooks */
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { type ComponentFamilyReadOnlySelector } from '@/ui/utilities/state/component-state/types/ComponentFamilyReadOnlySelector';
+import { type ComponentFamilySelector } from '@/ui/utilities/state/component-state/types/ComponentFamilySelector';
+import { type ComponentFamilyState } from '@/ui/utilities/state/component-state/types/ComponentFamilyState';
+import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
+import { type SerializableParam, useRecoilValue } from 'recoil';
 
 export const useRecoilComponentFamilyValue = <
   StateType,
   FamilyKey extends SerializableParam,
 >(
-  componentFamilyState: ComponentFamilyState<StateType, FamilyKey>,
+  componentState:
+    | ComponentFamilyState<StateType, FamilyKey>
+    | ComponentFamilySelector<StateType, FamilyKey>
+    | ComponentFamilyReadOnlySelector<StateType, FamilyKey>,
   familyKey: FamilyKey,
-  componentId?: string,
-) => {
-  const componentContext = (window as any).componentContextStateMap?.get(
-    componentFamilyState.key,
+  instanceIdFromProps?: string,
+): StateType => {
+  const instanceContext = globalComponentInstanceContextMap.get(
+    componentState.key,
   );
 
-  if (!componentContext) {
+  if (!instanceContext) {
     throw new Error(
-      `Component context for key "${componentFamilyState.key}" is not defined`,
+      `Instance context for key "${componentState.key}" is not defined`,
     );
   }
 
-  const internalComponentId = useAvailableScopeIdOrThrow(
-    componentContext,
-    componentId,
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    instanceContext,
+    instanceIdFromProps,
   );
 
-  return useRecoilValue(
-    componentFamilyState.atomFamily({
-      scopeId: internalComponentId,
-      familyKey,
-    }),
-  );
+  switch (componentState.type) {
+    case 'ComponentFamilyState': {
+      return useRecoilValue(
+        componentState.atomFamily({ familyKey, instanceId }),
+      );
+    }
+    case 'ComponentFamilySelector': {
+      return useRecoilValue(
+        componentState.selectorFamily({ familyKey, instanceId }),
+      );
+    }
+    case 'ComponentFamilyReadOnlySelector': {
+      return useRecoilValue(
+        componentState.selectorFamily({ familyKey, instanceId }),
+      );
+    }
+  }
 };

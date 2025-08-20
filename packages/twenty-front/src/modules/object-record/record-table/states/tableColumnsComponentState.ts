@@ -1,10 +1,10 @@
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
-import { ColumnDefinition } from '../types/ColumnDefinition';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { type ColumnDefinition } from '../types/ColumnDefinition';
 
-export const tableColumnsComponentState = createComponentStateV2<
+export const tableColumnsComponentState = createComponentState<
   ColumnDefinition<FieldMetadata>[]
 >({
   key: 'tableColumnsComponentState',

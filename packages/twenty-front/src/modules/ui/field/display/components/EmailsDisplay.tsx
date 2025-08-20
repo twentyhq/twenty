@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { FieldEmailsValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';

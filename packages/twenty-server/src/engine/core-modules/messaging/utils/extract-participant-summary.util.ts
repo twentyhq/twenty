@@ -1,7 +1,7 @@
-import { TimelineThreadParticipant } from 'src/engine/core-modules/messaging/dtos/timeline-thread-participant.dto';
+import { type TimelineThreadParticipant } from 'src/engine/core-modules/messaging/dtos/timeline-thread-participant.dto';
 import { filterActiveParticipants } from 'src/engine/core-modules/messaging/utils/filter-active-participants.util';
 import { formatThreadParticipant } from 'src/engine/core-modules/messaging/utils/format-thread-participant.util';
-import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
 export const extractParticipantSummary = (
   messageParticipants: MessageParticipantWorkspaceEntity[],

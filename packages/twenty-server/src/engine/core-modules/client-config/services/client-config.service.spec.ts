@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
@@ -100,6 +100,7 @@ describe('ClientConfigService', () => {
       const result = await service.getClientConfig();
 
       expect(result).toEqual({
+        appVersion: '1.0.0',
         billing: {
           isBillingEnabled: true,
           billingUrl: 'https://billing.example.com',

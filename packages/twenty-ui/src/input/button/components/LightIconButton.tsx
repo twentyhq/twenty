@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from '@ui/display';
-import { ComponentProps, MouseEvent } from 'react';
+import { type IconComponent } from '@ui/display';
+import { type ComponentProps, type MouseEvent } from 'react';
 
 export type LightIconButtonAccent = 'secondary' | 'tertiary';
 export type LightIconButtonSize = 'small' | 'medium';

@@ -2,7 +2,7 @@ import { i18n } from '@lingui/core';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
-import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modules/object-metadata/utils/resolve-object-metadata-standard-override.util';
 
 jest.mock('@lingui/core');
@@ -471,6 +471,55 @@ describe('resolveObjectMetadataStandardOverride', () => {
         objectMetadata,
         'labelSingular',
         'de-DE',
+      );
+
+      expect(result).toBe('Auto Translated Label');
+      expect(mockGenerateMessageId).toHaveBeenCalledWith('Standard Label');
+      expect(mockI18n._).toHaveBeenCalledWith('auto.translation.id');
+    });
+  });
+
+  describe('Undefined locale handling', () => {
+    it('should use SOURCE_LOCALE fallback when locale is undefined for standard object', () => {
+      const objectMetadata = {
+        labelSingular: 'Standard Label',
+        labelPlural: 'Standard Labels',
+        description: 'Standard Description',
+        icon: 'default-icon',
+        isCustom: false,
+        standardOverrides: {
+          labelSingular: 'Source Override',
+        },
+      };
+
+      const result = resolveObjectMetadataStandardOverride(
+        objectMetadata,
+        'labelSingular',
+        undefined,
+      );
+
+      expect(result).toBe('Source Override');
+      expect(mockGenerateMessageId).not.toHaveBeenCalled();
+      expect(mockI18n._).not.toHaveBeenCalled();
+    });
+
+    it('should fall back to auto translation when locale is undefined and no SOURCE_LOCALE override exists', () => {
+      mockI18n._.mockReturnValue('Auto Translated Label');
+      mockGenerateMessageId.mockReturnValue('auto.translation.id');
+
+      const objectMetadata = {
+        labelSingular: 'Standard Label',
+        labelPlural: 'Standard Labels',
+        description: 'Standard Description',
+        icon: 'default-icon',
+        isCustom: false,
+        standardOverrides: undefined,
+      };
+
+      const result = resolveObjectMetadataStandardOverride(
+        objectMetadata,
+        'labelSingular',
+        undefined,
       );
 
       expect(result).toBe('Auto Translated Label');

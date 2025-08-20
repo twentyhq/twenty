@@ -1,17 +1,10 @@
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { renderHook } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
 
 const mockDeleteWorkflowVersionStep = jest.fn();
-const updateOneRecordMock = jest.fn();
-const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
-
-jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
-  useUpdateOneRecord: () => ({
-    updateOneRecord: updateOneRecordMock,
-  }),
-}));
+const mockGetUpdatableWorkflowVersion = jest.fn();
+const mockDeleteStepsOutputSchema = jest.fn();
+const mockCloseCommandMenu = jest.fn();
 
 jest.mock('@/workflow/hooks/useDeleteWorkflowVersionStep', () => ({
   useDeleteWorkflowVersionStep: () => ({
@@ -19,34 +12,51 @@ jest.mock('@/workflow/hooks/useDeleteWorkflowVersionStep', () => ({
   }),
 }));
 
-jest.mock('@/workflow/hooks/useCreateDraftFromWorkflowVersion', () => ({
-  useCreateDraftFromWorkflowVersion: () => ({
-    createDraftFromWorkflowVersion: mockCreateDraftFromWorkflowVersion,
+jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
+  useGetUpdatableWorkflowVersionOrThrow: () => ({
+    getUpdatableWorkflowVersion: mockGetUpdatableWorkflowVersion,
+  }),
+}));
+
+jest.mock('@/workflow/hooks/useStepsOutputSchema', () => ({
+  useStepsOutputSchema: () => ({
+    deleteStepsOutputSchema: mockDeleteStepsOutputSchema,
+  }),
+}));
+
+jest.mock('@/command-menu/hooks/useCommandMenu', () => ({
+  useCommandMenu: () => ({
+    closeCommandMenu: mockCloseCommandMenu,
   }),
 }));
 
 describe('useDeleteStep', () => {
-  const mockWorkflow = {
-    id: '123',
-    currentVersion: {
-      id: '456',
-      status: 'DRAFT',
-      steps: [],
-      trigger: { type: 'manual' },
-    },
-    versions: [],
-  };
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-  it('should delete step in draft version', async () => {
-    const { result } = renderHook(
-      () =>
-        useDeleteStep({
-          workflow: mockWorkflow as unknown as WorkflowWithCurrentVersion,
-        }),
-      { wrapper: RecoilRoot },
-    );
-    await result.current.deleteStep('1');
+  it('should delete step and clean up dependencies', async () => {
+    const mockWorkflowVersionId = 'version-123';
+    const mockStepId = 'step-1';
+    const mockDeletedStepIds = ['step-1', 'step-2'];
 
-    expect(mockDeleteWorkflowVersionStep).toHaveBeenCalled();
+    mockGetUpdatableWorkflowVersion.mockResolvedValue(mockWorkflowVersionId);
+    mockDeleteWorkflowVersionStep.mockResolvedValue({
+      deletedStepIds: mockDeletedStepIds,
+    });
+
+    const { result } = renderHook(() => useDeleteStep());
+    await result.current.deleteStep(mockStepId);
+
+    expect(mockGetUpdatableWorkflowVersion).toHaveBeenCalled();
+    expect(mockDeleteWorkflowVersionStep).toHaveBeenCalledWith({
+      workflowVersionId: mockWorkflowVersionId,
+      stepId: mockStepId,
+    });
+    expect(mockCloseCommandMenu).toHaveBeenCalled();
+    expect(mockDeleteStepsOutputSchema).toHaveBeenCalledWith({
+      stepIds: mockDeletedStepIds,
+      workflowVersionId: mockWorkflowVersionId,
+    });
   });
 });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTheme } from '@emotion/react';
 
-import { RadioProps } from './Radio';
+import { type RadioProps } from './Radio';
 
 type RadioGroupProps = React.PropsWithChildren & {
   value?: string;

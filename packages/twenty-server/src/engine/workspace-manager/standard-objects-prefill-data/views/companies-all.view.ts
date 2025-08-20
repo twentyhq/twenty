@@ -1,5 +1,7 @@
+import { msg } from '@lingui/core/macro';
+
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   BASE_OBJECT_STANDARD_FIELD_IDS,
   COMPANY_STANDARD_FIELD_IDS,
@@ -8,6 +10,7 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 
 export const companiesAllView = (
   objectMetadataItems: ObjectMetadataEntity[],
+  useCoreNaming = false,
 ) => {
   const companyObjectMetadata = objectMetadataItems.find(
     (object) => object.standardId === STANDARD_OBJECT_IDS.company,
@@ -18,7 +21,7 @@ export const companiesAllView = (
   }
 
   return {
-    name: 'All Companies',
+    name: useCoreNaming ? msg`All {objectLabelPlural}` : 'All Companies',
     objectMetadataId: companyObjectMetadata.id ?? '',
     type: 'table',
     key: 'INDEX',
@@ -31,9 +34,7 @@ export const companiesAllView = (
         fieldMetadataId:
           companyObjectMetadata.fields.find(
             (field) => field.standardId === COMPANY_STANDARD_FIELD_IDS.name,
-          )?.id ??
-          '' ??
-          '',
+          )?.id ?? '',
         position: 0,
         isVisible: true,
         size: 180,
@@ -43,9 +44,7 @@ export const companiesAllView = (
           companyObjectMetadata.fields.find(
             (field) =>
               field.standardId === COMPANY_STANDARD_FIELD_IDS.domainName,
-          )?.id ??
-          '' ??
-          '',
+          )?.id ?? '',
         position: 1,
         isVisible: true,
         size: 100,

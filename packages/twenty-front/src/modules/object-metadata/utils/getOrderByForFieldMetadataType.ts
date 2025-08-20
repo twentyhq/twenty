@@ -1,12 +1,12 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
-import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
+import { type RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import {
-  FieldEmailsValue,
-  FieldLinksValue,
-  FieldPhonesValue,
-} from '@/object-record/record-field/types/FieldMetadata';
-import { OrderBy } from '@/types/OrderBy';
+  type FieldEmailsValue,
+  type FieldLinksValue,
+  type FieldPhonesValue,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type OrderBy } from '@/types/OrderBy';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const getOrderByForFieldMetadataType = (

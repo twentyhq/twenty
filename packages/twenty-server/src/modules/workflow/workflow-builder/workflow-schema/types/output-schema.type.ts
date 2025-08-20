@@ -1,4 +1,4 @@
-import { InputSchemaPropertyType } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
+import { type InputSchemaPropertyType } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
 
 export type Leaf = {
   isLeaf: true;
@@ -8,6 +8,7 @@ export type Leaf = {
   description?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
+  isCompositeSubField?: boolean;
 };
 
 export type Node = {
@@ -29,7 +30,9 @@ type Link = {
 export type BaseOutputSchema = Record<string, Leaf | Node>;
 
 export type FieldOutputSchema =
-  | ((Leaf | Node) & { fieldMetadataId?: string })
+  | ((Leaf | Node) & {
+      fieldMetadataId: string;
+    })
   | RecordOutputSchema;
 
 export type RecordOutputSchema = {
@@ -37,6 +40,7 @@ export type RecordOutputSchema = {
     nameSingular: string;
     fieldIdName: string;
     objectMetadataId: string;
+    isRelationField?: boolean;
   } & Leaf;
   fields: Record<string, FieldOutputSchema>;
   _outputSchemaType: 'RECORD';
