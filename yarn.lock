@@ -19662,6 +19662,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/html-to-text@npm:^9.0.4":
+  version: 9.0.4
+  resolution: "@types/html-to-text@npm:9.0.4"
+  checksum: 10c0/8e0e548f280d1c1107f70db01ff6331a295f3097f535f4d07c30ced271818fc3803a8f03bb2117c1207c46a3d40da256a03a17bd05fc9f5f1b4821c5bcbf98d8
+  languageName: node
+  linkType: hard
+
 "@types/http-assert@npm:*":
   version: 1.5.5
   resolution: "@types/http-assert@npm:1.5.5"
@@ -34227,7 +34234,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html-to-text@npm:9.0.5":
+"html-to-text@npm:9.0.5, html-to-text@npm:^9.0.5":
   version: 9.0.5
   resolution: "html-to-text@npm:9.0.5"
   dependencies:
@@ -50867,6 +50874,7 @@ __metadata:
     "@types/express-session": "npm:^1.18.0"
     "@types/graphql-upload": "npm:^8.0.12"
     "@types/handlebars": "npm:4.1.0"
+    "@types/html-to-text": "npm:^9.0.4"
     "@types/imapflow": "npm:^1.0.21"
     "@types/lodash.chunk": "npm:^4.2.9"
     "@types/lodash.differencewith": "npm:^4.5.9"
@@ -50936,6 +50944,7 @@ __metadata:
     graphql-upload: "npm:13.0.0"
     graphql-yoga: "npm:4.0.5"
     handlebars: "npm:^4.7.8"
+    html-to-text: "npm:^9.0.5"
     imapflow: "npm:1.0.187"
     ioredis: "npm:5.6.0"
     jsdom: "npm:^26.1.0"
