@@ -141,7 +141,6 @@ export const RecordTableHeaderCell = ({
   >(null);
 
   const { handleColumnsChange } = useTableColumns({
-    objectMetadataId: objectMetadataItem.id,
     recordTableId,
   });
 
