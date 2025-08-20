@@ -1,8 +1,10 @@
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFieldMetadataItemByIdOrThrow';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
-import { useGetFilterFieldMetadataItem } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useGetFilterFieldMetadataItem';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { getViewFilterOperands } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/getStepFilterOperands';
@@ -53,10 +55,8 @@ export const WorkflowStepFilterFieldSelect = ({
 
   const { getIcon } = useIcons();
 
-  const { getFilterFieldMetadataItem } = useGetFilterFieldMetadataItem();
-
   const { fieldMetadataItem: filterFieldMetadataItem } =
-    getFilterFieldMetadataItem(stepFilter.fieldMetadataId ?? '');
+    useFieldMetadataItemById(stepFilter.fieldMetadataId ?? '');
 
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
     shouldDisplayRecordFields,
@@ -81,6 +81,10 @@ export const WorkflowStepFilterFieldSelect = ({
           )
           .getValue();
 
+        const objectMetadataItems = snapshot
+          .getLoadable(objectMetadataItemsState)
+          .getValue();
+
         const {
           variableLabel,
           variableType,
@@ -96,7 +100,10 @@ export const WorkflowStepFilterFieldSelect = ({
           fieldMetadataItem: filterFieldMetadataItem,
           objectMetadataItem: filterObjectMetadataItem,
         } = isDefined(fieldMetadataId)
-          ? getFilterFieldMetadataItem(fieldMetadataId)
+          ? getFieldMetadataItemByIdOrThrow({
+              fieldMetadataId,
+              objectMetadataItems,
+            })
           : { fieldMetadataItem: undefined, objectMetadataItem: undefined };
 
         const filterType = isDefined(fieldMetadataId)
@@ -125,12 +132,7 @@ export const WorkflowStepFilterFieldSelect = ({
           },
         });
       },
-    [
-      upsertStepFilterSettings,
-      stepFilter,
-      workflowVersionId,
-      getFilterFieldMetadataItem,
-    ],
+    [upsertStepFilterSettings, stepFilter, workflowVersionId],
   );
 
   if (!isDefined(stepId)) {
@@ -191,25 +193,27 @@ export const WorkflowStepFilterFieldSelect = ({
   }
 
   return (
-    <WorkflowVariablesDropdown
-      instanceId={dropdownId}
-      onVariableSelect={handleChange}
-      clickableComponent={
-        <SelectControl
-          selectedOption={{
-            value: stepFilter.stepOutputKey,
-            label: label,
-            Icon: filterFieldMetadataItem?.icon
-              ? getIcon(filterFieldMetadataItem.icon)
-              : undefined,
-          }}
-          textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
-        />
-      }
-      shouldDisplayRecordFields={shouldDisplayRecordFields}
-      shouldDisplayRecordObjects={shouldDisplayRecordObjects}
-      shouldEnableSelectRelationObject={true}
-      fieldTypesToExclude={NON_SELECTABLE_FIELD_TYPES}
-    />
+    <>
+      <WorkflowVariablesDropdown
+        instanceId={dropdownId}
+        onVariableSelect={handleChange}
+        clickableComponent={
+          <SelectControl
+            selectedOption={{
+              value: stepFilter.stepOutputKey,
+              label: label,
+              Icon: filterFieldMetadataItem?.icon
+                ? getIcon(filterFieldMetadataItem.icon)
+                : undefined,
+            }}
+            textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
+          />
+        }
+        shouldDisplayRecordFields={shouldDisplayRecordFields}
+        shouldDisplayRecordObjects={shouldDisplayRecordObjects}
+        shouldEnableSelectRelationObject={true}
+        fieldTypesToExclude={NON_SELECTABLE_FIELD_TYPES}
+      />
+    </>
   );
 };

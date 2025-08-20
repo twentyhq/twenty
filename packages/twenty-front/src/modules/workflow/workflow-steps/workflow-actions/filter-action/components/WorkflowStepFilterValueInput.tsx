@@ -1,3 +1,4 @@
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
@@ -7,7 +8,6 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 import { WorkflowStepFilterValueCompositeInput } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueCompositeInput';
-import { useGetFilterFieldMetadataItem } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useGetFilterFieldMetadataItem';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -90,10 +90,8 @@ export const WorkflowStepFilterValueInput = ({
     compositeFieldSubFieldName,
   } = stepFilter;
 
-  const { getFilterFieldMetadataItem } = useGetFilterFieldMetadataItem();
-
   const { fieldMetadataItem: selectedFieldMetadataItem, objectMetadataItem } =
-    getFilterFieldMetadataItem(fieldMetadataId ?? '');
+    useFieldMetadataItemById(fieldMetadataId ?? '');
 
   if (isDisabled || operandHasNoInput) {
     return null;
