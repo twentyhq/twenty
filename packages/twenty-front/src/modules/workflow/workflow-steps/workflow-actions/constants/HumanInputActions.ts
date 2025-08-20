@@ -2,10 +2,7 @@ import { type WorkflowActionType } from '@/workflow/types/Workflow';
 
 export const HUMAN_INPUT_ACTIONS: Array<{
   label: string;
-  type: Extract<
-    WorkflowActionType,
-    'FORM'
-  >;
+  type: Extract<WorkflowActionType, 'FORM'>;
   icon: string;
 }> = [
   {

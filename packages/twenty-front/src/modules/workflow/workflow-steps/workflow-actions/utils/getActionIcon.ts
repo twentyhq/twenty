@@ -1,8 +1,8 @@
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
-import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
-import { AI_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/AIActions';
+import { AI_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/AiActions';
 import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/CoreActions';
 import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
+import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 
 export const getActionIcon = (actionType: WorkflowActionType) => {
   switch (actionType) {

@@ -1,4 +1,4 @@
-import { AI_ACTIONS } from '../../constants/AIActions';
+import { AI_ACTIONS } from '../../constants/AiActions';
 import { CORE_ACTIONS } from '../../constants/CoreActions';
 import { HUMAN_INPUT_ACTIONS } from '../../constants/HumanInputActions';
 import { RECORD_ACTIONS } from '../../constants/RecordActions';

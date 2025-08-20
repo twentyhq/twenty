@@ -13,7 +13,7 @@ import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/componen
 import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
-import { AI_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/AIActions';
+import { AI_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/AiActions';
 import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/CoreActions';
 import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';

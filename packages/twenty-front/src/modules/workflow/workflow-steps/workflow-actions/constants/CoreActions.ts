@@ -2,10 +2,7 @@ import { type WorkflowActionType } from '@/workflow/types/Workflow';
 
 export const CORE_ACTIONS: Array<{
   label: string;
-  type: Extract<
-    WorkflowActionType,
-    'CODE' | 'SEND_EMAIL' | 'HTTP_REQUEST' 
-  >;
+  type: Extract<WorkflowActionType, 'CODE' | 'SEND_EMAIL' | 'HTTP_REQUEST'>;
   icon: string;
 }> = [
   {
