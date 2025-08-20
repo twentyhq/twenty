@@ -149,9 +149,15 @@ export class MCPMetadataService {
         );
       }
 
-      return this.listTools(request);
+      if (request.body.method === 'tools/list') {
+        return this.listTools(request);
+      }
+
+      return wrapJsonRpcResponse(request.body.id ?? crypto.randomUUID(), {
+        result: {},
+      });
     } catch (error) {
-      return wrapJsonRpcResponse(request.body.id, {
+      return wrapJsonRpcResponse(request.body.id ?? crypto.randomUUID(), {
         error: {
           code: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
           message:
