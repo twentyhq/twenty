@@ -1,4 +1,3 @@
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SettingsRolePermissionsObjectsTableHeader } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader';
 import { SettingsRolePermissionsObjectsTableRow } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow';
 import { type SettingsRolePermissionsObjectPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
@@ -6,8 +5,8 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
-import { H2Title, IconDatabase } from 'twenty-ui/display';
-import { AnimatedExpandableContainer, Card, Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -16,10 +15,6 @@ const StyledTable = styled.div`
 const StyledTableRows = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledCard = styled(Card)`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
 type SettingsRolePermissionsObjectsSectionProps = {
@@ -160,49 +155,22 @@ export const SettingsRolePermissionsObjectsSection = ({
         title={t`Objects`}
         description={t`Objects and fields permissions settings`}
       />
-      <StyledCard rounded>
-        <SettingsOptionCardContentToggle
-          Icon={IconDatabase}
-          title={t`Data full access`}
-          description={t`See, edit, delete and destroy all records`}
-          checked={settingsDraftRole.canUpdateAllObjectRecords}
-          disabled={!isEditable}
-          onChange={() => {
-            setSettingsDraftRole({
-              ...settingsDraftRole,
-              canUpdateAllObjectRecords:
-                !settingsDraftRole.canUpdateAllObjectRecords,
-            });
-          }}
+      <StyledTable>
+        <SettingsRolePermissionsObjectsTableHeader
+          roleId={roleId}
+          objectPermissionsConfig={objectPermissionsConfig}
+          isEditable={isEditable}
         />
-      </StyledCard>
-      <AnimatedExpandableContainer
-        isExpanded={!settingsDraftRole.canUpdateAllObjectRecords}
-        dimension="height"
-        animationDurations={{
-          opacity: 0.2,
-          size: 0.4,
-        }}
-        mode="scroll-height"
-        containAnimation={false}
-      >
-        <StyledTable>
-          <SettingsRolePermissionsObjectsTableHeader
-            roleId={roleId}
-            objectPermissionsConfig={objectPermissionsConfig}
-            isEditable={isEditable}
-          />
-          <StyledTableRows>
-            {objectPermissionsConfig.map((permission) => (
-              <SettingsRolePermissionsObjectsTableRow
-                key={permission.key}
-                permission={permission}
-                isEditable={isEditable}
-              />
-            ))}
-          </StyledTableRows>
-        </StyledTable>
-      </AnimatedExpandableContainer>
+        <StyledTableRows>
+          {objectPermissionsConfig.map((permission) => (
+            <SettingsRolePermissionsObjectsTableRow
+              key={permission.key}
+              permission={permission}
+              isEditable={isEditable}
+            />
+          ))}
+        </StyledTableRows>
+      </StyledTable>
     </Section>
   );
 };
