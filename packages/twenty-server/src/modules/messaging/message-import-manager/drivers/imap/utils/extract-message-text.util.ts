@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify';
+import { convert } from 'html-to-text';
 import { JSDOM } from 'jsdom';
 import { type ParsedMail } from 'mailparser';
 import * as planer from 'planer';
@@ -21,10 +22,12 @@ export const extractTextWithoutReplyQuotations = (
       dom.window.document,
     );
 
-    const textContent = new JSDOM(cleanedHtml, { runScripts: 'outside-only' })
-      .window.document.body?.textContent;
+    const text = convert(cleanedHtml, {
+      wordwrap: false,
+      preserveNewlines: true,
+    }).trim();
 
-    return textContent ?? '';
+    return text.replace(/\u00A0/g, ' ');
   }
 
   return '';
