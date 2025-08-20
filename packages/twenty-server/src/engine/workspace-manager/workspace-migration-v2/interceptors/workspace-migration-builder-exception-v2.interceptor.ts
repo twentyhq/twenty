@@ -1,5 +1,5 @@
+import { t } from '@lingui/core/macro';
 import {
-  HttpStatus,
   type CallHandler,
   type ExecutionContext,
   type NestInterceptor,
@@ -21,6 +21,17 @@ type ValidationErrorObjectResponse =
     errors: FlatObjectMetadataValidationError[];
     fields: ValidationErrorFieldResponse[];
   };
+type ValidationErrorResponse = {
+  summary: {
+    totalErrors: number;
+    invalidFields: number;
+    invalidObjects: number;
+  };
+  errors: {
+    objectMetadata: ValidationErrorObjectResponse[];
+    fieldMetadata: ValidationErrorFieldResponse[];
+  };
+};
 export class WorkspaceMigrationBuilderExceptionV2Interceptor
   implements NestInterceptor
 {
@@ -31,27 +42,33 @@ export class WorkspaceMigrationBuilderExceptionV2Interceptor
           throw new error();
         }
 
-        const responseError: {
-          objectMetadata: ValidationErrorObjectResponse[];
-          fieldMetadata: ValidationErrorFieldResponse[];
-        } = {
-          fieldMetadata: [],
-          objectMetadata: [],
+        const responseError: ValidationErrorResponse = {
+          summary: {
+            invalidFields: 0,
+            invalidObjects: 0,
+            totalErrors: 0,
+          },
+          errors: {
+            fieldMetadata: [],
+            objectMetadata: [],
+          },
         };
         const formattedResponse =
-          error.failedWorkspaceMigrationBuildResult.errors.reduce(
+          error.failedWorkspaceMigrationBuildResult.errors.reduce<ValidationErrorResponse>(
             (responseError, failedValidationError) => {
               if (failedValidationError.type === 'object') {
                 const { id, namePlural, nameSingular } =
                   failedValidationError.objectMinimalInformation;
+                const fields =
+                  failedValidationError.fieldLevelErrors.map<ValidationErrorFieldResponse>(
+                    ({
+                      errors,
+                      fieldMinimalInformation: { id, name, objectMetadataId },
+                    }) => ({ id, name, objectMetadataId, errors }),
+                  );
                 const objectResponseError: ValidationErrorObjectResponse = {
-                  fields:
-                    failedValidationError.fieldLevelErrors.map<ValidationErrorFieldResponse>(
-                      ({
-                        errors,
-                        fieldMinimalInformation: { id, name, objectMetadataId },
-                      }) => ({ id, name, objectMetadataId, errors }),
-                    ),
+                  fields,
+
                   id,
                   namePlural,
                   nameSingular,
@@ -59,10 +76,21 @@ export class WorkspaceMigrationBuilderExceptionV2Interceptor
                 };
                 return {
                   ...responseError,
-                  objectMetadata: [
-                    ...responseError.objectMetadata,
-                    objectResponseError,
-                  ],
+                  summary: {
+                    ...responseError.summary,
+                    invalidFields:
+                      responseError.summary.invalidFields + fields.length,
+                    invalidObjects: ++responseError.summary.invalidObjects,
+                    totalErrors:
+                      responseError.summary.totalErrors + fields.length + 1,
+                  },
+                  errors: {
+                    ...responseError.errors,
+                    objectMetadata: [
+                      ...responseError.errors.objectMetadata,
+                      objectResponseError,
+                    ],
+                  },
                 };
               }
 
@@ -76,20 +104,29 @@ export class WorkspaceMigrationBuilderExceptionV2Interceptor
               };
               return {
                 ...responseError,
-                fieldMetadata: [
-                  ...responseError.fieldMetadata,
-                  fieldResponseError,
-                ],
+                summary: {
+                  ...responseError.summary,
+                  invalidFields: ++responseError.summary.invalidFields,
+                  totalErrors: ++responseError.summary.totalErrors,
+                },
+                errors: {
+                  ...responseError.errors,
+                  fieldMetadata: [
+                    ...responseError.errors.fieldMetadata,
+                    fieldResponseError,
+                  ],
+                },
               };
             },
             responseError,
           );
 
-        throw new GraphQLError('Workspace migration build validation failed', {
+        throw new GraphQLError(`Workspace migration build validation failed`, {
           extensions: {
-            code: HttpStatus.BAD_REQUEST,
-            userFriendlyMessage: 'Workspace migration build validation failed',
-            errors: formattedResponse,
+            code: 'METADATA_VALIDATION_ERROR',
+            ...formattedResponse,
+            message: `Validation failed for ${formattedResponse.summary.invalidObjects} object(s) and ${formattedResponse.summary.invalidFields} field(s)`,
+            userFriendlyMessage: t`Validation failed for ${formattedResponse.summary.invalidObjects} object(s) and ${formattedResponse.summary.invalidFields} field(s)`,
           },
         });
       }),
