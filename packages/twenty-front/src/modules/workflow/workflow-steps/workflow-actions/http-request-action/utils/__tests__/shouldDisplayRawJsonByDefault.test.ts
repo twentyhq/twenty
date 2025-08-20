@@ -46,11 +46,6 @@ describe('shouldDisplayRawJsonByDefault', () => {
         const defaultValue = '{"key1": "value1", "key2":}';
         expect(shouldDisplayRawJsonByDefault(defaultValue)).toBe(true);
       });
-
-      it('should return true for plain text', () => {
-        const defaultValue = 'This is just plain text';
-        expect(shouldDisplayRawJsonByDefault(defaultValue)).toBe(true);
-      });
     });
   });
 

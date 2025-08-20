@@ -85,7 +85,7 @@ export const ViewPickerListContent = () => {
       Promise.all(
         viewsReordered.map(async (view, index) => {
           if (view.position !== index) {
-            await updateView({ ...view, position: index });
+            await updateView({ id: view.id, position: index });
           }
         }),
       );

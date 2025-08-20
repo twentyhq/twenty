@@ -7,6 +7,7 @@ import { ViewField } from 'src/engine/core-modules/view/entities/view-field.enti
 import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -103,7 +104,7 @@ const createCoreViews = async (
       name: isString(name) ? name : name.message || '',
       objectMetadataId,
       type: type === 'kanban' ? ViewType.KANBAN : ViewType.TABLE,
-      key: key || undefined,
+      key: key === ViewKey.INDEX ? ViewKey.INDEX : null,
       position,
       icon,
       isCompact: false,
