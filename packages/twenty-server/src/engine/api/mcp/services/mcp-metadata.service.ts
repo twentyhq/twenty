@@ -89,13 +89,14 @@ export class MCPMetadataService {
         });
 
         return { result };
-      } catch {
+      } catch (err) {
         await this.metricsService.incrementCounter({
           key: MetricsKeys.AIToolExecutionFailed,
           attributes: {
             tool: request.body.params.name,
           },
         });
+        throw err;
       }
     }
 
