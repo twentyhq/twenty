@@ -127,7 +127,12 @@ export const WorkflowStepFilterFieldSelect = ({
           },
         });
       },
-    [upsertStepFilterSettings, stepFilter, workflowVersionId],
+    [
+      workflowVersionId,
+      getFieldMetadataItemByIdOrThrow,
+      upsertStepFilterSettings,
+      stepFilter,
+    ],
   );
 
   if (!isDefined(stepId)) {

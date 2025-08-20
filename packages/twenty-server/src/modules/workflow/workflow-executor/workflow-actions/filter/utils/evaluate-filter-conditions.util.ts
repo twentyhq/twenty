@@ -256,17 +256,9 @@ function evaluateCurrencyFilter(filter: ResolvedFilter): boolean {
       case ViewFilterOperand.IsNot:
         return filter.leftOperand !== filter.rightOperand;
       case ViewFilterOperand.IsEmpty:
-        return (
-          filter.leftOperand === null ||
-          filter.leftOperand === undefined ||
-          filter.leftOperand === ''
-        );
+        return !isNonEmptyString(filter.leftOperand);
       case ViewFilterOperand.IsNotEmpty:
-        return (
-          filter.leftOperand !== null &&
-          filter.leftOperand !== undefined &&
-          filter.leftOperand !== ''
-        );
+        return isNonEmptyString(filter.leftOperand);
       default:
         throw new Error(
           `Operand ${filter.operand} not supported for currency filter`,
@@ -289,10 +281,10 @@ function evaluateNumberFilter(filter: ResolvedFilter): boolean {
       return Number(leftValue) <= Number(rightValue);
 
     case ViewFilterOperand.IsEmpty:
-      return leftValue === null || leftValue === undefined || leftValue === '';
+      return !isNonEmptyString(leftValue);
 
     case ViewFilterOperand.IsNotEmpty:
-      return leftValue !== null && leftValue !== undefined && leftValue !== '';
+      return isNonEmptyString(leftValue);
 
     default:
       throw new Error(
@@ -311,19 +303,9 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
     case ViewFilterOperand.IsNot:
       return leftValue != rightValue;
     case ViewFilterOperand.IsEmpty:
-      return (
-        leftValue === null ||
-        leftValue === undefined ||
-        leftValue === '' ||
-        (Array.isArray(leftValue) && leftValue.length === 0)
-      );
+      return !isNotEmptyTextOrArray(leftValue);
     case ViewFilterOperand.IsNotEmpty:
-      return (
-        leftValue !== null &&
-        leftValue !== undefined &&
-        leftValue !== '' &&
-        (!Array.isArray(leftValue) || leftValue.length > 0)
-      );
+      return isNotEmptyTextOrArray(leftValue);
     case ViewFilterOperand.Contains:
       return contains(leftValue, rightValue);
     case ViewFilterOperand.DoesNotContain:
@@ -346,10 +328,10 @@ function evaluateSelectFilter(filter: ResolvedFilter): boolean {
     case ViewFilterOperand.IsNot:
       return !contains(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IsEmpty:
-      return isEmptyTextOrArray(filter.leftOperand);
+      return !isNotEmptyTextOrArray(filter.leftOperand);
 
     case ViewFilterOperand.IsNotEmpty:
-      return !isEmptyTextOrArray(filter.leftOperand);
+      return isNotEmptyTextOrArray(filter.leftOperand);
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for select filter`,
