@@ -1,4 +1,4 @@
-import { getDragOperationType } from '../getDragOperationType';
+import { getDragOperationType } from '@/object-record/record-drag/shared/utils/getDragOperationType';
 
 describe('getDragOperationType', () => {
   it('should return single when dragged record is not selected', () => {
