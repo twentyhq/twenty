@@ -249,6 +249,7 @@ export class ObjectMetadataServiceV2 {
             'Multiple validation errors occurred while creating object',
         },
       );
+
     if (isDefined(validateAndBuildResult)) {
       throw new WorkspaceMigrationBuilderExceptionV2(validateAndBuildResult);
     }

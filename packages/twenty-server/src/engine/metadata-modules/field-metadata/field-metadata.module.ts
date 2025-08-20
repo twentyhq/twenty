@@ -36,10 +36,10 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 import { ViewModule } from 'src/modules/view/view.module';
+import { WorkspaceMigrationBuilderExceptionV2Interceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2.interceptor';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
-import { WorkspaceMigrationBuilderExceptionV2Interceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2.interceptor';
 import { CreateFieldInput } from './dtos/create-field.input';
 import { UpdateFieldInput } from './dtos/update-field.input';
 import { FieldMetadataService } from './services/field-metadata.service';

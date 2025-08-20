@@ -248,13 +248,14 @@ export class FieldMetadataServiceV2 {
             inferDeletionFromMissingObjectFieldIndex: false,
           },
           workspaceId,
-          errorMessage:
-            'Multiple validation errors occurred while creating fields',
         },
       );
 
     if (isDefined(validateAndBuildResult)) {
-      throw new WorkspaceMigrationBuilderExceptionV2(validateAndBuildResult);
+      throw new WorkspaceMigrationBuilderExceptionV2(
+        validateAndBuildResult,
+        'Multiple validation errors occurred while creating fields',
+      );
     }
 
     return this.fieldMetadataRepository.find({

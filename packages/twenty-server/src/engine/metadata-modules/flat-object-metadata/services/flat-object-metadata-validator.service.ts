@@ -52,6 +52,7 @@ export class FlatObjectMetadataValidatorService {
         message: t`Object to update not found`,
         userFriendlyMessage: t`Object to update not found`,
       });
+
       return validationResult;
     }
     validationResult.objectMinimalInformation = {

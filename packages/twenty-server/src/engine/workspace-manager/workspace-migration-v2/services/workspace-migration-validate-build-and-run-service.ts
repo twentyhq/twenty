@@ -22,12 +22,9 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     private readonly workspaceMigrationRunnerV2Service: WorkspaceMigrationRunnerV2Service,
   ) {}
 
-  public async validateBuildAndRunWorkspaceMigration({
-    errorMessage,
-    ...builderArgs
-  }: WorkspaceMigrationBuildArgs & {
-    errorMessage: string;
-  }): Promise<FailedWorkspaceMigrationBuildResult | undefined> {
+  public async validateBuildAndRunWorkspaceMigration(
+    builderArgs: WorkspaceMigrationBuildArgs,
+  ): Promise<FailedWorkspaceMigrationBuildResult | undefined> {
     const validateAndBuildResult = await this.workspaceMigrationBuilderV2Service
       .validateAndBuild(builderArgs)
       .catch((error) => {

@@ -1,4 +1,4 @@
-import { FailedWorkspaceMigrationBuildResult } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
+import { type FailedWorkspaceMigrationBuildResult } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
 
 export class WorkspaceMigrationBuilderExceptionV2 extends Error {
   public tmp: FailedWorkspaceMigrationBuildResult;

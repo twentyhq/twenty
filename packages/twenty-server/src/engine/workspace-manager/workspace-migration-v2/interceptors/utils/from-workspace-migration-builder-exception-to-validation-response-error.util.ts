@@ -1,5 +1,5 @@
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
-import { ValidationErrorResponse } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/types/validate-error-response.type';
+import { type WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
+import { type ValidationErrorResponse } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/types/validate-error-response.type';
 import { fromFailedFlatFieldMetadataValidationToValidationErrorFieldResponse } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/utils/from-failed-flat-field-metadata-validation-to-validation-error-field-response.util';
 import { fromFailedFlatObjectMetadataValidationToValidationErrorObjectResponse } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/utils/from-failed-flat-object-metadata-validation-to-validation-error-object-response.util';
 
@@ -46,6 +46,7 @@ export const fromWorkspaceMigrationBuilderExceptionToValidationResponseError = (
         fromFailedFlatFieldMetadataValidationToValidationErrorFieldResponse(
           failedValidationError,
         );
+
       return {
         summary: {
           ...summary,

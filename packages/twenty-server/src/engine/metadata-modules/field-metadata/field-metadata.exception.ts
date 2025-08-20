@@ -25,5 +25,6 @@ export const FieldMetadataExceptionCode = appendCommonExceptionCode({
   NAME_NOT_SYNCED_WITH_LABEL: 'NAME_NOT_SYNCED_WITH_LABEL',
 } as const);
 
+// eslint-disable-next-line no-redeclare
 export type FieldMetadataExceptionCode =
   (typeof FieldMetadataExceptionCode)[keyof typeof FieldMetadataExceptionCode];
