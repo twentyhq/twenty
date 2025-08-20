@@ -66,7 +66,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
       );
 
       if (isUndefined(relationMetadataItem)) {
-        return '';
+        continue;
       }
 
       if (
