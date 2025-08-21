@@ -1,7 +1,5 @@
 import { Test } from '@nestjs/testing';
 
-import { type ToolSet } from 'ai';
-
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';

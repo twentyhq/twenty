@@ -1,7 +1,5 @@
 import { Test } from '@nestjs/testing';
 
-import { type Repository } from 'typeorm';
-
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -27,7 +25,6 @@ describe('ToolService', () => {
 
   let service: ToolService;
   let ormManager: TwentyORMGlobalManager;
-  let objectMetadataService: ObjectMetadataService;
   let permissionsCacheService: WorkspacePermissionsCacheService;
   let transformer: RecordInputTransformerService;
   let workspaceCache: WorkspaceCacheStorageService;
@@ -110,7 +107,6 @@ describe('ToolService', () => {
 
     service = moduleRef.get(ToolService);
     ormManager = moduleRef.get(TwentyORMGlobalManager);
-    objectMetadataService = moduleRef.get(ObjectMetadataService);
     permissionsCacheService = moduleRef.get(WorkspacePermissionsCacheService);
     transformer = moduleRef.get(RecordInputTransformerService);
     workspaceCache = moduleRef.get(WorkspaceCacheStorageService);
