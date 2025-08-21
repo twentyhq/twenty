@@ -1,5 +1,9 @@
 import { t } from '@lingui/core/macro';
-import { BaseGraphQLError, ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+
+import {
+  BaseGraphQLError,
+  ErrorCode,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { fromWorkspaceMigrationBuilderExceptionToValidationResponseError } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/utils/from-workspace-migration-builder-exception-to-validation-response-error.util';
 
