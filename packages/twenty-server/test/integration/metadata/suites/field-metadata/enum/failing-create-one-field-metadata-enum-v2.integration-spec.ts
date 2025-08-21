@@ -17,7 +17,7 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { eachTestingContextFilter } from 'twenty-shared/testing';
 
-describe.each([fieldMetadataEnumTypes])(
+describe.each(fieldMetadataEnumTypes)(
   'Create field metadata %s tests suite v2',
   (testedFieldMetadataType) => {
     let createdObjectMetadataId: string;

@@ -11,14 +11,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Default value for multi-select must be an array got invalid",
                 "userFriendlyMessage": "Multi-select field default value must be an array",
                 "value": "invalid",
@@ -57,14 +49,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Default value for multi-select must be an array got 'OPTION_424242'",
                 "userFriendlyMessage": "Multi-select field default value must be an array",
                 "value": "'OPTION_424242'",
@@ -101,14 +85,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Label must not contain a comma",
@@ -200,50 +176,18 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option position",
                 "value": [
                   {
                     "color": "green",
+                    "id": Any<String>,
                     "label": "Option 1",
                     "position": 1,
                     "value": "OPTION_1",
                   },
                   {
                     "color": "green",
-                    "label": "Option 2",
-                    "position": 1,
-                    "value": "OPTION_2",
-                  },
-                ],
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Duplicated option id",
-                "value": [
-                  {
-                    "color": "green",
-                    "label": "Option 1",
-                    "position": 1,
-                    "value": "OPTION_1",
-                  },
-                  {
-                    "color": "green",
+                    "id": Any<String>,
                     "label": "Option 2",
                     "position": 1,
                     "value": "OPTION_2",
@@ -284,50 +228,18 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Duplicated option id",
-                "value": [
-                  {
-                    "color": "green",
-                    "label": "Option 1",
-                    "position": 0,
-                    "value": "OPTION_1",
-                  },
-                  {
-                    "color": "green",
-                    "label": "Option 1",
-                    "position": 1,
-                    "value": "OPTION_1",
-                  },
-                ],
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option value",
                 "value": [
                   {
                     "color": "green",
+                    "id": Any<String>,
                     "label": "Option 1",
                     "position": 0,
                     "value": "OPTION_1",
                   },
                   {
                     "color": "green",
+                    "id": Any<String>,
                     "label": "Option 1",
                     "position": 1,
                     "value": "OPTION_1",
@@ -368,50 +280,18 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Duplicated option id",
-                "value": [
-                  {
-                    "color": "green",
-                    "label": "Option 1",
-                    "position": 1,
-                    "value": "OPTION_1",
-                  },
-                  {
-                    "color": "green",
-                    "label": "Option 2",
-                    "position": 2,
-                    "value": "OPTION_1",
-                  },
-                ],
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option value",
                 "value": [
                   {
                     "color": "green",
+                    "id": Any<String>,
                     "label": "Option 1",
                     "position": 1,
                     "value": "OPTION_1",
                   },
                   {
                     "color": "green",
+                    "id": Any<String>,
                     "label": "Option 2",
                     "position": 2,
                     "value": "OPTION_1",
@@ -450,14 +330,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "If defined default value must contain at least one value",
@@ -535,14 +407,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Default value for multi-select must be an array got ",
                 "userFriendlyMessage": "Multi-select field default value must be an array",
                 "value": "",
@@ -618,14 +482,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option label "" is beneath 1 character",
                 "value": "",
               },
@@ -668,14 +524,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option value "" is beneath 1 character",
                 "value": "",
               },
@@ -716,14 +564,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
@@ -815,14 +655,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
                 "value": "Option 1 and some other things, /",
               },
@@ -858,14 +690,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value for multi-select must be an array got Option_1",
@@ -904,14 +728,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value for multi-select must be an array got 22222",
@@ -1000,14 +816,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Value must be in UPPER_CASE and follow snake_case "22222"",
@@ -1153,14 +961,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Default value for multi-select must be an array got ",
                 "userFriendlyMessage": "Multi-select field default value must be an array",
                 "value": "",
@@ -1236,14 +1036,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option label "" is beneath 1 character",
                 "value": "",
               },
@@ -1286,14 +1078,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option value "" is beneath 1 character",
                 "value": "",
               },
@@ -1334,14 +1118,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value for multi-select must be an array got aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
@@ -1419,14 +1195,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option label exceeds 63 characters",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
@@ -1462,14 +1230,6 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option value exceeds 63 characters",
@@ -1578,16 +1338,1223 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
+                "value": "'UNKNOWN_OPTION'",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with an invalid default value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value should be as quoted string",
+                "value": "invalid",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "invalid" must be one of the option values",
+                "value": "invalid",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with an unknown default value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "'OPTION_424242'" must be one of the option values",
+                "value": "'OPTION_424242'",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with comma in option label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Label must not contain a comma",
+                "value": "Option ,1",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with duplicated option ids 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Duplicated option id",
+                "value": [
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 1",
+                    "position": 1,
+                    "value": "OPTION_1",
+                  },
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 2",
+                    "position": 2,
+                    "value": "OPTION_2",
+                  },
+                ],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with duplicated option positions 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Duplicated option position",
+                "value": [
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 1",
+                    "position": 1,
+                    "value": "OPTION_1",
+                  },
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 2",
+                    "position": 1,
+                    "value": "OPTION_2",
+                  },
+                ],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with duplicated option values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Duplicated option value",
+                "value": [
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 1",
+                    "position": 0,
+                    "value": "OPTION_1",
+                  },
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 1",
+                    "position": 1,
+                    "value": "OPTION_1",
+                  },
+                ],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with duplicated trimmed option values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Duplicated option value",
+                "value": [
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 1",
+                    "position": 1,
+                    "value": "OPTION_1",
+                  },
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 2",
+                    "position": 2,
+                    "value": "OPTION_1",
+                  },
+                ],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with empty options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Options are required for enum fields",
+                "userFriendlyMessage": "Options are required for enum fields",
+                "value": [],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with empty string defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value should be as quoted string",
+                "value": "",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "" must be one of the option values",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with empty string id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with empty string label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label "" is beneath 1 character",
+                "value": "",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Label must not be empty",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with empty string value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value "" is beneath 1 character",
+                "value": "",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Value must be in UPPER_CASE and follow snake_case """,
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with invalid option id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": "not a uuid",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with invalid option value format 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
+                "value": "Option 1 and some other things, /",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with not a string defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value for select must be a string got 22222",
+                "userFriendlyMessage": "Default value must be a string",
+                "value": 22222,
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with not a string id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": 22222,
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with not a string label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": Any<String>,
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "BUILDER_INTERNAL_SERVER_ERROR",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with not a string value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Value must be in UPPER_CASE and follow snake_case "22222"",
+                "value": 22222,
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with null id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
                 "message": "Option id is required",
+                "value": null,
               },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option id is invalid",
+                "value": null,
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with null label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": Any<String>,
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "BUILDER_INTERNAL_SERVER_ERROR",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with null options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Options are required for enum fields",
+                "userFriendlyMessage": "Options are required for enum fields",
+                "value": [],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with null value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": Any<String>,
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "BUILDER_INTERNAL_SERVER_ERROR",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with only white spaces defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value should be as quoted string",
+                "value": "",
               },
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
-                "value": "'UNKNOWN_OPTION'",
+                "message": "Default value "" must be one of the option values",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with only white spaces id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with only white spaces label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label "" is beneath 1 character",
+                "value": "",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Label must not be empty",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with only white spaces value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value "" is beneath 1 character",
+                "value": "",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Value must be in UPPER_CASE and follow snake_case """,
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with too long defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value should be as quoted string",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" must be one of the option values",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with too long id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with too long label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label exceeds 63 characters",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with too long value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value exceeds 63 characters",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Value must be in UPPER_CASE and follow snake_case "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with undefined option label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": Any<String>,
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "BUILDER_INTERNAL_SERVER_ERROR",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with undefined option value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "INTERNAL_SERVER_ERROR",
+      "exceptionEventId": Any<String>,
+      "userFriendlyMessage": "An error occurred.",
+    },
+    "message": "BUILDER_INTERNAL_SERVER_ERROR",
+  },
+]
+`;
+
+exports[`Create field metadata SELECT tests suite v2 Create should fail with undefined options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Options are required for enum fields",
+                "userFriendlyMessage": "Options are required for enum fields",
+                "value": [],
               },
             ],
             "id": Any<String>,
