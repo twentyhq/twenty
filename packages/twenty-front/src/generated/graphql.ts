@@ -45,7 +45,7 @@ export enum AdminPanelHealthServiceStatus {
 
 export type AdminPanelWorkerQueueHealth = {
   __typename?: 'AdminPanelWorkerQueueHealth';
-  id: Scalars['UUID'];
+  id: Scalars['String'];
   queueName: Scalars['String'];
   status: AdminPanelHealthServiceStatus;
 };
@@ -2612,7 +2612,7 @@ export type QueueMetricsDataPoint = {
 export type QueueMetricsSeries = {
   __typename?: 'QueueMetricsSeries';
   data: Array<QueueMetricsDataPoint>;
-  id: Scalars['UUID'];
+  id: Scalars['String'];
 };
 
 export enum QueueMetricsTimeRange {
