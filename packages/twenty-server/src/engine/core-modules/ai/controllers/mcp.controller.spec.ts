@@ -15,7 +15,7 @@ describe('McpController', () => {
 
   beforeEach(async () => {
     const mockMcpService = {
-      executeTool: jest.fn(),
+      handleMCPCoreQuery: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -49,7 +49,7 @@ describe('McpController', () => {
     const mockUserWorkspaceId = 'user-workspace-1';
     const mockApiKey = 'api-key-1';
 
-    it('should call mcpService.executeTool with correct parameters', async () => {
+    it('should call mcpService.handleMCPCoreQuery with correct parameters', async () => {
       const mockRequest: JsonRpc = {
         jsonrpc: '2.0',
         method: 'tools/call',
