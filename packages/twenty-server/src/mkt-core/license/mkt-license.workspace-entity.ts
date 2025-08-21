@@ -26,6 +26,7 @@ import {
 import { MKT_LICENSE_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
+import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -43,6 +44,7 @@ export enum MKT_LICENSE_STATUS {
   INACTIVE = 'inactive',
   EXPIRED = 'expired',
   REVOKED = 'revoked',
+  PENDING = 'pending',
 }
 
 export const MKT_LICENSE_STATUS_OPTIONS: FieldMetadataComplexOption[] = [
@@ -69,6 +71,12 @@ export const MKT_LICENSE_STATUS_OPTIONS: FieldMetadataComplexOption[] = [
     label: 'Revoked',
     position: 3,
     color: 'orange',
+  },
+  {
+    value: MKT_LICENSE_STATUS.PENDING,
+    label: 'Pending',
+    position: 4,
+    color: 'yellow',
   },
 ];
 
@@ -125,6 +133,36 @@ export class MktLicenseWorkspaceEntity extends BaseWorkspaceEntity {
   activatedAt?: string;
 
   @WorkspaceField({
+    standardId: MKT_LICENSE_FIELD_IDS.lastLoginAt,
+    type: FieldMetadataType.TEXT,
+    label: msg`Last Login At`,
+    description: msg`License last login at`,
+    icon: 'IconClock',
+  })
+  @WorkspaceIsNullable()
+  lastLoginAt?: string;
+
+  @WorkspaceField({
+    standardId: MKT_LICENSE_FIELD_IDS.deviceInfo,
+    type: FieldMetadataType.TEXT,
+    label: msg`Device Info`,
+    description: msg`License device info`,
+    icon: 'IconDeviceDesktop',
+  })
+  @WorkspaceIsNullable()
+  deviceInfo?: string;
+
+  @WorkspaceField({
+    standardId: MKT_LICENSE_FIELD_IDS.notes,
+    type: FieldMetadataType.TEXT,
+    label: msg`Notes`,
+    description: msg`License notes`,
+    icon: 'IconFileText',
+  })
+  @WorkspaceIsNullable()
+  notes?: string;
+
+  @WorkspaceField({
     standardId: MKT_LICENSE_FIELD_IDS.expiresAt,
     type: FieldMetadataType.TEXT,
     label: msg`Expires At`,
@@ -133,6 +171,22 @@ export class MktLicenseWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   expiresAt?: string;
+
+  @WorkspaceRelation({
+    standardId: MKT_LICENSE_FIELD_IDS.mktVariant,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Variant`,
+    description: msg`License variant`,
+    icon: 'IconBox',
+    inverseSideTarget: () => MktVariantWorkspaceEntity,
+    inverseSideFieldKey: 'mktLicenses',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  mktVariant: Relation<MktVariantWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('mktVariant')
+  mktVariantId: string | null;
 
   @WorkspaceRelation({
     standardId: MKT_LICENSE_FIELD_IDS.mktOrder,
