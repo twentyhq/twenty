@@ -54,17 +54,22 @@ export const MKT_VALUE_FIELD_IDS = {
 };
 
 export const MKT_VARIANT_FIELD_IDS = {
+  // fields
   name: 'd6c89b25-a22b-44ad-8069-793e596d39b4',
   description: '6d571e40-46e0-43ff-a9dc-3b9697051187',
   sku: 'fbf401ab-6f1b-47eb-86e9-1ac2d422d938',
   price: '37fda670-3261-4b47-b184-2a1224dcb832',
   inStock: 'edd56ccf-2997-4098-9440-cb48783d77a8',
   isActive: '270edf3a-1c06-445f-93a9-7d7315aa4d52',
-  position: '03ed978a-61d9-46a6-8d28-bf0964437849',
-  createdBy: 'e87d1e5d-e0f5-4ed0-ab23-3ebbb0a1beae',
-  // TODO: check if this can be deleted
+
+  // relations
+  mktLicenses: '403d1410-7c35-4044-988e-2a7fbe8845ab',
   mktProduct: '7cfa6d7b-db26-4fb5-9beb-3ec348f9fed7',
   mktVariantAttribute: 'b57069ab-7e21-4823-a61f-8de0726bfbe1',
+
+  // common relations or fields
+  position: '03ed978a-61d9-46a6-8d28-bf0964437849',
+  createdBy: 'e87d1e5d-e0f5-4ed0-ab23-3ebbb0a1beae',
   accountOwner: '60914403-db18-454f-a11c-7b8387539edf',
   timelineActivities: 'af6607e3-b106-44e9-9c3a-483a7ee342f3',
   searchVector: '1b50d19d-459d-466f-8560-c1ec12470936',
@@ -142,10 +147,13 @@ export const MKT_LICENSE_FIELD_IDS = {
   status: 'b992d78d-27cd-42a9-a91e-0f5422a14ca2',
   activatedAt: '38d52287-727f-479a-a970-2ac0e869f39b',
   expiresAt: '5c490b82-749b-41a1-908e-254f53ab19a4',
+  lastLoginAt: '803df1b5-d057-438e-abcf-d6e4840df0a4',
+  deviceInfo: '7dc3c246-0a81-48b0-9343-70bf0431dfca',
+  notes: 'dbf0752c-ed7c-45eb-88c0-e390ec42aed0',
   // relations
   person: '11a10308-2c5c-4322-847d-4ec12d056d9c',
   mktSales: '4bb927d7-a6d2-4746-b771-731cb6ab9950', // nullable
-  mktProduct: 'f2d1ae3c-12d8-4e24-8cb5-dc82d422f12b',
+  mktVariant: 'f2d1ae3c-12d8-4e24-8cb5-dc82d422f12b',
   mktAffiliate: '8e48e8f3-5ad3-4936-b570-e061ef2e5959', // nullable
   mktOrder: '72da2e23-0de4-44b6-9038-eaa574985103',
   // common relations or fields
