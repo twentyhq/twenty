@@ -282,18 +282,27 @@ export class FieldMetadataRelationService {
         isFieldMetadataTypeMorphRelation(targetFieldMetadata);
 
       const targetObjectMetadataFields = Object.values(
-        targetObjectMetadata?.fieldsById,
+        targetObjectMetadata.fieldsById,
       );
 
       const targetObjectMetadataWithoutDuplicates =
-        filterMorphRelationDuplicateFieldsDTO(targetObjectMetadataFields);
-      const targetFieldMetadataOverride =
+        filterMorphRelationDuplicateFieldsDTO<FieldMetadataEntity>(
+          targetObjectMetadataFields,
+        );
+      const targetFieldMetadataSelected =
         targetObjectMetadataWithoutDuplicates.find(
           (fieldMetadata) => fieldMetadata.name === targetFieldMetadata.name,
         );
 
-      const targetFieldMetadataOverriden = isRelationTargetMorphRelation
-        ? targetFieldMetadataOverride
+      if (!isDefined(targetFieldMetadataSelected)) {
+        throw new FieldMetadataException(
+          `Target field metadata not found for field metadata ${id}`,
+          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+        );
+      }
+
+      const targetFieldMetadataOverride = isRelationTargetMorphRelation
+        ? targetFieldMetadataSelected
         : targetFieldMetadata;
 
       return {
@@ -306,8 +315,7 @@ export class FieldMetadataRelationService {
           getObjectMetadataFromObjectMetadataItemWithFieldMaps(
             targetObjectMetadata,
           ) as ObjectMetadataEntity,
-        targetFieldMetadata:
-          targetFieldMetadataOverriden as FieldMetadataEntity,
+        targetFieldMetadata: targetFieldMetadataOverride as FieldMetadataEntity,
       };
     });
   }
