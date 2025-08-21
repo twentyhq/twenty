@@ -9,11 +9,9 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteTwoFactorAuthentication } from '@/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod';
 import { TwoFactorAuthenticationSetupForSettingsEffect } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationSetupForSettingsEffect';
-import {
-  TwoFactorAuthenticationVerificationForSettings,
-  useTwoFactorVerificationForSettings,
-} from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationForSettings';
+import { TwoFactorAuthenticationVerificationForSettings } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationForSettings';
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
+import { useTwoFactorVerificationForSettings } from '@/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings';
 import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -34,7 +32,7 @@ const StyledQRCodeContainer = styled.div`
 
 const StyledQRCodeWrapper = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.primary};
+  background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
@@ -148,11 +146,9 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
           ) : (
             <Section>
               <TwoFactorAuthenticationSetupForSettingsEffect />
-
               <H2Title
-                title={t`1. Scan the QR code`}
-                description="Use an authenticator app like Google Authenticator, Authy, or
-                  Microsoft Authenticator to scan this QR code."
+                title={t`Authenticator app`}
+                description={t`Authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator, etc. generate one-time passwords that are used as a second factor to verify your identity when prompted during sign-in.`}
               />
               <StyledQRCodeContainer>
                 {!qrCode ? (
@@ -175,9 +171,8 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
               <StyledDivider />
 
               <H2Title
-                title={t`2. Enter the code`}
-                description="Enter the 6-digit verification code from your authenticator
-                  app to complete the setup."
+                title={t`Verify the code from the app`}
+                description={t`Copy paste the code below`}
               />
               <TwoFactorAuthenticationVerificationForSettings />
             </Section>

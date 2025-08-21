@@ -1,16 +1,9 @@
-import { useMutation } from '@apollo/client';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useLingui } from '@lingui/react/macro';
-import { OTPInput, type SlotProps } from 'input-otp';
-import { useState } from 'react';
-import { Controller, useForm, useFormContext } from 'react-hook-form';
+import { OTPInput } from 'input-otp';
+import { Controller, useFormContext } from 'react-hook-form';
 
-import { VERIFY_TWO_FACTOR_AUTHENTICATION_METHOD_FOR_AUTHENTICATED_USER } from '@/settings/two-factor-authentication/graphql/mutations/verifyTwoFactorAuthenticationMethod';
-import { SettingsPath } from '@/types/SettingsPath';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { TwoFactorAuthenticationVerificationCodeDash } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeDash';
+import { TwoFactorAuthenticationVerificationCodeSlot } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeSlot';
 
 // OTP Form Types
 type OTPFormValues = {
@@ -27,188 +20,7 @@ const StyledOTPContainer = styled.div`
   }
 `;
 
-const StyledSlot = styled.div<{ isActive: boolean }>`
-  position: relative;
-  width: 2.5rem;
-  height: 3.5rem;
-  font-size: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s;
-  background-color: ${({ theme }) => theme.color.gray10};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-
-  .group:hover &,
-  .group:focus-within & {
-    border-color: ${({ theme }) => theme.border.color.medium};
-  }
-
-  outline: 0;
-  outline-color: ${({ theme }) => theme.border.color.medium};
-
-  ${({ isActive, theme }) =>
-    isActive &&
-    css`
-      outline-width: 1px;
-      outline-style: solid;
-      outline-color: ${theme.border.color.strong};
-    `}
-`;
-
-const StyledPlaceholderChar = styled.div`
-  font-size: 1.6rem;
-  opacity: 0.2;
-`;
-
-const StyledInputChar = styled.div`
-  opacity: 1;
-`;
-
-const StyledCaretContainer = styled.div`
-  align-items: center;
-  animation: caret-blink 1s steps(2, start) infinite;
-  display: flex;
-  inset: 0;
-  justify-content: center;
-  pointer-events: none;
-  position: absolute;
-
-  @keyframes caret-blink {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0;
-    }
-  }
-`;
-
-const StyledCaret = styled.div`
-  width: 1px;
-  height: 2rem;
-  background-color: ${({ theme }) => theme.font.color.primary};
-`;
-
-const FakeCaret = () => {
-  return (
-    <StyledCaretContainer>
-      <StyledCaret />
-    </StyledCaretContainer>
-  );
-};
-
-const StyledDashContainer = styled.div`
-  display: flex;
-  width: 0.5rem;
-  justify-content: center;
-  align-items: center;
-`;
-
-const StyledDash = styled.div`
-  background-color: ${({ theme }) => theme.font.color.tertiary};
-  border-radius: 9999px;
-  height: 0.25rem;
-  width: 0.75rem;
-`;
-
-const FakeDash = () => {
-  return (
-    <StyledDashContainer>
-      <StyledDash />
-    </StyledDashContainer>
-  );
-};
-
-export const Slot = (props: SlotProps) => {
-  return (
-    <StyledSlot isActive={props.isActive}>
-      {props.char ? (
-        <StyledInputChar>{props.char}</StyledInputChar>
-      ) : (
-        <StyledPlaceholderChar>
-          {props.placeholderChar ?? 'X'}
-        </StyledPlaceholderChar>
-      )}
-      {props.hasFakeCaret && <FakeCaret />}
-    </StyledSlot>
-  );
-};
-
-export const useTwoFactorVerificationForSettings = () => {
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
-  const navigate = useNavigateSettings();
-  const { t } = useLingui();
-  const [isLoading, setIsLoading] = useState(false);
-  const { loadCurrentUser } = useLoadCurrentUser();
-
-  const [verifyTwoFactorAuthenticationMethod] = useMutation(
-    VERIFY_TWO_FACTOR_AUTHENTICATION_METHOD_FOR_AUTHENTICATED_USER,
-  );
-
-  const formConfig = useForm<OTPFormValues>({
-    mode: 'onChange',
-    defaultValues: {
-      otp: '',
-    },
-  });
-
-  const { isSubmitting } = formConfig.formState;
-  const otpValue = formConfig.watch('otp');
-  const canSave = !isSubmitting && otpValue?.length === 6;
-
-  const handleVerificationSuccess = async () => {
-    enqueueSuccessSnackBar({
-      message: t`Two-factor authentication setup completed successfully!`,
-    });
-
-    // Reload current user to refresh 2FA status
-    await loadCurrentUser();
-
-    // Navigate back to profile page
-    navigate(SettingsPath.ProfilePage);
-  };
-
-  const handleSave = async (values: OTPFormValues) => {
-    try {
-      setIsLoading(true);
-
-      await verifyTwoFactorAuthenticationMethod({
-        variables: {
-          otp: values.otp,
-        },
-      });
-
-      await handleVerificationSuccess();
-    } catch {
-      enqueueErrorSnackBar({
-        message: t`Invalid verification code. Please try again.`,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleCancel = () => {
-    // Reset form and navigate back to profile page
-    formConfig.reset();
-    navigate(SettingsPath.ProfilePage);
-  };
-
-  return {
-    formConfig,
-    isLoading,
-    canSave,
-    isSubmitting,
-    handleSave,
-    handleCancel,
-  };
-};
-
 export const TwoFactorAuthenticationVerificationForSettings = () => {
-  // Use the form context from the parent instead of creating a new form instance
   const formContext = useFormContext<OTPFormValues>();
 
   return (
@@ -224,7 +36,7 @@ export const TwoFactorAuthenticationVerificationForSettings = () => {
           render={({ slots }) => (
             <StyledOTPContainer>
               {slots.slice(0, 3).map((slot, idx) => (
-                <Slot
+                <TwoFactorAuthenticationVerificationCodeSlot
                   key={idx}
                   char={slot.char}
                   placeholderChar={slot.placeholderChar}
@@ -232,9 +44,9 @@ export const TwoFactorAuthenticationVerificationForSettings = () => {
                   hasFakeCaret={slot.hasFakeCaret}
                 />
               ))}
-              <FakeDash />
+              <TwoFactorAuthenticationVerificationCodeDash />
               {slots.slice(3).map((slot, idx) => (
-                <Slot
+                <TwoFactorAuthenticationVerificationCodeSlot
                   key={idx + 3}
                   char={slot.char}
                   placeholderChar={slot.placeholderChar}
