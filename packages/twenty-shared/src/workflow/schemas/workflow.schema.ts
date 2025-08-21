@@ -28,7 +28,7 @@ export const baseWorkflowActionSchema = z.object({
 
 export const baseTriggerSchema = z.object({
   name: z.string().optional(),
-  type: z.string(),
+  type: z.enum(['DATABASE_EVENT', 'MANUAL', 'CRON', 'WEBHOOK']),
   position: z.object({ x: z.number(), y: z.number() }).optional().nullable(),
   nextStepIds: z.array(z.string()).optional().nullable(),
 });
@@ -220,7 +220,9 @@ export const workflowActionSchema = z.discriminatedUnion('type', [
 export const workflowDatabaseEventTriggerSchema = baseTriggerSchema.extend({
   type: z.literal('DATABASE_EVENT'),
   settings: z.object({
-    eventName: z.string(),
+    eventName: z.string()
+      .regex(/^[a-z][a-z0-9_]*\.(created|updated|deleted)$/, 'Event name must follow the pattern: objectName.action (e.g., "company.created", "person.updated")')
+      .describe('Event name in format: objectName.action (e.g., "company.created", "person.updated", "task.deleted")'),
     input: z.object({}).passthrough().optional(),
     outputSchema: z.object({}).passthrough(),
     objectType: z.string().optional(),
