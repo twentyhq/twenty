@@ -19,7 +19,7 @@ const StyledScrollWrapper = styled.div`
   width: 100%;
   height: 100%;
 
-  &[data-select-on-click='true'] {
+  &[data-prevent-text-selection='true'] {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -27,21 +27,12 @@ const StyledScrollWrapper = styled.div`
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
     cursor: default;
-
     * {
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
     }
-  }
-
-  &[data-select-on-click='false'] {
-    -webkit-user-select: text;
-    -moz-user-select: text;
-    -ms-user-select: text;
-    user-select: text;
-    cursor: text;
   }
 `;
 
@@ -98,7 +89,7 @@ export const ScrollWrapper = ({
         id={`scroll-wrapper-${componentInstanceId}`}
         className={className}
         onScroll={handleScroll}
-        data-select-on-click={preventTextSelection}
+        data-prevent-text-selection={preventTextSelection}
       >
         {children}
       </StyledScrollWrapper>
