@@ -4,9 +4,6 @@ import { MktLicenseCreateOnePreQueryHook } from 'src/mkt-core/license/mkt-licens
 import { MktLicenseService } from 'src/mkt-core/license/mkt-license.service';
 
 @Module({
-  providers: [
-    MktLicenseService,
-    MktLicenseCreateOnePreQueryHook,
-  ],
+  providers: [MktLicenseService, MktLicenseCreateOnePreQueryHook],
 })
 export class MktLicenseModule {}

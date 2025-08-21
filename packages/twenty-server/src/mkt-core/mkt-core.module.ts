@@ -5,10 +5,6 @@ import { MktLicenseModule } from 'src/mkt-core/license/mkt-license.module';
 import { MktOrderModule } from 'src/mkt-core/order/mkt-order.module';
 
 @Module({
-  imports: [
-    MktOrderModule,
-    MktInvoiceModule,
-    MktLicenseModule,
-  ],
+  imports: [MktOrderModule, MktInvoiceModule, MktLicenseModule],
 })
 export class MktCoreModule {}

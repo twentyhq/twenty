@@ -1,4 +1,5 @@
-import { Injectable,Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MKT_LICENSE_STATUS } from 'src/mkt-core/license/mkt-license.workspace-entity';
@@ -13,7 +14,7 @@ type licenseType = {
   lastLoginAt: string;
   deviceInfo: string;
   notes: string;
-}
+};
 
 @Injectable()
 export class MktLicenseService {
@@ -40,22 +41,26 @@ export class MktLicenseService {
         'mktOrder',
         { shouldBypassPermissionChecks: true },
       );
-      const order = await orderRepository.findOne({ where: { id: orderId } });
-      if (!order) {
-        this.logger.warn(`Order ${orderId} not found when creating License`);
-  
-        return license;
-      }
-      license = {
-        licenseKey: this.generateLicenseName(order.name),
-        name: this.generateLicenseName(order.name),
-        status: null,
-        activatedAt: new Date().toISOString(),
-        expiresAt: new Date(new Date().getTime() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        lastLoginAt: '',
-        deviceInfo: '',
-        notes: '',
-      }
+    const order = await orderRepository.findOne({ where: { id: orderId } });
+
+    if (!order) {
+      this.logger.warn(`Order ${orderId} not found when creating License`);
+
+      return license;
+    }
+    license = {
+      licenseKey: this.generateLicenseName(order.name),
+      name: this.generateLicenseName(order.name),
+      status: null,
+      activatedAt: new Date().toISOString(),
+      expiresAt: new Date(
+        new Date().getTime() + 30 * 24 * 60 * 60 * 1000,
+      ).toISOString(),
+      lastLoginAt: '',
+      deviceInfo: '',
+      notes: '',
+    };
+
     return license;
   }
 
