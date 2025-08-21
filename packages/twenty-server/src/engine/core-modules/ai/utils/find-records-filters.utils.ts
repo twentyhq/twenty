@@ -21,9 +21,6 @@ const isSkippableValue = (value: unknown): boolean =>
 const isPlainObject = (value: unknown): value is FilterObject =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
-/**
- * Parse a single filter condition object (e.g., { ilike: "%foo%" }) into a TypeORM operator or value.
- */
 export const parseFilterCondition = (filterValue: FilterObject): unknown => {
   if ('eq' in filterValue) {
     return filterValue.eq;
@@ -77,9 +74,6 @@ export const parseFilterCondition = (filterValue: FilterObject): unknown => {
   return null;
 };
 
-/**
- * Build where conditions compatible with TypeORM from a flexible search criteria object
- */
 export const buildWhereConditions = (
   searchCriteria: FilterObject,
 ): WhereRecord => {
