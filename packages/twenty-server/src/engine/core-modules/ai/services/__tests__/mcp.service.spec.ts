@@ -12,7 +12,7 @@ import { MCP_SERVER_METADATA } from 'src/engine/core-modules/ai/constants/mcp.co
 import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 
-import { McpService } from './mcp.service';
+import { McpService } from '../mcp.service';
 
 describe('McpService', () => {
   let service: McpService;

@@ -250,8 +250,6 @@ export class ToolService {
           { roleId },
         );
 
-      // const createdRecord = await repository.save(parameters);
-      // Get object metadata maps for field transformation
       const objectMetadataMaps =
         await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
           workspaceId,
@@ -268,7 +266,6 @@ export class ToolService {
         };
       }
 
-      // Transform input data (handles rich text conversion)
       const transformedCreateData =
         await this.recordInputTransformerService.process({
           recordInput: parameters,
@@ -327,8 +324,6 @@ export class ToolService {
         };
       }
 
-      // await repository.update(id as string, updateData);
-      // Get object metadata maps for field transformation
       const objectMetadataMaps =
         await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
           workspaceId,
@@ -345,7 +340,6 @@ export class ToolService {
         };
       }
 
-      // Transform input data (handles rich text conversion)
       const transformedUpdateData =
         await this.recordInputTransformerService.process({
           recordInput: updateData,
