@@ -23,13 +23,13 @@ export class McpController {
 
   @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
-  async executeMcpMethods(
+  async handleMcpCore(
     @Body() body: JsonRpc,
     @AuthWorkspace() workspace: Workspace,
     @AuthApiKey() apiKey: string | undefined,
     @AuthUserWorkspaceId() userWorkspaceId: string | undefined,
   ) {
-    return this.mcpService.executeTool(body, {
+    return this.mcpService.handleMCPCoreQuery(body, {
       workspace,
       userWorkspaceId,
       apiKey,

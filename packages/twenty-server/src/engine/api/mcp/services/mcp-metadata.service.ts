@@ -57,6 +57,9 @@ export class MCPMetadataService {
           resources: { listChanged: false },
           prompts: { listChanged: false },
         },
+        tools: [],
+        resources: [],
+        prompts: [],
       },
     });
   }
@@ -115,11 +118,13 @@ export class MCPMetadataService {
           tools: { listChanged: false },
         },
         tools: Object.values(this.tools),
+        resources: [],
+        prompts: [],
       },
     });
   }
 
-  async handleMCPQuery(
+  async handleMCPMetadataQuery(
     request: Request,
     {
       workspace,
@@ -151,6 +156,28 @@ export class MCPMetadataService {
 
       if (request.body.method === 'tools/list') {
         return this.listTools(request);
+      }
+
+      if (request.body.method === 'prompts/list') {
+        return wrapJsonRpcResponse(request.body.id, {
+          result: {
+            capabilities: {
+              prompts: { listChanged: false },
+            },
+            prompts: [],
+          },
+        });
+      }
+
+      if (request.body.method === 'resources/list') {
+        return wrapJsonRpcResponse(request.body.id, {
+          result: {
+            capabilities: {
+              resources: { listChanged: false },
+            },
+            resources: [],
+          },
+        });
       }
 
       return wrapJsonRpcResponse(request.body.id ?? crypto.randomUUID(), {
