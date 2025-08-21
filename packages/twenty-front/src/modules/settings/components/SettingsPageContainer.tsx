@@ -52,10 +52,7 @@ export const SettingsPageContainer = ({
   useScrollRestoration(componentInstanceId);
 
   return (
-    <ScrollWrapper
-      componentInstanceId={componentInstanceId}
-      preventTextSelection={true}
-    >
+    <ScrollWrapper componentInstanceId={componentInstanceId}>
       <StyledSettingsPageContainer>{children}</StyledSettingsPageContainer>
     </ScrollWrapper>
   );
