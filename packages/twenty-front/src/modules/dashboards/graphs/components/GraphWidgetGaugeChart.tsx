@@ -59,13 +59,6 @@ const StyledLegendItem = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 `;
 
-const StyledLegendDot = styled.div<{ color: string }>`
-  background: ${({ color }) => color};
-  border-radius: 50%;
-  height: 6px;
-  width: 6px;
-`;
-
 const StyledLegendLabel = styled.span`
   color: ${({ theme }) => theme.font.color.light};
 `;
@@ -85,18 +78,20 @@ const StyledTooltipRow = styled.div`
   color: ${({ theme }) => theme.font.color.extraLight};
   display: flex;
   font-size: ${({ theme }) => theme.font.size.xs};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledTooltipDot = styled.div`
+const StyledDot = styled.div`
   background: ${({ theme }) => theme.color.blue};
   border-radius: 50%;
   height: 6px;
   width: 6px;
-  margin-right: ${({ theme }) => theme.spacing(2)};
+  flex-shrink: 0;
 `;
 
 const StyledTooltipValue = styled.span`
   margin-left: auto;
+  white-space: nowrap;
 `;
 
 const StyledTooltipLink = styled.a`
@@ -147,18 +142,20 @@ export const GraphWidgetGaugeChart = ({
 
   const gradientColors = isHovered
     ? {
-        start: theme.color.blue50,
-        end: theme.color.blue70,
+        start: theme.adaptiveColors.blue4,
+        end: theme.adaptiveColors.blue3,
       }
     : {
-        start: theme.color.blue30,
-        end: theme.color.blue50,
+        start: theme.adaptiveColors.blue2,
+        end: theme.adaptiveColors.blue1,
       };
+
+  const gradientId = `gaugeGradient-${id}`;
 
   const defs = [
     {
-      id: 'gaugeGradient',
-      type: 'angularGradient',
+      id: gradientId,
+      type: 'linearGradient',
       colors: [
         { offset: 0, color: gradientColors.start },
         { offset: 100, color: gradientColors.end },
@@ -169,7 +166,7 @@ export const GraphWidgetGaugeChart = ({
   const tooltipContent = (
     <StyledTooltipContent>
       <StyledTooltipRow>
-        <StyledTooltipDot />
+        <StyledDot />
         <span>{legendLabel}</span>
         <StyledTooltipValue>{`${displayValue}${unit}`}</StyledTooltipValue>
       </StyledTooltipRow>
@@ -194,8 +191,14 @@ export const GraphWidgetGaugeChart = ({
             endAngle={90}
             innerRadius={0.7}
             padding={0.2}
-            colors={[gradientColors.start, theme.background.tertiary]}
+            colors={[`url(#${gradientId})`, theme.background.tertiary]}
             defs={defs}
+            fill={[
+              {
+                match: (d: { x: string }) => d.x === 'value',
+                id: gradientId,
+              },
+            ]}
             enableTracks={false}
             enableRadialGrid={false}
             enableCircularGrid={false}
@@ -215,7 +218,7 @@ export const GraphWidgetGaugeChart = ({
         </StyledChartContainer>
         <StyledLegendContainer>
           <StyledLegendItem>
-            <StyledLegendDot color={theme.color.blue} />
+            <StyledDot />
             <StyledLegendLabel>{legendLabel}</StyledLegendLabel>
             <StyledLegendValue>{`${displayValue}${unit}`}</StyledLegendValue>
           </StyledLegendItem>
