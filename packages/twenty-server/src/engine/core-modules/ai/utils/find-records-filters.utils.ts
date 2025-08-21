@@ -132,14 +132,6 @@ export const buildWhereConditions = (
 
       if (Object.keys(nestedConditions).length > 0) {
         whereConditions[key] = nestedConditions;
-      } else {
-        const fallbackFilterCondition = parseFilterCondition(
-          value as Record<string, unknown>,
-        );
-
-        if (fallbackFilterCondition !== null) {
-          whereConditions[key] = fallbackFilterCondition;
-        }
       }
 
       return;
