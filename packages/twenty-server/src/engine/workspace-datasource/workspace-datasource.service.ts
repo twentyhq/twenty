@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { type DataSource, type EntityManager } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -12,16 +11,12 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 
 @Injectable()
 export class WorkspaceDataSourceService {
-  constructor(
-    private readonly dataSourceService: DataSourceService,
-    private readonly typeormService: TypeORMService,
-  ) {}
+  constructor(private readonly typeormService: TypeORMService) {}
 
   /**
    *
    * Connect to the workspace data source
    *
-   * @param workspaceId
    * @returns
    */
   public async connectToMainDataSource(): Promise<DataSource> {
@@ -32,15 +27,6 @@ export class WorkspaceDataSourceService {
     }
 
     return dataSource;
-  }
-
-  public async checkSchemaExists(workspaceId: string) {
-    const dataSource =
-      await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
-        workspaceId,
-      );
-
-    return dataSource.length > 0;
   }
 
   /**

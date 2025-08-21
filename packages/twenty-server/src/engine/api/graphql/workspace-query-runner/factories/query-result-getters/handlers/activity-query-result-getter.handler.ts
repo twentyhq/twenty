@@ -27,7 +27,7 @@ export class ActivityQueryResultGetterHandler
       return activity;
     }
 
-    let blocknote: RichTextBody = [];
+    let blocknote: RichTextBody;
 
     try {
       blocknote = JSON.parse(blocknoteJson);

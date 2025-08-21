@@ -156,32 +156,6 @@ export class WorkspaceSyncFieldMetadataService {
     }
   }
 
-  synchronizeCustomObject(
-    context: WorkspaceSyncContext,
-    customObjectMetadata: ObjectMetadataEntity,
-  ): FieldComparatorResult[] {
-    // Create standard field metadata collection
-    const customObjectStandardFieldMetadataCollection =
-      this.standardFieldFactory.create(CustomWorkspaceEntity, context);
-
-    const standardFieldMetadataCollection = computeStandardFields(
-      context,
-      customObjectStandardFieldMetadataCollection,
-      customObjectMetadata,
-    );
-
-    /**
-     * COMPARE FIELD METADATA
-     */
-    const fieldComparatorResults = this.workspaceFieldComparator.compare(
-      customObjectMetadata.id,
-      customObjectMetadata.fields,
-      standardFieldMetadataCollection,
-    );
-
-    return fieldComparatorResults;
-  }
-
   private async synchronizeCustomObjectFields(
     context: WorkspaceSyncContext,
     customObjectMetadataCollection: ObjectMetadataEntity[],

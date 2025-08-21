@@ -6,11 +6,6 @@ import { Strategy } from 'passport-microsoft';
 import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-export type MicrosoftAPIScopeConfig = {
-  isCalendarEnabled?: boolean;
-  isMessagingAliasFetchingEnabled?: boolean;
-};
-
 @Injectable()
 export class MicrosoftAPIsOauthCommonStrategy extends PassportStrategy(
   Strategy,

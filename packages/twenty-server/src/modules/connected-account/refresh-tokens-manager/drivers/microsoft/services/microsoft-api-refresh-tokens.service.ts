@@ -6,11 +6,6 @@ import { z } from 'zod';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type ConnectedAccountTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 
-export type MicrosoftTokens = {
-  accessToken: string;
-  refreshToken: string;
-};
-
 interface MicrosoftRefreshTokenResponse {
   access_token: string;
   refresh_token: string;

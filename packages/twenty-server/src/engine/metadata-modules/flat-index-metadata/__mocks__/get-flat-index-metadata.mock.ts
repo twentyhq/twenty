@@ -26,12 +26,3 @@ export const getFlatIndexMetadataMock = (
     ...overrides,
   };
 };
-
-export const getStandardFlatIndexMetadataMock = (
-  overrides: Omit<FlatIndexMetadataOverrides, 'isCustom'>,
-) => {
-  return getFlatIndexMetadataMock({
-    isCustom: false,
-    ...overrides,
-  });
-};

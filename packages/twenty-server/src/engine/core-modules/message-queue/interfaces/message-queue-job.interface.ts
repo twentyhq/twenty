@@ -5,12 +5,6 @@ export interface MessageQueueJob<T = any> {
   data: T;
 }
 
-export interface MessageQueueCronJobData<
-  T extends MessageQueueJobData | undefined,
-> {
-  handle(data: T): Promise<void> | void;
-}
-
 export interface MessageQueueJobData {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;

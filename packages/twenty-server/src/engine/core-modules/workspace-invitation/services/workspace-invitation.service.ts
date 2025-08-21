@@ -111,25 +111,6 @@ export class WorkspaceInvitationService {
       .getOne();
   }
 
-  async getAppTokenByInvitationToken(invitationToken: string) {
-    const appToken = await this.appTokenRepository.findOne({
-      where: {
-        value: invitationToken,
-        type: AppTokenType.InvitationToken,
-      },
-      relations: { workspace: true },
-    });
-
-    if (!appToken) {
-      throw new WorkspaceInvitationException(
-        'Invalid invitation token',
-        WorkspaceInvitationExceptionCode.INVALID_INVITATION,
-      );
-    }
-
-    return appToken;
-  }
-
   async loadWorkspaceInvitations(workspace: Workspace) {
     const appTokens = await this.appTokenRepository.find({
       where: {

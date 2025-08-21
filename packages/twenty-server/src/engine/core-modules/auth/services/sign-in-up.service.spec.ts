@@ -32,12 +32,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
-jest.mock('src/utils/image', () => {
-  return {
-    getImageBufferFromUrl: () => Promise.resolve(Buffer.from('')),
-  };
-});
-
 describe('SignInUpService', () => {
   let service: SignInUpService;
   let UserRepository: Repository<User>;

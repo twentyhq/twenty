@@ -39,9 +39,7 @@ export class CommandLogger {
         flag: append ? 'a' : 'w',
       });
 
-      const absoluteLogFilePath = joinPath(process.cwd(), logFilePath);
-
-      return absoluteLogFilePath;
+      return joinPath(process.cwd(), logFilePath);
     } catch (err) {
       console.error(
         `Error writing to file ${path}/${fileName}.json: ${err?.message}`,

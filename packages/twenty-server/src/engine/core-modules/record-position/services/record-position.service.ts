@@ -149,47 +149,6 @@ export class RecordPositionService {
     ];
   }
 
-  async findByPosition(
-    positionValue: number | null,
-    objectMetadata: { isCustom: boolean; nameSingular: string },
-    workspaceId: string,
-  ): Promise<{ id: string; position: number } | null> {
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        objectMetadata.nameSingular,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
-
-    const record = await repository.findOneBy({
-      position: positionValue,
-    });
-
-    return record ? { id: record.id, position: record.position } : null;
-  }
-
-  async updatePosition(
-    recordId: string,
-    positionValue: number,
-    objectMetadata: { isCustom: boolean; nameSingular: string },
-    workspaceId: string,
-  ): Promise<void> {
-    const repository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-        workspaceId,
-        objectMetadata.nameSingular,
-        {
-          shouldBypassPermissionChecks: true,
-        },
-      );
-
-    await repository.update(recordId, {
-      position: positionValue,
-    });
-  }
-
   private async findMinPosition(
     objectMetadata: { isCustom: boolean; nameSingular: string },
     workspaceId: string,

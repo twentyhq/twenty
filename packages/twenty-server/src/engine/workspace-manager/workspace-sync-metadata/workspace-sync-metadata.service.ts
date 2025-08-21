@@ -116,7 +116,7 @@ export class WorkspaceSyncMetadataService {
       // 3 - Sync standard relations on standard and custom objects
       const workspaceRelationMigrationsStart = performance.now();
 
-      let workspaceRelationMigrations: Partial<WorkspaceMigrationEntity>[] = [];
+      let workspaceRelationMigrations: Partial<WorkspaceMigrationEntity>[];
 
       workspaceRelationMigrations =
         await this.workspaceSyncFieldMetadataRelationService.synchronize(

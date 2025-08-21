@@ -122,7 +122,7 @@ export const convertObjectMetadataToSchemaProperties = ({
       return node;
     }
 
-    let itemProperty = {} as SchemaObject;
+    let itemProperty: SchemaObject | undefined;
 
     switch (field.type) {
       case FieldMetadataType.MULTI_SELECT:
@@ -338,7 +338,7 @@ export const convertObjectMetadataToSchemaProperties = ({
       itemProperty.description = field.description;
     }
 
-    if (Object.keys(itemProperty).length) {
+    if (isDefined(itemProperty)) {
       return { ...node, [field.name]: itemProperty };
     }
 

@@ -23,9 +23,7 @@ import {
 export enum WorkspaceCacheKeys {
   GraphQLTypeDefs = 'graphql:type-defs',
   GraphQLUsedScalarNames = 'graphql:used-scalar-names',
-  GraphQLOperations = 'graphql:operations',
   ORMEntitySchemas = 'orm:entity-schemas',
-  GraphQLFeatureFlag = 'graphql:feature-flag',
   MetadataObjectMetadataMaps = 'metadata:object-metadata-maps',
   MetadataVersion = 'metadata:workspace-metadata-version',
   FeatureFlagMap = 'feature-flag:feature-flag-map',

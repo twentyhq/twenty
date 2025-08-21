@@ -46,7 +46,7 @@ export abstract class ActiveOrSuspendedWorkspacesMigrationCommandRunner<
     success: [],
   };
 
-  constructor(
+  protected constructor(
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {

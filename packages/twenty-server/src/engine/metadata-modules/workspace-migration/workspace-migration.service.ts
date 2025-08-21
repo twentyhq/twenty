@@ -20,6 +20,7 @@ export class WorkspaceMigrationService {
    *
    * @returns Promise<WorkspaceMigration[]>
    * @param workspaceId
+   * @param queryRunner
    */
   public async getPendingMigrations(
     workspaceId: string,
@@ -91,28 +92,12 @@ export class WorkspaceMigrationService {
   }
 
   /**
-   * Set appliedAt as current date for a given migration.
-   * Should be called once the migration has been applied
-   *
-   * @param workspaceId
-   * @param migration
-   */
-  public async setAppliedAtForMigration(
-    workspaceId: string,
-    migration: WorkspaceMigrationEntity,
-  ) {
-    await this.workspaceMigrationRepository.update(
-      { id: migration.id, workspaceId },
-      { appliedAt: new Date() },
-    );
-  }
-
-  /**
    * Create a new pending migration for a given workspaceId and expected changes
    *
    * @param name
    * @param workspaceId
    * @param migrations
+   * @param queryRunner
    */
   public async createCustomMigration(
     name: string,
@@ -124,15 +109,13 @@ export class WorkspaceMigrationService {
       ? queryRunner.manager.getRepository(WorkspaceMigrationEntity)
       : this.workspaceMigrationRepository;
 
-    const migration = await workspaceMigrationRepository.save({
+    return await workspaceMigrationRepository.save({
       name,
       migrations,
       workspaceId,
       isCustom: true,
       createdAt: new Date(),
     });
-
-    return migration;
   }
 
   public async deleteAllWithinWorkspace(workspaceId: string) {

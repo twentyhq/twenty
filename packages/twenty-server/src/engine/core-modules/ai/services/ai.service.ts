@@ -36,12 +36,4 @@ export class AiService {
       maxTokens: options?.maxTokens,
     });
   }
-
-  getAvailableModels() {
-    return this.aiModelRegistryService.getAvailableModels();
-  }
-
-  getDefaultModel() {
-    return this.aiModelRegistryService.getDefaultModel();
-  }
 }

@@ -5,20 +5,11 @@ interface CommandLoggerOptions {
   constructorName: string;
 }
 
-export const isCommandLogger = (
-  logger: Logger | CommandLogger,
-): logger is CommandLogger => {
-  // @ts-expect-error legacy noImplicitAny
-  return typeof logger['setVerbose'] === 'function';
-};
-
 export class CommandLogger {
   private logger: Logger;
-  private verboseFlag: boolean;
 
   constructor(options: CommandLoggerOptions) {
     this.logger = new Logger(options.constructorName);
-    this.verboseFlag = options.verbose ?? false;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,16 +29,5 @@ export class CommandLogger {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   debug(message: string, ...optionalParams: [...any, string?]) {
     this.logger.debug(message, ...optionalParams);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  verbose(message: string, ...optionalParams: [...any, string?]) {
-    if (this.verboseFlag) {
-      this.logger.log(message, ...optionalParams);
-    }
-  }
-
-  setVerbose(flag: boolean) {
-    this.verboseFlag = flag;
   }
 }

@@ -13,8 +13,6 @@ import { validateOptionsForType } from 'src/engine/metadata-modules/field-metada
 @Injectable()
 @ValidatorConstraint({ name: 'isFieldMetadataOptions', async: true })
 export class IsFieldMetadataOptions {
-  private validationErrors: string[] = [];
-
   constructor(
     @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
@@ -52,9 +50,7 @@ export class IsFieldMetadataOptions {
 
     try {
       return validateOptionsForType(type, value);
-    } catch (err) {
-      this.validationErrors.push(err.message);
-
+    } catch {
       return false;
     }
   }

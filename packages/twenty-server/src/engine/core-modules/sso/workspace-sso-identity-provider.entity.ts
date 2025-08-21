@@ -23,7 +23,6 @@ export enum IdentityProviderType {
 }
 
 export enum OIDCResponseType {
-  // Only Authorization Code is used for now
   CODE = 'code',
   ID_TOKEN = 'id_token',
   TOKEN = 'token',

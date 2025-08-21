@@ -5,10 +5,7 @@ import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { render } from '@react-email/render';
 import { differenceInDays } from 'date-fns';
-import {
-  CleanSuspendedWorkspaceEmail,
-  WarnSuspendedWorkspaceEmail,
-} from 'twenty-emails';
+import { CleanSuspendedWorkspaceEmail, WarnSuspendedWorkspaceEmail, } from 'twenty-emails';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
@@ -23,12 +20,16 @@ import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { USER_WORKSPACE_DELETION_WARNING_SENT_KEY } from 'src/engine/workspace-manager/workspace-cleaner/constants/user-workspace-deletion-warning-sent-key.constant';
+import {
+  USER_WORKSPACE_DELETION_WARNING_SENT_KEY
+} from 'src/engine/workspace-manager/workspace-cleaner/constants/user-workspace-deletion-warning-sent-key.constant';
 import {
   WorkspaceCleanerException,
   WorkspaceCleanerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-cleaner/exceptions/workspace-cleaner.exception';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import {
+  type WorkspaceMemberWorkspaceEntity
+} from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class CleanerWorkspaceService {
@@ -76,12 +77,7 @@ export class CleanerWorkspaceService {
           order: { updatedAt: 'DESC' },
         });
 
-      const daysSinceBillingInactivity = differenceInDays(
-        new Date(),
-        lastSubscription.updatedAt,
-      );
-
-      return daysSinceBillingInactivity;
+      return differenceInDays(new Date(), lastSubscription.updatedAt);
     } catch {
       throw new WorkspaceCleanerException(
         `No billing subscription found for workspace ${workspace.id} ${workspace.displayName}`,

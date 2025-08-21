@@ -73,7 +73,7 @@ export class AgentToolService {
       workspaceId,
     });
 
-    const handoffTools = handoffs.reduce<ToolSet>((tools, handoff) => {
+    return handoffs.reduce<ToolSet>((tools, handoff) => {
       const toolName = `handoff_to_${camelCase(handoff.toAgent.name)}`;
 
       const handoffSchema = z.object({
@@ -121,7 +121,5 @@ export class AgentToolService {
 
       return tools;
     }, {});
-
-    return handoffTools;
   }
 }

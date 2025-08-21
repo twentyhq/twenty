@@ -5,7 +5,7 @@ import {
   type BeforeUpdateOneHook,
   type UpdateOneInputType,
 } from '@ptc-org/nestjs-query-graphql';
-import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -259,26 +259,23 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
   }): boolean {
     // Handle localized overrides
     if (locale && locale !== SOURCE_LOCALE) {
-      const wasOverrideReset = this.resetLocalizedOverride(
+      return this.resetLocalizedOverride(
         update,
         overrideKey,
         newValue,
         originalValue,
         locale,
       );
-
-      return wasOverrideReset;
     }
 
     // Handle default language overrides
-    const wasOverrideReset = this.resetDefaultOverride(
+
+    return this.resetDefaultOverride(
       update,
       overrideKey,
       newValue,
       originalValue,
     );
-
-    return wasOverrideReset;
   }
 
   private resetLocalizedOverride(

@@ -177,9 +177,4 @@ export class AiModelRegistryService {
       outputCostPer1kTokensInCents: 0,
     };
   }
-
-  // Force refresh the registry (useful if config changes)
-  refreshRegistry(): void {
-    this.buildModelRegistry();
-  }
 }

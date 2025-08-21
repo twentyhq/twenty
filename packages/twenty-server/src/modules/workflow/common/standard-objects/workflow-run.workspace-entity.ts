@@ -42,11 +42,6 @@ export enum WorkflowRunStatus {
   ENQUEUED = 'ENQUEUED',
 }
 
-export type StepOutput = {
-  id: string;
-  output: WorkflowActionOutput;
-};
-
 export type WorkflowRunOutput = {
   flow: {
     trigger: WorkflowTrigger;

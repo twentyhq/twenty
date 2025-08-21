@@ -104,7 +104,6 @@ const findFieldMetadata = async ({
     },
   });
   const fields = await makeMetadataAPIRequest(operation);
-  const field = fields.body.data.fields.edges?.[0]?.node;
 
-  return field;
+  return fields.body.data.fields.edges?.[0]?.node;
 };

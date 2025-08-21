@@ -42,8 +42,3 @@ export type ObjectRecordCursor = {
     | ObjectRecordCursorLeafScalarValue
     | ObjectRecordCursorLeafCompositeValue;
 };
-
-export interface ObjectRecordDuplicateCriteria {
-  objectName: string;
-  columnNames: string[];
-}

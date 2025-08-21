@@ -74,8 +74,5 @@ export enum PermissionsExceptionMessage {
   CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION = 'Cannot give writing permission without reading permission',
   FIELD_METADATA_NOT_FOUND = 'Field metadata not found',
   ONLY_FIELD_RESTRICTION_ALLOWED = 'Field permission can only introduce a restriction',
-  FIELD_RESTRICTION_ONLY_ALLOWED_ON_READABLE_OBJECT = 'Field restriction only makes sense on readable object',
-  FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT = 'Field restriction on update only makes sense on updatable object',
   OBJECT_PERMISSION_NOT_FOUND = 'Object permission not found',
-  EMPTY_FIELD_PERMISSION_NOT_ALLOWED = 'Empty field permission not allowed',
 }

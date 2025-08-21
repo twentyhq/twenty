@@ -13,7 +13,7 @@ export type MigrationCommandOptions = {
 export abstract class MigrationCommandRunner extends CommandRunner {
   protected logger: CommandLogger | Logger;
 
-  constructor() {
+  protected constructor() {
     super();
     this.logger = new CommandLogger({
       verbose: false,

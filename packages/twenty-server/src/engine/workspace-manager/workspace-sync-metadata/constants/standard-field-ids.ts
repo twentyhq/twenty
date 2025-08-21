@@ -152,15 +152,6 @@ export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
   connectionParameters: '20202020-a1b2-46be-814f-6228af16c481',
 } as const;
 
-export const EVENT_STANDARD_FIELD_IDS = {
-  properties: '20202020-f142-4b04-b91b-6a2b4af3bf10',
-  workspaceMember: '20202020-af23-4479-9a30-868edc474b35',
-  person: '20202020-c414-45b9-a60a-ac27aa96229e',
-  company: '20202020-04ad-4221-a744-7a8278a5ce20',
-  opportunity: '20202020-7664-4a35-a3df-580d389fd5f0',
-  custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
-} as const;
-
 export const AUDIT_LOGS_STANDARD_FIELD_IDS = {
   name: '20202020-2462-4b9d-b5d9-745febb3b095',
   properties: '20202020-5d36-470e-8fad-d56ea3ab2fd0',

@@ -29,7 +29,6 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   private currentAppVersion: SemVer;
   public abstract allCommands: AllCommands;
   public commands: VersionCommands;
-  public readonly VALIDATE_WORKSPACE_VERSION_FEATURE_FLAG?: true;
 
   constructor(
     @InjectRepository(Workspace, 'core')

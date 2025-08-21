@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { ImapFlow } from 'imapflow';
 import { createTransport } from 'nodemailer';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
@@ -11,7 +10,6 @@ import {
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CalDAVClient } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/caldav.client';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class ImapSmtpCaldavService {
@@ -175,25 +173,5 @@ export class ImapSmtpCaldavService {
           'Please select a valid connection type (IMAP, SMTP, or CalDAV) and try again.',
       },
     );
-  }
-
-  async getImapSmtpCaldav(
-    workspaceId: string,
-    connectionId: string,
-  ): Promise<ConnectedAccountWorkspaceEntity | null> {
-    const connectedAccountRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ConnectedAccountWorkspaceEntity>(
-        workspaceId,
-        'connectedAccount',
-      );
-
-    const connectedAccount = await connectedAccountRepository.findOne({
-      where: {
-        id: connectionId,
-        provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-      },
-    });
-
-    return connectedAccount;
   }
 }

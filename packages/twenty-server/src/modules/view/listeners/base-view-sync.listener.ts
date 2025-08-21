@@ -38,7 +38,7 @@ export abstract class BaseViewSyncListener<T extends EntityWithId> {
 
   protected readonly logger: Logger;
 
-  constructor(
+  protected constructor(
     protected readonly syncOperations: SyncOperations<T>,
     loggerName: string,
     protected readonly entityTypeName: string,

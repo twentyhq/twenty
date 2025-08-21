@@ -211,16 +211,6 @@ export const deleteTestViewFilterWithRestApi = async (
   }).catch(() => {});
 };
 
-export const deleteTestViewSortWithRestApi = async (
-  viewSortId: string,
-): Promise<void> => {
-  await makeRestAPIRequest({
-    method: 'delete',
-    path: `/metadata/viewSorts/${viewSortId}`,
-    bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-  }).catch(() => {});
-};
-
 export const deleteTestViewGroupWithRestApi = async (
   viewGroupId: string,
 ): Promise<void> => {

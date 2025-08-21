@@ -61,15 +61,13 @@ export class AgentHandoffService {
     fromAgentId: string;
     workspaceId: string;
   }): Promise<AgentHandoffEntity[]> {
-    const handoffs = await this.agentHandoffRepository.find({
+    return await this.agentHandoffRepository.find({
       where: {
         fromAgentId,
         workspaceId,
       },
       relations: ['toAgent'],
     });
-
-    return handoffs;
   }
 
   async createHandoff({
@@ -121,14 +119,12 @@ export class AgentHandoffService {
       );
     }
 
-    const handoff = await this.agentHandoffRepository.save({
+    return await this.agentHandoffRepository.save({
       fromAgentId,
       toAgentId,
       workspaceId,
       description,
     });
-
-    return handoff;
   }
 
   async removeHandoff({
@@ -144,15 +140,6 @@ export class AgentHandoffService {
       fromAgentId,
       toAgentId,
       workspaceId,
-    });
-  }
-
-  async getWorkspaceHandoffs(
-    workspaceId: string,
-  ): Promise<AgentHandoffEntity[]> {
-    return this.agentHandoffRepository.find({
-      where: { workspaceId },
-      relations: ['fromAgent', 'toAgent'],
     });
   }
 }

@@ -504,57 +504,6 @@ export class ToolService {
     }
   }
 
-  private async _destroyRecord(
-    objectName: string,
-    parameters: Record<string, unknown>,
-    workspaceId: string,
-    roleId: string,
-  ) {
-    try {
-      const repository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-          workspaceId,
-          objectName,
-          { roleId },
-        );
-
-      const { id } = parameters;
-
-      if (!id || typeof id !== 'string') {
-        return {
-          success: false,
-          error: 'Record ID is required for destroy',
-          message: `Failed to destroy ${objectName}: Record ID is required`,
-        };
-      }
-
-      const existingRecord = await repository.findOne({
-        where: { id },
-      });
-
-      if (!existingRecord) {
-        return {
-          success: false,
-          error: 'Record not found',
-          message: `Failed to destroy ${objectName}: Record with ID ${id} not found`,
-        };
-      }
-
-      await repository.remove(existingRecord);
-
-      return {
-        success: true,
-        message: `Successfully destroyed ${objectName}`,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        message: `Failed to destroy ${objectName}`,
-      };
-    }
-  }
-
   private async softDeleteManyRecords(
     objectName: string,
     parameters: Record<string, unknown>,
@@ -614,69 +563,6 @@ export class ToolService {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
         message: `Failed to soft delete many ${objectName}`,
-      };
-    }
-  }
-
-  private async _destroyManyRecords(
-    objectName: string,
-    parameters: Record<string, unknown>,
-    workspaceId: string,
-    roleId: string,
-  ) {
-    try {
-      const repository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-          workspaceId,
-          objectName,
-          { roleId },
-        );
-
-      const { filter } = parameters;
-
-      if (!filter || typeof filter !== 'object' || !('id' in filter)) {
-        return {
-          success: false,
-          error: 'Filter with record IDs is required for bulk destroy',
-          message: `Failed to destroy many ${objectName}: Filter with record IDs is required`,
-        };
-      }
-
-      const idFilter = filter.id as Record<string, unknown>;
-      const recordIds = idFilter.in as string[];
-
-      if (!Array.isArray(recordIds) || recordIds.length === 0) {
-        return {
-          success: false,
-          error: 'At least one record ID is required for bulk destroy',
-          message: `Failed to destroy many ${objectName}: At least one record ID is required`,
-        };
-      }
-
-      const existingRecords = await repository.find({
-        where: { id: { in: recordIds } },
-      });
-
-      if (existingRecords.length === 0) {
-        return {
-          success: false,
-          error: 'No records found to destroy',
-          message: `Failed to destroy many ${objectName}: No records found with the provided IDs`,
-        };
-      }
-
-      await repository.delete({ id: { in: recordIds } });
-
-      return {
-        success: true,
-        count: existingRecords.length,
-        message: `Successfully destroyed ${existingRecords.length} ${objectName} records`,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        message: `Failed to destroy many ${objectName}`,
       };
     }
   }

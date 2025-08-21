@@ -9,7 +9,9 @@ export abstract class DriverFactoryBase<TDriver> {
   private currentDriver: TDriver | null = null;
   private currentConfigKey: string | null = null;
 
-  constructor(protected readonly twentyConfigService: TwentyConfigService) {}
+  protected constructor(
+    protected readonly twentyConfigService: TwentyConfigService,
+  ) {}
 
   getCurrentDriver(): TDriver {
     let configKey: string;

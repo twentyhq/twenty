@@ -6,11 +6,6 @@ import { Strategy } from 'passport-google-oauth20';
 import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-export type GoogleAPIScopeConfig = {
-  isCalendarEnabled?: boolean;
-  isMessagingAliasFetchingEnabled?: boolean;
-};
-
 @Injectable()
 export class GoogleAPIsOauthCommonStrategy extends PassportStrategy(
   Strategy,

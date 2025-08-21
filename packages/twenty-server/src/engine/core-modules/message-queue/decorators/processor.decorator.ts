@@ -19,7 +19,7 @@ export interface MessageQueueProcessorOptions {
 
 /**
  * Represents a worker that is able to process jobs from the queue.
- * @param processorOptions processor options
+ * @param queueNameOrOptions
  */
 export function Processor(
   queueNameOrOptions: string | MessageQueueProcessorOptions,

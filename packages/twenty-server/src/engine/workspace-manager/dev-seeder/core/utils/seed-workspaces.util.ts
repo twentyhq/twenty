@@ -72,16 +72,3 @@ export const seedWorkspaces = async ({
     .values(workspaces[workspaceId])
     .execute();
 };
-
-export const deleteWorkspaces = async (
-  dataSource: DataSource,
-  schemaName: string,
-  workspaceId: string,
-) => {
-  await dataSource
-    .createQueryBuilder()
-    .delete()
-    .from(`${schemaName}.${tableName}`)
-    .where(`${tableName}."id" = :id`, { id: workspaceId })
-    .execute();
-};

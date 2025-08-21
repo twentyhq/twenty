@@ -6,10 +6,6 @@ import { MicrosoftAPIsOauthCommonStrategy } from 'src/engine/core-modules/auth/s
 import { type MicrosoftAPIsRequest } from 'src/engine/core-modules/auth/types/microsoft-api-request.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-export type MicrosoftAPIScopeConfig = {
-  isCalendarEnabled?: boolean;
-};
-
 @Injectable()
 export class MicrosoftAPIsOauthExchangeCodeForTokenStrategy extends MicrosoftAPIsOauthCommonStrategy {
   constructor(twentyConfigService: TwentyConfigService) {

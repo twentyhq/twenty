@@ -1,19 +1,14 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException, } from '@nestjs/common';
 
 import { i18n } from '@lingui/core';
-import {
-  type BeforeUpdateOneHook,
-  type UpdateOneInputType,
-} from '@ptc-org/nestjs-query-graphql';
+import { type BeforeUpdateOneHook, type UpdateOneInputType, } from '@ptc-org/nestjs-query-graphql';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
-import { type ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
+import {
+  type ObjectStandardOverridesDTO
+} from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
 import { type UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -191,25 +186,21 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
     locale?: keyof typeof APP_LOCALES | undefined;
   }): boolean {
     if (locale && locale !== SOURCE_LOCALE) {
-      const wasOverrideReset = this.resetLocalizedOverride(
+      return this.resetLocalizedOverride(
         update,
         overrideKey,
         newValue,
         originalValue,
         locale,
       );
-
-      return wasOverrideReset;
     }
 
-    const wasOverrideReset = this.resetDefaultOverride(
+    return this.resetDefaultOverride(
       update,
       overrideKey,
       newValue,
       originalValue,
     );
-
-    return wasOverrideReset;
   }
 
   private resetLocalizedOverride(

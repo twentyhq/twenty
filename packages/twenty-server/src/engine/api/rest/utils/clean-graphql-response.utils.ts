@@ -55,15 +55,15 @@ export const cleanGraphQLResponse = (input: any) => {
       output.data[key] = cleanObject(input[key]);
     } else if (Array.isArray(input[key])) {
       const itemsWithEdges = input[key].filter((item) => item.edges);
-      const cleanedObjArray = itemsWithEdges.map(({ edges, ...item }) => {
+
+
+      output.data = itemsWithEdges.map(({ edges, ...item }) => {
         return {
           ...item,
           // @ts-expect-error legacy noImplicitAny
           [key]: edges.map((edge) => cleanObject(edge.node)),
         };
       });
-
-      output.data = cleanedObjArray;
     } else {
       // Assign all other properties directly under the data key
       // @ts-expect-error legacy noImplicitAny

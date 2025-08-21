@@ -28,7 +28,6 @@ export type BasicFieldMetadataType =
   | FieldMetadataType.POSITION
   | FieldMetadataType.DATE_TIME
   | FieldMetadataType.DATE
-  | FieldMetadataType.POSITION
   | FieldMetadataType.ARRAY;
 
 @Injectable()

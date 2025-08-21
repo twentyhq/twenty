@@ -9,7 +9,8 @@ import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/
 /**
  * MessageQueue Module factory
  * @returns MessageQueueModuleOptions
- * @param twentyConfigService
+ * @param _twentyConfigService
+ * @param redisClientService
  */
 export const messageQueueModuleFactory = async (
   _twentyConfigService: TwentyConfigService,

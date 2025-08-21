@@ -9,13 +9,3 @@ export const AGENT_GQL_FIELDS = `
     createdAt
     updatedAt
 `;
-
-export const AGENT_TOOL_GQL_FIELDS = `
-    id
-    name
-    description
-    type
-    config
-    createdAt
-    updatedAt
-`;

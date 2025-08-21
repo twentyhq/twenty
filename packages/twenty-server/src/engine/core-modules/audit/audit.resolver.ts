@@ -30,16 +30,6 @@ import { AuditService } from './services/audit.service';
 export class AuditResolver {
   constructor(private readonly auditService: AuditService) {}
 
-  // preparing for new name
-  async createPageview(
-    @Args()
-    createAnalyticsInput: CreateAnalyticsInputV2,
-    @AuthWorkspace({ allowUndefined: true }) workspace: Workspace | undefined,
-    @AuthUser({ allowUndefined: true }) user: User | undefined,
-  ) {
-    return this.trackAnalytics(createAnalyticsInput, workspace, user);
-  }
-
   @Mutation(() => Analytics)
   @UseGuards(WorkspaceAuthGuard)
   async createObjectEvent(

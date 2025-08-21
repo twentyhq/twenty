@@ -8,11 +8,9 @@ import { pipeline } from 'stream/promises';
 
 import {
   CopyObjectCommand,
-  type CreateBucketCommandInput,
   DeleteObjectCommand,
   DeleteObjectsCommand,
   GetObjectCommand,
-  type HeadBucketCommandInput,
   HeadObjectCommand,
   ListObjectsV2Command,
   NotFound,
@@ -391,32 +389,6 @@ export class S3Driver implements StorageDriver {
         to: { folderPath: toFolderPath, filename },
       });
     }
-  }
-
-  async checkBucketExists(args: HeadBucketCommandInput) {
-    try {
-      await this.s3Client.headBucket(args);
-
-      return true;
-    } catch (error) {
-      if (error instanceof NotFound) {
-        return false;
-      }
-
-      throw error;
-    }
-  }
-
-  async createBucket(args: CreateBucketCommandInput) {
-    const exist = await this.checkBucketExists({
-      Bucket: args.Bucket,
-    });
-
-    if (exist) {
-      return;
-    }
-
-    return this.s3Client.createBucket(args);
   }
 
   async checkFileExists(params: {

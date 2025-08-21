@@ -11,7 +11,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 
 @Injectable()
 export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
-  private mainClient: ClickHouseClient | undefined;
+  private readonly mainClient: ClickHouseClient | undefined;
   private clients: Map<string, ClickHouseClient> = new Map();
   private isClientInitializing: Map<string, boolean> = new Map();
   private readonly logger = new Logger(ClickHouseService.name);
@@ -31,10 +31,6 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
         application: 'twenty',
       });
     }
-  }
-
-  public getMainClient(): ClickHouseClient | undefined {
-    return this.mainClient;
   }
 
   public async connectToClient(

@@ -5,8 +5,6 @@ import { useOnResolve } from '@envelop/on-resolve';
 
 import { type GraphQLContext } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
 
-export class UnauthenticatedError extends Error {}
-
 export type IdentifyFn<ContextType = ThrottlerContext> = (
   context: ContextType,
 ) => string;

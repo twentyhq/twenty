@@ -9836,7 +9836,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@node-saml/node-saml@npm:5.0.0, @node-saml/node-saml@npm:^5.0.0":
+"@node-saml/node-saml@npm:5.1.0":
+  version: 5.1.0
+  resolution: "@node-saml/node-saml@npm:5.1.0"
+  dependencies:
+    "@types/debug": "npm:^4.1.12"
+    "@types/qs": "npm:^6.9.18"
+    "@types/xml-encryption": "npm:^1.2.4"
+    "@types/xml2js": "npm:^0.4.14"
+    "@xmldom/is-dom-node": "npm:^1.0.1"
+    "@xmldom/xmldom": "npm:^0.8.10"
+    debug: "npm:^4.4.0"
+    xml-crypto: "npm:^6.1.2"
+    xml-encryption: "npm:^3.1.0"
+    xml2js: "npm:^0.6.2"
+    xmlbuilder: "npm:^15.1.1"
+    xpath: "npm:^0.0.34"
+  checksum: 10c0/5490566503403abe55af63fe9257942a03b327e3573b3ed54af0fff4b7b5aaf974a458c38a75ff4cf781d9acec390baabe7a21dec817bf64d24450a90d302aea
+  languageName: node
+  linkType: hard
+
+"@node-saml/node-saml@npm:^5.0.0":
   version: 5.0.0
   resolution: "@node-saml/node-saml@npm:5.0.0"
   dependencies:
@@ -20449,6 +20469,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/qs@npm:^6.9.18":
+  version: 6.14.0
+  resolution: "@types/qs@npm:6.14.0"
+  checksum: 10c0/5b3036df6e507483869cdb3858201b2e0b64b4793dc4974f188caa5b5732f2333ab9db45c08157975054d3b070788b35088b4bc60257ae263885016ee2131310
+  languageName: node
+  linkType: hard
+
 "@types/range-parser@npm:*":
   version: 1.2.7
   resolution: "@types/range-parser@npm:1.2.7"
@@ -28187,7 +28214,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:4.4.1, debug@npm:^4.0.0, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.3, debug@npm:^4.3.4, debug@npm:^4.3.5, debug@npm:^4.3.6":
+"debug@npm:4, debug@npm:4.4.1, debug@npm:^4.0.0, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.3, debug@npm:^4.3.4, debug@npm:^4.3.5, debug@npm:^4.3.6, debug@npm:^4.4.0":
   version: 4.4.1
   resolution: "debug@npm:4.4.1"
   dependencies:
@@ -50848,7 +50875,7 @@ __metadata:
     "@nestjs/terminus": "npm:11.0.0"
     "@nestjs/testing": "npm:^9.0.0"
     "@nestjs/typeorm": "npm:10.0.2"
-    "@node-saml/node-saml": "npm:5.0.0"
+    "@node-saml/node-saml": "npm:5.1.0"
     "@node-saml/passport-saml": "npm:^5.0.0"
     "@nx/js": "npm:21.3.11"
     "@opentelemetry/api": "npm:^1.9.0"
@@ -53946,6 +53973,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"xml-crypto@npm:^6.1.2":
+  version: 6.1.2
+  resolution: "xml-crypto@npm:6.1.2"
+  dependencies:
+    "@xmldom/is-dom-node": "npm:^1.0.1"
+    "@xmldom/xmldom": "npm:^0.8.10"
+    xpath: "npm:^0.0.33"
+  checksum: 10c0/70c19a0d721df6fbc967c09636d2c9ed5fa49309cb8a1ed740f6a4bebdcee76c6988d32fd2a338f3122aa112ac67842a638b2913347496c937c2167f0c9d3ed0
+  languageName: node
+  linkType: hard
+
 "xml-encryption@npm:^3.0.2":
   version: 3.0.2
   resolution: "xml-encryption@npm:3.0.2"
@@ -53954,6 +53992,17 @@ __metadata:
     escape-html: "npm:^1.0.3"
     xpath: "npm:0.0.32"
   checksum: 10c0/fcad4244f76c9b849f4168e6712c96281badb25e5ebeaae3da1e837386440527f33f3452b529949794d16072d12b0f9fa0405052445c9ce52b9311f557eb0dcb
+  languageName: node
+  linkType: hard
+
+"xml-encryption@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "xml-encryption@npm:3.1.0"
+  dependencies:
+    "@xmldom/xmldom": "npm:^0.8.5"
+    escape-html: "npm:^1.0.3"
+    xpath: "npm:0.0.32"
+  checksum: 10c0/5cc367152a022d6a837487b10fd47baf64d8c85811a1d405a62b7f4308e838a4de0c10727826293a242177a9729b7a56131981a3ac94c34aa85885d0905c1522
   languageName: node
   linkType: hard
 

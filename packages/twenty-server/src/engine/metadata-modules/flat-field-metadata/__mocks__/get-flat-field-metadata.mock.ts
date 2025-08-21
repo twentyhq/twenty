@@ -43,15 +43,3 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     ...overrides,
   };
 };
-
-export const getStandardFlatFieldMetadataMock = (
-  overrides: Omit<FlatFieldMetadataOverrides, 'isCustom' | 'isSystem'>,
-) => {
-  return getFlatFieldMetadataMock({
-    standardId: faker.string.uuid(),
-    standardOverrides: {},
-    isCustom: false,
-    isSystem: true,
-    ...overrides,
-  });
-};

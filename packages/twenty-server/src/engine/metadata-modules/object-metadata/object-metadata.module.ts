@@ -34,7 +34,6 @@ import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
 import { SearchVectorModule } from 'src/engine/metadata-modules/search-vector/search-vector.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
@@ -60,7 +59,6 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,
         WorkspaceMetadataVersionModule,
-        RemoteTableRelationsModule,
         SearchVectorModule,
         IndexMetadataModule,
         PermissionsModule,

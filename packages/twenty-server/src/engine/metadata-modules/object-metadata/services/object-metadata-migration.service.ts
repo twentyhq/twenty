@@ -14,7 +14,6 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { buildMigrationsForCustomObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/build-migrations-for-custom-object-relations.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
@@ -174,61 +173,6 @@ export class ObjectMetadataMigrationService {
                 alteredColumnDefinition: {
                   columnName: `${alteredObjectMetadata.nameSingular}Id`,
                   columnType: 'uuid',
-                  isNullable: true,
-                  defaultValue: null,
-                },
-              },
-            ],
-          },
-        ],
-        queryRunner,
-      );
-    }
-  }
-
-  public async createUpdateForeignKeysMigrations(
-    existingObjectMetadata: ObjectMetadataEntity,
-    updatedObjectMetadata: ObjectMetadataEntity,
-    relationsAndForeignKeysMetadata: {
-      relatedObjectMetadata: ObjectMetadataEntity;
-      foreignKeyFieldMetadata: FieldMetadataEntity;
-    }[],
-    workspaceId: string,
-    queryRunner?: QueryRunner,
-  ) {
-    for (const {
-      relatedObjectMetadata,
-      foreignKeyFieldMetadata,
-    } of relationsAndForeignKeysMetadata) {
-      const relatedObjectTableName = computeObjectTargetTable(
-        relatedObjectMetadata,
-      );
-      const columnName = `${existingObjectMetadata.nameSingular}Id`;
-      const columnType = fieldMetadataTypeToColumnType(
-        foreignKeyFieldMetadata.type,
-      );
-
-      await this.workspaceMigrationService.createCustomMigration(
-        generateMigrationName(
-          `rename-${existingObjectMetadata.nameSingular}-to-${updatedObjectMetadata.nameSingular}-in-${relatedObjectMetadata.nameSingular}`,
-        ),
-        workspaceId,
-        [
-          {
-            name: relatedObjectTableName,
-            action: WorkspaceMigrationTableActionType.ALTER,
-            columns: [
-              {
-                action: WorkspaceMigrationColumnActionType.ALTER,
-                currentColumnDefinition: {
-                  columnName,
-                  columnType,
-                  isNullable: true,
-                  defaultValue: null,
-                },
-                alteredColumnDefinition: {
-                  columnName: `${updatedObjectMetadata.nameSingular}Id`,
-                  columnType,
                   isNullable: true,
                   defaultValue: null,
                 },

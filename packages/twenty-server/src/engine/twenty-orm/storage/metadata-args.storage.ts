@@ -52,8 +52,6 @@ export class MetadataArgsStorage {
     target: Function | string,
   ): WorkspaceEntityMetadataArgs | undefined;
 
-  filterEntities(target: (Function | string)[]): WorkspaceEntityMetadataArgs[];
-
   filterEntities(
     target: (Function | string) | (Function | string)[],
   ): WorkspaceEntityMetadataArgs | undefined | WorkspaceEntityMetadataArgs[] {
@@ -86,10 +84,6 @@ export class MetadataArgsStorage {
   }
 
   filterRelations(target: Function | string): WorkspaceRelationMetadataArgs[];
-
-  filterRelations(
-    target: (Function | string)[],
-  ): WorkspaceRelationMetadataArgs[];
 
   filterRelations(
     target: (Function | string) | (Function | string)[],
