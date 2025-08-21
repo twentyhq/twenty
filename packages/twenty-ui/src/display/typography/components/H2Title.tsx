@@ -25,6 +25,12 @@ const StyledTitle = styled.h2`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin: 0;
+
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  -webkit-user-select: text !important;
+  cursor: text !important;
+  user-select: text !important;
 `;
 
 const StyledDescription = styled.h3`
@@ -33,6 +39,21 @@ const StyledDescription = styled.h3`
   font-weight: ${({ theme }) => theme.font.weight.regular};
   margin: 0;
   margin-top: ${({ theme }) => theme.spacing(2)};
+
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  -webkit-user-select: text !important;
+  cursor: text !important;
+  user-select: text !important;
+
+  &,
+  & * {
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    -webkit-user-select: text !important;
+    cursor: text !important;
+    user-select: text !important;
+  }
 `;
 
 export const H2Title = ({
