@@ -71,11 +71,6 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED,
         workspaceId: workspaceId,
         value: true,

@@ -130,13 +130,11 @@ describe('WorkspaceEntityManager', () => {
         IS_AI_ENABLED: false,
         IS_IMAP_SMTP_CALDAV_ENABLED: false,
         IS_MORPH_RELATION_ENABLED: false,
-        IS_WORKFLOW_FILTERING_ENABLED: false,
+
         IS_WORKFLOW_BRANCH_ENABLED: false,
         IS_RELATION_CONNECT_ENABLED: false,
-        IS_FIELDS_PERMISSIONS_ENABLED: false,
         IS_CORE_VIEW_SYNCING_ENABLED: false,
         IS_CORE_VIEW_ENABLED: false,
-        IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
         IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
         IS_API_KEY_ROLES_ENABLED: false,
       },
@@ -153,13 +151,13 @@ describe('WorkspaceEntityManager', () => {
         IS_POSTGRESQL_INTEGRATION_ENABLED: false,
         IS_STRIPE_INTEGRATION_ENABLED: false,
         IS_UNIQUE_INDEXES_ENABLED: false,
+        IS_JSON_FILTER_ENABLED: false,
         IS_AI_ENABLED: false,
         IS_IMAP_SMTP_CALDAV_ENABLED: false,
         IS_MORPH_RELATION_ENABLED: false,
-        IS_WORKFLOW_FILTERING_ENABLED: false,
-        IS_FIELDS_PERMISSIONS_ENABLED: true,
+
+        IS_RELATION_CONNECT_ENABLED: false,
         IS_CORE_VIEW_SYNCING_ENABLED: false,
-        IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
       },
       permissionsPerRoleId: {},
     } as WorkspaceDataSource;
@@ -234,10 +232,6 @@ describe('WorkspaceEntityManager', () => {
       .mockImplementation(
         ({ formattedResult }: { formattedResult: string[] }) => formattedResult,
       );
-
-    jest.spyOn(entityManager as any, 'getFeatureFlagMap').mockReturnValue({
-      IS_FIELDS_PERMISSIONS_ENABLED: true,
-    });
 
     jest
       .spyOn(entityManager as any, 'extractTargetNameSingularFromEntityTarget')
@@ -327,7 +321,6 @@ describe('WorkspaceEntityManager', () => {
       });
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
-        isFieldPermissionsEnabled: true,
         operationType: 'update',
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectsPermissions: mockPermissionOptions.objectRecordsPermissions,
@@ -362,7 +355,6 @@ describe('WorkspaceEntityManager', () => {
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
         operationType: 'delete',
-        isFieldPermissionsEnabled: true,
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectsPermissions: mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],
