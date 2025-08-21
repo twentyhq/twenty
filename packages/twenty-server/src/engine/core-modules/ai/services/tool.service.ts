@@ -1,18 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
-import {
-  ILike,
-  In,
-  IsNull,
-  LessThan,
-  LessThanOrEqual,
-  Like,
-  MoreThan,
-  MoreThanOrEqual,
-  Not,
-} from 'typeorm';
 
+import { buildWhereConditions } from 'src/engine/core-modules/ai/utils/find-records-filters.utils';
 import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import {
   generateBulkDeleteToolSchema,
@@ -172,7 +162,7 @@ export class ToolService {
 
       const { limit = 100, offset = 0, ...searchCriteria } = parameters;
 
-      const whereConditions = this.buildWhereConditions(searchCriteria);
+      const whereConditions = buildWhereConditions(searchCriteria);
 
       const records = await repository.find({
         where: whereConditions,
@@ -194,136 +184,6 @@ export class ToolService {
         message: `Failed to find ${objectName} records`,
       };
     }
-  }
-
-  private buildWhereConditions(
-    searchCriteria: Record<string, unknown>,
-  ): Record<string, unknown> {
-    const whereConditions: Record<string, unknown> = {};
-
-    Object.entries(searchCriteria).forEach(([key, value]) => {
-      if (value === undefined || value === null || value === '') {
-        return;
-      }
-
-      if (typeof value === 'object' && !Array.isArray(value)) {
-        // First check if this is a direct filter condition (eq, ilike, etc.)
-        const filterCondition = this.parseFilterCondition(
-          value as Record<string, unknown>,
-        );
-
-        if (filterCondition !== null) {
-          whereConditions[key] = filterCondition;
-
-          return;
-        }
-
-        // Otherwise, try to build nested conditions
-        const nestedConditions = this.buildNestedWhereConditions(
-          value as Record<string, unknown>,
-        );
-
-        if (Object.keys(nestedConditions).length > 0) {
-          whereConditions[key] = nestedConditions;
-        } else {
-          const filterCondition = this.parseFilterCondition(
-            value as Record<string, unknown>,
-          );
-
-          if (filterCondition !== null) {
-            whereConditions[key] = filterCondition;
-          }
-        }
-
-        return;
-      }
-
-      whereConditions[key] = value;
-    });
-
-    return whereConditions;
-  }
-
-  private buildNestedWhereConditions(
-    nestedValue: Record<string, unknown>,
-  ): Record<string, unknown> {
-    const nestedConditions: Record<string, unknown> = {};
-
-    Object.entries(nestedValue).forEach(([nestedKey, nestedFieldValue]) => {
-      if (
-        nestedFieldValue === undefined ||
-        nestedFieldValue === null ||
-        nestedFieldValue === ''
-      ) {
-        return;
-      }
-
-      if (
-        typeof nestedFieldValue === 'object' &&
-        !Array.isArray(nestedFieldValue)
-      ) {
-        const filterCondition = this.parseFilterCondition(
-          nestedFieldValue as Record<string, unknown>,
-        );
-
-        if (filterCondition !== null) {
-          nestedConditions[nestedKey] = filterCondition;
-        }
-      } else {
-        nestedConditions[nestedKey] = nestedFieldValue;
-      }
-    });
-
-    return nestedConditions;
-  }
-
-  private parseFilterCondition(filterValue: Record<string, unknown>): unknown {
-    if ('eq' in filterValue) {
-      return filterValue.eq;
-    }
-    if ('neq' in filterValue) {
-      return Not(filterValue.neq);
-    }
-    if ('gt' in filterValue) {
-      return MoreThan(filterValue.gt);
-    }
-    if ('gte' in filterValue) {
-      return MoreThanOrEqual(filterValue.gte);
-    }
-    if ('lt' in filterValue) {
-      return LessThan(filterValue.lt);
-    }
-    if ('lte' in filterValue) {
-      return LessThanOrEqual(filterValue.lte);
-    }
-    if ('in' in filterValue) {
-      return In(filterValue.in as string[]);
-    }
-    if ('like' in filterValue) {
-      return Like(filterValue.like as string);
-    }
-    if ('ilike' in filterValue) {
-      return ILike(filterValue.ilike as string);
-    }
-    if ('startsWith' in filterValue) {
-      return Like(`${filterValue.startsWith}%`);
-    }
-    if ('is' in filterValue) {
-      if (filterValue.is === 'NULL') {
-        return IsNull();
-      }
-      if (filterValue.is === 'NOT_NULL') {
-        return Not(IsNull());
-      }
-    }
-    if ('isEmptyArray' in filterValue) {
-      return [];
-    }
-    if ('containsIlike' in filterValue) {
-      return Like(`%${filterValue.containsIlike}%`);
-    }
-
-    return null;
   }
 
   private async findOneRecord(
