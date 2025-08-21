@@ -71,7 +71,6 @@ export const WorkflowRunVisualizerEffect = ({
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
-  const isWorkflowFilteringEnabled = true;
   const isWorkflowBranchEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
   );
@@ -134,7 +133,6 @@ export const WorkflowRunVisualizerEffect = ({
             trigger: workflowRunState.flow.trigger,
             steps: workflowRunState.flow.steps,
             stepInfos: workflowRunState.stepInfos,
-            isWorkflowFilteringEnabled,
             isWorkflowBranchEnabled,
           });
 
@@ -207,7 +205,6 @@ export const WorkflowRunVisualizerEffect = ({
       flowState,
       getIcon,
       isWorkflowBranchEnabled,
-      isWorkflowFilteringEnabled,
       openWorkflowRunViewStepInCommandMenu,
       workflowDiagramState,
       workflowDiagramStatusState,
