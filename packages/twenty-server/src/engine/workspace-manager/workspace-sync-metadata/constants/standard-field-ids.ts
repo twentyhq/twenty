@@ -363,6 +363,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   statusStartDate: '20202020-1c0d-4e5f-7081-901234567890',
   statusExpectedEndDate: '20202020-2d1e-4f60-8192-012345678901',
   staffStatusHistories: '20202020-3e2f-5071-9203-123456789012',
+  department: '20202020-4f30-6182-a304-234567890123',
 };
 
 export const TASK_STANDARD_FIELD_IDS = {
