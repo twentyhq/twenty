@@ -1,7 +1,7 @@
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
 export const filterMorphRelationDuplicateFieldsDTO = (
-  fields: FieldMetadataDTO[],
+  fields: Pick<FieldMetadataDTO, 'name' | 'id'>[],
 ) => {
   return fields.filter((currentField) => {
     return !fields.some(
