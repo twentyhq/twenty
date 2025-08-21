@@ -44,7 +44,7 @@ describe('McpController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('executeTool', () => {
+  describe('handleMcpCore', () => {
     const mockWorkspace = { id: 'workspace-1' } as Workspace;
     const mockUserWorkspaceId = 'user-workspace-1';
     const mockApiKey = 'api-key-1';
@@ -68,7 +68,7 @@ describe('McpController', () => {
 
       mcpService.handleMCPCoreQuery.mockResolvedValue(mockResponse);
 
-      const result = await controller.executeMcpMethods(
+      const result = await controller.handleMcpCore(
         mockRequest,
         mockWorkspace,
         mockApiKey,
@@ -105,7 +105,7 @@ describe('McpController', () => {
 
       mcpService.handleMCPCoreQuery.mockResolvedValue(mockResponse);
 
-      const result = await controller.executeMcpMethods(
+      const result = await controller.handleMcpCore(
         mockRequest,
         mockWorkspace,
         mockApiKey,
@@ -147,7 +147,7 @@ describe('McpController', () => {
 
       mcpService.handleMCPCoreQuery.mockResolvedValue(mockResponse);
 
-      const result = await controller.executeMcpMethods(
+      const result = await controller.handleMcpCore(
         mockRequest,
         mockWorkspace,
         mockApiKey,
