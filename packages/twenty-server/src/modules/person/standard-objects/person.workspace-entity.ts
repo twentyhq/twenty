@@ -43,6 +43,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 import { MktStaffStatusHistoryWorkspaceEntity } from 'src/mkt-core/mkt-staff-status-history/mkt-staff-status-history.workspace-entity';
 import { MktDepartmentWorkspaceEntity } from 'src/mkt-core/mkt-department/mkt-department.workspace-entity';
 import { MktEmploymentStatusWorkspaceEntity } from 'src/mkt-core/mkt-employment-status/mkt-employment-status.workspace-entity';
+import { MktOrganizationLevelWorkspaceEntity } from 'src/mkt-core/mkt-organization-level/mkt-organization-level.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
@@ -326,14 +327,20 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
 
-  @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.organizationLevelId,
-    type: FieldMetadataType.TEXT,
-    label: msg`Organization Level ID`,
-    description: msg`Reference to organization level`,
-    icon: 'IconBuildings',
+  @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.organizationLevel,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Organization Level`,
+    description: msg`Person's organization level`,
+    icon: 'IconHierarchy',
+    inverseSideTarget: () => MktOrganizationLevelWorkspaceEntity,
+    inverseSideFieldKey: 'people',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
+  organizationLevel: Relation<MktOrganizationLevelWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('organizationLevel')
   organizationLevelId: string | null;
 
   @WorkspaceRelation({

@@ -365,6 +365,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   statusExpectedEndDate: '20202020-2d1e-4f60-8192-012345678901',
   staffStatusHistories: '20202020-3e2f-5071-9203-123456789012',
   department: '20202020-4f30-6182-a304-234567890123',
+  organizationLevel: '20202020-5040-7293-b405-345678901234',
 };
 
 export const TASK_STANDARD_FIELD_IDS = {
