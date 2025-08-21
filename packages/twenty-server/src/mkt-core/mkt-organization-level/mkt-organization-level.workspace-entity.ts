@@ -85,23 +85,23 @@ export class MktOrganizationLevelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MKT_ORGANIZATION_LEVEL_FIELD_IDS.defaultPermissions,
-    type: FieldMetadataType.RAW_JSON,
+    type: FieldMetadataType.TEXT,
     label: msg`Default Permissions`,
     description: msg`Default permissions for this level`,
     icon: 'IconLock',
   })
   @WorkspaceIsNullable()
-  defaultPermissions?: Record<string, unknown>;
+  defaultPermissions?: string;
 
   @WorkspaceField({
     standardId: MKT_ORGANIZATION_LEVEL_FIELD_IDS.accessLimitations,
-    type: FieldMetadataType.RAW_JSON,
+    type: FieldMetadataType.TEXT,
     label: msg`Access Limitations`,
     description: msg`Access limitations for this level`,
     icon: 'IconShieldCheck',
   })
   @WorkspaceIsNullable()
-  accessLimitations?: Record<string, unknown>;
+  accessLimitations?: string;
 
   @WorkspaceField({
     standardId: MKT_ORGANIZATION_LEVEL_FIELD_IDS.displayOrder,
