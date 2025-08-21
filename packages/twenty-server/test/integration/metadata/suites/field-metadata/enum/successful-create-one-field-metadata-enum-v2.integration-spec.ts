@@ -16,8 +16,9 @@ import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { eachTestingContextFilter } from 'twenty-shared/testing';
 
-describe.each([fieldMetadataEnumTypes])(
+describe.each(fieldMetadataEnumTypes)(
   'Create field metadata %s tests suite v2',
   (testedFieldMetadataType) => {
     let createdObjectMetadataId: string;
@@ -98,7 +99,7 @@ describe.each([fieldMetadataEnumTypes])(
       });
     });
 
-    test.each(successfulTestCases)(
+    test.each(eachTestingContextFilter(successfulTestCases))(
       'Create $title',
       async ({ context: { input, expectedOptions } }) => {
         const { data, errors } = await createOneFieldMetadata<
