@@ -351,7 +351,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUserCheck',
     inverseSideTarget: () => MktEmploymentStatusWorkspaceEntity,
     inverseSideFieldKey: 'people',
-    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   employmentStatus: Relation<MktEmploymentStatusWorkspaceEntity> | null;
