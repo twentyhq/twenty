@@ -124,7 +124,7 @@ export class MCPMetadataService {
     });
   }
 
-  async handleMCPQuery(
+  async handleMCPMetadataQuery(
     request: Request,
     {
       workspace,

@@ -93,7 +93,7 @@ export class McpService {
     return roleId;
   }
 
-  async executeTool(
+  async handleMCPCoreQuery(
     { id, method, params }: JsonRpc,
     {
       workspace,

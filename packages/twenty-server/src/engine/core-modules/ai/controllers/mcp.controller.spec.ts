@@ -66,7 +66,7 @@ describe('McpController', () => {
         },
       };
 
-      mcpService.executeTool.mockResolvedValue(mockResponse);
+      mcpService.handleMCPCoreQuery.mockResolvedValue(mockResponse);
 
       const result = await controller.executeMcpMethods(
         mockRequest,
@@ -75,7 +75,7 @@ describe('McpController', () => {
         mockUserWorkspaceId,
       );
 
-      expect(mcpService.executeTool).toHaveBeenCalledWith(mockRequest, {
+      expect(mcpService.handleMCPCoreQuery).toHaveBeenCalledWith(mockRequest, {
         workspace: mockWorkspace,
         userWorkspaceId: mockUserWorkspaceId,
         apiKey: mockApiKey,
@@ -103,7 +103,7 @@ describe('McpController', () => {
         },
       };
 
-      mcpService.executeTool.mockResolvedValue(mockResponse);
+      mcpService.handleMCPCoreQuery.mockResolvedValue(mockResponse);
 
       const result = await controller.executeMcpMethods(
         mockRequest,
@@ -112,7 +112,7 @@ describe('McpController', () => {
         mockUserWorkspaceId,
       );
 
-      expect(mcpService.executeTool).toHaveBeenCalledWith(mockRequest, {
+      expect(mcpService.handleMCPCoreQuery).toHaveBeenCalledWith(mockRequest, {
         workspace: mockWorkspace,
         userWorkspaceId: mockUserWorkspaceId,
         apiKey: mockApiKey,
@@ -145,7 +145,7 @@ describe('McpController', () => {
         },
       };
 
-      mcpService.executeTool.mockResolvedValue(mockResponse);
+      mcpService.handleMCPCoreQuery.mockResolvedValue(mockResponse);
 
       const result = await controller.executeMcpMethods(
         mockRequest,
@@ -154,7 +154,7 @@ describe('McpController', () => {
         mockUserWorkspaceId,
       );
 
-      expect(mcpService.executeTool).toHaveBeenCalledWith(mockRequest, {
+      expect(mcpService.handleMCPCoreQuery).toHaveBeenCalledWith(mockRequest, {
         workspace: mockWorkspace,
         userWorkspaceId: mockUserWorkspaceId,
         apiKey: mockApiKey,
