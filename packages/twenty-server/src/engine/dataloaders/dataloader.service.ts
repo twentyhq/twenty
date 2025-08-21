@@ -250,7 +250,9 @@ export class DataloaderService {
             });
           });
 
-          return filterMorphRelationDuplicateFieldsDTO(fields);
+          return filterMorphRelationDuplicateFieldsDTO<FieldMetadataDTO>(
+            fields,
+          );
         });
 
         return fieldMetadataCollection;

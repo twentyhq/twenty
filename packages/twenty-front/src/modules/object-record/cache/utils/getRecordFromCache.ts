@@ -6,10 +6,10 @@ import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFr
 import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectPermissions } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { type ObjectPermissions } from 'twenty-shared/types';
 
 export type GetRecordFromCacheArgs = {
   cache: ApolloCache<object>;
@@ -21,7 +21,6 @@ export type GetRecordFromCacheArgs = {
     string,
     ObjectPermissions & { objectMetadataId: string }
   >;
-  isFieldsPermissionsEnabled?: boolean;
 };
 export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
   objectMetadataItem,
@@ -30,7 +29,6 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
   recordId,
   recordGqlFields,
   objectPermissionsByObjectMetadataId,
-  isFieldsPermissionsEnabled = false,
 }: GetRecordFromCacheArgs) => {
   if (isUndefinedOrNull(objectMetadataItem)) {
     return null;
@@ -48,7 +46,6 @@ export const getRecordFromCache = <T extends ObjectRecord = ObjectRecord>({
           objectMetadataItem,
           recordGqlFields: appliedRecordGqlFields,
           objectPermissionsByObjectMetadataId,
-          isFieldsPermissionsEnabled,
         },
       )}
     `;
