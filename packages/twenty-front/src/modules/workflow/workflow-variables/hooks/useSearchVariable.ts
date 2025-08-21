@@ -4,6 +4,7 @@ import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/ste
 import { type RecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { getOutputSchemaType } from '@/workflow/workflow-variables/utils/getOutputSchemaType';
 import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
+import { searchVariableThroughRecordEventOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughRecordEventOutputSchema';
 import { searchVariableThroughRecordOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughRecordOutputSchema';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -50,6 +51,15 @@ export const useSearchVariable = ({
 
   if (outputSchemaType === 'RECORD') {
     return searchVariableThroughRecordOutputSchema({
+      stepName: stepOutputSchema.name,
+      recordOutputSchema: stepOutputSchema.outputSchema as RecordOutputSchemaV2,
+      rawVariableName,
+      isFullRecord,
+    });
+  }
+
+  if (outputSchemaType === 'DATABASE_EVENT') {
+    return searchVariableThroughRecordEventOutputSchema({
       stepName: stepOutputSchema.name,
       recordOutputSchema: stepOutputSchema.outputSchema as RecordOutputSchemaV2,
       rawVariableName,

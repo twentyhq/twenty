@@ -149,7 +149,7 @@ const buildVariableResult = (
   };
 };
 
-const searchCurrentStepOutputSchema = ({
+export const searchRecordOutputSchema = ({
   stepName,
   recordOutputSchema,
   path,
@@ -237,7 +237,7 @@ export const searchVariableThroughRecordOutputSchema = ({
     };
   }
 
-  return searchCurrentStepOutputSchema({
+  return searchRecordOutputSchema({
     stepName,
     recordOutputSchema,
     selectedField: fieldName,
