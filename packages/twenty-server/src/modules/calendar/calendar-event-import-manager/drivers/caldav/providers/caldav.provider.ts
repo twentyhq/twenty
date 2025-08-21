@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { CalDAVClient } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/caldav.client';
-import {
-  type ConnectedAccountWorkspaceEntity
-} from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class CalDavClientProvider {
@@ -19,7 +17,6 @@ export class CalDavClientProvider {
     ) {
       throw new Error('Missing required CalDAV connection parameters');
     }
-
 
     return new CalDAVClient({
       username:

@@ -56,7 +56,6 @@ export const cleanGraphQLResponse = (input: any) => {
     } else if (Array.isArray(input[key])) {
       const itemsWithEdges = input[key].filter((item) => item.edges);
 
-
       output.data = itemsWithEdges.map(({ edges, ...item }) => {
         return {
           ...item,

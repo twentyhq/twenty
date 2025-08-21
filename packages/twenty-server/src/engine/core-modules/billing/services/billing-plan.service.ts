@@ -5,16 +5,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { JsonContains, Repository } from 'typeorm';
 
-import { BillingException, BillingExceptionCode, } from 'src/engine/core-modules/billing/billing.exception';
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingGetPlanResult } from 'src/engine/core-modules/billing/types/billing-get-plan-result.type';
-import {
-  type BillingGetPricesPerPlanResult
-} from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
+import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 
 @Injectable()
 export class BillingPlanService {
@@ -33,8 +34,6 @@ export class BillingPlanService {
     priceUsageBased: BillingUsageType;
     productKey: BillingProductKey;
   }): Promise<BillingProduct[]> {
-
-
     return await this.billingProductRepository.find({
       where: {
         metadata: JsonContains({

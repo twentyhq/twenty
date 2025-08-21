@@ -1,18 +1,8 @@
-import {
-  deleteOneFieldMetadata
-} from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
-import {
-  findManyFieldsMetadataQueryFactory
-} from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
-import {
-  createOneObjectMetadata
-} from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import {
-  createRelationBetweenObjects
-} from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
-import {
-  deleteOneObjectMetadata
-} from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
+import { findManyFieldsMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -193,7 +183,6 @@ const findFieldMetadata = async ({
   });
 
   const fields = await makeMetadataAPIRequest(operation);
-
 
   return fields.body.data.fields.edges?.[0]?.node;
 };

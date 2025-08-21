@@ -3,7 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
-import { AI_MODELS, ModelProvider, } from 'src/engine/core-modules/ai/constants/ai-models.const';
+import {
+  AI_MODELS,
+  ModelProvider,
+} from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { convertCentsToBillingCredits } from 'src/engine/core-modules/ai/utils/convert-cents-to-billing-credits.util';
 import {

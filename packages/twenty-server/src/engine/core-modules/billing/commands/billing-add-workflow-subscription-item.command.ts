@@ -13,9 +13,7 @@ import { type BillingPrice } from 'src/engine/core-modules/billing/entities/bill
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import {
-  StripeSubscriptionItemService
-} from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
+import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -124,8 +122,6 @@ export class BillingAddWorkflowSubscriptionItemCommand extends ActiveOrSuspended
     const basedProductSubscriptionItem =
       subscription?.billingSubscriptionItems.find((item) => {
         return billingProducts.some((product) => {
-
-
           return (
             product.stripeProductId === item.stripeProductId &&
             product.metadata.productKey === BillingProductKey.BASE_PRODUCT
