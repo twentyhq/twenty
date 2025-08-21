@@ -58,6 +58,7 @@ const StyledSlot = styled.div<{ isActive: boolean }>`
 `;
 
 const StyledPlaceholderChar = styled.div`
+  font-size: 1.6rem;
   opacity: 0.2;
 `;
 
