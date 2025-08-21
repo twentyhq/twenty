@@ -68,8 +68,6 @@ export class AgentToolService {
 
     const workflowTools = await this.generateWorkflowTools(role, workspaceId);
 
-    console.log({ workflowTools });
-
     return {
       ...databaseTools,
       ...actionTools,
