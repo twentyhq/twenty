@@ -13,7 +13,7 @@ import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils
 export const findManyObjectMetadata = async ({
   input,
   gqlFields,
-  expectToFail = false,
+  expectToFail,
 }: PerformMetadataQueryParams<FindManyObjectMetadataFactoryInput>): Promise<{
   errors: BaseGraphQLError[];
   objects: ObjectMetadataDTO[];
@@ -25,7 +25,7 @@ export const findManyObjectMetadata = async ({
 
   const response = await makeMetadataAPIRequest(graphqlOperation);
 
-  if (expectToFail) {
+  if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
       errorMessage: 'Object Metadata retrieval should have failed but did not',

@@ -13,7 +13,7 @@ import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils
 export const createOneObjectMetadata = async ({
   input,
   gqlFields,
-  expectToFail = false,
+  expectToFail,
 }: PerformMetadataQueryParams<CreateOneObjectFactoryInput>): CommonResponseBody<{
   createOneObject: ObjectMetadataEntity; // not accurate
 }> => {
@@ -24,7 +24,7 @@ export const createOneObjectMetadata = async ({
 
   const response = await makeMetadataAPIRequest(graphqlOperation);
 
-  if (expectToFail) {
+  if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
       errorMessage: 'Object Metadata creation should have failed but did not',
