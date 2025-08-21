@@ -1,10 +1,13 @@
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
+import { coreViewsState } from '@/views/states/coreViewState';
+import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { selector } from 'recoil';
 
 export const prefetchViewLengthSelector = selector<number>({
   key: 'prefetchViewLengthSelector',
   get: ({ get }) => {
-    const views = get(prefetchViewsState);
+    const coreViews = get(coreViewsState);
+
+    const views = coreViews.map(convertCoreViewToView);
     return views?.length ?? 0;
   },
 });
