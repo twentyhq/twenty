@@ -14,12 +14,10 @@ import {
   generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 
 describe('ViewService', () => {
   let viewService: ViewService;
   let viewRepository: Repository<View>;
-  let workspaceMetadataCacheService: WorkspaceMetadataCacheService;
 
   const mockView = {
     id: 'view-id',
@@ -56,21 +54,12 @@ describe('ViewService', () => {
             delete: jest.fn(),
           },
         },
-        {
-          provide: WorkspaceMetadataCacheService,
-          useValue: {
-            getExistingOrRecomputeMetadataMaps: jest.fn(),
-          },
-        },
       ],
     }).compile();
 
     viewService = module.get<ViewService>(ViewService);
     viewRepository = module.get<Repository<View>>(
       getRepositoryToken(View, 'core'),
-    );
-    workspaceMetadataCacheService = module.get<WorkspaceMetadataCacheService>(
-      WorkspaceMetadataCacheService,
     );
   });
 
@@ -325,101 +314,6 @@ describe('ViewService', () => {
       expect(viewService.findById).toHaveBeenCalledWith(id, workspaceId);
       expect(viewRepository.delete).toHaveBeenCalledWith(id);
       expect(result).toEqual(true);
-    });
-  });
-
-  describe('getObjectMetadataByViewId', () => {
-    it('should return object metadata for a view', async () => {
-      const viewId = 'view-id';
-      const workspaceId = 'workspace-id';
-      const objectMetadataId = 'object-id';
-      const mockObjectMetadata = {
-        id: objectMetadataId,
-        nameSingular: 'TestObject',
-        namePlural: 'TestObjects',
-        labelSingular: 'Test Object',
-        labelPlural: 'Test Objects',
-      };
-
-      jest.spyOn(viewRepository, 'findOne').mockResolvedValue({
-        objectMetadataId,
-      } as View);
-
-      jest
-        .spyOn(
-          workspaceMetadataCacheService,
-          'getExistingOrRecomputeMetadataMaps',
-        )
-        .mockResolvedValue({
-          objectMetadataMaps: {
-            byId: {
-              [objectMetadataId]: mockObjectMetadata,
-            },
-            idByNameSingular: {},
-          },
-          metadataVersion: 1,
-        } as any);
-
-      const result = await viewService.getObjectMetadataByViewId(
-        viewId,
-        workspaceId,
-      );
-
-      expect(viewRepository.findOne).toHaveBeenCalledWith({
-        where: { id: viewId },
-        select: ['objectMetadataId'],
-      });
-      expect(
-        workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps,
-      ).toHaveBeenCalledWith({ workspaceId });
-      expect(result).toEqual(mockObjectMetadata);
-    });
-
-    it('should return null when view is not found', async () => {
-      const viewId = 'non-existent-id';
-      const workspaceId = 'workspace-id';
-
-      jest.spyOn(viewRepository, 'findOne').mockResolvedValue(null);
-
-      const result = await viewService.getObjectMetadataByViewId(
-        viewId,
-        workspaceId,
-      );
-
-      expect(result).toBeNull();
-      expect(
-        workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('should return null when object metadata is not in cache', async () => {
-      const viewId = 'view-id';
-      const workspaceId = 'workspace-id';
-      const objectMetadataId = 'object-id';
-
-      jest.spyOn(viewRepository, 'findOne').mockResolvedValue({
-        objectMetadataId,
-      } as View);
-
-      jest
-        .spyOn(
-          workspaceMetadataCacheService,
-          'getExistingOrRecomputeMetadataMaps',
-        )
-        .mockResolvedValue({
-          objectMetadataMaps: {
-            byId: {},
-            idByNameSingular: {},
-          },
-          metadataVersion: 1,
-        } as any);
-
-      const result = await viewService.getObjectMetadataByViewId(
-        viewId,
-        workspaceId,
-      );
-
-      expect(result).toBeNull();
     });
   });
 });
