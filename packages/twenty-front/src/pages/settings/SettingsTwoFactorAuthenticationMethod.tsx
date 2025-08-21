@@ -26,38 +26,53 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledQRCodeContainer = styled.div`
   margin: ${({ theme }) => theme.spacing(4)} 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledInstructions = styled.div`
+const StyledQRCodeWrapper = styled.div`
+  align-items: center;
+  background-color: ${({ theme }) => theme.background.primary};
+  border: 1px solid ${({ theme }) => theme.border.color.light};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  display: flex;
+  justify-content: center;
+  padding: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledQRCode = styled(QRCode)`
+  height: 137px;
+  width: 137px;
+`;
+
+const StyledCopySetupKeyText = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-  max-width: 400px;
-`;
-
-const StyledDivider = styled.div`
-  width: 100%;
-  height: 1px;
-  background-color: ${({ theme }) => theme.border.color.light};
-  margin: ${({ theme }) => theme.spacing(6)} 0;
+  text-align: left;
+  line-height: 1.5;
 `;
 
 const StyledCopySetupKeyLink = styled.button`
   background: none;
   border: none;
-  color: ${({ theme }) => theme.font.color.secondary};
+  color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
+  display: inline;
   font-size: ${({ theme }) => theme.font.size.sm};
-  margin-top: ${({ theme }) => theme.spacing(2)};
   padding: 0;
   text-decoration: underline;
+  margin-left: 0;
 
   &:hover {
-    color: ${({ theme }) => theme.font.color.primary};
+    color: ${({ theme }) => theme.font.color.secondary};
   }
+`;
+
+const StyledDivider = styled.div`
+  margin: ${({ theme }) => theme.spacing(6)} 0;
+  width: 100%;
 `;
 
 export const SettingsTwoFactorAuthenticationMethod = () => {
@@ -134,34 +149,36 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
             <Section>
               <TwoFactorAuthenticationSetupForSettingsEffect />
 
-              <H2Title title={t`1. Scan the QR code`} />
-              <StyledInstructions>
-                <Trans>
-                  Use an authenticator app like Google Authenticator, Authy, or
-                  Microsoft Authenticator to scan this QR code.
-                </Trans>
-              </StyledInstructions>
+              <H2Title
+                title={t`1. Scan the QR code`}
+                description="Use an authenticator app like Google Authenticator, Authy, or
+                  Microsoft Authenticator to scan this QR code."
+              />
               <StyledQRCodeContainer>
-                {!qrCode ? <Loader /> : <QRCode value={qrCode} />}
-                {qrCode && (
-                  <StyledCopySetupKeyLink onClick={handleCopySetupKey}>
-                    <IconCopy size={theme.icon.size.sm} />
-                    <Trans>Copy Setup Key</Trans>
-                  </StyledCopySetupKeyLink>
+                {!qrCode ? (
+                  <Loader />
+                ) : (
+                  <>
+                    <StyledQRCodeWrapper>
+                      <StyledQRCode value={qrCode} />
+                    </StyledQRCodeWrapper>
+                    <StyledCopySetupKeyText>
+                      <Trans>Can't scan? Copy the</Trans>{' '}
+                      <StyledCopySetupKeyLink onClick={handleCopySetupKey}>
+                        <Trans>setup key</Trans>
+                      </StyledCopySetupKeyLink>
+                    </StyledCopySetupKeyText>
+                  </>
                 )}
               </StyledQRCodeContainer>
 
               <StyledDivider />
 
-              <H2Title title={t`2. Enter the code`} />
-
-              <StyledInstructions>
-                <Trans>
-                  Enter the 6-digit verification code from your authenticator
-                  app to complete the setup.
-                </Trans>
-              </StyledInstructions>
-
+              <H2Title
+                title={t`2. Enter the code`}
+                description="Enter the 6-digit verification code from your authenticator
+                  app to complete the setup."
+              />
               <TwoFactorAuthenticationVerificationForSettings />
             </Section>
           )}

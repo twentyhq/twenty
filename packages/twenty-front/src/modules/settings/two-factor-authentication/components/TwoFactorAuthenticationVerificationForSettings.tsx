@@ -19,16 +19,12 @@ type OTPFormValues = {
 
 const StyledOTPContainer = styled.div`
   display: flex;
-
+  gap: ${({ theme }) => theme.spacing(1)};
   margin-bottom: ${({ theme }) => theme.spacing(8)};
 
   &:has(:disabled) {
     opacity: 0.3;
   }
-`;
-
-const StyledSlotGroup = styled.div`
-  display: flex;
 `;
 
 const StyledSlot = styled.div<{ isActive: boolean }>`
@@ -40,20 +36,9 @@ const StyledSlot = styled.div<{ isActive: boolean }>`
   align-items: center;
   justify-content: center;
   transition: all 0.3s;
-  border-top: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-right: 1px solid ${({ theme }) => theme.border.color.medium};
-
-  &:first-of-type {
-    border-left: 1px solid ${({ theme }) => theme.border.color.medium};
-    border-top-left-radius: 0.375rem;
-    border-bottom-left-radius: 0.375rem;
-  }
-
-  &:last-of-type {
-    border-top-right-radius: 0.375rem;
-    border-bottom-right-radius: 0.375rem;
-  }
+  background-color: ${({ theme }) => theme.color.gray10};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.md};
 
   .group:hover &,
   .group:focus-within & {
@@ -73,9 +58,11 @@ const StyledSlot = styled.div<{ isActive: boolean }>`
 `;
 
 const StyledPlaceholderChar = styled.div`
-  .group:has(input[data-input-otp-placeholder-shown]) & {
-    opacity: 0.2;
-  }
+  opacity: 0.2;
+`;
+
+const StyledInputChar = styled.div`
+  opacity: 1;
 `;
 
 const StyledCaretContainer = styled.div`
@@ -104,9 +91,17 @@ const StyledCaret = styled.div`
   background-color: ${({ theme }) => theme.font.color.primary};
 `;
 
+const FakeCaret = () => {
+  return (
+    <StyledCaretContainer>
+      <StyledCaret />
+    </StyledCaretContainer>
+  );
+};
+
 const StyledDashContainer = styled.div`
   display: flex;
-  width: 2.5rem;
+  width: 0.5rem;
   justify-content: center;
   align-items: center;
 `;
@@ -117,14 +112,6 @@ const StyledDash = styled.div`
   height: 0.25rem;
   width: 0.75rem;
 `;
-
-const FakeCaret = () => {
-  return (
-    <StyledCaretContainer>
-      <StyledCaret />
-    </StyledCaretContainer>
-  );
-};
 
 const FakeDash = () => {
   return (
@@ -137,9 +124,13 @@ const FakeDash = () => {
 export const Slot = (props: SlotProps) => {
   return (
     <StyledSlot isActive={props.isActive}>
-      <StyledPlaceholderChar>
-        {props.char ?? props.placeholderChar}
-      </StyledPlaceholderChar>
+      {props.char ? (
+        <StyledInputChar>{props.char}</StyledInputChar>
+      ) : (
+        <StyledPlaceholderChar>
+          {props.placeholderChar ?? 'X'}
+        </StyledPlaceholderChar>
+      )}
       {props.hasFakeCaret && <FakeCaret />}
     </StyledSlot>
   );
@@ -231,29 +222,25 @@ export const TwoFactorAuthenticationVerificationForSettings = () => {
           value={value}
           render={({ slots }) => (
             <StyledOTPContainer>
-              <StyledSlotGroup>
-                {slots.slice(0, 3).map((slot, idx) => (
-                  <Slot
-                    key={idx}
-                    char={slot.char}
-                    placeholderChar={slot.placeholderChar}
-                    isActive={slot.isActive}
-                    hasFakeCaret={slot.hasFakeCaret}
-                  />
-                ))}
-              </StyledSlotGroup>
+              {slots.slice(0, 3).map((slot, idx) => (
+                <Slot
+                  key={idx}
+                  char={slot.char}
+                  placeholderChar={slot.placeholderChar}
+                  isActive={slot.isActive}
+                  hasFakeCaret={slot.hasFakeCaret}
+                />
+              ))}
               <FakeDash />
-              <StyledSlotGroup>
-                {slots.slice(3).map((slot, idx) => (
-                  <Slot
-                    key={idx}
-                    char={slot.char}
-                    placeholderChar={slot.placeholderChar}
-                    isActive={slot.isActive}
-                    hasFakeCaret={slot.hasFakeCaret}
-                  />
-                ))}
-              </StyledSlotGroup>
+              {slots.slice(3).map((slot, idx) => (
+                <Slot
+                  key={idx + 3}
+                  char={slot.char}
+                  placeholderChar={slot.placeholderChar}
+                  isActive={slot.isActive}
+                  hasFakeCaret={slot.hasFakeCaret}
+                />
+              ))}
             </StyledOTPContainer>
           )}
         />
