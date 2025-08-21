@@ -104,7 +104,7 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-      isWorkflowFilteringEnabled: true,
+
       isWorkflowBranchEnabled: true,
     });
 
@@ -334,7 +334,7 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-      isWorkflowFilteringEnabled: true,
+
       isWorkflowBranchEnabled: true,
     });
 
@@ -564,7 +564,7 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-      isWorkflowFilteringEnabled: true,
+
       isWorkflowBranchEnabled: true,
     });
 
@@ -813,7 +813,7 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-      isWorkflowFilteringEnabled: true,
+
       isWorkflowBranchEnabled: true,
     });
 
@@ -1042,7 +1042,7 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-      isWorkflowFilteringEnabled: true,
+
       isWorkflowBranchEnabled: true,
     });
 

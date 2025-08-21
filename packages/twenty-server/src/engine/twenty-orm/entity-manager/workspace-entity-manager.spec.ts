@@ -130,13 +130,12 @@ describe('WorkspaceEntityManager', () => {
         IS_AI_ENABLED: false,
         IS_IMAP_SMTP_CALDAV_ENABLED: false,
         IS_MORPH_RELATION_ENABLED: false,
-        IS_WORKFLOW_FILTERING_ENABLED: false,
+
         IS_WORKFLOW_BRANCH_ENABLED: false,
         IS_RELATION_CONNECT_ENABLED: false,
         IS_FIELDS_PERMISSIONS_ENABLED: false,
         IS_CORE_VIEW_SYNCING_ENABLED: false,
         IS_CORE_VIEW_ENABLED: false,
-        IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
         IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
         IS_API_KEY_ROLES_ENABLED: false,
       },
@@ -157,11 +156,10 @@ describe('WorkspaceEntityManager', () => {
         IS_AI_ENABLED: false,
         IS_IMAP_SMTP_CALDAV_ENABLED: false,
         IS_MORPH_RELATION_ENABLED: false,
-        IS_WORKFLOW_FILTERING_ENABLED: false,
+
         IS_RELATION_CONNECT_ENABLED: false,
         IS_FIELDS_PERMISSIONS_ENABLED: true,
         IS_CORE_VIEW_SYNCING_ENABLED: false,
-        IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
       },
       permissionsPerRoleId: {},
     } as WorkspaceDataSource;
