@@ -11,7 +11,6 @@ import {
 } from 'typeorm';
 
 import {
-  buildNestedWhereConditions,
   buildWhereConditions,
   parseFilterCondition,
 } from 'src/engine/core-modules/ai/utils/find-records-filters.utils';
@@ -59,25 +58,6 @@ describe('find-records-filters.utils', () => {
       const result = parseFilterCondition({ containsIlike: 'mid' });
 
       expect(result).toEqual(Like('%mid%'));
-    });
-  });
-
-  describe('buildNestedWhereConditions', () => {
-    it('should build nested conditions and skip empty values', () => {
-      const nested = buildNestedWhereConditions({
-        name: { ilike: '%john%' },
-        age: { gt: 18 },
-        empty: '',
-        nil: null,
-        undef: undefined,
-        raw: 5,
-      });
-
-      expect(nested).toEqual({
-        name: ILike('%john%'),
-        age: MoreThan(18),
-        raw: 5,
-      });
     });
   });
 

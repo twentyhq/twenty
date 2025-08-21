@@ -9,33 +9,48 @@ import {
   MoreThanOrEqual,
   Not,
 } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+
+type FilterObject = Record<string, unknown>;
+
+type WhereRecord = Record<string, unknown>;
+
+const isSkippableValue = (value: unknown): boolean =>
+  !isDefined(value) || value === '';
+
+const isPlainObject = (value: unknown): value is FilterObject =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
 
 /**
  * Parse a single filter condition object (e.g., { ilike: "%foo%" }) into a TypeORM operator or value.
  */
-export const parseFilterCondition = (
-  filterValue: Record<string, unknown>,
-): unknown => {
+export const parseFilterCondition = (filterValue: FilterObject): unknown => {
   if ('eq' in filterValue) {
     return filterValue.eq;
   }
   if ('neq' in filterValue) {
-    return Not(filterValue.neq);
+    return Not(filterValue.neq as unknown);
   }
   if ('gt' in filterValue) {
-    return MoreThan(filterValue.gt);
+    return MoreThan(filterValue.gt as unknown as number | string | Date);
   }
   if ('gte' in filterValue) {
-    return MoreThanOrEqual(filterValue.gte);
+    return MoreThanOrEqual(
+      filterValue.gte as unknown as number | string | Date,
+    );
   }
   if ('lt' in filterValue) {
-    return LessThan(filterValue.lt);
+    return LessThan(filterValue.lt as unknown as number | string | Date);
   }
   if ('lte' in filterValue) {
-    return LessThanOrEqual(filterValue.lte);
+    return LessThanOrEqual(
+      filterValue.lte as unknown as number | string | Date,
+    );
   }
   if ('in' in filterValue) {
-    return In(filterValue.in as string[]);
+    const values = (filterValue as { in: unknown }).in;
+
+    return Array.isArray(values) ? In(values as unknown[]) : null;
   }
   if ('like' in filterValue) {
     return Like(filterValue.like as string);
@@ -44,101 +59,60 @@ export const parseFilterCondition = (
     return ILike(filterValue.ilike as string);
   }
   if ('startsWith' in filterValue) {
-    return Like(`${filterValue.startsWith}%`);
+    return Like(`${String(filterValue.startsWith)}%`);
   }
   if ('is' in filterValue) {
-    if (filterValue.is === 'NULL') {
-      return IsNull();
-    }
-    if (filterValue.is === 'NOT_NULL') {
-      return Not(IsNull());
-    }
+    const v = (filterValue as { is: unknown }).is;
+
+    if (v === 'NULL') return IsNull();
+    if (v === 'NOT_NULL') return Not(IsNull());
   }
   if ('isEmptyArray' in filterValue) {
     return [];
   }
   if ('containsIlike' in filterValue) {
-    return Like(`%${filterValue.containsIlike}%`);
+    return Like(`%${String(filterValue.containsIlike)}%`);
   }
 
   return null;
 };
 
 /**
- * Build nested where conditions for a nested object (e.g., relation filters)
- */
-export const buildNestedWhereConditions = (
-  nestedValue: Record<string, unknown>,
-): Record<string, unknown> => {
-  const nestedConditions: Record<string, unknown> = {};
-
-  Object.entries(nestedValue).forEach(([nestedKey, nestedFieldValue]) => {
-    if (
-      nestedFieldValue === undefined ||
-      nestedFieldValue === null ||
-      nestedFieldValue === ''
-    ) {
-      return;
-    }
-
-    if (
-      typeof nestedFieldValue === 'object' &&
-      !Array.isArray(nestedFieldValue)
-    ) {
-      const filterCondition = parseFilterCondition(
-        nestedFieldValue as Record<string, unknown>,
-      );
-
-      if (filterCondition !== null) {
-        nestedConditions[nestedKey] = filterCondition;
-      }
-    } else {
-      nestedConditions[nestedKey] = nestedFieldValue;
-    }
-  });
-
-  return nestedConditions;
-};
-
-/**
  * Build where conditions compatible with TypeORM from a flexible search criteria object
  */
 export const buildWhereConditions = (
-  searchCriteria: Record<string, unknown>,
-): Record<string, unknown> => {
-  const whereConditions: Record<string, unknown> = {};
-
-  Object.entries(searchCriteria).forEach(([key, value]) => {
-    if (value === undefined || value === null || value === '') {
-      return;
-    }
-
-    if (typeof value === 'object' && !Array.isArray(value)) {
-      // Direct operator-based condition (eq, ilike, etc.)
-      const filterCondition = parseFilterCondition(
-        value as Record<string, unknown>,
-      );
-
-      if (filterCondition !== null) {
-        whereConditions[key] = filterCondition;
-
-        return;
+  searchCriteria: FilterObject,
+): WhereRecord => {
+  return Object.entries(searchCriteria).reduce<WhereRecord>(
+    (acc, [key, value]) => {
+      if (isSkippableValue(value)) {
+        return acc;
       }
 
-      // Otherwise, try to build nested conditions
-      const nestedConditions = buildNestedWhereConditions(
-        value as Record<string, unknown>,
-      );
+      if (isPlainObject(value)) {
+        // Direct operator-based condition (eq, ilike, etc.)
+        const filterCondition = parseFilterCondition(value as FilterObject);
 
-      if (Object.keys(nestedConditions).length > 0) {
-        whereConditions[key] = nestedConditions;
+        if (isDefined(filterCondition)) {
+          acc[key] = filterCondition;
+
+          return acc;
+        }
+
+        // Otherwise, try to build nested conditions
+        const nestedConditions = buildWhereConditions(value);
+
+        if (Object.keys(nestedConditions).length > 0) {
+          acc[key] = nestedConditions;
+        }
+
+        return acc;
       }
 
-      return;
-    }
+      acc[key] = value as unknown;
 
-    whereConditions[key] = value;
-  });
-
-  return whereConditions;
+      return acc;
+    },
+    {},
+  );
 };
