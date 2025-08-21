@@ -13,6 +13,7 @@ import {
   Not,
 } from 'typeorm';
 
+import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import {
   generateBulkDeleteToolSchema,
   generateFindOneToolSchema,
@@ -22,8 +23,10 @@ import {
 } from 'src/engine/metadata-modules/agent/utils/agent-tool-schema.utils';
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-related-object.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class ToolService {
@@ -31,6 +34,8 @@ export class ToolService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly objectMetadataService: ObjectMetadataService,
     protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly recordInputTransformerService: RecordInputTransformerService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
   async listTools(roleId: string, workspaceId: string): Promise<ToolSet> {
@@ -202,6 +207,18 @@ export class ToolService {
       }
 
       if (typeof value === 'object' && !Array.isArray(value)) {
+        // First check if this is a direct filter condition (eq, ilike, etc.)
+        const filterCondition = this.parseFilterCondition(
+          value as Record<string, unknown>,
+        );
+
+        if (filterCondition !== null) {
+          whereConditions[key] = filterCondition;
+
+          return;
+        }
+
+        // Otherwise, try to build nested conditions
         const nestedConditions = this.buildNestedWhereConditions(
           value as Record<string, unknown>,
         );
@@ -373,7 +390,32 @@ export class ToolService {
           { roleId },
         );
 
-      const createdRecord = await repository.save(parameters);
+      // const createdRecord = await repository.save(parameters);
+      // Get object metadata maps for field transformation
+      const objectMetadataMaps =
+        await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
+          workspaceId,
+        );
+
+      const objectMetadataItemWithFieldsMaps =
+        getObjectMetadataMapItemByNameSingular(objectMetadataMaps, objectName);
+
+      if (!objectMetadataItemWithFieldsMaps) {
+        return {
+          success: false,
+          error: 'Object metadata not found',
+          message: `Failed to create ${objectName}: Object metadata not found`,
+        };
+      }
+
+      // Transform input data (handles rich text conversion)
+      const transformedCreateData =
+        await this.recordInputTransformerService.process({
+          recordInput: parameters,
+          objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
+        });
+
+      const createdRecord = await repository.save(transformedCreateData);
 
       return {
         success: true,
@@ -425,7 +467,32 @@ export class ToolService {
         };
       }
 
-      await repository.update(id as string, updateData);
+      // await repository.update(id as string, updateData);
+      // Get object metadata maps for field transformation
+      const objectMetadataMaps =
+        await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
+          workspaceId,
+        );
+
+      const objectMetadataItemWithFieldsMaps =
+        getObjectMetadataMapItemByNameSingular(objectMetadataMaps, objectName);
+
+      if (!objectMetadataItemWithFieldsMaps) {
+        return {
+          success: false,
+          error: 'Object metadata not found',
+          message: `Failed to update ${objectName}: Object metadata not found`,
+        };
+      }
+
+      // Transform input data (handles rich text conversion)
+      const transformedUpdateData =
+        await this.recordInputTransformerService.process({
+          recordInput: updateData,
+          objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
+        });
+
+      await repository.update(id as string, transformedUpdateData)
 
       const updatedRecord = await repository.findOne({
         where: { id: id as string },
