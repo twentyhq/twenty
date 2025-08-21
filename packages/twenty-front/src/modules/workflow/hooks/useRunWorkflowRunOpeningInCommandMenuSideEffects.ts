@@ -27,9 +27,6 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const isWorkflowFilteringEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
-  );
   const isWorkflowBranchEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
   );
@@ -65,7 +62,6 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           steps: workflowRunRecord.state.flow.steps,
           stepInfos: workflowRunRecord.state.stepInfos,
           trigger: workflowRunRecord.state.flow.trigger,
-          isWorkflowFilteringEnabled,
           isWorkflowBranchEnabled,
         });
 
@@ -136,7 +132,6 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
     [
       apolloCoreClient.cache,
       objectPermissionsByObjectMetadataId,
-      isWorkflowFilteringEnabled,
       isWorkflowBranchEnabled,
       openWorkflowRunViewStepInCommandMenu,
       getIcon,

@@ -55,6 +55,9 @@ const StyledListItem = styled(RecordDetailRecordsListItemContainer)<{
       }
     `}
 
+  padding-left: ${({ theme }) => theme.spacing(3)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+
   &:hover {
     .displayOnHover {
       opacity: 1;
@@ -252,6 +255,7 @@ export const RecordDetailRelationRecordsListItem = ({
           objectNameSingular={relationObjectMetadataNameSingular}
           objectRecordId={relationRecord.id}
           showDuplicatesSection={false}
+          showRelationSections={false}
           excludeCreatedAtAndUpdatedAt={true}
           excludeFieldMetadataIds={[relationFieldMetadataId]}
         />

@@ -14,6 +14,8 @@ const StyledHeader = styled.header<{
   isDropdownOpen?: boolean;
   areRecordsAvailable?: boolean;
 }>`
+  padding-left: ${({ theme }) => theme.spacing(3)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
   align-items: center;
   justify-content: space-between;
   display: flex;
