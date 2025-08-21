@@ -18,22 +18,6 @@ const StyledScrollWrapper = styled.div`
   overflow-y: hidden;
   width: 100%;
   height: 100%;
-
-  &[data-prevent-text-selection='true'] {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
-    -webkit-tap-highlight-color: transparent;
-    cursor: default;
-    * {
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-    }
-  }
 `;
 
 export type ScrollWrapperProps = {
@@ -42,7 +26,6 @@ export type ScrollWrapperProps = {
   defaultEnableXScroll?: boolean;
   defaultEnableYScroll?: boolean;
   componentInstanceId: string;
-  preventTextSelection?: boolean;
 };
 
 export const ScrollWrapper = ({
@@ -51,7 +34,6 @@ export const ScrollWrapper = ({
   className,
   defaultEnableXScroll = true,
   defaultEnableYScroll = true,
-  preventTextSelection = false,
 }: ScrollWrapperProps) => {
   const setScrollTop = useSetRecoilComponentState(
     scrollWrapperScrollTopComponentState,
@@ -89,7 +71,6 @@ export const ScrollWrapper = ({
         id={`scroll-wrapper-${componentInstanceId}`}
         className={className}
         onScroll={handleScroll}
-        data-prevent-text-selection={preventTextSelection}
       >
         {children}
       </StyledScrollWrapper>
