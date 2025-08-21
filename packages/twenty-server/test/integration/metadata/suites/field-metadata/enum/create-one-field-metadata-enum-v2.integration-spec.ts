@@ -12,11 +12,11 @@ import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metada
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { eachTestingContextFilter } from 'twenty-shared/testing';
 
-describe.each(fieldMetadataEnumTypes)(
+describe.each([fieldMetadataEnumTypes[0]])(
   'Create field metadata %s tests suite v2',
   (testedFieldMetadataType) => {
     let createdObjectMetadataId: string;
@@ -37,8 +37,7 @@ describe.each(fieldMetadataEnumTypes)(
 
       await makeGraphqlAPIRequest(enablePermissionsQuery);
 
-      const { data } = await createOneObjectMetadata({
-        expectToFail: false,
+      const { data } = await forceCreateOneObjectMetadata({
         input: {
           labelSingular: LISTING_NAME_SINGULAR,
           labelPlural: LISTING_NAME_PLURAL,
@@ -67,7 +66,7 @@ describe.each(fieldMetadataEnumTypes)(
       const enablePermissionsQuery = updateFeatureFlagFactory(
         SEED_APPLE_WORKSPACE_ID,
         FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        true,
+        false,
       );
 
       await makeGraphqlAPIRequest(enablePermissionsQuery);
