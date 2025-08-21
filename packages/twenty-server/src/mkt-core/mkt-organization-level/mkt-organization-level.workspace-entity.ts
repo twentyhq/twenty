@@ -1,14 +1,19 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MKT_ORGANIZATION_LEVEL_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @WorkspaceEntity({
   standardId: MKT_OBJECT_IDS.mktOrganizationLevel,
@@ -80,23 +85,23 @@ export class MktOrganizationLevelWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MKT_ORGANIZATION_LEVEL_FIELD_IDS.defaultPermissions,
-    type: FieldMetadataType.RAW_JSON,
+    type: FieldMetadataType.TEXT,
     label: msg`Default Permissions`,
     description: msg`Default permissions for this level`,
     icon: 'IconLock',
   })
   @WorkspaceIsNullable()
-  defaultPermissions?: Record<string, unknown>;
+  defaultPermissions?: string;
 
   @WorkspaceField({
     standardId: MKT_ORGANIZATION_LEVEL_FIELD_IDS.accessLimitations,
-    type: FieldMetadataType.RAW_JSON,
+    type: FieldMetadataType.TEXT,
     label: msg`Access Limitations`,
     description: msg`Access limitations for this level`,
     icon: 'IconShieldCheck',
   })
   @WorkspaceIsNullable()
-  accessLimitations?: Record<string, unknown>;
+  accessLimitations?: string;
 
   @WorkspaceField({
     standardId: MKT_ORGANIZATION_LEVEL_FIELD_IDS.displayOrder,
@@ -135,4 +140,16 @@ export class MktOrganizationLevelWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The creator of the record`,
   })
   createdBy: ActorMetadata;
+
+  // Relations
+  @WorkspaceRelation({
+    standardId: MKT_ORGANIZATION_LEVEL_FIELD_IDS.staffMembers,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`People`,
+    description: msg`People at this organization level`,
+    icon: 'IconUsers',
+    inverseSideTarget: () => PersonWorkspaceEntity,
+    inverseSideFieldKey: 'organizationLevel',
+  })
+  people: Relation<PersonWorkspaceEntity[]>;
 }

@@ -41,6 +41,9 @@ import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-obj
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { MktStaffStatusHistoryWorkspaceEntity } from 'src/mkt-core/mkt-staff-status-history/mkt-staff-status-history.workspace-entity';
+import { MktDepartmentWorkspaceEntity } from 'src/mkt-core/mkt-department/mkt-department.workspace-entity';
+import { MktEmploymentStatusWorkspaceEntity } from 'src/mkt-core/mkt-employment-status/mkt-employment-status.workspace-entity';
+import { MktOrganizationLevelWorkspaceEntity } from 'src/mkt-core/mkt-organization-level/mkt-organization-level.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
@@ -195,6 +198,22 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   companyId: string | null;
 
   @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.department,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Department`,
+    description: msg`Person's department`,
+    icon: 'IconBuilding',
+    inverseSideTarget: () => MktDepartmentWorkspaceEntity,
+    inverseSideFieldKey: 'people',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  department: Relation<MktDepartmentWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('department')
+  departmentId: string | null;
+
+  @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,
     type: RelationType.ONE_TO_MANY,
     label: msg`Opportunities`,
@@ -308,24 +327,35 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
 
-  @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.organizationLevelId,
-    type: FieldMetadataType.TEXT,
-    label: msg`Organization Level ID`,
-    description: msg`Reference to organization level`,
-    icon: 'IconBuildings',
+  @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.organizationLevel,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Organization Level`,
+    description: msg`Person's organization level`,
+    icon: 'IconHierarchy',
+    inverseSideTarget: () => MktOrganizationLevelWorkspaceEntity,
+    inverseSideFieldKey: 'people',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
+  organizationLevel: Relation<MktOrganizationLevelWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('organizationLevel')
   organizationLevelId: string | null;
 
-  @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.employmentStatusId,
-    type: FieldMetadataType.TEXT,
-    label: msg`Employment Status ID`,
-    description: msg`Reference to employment status`,
+  @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.employmentStatus,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Employment Status`,
+    description: msg`Person's employment status`,
     icon: 'IconUserCheck',
+    inverseSideTarget: () => MktEmploymentStatusWorkspaceEntity,
+    inverseSideFieldKey: 'people',
   })
   @WorkspaceIsNullable()
+  employmentStatus: Relation<MktEmploymentStatusWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('employmentStatus')
   employmentStatusId: string | null;
 
   @WorkspaceField({
