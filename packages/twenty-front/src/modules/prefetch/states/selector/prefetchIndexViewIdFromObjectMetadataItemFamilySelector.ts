@@ -3,7 +3,6 @@ import { ViewKey } from '@/views/types/ViewKey';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { selectorFamily } from 'recoil';
 
-// TODO update with new state using convertCoreViewToView
 export const prefetchIndexViewIdFromObjectMetadataItemFamilySelector =
   selectorFamily<string | undefined, { objectMetadataItemId: string }>({
     key: 'prefetchIndexViewIdFromObjectMetadataItemFamilySelector',
