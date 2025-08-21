@@ -314,6 +314,80 @@ describe('evaluateFilterConditions', () => {
       });
     });
 
+    describe('Select filter operands', () => {
+      it('should return true when there are common values (SELECT)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.Is,
+          ['John'],
+          ['John', 'Jane'],
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when there are no common values (SELECT)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.Is,
+          ['John'],
+          ['Jane'],
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when there are no common values (IsNot)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IsNot,
+          ['John'],
+          ['Jane'],
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return true when there are no values (IsEmpty)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IsEmpty,
+          [],
+          '',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when there is a value (IsEmpty)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IsEmpty,
+          ['John'],
+          '',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when there are values (IsNotEmpty)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          ['John'],
+          '',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+    });
+
     describe('Boolean filter operands', () => {
       it('should return true when boolean values are equal', () => {
         const filter = createFilter(

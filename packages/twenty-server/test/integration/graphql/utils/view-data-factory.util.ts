@@ -20,7 +20,7 @@ export const createViewData = (overrides: Partial<View> = {}) => ({
   objectMetadataId: TEST_OBJECT_METADATA_1_ID,
   icon: 'IconTable',
   type: ViewType.TABLE,
-  key: 'INDEX',
+  key: null,
   position: 0,
   isCompact: false,
   openRecordIn: ViewOpenRecordIn.SIDE_PANEL,

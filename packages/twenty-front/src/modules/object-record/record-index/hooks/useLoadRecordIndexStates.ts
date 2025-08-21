@@ -117,6 +117,7 @@ export const useLoadRecordIndexStates = () => {
         const existingRecordIndexFieldDefinitions = snapshot
           .getLoadable(recordIndexFieldDefinitionsState)
           .getValue();
+
         if (
           !isDeeplyEqual(
             existingRecordIndexFieldDefinitions,

@@ -1,13 +1,15 @@
 import { type DropResult, type ResponderProvided } from '@hello-pangea/dnd';
 
-import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
+import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useObjectOptionsForTable } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForTable';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
+import { visibleAndReadableRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleAndReadableRecordFieldsComponentSelector';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewType } from '@/views/types/ViewType';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,26 +22,18 @@ export const ViewFieldsVisibleDropdownSection = () => {
     ObjectOptionsDropdownContext,
   );
 
-  const {
-    handleReorderColumns,
-    handleColumnVisibilityChange,
-    visibleTableColumns,
-  } = useObjectOptionsForTable(recordIndexId, objectMetadataItem.id);
+  const { handleReorderColumns, handleColumnVisibilityChange } =
+    useObjectOptionsForTable(recordIndexId, objectMetadataItem.id);
 
-  const {
-    handleReorderBoardFields,
-    handleBoardFieldVisibilityChange,
-    visibleBoardFields,
-  } = useObjectOptionsForBoard({
-    objectNameSingular: objectMetadataItem.nameSingular,
-    recordBoardId: recordIndexId,
-    viewBarId: recordIndexId,
-  });
+  const { handleReorderBoardFields, handleBoardFieldVisibilityChange } =
+    useObjectOptionsForBoard({
+      objectNameSingular: objectMetadataItem.nameSingular,
+      recordBoardId: recordIndexId,
+      viewBarId: recordIndexId,
+    });
 
-  const visibleRecordFields =
-    viewType === ViewType.Kanban ? visibleBoardFields : visibleTableColumns;
-
-  const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
+  const { getFieldMetadataItemByIdOrThrow } =
+    useGetFieldMetadataItemByIdOrThrow();
 
   const handleReorderFields =
     viewType === ViewType.Kanban
@@ -60,19 +54,23 @@ export const ViewFieldsVisibleDropdownSection = () => {
   const fieldMetadataItemLabelIdentifier =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
+  const visibleRecordFields = useRecoilComponentValue(
+    visibleAndReadableRecordFieldsComponentSelector,
+  );
+
   const nonDraggableRecordField = visibleRecordFields.find(
     (recordFieldToFilter) =>
-      recordFieldToFilter.fieldMetadataId ===
+      recordFieldToFilter.fieldMetadataItemId ===
       fieldMetadataItemLabelIdentifier?.id,
   );
 
   const draggableRecordFields = visibleRecordFields
     .filter(
       (recordFieldToFilter) =>
-        recordFieldToFilter.fieldMetadataId !==
-        nonDraggableRecordField?.fieldMetadataId,
+        nonDraggableRecordField?.fieldMetadataItemId !==
+        recordFieldToFilter.fieldMetadataItemId,
     )
-    .sort(sortByProperty('position'));
+    .toSorted(sortByProperty('position'));
 
   return (
     <>
@@ -96,27 +94,29 @@ export const ViewFieldsVisibleDropdownSection = () => {
                     index +
                     (isDefined(fieldMetadataItemLabelIdentifier) ? 1 : 0);
 
-                  const fieldMetadataItem = getFieldMetadataItemById(
-                    recordField.fieldMetadataId,
+                  const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
+                    recordField.fieldMetadataItemId,
                   );
 
                   return (
                     <DraggableItem
-                      key={recordField.fieldMetadataId}
-                      draggableId={recordField.fieldMetadataId}
+                      key={recordField.fieldMetadataItemId}
+                      draggableId={recordField.fieldMetadataItemId}
                       index={fieldIndex + 1}
                       itemComponent={
                         <MenuItemDraggable
-                          key={recordField.fieldMetadataId}
+                          key={recordField.fieldMetadataItemId}
                           LeftIcon={getIcon(fieldMetadataItem.icon)}
                           iconButtons={[
                             {
                               Icon: IconEyeOff,
-                              onClick: () =>
+                              onClick: () => {
                                 handleChangeFieldVisibility({
-                                  fieldMetadataId: recordField.fieldMetadataId,
-                                  isVisible: recordField.isVisible,
-                                }),
+                                  fieldMetadataId:
+                                    recordField.fieldMetadataItemId,
+                                  isVisible: false,
+                                });
+                              },
                             },
                           ]}
                           text={fieldMetadataItem.label}

@@ -1,5 +1,4 @@
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { useSaveColumnsToView } from '@/object-record/record-table/hooks/useSaveColumnsToView';
 import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTableColumns';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
@@ -7,7 +6,6 @@ import { type ColumnDefinition } from '@/object-record/record-table/types/Column
 //   but for now it allows to have a cleaner API globally.
 // TODO: should be solved with new RecordField abstraction
 export const useHandleColumnsChange = () => {
-  const { saveColumnsToView } = useSaveColumnsToView();
   const { setTableColumns } = useSetTableColumns();
 
   const handleColumnsChange = async ({
@@ -20,8 +18,6 @@ export const useHandleColumnsChange = () => {
     objectMetadataId: string;
   }) => {
     setTableColumns(columns, recordTableId, objectMetadataId);
-
-    await saveColumnsToView(columns);
   };
 
   return {

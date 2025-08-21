@@ -49,7 +49,7 @@ export class MCPMetadataService {
     }
   }
 
-  handleInitialize(requestId: string | number | null) {
+  handleInitialize(requestId: string | number) {
     return wrapJsonRpcResponse(requestId, {
       result: {
         capabilities: {
@@ -59,63 +59,6 @@ export class MCPMetadataService {
         },
       },
     });
-  }
-
-  get commonProperties() {
-    return {
-      fields: {
-        type: 'array',
-        items: {
-          type: 'string',
-          description:
-            'Names of field properties to include in the response for field entities. ',
-          examples: [
-            'type',
-            'name',
-            'label',
-            'description',
-            'icon',
-            'isCustom',
-            'isActive',
-            'isSystem',
-            'isNullable',
-            'createdAt',
-            'updatedAt',
-            'defaultValue',
-            'options',
-            'relation',
-          ],
-        },
-        description:
-          'List of field names to select in the query for field entity. Strongly recommended to limit token usage and reduce response size. Use this to include only the properties you need.',
-      },
-      objects: {
-        type: 'array',
-        items: {
-          type: 'string',
-          description:
-            'Object property names to include in the response for object entities.',
-          examples: [
-            'dataSourceId',
-            'nameSingular',
-            'namePlural',
-            'labelSingular',
-            'labelPlural',
-            'description',
-            'icon',
-            'isCustom',
-            'isActive',
-            'isSystem',
-            'createdAt',
-            'updatedAt',
-            'labelIdentifierFieldMetadataId',
-            'imageIdentifierFieldMetadataId',
-          ],
-        },
-        description:
-          'List of object properties to select in the query for object entities. Strongly recommended to limit token usage and reduce response size. Specify only the necessary properties to optimize your request.',
-      },
-    };
   }
 
   get tools() {
@@ -146,13 +89,14 @@ export class MCPMetadataService {
         });
 
         return { result };
-      } catch {
+      } catch (err) {
         await this.metricsService.incrementCounter({
           key: MetricsKeys.AIToolExecutionFailed,
           attributes: {
             tool: request.body.params.name,
           },
         });
+        throw err;
       }
     }
 
@@ -170,7 +114,6 @@ export class MCPMetadataService {
         capabilities: {
           tools: { listChanged: false },
         },
-        commonProperties: this.commonProperties,
         tools: Object.values(this.tools),
       },
     });
@@ -206,9 +149,15 @@ export class MCPMetadataService {
         );
       }
 
-      return this.listTools(request);
+      if (request.body.method === 'tools/list') {
+        return this.listTools(request);
+      }
+
+      return wrapJsonRpcResponse(request.body.id ?? crypto.randomUUID(), {
+        result: {},
+      });
     } catch (error) {
-      return wrapJsonRpcResponse(request.body.id, {
+      return wrapJsonRpcResponse(request.body.id ?? crypto.randomUUID(), {
         error: {
           code: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
           message:

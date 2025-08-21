@@ -65,7 +65,7 @@ export const SettingsIntegrationMCP = () => {
       {
         mcpServers: {
           [serverName]: {
-            type: 'remote',
+            type: 'streamable-http',
             url: `${REACT_APP_SERVER_BASE_URL}${pathSuffix}`,
             headers: {
               Authorization: 'Bearer [API_KEY]',

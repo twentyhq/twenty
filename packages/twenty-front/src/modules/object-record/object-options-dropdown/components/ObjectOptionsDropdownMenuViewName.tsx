@@ -1,5 +1,3 @@
-import { Key } from 'ts-key-enum';
-
 import { useUpdateObjectViewOptions } from '@/object-record/object-options-dropdown/hooks/useUpdateObjectViewOptions';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -16,7 +14,8 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Key } from 'ts-key-enum';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -43,6 +42,7 @@ const StyledMenuIconContainer = styled.div`
   justify-content: center;
   width: ${({ theme }) => theme.spacing(6)};
 `;
+
 const StyledMainText = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   flex-shrink: 0;
@@ -75,6 +75,8 @@ export const ObjectOptionsDropdownMenuViewName = ({
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
   const [viewName, setViewName] = useState(currentView?.name);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   useHotkeysOnFocusedElement({
     keys: [Key.Enter],
     callback: async () => {
@@ -102,23 +104,28 @@ export const ObjectOptionsDropdownMenuViewName = ({
     setViewPickerSelectedIcon(currentView.icon);
   }, [currentView.icon, setViewPickerSelectedIcon]);
 
+  useEffect(() => {
+    if (currentView?.key !== 'INDEX' && inputRef.current !== null) {
+      inputRef.current.focus();
+    }
+  }, [currentView?.key]);
+
   const theme = useTheme();
   const { getIcon } = useIcons();
   const MainIcon = getIcon(currentView?.icon);
 
   return (
     <>
-      {currentView?.key === 'INDEX' && (
+      {currentView?.key === 'INDEX' ? (
         <StyledMenuTitleContainer>
           <StyledMenuIconContainer>
             <MainIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
           </StyledMenuIconContainer>
           <StyledMainText>
-            <OverflowingTextWithTooltip text={currentView?.name} />
+            <OverflowingTextWithTooltip text={currentView.name} />
           </StyledMainText>
         </StyledMenuTitleContainer>
-      )}
-      {currentView?.key !== 'INDEX' && (
+      ) : (
         <DropdownMenuItemsContainer>
           <StyledDropdownMenuIconAndNameContainer>
             <IconPicker

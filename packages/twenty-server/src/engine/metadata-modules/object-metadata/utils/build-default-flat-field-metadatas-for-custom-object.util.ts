@@ -35,6 +35,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isActive: true,
     isCustom: false,
     isSystem: true,
+    isUIReadOnly: true,
     defaultValue: 'uuid',
 
     createdAt,
@@ -65,6 +66,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isActive: true,
     isCustom: false,
     isSystem: false,
+    isUIReadOnly: false,
     defaultValue: "'Untitled'",
 
     createdAt,
@@ -95,6 +97,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isActive: true,
     isCustom: false,
     isSystem: false,
+    isUIReadOnly: true,
     defaultValue: 'now',
 
     createdAt,
@@ -125,6 +128,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isActive: true,
     isCustom: false,
     isSystem: false,
+    isUIReadOnly: true,
     defaultValue: 'now',
 
     createdAt,
@@ -155,6 +159,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isActive: true,
     isCustom: false,
     isSystem: false,
+    isUIReadOnly: true,
     defaultValue: null,
 
     createdAt,
@@ -185,6 +190,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isActive: true,
     isCustom: false,
     isSystem: false,
+    isUIReadOnly: true,
     defaultValue: { name: "''", source: "'MANUAL'" },
 
     createdAt,
@@ -215,6 +221,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isActive: true,
     isCustom: false,
     isSystem: true,
+    isUIReadOnly: true,
     defaultValue: 0,
 
     createdAt,
@@ -245,6 +252,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     isActive: true,
     isCustom: false,
     isSystem: true,
+    isUIReadOnly: true,
     defaultValue: null,
 
     createdAt,
