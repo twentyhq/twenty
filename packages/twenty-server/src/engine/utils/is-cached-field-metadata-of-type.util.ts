@@ -3,7 +3,7 @@ import { type FieldMetadataType } from 'twenty-shared/types';
 import { type CachedFieldMetadataEntity } from 'src/engine/metadata-modules/types/cached-field-metadata-entity';
 
 export function isCachedFieldMetadataEntityOfType<
-  Field extends CachedFieldMetadataEntity<FieldMetadataType>,
+  Field extends CachedFieldMetadataEntity,
   Type extends FieldMetadataType,
 >(
   fieldMetadata: Pick<Field, 'type'>,

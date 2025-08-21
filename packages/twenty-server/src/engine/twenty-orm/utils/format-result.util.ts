@@ -50,7 +50,7 @@ export function formatResult<T>(
 
     const fieldMetadata = objectMetadataItemWithFieldMaps.fieldsById[
       fieldMetadataId
-    ] as FieldMetadataEntity<FieldMetadataType> | undefined;
+    ] as FieldMetadataEntity | undefined;
 
     const isRelation = fieldMetadata
       ? isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION)

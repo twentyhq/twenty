@@ -30,7 +30,7 @@ export const mapUdtNameToFieldType = (udtName: string): FieldMetadataType => {
 
 export const mapUdtNameToFieldSettings = (
   udtName: string,
-): FieldMetadataSettings<FieldMetadataType> | undefined => {
+): FieldMetadataSettings | undefined => {
   switch (udtName) {
     case 'integer':
     case 'int2':

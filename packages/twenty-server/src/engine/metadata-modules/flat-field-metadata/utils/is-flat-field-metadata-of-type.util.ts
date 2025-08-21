@@ -3,7 +3,7 @@ import { type FieldMetadataType } from 'twenty-shared/types';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 export function isFlatFieldMetadataEntityOfType<
-  Field extends FlatFieldMetadata<FieldMetadataType>,
+  Field extends FlatFieldMetadata,
   Type extends FieldMetadataType,
 >(
   fieldMetadata: Pick<Field, 'type'>,

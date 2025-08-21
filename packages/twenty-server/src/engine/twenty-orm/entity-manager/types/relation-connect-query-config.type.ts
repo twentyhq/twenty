@@ -11,7 +11,7 @@ export type RelationConnectQueryConfig = {
   recordToConnectConditions: UniqueConstraintCondition[];
   relationFieldName: string;
   connectFieldName: string;
-  uniqueConstraintFields: FieldMetadataEntity<FieldMetadataType>[];
+  uniqueConstraintFields: FieldMetadataEntity[];
   recordToConnectConditionByEntityIndex: {
     [entityIndex: number]: UniqueConstraintCondition;
   };

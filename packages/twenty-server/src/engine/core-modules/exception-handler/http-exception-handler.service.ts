@@ -66,13 +66,11 @@ export class HttpExceptionHandlerService {
 
   handleError = (
     exception: Error | HttpException,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    response: Response<any, Record<string, any>>,
+    response: Response,
     errorCode?: number,
     user?: ExceptionHandlerUser,
     workspace?: ExceptionHandlerWorkspace,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): Response<any, Record<string, any>> | undefined => {
+  ): Response | undefined => {
     const params = this.request?.params;
 
     if (params?.workspaceId) {

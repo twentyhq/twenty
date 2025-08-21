@@ -88,7 +88,7 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
   }
 
   async validate(
-    args: UpdateManyResolverArgs<Partial<ObjectRecord>>,
+    args: UpdateManyResolverArgs,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
     assertMutationNotOnRemoteObject(options.objectMetadataItemWithFieldMaps);

@@ -1,6 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
-export class MicrosoftImportDriverException extends CustomException<string> {
+export class MicrosoftImportDriverException extends CustomException {
   statusCode: number;
   constructor(
     message: string,

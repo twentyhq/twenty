@@ -4,7 +4,7 @@ import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-meta
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export const isFieldMetadataRelationOrMorphRelation = (
-  fieldMetadata: FieldMetadataEntity<FieldMetadataType>,
+  fieldMetadata: FieldMetadataEntity,
 ): fieldMetadata is FieldMetadataEntity &
   (
     | FieldMetadataEntity<FieldMetadataType.RELATION>

@@ -45,8 +45,7 @@ export class GmailGetMessagesService {
   private formatBatchResponseAsMessage(
     messageIds: string[],
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    responseCollection: AxiosResponse<any, any>,
+    responseCollection: AxiosResponse,
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
       'handle' | 'handleAliases'

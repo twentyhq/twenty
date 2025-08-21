@@ -102,7 +102,7 @@ const updateConnectQueryConfigs = (
 const createConnectQueryConfig = (
   connectFieldName: string,
   recordToConnectCondition: UniqueConstraintCondition,
-  uniqueConstraintFields: FieldMetadataEntity<FieldMetadataType>[],
+  uniqueConstraintFields: FieldMetadataEntity[],
   targetObjectNameSingular: string,
   entityIndex: number,
 ) => {
@@ -126,7 +126,7 @@ const computeRecordToConnectCondition = (
   entity: Record<string, unknown>,
 ): {
   recordToConnectCondition: UniqueConstraintCondition;
-  uniqueConstraintFields: FieldMetadataEntity<FieldMetadataType>[];
+  uniqueConstraintFields: FieldMetadataEntity[];
   targetObjectNameSingular: string;
 } => {
   const field =

@@ -51,7 +51,7 @@ export interface TypeOptions<T = any> {
   isArray?: boolean;
   arrayDepth?: number;
   defaultValue?: T;
-  settings?: FieldMetadataSettings<FieldMetadataType>;
+  settings?: FieldMetadataSettings;
   isIdField?: boolean;
   isRelationConnectField?: boolean;
 }
@@ -62,7 +62,7 @@ const StringArrayScalarType = new GraphQLList(GraphQLString);
 export class TypeMapperService {
   mapToScalarType(
     fieldMetadataType: FieldMetadataType,
-    settings?: FieldMetadataSettings<FieldMetadataType>,
+    settings?: FieldMetadataSettings,
     isIdField?: boolean,
   ): GraphQLScalarType | undefined {
     if (

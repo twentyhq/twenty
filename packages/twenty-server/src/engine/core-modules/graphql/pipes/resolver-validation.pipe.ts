@@ -43,7 +43,7 @@ export class ResolverValidationPipe implements PipeTransform {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private toValidate(metatype: Type<any>): boolean {
+  private toValidate(metatype: Type): boolean {
     const types: unknown[] = [String, Boolean, Number, Array, Object];
 
     return !types.includes(metatype);

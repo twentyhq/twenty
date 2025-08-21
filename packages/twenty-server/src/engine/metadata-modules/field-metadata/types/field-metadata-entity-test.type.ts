@@ -39,7 +39,7 @@ type NotDefinedRelationRecord = {
   relationTargetObjectMetadata: never | null;
 };
 
-type AbstractFieldMetadata = FieldMetadataEntity<FieldMetadataType>;
+type AbstractFieldMetadata = FieldMetadataEntity;
 
 type UUIDFieldMetadata = FieldMetadataEntity<FieldMetadataType.UUID>;
 

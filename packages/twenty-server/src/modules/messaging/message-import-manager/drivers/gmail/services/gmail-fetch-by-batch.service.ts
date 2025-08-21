@@ -18,15 +18,13 @@ export class GmailFetchByBatchService {
   ): Promise<{
     messageIdsByBatch: string[][];
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    batchResponses: AxiosResponse<any, any>[];
+    batchResponses: AxiosResponse[];
   }> {
     const batchLimit = 20;
 
     let batchOffset = 0;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let batchResponses: AxiosResponse<any, any>[] = [];
+    let batchResponses: AxiosResponse[] = [];
 
     const messageIdsByBatch: string[][] = [];
 

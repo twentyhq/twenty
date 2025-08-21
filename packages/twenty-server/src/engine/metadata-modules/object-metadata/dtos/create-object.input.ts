@@ -67,7 +67,7 @@ export class CreateObjectInput {
 
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
-  primaryKeyFieldMetadataSettings?: FieldMetadataSettings<FieldMetadataType>;
+  primaryKeyFieldMetadataSettings?: FieldMetadataSettings;
 
   @IsBoolean()
   @IsOptional()

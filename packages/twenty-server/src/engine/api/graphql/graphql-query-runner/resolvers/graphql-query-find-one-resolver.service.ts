@@ -102,7 +102,7 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
   }
 
   async validate(
-    args: FindOneResolverArgs<ObjectRecordFilter>,
+    args: FindOneResolverArgs,
     _options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
     if (!args.filter || Object.keys(args.filter).length === 0) {
