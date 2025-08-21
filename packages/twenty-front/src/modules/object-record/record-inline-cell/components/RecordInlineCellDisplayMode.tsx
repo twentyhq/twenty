@@ -13,12 +13,12 @@ import { useLingui } from '@lingui/react/macro';
 const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   Pick<
     RecordInlineCellContextProps,
-    'isDisplayModeFixHeight' | 'disableHoverEffect'
+    'isDisplayModeFixHeight' | 'disableHoverEffect' | 'readonly'
   > & { isHovered?: boolean }
 >`
   outline: 1px solid
-    ${({ theme, isHovered }) =>
-      isHovered ? theme.border.color.medium : 'transparent'};
+    ${({ theme, isHovered, readonly }) =>
+      isHovered && readonly ? theme.border.color.medium : 'transparent'};
   align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
@@ -29,7 +29,7 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   padding-right: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
   ${(props) => {
-    if (props.isHovered === true) {
+    if (props.isHovered === true && !props.readonly) {
       return css`
         background-color: ${!props.disableHoverEffect
           ? props.theme.background.transparent.light
@@ -72,13 +72,14 @@ export const RecordInlineCellDisplayMode = ({
 }>) => {
   const { t } = useLingui();
 
-  const { editModeContentOnly, showLabel, label, buttonIcon } =
+  const { editModeContentOnly, showLabel, label, buttonIcon, readonly } =
     useRecordInlineCellContext();
 
   const isDisplayModeContentEmpty = useIsFieldEmpty();
   const showEditButton =
     buttonIcon &&
     isHovered &&
+    !readonly &&
     !isDisplayModeContentEmpty &&
     !editModeContentOnly;
 
@@ -92,6 +93,7 @@ export const RecordInlineCellDisplayMode = ({
     <>
       <StyledRecordInlineCellNormalModeOuterContainer
         isHovered={isHovered}
+        readonly={readonly}
         onClick={onClick}
       >
         <StyledRecordInlineCellNormalModeInnerContainer>
