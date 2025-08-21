@@ -18,7 +18,7 @@ import {
 import { Card } from 'twenty-ui/layout';
 import {
   type AuthProviders,
-  useUpdateWorkspaceMutation
+  useUpdateWorkspaceMutation,
 } from '~/generated-metadata/graphql';
 
 import { Toggle2FA } from './Toggle2FA';

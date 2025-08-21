@@ -55,17 +55,17 @@ export const SettingsProfile = () => {
           />
           <EmailField />
         </Section>
-          <Section>
-            <H2Title
-              title={t`Two Factor Authentication`}
-              description={t`Enhances security by requiring a code along with your password`}
-            />
-            <UndecoratedLink
-              to={getSettingsPath(
-                SettingsPath.TwoFactorAuthenticationStrategyConfig,
-                { twoFactorAuthenticationStrategy: 'TOTP' },
-              )}
-            >
+        <Section>
+          <H2Title
+            title={t`Two Factor Authentication`}
+            description={t`Enhances security by requiring a code along with your password`}
+          />
+          <UndecoratedLink
+            to={getSettingsPath(
+              SettingsPath.TwoFactorAuthenticationStrategyConfig,
+              { twoFactorAuthenticationStrategy: 'TOTP' },
+            )}
+          >
             <SettingsCard
               title={t`Authenticator App`}
               Icon={<IconShield />}
@@ -77,8 +77,8 @@ export const SettingsProfile = () => {
                 )
               }
             />
-            </UndecoratedLink>
-          </Section>
+          </UndecoratedLink>
+        </Section>
         <Section>
           <ChangePassword />
         </Section>
