@@ -14,6 +14,7 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { eachTestingContextFilter } from 'twenty-shared/testing';
 
 describe.each([fieldMetadataEnumTypes[0]])(
@@ -93,7 +94,7 @@ describe.each([fieldMetadataEnumTypes[0]])(
 
         expect(data).toBeNull();
         expect(errors).toBeDefined();
-        expect(errors).toMatchSnapshot();
+        expect(errors).toMatchSnapshot(extractRecordIdsAndDatesAsExpectAny(errors));
       },
     );
   },

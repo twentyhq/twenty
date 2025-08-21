@@ -31,7 +31,6 @@ export const MUTLI_SELECT_OPERATION_AGNOSTIC_TEST_CASES: FieldMetadataEnumSucces
     failing: [
       ...SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_TEST_CASES.failing,
       {
-        only: true,
         title: 'should fail with non stringified array default value',
         context: {
           input: {
