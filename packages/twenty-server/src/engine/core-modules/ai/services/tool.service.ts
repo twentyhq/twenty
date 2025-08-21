@@ -492,7 +492,7 @@ export class ToolService {
           objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
         });
 
-      await repository.update(id as string, transformedUpdateData)
+      await repository.update(id as string, transformedUpdateData);
 
       const updatedRecord = await repository.findOne({
         where: { id: id as string },
