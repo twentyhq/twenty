@@ -116,6 +116,7 @@ export const WorkflowStepFilterValueInput = ({
         onChange={handleValueChange}
         VariablePicker={WorkflowVariablePicker}
         objectNameSingular={objectMetadataItem.nameSingular}
+        disabled={readonly}
       />
     );
   }

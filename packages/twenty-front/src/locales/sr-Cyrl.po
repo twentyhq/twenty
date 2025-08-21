@@ -143,11 +143,6 @@ msgstr "{workspaceMemberName} ће бити уклоњен из следеће �
 msgid "••••••••"
 msgstr "••••••••"
 
-#. js-lingui-id: 3DNcuK
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
-msgid "1. Scan the QR code"
-msgstr "1. Скенирaјте QR код"
-
 #. js-lingui-id: vb5TwV
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 msgid "1. Select a field type"
@@ -185,11 +180,6 @@ msgstr "2. Конфигуришите"
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "2. Configure field"
 msgstr "2. Конфигуришите поље"
-
-#. js-lingui-id: bD1Hnc
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
-msgid "2. Enter the code"
-msgstr "2. Унесите кoд"
 
 #. js-lingui-id: 0Tx9MD
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
@@ -871,10 +861,20 @@ msgstr "Аутентификација"
 msgid "Authentication failed"
 msgstr "Аутентификација није успела"
 
+#. js-lingui-id: H7qgYQ
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "Authenticator app"
+msgstr ""
+
 #. js-lingui-id: YZWcQL
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Authenticator App"
 msgstr "Апликација за аутентификацију"
+
+#. js-lingui-id: 9aB4Rs
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "Authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator, etc. generate one-time passwords that are used as a second factor to verify your identity when prompted during sign-in."
+msgstr ""
 
 #. js-lingui-id: yIVrHZ
 #: src/pages/auth/Authorize.tsx
@@ -1047,6 +1047,11 @@ msgstr "Календари"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Can't change API names for standard objects"
 msgstr "Не могу се мењати API имена за стандардне објекте"
+
+#. js-lingui-id: YXzPl1
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "Can't scan? Copy the"
+msgstr ""
 
 #. js-lingui-id: dEgA5A
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -1459,8 +1464,12 @@ msgstr "Копирај линк"
 msgid "Copy link to view"
 msgstr "Копирај везу за преглед"
 
-#. js-lingui-id: S+Jl8l
+#. js-lingui-id: HvB+os
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "Copy paste the code below"
+msgstr ""
+
+#. js-lingui-id: S+Jl8l
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Copy Setup Key"
 msgstr "Копирајте подешавање кључа"
@@ -2428,11 +2437,6 @@ msgstr ""
 msgid "Enter in <0>Unicode</0> format"
 msgstr "Унеси у <0>Unicode</0> формату"
 
-#. js-lingui-id: MY3Tl9
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
-msgid "Enter the 6-digit verification code from your authenticator app to complete the setup."
-msgstr "Унесите шестоцифрени код за верификацију из ваше апликације за аутентификацију да бисте завршили подешавање."
-
 #. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Enter the credentials to set the connection"
@@ -3355,7 +3359,7 @@ msgid "Invalid form values"
 msgstr "Невалиде вредности формулара"
 
 #. js-lingui-id: VEKoJx
-#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationForSettings.tsx
+#: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Invalid verification code. Please try again."
 msgstr "Неправилан код верификације. Молимо покушајте поново."
@@ -5449,6 +5453,11 @@ msgstr "Потпуни приступ подешавањима"
 msgid "Settings permissions"
 msgstr "Дозволе за подешавања"
 
+#. js-lingui-id: J2TlKG
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "setup key"
+msgstr ""
+
 #. js-lingui-id: i5CJAR
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
@@ -6167,7 +6176,7 @@ msgid "Two-Factor Authentication"
 msgstr "Двофакторска аутентификација"
 
 #. js-lingui-id: cRM1ec
-#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationForSettings.tsx
+#: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
 msgid "Two-factor authentication setup completed successfully!"
 msgstr "Подешавање двофакторске аутентификације је успешно завршено!"
 
@@ -6272,11 +6281,6 @@ msgstr "Отпреми датотеку"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload the XML file with your connection infos"
 msgstr "Отпремите XML датотеку са информацијама о вашој вези"
-
-#. js-lingui-id: zlvvC+
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
-msgid "Use an authenticator app like Google Authenticator, Authy, or Microsoft Authenticator to scan this QR code."
-msgstr "Користите апликације за аутентификацију као што су Google Authenticator, Authy или Microsoft Authenticator да скенирате овај QR код."
 
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
@@ -6384,6 +6388,11 @@ msgstr "Променљива је успешно ажурирана."
 #: src/pages/auth/SignInUp.tsx
 msgid "Verify code from the app"
 msgstr "Проверите код из апликације"
+
+#. js-lingui-id: zS/rMV
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "Verify the code from the app"
+msgstr ""
 
 #. js-lingui-id: IHIWR4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
