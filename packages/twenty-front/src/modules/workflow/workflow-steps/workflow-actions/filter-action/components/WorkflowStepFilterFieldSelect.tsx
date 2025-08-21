@@ -56,8 +56,10 @@ export const WorkflowStepFilterFieldSelect = ({
 
   const { getIcon } = useIcons();
 
-  const { fieldMetadataItem: filterFieldMetadataItem } =
-    useFieldMetadataItemById(stepFilter.fieldMetadataId ?? '');
+  const {
+    fieldMetadataItem: filterFieldMetadataItem,
+    objectMetadataItem: filterObjectMetadataItem,
+  } = useFieldMetadataItemById(stepFilter.fieldMetadataId ?? '');
 
   const { getFieldMetadataItemByIdOrThrow } =
     useGetFieldMetadataItemByIdOrThrow();
@@ -141,17 +143,26 @@ export const WorkflowStepFilterFieldSelect = ({
     return null;
   }
 
+  const isFullRecord =
+    filterFieldMetadataItem?.name === 'id' &&
+    isDefined(filterObjectMetadataItem?.labelSingular);
+
   const { variableLabel } = searchVariableThroughOutputSchema({
     stepOutputSchema: stepsOutputSchema?.[0],
     rawVariableName: stepFilter.stepOutputKey,
-    isFullRecord: false,
+    isFullRecord,
   });
 
   const isSelectedFieldNotFound = !isDefined(variableLabel);
-  const label =
-    isSelectedFieldNotFound || !isDefined(stepFilter.displayValue)
-      ? t`Select a field from a previous step`
-      : variableLabel;
+  const label = isSelectedFieldNotFound
+    ? t`Select a field from a previous step`
+    : variableLabel;
+
+  const icon = isFullRecord
+    ? getIcon(filterObjectMetadataItem?.icon)
+    : filterFieldMetadataItem?.icon
+      ? getIcon(filterFieldMetadataItem.icon)
+      : undefined;
 
   const dropdownId = `step-filter-field-${stepFilter.id}`;
 
@@ -182,9 +193,7 @@ export const WorkflowStepFilterFieldSelect = ({
             selectedOption={{
               value: stepFilter.stepOutputKey,
               label,
-              Icon: filterFieldMetadataItem?.icon
-                ? getIcon(filterFieldMetadataItem.icon)
-                : undefined,
+              Icon: icon,
             }}
             isDisabled={true}
           />
@@ -202,11 +211,9 @@ export const WorkflowStepFilterFieldSelect = ({
         clickableComponent={
           <SelectControl
             selectedOption={{
+              label,
               value: stepFilter.stepOutputKey,
-              label: label,
-              Icon: filterFieldMetadataItem?.icon
-                ? getIcon(filterFieldMetadataItem.icon)
-                : undefined,
+              Icon: icon,
             }}
             textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
           />
