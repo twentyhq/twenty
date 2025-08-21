@@ -41,16 +41,6 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
-    key: FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
-    metadata: {
-      label: 'Workflow Filter Step',
-      description:
-        'Continue to the next node only if the filter conditions are met',
-      imagePath:
-        'https://twenty.com/images/lab/is-worklfow-filtering-enabled.png',
-    },
-  },
-  {
     key: FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
     metadata: {
       label: 'Workflow Branches',

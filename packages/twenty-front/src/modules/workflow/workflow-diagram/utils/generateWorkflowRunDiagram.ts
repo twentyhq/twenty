@@ -19,13 +19,11 @@ export const generateWorkflowRunDiagram = ({
   trigger,
   steps,
   stepInfos,
-  isWorkflowFilteringEnabled,
   isWorkflowBranchEnabled,
 }: {
   trigger: WorkflowTrigger;
   steps: Array<WorkflowStep>;
   stepInfos: WorkflowRunStepInfos | undefined;
-  isWorkflowFilteringEnabled: boolean;
   isWorkflowBranchEnabled: boolean;
 }): {
   diagram: WorkflowRunDiagram;
@@ -46,7 +44,7 @@ export const generateWorkflowRunDiagram = ({
   const workflowDiagram = generateWorkflowDiagram({
     trigger,
     steps,
-    defaultEdgeType: 'filtering-disabled--readonly',
+    defaultEdgeType: 'empty-filter--readonly',
   });
 
   const workflowRunDiagramNodes: WorkflowRunDiagramNode[] =
@@ -91,9 +89,7 @@ export const generateWorkflowRunDiagram = ({
 
     const stepInfo = stepInfos?.[parentNode.id];
 
-    const edgeType: WorkflowDiagramEdgeType = isWorkflowFilteringEnabled
-      ? 'empty-filter--run'
-      : 'filtering-disabled--run';
+    const edgeType: WorkflowDiagramEdgeType = 'empty-filter--run';
 
     return {
       ...edge,
@@ -105,16 +101,6 @@ export const generateWorkflowRunDiagram = ({
       } satisfies WorkflowDiagramEdgeData,
     };
   });
-
-  if (!isWorkflowFilteringEnabled) {
-    return {
-      diagram: {
-        nodes: workflowRunDiagramNodes,
-        edges: workflowRunDiagramEdges,
-      },
-      stepToOpenByDefault,
-    };
-  }
 
   return {
     diagram: transformFilterNodesAsEdges({

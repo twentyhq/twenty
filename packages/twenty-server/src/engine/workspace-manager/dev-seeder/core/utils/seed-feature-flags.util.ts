@@ -41,11 +41,6 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
         key: FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
         workspaceId: workspaceId,
         value: false,
