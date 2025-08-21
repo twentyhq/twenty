@@ -9,4 +9,5 @@ export type WorkspaceMigrationActionRunnerArgs<
   queryRunner: QueryRunner;
   action: T;
   flatObjectMetadataMaps: FlatObjectMetadataMaps;
+  workspaceId: string;
 };
