@@ -10,7 +10,7 @@ import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/
 export const updateOneObjectMetadata = async ({
   input,
   gqlFields,
-  expectToFail = false,
+  expectToFail,
 }: PerformMetadataQueryParams<UpdateOneObjectFactoryInput>) => {
   const graphqlOperation = updateOneObjectMetadataQueryFactory({
     input,

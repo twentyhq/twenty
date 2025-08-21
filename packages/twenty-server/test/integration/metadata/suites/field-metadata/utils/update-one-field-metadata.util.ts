@@ -8,11 +8,12 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 
 export const updateOneFieldMetadata = async ({
   input,
   gqlFields,
-  expectToFail = false,
+  expectToFail,
 }: PerformMetadataQueryParams<UpdateOneFieldFactoryInput>): CommonResponseBody<{
   updateOneField: FieldMetadataEntity;
 }> => {
@@ -23,10 +24,17 @@ export const updateOneFieldMetadata = async ({
 
   const response = await makeGraphqlAPIRequest(graphqlOperation);
 
-  if (expectToFail) {
+  if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
       errorMessage: 'Field Metadata update should have failed but did not',
+    });
+  }
+
+  if (expectToFail === false) {
+    warnIfErrorButNotExpectedToFail({
+      errorMessage: 'Field metadata update should not have fail',
+      response,
     });
   }
 
