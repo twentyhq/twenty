@@ -100,6 +100,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
       const options = (createFieldInput?.options ?? []).map<
         FieldMetadataOptions<typeof createFieldInput.type>[number]
       >((option) => ({
+        id: v4(),
         ...trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
           option as FieldMetadataOptions<typeof createFieldInput.type>[number],
           ['label', 'value', 'id', 'color'],
