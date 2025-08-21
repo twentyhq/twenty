@@ -132,7 +132,7 @@ export const GraphWidgetGaugeChart = ({
 
   const displayValue = formatValue(value);
 
-  const normalizedValue = ((value - min) / (max - min)) * 100;
+  const normalizedValue = max === min ? 0 : ((value - min) / (max - min)) * 100;
   const clampedNormalizedValue = Math.max(0, Math.min(100, normalizedValue));
 
   const data = [
