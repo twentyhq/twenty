@@ -10,11 +10,9 @@ import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePic
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { H2Title, IconShield, Status } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SettingsProfile = () => {
@@ -22,10 +20,6 @@ export const SettingsProfile = () => {
 
   const { currentUserWorkspaceTwoFactorAuthenticationMethods } =
     useCurrentUserWorkspaceTwoFactorAuthentication();
-
-  const isTwoFactorAuthenticationEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_ENABLED,
-  );
 
   const has2FAMethod =
     currentUserWorkspaceTwoFactorAuthenticationMethods['TOTP']?.status ===
@@ -61,32 +55,30 @@ export const SettingsProfile = () => {
           />
           <EmailField />
         </Section>
-        {isTwoFactorAuthenticationEnabled && (
-          <Section>
-            <H2Title
-              title={t`Two Factor Authentication`}
-              description={t`Enhances security by requiring a code along with your password`}
+        <Section>
+          <H2Title
+            title={t`Two Factor Authentication`}
+            description={t`Enhances security by requiring a code along with your password`}
+          />
+          <UndecoratedLink
+            to={getSettingsPath(
+              SettingsPath.TwoFactorAuthenticationStrategyConfig,
+              { twoFactorAuthenticationStrategy: 'TOTP' },
+            )}
+          >
+            <SettingsCard
+              title={t`Authenticator App`}
+              Icon={<IconShield />}
+              Status={
+                has2FAMethod ? (
+                  <Status text={'Active'} color={'turquoise'} />
+                ) : (
+                  <Status text={'Deactivated'} color={'gray'} />
+                )
+              }
             />
-            <UndecoratedLink
-              to={getSettingsPath(
-                SettingsPath.TwoFactorAuthenticationStrategyConfig,
-                { twoFactorAuthenticationStrategy: 'TOTP' },
-              )}
-            >
-              <SettingsCard
-                title={t`Authenticator App`}
-                Icon={<IconShield />}
-                Status={
-                  has2FAMethod ? (
-                    <Status text={'Active'} color={'turquoise'} />
-                  ) : (
-                    <Status text={'Setup'} color={'blue'} />
-                  )
-                }
-              />
-            </UndecoratedLink>
-          </Section>
-        )}
+          </UndecoratedLink>
+        </Section>
         <Section>
           <ChangePassword />
         </Section>

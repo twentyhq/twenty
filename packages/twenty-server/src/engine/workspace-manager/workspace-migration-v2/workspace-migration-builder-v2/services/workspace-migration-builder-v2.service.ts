@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { type FromTo } from 'twenty-shared/types';
 
-import { FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { FailedFlatObjectMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
+import { FailedFlatObjectMetadataValidation } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
 import { fromFlatObjectMetadataMapsToFlatObjectMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-maps-to-flat-object-metadatas.util';
 import { deletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-manager/workspace-migration-v2/utils/deleted-created-updated-matrix-dispatcher.util';
 import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-v2-field-actions-builder.service';
@@ -18,6 +18,19 @@ import { buildWorkspaceMigrationIndexActions } from 'src/engine/workspace-manage
 export type WorkspaceMigrationV2BuilderOptions = {
   inferDeletionFromMissingObjectFieldIndex: boolean;
   isSystemBuild: boolean;
+};
+
+type SuccessfulWorkspaceMigrationBuildResult = {
+  status: 'success';
+  workspaceMigration: WorkspaceMigrationV2;
+};
+
+export type FailedWorkspaceMigrationBuildResult = {
+  status: 'fail';
+  errors: (
+    | FailedFlatObjectMetadataValidation
+    | FailedFlatFieldMetadataValidation
+  )[];
 };
 
 export type WorkspaceMigrationBuildArgs = {
@@ -37,17 +50,8 @@ export class WorkspaceMigrationBuilderV2Service {
     workspaceId,
     buildOptions,
   }: WorkspaceMigrationBuildArgs): Promise<
-    | {
-        status: 'fail';
-        errors: (
-          | FailedFlatObjectMetadataValidationExceptions
-          | FailedFlatFieldMetadataValidationExceptions
-        )[];
-      }
-    | {
-        status: 'success';
-        workspaceMigration: WorkspaceMigrationV2;
-      }
+    | SuccessfulWorkspaceMigrationBuildResult
+    | FailedWorkspaceMigrationBuildResult
   > {
     const fromFlatObjectMetadatas =
       fromFlatObjectMetadataMapsToFlatObjectMetadatas(

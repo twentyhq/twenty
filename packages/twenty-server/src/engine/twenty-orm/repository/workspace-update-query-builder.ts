@@ -13,7 +13,6 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 import { type RelationConnectQueryConfig } from 'src/engine/twenty-orm/entity-manager/types/relation-connect-query-config.type';
 import { type RelationDisconnectQueryFieldsByEntityIndex } from 'src/engine/twenty-orm/entity-manager/types/relation-nested-query-fields-by-entity-index.type';
@@ -91,8 +90,6 @@ export class WorkspaceUpdateQueryBuilder<
         objectsPermissions: this.objectRecordsPermissions,
         objectMetadataMaps: this.internalContext.objectMetadataMaps,
         shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
-        isFieldPermissionsEnabled:
-          this.featureFlagMap?.[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED],
       });
 
       const mainAliasTarget = this.getMainAliasTarget();
@@ -202,8 +199,6 @@ export class WorkspaceUpdateQueryBuilder<
           objectsPermissions: this.objectRecordsPermissions,
           objectMetadataMaps: this.internalContext.objectMetadataMaps,
           shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
-          isFieldPermissionsEnabled:
-            this.featureFlagMap?.[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED],
         });
       }
 

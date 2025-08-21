@@ -1,0 +1,1408 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Object metadata creation should fail v2 when labelPlural contains only whitespace 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Object label is too short",
+              "value": "",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "listingas",
+          "nameSingular": "listinga",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 0 field(s)",
+    "summary": {
+      "invalidFields": 0,
+      "invalidObjects": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when labelPlural exceeds maximum length 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Object label is too long",
+              "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "listingas",
+          "nameSingular": "listinga",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 0 field(s)",
+    "summary": {
+      "invalidFields": 0,
+      "invalidObjects": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when labelPlural is empty 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Object label is too short",
+              "value": "",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "listingas",
+          "nameSingular": "listinga",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 0 field(s)",
+    "summary": {
+      "invalidFields": 0,
+      "invalidObjects": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when labelSingular contains only whitespace 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Object label is too short",
+              "value": "",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "listingas",
+          "nameSingular": "listinga",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 0 field(s)",
+    "summary": {
+      "invalidFields": 0,
+      "invalidObjects": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when labelSingular exceeds maximum length 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Object label is too long",
+              "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "listingas",
+          "nameSingular": "listinga",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 0 field(s)",
+    "summary": {
+      "invalidFields": 0,
+      "invalidObjects": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when labelSingular is empty 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Object label is too short",
+              "value": "",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "listingas",
+          "nameSingular": "listinga",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 0 field(s)",
+    "summary": {
+      "invalidFields": 0,
+      "invalidObjects": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when labels are identical 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "The singular and plural labels cannot be the same for an object",
+              "userFriendlyMessage": "The singular and plural labels cannot be the same for an object",
+              "value": "FooBar",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "listingas",
+          "nameSingular": "listinga",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 0 field(s)",
+    "summary": {
+      "invalidFields": 0,
+      "invalidObjects": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when labels with whitespaces result to be identical 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "The singular and plural labels cannot be the same for an object",
+              "userFriendlyMessage": "The singular and plural labels cannot be the same for an object",
+              "value": "FooBar",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "listingas",
+          "nameSingular": "listinga",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 0 field(s)",
+    "summary": {
+      "invalidFields": 0,
+      "invalidObjects": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when name exceeds maximum length 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too long",
+              "userFriendlyMessage": "Name is too long",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            },
+          ],
+          "id": Any<String>,
+          "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too long",
+              "userFriendlyMessage": "Name is too long",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            },
+          ],
+          "id": Any<String>,
+          "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too long",
+              "userFriendlyMessage": "Name is too long",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            },
+          ],
+          "id": Any<String>,
+          "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too long",
+              "userFriendlyMessage": "Name is too long",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            },
+          ],
+          "id": Any<String>,
+          "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too long",
+              "userFriendlyMessage": "Name is too long",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            },
+          ],
+          "id": Any<String>,
+          "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Name is too long",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "listingas",
+          "nameSingular": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 5 field(s)",
+    "summary": {
+      "invalidFields": 5,
+      "invalidObjects": 1,
+      "totalErrors": 6,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 5 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when namePlural has invalid characters 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "μ",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "μ",
+          "nameSingular": "listinga",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 0 field(s)",
+    "summary": {
+      "invalidFields": 0,
+      "invalidObjects": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when namePlural is a reserved keyword 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "The name is not available",
+              "value": "users",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "users",
+          "nameSingular": "listinga",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 0 field(s)",
+    "summary": {
+      "invalidFields": 0,
+      "invalidObjects": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when namePlural is an empty string 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "",
+          "nameSingular": "listinga",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 0 field(s)",
+    "summary": {
+      "invalidFields": 0,
+      "invalidObjects": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when namePlural is not camelCased 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Name should be in camelCase",
+              "value": "Not_Camel_Case",
+            },
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "Not_Camel_Case",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "Not_Camel_Case",
+          "nameSingular": "listinga",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 0 field(s)",
+    "summary": {
+      "invalidFields": 0,
+      "invalidObjects": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when nameSingular contains only one char and whitespaces 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
+              "value": "a a",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "a a",
+            },
+          ],
+          "id": Any<String>,
+          "name": "a a",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
+              "value": "a a",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "a a",
+            },
+          ],
+          "id": Any<String>,
+          "name": "a a",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
+              "value": "a a",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "a a",
+            },
+          ],
+          "id": Any<String>,
+          "name": "a a",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
+              "value": "a a",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "a a",
+            },
+          ],
+          "id": Any<String>,
+          "name": "a a",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
+              "value": "a a",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "a a",
+            },
+          ],
+          "id": Any<String>,
+          "name": "a a",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Name should be in camelCase",
+              "value": "a a",
+            },
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "a a",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "listingas",
+          "nameSingular": "a a",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 5 field(s)",
+    "summary": {
+      "invalidFields": 5,
+      "invalidObjects": 1,
+      "totalErrors": 6,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 5 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when nameSingular contains only whitespaces 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "id": Any<String>,
+          "name": "",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "id": Any<String>,
+          "name": "",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "id": Any<String>,
+          "name": "",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "id": Any<String>,
+          "name": "",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "id": Any<String>,
+          "name": "",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "listingas",
+          "nameSingular": "",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 5 field(s)",
+    "summary": {
+      "invalidFields": 5,
+      "invalidObjects": 1,
+      "totalErrors": 6,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 5 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when nameSingular has invalid characters 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "μ",
+            },
+          ],
+          "id": Any<String>,
+          "name": "μ",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "μ",
+            },
+          ],
+          "id": Any<String>,
+          "name": "μ",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "μ",
+            },
+          ],
+          "id": Any<String>,
+          "name": "μ",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "μ",
+            },
+          ],
+          "id": Any<String>,
+          "name": "μ",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "μ",
+            },
+          ],
+          "id": Any<String>,
+          "name": "μ",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "μ",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "listingas",
+          "nameSingular": "μ",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 5 field(s)",
+    "summary": {
+      "invalidFields": 5,
+      "invalidObjects": 1,
+      "totalErrors": 6,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 5 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when nameSingular is a reserved keyword 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "The name is not available",
+              "userFriendlyMessage": "The name is not available",
+              "value": "user",
+            },
+          ],
+          "id": Any<String>,
+          "name": "user",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "The name is not available",
+              "userFriendlyMessage": "The name is not available",
+              "value": "user",
+            },
+          ],
+          "id": Any<String>,
+          "name": "user",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "The name is not available",
+              "userFriendlyMessage": "The name is not available",
+              "value": "user",
+            },
+          ],
+          "id": Any<String>,
+          "name": "user",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "The name is not available",
+              "userFriendlyMessage": "The name is not available",
+              "value": "user",
+            },
+          ],
+          "id": Any<String>,
+          "name": "user",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "The name is not available",
+              "userFriendlyMessage": "The name is not available",
+              "value": "user",
+            },
+          ],
+          "id": Any<String>,
+          "name": "user",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "The name is not available",
+              "value": "user",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "listingas",
+          "nameSingular": "user",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 5 field(s)",
+    "summary": {
+      "invalidFields": 5,
+      "invalidObjects": 1,
+      "totalErrors": 6,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 5 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when nameSingular is an empty string 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "id": Any<String>,
+          "name": "",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "id": Any<String>,
+          "name": "",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "id": Any<String>,
+          "name": "",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "id": Any<String>,
+          "name": "",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "id": Any<String>,
+          "name": "",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "listingas",
+          "nameSingular": "",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 5 field(s)",
+    "summary": {
+      "invalidFields": 5,
+      "invalidObjects": 1,
+      "totalErrors": 6,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 5 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when nameSingular is not camelCased 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
+              "value": "Not_Camel_Case",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "Not_Camel_Case",
+            },
+          ],
+          "id": Any<String>,
+          "name": "Not_Camel_Case",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
+              "value": "Not_Camel_Case",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "Not_Camel_Case",
+            },
+          ],
+          "id": Any<String>,
+          "name": "Not_Camel_Case",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
+              "value": "Not_Camel_Case",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "Not_Camel_Case",
+            },
+          ],
+          "id": Any<String>,
+          "name": "Not_Camel_Case",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
+              "value": "Not_Camel_Case",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "Not_Camel_Case",
+            },
+          ],
+          "id": Any<String>,
+          "name": "Not_Camel_Case",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name should be in camelCase",
+              "userFriendlyMessage": "Name should be in camelCase",
+              "value": "Not_Camel_Case",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "Not_Camel_Case",
+            },
+          ],
+          "id": Any<String>,
+          "name": "Not_Camel_Case",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Name should be in camelCase",
+              "value": "Not_Camel_Case",
+            },
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "Not_Camel_Case",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "listingas",
+          "nameSingular": "Not_Camel_Case",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 5 field(s)",
+    "summary": {
+      "invalidFields": 5,
+      "invalidObjects": 1,
+      "totalErrors": 6,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 5 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when names are identical 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "The singular and plural names cannot be the same for an object",
+              "userFriendlyMessage": "The singular and plural names cannot be the same for an object",
+              "value": "fooBar",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "fooBar",
+          "nameSingular": "fooBar",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 0 field(s)",
+    "summary": {
+      "invalidFields": 0,
+      "invalidObjects": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Object metadata creation should fail v2 when names with whitespaces result to be identical 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [],
+      "objectMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_OBJECT_INPUT",
+              "message": "The singular and plural names cannot be the same for an object",
+              "userFriendlyMessage": "The singular and plural names cannot be the same for an object",
+              "value": "fooBar",
+            },
+          ],
+          "fields": [],
+          "id": Any<String>,
+          "namePlural": "fooBar",
+          "nameSingular": "fooBar",
+          "operation": "create_object",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 object(s) and 0 field(s)",
+    "summary": {
+      "invalidFields": 0,
+      "invalidObjects": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 1 object(s) and 0 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating object",
+  "name": "GraphQLError",
+}
+`;

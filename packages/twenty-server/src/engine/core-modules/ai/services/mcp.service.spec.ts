@@ -108,17 +108,17 @@ describe('McpService', () => {
       const requestId = '123';
       const result = service.handleInitialize(requestId);
 
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         id: requestId,
         jsonrpc: '2.0',
-        result: {
+        result: expect.objectContaining({
           ...MCP_SERVER_METADATA,
           capabilities: {
             tools: { listChanged: false },
             resources: { listChanged: false },
             prompts: { listChanged: false },
           },
-        },
+        }),
       });
     });
   });
@@ -163,7 +163,7 @@ describe('McpService', () => {
     });
   });
 
-  describe('executeTool', () => {
+  describe('handleMCPCoreQuery', () => {
     it('should handle initialize method', async () => {
       featureFlagService.isFeatureEnabled.mockResolvedValue(true);
 
@@ -173,22 +173,22 @@ describe('McpService', () => {
         id: '123',
       };
 
-      const result = await service.executeTool(mockRequest, {
+      const result = await service.handleMCPCoreQuery(mockRequest, {
         workspace: mockWorkspace,
         userWorkspaceId: mockUserWorkspaceId,
       });
 
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         id: '123',
         jsonrpc: '2.0',
-        result: {
+        result: expect.objectContaining({
           ...MCP_SERVER_METADATA,
           capabilities: {
             tools: { listChanged: false },
             resources: { listChanged: false },
             prompts: { listChanged: false },
           },
-        },
+        }),
       });
     });
 
@@ -215,7 +215,7 @@ describe('McpService', () => {
         id: '123',
       };
 
-      const result = await service.executeTool(mockRequest, {
+      const result = await service.handleMCPCoreQuery(mockRequest, {
         workspace: mockWorkspace,
         userWorkspaceId: mockUserWorkspaceId,
       });
@@ -263,7 +263,7 @@ describe('McpService', () => {
         id: '123',
       };
 
-      const result = await service.executeTool(mockRequest, {
+      const result = await service.handleMCPCoreQuery(mockRequest, {
         workspace: mockWorkspace,
         apiKey: mockApiKey,
       });
@@ -312,15 +312,15 @@ describe('McpService', () => {
         id: '123',
       };
 
-      const result = await service.executeTool(mockRequest, {
+      const result = await service.handleMCPCoreQuery(mockRequest, {
         workspace: mockWorkspace,
         userWorkspaceId: mockUserWorkspaceId,
       });
 
-      expect(result).toEqual({
+      expect(result).toMatchObject({
         id: '123',
         jsonrpc: '2.0',
-        result: {
+        result: expect.objectContaining({
           ...MCP_SERVER_METADATA,
           capabilities: {
             tools: { listChanged: false },
@@ -332,7 +332,7 @@ describe('McpService', () => {
               inputSchema: { type: 'object', properties: {} },
             },
           ],
-        },
+        }),
       });
     });
 
@@ -345,7 +345,7 @@ describe('McpService', () => {
         id: '123',
       };
 
-      const result = await service.executeTool(mockRequest, {
+      const result = await service.handleMCPCoreQuery(mockRequest, {
         workspace: mockWorkspace,
         userWorkspaceId: mockUserWorkspaceId,
       });
@@ -373,7 +373,7 @@ describe('McpService', () => {
         id: '123',
       };
 
-      const result = await service.executeTool(mockRequest, {
+      const result = await service.handleMCPCoreQuery(mockRequest, {
         workspace: mockWorkspace,
         userWorkspaceId: mockUserWorkspaceId,
       });

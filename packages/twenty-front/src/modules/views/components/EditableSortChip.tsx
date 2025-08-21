@@ -1,4 +1,4 @@
-import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { useFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useFieldMetadataItemByIdOrThrow';
 import { useRemoveRecordSort } from '@/object-record/record-sort/hooks/useRemoveRecordSort';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
@@ -18,7 +18,7 @@ export const EditableSortChip = ({ recordSort }: EditableSortChipProps) => {
     removeRecordSort(recordSort.fieldMetadataId);
   };
 
-  const { fieldMetadataItem } = useFieldMetadataItemById(
+  const { fieldMetadataItem } = useFieldMetadataItemByIdOrThrow(
     recordSort.fieldMetadataId,
   );
 

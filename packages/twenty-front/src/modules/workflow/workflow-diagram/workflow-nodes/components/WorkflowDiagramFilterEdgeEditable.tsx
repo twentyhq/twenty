@@ -251,15 +251,6 @@ export const WorkflowDiagramFilterEdgeEditable = ({
                 >
                   <DropdownMenuItemsContainer>
                     <MenuItem
-                      text="Filter"
-                      LeftIcon={IconFilter}
-                      onClick={() => {
-                        closeDropdown(dropdownId);
-
-                        handleFilterButtonClick();
-                      }}
-                    />
-                    <MenuItem
                       text={t`Remove filter`}
                       LeftIcon={IconFilterX}
                       onClick={handleRemoveFilterButtonClick}

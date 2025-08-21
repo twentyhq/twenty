@@ -41,26 +41,16 @@ const StyledLabelAndIconContainer = styled.div`
   height: 24px;
 `;
 
-const StyledValueContainer = styled.div<{ readonly: boolean }>`
+const StyledValueContainer = styled.div<{
+  readonly: boolean;
+}>`
   display: flex;
   min-width: 0;
   position: relative;
   width: 100%;
 
-  &:hover {
-    ${({ readonly, theme }) =>
-      readonly &&
-      `
-      border-radius: ${theme.border.radius.sm};
-      
-      ${StyledIconContainer}, ${StyledLabelContainer} {
-        color: ${theme.font.color.secondary};
-      }
-      
-      img {
-        opacity: 0.64;
-      }
-    `}
+  &:hover .record-inline-cell-value-display {
+    opacity: 0;
   }
 `;
 
@@ -152,7 +142,7 @@ export const RecordInlineCellContainer = () => {
       )}
 
       <StyledValueContainer readonly={readonly ?? false} id={anchorId}>
-        <RecordInlineCellValue />
+        <RecordInlineCellValue className="record-inline-cell-value-display" />
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>
   );

@@ -87,6 +87,12 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
       objectMetadataItemId: objectMetadataItem.id,
     });
 
+  const shouldShowSeeTableHeader = !cannotAllowFieldReadRestrict;
+  const shouldShowUpdateTableHeader =
+    !cannotAllowFieldReadRestrict && !cannotAllowFieldUpdateRestrict;
+  const shouldShowEmptyTableHeader =
+    cannotAllowFieldReadRestrict && cannotAllowFieldUpdateRestrict;
+
   return (
     <Section>
       <H2Title
@@ -113,20 +119,19 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
           <TableHeader>
             <TableHeaderText>{t`Data type`}</TableHeaderText>
           </TableHeader>
-          {cannotAllowFieldReadRestrict ? (
-            <TableHeader></TableHeader>
-          ) : (
-            <TableHeader>
-              <TableHeaderText>{t`See`}</TableHeaderText>
-            </TableHeader>
-          )}
-          {cannotAllowFieldUpdateRestrict ? (
-            <TableHeader></TableHeader>
-          ) : (
-            <TableHeader>
-              <TableHeaderText>{t`Edit`}</TableHeaderText>
-            </TableHeader>
-          )}
+          <>
+            {shouldShowEmptyTableHeader && <TableHeader />}
+            {shouldShowSeeTableHeader && (
+              <TableHeader>
+                <TableHeaderText>{t`See`}</TableHeaderText>
+              </TableHeader>
+            )}
+            {shouldShowUpdateTableHeader && (
+              <TableHeader>
+                <TableHeaderText>{t`Edit`}</TableHeaderText>
+              </TableHeader>
+            )}
+          </>
         </StyledObjectFieldTableRow>
         <SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHeaderRow
           roleId={roleId}
