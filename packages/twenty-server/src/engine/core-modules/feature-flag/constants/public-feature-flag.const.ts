@@ -32,15 +32,6 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
-    key: FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED,
-    metadata: {
-      label: 'Fields Permissions',
-      description: 'Configure permissions at field-level for your workspace',
-      imagePath:
-        'https://twenty.com/images/lab/is-fields-permissions-enabled.png',
-    },
-  },
-  {
     key: FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
     metadata: {
       label: 'Workflow Filter Step',

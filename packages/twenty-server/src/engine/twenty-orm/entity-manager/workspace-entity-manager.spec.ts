@@ -133,7 +133,6 @@ describe('WorkspaceEntityManager', () => {
         IS_WORKFLOW_FILTERING_ENABLED: false,
         IS_WORKFLOW_BRANCH_ENABLED: false,
         IS_RELATION_CONNECT_ENABLED: false,
-        IS_FIELDS_PERMISSIONS_ENABLED: false,
         IS_CORE_VIEW_SYNCING_ENABLED: false,
         IS_CORE_VIEW_ENABLED: false,
         IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
@@ -159,7 +158,6 @@ describe('WorkspaceEntityManager', () => {
         IS_MORPH_RELATION_ENABLED: false,
         IS_WORKFLOW_FILTERING_ENABLED: false,
         IS_RELATION_CONNECT_ENABLED: false,
-        IS_FIELDS_PERMISSIONS_ENABLED: true,
         IS_CORE_VIEW_SYNCING_ENABLED: false,
         IS_TWO_FACTOR_AUTHENTICATION_ENABLED: false,
       },
@@ -236,10 +234,6 @@ describe('WorkspaceEntityManager', () => {
       .mockImplementation(
         ({ formattedResult }: { formattedResult: string[] }) => formattedResult,
       );
-
-    jest.spyOn(entityManager as any, 'getFeatureFlagMap').mockReturnValue({
-      IS_FIELDS_PERMISSIONS_ENABLED: true,
-    });
 
     jest
       .spyOn(entityManager as any, 'extractTargetNameSingularFromEntityTarget')
@@ -329,7 +323,6 @@ describe('WorkspaceEntityManager', () => {
       });
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
-        isFieldPermissionsEnabled: true,
         operationType: 'update',
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectsPermissions: mockPermissionOptions.objectRecordsPermissions,
@@ -364,7 +357,6 @@ describe('WorkspaceEntityManager', () => {
       expect(validateOperationIsPermittedOrThrow).toHaveBeenCalledWith({
         entityName: 'test-entity',
         operationType: 'delete',
-        isFieldPermissionsEnabled: true,
         objectMetadataMaps: mockInternalContext.objectMetadataMaps,
         objectsPermissions: mockPermissionOptions.objectRecordsPermissions,
         selectedColumns: [],

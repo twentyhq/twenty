@@ -132,14 +132,6 @@ export class FeatureFlagService {
       { workspaceId },
     );
 
-    if (featureFlag === FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED) {
-      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
-        {
-          workspaceId,
-        },
-      );
-    }
-
     return result;
   }
 }

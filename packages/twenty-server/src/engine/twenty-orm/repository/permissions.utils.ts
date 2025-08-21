@@ -41,7 +41,6 @@ type ValidateOperationIsPermittedOrThrowArgs = {
   objectsPermissions: ObjectsPermissionsDeprecated;
   objectMetadataMaps: ObjectMetadataMaps;
   selectedColumns: string[] | '*';
-  isFieldPermissionsEnabled?: boolean;
   allFieldsSelected: boolean;
   updatedColumns: string[];
 };
@@ -52,7 +51,6 @@ export const validateOperationIsPermittedOrThrow = ({
   objectsPermissions,
   objectMetadataMaps,
   selectedColumns,
-  isFieldPermissionsEnabled,
   allFieldsSelected,
   updatedColumns,
 }: ValidateOperationIsPermittedOrThrowArgs) => {
@@ -81,9 +79,8 @@ export const validateOperationIsPermittedOrThrow = ({
     return;
   }
 
-  const columnNameToFieldMetadataIdMap = isFieldPermissionsEnabled
-    ? getColumnNameToFieldMetadataIdMap(objectMetadata)
-    : {};
+  const columnNameToFieldMetadataIdMap =
+    getColumnNameToFieldMetadataIdMap(objectMetadata);
 
   const permissionsForEntity = objectsPermissions[objectMetadataIdForEntity];
 
@@ -96,14 +93,12 @@ export const validateOperationIsPermittedOrThrow = ({
         );
       }
 
-      if (isFieldPermissionsEnabled) {
-        validateReadFieldPermissionOrThrow({
-          restrictedFields: permissionsForEntity.restrictedFields,
-          selectedColumns,
-          columnNameToFieldMetadataIdMap,
-          allFieldsSelected,
-        });
-      }
+      validateReadFieldPermissionOrThrow({
+        restrictedFields: permissionsForEntity.restrictedFields,
+        selectedColumns,
+        columnNameToFieldMetadataIdMap,
+        allFieldsSelected,
+      });
       break;
     case 'insert':
     case 'update':
@@ -114,15 +109,13 @@ export const validateOperationIsPermittedOrThrow = ({
         );
       }
 
-      if (isFieldPermissionsEnabled) {
-        validateReadFieldPermissionOrThrow({
-          restrictedFields: permissionsForEntity.restrictedFields,
-          selectedColumns,
-          columnNameToFieldMetadataIdMap,
-        });
-      }
+      validateReadFieldPermissionOrThrow({
+        restrictedFields: permissionsForEntity.restrictedFields,
+        selectedColumns,
+        columnNameToFieldMetadataIdMap,
+      });
 
-      if (isFieldPermissionsEnabled && updatedColumns.length > 0) {
+      if (updatedColumns.length > 0) {
         validateUpdateFieldPermissionOrThrow({
           restrictedFields: permissionsForEntity.restrictedFields,
           updatedColumns,
@@ -138,13 +131,11 @@ export const validateOperationIsPermittedOrThrow = ({
         );
       }
 
-      if (isFieldPermissionsEnabled) {
-        validateReadFieldPermissionOrThrow({
-          restrictedFields: permissionsForEntity.restrictedFields,
-          selectedColumns,
-          columnNameToFieldMetadataIdMap,
-        });
-      }
+      validateReadFieldPermissionOrThrow({
+        restrictedFields: permissionsForEntity.restrictedFields,
+        selectedColumns,
+        columnNameToFieldMetadataIdMap,
+      });
       break;
     case 'restore':
     case 'soft-delete':
@@ -155,13 +146,11 @@ export const validateOperationIsPermittedOrThrow = ({
         );
       }
 
-      if (isFieldPermissionsEnabled) {
-        validateReadFieldPermissionOrThrow({
-          restrictedFields: permissionsForEntity.restrictedFields,
-          selectedColumns,
-          columnNameToFieldMetadataIdMap,
-        });
-      }
+      validateReadFieldPermissionOrThrow({
+        restrictedFields: permissionsForEntity.restrictedFields,
+        selectedColumns,
+        columnNameToFieldMetadataIdMap,
+      });
       break;
     default:
       throw new PermissionsException(
@@ -180,7 +169,6 @@ type ValidateQueryIsPermittedOrThrowArgs = {
   objectsPermissions: ObjectsPermissionsDeprecated;
   objectMetadataMaps: ObjectMetadataMaps;
   shouldBypassPermissionChecks: boolean;
-  isFieldPermissionsEnabled?: boolean;
 };
 
 export const validateQueryIsPermittedOrThrow = ({
@@ -188,7 +176,6 @@ export const validateQueryIsPermittedOrThrow = ({
   objectsPermissions,
   objectMetadataMaps,
   shouldBypassPermissionChecks,
-  isFieldPermissionsEnabled,
 }: ValidateQueryIsPermittedOrThrowArgs) => {
   if (shouldBypassPermissionChecks) {
     return;
@@ -204,31 +191,29 @@ export const validateQueryIsPermittedOrThrow = ({
   let selectedColumns: string[] | '*' = [];
   let updatedColumns: string[] = [];
 
-  if (isFieldPermissionsEnabled) {
-    selectedColumns = getSelectedColumnsFromExpressionMap({
-      operationType,
-      expressionMap,
-      allFieldsSelected,
-    });
+  selectedColumns = getSelectedColumnsFromExpressionMap({
+    operationType,
+    expressionMap,
+    allFieldsSelected,
+  });
 
-    if (operationType !== 'select') {
-      const valuesSet = expressionMap.valuesSet;
+  if (operationType !== 'select') {
+    const valuesSet = expressionMap.valuesSet;
 
-      if (Array.isArray(valuesSet)) {
-        updatedColumns = valuesSet.reduce((acc, value) => {
-          const keys = Object.keys(value);
+    if (Array.isArray(valuesSet)) {
+      updatedColumns = valuesSet.reduce((acc, value) => {
+        const keys = Object.keys(value);
 
-          keys.forEach((key) => {
-            if (!acc.includes(key)) {
-              acc.push(key);
-            }
-          });
+        keys.forEach((key) => {
+          if (!acc.includes(key)) {
+            acc.push(key);
+          }
+        });
 
-          return acc;
-        }, []);
-      } else {
-        updatedColumns = Object.keys(valuesSet ?? {});
-      }
+        return acc;
+      }, []);
+    } else {
+      updatedColumns = Object.keys(valuesSet ?? {});
     }
   }
 
@@ -238,7 +223,6 @@ export const validateQueryIsPermittedOrThrow = ({
     objectsPermissions,
     objectMetadataMaps,
     selectedColumns,
-    isFieldPermissionsEnabled,
     allFieldsSelected,
     updatedColumns,
   });
