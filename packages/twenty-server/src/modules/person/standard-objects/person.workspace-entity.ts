@@ -42,6 +42,7 @@ import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/tas
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { MktStaffStatusHistoryWorkspaceEntity } from 'src/mkt-core/mkt-staff-status-history/mkt-staff-status-history.workspace-entity';
 import { MktDepartmentWorkspaceEntity } from 'src/mkt-core/mkt-department/mkt-department.workspace-entity';
+import { MktEmploymentStatusWorkspaceEntity } from 'src/mkt-core/mkt-employment-status/mkt-employment-status.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
@@ -335,14 +336,20 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   organizationLevelId: string | null;
 
-  @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.employmentStatusId,
-    type: FieldMetadataType.TEXT,
-    label: msg`Employment Status ID`,
-    description: msg`Reference to employment status`,
+  @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.employmentStatus,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Employment Status`,
+    description: msg`Person's employment status`,
     icon: 'IconUserCheck',
+    inverseSideTarget: () => MktEmploymentStatusWorkspaceEntity,
+    inverseSideFieldKey: 'people',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
+  employmentStatus: Relation<MktEmploymentStatusWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('employmentStatus')
   employmentStatusId: string | null;
 
   @WorkspaceField({

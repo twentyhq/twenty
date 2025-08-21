@@ -360,6 +360,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   searchVector: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
   organizationLevelId: '20202020-9a8b-4c5d-6e7f-8901234567a0',
   employmentStatusId: '20202020-0b9c-4d5e-6f80-9012345678a1',
+  employmentStatus: '20202020-5c3d-6e7f-8091-234567890123',
   statusStartDate: '20202020-1c0d-4e5f-7081-901234567890',
   statusExpectedEndDate: '20202020-2d1e-4f60-8192-012345678901',
   staffStatusHistories: '20202020-3e2f-5071-9203-123456789012',

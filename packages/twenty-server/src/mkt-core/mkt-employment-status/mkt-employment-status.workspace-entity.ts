@@ -1,14 +1,19 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MKT_EMPLOYMENT_STATUS_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @WorkspaceEntity({
   standardId: MKT_OBJECT_IDS.mktEmploymentStatus,
@@ -101,23 +106,23 @@ export class MktEmploymentStatusWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MKT_EMPLOYMENT_STATUS_FIELD_IDS.restrictions,
-    type: FieldMetadataType.RAW_JSON,
+    type: FieldMetadataType.TEXT,
     label: msg`Restrictions`,
     description: msg`Restrictions for this status`,
     icon: 'IconShieldCheck',
   })
   @WorkspaceIsNullable()
-  restrictions?: Record<string, unknown>;
+  restrictions?: string;
 
   @WorkspaceField({
     standardId: MKT_EMPLOYMENT_STATUS_FIELD_IDS.allowedNextStatuses,
-    type: FieldMetadataType.RAW_JSON,
+    type: FieldMetadataType.TEXT,
     label: msg`Allowed Next Statuses`,
     description: msg`Statuses that can be transitioned to`,
     icon: 'IconArrowRight',
   })
   @WorkspaceIsNullable()
-  allowedNextStatuses?: Record<string, unknown>;
+  allowedNextStatuses?: string;
 
   @WorkspaceField({
     standardId: MKT_EMPLOYMENT_STATUS_FIELD_IDS.displayOrder,
@@ -166,4 +171,16 @@ export class MktEmploymentStatusWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The creator of the record`,
   })
   createdBy: ActorMetadata;
+
+  // Relations
+  @WorkspaceRelation({
+    standardId: MKT_EMPLOYMENT_STATUS_FIELD_IDS.staffMembers,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`People`,
+    description: msg`People with this employment status`,
+    icon: 'IconUsers',
+    inverseSideTarget: () => PersonWorkspaceEntity,
+    inverseSideFieldKey: 'employmentStatus',
+  })
+  people: Relation<PersonWorkspaceEntity[]>;
 }
