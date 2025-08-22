@@ -52,7 +52,13 @@ export const Default: Story = {
   },
   render: (args) => (
     <Container>
-      <GraphWidgetPieChart {...args} />
+      <GraphWidgetPieChart
+        data={args.data}
+        unit={args.unit}
+        showLegend={args.showLegend}
+        tooltipHref={args.tooltipHref}
+        id={args.id}
+      />
     </Container>
   ),
 };
@@ -72,7 +78,13 @@ export const Revenue: Story = {
   },
   render: (args) => (
     <Container>
-      <GraphWidgetPieChart {...args} />
+      <GraphWidgetPieChart
+        data={args.data}
+        unit={args.unit}
+        showLegend={args.showLegend}
+        tooltipHref={args.tooltipHref}
+        id={args.id}
+      />
     </Container>
   ),
 };
@@ -91,7 +103,13 @@ export const TaskStatus: Story = {
   },
   render: (args) => (
     <Container>
-      <GraphWidgetPieChart {...args} />
+      <GraphWidgetPieChart
+        data={args.data}
+        unit={args.unit}
+        showLegend={args.showLegend}
+        tooltipHref={args.tooltipHref}
+        id={args.id}
+      />
     </Container>
   ),
 };
@@ -109,7 +127,13 @@ export const TwoSlices: Story = {
   },
   render: (args) => (
     <Container>
-      <GraphWidgetPieChart {...args} />
+      <GraphWidgetPieChart
+        data={args.data}
+        unit={args.unit}
+        showLegend={args.showLegend}
+        tooltipHref={args.tooltipHref}
+        id={args.id}
+      />
     </Container>
   ),
 };
@@ -133,7 +157,13 @@ export const ManySlices: Story = {
   },
   render: (args) => (
     <Container>
-      <GraphWidgetPieChart {...args} />
+      <GraphWidgetPieChart
+        data={args.data}
+        unit={args.unit}
+        showLegend={args.showLegend}
+        tooltipHref={args.tooltipHref}
+        id={args.id}
+      />
     </Container>
   ),
 };
@@ -152,7 +182,13 @@ export const WithoutLegend: Story = {
   },
   render: (args) => (
     <Container>
-      <GraphWidgetPieChart {...args} />
+      <GraphWidgetPieChart
+        data={args.data}
+        unit={args.unit}
+        showLegend={args.showLegend}
+        tooltipHref={args.tooltipHref}
+        id={args.id}
+      />
     </Container>
   ),
 };
@@ -172,7 +208,13 @@ export const MarketShare: Story = {
   },
   render: (args) => (
     <Container>
-      <GraphWidgetPieChart {...args} />
+      <GraphWidgetPieChart
+        data={args.data}
+        unit={args.unit}
+        showLegend={args.showLegend}
+        tooltipHref={args.tooltipHref}
+        id={args.id}
+      />
     </Container>
   ),
 };
@@ -192,7 +234,13 @@ export const Storage: Story = {
   },
   render: (args) => (
     <Container>
-      <GraphWidgetPieChart {...args} />
+      <GraphWidgetPieChart
+        data={args.data}
+        unit={args.unit}
+        showLegend={args.showLegend}
+        tooltipHref={args.tooltipHref}
+        id={args.id}
+      />
     </Container>
   ),
 };

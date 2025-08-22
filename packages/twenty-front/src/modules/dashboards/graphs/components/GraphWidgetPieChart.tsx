@@ -1,7 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
-import { ResponsivePie, type ComputedDatum, type DatumId } from '@nivo/pie';
+import {
+  ResponsivePie,
+  type ComputedDatum,
+  type DatumId,
+  type PieCustomLayerProps,
+} from '@nivo/pie';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight } from 'twenty-ui/display';
@@ -106,10 +111,10 @@ export const GraphWidgetPieChart = ({
 
   const dotColors = [
     theme.color.blue,
-    theme.color.green,
-    theme.color.orange,
-    theme.color.red,
     theme.color.purple,
+    theme.color.turquoise,
+    theme.color.orange,
+    theme.color.pink,
   ];
 
   const colorSchemes = [
@@ -124,9 +129,12 @@ export const GraphWidgetPieChart = ({
       hover: [theme.adaptiveColors.purple3, theme.adaptiveColors.purple4],
     },
     {
-      name: 'pink',
-      normal: [theme.adaptiveColors.pink1, theme.adaptiveColors.pink2],
-      hover: [theme.adaptiveColors.pink3, theme.adaptiveColors.pink4],
+      name: 'turquoise',
+      normal: [
+        theme.adaptiveColors.turquoise1,
+        theme.adaptiveColors.turquoise2,
+      ],
+      hover: [theme.adaptiveColors.turquoise3, theme.adaptiveColors.turquoise4],
     },
     {
       name: 'orange',
@@ -212,6 +220,62 @@ export const GraphWidgetPieChart = ({
     );
   };
 
+  // Map color scheme names to theme colors for the lines
+  const colorSchemeToThemeColor: Record<string, string> = {
+    blue: theme.color.blue,
+    purple: theme.color.purple,
+    turquoise: theme.color.turquoise,
+    orange: theme.color.orange,
+    pink: theme.color.pink,
+  };
+
+  const renderSliceEndLines = (
+    layerProps: PieCustomLayerProps<{
+      id: string;
+      value: number;
+      label?: string;
+    }>,
+  ) => {
+    const { dataWithArc, centerX, centerY, innerRadius, radius } = layerProps;
+
+    if (!dataWithArc || !Array.isArray(dataWithArc) || dataWithArc.length < 2) {
+      return null;
+    }
+
+    // Draw lines at the end of each slice (which creates lines between all slices)
+    return (
+      <g>
+        {dataWithArc.map((datum) => {
+          // Find the corresponding enriched data item to get the color scheme
+          const enrichedItem = enrichedData.find((d) => d.id === datum.id);
+          const lineColor = enrichedItem
+            ? colorSchemeToThemeColor[enrichedItem.colorScheme] ||
+              theme.border.color.strong
+            : theme.border.color.strong;
+
+          // Calculate line position at the end angle of this slice
+          const angle = datum.arc.endAngle - Math.PI / 2;
+          const x1 = centerX + Math.cos(angle) * innerRadius;
+          const y1 = centerY + Math.sin(angle) * innerRadius;
+          const x2 = centerX + Math.cos(angle) * radius;
+          const y2 = centerY + Math.sin(angle) * radius;
+
+          return (
+            <line
+              key={`${datum.id}-separator`}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
+              stroke={lineColor}
+              strokeWidth={1}
+            />
+          );
+        })}
+      </g>
+    );
+  };
+
   return (
     <StyledContainer id={id}>
       <StyledChartContainer>
@@ -228,6 +292,13 @@ export const GraphWidgetPieChart = ({
           onMouseLeave={() => setHoveredSliceId(null)}
           defs={defs}
           fill={fill}
+          layers={[
+            'arcs',
+            renderSliceEndLines,
+            'arcLinkLabels',
+            'arcLabels',
+            'legends',
+          ]}
         />
       </StyledChartContainer>
       {showLegend && (
