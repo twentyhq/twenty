@@ -4,7 +4,7 @@ import wyw from '@wyw-in-js/vite';
 import * as path from 'path';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
-import dts, { PluginOptions } from 'vite-plugin-dts';
+import dts, { type PluginOptions } from 'vite-plugin-dts';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
@@ -73,7 +73,7 @@ export default defineConfig(({ command }) => {
         plugins: [['@swc/plugin-emotion', {}]],
       }),
       tsconfigPaths({
-        projects: ['tsconfig.json'],
+        projects: ['tsconfig.lib.json'],
       }),
       svgr(),
       dts(dtsConfig),
