@@ -66,6 +66,7 @@ export const MKT_VARIANT_FIELD_IDS = {
   mktLicenses: '403d1410-7c35-4044-988e-2a7fbe8845ab',
   mktProduct: '7cfa6d7b-db26-4fb5-9beb-3ec348f9fed7',
   mktVariantAttribute: 'b57069ab-7e21-4823-a61f-8de0726bfbe1',
+  mktOrderItems: 'f0e7b2d7-aa06-4173-bb81-0b0060da95ae',
 
   // common relations or fields
   position: '03ed978a-61d9-46a6-8d28-bf0964437849',
