@@ -459,3 +459,50 @@ export const MKT_DEPARTMENT_FIELD_IDS = {
   position: 'f8a9b0c1-d2e3-4f5a-6b7c-8d9e0f1a2b3c',
   createdBy: 'a9b0c1d2-e3f4-5a6b-7c8d-9e0f1a2b3c4d',
 };
+
+export const MKT_KPI_FIELD_IDS = {
+  // basic kpi information
+  kpiName: '20202020-7a8b-9c0d-1e2f-3a4b5c6d7e8f',
+  kpiCode: '20202020-8b9c-0d1e-2f3a-4b5c6d7e8f9a',
+  kpiType: '20202020-9c0d-1e2f-3a4b-5c6d7e8f9a0b',
+  kpiCategory: '20202020-0d1e-2f3a-4b5c-6d7e8f9a0b1c',
+  description: '20202020-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
+
+  // target and actual values
+  targetValue: '20202020-2f3a-4b5c-6d7e-8f9a0b1c2d3e',
+  actualValue: '20202020-3a4b-5c6d-7e8f-9a0b1c2d3e4f',
+  unitOfMeasure: '20202020-4b5c-6d7e-8f9a-0b1c2d3e4f5a',
+
+  // time period
+  periodType: '20202020-5c6d-7e8f-9a0b-1c2d3e4f5a6b',
+  periodYear: '20202020-6d7e-8f9a-0b1c-2d3e4f5a6b7c',
+  periodQuarter: '20202020-7e8f-9a0b-1c2d-3e4f5a6b7c8d',
+  periodMonth: '20202020-8f9a-0b1c-2d3e-4f5a6b7c8d9e',
+  periodWeek: '20202020-9a0b-1c2d-3e4f-5a6b7c8d9e0f',
+  periodStartDate: '20202020-0b1c-2d3e-4f5a-6b7c8d9e0f1a',
+  periodEndDate: '20202020-1c2d-3e4f-5a6b-7c8d9e0f1a2b',
+
+  // assignment
+  assigneeType: '20202020-2d3e-4f5a-6b7c-8d9e0f1a2b3c',
+  assigneeWorkspaceMember: '20202020-3e4f-5a6b-7c8d-9e0f1a2b3c4d',
+  assigneeDepartment: '20202020-4f5a-6b7c-8d9e-0f1a2b3c4d5e',
+
+  // status and progress
+  status: '20202020-5a6b-7c8d-9e0f-1a2b3c4d5e6f',
+  achievedAt: '20202020-6b7c-8d9e-0f1a-2b3c4d5e6f7a',
+
+  // calculation configuration
+  isAutoCalculated: '20202020-7c8d-9e0f-1a2b-3c4d5e6f7a8b',
+  calculationFormula: '20202020-8d9e-0f1a-2b3c-4d5e6f7a8b9c',
+  alertThresholds: '20202020-9e0f-1a2b-3c4d-5e6f7a8b9c0d',
+
+  // additional information
+  notes: '20202020-0f1a-2b3c-4d5e-6f7a8b9c0d1e',
+  priority: '20202020-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
+  weight: '20202020-2b3c-4d5e-6f7a-8b9c0d1e2f3a',
+
+  // standard fields
+  position: '20202020-3c4d-5e6f-7a8b-9c0d1e2f3a4b',
+  createdBy: '20202020-4d5e-6f7a-8b9c-0d1e2f3a4b5c',
+  createdByPerson: '20202020-5e6f-7a8b-9c0d-1e2f3a4b5c6d',
+};

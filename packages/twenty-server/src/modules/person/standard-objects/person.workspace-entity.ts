@@ -44,6 +44,7 @@ import { MktStaffStatusHistoryWorkspaceEntity } from 'src/mkt-core/mkt-staff-sta
 import { MktDepartmentWorkspaceEntity } from 'src/mkt-core/mkt-department/mkt-department.workspace-entity';
 import { MktEmploymentStatusWorkspaceEntity } from 'src/mkt-core/mkt-employment-status/mkt-employment-status.workspace-entity';
 import { MktOrganizationLevelWorkspaceEntity } from 'src/mkt-core/mkt-organization-level/mkt-organization-level.workspace-entity';
+import { MktKpiWorkspaceEntity } from 'src/mkt-core/mkt-kpi/mkt-kpi.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
@@ -390,4 +391,17 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   staffStatusHistories: Relation<MktStaffStatusHistoryWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: PERSON_STANDARD_FIELD_IDS.createdKpis,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Created KPIs`,
+    description: msg`KPIs created by this person`,
+    icon: 'IconTarget',
+    inverseSideTarget: () => MktKpiWorkspaceEntity,
+    inverseSideFieldKey: 'createdByPerson',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsSystem()
+  createdKpis: Relation<MktKpiWorkspaceEntity[]>;
 }
