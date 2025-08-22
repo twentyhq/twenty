@@ -14,8 +14,18 @@ const meta: Meta<typeof GraphWidgetPieChart> = {
     data: {
       control: 'object',
     },
-    unit: {
+    displayType: {
+      control: 'select',
+      options: ['percentage', 'number', 'shortNumber', 'currency', 'custom'],
+    },
+    prefix: {
       control: 'text',
+    },
+    suffix: {
+      control: 'text',
+    },
+    decimals: {
+      control: 'number',
     },
     showLegend: {
       control: 'boolean',
@@ -45,7 +55,6 @@ export const Default: Story = {
       { id: 'proposal', value: 15, label: 'Proposal' },
       { id: 'negotiation', value: 5, label: 'Negotiation' },
     ],
-    unit: '',
     showLegend: true,
     tooltipHref: 'https://example.com/leads',
     id: 'pie-chart-default',
@@ -54,7 +63,10 @@ export const Default: Story = {
     <Container>
       <GraphWidgetPieChart
         data={args.data}
-        unit={args.unit}
+        displayType={args.displayType}
+        prefix={args.prefix}
+        suffix={args.suffix}
+        decimals={args.decimals}
         showLegend={args.showLegend}
         tooltipHref={args.tooltipHref}
         id={args.id}
@@ -71,7 +83,8 @@ export const Revenue: Story = {
       { id: 'product-c', value: 250000, label: 'Product C' },
       { id: 'product-d', value: 180000, label: 'Product D' },
     ],
-    unit: '$',
+    prefix: '$',
+    displayType: 'shortNumber',
     showLegend: true,
     tooltipHref: 'https://example.com/revenue',
     id: 'pie-chart-revenue',
@@ -80,7 +93,10 @@ export const Revenue: Story = {
     <Container>
       <GraphWidgetPieChart
         data={args.data}
-        unit={args.unit}
+        displayType={args.displayType}
+        prefix={args.prefix}
+        suffix={args.suffix}
+        decimals={args.decimals}
         showLegend={args.showLegend}
         tooltipHref={args.tooltipHref}
         id={args.id}
@@ -96,7 +112,7 @@ export const TaskStatus: Story = {
       { id: 'in-progress', value: 30, label: 'In Progress' },
       { id: 'todo', value: 25, label: 'To Do' },
     ],
-    unit: '%',
+    displayType: 'percentage',
     showLegend: true,
     tooltipHref: 'https://example.com/tasks',
     id: 'pie-chart-task-status',
@@ -105,7 +121,10 @@ export const TaskStatus: Story = {
     <Container>
       <GraphWidgetPieChart
         data={args.data}
-        unit={args.unit}
+        displayType={args.displayType}
+        prefix={args.prefix}
+        suffix={args.suffix}
+        decimals={args.decimals}
         showLegend={args.showLegend}
         tooltipHref={args.tooltipHref}
         id={args.id}
@@ -120,7 +139,7 @@ export const TwoSlices: Story = {
       { id: 'active', value: 75, label: 'Active' },
       { id: 'inactive', value: 25, label: 'Inactive' },
     ],
-    unit: '%',
+    displayType: 'percentage',
     showLegend: true,
     tooltipHref: 'https://example.com/status',
     id: 'pie-chart-two-slices',
@@ -129,7 +148,10 @@ export const TwoSlices: Story = {
     <Container>
       <GraphWidgetPieChart
         data={args.data}
-        unit={args.unit}
+        displayType={args.displayType}
+        prefix={args.prefix}
+        suffix={args.suffix}
+        decimals={args.decimals}
         showLegend={args.showLegend}
         tooltipHref={args.tooltipHref}
         id={args.id}
@@ -150,7 +172,6 @@ export const ManySlices: Story = {
       { id: 'category-7', value: 6, label: 'Category 7' },
       { id: 'category-8', value: 4, label: 'Category 8' },
     ],
-    unit: '',
     showLegend: true,
     tooltipHref: 'https://example.com/categories',
     id: 'pie-chart-many-slices',
@@ -159,7 +180,10 @@ export const ManySlices: Story = {
     <Container>
       <GraphWidgetPieChart
         data={args.data}
-        unit={args.unit}
+        displayType={args.displayType}
+        prefix={args.prefix}
+        suffix={args.suffix}
+        decimals={args.decimals}
         showLegend={args.showLegend}
         tooltipHref={args.tooltipHref}
         id={args.id}
@@ -175,7 +199,7 @@ export const WithoutLegend: Story = {
       { id: 'mobile', value: 35, label: 'Mobile' },
       { id: 'desktop', value: 20, label: 'Desktop' },
     ],
-    unit: '%',
+    displayType: 'percentage',
     showLegend: false,
     tooltipHref: 'https://example.com/platforms',
     id: 'pie-chart-without-legend',
@@ -184,7 +208,10 @@ export const WithoutLegend: Story = {
     <Container>
       <GraphWidgetPieChart
         data={args.data}
-        unit={args.unit}
+        displayType={args.displayType}
+        prefix={args.prefix}
+        suffix={args.suffix}
+        decimals={args.decimals}
         showLegend={args.showLegend}
         tooltipHref={args.tooltipHref}
         id={args.id}
@@ -201,7 +228,7 @@ export const MarketShare: Story = {
       { id: 'brand-c', value: 18.7, label: 'Brand C' },
       { id: 'others', value: 17.6, label: 'Others' },
     ],
-    unit: '%',
+    displayType: 'percentage',
     showLegend: true,
     tooltipHref: 'https://example.com/market',
     id: 'pie-chart-market-share',
@@ -210,7 +237,10 @@ export const MarketShare: Story = {
     <Container>
       <GraphWidgetPieChart
         data={args.data}
-        unit={args.unit}
+        displayType={args.displayType}
+        prefix={args.prefix}
+        suffix={args.suffix}
+        decimals={args.decimals}
         showLegend={args.showLegend}
         tooltipHref={args.tooltipHref}
         id={args.id}
@@ -227,7 +257,7 @@ export const Storage: Story = {
       { id: 'applications', value: 95, label: 'Applications' },
       { id: 'system', value: 50, label: 'System' },
     ],
-    unit: ' GB',
+    suffix: ' GB',
     showLegend: true,
     tooltipHref: 'https://example.com/storage',
     id: 'pie-chart-storage',
@@ -236,7 +266,10 @@ export const Storage: Story = {
     <Container>
       <GraphWidgetPieChart
         data={args.data}
-        unit={args.unit}
+        displayType={args.displayType}
+        prefix={args.prefix}
+        suffix={args.suffix}
+        decimals={args.decimals}
         showLegend={args.showLegend}
         tooltipHref={args.tooltipHref}
         id={args.id}
@@ -290,7 +323,7 @@ export const Catalog: Story = {
     <Container>
       <GraphWidgetPieChart
         data={args.data}
-        unit="%"
+        displayType="percentage"
         showLegend={true}
         id={args.id}
       />

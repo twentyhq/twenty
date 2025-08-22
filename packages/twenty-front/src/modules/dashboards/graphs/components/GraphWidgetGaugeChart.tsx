@@ -1,26 +1,28 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import { ResponsiveRadialBar } from '@nivo/radial-bar';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
+
+import { createGradientDef } from '../utils/createGradientDef';
+import { createGraphColorRegistry } from '../utils/createGraphColorRegistry';
+import { getColorSchemeByName } from '../utils/getColorSchemeByName';
 import {
-  AppTooltip,
-  H1Title,
-  H1TitleFontColor,
-  IconArrowUpRight,
-  TooltipDelay,
-} from 'twenty-ui/display';
+  formatGraphValue,
+  type GraphValueFormatOptions,
+} from '../utils/graphFormatters';
+import { GraphWidgetTooltip } from './GraphWidgetTooltip';
 
 type GraphWidgetGaugeChartProps = {
   value: number;
   min: number;
   max: number;
-  unit: string;
   showValue?: boolean;
   legendLabel: string;
-  tooltipHref: string;
+  tooltipHref?: string;
   id: string;
-};
+} & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -67,65 +69,44 @@ const StyledLegendValue = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
 `;
 
-const StyledTooltipContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledTooltipRow = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.extraLight};
-  display: flex;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledDot = styled.div`
-  background: ${({ theme }) => theme.color.blue};
+const StyledDot = styled.div<{ $color: string }>`
+  background: ${({ $color }) => $color};
   border-radius: 50%;
   height: 6px;
   width: 6px;
   flex-shrink: 0;
 `;
 
-const StyledTooltipValue = styled.span`
-  margin-left: auto;
-  white-space: nowrap;
-`;
-
-const StyledTooltipLink = styled.a`
-  display: flex;
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
-  cursor: pointer;
-  text-decoration: none;
-  &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
-  }
-`;
-
 export const GraphWidgetGaugeChart = ({
   value,
   min,
   max,
-  unit,
   showValue = true,
   legendLabel,
   tooltipHref,
   id,
+  displayType,
+  decimals,
+  prefix,
+  suffix,
+  customFormatter,
 }: GraphWidgetGaugeChartProps) => {
   const theme = useTheme();
   const [isHovered, setIsHovered] = useState(false);
 
-  const formatValue = (val: number): string => {
-    if (val % 1 !== 0) {
-      return val.toFixed(1);
-    }
-    return val.toString();
+  const colorRegistry = createGraphColorRegistry(theme);
+  const colorScheme =
+    getColorSchemeByName(colorRegistry, 'blue') || colorRegistry.blue;
+
+  const formatOptions: GraphValueFormatOptions = {
+    displayType,
+    decimals,
+    prefix,
+    suffix,
+    customFormatter,
   };
 
-  const displayValue = formatValue(value);
+  const formattedValue = formatGraphValue(value, formatOptions);
 
   const normalizedValue = max === min ? 0 : ((value - min) / (max - min)) * 100;
   const clampedNormalizedValue = Math.max(0, Math.min(100, normalizedValue));
@@ -140,99 +121,82 @@ export const GraphWidgetGaugeChart = ({
     },
   ];
 
-  const gradientColors = isHovered
-    ? {
-        start: theme.adaptiveColors.blue4,
-        end: theme.adaptiveColors.blue3,
-      }
-    : {
-        start: theme.adaptiveColors.blue2,
-        end: theme.adaptiveColors.blue1,
-      };
-
   const gradientId = `gaugeGradient-${id}`;
+  const gradientDef = createGradientDef(colorScheme, gradientId, isHovered);
+  const defs = [gradientDef];
 
-  const defs = [
-    {
-      id: gradientId,
-      type: 'linearGradient',
-      colors: [
-        { offset: 0, color: gradientColors.start },
-        { offset: 100, color: gradientColors.end },
-      ],
-    },
-  ];
+  const handleClick = () => {
+    if (isDefined(tooltipHref)) {
+      window.location.href = tooltipHref;
+    }
+  };
 
-  const tooltipContent = (
-    <StyledTooltipContent>
-      <StyledTooltipRow>
-        <StyledDot />
-        <span>{legendLabel}</span>
-        <StyledTooltipValue>{`${displayValue}${unit}`}</StyledTooltipValue>
-      </StyledTooltipRow>
-      <StyledTooltipLink href={tooltipHref}>
-        <span>{t`Click to see data`}</span>
-        <IconArrowUpRight size={theme.icon.size.sm} />
-      </StyledTooltipLink>
-    </StyledTooltipContent>
-  );
+  const renderTooltip = () => {
+    const percentageValue = normalizedValue.toFixed(1);
+    const formattedWithPercentage = `${formattedValue} (${percentageValue}%)`;
+
+    return (
+      <GraphWidgetTooltip
+        items={[
+          {
+            label: legendLabel,
+            formattedValue: formattedWithPercentage,
+            dotColor: colorScheme.solid,
+          },
+        ]}
+        showClickHint={isDefined(tooltipHref)}
+      />
+    );
+  };
 
   return (
-    <>
-      <StyledContainer
-        id={id}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <StyledChartContainer>
-          <ResponsiveRadialBar
-            data={data}
-            startAngle={-90}
-            endAngle={90}
-            innerRadius={0.7}
-            padding={0.2}
-            colors={[`url(#${gradientId})`, theme.background.tertiary]}
-            defs={defs}
-            fill={[
-              {
-                match: (d: { x: string }) => d.x === 'value',
-                id: gradientId,
-              },
-            ]}
-            enableTracks={false}
-            enableRadialGrid={false}
-            enableCircularGrid={false}
-            enableLabels={false}
-            isInteractive={false}
-            radialAxisStart={null}
-            radialAxisEnd={null}
-            circularAxisInner={null}
-            circularAxisOuter={null}
+    <StyledContainer
+      id={id}
+      style={{ cursor: isDefined(tooltipHref) ? 'pointer' : 'default' }}
+    >
+      <StyledChartContainer>
+        <ResponsiveRadialBar
+          data={data}
+          startAngle={-90}
+          endAngle={90}
+          innerRadius={0.7}
+          padding={0.2}
+          colors={[`url(#${gradientId})`, theme.background.tertiary]}
+          defs={defs}
+          fill={[
+            {
+              match: (d: { x: string }) => d.x === 'value',
+              id: gradientId,
+            },
+          ]}
+          enableTracks={false}
+          enableRadialGrid={false}
+          enableCircularGrid={false}
+          enableLabels={false}
+          isInteractive={true}
+          tooltip={renderTooltip}
+          onClick={handleClick}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          radialAxisStart={null}
+          radialAxisEnd={null}
+          circularAxisInner={null}
+          circularAxisOuter={null}
+        />
+        {showValue && (
+          <StyledH1Title
+            title={formattedValue}
+            fontColor={H1TitleFontColor.Primary}
           />
-          {showValue && (
-            <StyledH1Title
-              title={`${displayValue}${unit}`}
-              fontColor={H1TitleFontColor.Primary}
-            />
-          )}
-        </StyledChartContainer>
-        <StyledLegendContainer>
-          <StyledLegendItem>
-            <StyledDot />
-            <StyledLegendLabel>{legendLabel}</StyledLegendLabel>
-            <StyledLegendValue>{`${displayValue}${unit}`}</StyledLegendValue>
-          </StyledLegendItem>
-        </StyledLegendContainer>
-      </StyledContainer>
-      <AppTooltip
-        anchorSelect={`#${id}`}
-        place="top-start"
-        noArrow
-        delay={TooltipDelay.noDelay}
-        clickable
-      >
-        {tooltipContent}
-      </AppTooltip>
-    </>
+        )}
+      </StyledChartContainer>
+      <StyledLegendContainer>
+        <StyledLegendItem>
+          <StyledDot $color={colorScheme.solid} />
+          <StyledLegendLabel>{legendLabel}</StyledLegendLabel>
+          <StyledLegendValue>{formattedValue}</StyledLegendValue>
+        </StyledLegendItem>
+      </StyledLegendContainer>
+    </StyledContainer>
   );
 };

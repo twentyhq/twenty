@@ -1,23 +1,29 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import {
-  ResponsivePie,
-  type ComputedDatum,
-  type DatumId,
-  type PieCustomLayerProps,
+    ResponsivePie,
+    type ComputedDatum,
+    type DatumId,
+    type PieCustomLayerProps,
 } from '@nivo/pie';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconArrowUpRight } from 'twenty-ui/display';
+
+import { createGradientDef } from '../utils/createGradientDef';
+import { createGraphColorRegistry } from '../utils/createGraphColorRegistry';
+import { getColorSchemeByIndex } from '../utils/getColorSchemeByIndex';
+import {
+    formatGraphValue,
+    type GraphValueFormatOptions,
+} from '../utils/graphFormatters';
+import { GraphWidgetTooltip } from './GraphWidgetTooltip';
 
 type GraphWidgetPieChartProps = {
   data: Array<{ id: string; value: number; label?: string }>;
-  unit?: string;
   showLegend?: boolean;
   tooltipHref?: string;
   id: string;
-};
+} & GraphValueFormatOptions;
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -67,123 +73,49 @@ const StyledDot = styled.div<{ $color: string }>`
   flex-shrink: 0;
 `;
 
-const StyledTooltipContent = styled.div`
-  background: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  pointer-events: none;
-`;
-
-const StyledTooltipRow = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.extraLight};
-  display: flex;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledTooltipValue = styled.span`
-  margin-left: auto;
-  white-space: nowrap;
-`;
-
-const StyledTooltipLink = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.light};
-  cursor: default;
-  display: flex;
-`;
-
 export const GraphWidgetPieChart = ({
   data,
-  unit = '',
   showLegend = true,
   tooltipHref,
   id,
+  displayType,
+  decimals,
+  prefix,
+  suffix,
+  customFormatter,
 }: GraphWidgetPieChartProps) => {
   const theme = useTheme();
   const [hoveredSliceId, setHoveredSliceId] = useState<DatumId | null>(null);
 
-  const dotColors = [
-    theme.color.blue,
-    theme.color.purple,
-    theme.color.turquoise,
-    theme.color.orange,
-    theme.color.pink,
-  ];
+  const colorRegistry = createGraphColorRegistry(theme);
 
-  const colorSchemes = [
-    {
-      name: 'blue',
-      normal: [theme.adaptiveColors.blue1, theme.adaptiveColors.blue2],
-      hover: [theme.adaptiveColors.blue3, theme.adaptiveColors.blue4],
-    },
-    {
-      name: 'purple',
-      normal: [theme.adaptiveColors.purple1, theme.adaptiveColors.purple2],
-      hover: [theme.adaptiveColors.purple3, theme.adaptiveColors.purple4],
-    },
-    {
-      name: 'turquoise',
-      normal: [
-        theme.adaptiveColors.turquoise1,
-        theme.adaptiveColors.turquoise2,
-      ],
-      hover: [theme.adaptiveColors.turquoise3, theme.adaptiveColors.turquoise4],
-    },
-    {
-      name: 'orange',
-      normal: [theme.adaptiveColors.orange1, theme.adaptiveColors.orange2],
-      hover: [theme.adaptiveColors.orange3, theme.adaptiveColors.orange4],
-    },
-    {
-      name: 'pink',
-      normal: [theme.adaptiveColors.pink1, theme.adaptiveColors.pink2],
-      hover: [theme.adaptiveColors.pink3, theme.adaptiveColors.pink4],
-    },
-  ];
-
-  const formatValue = (val: number): string => {
-    if (val % 1 !== 0) {
-      return val.toFixed(1);
-    }
-    return val.toString();
+  const formatOptions: GraphValueFormatOptions = {
+    displayType,
+    decimals,
+    prefix,
+    suffix,
+    customFormatter,
   };
 
   const totalValue = data.reduce((sum, item) => sum + item.value, 0);
 
   const enrichedData = data.map((item, index) => {
-    const colorScheme = colorSchemes[index % colorSchemes.length];
+    const colorScheme = getColorSchemeByIndex(colorRegistry, index);
     const isHovered = hoveredSliceId === item.id;
-    const colors = isHovered ? colorScheme.hover : colorScheme.normal;
     const gradientId = `${colorScheme.name}Gradient-${id}-${index}`;
-    const dotColor = dotColors[index % dotColors.length];
 
     return {
       ...item,
       gradientId,
-      colors,
-      colorScheme: colorScheme.name,
-      dotColor,
+      colorScheme,
+      isHovered,
       percentage: totalValue > 0 ? (item.value / totalValue) * 100 : 0,
     };
   });
 
-  const defs = enrichedData.flatMap((item) => [
-    {
-      id: item.gradientId,
-      type: 'linearGradient',
-      colors: [
-        { offset: 0, color: item.colors[0] },
-        { offset: 100, color: item.colors[1] },
-      ],
-    },
-  ]);
+  const defs = enrichedData.map((item) =>
+    createGradientDef(item.colorScheme, item.gradientId, item.isHovered),
+  );
 
   const fill = enrichedData.map((item) => ({
     match: { id: item.id },
@@ -202,31 +134,21 @@ export const GraphWidgetPieChart = ({
     const item = enrichedData.find((d) => d.id === datum.id);
     if (!item) return null;
 
-    return (
-      <StyledTooltipContent>
-        <StyledTooltipRow>
-          <StyledDot $color={item.dotColor} />
-          <span>{item.label || item.id}</span>
-          <StyledTooltipValue>
-            {formatValue(item.value)}
-            {unit} ({item.percentage.toFixed(1)}%)
-          </StyledTooltipValue>
-        </StyledTooltipRow>
-        <StyledTooltipLink>
-          <span>{t`Click to see data`}</span>
-          <IconArrowUpRight size={theme.icon.size.sm} />
-        </StyledTooltipLink>
-      </StyledTooltipContent>
-    );
-  };
+    const formattedValue = formatGraphValue(item.value, formatOptions);
+    const formattedWithPercentage = `${formattedValue} (${item.percentage.toFixed(1)}%)`;
 
-  // Map color scheme names to theme colors for the lines
-  const colorSchemeToThemeColor: Record<string, string> = {
-    blue: theme.color.blue,
-    purple: theme.color.purple,
-    turquoise: theme.color.turquoise,
-    orange: theme.color.orange,
-    pink: theme.color.pink,
+    return (
+      <GraphWidgetTooltip
+        items={[
+          {
+            label: item.label || item.id,
+            formattedValue: formattedWithPercentage,
+            dotColor: item.colorScheme.solid,
+          },
+        ]}
+        showClickHint={isDefined(tooltipHref)}
+      />
+    );
   };
 
   const renderSliceEndLines = (
@@ -249,8 +171,7 @@ export const GraphWidgetPieChart = ({
           // Find the corresponding enriched data item to get the color scheme
           const enrichedItem = enrichedData.find((d) => d.id === datum.id);
           const lineColor = enrichedItem
-            ? colorSchemeToThemeColor[enrichedItem.colorScheme] ||
-              theme.border.color.strong
+            ? enrichedItem.colorScheme.solid
             : theme.border.color.strong;
 
           // Calculate line position at the end angle of this slice
@@ -305,11 +226,10 @@ export const GraphWidgetPieChart = ({
         <StyledLegendContainer>
           {enrichedData.map((item) => (
             <StyledLegendItem key={item.id}>
-              <StyledDot $color={item.dotColor} />
+              <StyledDot $color={item.colorScheme.solid} />
               <StyledLegendLabel>{item.label || item.id}</StyledLegendLabel>
               <StyledLegendValue>
-                {formatValue(item.value)}
-                {unit}
+                {formatGraphValue(item.value, formatOptions)}
               </StyledLegendValue>
             </StyledLegendItem>
           ))}
