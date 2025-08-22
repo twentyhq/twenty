@@ -73,7 +73,7 @@ export default defineConfig(({ command }) => {
         plugins: [['@swc/plugin-emotion', {}]],
       }),
       tsconfigPaths({
-        projects: ['tsconfig.lib.json'],
+        projects: ['tsconfig.json'],
       }),
       svgr(),
       dts(dtsConfig),
