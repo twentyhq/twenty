@@ -1204,6 +1204,11 @@ msgstr "Kliknij na \"Dodaj Pole Wyjściowe\" poniżej, aby zdefiniować struktur
 msgid "Click on the checkmark to apply your changes."
 msgstr "Kliknij zaznaczenie, aby zastosować zmiany."
 
+#. js-lingui-id: d0rtA5
+#: src/modules/dashboards/graphs/components/GraphWidgetGaugeChart.tsx
+msgid "Click to see data"
+msgstr ""
+
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client ID"

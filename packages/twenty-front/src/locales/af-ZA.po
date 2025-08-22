@@ -1204,6 +1204,11 @@ msgstr "Klik op \"Voeg Uitvoerveld by\" hieronder om die struktuur van jou KI-ag
 msgid "Click on the checkmark to apply your changes."
 msgstr "Klik op die regmerkie om jou veranderinge toe te pas."
 
+#. js-lingui-id: d0rtA5
+#: src/modules/dashboards/graphs/components/GraphWidgetGaugeChart.tsx
+msgid "Click to see data"
+msgstr ""
+
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client ID"
