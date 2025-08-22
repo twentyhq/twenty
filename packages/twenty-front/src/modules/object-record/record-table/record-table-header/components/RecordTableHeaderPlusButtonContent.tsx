@@ -31,14 +31,13 @@ export const RecordTableHeaderPlusButtonContent = () => {
 
   const { getIcon } = useIcons();
   const { handleColumnVisibilityChange } = useTableColumns({
-    objectMetadataId: objectMetadataItem.id,
     recordTableId,
   });
 
   const handleAddColumn = useCallback(
     (column: ColumnDefinition<FieldMetadata>) => {
       closeDropdown();
-      handleColumnVisibilityChange(column);
+      handleColumnVisibilityChange({ ...column, isVisible: true });
     },
     [handleColumnVisibilityChange, closeDropdown],
   );

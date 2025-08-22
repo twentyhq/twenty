@@ -7,6 +7,8 @@
  *                              |___/
  */
 
+export { findById } from './array/findById';
+export { findByProperty } from './array/findByProperty';
 export { assertUnreachable } from './assertUnreachable';
 export { deepMerge } from './deepMerge';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';

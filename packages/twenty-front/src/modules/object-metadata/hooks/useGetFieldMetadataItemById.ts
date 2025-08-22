@@ -1,23 +1,29 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFieldMetadataItemByIdOrThrow';
+import { useRecoilCallback } from 'recoil';
 
-export const useGetFieldMetadataItemById = () => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+type GetFieldMetadataItemByIdOrThrowResult = {
+  fieldMetadataItem: FieldMetadataItem;
+  objectMetadataItem: ObjectMetadataItem;
+};
 
-  const getFieldMetadataItemById = (fieldMetadataId: string) => {
-    const fieldMetadataItem = objectMetadataItems
-      .flatMap((objectMetadataItem) => objectMetadataItem.fields)
-      .find((field) => field.id === fieldMetadataId);
+export const useGetFieldMetadataItemByIdOrThrow = () => {
+  const getFieldMetadataItemById = useRecoilCallback(
+    ({ snapshot }) =>
+      (fieldMetadataId: string): GetFieldMetadataItemByIdOrThrowResult => {
+        const objectMetadataItems = snapshot
+          .getLoadable(objectMetadataItemsState)
+          .getValue();
 
-    if (!isDefined(fieldMetadataItem)) {
-      throw new Error(
-        `Field metadata item not found for id ${fieldMetadataId}`,
-      );
-    }
+        return getFieldMetadataItemByIdOrThrow({
+          fieldMetadataId,
+          objectMetadataItems,
+        });
+      },
+    [],
+  );
 
-    return fieldMetadataItem;
-  };
-
-  return { getFieldMetadataItemById };
+  return { getFieldMetadataItemByIdOrThrow: getFieldMetadataItemById };
 };

@@ -39,7 +39,7 @@ export class McpService {
     }
   }
 
-  handleInitialize(requestId: string | number | null) {
+  handleInitialize(requestId: string | number) {
     return wrapJsonRpcResponse(requestId, {
       result: {
         capabilities: {
@@ -47,6 +47,9 @@ export class McpService {
           resources: { listChanged: false },
           prompts: { listChanged: false },
         },
+        tools: [],
+        resources: [],
+        prompts: [],
       },
     });
   }
@@ -90,7 +93,7 @@ export class McpService {
     return roleId;
   }
 
-  async executeTool(
+  async handleMCPCoreQuery(
     { id, method, params }: JsonRpc,
     {
       workspace,
@@ -105,6 +108,16 @@ export class McpService {
         return this.handleInitialize(id);
       }
 
+      if (method === 'ping') {
+        return wrapJsonRpcResponse(
+          id,
+          {
+            result: {},
+          },
+          true,
+        );
+      }
+
       const roleId = await this.getRoleId(
         workspace.id,
         userWorkspaceId,
@@ -117,7 +130,35 @@ export class McpService {
         return await this.handleToolCall(id, toolSet, params);
       }
 
-      return await this.handleToolsListing(id, toolSet);
+      if (method === 'tools/list') {
+        return await this.handleToolsListing(id, toolSet);
+      }
+
+      if (method === 'prompts/list') {
+        return wrapJsonRpcResponse(id, {
+          result: {
+            capabilities: {
+              prompts: { listChanged: false },
+            },
+            prompts: [],
+          },
+        });
+      }
+
+      if (method === 'resources/list') {
+        return wrapJsonRpcResponse(id, {
+          result: {
+            capabilities: {
+              resources: { listChanged: false },
+            },
+            resources: [],
+          },
+        });
+      }
+
+      return wrapJsonRpcResponse(id, {
+        result: {},
+      });
     } catch (error) {
       return wrapJsonRpcResponse(id, {
         error: {
@@ -129,7 +170,7 @@ export class McpService {
   }
 
   private async handleToolCall(
-    id: string | number | null,
+    id: string | number,
     toolSet: ToolSet,
     params: Record<string, unknown>,
   ) {
@@ -161,7 +202,7 @@ export class McpService {
     );
   }
 
-  private handleToolsListing(id: string | number | null, toolSet: ToolSet) {
+  private handleToolsListing(id: string | number, toolSet: ToolSet) {
     const toolsArray = Object.entries(toolSet)
       .filter(([, def]) => !!def.parameters.jsonSchema)
       .map(([name, def]) => ({
@@ -176,6 +217,8 @@ export class McpService {
           tools: { listChanged: false },
         },
         tools: toolsArray,
+        resources: [],
+        prompts: [],
       },
     });
   }

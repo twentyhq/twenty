@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 
@@ -16,8 +17,8 @@ export class CreateViewInput {
   @Field(() => ViewType, { nullable: true, defaultValue: ViewType.TABLE })
   type?: ViewType;
 
-  @Field({ nullable: true, defaultValue: 'INDEX' })
-  key?: string;
+  @Field(() => ViewKey, { nullable: true })
+  key?: ViewKey;
 
   @Field({ nullable: false })
   icon: string;

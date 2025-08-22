@@ -58,10 +58,7 @@ export const useTestHttpRequest = (actionId: string) => {
 
       const requestOptions: RequestInit = {
         method: httpRequestFormData.method,
-        headers: {
-          'Content-Type': 'application/json',
-          ...(substitutedHeaders as Record<string, string>),
-        },
+        headers: substitutedHeaders as Record<string, string>,
       };
 
       if (['POST', 'PUT', 'PATCH'].includes(httpRequestFormData.method)) {

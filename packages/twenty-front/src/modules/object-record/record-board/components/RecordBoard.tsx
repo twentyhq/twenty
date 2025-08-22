@@ -15,17 +15,17 @@ import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/comp
 import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
-import { useBoardCardDragState } from '@/object-record/record-board/hooks/useBoardCardDragState';
-import { useEndBoardCardDrag } from '@/object-record/record-board/hooks/useEndBoardCardDrag';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
-import { useRecordBoardDragOperations } from '@/object-record/record-board/hooks/useRecordBoardDragOperations';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
-import { useStartBoardCardDrag } from '@/object-record/record-board/hooks/useStartBoardCardDrag';
 import { RecordBoardDeactivateBoardCardEffect } from '@/object-record/record-board/record-board-card/components/RecordBoardDeactivateBoardCardEffect';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
+import { useRecordBoardDragOperations } from '@/object-record/record-drag/board/hooks/useRecordBoardDragOperations';
+import { useEndRecordDrag } from '@/object-record/record-drag/shared/hooks/useEndRecordDrag';
+import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
+import { useStartRecordDrag } from '@/object-record/record-drag/shared/hooks/useStartRecordDrag';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -113,9 +113,9 @@ export const RecordBoard = () => {
     recordBoardId,
   );
 
-  const startDrag = useStartBoardCardDrag(recordBoardId);
-  const endDrag = useEndBoardCardDrag(recordBoardId);
-  const multiDragState = useBoardCardDragState(recordBoardId);
+  const { startDrag } = useStartRecordDrag('board', recordBoardId);
+  const { endDrag } = useEndRecordDrag('board', recordBoardId);
+  const multiDragState = useRecordDragState('board', recordBoardId);
 
   const { processDragOperation } = useRecordBoardDragOperations();
 

@@ -2,7 +2,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { type ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared/types';
-import { DataSource, type QueryRunner, Repository } from 'typeorm';
+import { DataSource, Repository, type QueryRunner } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -17,6 +17,7 @@ import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.enti
 import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { type ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
+import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { type ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
@@ -29,7 +30,7 @@ import { type ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects
 import { type ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { type ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
-import { transformViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/utils/transform-view-filter-workspace-value-to-core-value';
+import { convertViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/utils/convert-view-filter-workspace-value-to-core-value';
 
 @Command({
   name: 'migrate:views-to-core',
@@ -246,15 +247,25 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     workspaceId: string,
     queryRunner: QueryRunner,
   ): Promise<void> {
+    let viewName = workspaceView.name;
+
+    if (workspaceView.key === 'INDEX' && !viewName.includes('{')) {
+      viewName = 'All {objectLabelPlural}';
+    }
+
     const coreView: Partial<View> = {
       id: workspaceView.id,
-      name: workspaceView.name,
+      name: viewName,
       objectMetadataId: workspaceView.objectMetadataId,
       type: workspaceView.type === 'table' ? ViewType.TABLE : ViewType.KANBAN,
-      key: workspaceView.key,
+      key:
+        workspaceView.key === 'INDEX' || workspaceView.key === ViewKey.INDEX
+          ? ViewKey.INDEX
+          : null,
       icon: workspaceView.icon,
       position: workspaceView.position,
       isCompact: workspaceView.isCompact,
+      isCustom: workspaceView.key !== 'INDEX',
       openRecordIn:
         workspaceView.openRecordIn === 'SIDE_PANEL'
           ? ViewOpenRecordIn.SIDE_PANEL
@@ -321,7 +332,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         operand: convertViewFilterOperandToCoreOperand(
           filter.operand as SharedViewFilterOperand,
         ),
-        value: transformViewFilterWorkspaceValueToCoreValue(filter.value),
+        value: convertViewFilterWorkspaceValueToCoreValue(filter.value),
         viewFilterGroupId: filter.viewFilterGroupId,
         workspaceId,
         createdAt: new Date(filter.createdAt),

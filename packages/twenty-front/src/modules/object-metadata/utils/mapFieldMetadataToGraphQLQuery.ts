@@ -1,5 +1,4 @@
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { isUndefined } from '@sniptt/guards';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -27,7 +26,6 @@ type MapFieldMetadataToGraphQLQueryArgs = {
     string,
     ObjectPermissions & { objectMetadataId: string }
   >;
-  isFieldsPermissionsEnabled?: boolean;
 };
 // TODO: change ObjectMetadataItems mock before refactoring with relation computed field
 export const mapFieldMetadataToGraphQLQuery = ({
@@ -37,7 +35,6 @@ export const mapFieldMetadataToGraphQLQuery = ({
   relationRecordGqlFields,
   computeReferences = false,
   objectPermissionsByObjectMetadataId,
-  isFieldsPermissionsEnabled,
 }: MapFieldMetadataToGraphQLQueryArgs): string => {
   const fieldType = fieldMetadata.type;
 
@@ -65,7 +62,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
           objectMetadataItem.id === morphRelation.targetObjectMetadata.id,
       );
 
-      if (isUndefined(relationMetadataItem)) {
+      if (!isDefined(relationMetadataItem)) {
         continue;
       }
 
@@ -111,7 +108,6 @@ export const mapFieldMetadataToGraphQLQuery = ({
       computeReferences,
       isRootLevel: false,
       objectPermissionsByObjectMetadataId,
-      isFieldsPermissionsEnabled,
     })}
   }
 }`;
@@ -126,7 +122,6 @@ ${mapObjectMetadataToGraphQLQuery({
   computeReferences,
   isRootLevel: false,
   objectPermissionsByObjectMetadataId,
-  isFieldsPermissionsEnabled,
 })}`;
       }
     }
@@ -143,7 +138,7 @@ ${mapObjectMetadataToGraphQLQuery({
         fieldMetadata.relation?.targetObjectMetadata.id,
     );
 
-    if (isUndefined(relationMetadataItem)) {
+    if (!isDefined(relationMetadataItem)) {
       return '';
     }
 
@@ -179,7 +174,6 @@ ${mapObjectMetadataToGraphQLQuery({
   computeReferences: computeReferences,
   isRootLevel: false,
   objectPermissionsByObjectMetadataId,
-  isFieldsPermissionsEnabled,
 })}`;
   }
 
@@ -193,7 +187,7 @@ ${mapObjectMetadataToGraphQLQuery({
         fieldMetadata.relation?.targetObjectMetadata.id,
     );
 
-    if (isUndefined(relationMetadataItem)) {
+    if (!isDefined(relationMetadataItem)) {
       return '';
     }
 
@@ -227,7 +221,6 @@ ${mapObjectMetadataToGraphQLQuery({
       computeReferences,
       isRootLevel: false,
       objectPermissionsByObjectMetadataId,
-      isFieldsPermissionsEnabled,
     })}
   }
 }`;

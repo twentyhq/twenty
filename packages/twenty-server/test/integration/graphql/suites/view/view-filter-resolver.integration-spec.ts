@@ -101,7 +101,7 @@ describe('View Filter Resolver', () => {
     it('should create a view filter with numeric value', async () => {
       const filterData = createViewFilterData(testViewId, {
         operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
-        value: '100',
+        value: 100,
       });
 
       const operation = createViewFilterOperationFactory({ data: filterData });
@@ -111,7 +111,7 @@ describe('View Filter Resolver', () => {
       assertViewFilterStructure(response.body.data.createCoreViewFilter, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
-        value: '100',
+        value: 100,
         viewId: testViewId,
       });
     });
@@ -120,7 +120,7 @@ describe('View Filter Resolver', () => {
       const operation = createViewFilterOperationFactory({
         data: createViewFilterData(testViewId, {
           operand: ViewFilterOperand.IS,
-          value: 'true',
+          value: true,
         }),
       });
 
@@ -130,7 +130,7 @@ describe('View Filter Resolver', () => {
       assertViewFilterStructure(response.body.data.createCoreViewFilter, {
         fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         operand: ViewFilterOperand.IS,
-        value: 'true',
+        value: true,
         viewId: testViewId,
       });
     });

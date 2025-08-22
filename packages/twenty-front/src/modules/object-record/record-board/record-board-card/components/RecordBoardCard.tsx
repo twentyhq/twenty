@@ -1,7 +1,7 @@
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
-import { useBoardCardDragState } from '@/object-record/record-board/hooks/useBoardCardDragState';
+import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
@@ -124,11 +124,14 @@ export const RecordBoardCard = () => {
     RecordBoardCardContext,
   );
 
-  const multiDragState = useBoardCardDragState();
+  const recordBoardId = useAvailableComponentInstanceIdOrThrow(
+    RecordBoardComponentInstanceContext,
+  );
+
+  const multiDragState = useRecordDragState('board', recordBoardId);
 
   const isPrimaryMultiDrag =
-    multiDragState &&
-    multiDragState.isDragging &&
+    multiDragState?.isDragging &&
     recordId === multiDragState.primaryDraggedRecordId &&
     multiDragState.originalSelection.length > 1;
 
@@ -167,10 +170,6 @@ export const RecordBoardCard = () => {
       rowIndex,
       columnIndex,
     },
-  );
-
-  const recordBoardId = useAvailableComponentInstanceIdOrThrow(
-    RecordBoardComponentInstanceContext,
   );
 
   const actionMenuId = getActionMenuIdFromRecordIndexId(recordBoardId);

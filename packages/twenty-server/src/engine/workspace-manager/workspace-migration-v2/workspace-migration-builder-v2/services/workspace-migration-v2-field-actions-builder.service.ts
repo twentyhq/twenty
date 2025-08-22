@@ -93,8 +93,8 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
           },
         );
 
-      if (validationErrors.length > 0) {
-        validateAndBuildResult.failed.push(...validationErrors);
+      if (validationErrors.errors.length > 0) {
+        validateAndBuildResult.failed.push(validationErrors);
         continue;
       }
 
@@ -142,8 +142,8 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
           },
         );
 
-      if (validationErrors.length > 0) {
-        validateAndBuildResult.failed.push(...validationErrors);
+      if (validationErrors.errors.length > 0) {
+        validateAndBuildResult.failed.push(validationErrors);
         continue;
       }
 
@@ -174,8 +174,8 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
           },
         );
 
-      if (validationErrors.length > 0) {
-        validateAndBuildResult.failed.push(...validationErrors);
+      if (validationErrors.errors.length > 0) {
+        validateAndBuildResult.failed.push(validationErrors);
         continue;
       }
 

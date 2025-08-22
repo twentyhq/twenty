@@ -11,6 +11,7 @@ import { EmailAliasManagerModule } from 'src/modules/connected-account/email-ali
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-fetch-by-batch.service';
+import { ImapFindSentFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-sent-folder.service';
 import { ImapGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-message-list.service';
 import { ImapGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-messages.service';
 import { ImapHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-handle-error.service';
@@ -37,6 +38,7 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     ImapHandleErrorService,
     ImapMessageLocatorService,
     ImapMessageProcessorService,
+    ImapFindSentFolderService,
   ],
   exports: [
     ImapGetMessagesService,
