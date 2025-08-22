@@ -64,6 +64,7 @@ export const MKT_ORDER_ITEM_DATA_SEEDS_IDS = {
 };
 
 import { MKT_VARIANT_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-variant-data-seeds.constants';
+
 // Import order and product seed IDs for relationships
 import { MKT_ORDER_DATA_SEEDS_IDS } from './mkt-order-data-seeds.constants';
 import { MKT_PRODUCT_DATA_SEEDS_IDS } from './mkt-product-data-seeds.constants';
