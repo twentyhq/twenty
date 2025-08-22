@@ -13,6 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
@@ -51,14 +52,14 @@ export class ViewResolver {
   @ResolveField(() => String)
   async name(
     @Parent() view: ViewDTO,
-    @Context() context: I18nContext,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<string> {
     if (view.name.includes('{objectLabelPlural}')) {
-      const objectMetadata = await this.viewService.getObjectMetadataByViewId(
-        view.id,
-        workspace.id,
-      );
+      const objectMetadata = await context.loaders.objectMetadataLoader.load({
+        objectMetadataId: view.objectMetadataId,
+        workspaceId: workspace.id,
+      });
 
       if (objectMetadata) {
         const translatedObjectLabel = resolveObjectMetadataStandardOverride(
