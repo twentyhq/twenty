@@ -31,9 +31,9 @@ export const recordStoreMorphOneToManyValueWithObjectNameFamilySelector =
             return {
               objectNameSingular:
                 morphRelation.targetObjectMetadata.nameSingular,
-              value: get(recordStoreFamilyState(recordId))?.[
+              value: (get(recordStoreFamilyState(recordId))?.[
                 computedFieldName
-              ] as ObjectRecord[],
+              ] || []) as ObjectRecord[],
             };
           },
         );

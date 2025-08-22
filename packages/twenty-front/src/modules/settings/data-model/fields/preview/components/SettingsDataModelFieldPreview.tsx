@@ -27,6 +27,7 @@ export type SettingsDataModelFieldPreviewProps = {
     | 'options'
     | 'settings'
     | 'relation'
+    | 'morphRelations'
   > & {
     id?: string;
     name?: string;
@@ -111,8 +112,8 @@ export const SettingsDataModelFieldPreview = ({
       relationObjectMetadataItem?.nameSingular || '',
     options: fieldMetadataItem.options ?? [],
     settings: fieldMetadataItem.settings,
-    relationType: fieldMetadataItem.relation?.type,
-    morphRelations: [],
+    relationType: fieldMetadataItem.settings?.relationType,
+    morphRelations: fieldMetadataItem?.morphRelations ?? [],
   };
 
   return (
