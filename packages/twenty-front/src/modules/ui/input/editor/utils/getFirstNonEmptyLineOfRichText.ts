@@ -6,6 +6,7 @@ export const getFirstNonEmptyLineOfRichText = (
 ): string => {
   if (blocks === null) {
     return '';
+    // test
   }
   for (const block of blocks) {
     if (!isUndefinedOrNull(block.content)) {
