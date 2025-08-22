@@ -22,8 +22,8 @@ export const CLEAN_WORKFLOW_RUN_CRON_PATTERN = '0 0 * * *';
 const NUMBER_OF_WORKFLOW_RUNS_TO_KEEP = 1000;
 
 @Processor(MessageQueue.cronQueue)
-export class CleanWorkflowRunsJob {
-  private readonly logger = new Logger(CleanWorkflowRunsJob.name);
+export class WorkflowCleanWorkflowRunsJob {
+  private readonly logger = new Logger(WorkflowCleanWorkflowRunsJob.name);
 
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -32,8 +32,11 @@ export class CleanWorkflowRunsJob {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  @Process(CleanWorkflowRunsJob.name)
-  @SentryCronMonitor(CleanWorkflowRunsJob.name, CLEAN_WORKFLOW_RUN_CRON_PATTERN)
+  @Process(WorkflowCleanWorkflowRunsJob.name)
+  @SentryCronMonitor(
+    WorkflowCleanWorkflowRunsJob.name,
+    CLEAN_WORKFLOW_RUN_CRON_PATTERN,
+  )
   async handle() {
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {

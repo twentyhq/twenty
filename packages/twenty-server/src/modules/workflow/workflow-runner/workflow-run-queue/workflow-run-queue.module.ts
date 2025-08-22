@@ -6,10 +6,10 @@ import { MessageQueueModule } from 'src/engine/core-modules/message-queue/messag
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { CronCleanWorkflowRunsCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/cron-clean-workflow-runs.cron.command';
+import { WorkflowCleanWorkflowRunsCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-clean-workflow-runs.cron.command';
 import { WorkflowHandleStaledRunsCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-handle-staled-runs.cron.command';
 import { WorkflowRunEnqueueCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-run-enqueue.cron.command';
-import { CleanWorkflowRunsJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/clean-workflow-runs.cron.job';
+import { WorkflowCleanWorkflowRunsJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-clean-workflow-runs.cron.job';
 import { WorkflowHandleStaledRunsPerWorkspaceJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-handle-staled-runs-per-workspace.job';
 import { WorkflowHandleStaledRunsJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-handle-staled-runs.job';
 import { WorkflowRunEnqueuePerWorkspaceJob } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-run-enqueue-per-workspace.job';
@@ -32,13 +32,14 @@ import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-
     WorkflowHandleStaledRunsCronCommand,
     WorkflowHandleStaledRunsJob,
     WorkflowHandleStaledRunsPerWorkspaceJob,
-    CleanWorkflowRunsJob,
-    CronCleanWorkflowRunsCommand,
+    WorkflowCleanWorkflowRunsJob,
+    WorkflowCleanWorkflowRunsCommand,
   ],
   exports: [
     WorkflowRunQueueWorkspaceService,
     WorkflowRunEnqueueCronCommand,
     WorkflowHandleStaledRunsCronCommand,
+    WorkflowCleanWorkflowRunsCommand,
   ],
 })
 export class WorkflowRunQueueModule {}
