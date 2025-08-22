@@ -37,15 +37,15 @@ export const useMorphRelationToOneFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const computedFieldNames = fieldDefinition.metadata.morphRelations.map(
-    (morphRelation) =>
+  const computedFieldNames =
+    fieldDefinition.metadata.morphRelations?.map((morphRelation) =>
       computeMorphRelationFieldName({
         fieldName,
         relationDirection: RelationType.MANY_TO_ONE,
         nameSingular: morphRelation.targetObjectMetadata.nameSingular,
         namePlural: morphRelation.targetObjectMetadata.namePlural,
       }),
-  );
+    ) ?? [];
 
   const fieldValues = useRecordFieldValues<
     {

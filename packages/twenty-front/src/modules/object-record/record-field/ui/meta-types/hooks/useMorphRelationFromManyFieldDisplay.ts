@@ -32,8 +32,8 @@ export const useMorphRelationFromManyFieldDisplay = () => {
 
   const button = fieldDefinition.editButtonIcon;
 
-  const fieldNamesMap = fieldDefinition.metadata.morphRelations.map(
-    (morphRelation) => {
+  const fieldNamesMap =
+    fieldDefinition.metadata.morphRelations?.map((morphRelation) => {
       return {
         morphRelation: morphRelation,
         fieldName: computeMorphRelationFieldName({
@@ -43,8 +43,7 @@ export const useMorphRelationFromManyFieldDisplay = () => {
           namePlural: morphRelation.targetObjectMetadata.namePlural,
         }),
       };
-    },
-  );
+    }) ?? [];
   const fieldNames = fieldNamesMap.map((field) => field.fieldName);
 
   const fieldValues = useRecordFieldValues<
