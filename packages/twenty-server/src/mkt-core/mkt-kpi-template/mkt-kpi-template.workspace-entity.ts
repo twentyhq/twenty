@@ -260,22 +260,6 @@ export class MktKpiTemplateWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('createdByPerson')
   createdByPersonId: string | null;
 
-  // @WorkspaceRelation({
-  //   standardId: MKT_KPI_TEMPLATE_FIELD_IDS.accountOwner,
-  //   type: RelationType.MANY_TO_ONE,
-  //   label: msg`Account Owner`,
-  //   description: msg`Your team member responsible for managing the KPI template`,
-  //   icon: 'IconUserCircle',
-  //   inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
-  //   inverseSideFieldKey: 'accountOwnerForMktKpiTemplates',
-  //   onDelete: RelationOnDeleteAction.SET_NULL,
-  // })
-  // @WorkspaceIsNullable()
-  // accountOwner: Relation<WorkspaceMemberWorkspaceEntity> | null;
-  //
-  // @WorkspaceJoinColumn('accountOwner')
-  // accountOwnerId: string | null;
-
   @WorkspaceField({
     standardId: MKT_KPI_TEMPLATE_FIELD_IDS.searchVector,
     type: FieldMetadataType.TS_VECTOR,

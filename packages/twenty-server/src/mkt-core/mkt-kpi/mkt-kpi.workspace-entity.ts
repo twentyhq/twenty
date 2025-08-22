@@ -3,6 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 
 import { ActorMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -15,6 +16,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { MKT_KPI_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { MktKpiHistoryWorkspaceEntity } from 'src/mkt-core/mkt-kpi-history/mkt-kpi-history.workspace-entity';
 
 import {
   MKT_KPI_TYPE_OPTIONS,
@@ -316,12 +318,25 @@ export class MktKpiWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconUser',
     inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'createdKpis',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
   createdByPerson: Relation<PersonWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('createdByPerson')
   createdByPersonId: string | null;
+
+  @WorkspaceRelation({
+    standardId: MKT_KPI_FIELD_IDS.kpiHistories,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`KPI Histories`,
+    description: msg`History of changes made to this KPI`,
+    icon: 'IconHistory',
+    inverseSideTarget: () => MktKpiHistoryWorkspaceEntity,
+    inverseSideFieldKey: 'kpi',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  kpiHistories: Relation<MktKpiHistoryWorkspaceEntity[]>;
 
   // @WorkspaceRelation({
   //   standardId: MKT_KPI_FIELD_IDS.assigneeWorkspaceMember,
