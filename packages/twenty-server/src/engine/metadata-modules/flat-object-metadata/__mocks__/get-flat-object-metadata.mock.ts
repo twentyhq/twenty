@@ -42,3 +42,15 @@ export const getFlatObjectMetadataMock = (
     ...overrides,
   };
 };
+
+export const getStandardFlatObjectMetadataMock = (
+  overrides: Omit<FlatObjectMetadataOverrides, 'isCustom' | 'isSystem'>,
+) => {
+  return getFlatObjectMetadataMock({
+    standardId: faker.string.uuid(),
+    standardOverrides: {},
+    isCustom: false,
+    isSystem: true,
+    ...overrides,
+  });
+};
