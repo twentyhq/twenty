@@ -5,7 +5,7 @@ import {
 
 export const getOutputSchemaType = (
   stepType: WorkflowActionType | WorkflowTriggerType,
-): 'RECORD' | 'DATABASE_EVENT' | 'FIND_RECORDS' | 'FORM' | 'BASE' => {
+): 'RECORD' | 'DATABASE_EVENT' | 'FIND_RECORDS' | 'FORM' | 'CODE' | 'BASE' => {
   switch (stepType) {
     case 'CREATE_RECORD':
     case 'UPDATE_RECORD':
@@ -18,6 +18,8 @@ export const getOutputSchemaType = (
       return 'FIND_RECORDS';
     case 'FORM':
       return 'FORM';
+    case 'CODE':
+      return 'CODE';
     default:
       return 'BASE';
   }

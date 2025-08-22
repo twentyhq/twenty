@@ -1,13 +1,16 @@
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
+import type { BaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
+import type { CodeOutputSchema } from '@/workflow/workflow-variables/types/CodeOutputSchema';
 import type { FindRecordsOutputSchema } from '@/workflow/workflow-variables/types/FindRecordsOutputSchema';
 import type { FormOutputSchema } from '@/workflow/workflow-variables/types/FormOutputSchema';
 import { type RecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { getOutputSchemaType } from '@/workflow/workflow-variables/utils/getOutputSchemaType';
+import { searchVariableThroughBaseOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughBaseOutputSchema';
+import { searchVariableThroughCodeOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughCodeOutputSchema';
 import { searchVariableThroughFindRecordsOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughFindRecordsOutputSchema';
 import { searchVariableThroughFormOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughFormOutputSchema';
-import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
 import { searchVariableThroughRecordEventOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughRecordEventOutputSchema';
 import { searchVariableThroughRecordOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughRecordOutputSchema';
 import { useRecoilValue } from 'recoil';
@@ -91,9 +94,20 @@ export const useSearchVariable = ({
     });
   }
 
-  // TODO: remove old search once all schema types are handled
-  return searchVariableThroughOutputSchema({
-    stepOutputSchema,
+  if (outputSchemaType === 'CODE') {
+    return searchVariableThroughCodeOutputSchema({
+      stepName: stepOutputSchema.name,
+      codeOutputSchema:
+        stepOutputSchema.outputSchema as unknown as CodeOutputSchema,
+      rawVariableName,
+      isFullRecord,
+    });
+  }
+
+  return searchVariableThroughBaseOutputSchema({
+    stepName: stepOutputSchema.name,
+    baseOutputSchema:
+      stepOutputSchema.outputSchema as unknown as BaseOutputSchemaV2,
     rawVariableName,
     isFullRecord,
   });
