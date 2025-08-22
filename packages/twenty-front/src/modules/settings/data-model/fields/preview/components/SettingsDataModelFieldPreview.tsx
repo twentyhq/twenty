@@ -112,6 +112,7 @@ export const SettingsDataModelFieldPreview = ({
     options: fieldMetadataItem.options ?? [],
     settings: fieldMetadataItem.settings,
     relationType: fieldMetadataItem.relation?.type,
+    morphRelations: [],
   };
 
   return (
