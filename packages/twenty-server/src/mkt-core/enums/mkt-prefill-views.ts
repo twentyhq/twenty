@@ -51,4 +51,5 @@ export const MKT_ALL_VIEWS = [
   mktDepartmentsAllView,
   mktStaffStatusHistoryAllView,
   mktKpisAllView,
+  // prefillMktKpiTemplates,
 ];

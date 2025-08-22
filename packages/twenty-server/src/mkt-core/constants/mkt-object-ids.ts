@@ -33,4 +33,5 @@ export const MKT_OBJECT_IDS = {
   mktStaffStatusHistory: 'b8c9d0e1-f2a3-4b5c-6d7e-8f9a0b1c2d3e',
   // kpi system
   mktKpi: 'a7b8c9d0-e1f2-3a4b-5c6d-7e8f9a0b1c2d',
+  mktKpiTemplate: 'c9d0e1f2-3a4b-5c6d-7e8f-9a0b1c2d3e4f',
 };

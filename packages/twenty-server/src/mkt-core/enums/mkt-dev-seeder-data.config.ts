@@ -83,6 +83,10 @@ import {
   MKT_KPI_DATA_SEED_COLUMNS,
   MKT_KPI_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-kpi-data-seeds.constants';
+import {
+  MKT_KPI_TEMPLATE_DATA_SEED_COLUMNS,
+  MKT_KPI_TEMPLATE_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-kpi-template-data-seeds.constants';
 
 export const MKT_RECORD_SEEDS_CONFIGS = [
   // Product configs
@@ -189,9 +193,15 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     pgColumns: MKT_STAFF_STATUS_HISTORY_DATA_SEED_COLUMNS,
     recordSeeds: MKT_STAFF_STATUS_HISTORY_DATA_SEEDS,
   },
+  // KPI System configs
   {
     tableName: 'mktKpi',
     pgColumns: MKT_KPI_DATA_SEED_COLUMNS,
     recordSeeds: MKT_KPI_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktKpiTemplate',
+    pgColumns: MKT_KPI_TEMPLATE_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_KPI_TEMPLATE_DATA_SEEDS,
   },
 ];

@@ -14,6 +14,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { MKT_KPI_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 
 import {
   MKT_KPI_TYPE_OPTIONS,
@@ -318,6 +319,9 @@ export class MktKpiWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   createdByPerson: Relation<PersonWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('createdByPerson')
+  createdByPersonId: string | null;
 
   // @WorkspaceRelation({
   //   standardId: MKT_KPI_FIELD_IDS.assigneeWorkspaceMember,
