@@ -12,8 +12,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { AgentExecutionResult } from 'src/engine/metadata-modules/agent/agent-execution.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import {
-    AgentException,
-    AgentExceptionCode,
+  AgentException,
+  AgentExceptionCode,
 } from 'src/engine/metadata-modules/agent/agent.exception';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
