@@ -1,8 +1,10 @@
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
+import type { FindRecordsOutputSchema } from '@/workflow/workflow-variables/types/FindRecordsOutputSchema';
 import { type RecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { getOutputSchemaType } from '@/workflow/workflow-variables/utils/getOutputSchemaType';
+import { searchVariableThroughFindRecordsOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughFindRecordsOutputSchema';
 import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
 import { searchVariableThroughRecordEventOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughRecordEventOutputSchema';
 import { searchVariableThroughRecordOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughRecordOutputSchema';
@@ -62,6 +64,16 @@ export const useSearchVariable = ({
     return searchVariableThroughRecordEventOutputSchema({
       stepName: stepOutputSchema.name,
       recordOutputSchema: stepOutputSchema.outputSchema as RecordOutputSchemaV2,
+      rawVariableName,
+      isFullRecord,
+    });
+  }
+
+  if (outputSchemaType === 'FIND_RECORDS') {
+    return searchVariableThroughFindRecordsOutputSchema({
+      stepName: stepOutputSchema.name,
+      searchRecordOutputSchema:
+        stepOutputSchema.outputSchema as unknown as FindRecordsOutputSchema,
       rawVariableName,
       isFullRecord,
     });
