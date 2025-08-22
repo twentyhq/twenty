@@ -3,9 +3,8 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { BILLING_FEATURE_USED } from 'src/engine/core-modules/billing/constants/billing-feature-used.constant';
 import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-
-import { AIBillingService } from './ai-billing.service';
-import { AiModelRegistryService } from './ai-model-registry.service';
+import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
+import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 
 describe('AIBillingService', () => {
   let service: AIBillingService;
