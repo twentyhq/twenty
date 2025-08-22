@@ -10,10 +10,7 @@ import {
   type settingsDataModelFieldSelectFormSchema,
 } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
-import {
-  SettingsDataModelFieldPreviewCard,
-  type SettingsDataModelFieldPreviewCardProps,
-} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 
 type SettingsDataModelFieldSelectOrMultiSelectFormValues = z.infer<
   | typeof settingsDataModelFieldSelectFormSchema
@@ -23,6 +20,7 @@ type SettingsDataModelFieldSelectOrMultiSelectFormValues = z.infer<
 type SettingsDataModelFieldSelectSettingsFormCardProps = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
+    | 'name'
     | 'icon'
     | 'label'
     | 'type'
@@ -31,16 +29,19 @@ type SettingsDataModelFieldSelectSettingsFormCardProps = {
     | 'isUnique'
     | 'isCustom'
   >;
-} & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
+  objectNameSingular: string;
+};
 
-const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
+const StyledSettingsDataModelFieldPreviewCard = styled(
+  SettingsDataModelFieldPreviewCard,
+)`
   display: grid;
   flex: 1 1 100%;
 `;
 
 export const SettingsDataModelFieldSelectSettingsFormCard = ({
   fieldMetadataItem,
-  objectMetadataItem,
+  objectNameSingular,
 }: SettingsDataModelFieldSelectSettingsFormCardProps) => {
   const { initialOptions, initialDefaultValue } =
     useSelectSettingsFormInitialValues({
@@ -53,13 +54,13 @@ export const SettingsDataModelFieldSelectSettingsFormCard = ({
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <StyledFieldPreviewCard
+        <StyledSettingsDataModelFieldPreviewCard
           fieldMetadataItem={{
             ...fieldMetadataItem,
             defaultValue: watchFormValue('defaultValue', initialDefaultValue),
             options: watchFormValue('options', initialOptions),
           }}
-          objectMetadataItem={objectMetadataItem}
+          objectNameSingular={objectNameSingular}
         />
       }
       form={

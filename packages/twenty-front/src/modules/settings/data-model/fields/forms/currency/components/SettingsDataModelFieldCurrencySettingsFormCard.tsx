@@ -8,18 +8,16 @@ import {
   type SettingsDataModelFieldCurrencyFormValues,
 } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
-import {
-  SettingsDataModelFieldPreviewCard,
-  type SettingsDataModelFieldPreviewCardProps,
-} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 
 type SettingsDataModelFieldCurrencySettingsFormCardProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
+    'name' | 'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
   >;
-} & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
+  objectNameSingular: string;
+};
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
   display: grid;
@@ -29,7 +27,7 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
 export const SettingsDataModelFieldCurrencySettingsFormCard = ({
   disabled,
   fieldMetadataItem,
-  objectMetadataItem,
+  objectNameSingular,
 }: SettingsDataModelFieldCurrencySettingsFormCardProps) => {
   const { initialDefaultValue, initialSettingsValue } =
     useCurrencySettingsFormInitialValues({
@@ -48,7 +46,7 @@ export const SettingsDataModelFieldCurrencySettingsFormCard = ({
             defaultValue: watchFormValue('defaultValue', initialDefaultValue),
             settings: watchFormValue('settings', initialSettingsValue),
           }}
-          objectMetadataItem={objectMetadataItem}
+          objectNameSingular={objectNameSingular}
         />
       }
       form={

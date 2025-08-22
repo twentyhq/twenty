@@ -31,7 +31,7 @@ const meta: Meta<typeof SettingsDataModelFieldPreviewCard> = {
     SnackBarDecorator,
   ],
   args: {
-    objectMetadataItem: mockedPersonObjectMetadataItem,
+    objectNameSingular: mockedPersonObjectMetadataItem.nameSingular,
   },
   parameters: {
     container: { width: 480 },
@@ -65,7 +65,7 @@ export const Boolean: Story = {
       ({ name, type }) =>
         name === 'idealCustomerProfile' && type === FieldMetadataType.BOOLEAN,
     ),
-    objectMetadataItem: mockedCompanyObjectMetadataItem,
+    objectNameSingular: mockedCompanyObjectMetadataItem.nameSingular,
   },
 };
 
@@ -76,7 +76,7 @@ export const Currency: Story = {
         name === 'annualRecurringRevenue' &&
         type === FieldMetadataType.CURRENCY,
     ),
-    objectMetadataItem: mockedCompanyObjectMetadataItem,
+    objectNameSingular: mockedCompanyObjectMetadataItem.nameSingular,
   },
 };
 
@@ -85,7 +85,7 @@ export const Date: Story = {
     fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
       ({ type }) => type === FieldMetadataType.DATE_TIME,
     ),
-    objectMetadataItem: mockedCompanyObjectMetadataItem,
+    objectNameSingular: mockedCompanyObjectMetadataItem.nameSingular,
   },
 };
 
@@ -95,7 +95,7 @@ export const Links: Story = {
       ({ name, type }) =>
         name === 'linkedinLink' && type === FieldMetadataType.LINKS,
     ),
-    objectMetadataItem: mockedCompanyObjectMetadataItem,
+    objectNameSingular: mockedCompanyObjectMetadataItem.nameSingular,
   },
 };
 
@@ -104,13 +104,14 @@ export const Number: Story = {
     fieldMetadataItem: mockedCompanyObjectMetadataItem?.fields.find(
       ({ type }) => type === FieldMetadataType.NUMBER,
     ),
-    objectMetadataItem: mockedCompanyObjectMetadataItem,
+    objectNameSingular: mockedCompanyObjectMetadataItem.nameSingular,
   },
 };
 
 export const Rating: Story = {
   args: {
     fieldMetadataItem: {
+      name: 'engagement',
       icon: 'IconHandClick',
       label: 'Engagement',
       type: FieldMetadataType.RATING,
@@ -123,7 +124,7 @@ export const Relation: Story = {
     fieldMetadataItem: mockedPersonObjectMetadataItem?.fields.find(
       ({ name }) => name === 'company',
     ),
-    relationObjectMetadataItem: mockedCompanyObjectMetadataItem,
+    objectNameSingular: mockedPersonObjectMetadataItem.nameSingular,
   },
 };
 
@@ -135,13 +136,13 @@ const selectFieldMetadataItem = getMockFieldMetadataItemOrThrow({
 export const Select: Story = {
   args: {
     fieldMetadataItem: selectFieldMetadataItem,
-    objectMetadataItem: mockedOpportunityObjectMetadataItem,
+    objectNameSingular: mockedOpportunityObjectMetadataItem.nameSingular,
   },
 };
 
 export const MultiSelect: Story = {
   args: {
-    objectMetadataItem: mockedOpportunityObjectMetadataItem,
+    objectNameSingular: mockedOpportunityObjectMetadataItem.nameSingular,
     fieldMetadataItem: {
       ...structuredClone(selectFieldMetadataItem),
       type: FieldMetadataType.MULTI_SELECT,

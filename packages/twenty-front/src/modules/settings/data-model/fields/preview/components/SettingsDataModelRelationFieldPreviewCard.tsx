@@ -1,20 +1,22 @@
 import styled from '@emotion/styled';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { SettingsDataModelFieldPreview } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreview';
+import { SettingsDataModelRelationFieldPreview } from '@/settings/data-model/fields/preview/components/SettingsDataModelRelationFieldPreview';
 import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
+import { isDefined } from 'twenty-shared/utils';
 import { Card, CardContent } from 'twenty-ui/layout';
 
-type SettingsDataModelFieldPreviewCardProps = {
-  className?: string;
+export type SettingsDataModelRelationFieldPreviewCardProps = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
     'name' | 'icon' | 'label' | 'type' | 'defaultValue' | 'options' | 'settings'
   >;
-  objectNameSingular: string;
+  objectNameSingulars: string[];
+  fieldPreviewTargetObjectNameSingular: string;
   shrink?: boolean;
   withFieldLabel?: boolean;
+  className?: string;
   pluralizeLabel?: boolean;
 };
 
@@ -27,28 +29,35 @@ const StyledCardContent = styled(CardContent)`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const SettingsDataModelFieldPreviewCard = ({
+export const SettingsDataModelRelationFieldPreviewCard = ({
   className,
   fieldMetadataItem,
-  objectNameSingular,
+  objectNameSingulars,
+  fieldPreviewTargetObjectNameSingular,
   shrink,
   withFieldLabel = true,
   pluralizeLabel = false,
-}: SettingsDataModelFieldPreviewCardProps) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+}: SettingsDataModelRelationFieldPreviewCardProps) => {
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const targetObjectMetadataItems = objectNameSingulars
+    .map((nameSingular) =>
+      objectMetadataItems.find((item) => item.nameSingular === nameSingular),
+    )
+    .filter(isDefined);
 
   return (
     <StyledCard className={className} fullWidth>
       <StyledCardContent>
         <SettingsDataModelObjectPreview
-          objectMetadataItems={[objectMetadataItem]}
+          objectMetadataItems={targetObjectMetadataItems}
           pluralizeLabel={pluralizeLabel}
         />
-        <SettingsDataModelFieldPreview
-          objectNameSingular={objectMetadataItem.nameSingular}
+        <SettingsDataModelRelationFieldPreview
           fieldMetadataItem={fieldMetadataItem}
+          relationTargetObjectNameSingular={
+            fieldPreviewTargetObjectNameSingular
+          }
           shrink={shrink}
           withFieldLabel={withFieldLabel}
         />

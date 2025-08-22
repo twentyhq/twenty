@@ -3,9 +3,9 @@ import { useMemo } from 'react';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
-import { type SettingsDataModelFieldPreviewCardProps } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
@@ -14,7 +14,10 @@ export const useRelationSettingsFormInitialValues = ({
   objectMetadataItem,
 }: {
   fieldMetadataItem?: Pick<FieldMetadataItem, 'type' | 'relation'>;
-  objectMetadataItem?: SettingsDataModelFieldPreviewCardProps['objectMetadataItem'];
+  objectMetadataItem?: Pick<
+    ObjectMetadataItem,
+    'id' | 'icon' | 'labelSingular' | 'labelPlural'
+  >;
 }) => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 

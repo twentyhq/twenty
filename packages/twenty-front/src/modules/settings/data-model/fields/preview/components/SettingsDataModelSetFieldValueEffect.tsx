@@ -7,13 +7,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 type SettingsDataModelSetFieldValueEffectProps = {
   recordId: string;
-  fieldName: string;
+  gqlFieldName: string;
   value: unknown;
 };
 
 export const SettingsDataModelSetFieldValueEffect = ({
   recordId,
-  fieldName,
+  gqlFieldName,
   value,
 }: SettingsDataModelSetFieldValueEffectProps) => {
   const settingsPreviewRecordId = useRecoilValue(settingsPreviewRecordIdState);
@@ -25,20 +25,20 @@ export const SettingsDataModelSetFieldValueEffect = ({
   const setFieldValue = useSetRecoilState(
     recordStoreFamilySelector({
       recordId,
-      fieldName,
+      fieldName: gqlFieldName,
     }),
   );
 
   useEffect(() => {
     if (
       isDefined(upsertedPreviewRecord) &&
-      !!upsertedPreviewRecord[fieldName]
+      !!upsertedPreviewRecord[gqlFieldName]
     ) {
-      setFieldValue(upsertedPreviewRecord[fieldName]);
+      setFieldValue(upsertedPreviewRecord[gqlFieldName]);
     } else {
       setFieldValue(value);
     }
-  }, [value, setFieldValue, recordId, fieldName, upsertedPreviewRecord]);
+  }, [value, setFieldValue, recordId, gqlFieldName, upsertedPreviewRecord]);
 
   return null;
 };

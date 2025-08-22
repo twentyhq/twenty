@@ -1,24 +1,23 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { BooleanFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/BooleanFieldInput';
-import { RatingFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RatingFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
+import { computeMorphRelationFieldName } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-type SettingsDataModelFieldPreviewProps = {
+type SettingsDataModelRelationFieldPreviewProps = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'name' | 'icon' | 'label' | 'type' | 'defaultValue' | 'options' | 'settings'
+    'name' | 'icon' | 'label' | 'type' | 'settings'
   >;
-  objectNameSingular: string;
+  relationTargetObjectNameSingular: string;
   shrink?: boolean;
   withFieldLabel?: boolean;
 };
@@ -48,37 +47,38 @@ const StyledFieldLabel = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const SettingsDataModelFieldPreview = ({
+export const SettingsDataModelRelationFieldPreview = ({
   fieldMetadataItem,
-  objectNameSingular,
+  relationTargetObjectNameSingular,
   shrink,
   withFieldLabel = true,
-}: SettingsDataModelFieldPreviewProps) => {
-  const theme = useTheme();
-  const { labelIdentifierFieldMetadataItem } =
-    useLabelIdentifierFieldMetadataItem({
-      objectNameSingular,
+}: SettingsDataModelRelationFieldPreviewProps) => {
+  const { objectMetadataItem: relationTargetObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: relationTargetObjectNameSingular,
     });
+
+  const theme = useTheme();
 
   const { getIcon } = useIcons();
   const FieldIcon = getIcon(fieldMetadataItem.icon);
 
-  const isLabelIdentifier =
-    labelIdentifierFieldMetadataItem?.name === fieldMetadataItem.name;
-
-  const fieldName = fieldMetadataItem.name;
-  const recordId = `${objectNameSingular}-${fieldName}-preview`;
-
   const fieldPreviewValue = useFieldPreviewValue({
     fieldMetadataItem,
-    skip: isLabelIdentifier,
+    relationObjectNameSingular: relationTargetObjectNameSingular,
   });
+
+  const fieldName = fieldMetadataItem.name;
+  const recordId = `${relationTargetObjectNameSingular}-${fieldName}-preview`;
 
   const metadata = {
     fieldName,
-    objectMetadataNameSingular: objectNameSingular,
-    options: fieldMetadataItem.options ?? [],
+    objectMetadataNameSingular: 'company',
+    relationObjectMetadataNameSingular: relationTargetObjectNameSingular,
+    options: [],
     settings: fieldMetadataItem.settings,
+    relationType: fieldMetadataItem.settings?.relationType,
+    morphRelations: [],
   };
 
   return (
@@ -90,7 +90,16 @@ export const SettingsDataModelFieldPreview = ({
       >
         <SettingsDataModelSetFieldValueEffect
           recordId={recordId}
-          gqlFieldName={fieldMetadataItem.name ?? ''}
+          gqlFieldName={
+            fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION
+              ? computeMorphRelationFieldName({
+                  fieldName: fieldMetadataItem.name ?? '',
+                  relationDirection: fieldMetadataItem.settings?.relationType,
+                  nameSingular: relationTargetObjectNameSingular,
+                  namePlural: relationTargetObjectMetadataItem.namePlural,
+                })
+              : fieldMetadataItem.name
+          }
           value={fieldPreviewValue}
         />
         <StyledFieldPreview shrink={shrink}>
@@ -106,30 +115,20 @@ export const SettingsDataModelFieldPreview = ({
           <FieldContext.Provider
             value={{
               recordId,
-              isLabelIdentifier,
+              isLabelIdentifier: false,
               fieldDefinition: {
                 type: fieldMetadataItem.type,
                 iconName: 'FieldIcon',
                 fieldMetadataId: '',
                 label: fieldMetadataItem.label,
                 metadata,
-                defaultValue: fieldMetadataItem.defaultValue,
+                defaultValue: null,
               },
-              isRecordFieldReadOnly:
-                fieldMetadataItem.type === FieldMetadataType.BOOLEAN ||
-                fieldMetadataItem.type === FieldMetadataType.RATING
-                  ? true
-                  : false,
+              isRecordFieldReadOnly: true,
               disableChipClick: true,
             }}
           >
-            {fieldMetadataItem.type === FieldMetadataType.BOOLEAN ? (
-              <BooleanFieldInput />
-            ) : fieldMetadataItem.type === FieldMetadataType.RATING ? (
-              <RatingFieldInput />
-            ) : (
-              <FieldDisplay />
-            )}
+            <FieldDisplay />
           </FieldContext.Provider>
         </StyledFieldPreview>
       </RecordFieldComponentInstanceContext.Provider>

@@ -6,19 +6,16 @@ import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/componen
 
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
 import { SettingsDataModelFieldPhonesForm } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';
-import {
-  SettingsDataModelFieldPreviewCard,
-  type SettingsDataModelFieldPreviewCardProps,
-} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 
 type SettingsDataModelFieldPhonesSettingsFormCardProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'isCustom' | 'settings'
-  > &
-    Partial<{ id: string }>;
-} & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
+    'name' | 'icon' | 'label' | 'type' | 'isCustom' | 'settings'
+  >;
+  objectNameSingular: string;
+};
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
   flex: 1 1 100%;
@@ -27,14 +24,14 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
 export const SettingsDataModelFieldPhonesSettingsFormCard = ({
   disabled,
   fieldMetadataItem,
-  objectMetadataItem,
+  objectNameSingular,
 }: SettingsDataModelFieldPhonesSettingsFormCardProps) => {
   return (
     <SettingsDataModelPreviewFormCard
       preview={
         <StyledFieldPreviewCard
           fieldMetadataItem={fieldMetadataItem}
-          objectMetadataItem={objectMetadataItem}
+          objectNameSingular={objectNameSingular}
         />
       }
       form={
@@ -45,7 +42,7 @@ export const SettingsDataModelFieldPhonesSettingsFormCard = ({
           />
           <SettingsDataModelFieldIsUniqueForm
             fieldMetadataItem={fieldMetadataItem}
-            objectMetadataItem={objectMetadataItem}
+            objectNameSingular={objectNameSingular}
           />
         </>
       }

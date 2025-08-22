@@ -9,19 +9,16 @@ import {
   type SettingsDataModelFieldDateFormValues,
 } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
-import {
-  SettingsDataModelFieldPreviewCard,
-  type SettingsDataModelFieldPreviewCardProps,
-} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 
 type SettingsDataModelFieldDateSettingsFormCardProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'isCustom' | 'settings' | 'isUnique'
-  > &
-    Partial<{ id: string }>;
-} & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
+    'name' | 'icon' | 'label' | 'type' | 'isCustom' | 'settings' | 'isUnique'
+  >;
+  objectNameSingular: string;
+};
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
   display: grid;
@@ -31,7 +28,7 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
 export const SettingsDataModelFieldDateSettingsFormCard = ({
   disabled,
   fieldMetadataItem,
-  objectMetadataItem,
+  objectNameSingular,
 }: SettingsDataModelFieldDateSettingsFormCardProps) => {
   const { initialDisplayFormat, initialCustomUnicodeDateFormat } =
     useDateSettingsFormInitialValues({
@@ -58,7 +55,7 @@ export const SettingsDataModelFieldDateSettingsFormCard = ({
               ),
             },
           }}
-          objectMetadataItem={objectMetadataItem}
+          objectNameSingular={objectNameSingular}
         />
       }
       form={
@@ -69,7 +66,7 @@ export const SettingsDataModelFieldDateSettingsFormCard = ({
           />
           <SettingsDataModelFieldIsUniqueForm
             fieldMetadataItem={fieldMetadataItem}
-            objectMetadataItem={objectMetadataItem}
+            objectNameSingular={objectNameSingular}
           />
         </>
       }

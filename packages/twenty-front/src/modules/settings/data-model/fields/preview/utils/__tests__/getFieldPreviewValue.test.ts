@@ -25,7 +25,9 @@ describe('getFieldPreviewValue', () => {
 
     // When
     const result = getFieldPreviewValue({
-      fieldMetadataItem,
+      fieldType: fieldMetadataItem.type,
+      fieldSettings: fieldMetadataItem.settings,
+      defaultValue: fieldMetadataItem.defaultValue,
     });
 
     // Then
@@ -45,7 +47,9 @@ describe('getFieldPreviewValue', () => {
 
     // When
     const result = getFieldPreviewValue({
-      fieldMetadataItem,
+      fieldType: fieldMetadataItem.type,
+      fieldSettings: fieldMetadataItem.settings,
+      defaultValue: fieldMetadataItem.defaultValue,
     });
 
     // Then
@@ -68,7 +72,9 @@ describe('getFieldPreviewValue', () => {
 
     // When
     const result = getFieldPreviewValue({
-      fieldMetadataItem,
+      fieldType: fieldMetadataItem.type,
+      fieldSettings: fieldMetadataItem.settings,
+      defaultValue: fieldMetadataItem.defaultValue,
     });
 
     // Then

@@ -30,10 +30,7 @@ import {
   settingsDataModelFieldSelectFormSchema,
 } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
 import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectSettingsFormCard';
-import {
-  SettingsDataModelFieldPreviewCard,
-  type SettingsDataModelFieldPreviewCardProps,
-} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const isUniqueFieldFormSchema = z.object({
@@ -138,10 +135,10 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
 type SettingsDataModelFieldSettingsFormCardProps = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'isCustom' | 'settings'
-  > &
-    Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
-} & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
+    'name' | 'icon' | 'label' | 'type' | 'isCustom' | 'settings'
+  >;
+  objectNameSingular: string;
+};
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
   flex: 1 1 100%;
@@ -171,7 +168,7 @@ const previewableTypes = [
 
 export const SettingsDataModelFieldSettingsFormCard = ({
   fieldMetadataItem,
-  objectMetadataItem,
+  objectNameSingular,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
   if (!previewableTypes.includes(fieldMetadataItem.type)) {
     return null;
@@ -181,7 +178,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     return (
       <SettingsDataModelFieldBooleanSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
+        objectNameSingular={objectNameSingular}
       />
     );
   }
@@ -190,7 +187,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     return (
       <SettingsDataModelFieldCurrencySettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
+        objectNameSingular={objectNameSingular}
       />
     );
   }
@@ -202,7 +199,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     return (
       <SettingsDataModelFieldDateSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
+        objectNameSingular={objectNameSingular}
       />
     );
   }
@@ -211,7 +208,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     return (
       <SettingsDataModelFieldRelationSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
+        objectNameSingular={objectNameSingular}
       />
     );
   }
@@ -220,7 +217,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     return (
       <SettingsDataModelFieldMorphRelationFormCard
         fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
+        objectNameSingular={objectNameSingular}
       />
     );
   }
@@ -229,7 +226,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     return (
       <SettingsDataModelFieldNumberSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
+        objectNameSingular={objectNameSingular}
       />
     );
   }
@@ -238,7 +235,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     return (
       <SettingsDataModelFieldTextSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
+        objectNameSingular={objectNameSingular}
       />
     );
   }
@@ -247,7 +244,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     return (
       <SettingsDataModelFieldAddressSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
+        objectNameSingular={objectNameSingular}
       />
     );
   }
@@ -256,7 +253,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     return (
       <SettingsDataModelFieldPhonesSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
+        objectNameSingular={objectNameSingular}
       />
     );
   }
@@ -268,7 +265,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     return (
       <SettingsDataModelFieldSelectSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
-        objectMetadataItem={objectMetadataItem}
+        objectNameSingular={objectNameSingular}
       />
     );
   }
@@ -278,13 +275,13 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       preview={
         <StyledFieldPreviewCard
           fieldMetadataItem={fieldMetadataItem}
-          objectMetadataItem={objectMetadataItem}
+          objectNameSingular={objectNameSingular}
         />
       }
       form={
         <SettingsDataModelFieldIsUniqueForm
           fieldMetadataItem={fieldMetadataItem}
-          objectMetadataItem={objectMetadataItem}
+          objectNameSingular={objectNameSingular}
         />
       }
     />

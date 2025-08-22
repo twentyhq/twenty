@@ -47,7 +47,7 @@ export type SettingsDataModelFieldRelationFormValues = z.infer<
 
 type SettingsDataModelFieldRelationFormProps = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'type'>;
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem?: ObjectMetadataItem;
 };
 
 export const StyledContainer = styled.div`

@@ -37,7 +37,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 //TODO: fix this type
-type SettingsDataModelFieldEditFormValues = z.infer<
+export type SettingsDataModelFieldEditFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
 > &
   any;
@@ -237,7 +237,7 @@ export const SettingsObjectFieldEdit = () => {
                       )}
                       <SettingsDataModelFieldSettingsFormCard
                         fieldMetadataItem={fieldMetadataItem}
-                        objectMetadataItem={objectMetadataItem}
+                        objectNameSingular={objectMetadataItem.nameSingular}
                       />
                     </Section>
                   </>

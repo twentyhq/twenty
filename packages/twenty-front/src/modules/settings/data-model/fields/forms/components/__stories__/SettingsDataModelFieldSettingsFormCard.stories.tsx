@@ -38,7 +38,7 @@ const meta: Meta<typeof SettingsDataModelFieldSettingsFormCard> = {
   ],
   args: {
     fieldMetadataItem,
-    objectMetadataItem: mockedCompanyObjectMetadataItem,
+    objectNameSingular: mockedCompanyObjectMetadataItem.nameSingular,
   },
   parameters: {
     container: { width: 512 },
@@ -62,6 +62,7 @@ export const WithRelationForm: Story = {
 export const WithSelectForm: Story = {
   args: {
     fieldMetadataItem: {
+      name: 'industry',
       label: 'Industry',
       icon: 'IconBuildingFactory2',
       type: FieldMetadataType.SELECT,

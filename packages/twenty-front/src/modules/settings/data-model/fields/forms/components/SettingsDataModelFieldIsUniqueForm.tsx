@@ -2,7 +2,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { Separator } from '@/settings/components/Separator';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { canBeUnique } from '@/settings/data-model/fields/forms/utils/canBeUnique.util';
@@ -20,15 +20,19 @@ type SettingsDataModelFieldIsUniqueFormProps = {
     'icon' | 'label' | 'type' | 'isCustom' | 'settings' | 'isUnique'
   > &
     Partial<{ id: string }>;
-  objectMetadataItem: Pick<ObjectMetadataItem, 'indexMetadatas'>;
+  objectNameSingular: string;
 };
 
 export const SettingsDataModelFieldIsUniqueForm = ({
   fieldMetadataItem,
-  objectMetadataItem,
+  objectNameSingular,
 }: SettingsDataModelFieldIsUniqueFormProps) => {
   const { control } =
     useFormContext<SettingsDataModelFieldIsUniqueFormValues>();
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
   const hasStandardUniqueIndex = objectMetadataItem.indexMetadatas.some(
     (index) =>

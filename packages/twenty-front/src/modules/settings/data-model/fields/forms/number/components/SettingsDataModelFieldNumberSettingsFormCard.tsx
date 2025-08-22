@@ -4,20 +4,17 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
 import { SettingsDataModelFieldNumberForm } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
-import {
-  SettingsDataModelFieldPreviewCard,
-  type SettingsDataModelFieldPreviewCardProps,
-} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { useFormContext } from 'react-hook-form';
 
 type SettingsDataModelFieldNumberSettingsFormCardProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'isCustom' | 'settings' | 'isUnique'
-  > &
-    Partial<{ id: string }>;
-} & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
+    'name' | 'icon' | 'label' | 'type' | 'isCustom' | 'settings' | 'isUnique'
+  >;
+  objectNameSingular: string;
+};
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
   display: grid;
@@ -27,7 +24,7 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
 export const SettingsDataModelFieldNumberSettingsFormCard = ({
   disabled,
   fieldMetadataItem,
-  objectMetadataItem,
+  objectNameSingular,
 }: SettingsDataModelFieldNumberSettingsFormCardProps) => {
   const { watch } = useFormContext();
 
@@ -36,12 +33,13 @@ export const SettingsDataModelFieldNumberSettingsFormCard = ({
       preview={
         <StyledFieldPreviewCard
           fieldMetadataItem={{
+            name: watch('name'),
             icon: watch('icon'),
             label: watch('label') || 'New Field',
             settings: watch('settings') || null,
             type: fieldMetadataItem.type,
           }}
-          objectMetadataItem={objectMetadataItem}
+          objectNameSingular={objectNameSingular}
         />
       }
       form={
@@ -53,7 +51,7 @@ export const SettingsDataModelFieldNumberSettingsFormCard = ({
 
           <SettingsDataModelFieldIsUniqueForm
             fieldMetadataItem={fieldMetadataItem}
-            objectMetadataItem={objectMetadataItem}
+            objectNameSingular={objectNameSingular}
           />
         </>
       }

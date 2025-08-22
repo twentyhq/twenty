@@ -1,5 +1,5 @@
-import { useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
+import { useFormContext } from 'react-hook-form';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
@@ -8,17 +8,15 @@ import {
   type SettingsDataModelFieldBooleanFormValues,
 } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm';
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
-import {
-  SettingsDataModelFieldPreviewCard,
-  type SettingsDataModelFieldPreviewCardProps,
-} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 
 type SettingsDataModelFieldBooleanSettingsFormCardProps = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue'
+    'name' | 'icon' | 'label' | 'type' | 'defaultValue'
   >;
-} & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
+  objectNameSingular: string;
+};
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
   display: grid;
@@ -27,7 +25,7 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
 
 export const SettingsDataModelFieldBooleanSettingsFormCard = ({
   fieldMetadataItem,
-  objectMetadataItem,
+  objectNameSingular,
 }: SettingsDataModelFieldBooleanSettingsFormCardProps) => {
   const { initialDefaultValue } = useBooleanSettingsFormInitialValues({
     fieldMetadataItem,
@@ -44,7 +42,7 @@ export const SettingsDataModelFieldBooleanSettingsFormCard = ({
             ...fieldMetadataItem,
             defaultValue: watchFormValue('defaultValue', initialDefaultValue),
           }}
-          objectMetadataItem={objectMetadataItem}
+          objectNameSingular={objectNameSingular}
         />
       }
       form={

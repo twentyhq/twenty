@@ -51,7 +51,7 @@ export const SettingsDataModelObjectSettingsFormCard = ({
         </SettingsDataModelCardTitle>
         {labelIdentifierFieldMetadataItem ? (
           <StyledFieldPreviewCard
-            objectMetadataItem={objectMetadataItem}
+            objectNameSingular={objectMetadataItem.nameSingular}
             fieldMetadataItem={labelIdentifierFieldMetadataItem}
             withFieldLabel={false}
           />
