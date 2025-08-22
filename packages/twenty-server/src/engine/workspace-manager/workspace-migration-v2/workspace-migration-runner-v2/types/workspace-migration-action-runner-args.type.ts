@@ -7,6 +7,7 @@ export type WorkspaceMigrationActionRunnerArgs<
   T extends WorkspaceMigrationActionV2,
 > = {
   queryRunner: QueryRunner;
+  workspaceQueryRunner: QueryRunner;
   action: T;
   flatObjectMetadataMaps: FlatObjectMetadataMaps;
   workspaceId: string;
