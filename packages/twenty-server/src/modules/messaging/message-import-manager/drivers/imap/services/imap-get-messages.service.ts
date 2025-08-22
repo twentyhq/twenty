@@ -8,6 +8,7 @@ import { computeMessageDirection } from 'src/modules/messaging/message-import-ma
 import { ImapFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-fetch-by-batch.service';
 import { type MessageFetchResult } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-processor.service';
 import { extractTextWithoutReplyQuotations } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-message-text.util';
+import { parseMessageId } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-message-id.util';
 import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
@@ -34,19 +35,55 @@ export class ImapGetMessagesService {
       return [];
     }
 
-    const { batchResults } = await this.fetchByBatchService.fetchAllByBatches(
-      messageIds,
-      connectedAccount,
-    );
+    const folderToUidsMap = this.groupMessageIdsByFolder(messageIds);
 
-    this.logger.log(`IMAP fetch completed`);
+    const allMessages: MessageWithParticipants[] = [];
 
-    const messages = this.formatBatchResponsesAsMessages(
-      batchResults,
-      connectedAccount,
-    );
+    for (const [folder, uids] of folderToUidsMap.entries()) {
+      if (!uids.length) {
+        continue;
+      }
 
-    return messages;
+      const { batchResults } = await this.fetchByBatchService.fetchAllByBatches(
+        uids,
+        connectedAccount,
+        folder,
+      );
+
+      this.logger.log(`IMAP fetch completed for folder: ${folder}`);
+
+      const messages = this.formatBatchResponsesAsMessages(
+        batchResults,
+        connectedAccount,
+        folder,
+      );
+
+      allMessages.push(...messages);
+    }
+
+    return allMessages;
+  }
+
+  private groupMessageIdsByFolder(messageIds: string[]): Map<string, number[]> {
+    const folderToUidsMap = new Map<string, number[]>();
+
+    for (const messageId of messageIds) {
+      const parsedMessageId = parseMessageId(messageId);
+
+      if (!parsedMessageId) {
+        this.logger.warn(`Invalid messageId format: ${messageId}`);
+        continue;
+      }
+
+      const { folder, uid } = parsedMessageId;
+
+      if (!folderToUidsMap.has(folder)) {
+        folderToUidsMap.set(folder, []);
+      }
+      folderToUidsMap.get(folder)!.push(uid);
+    }
+
+    return folderToUidsMap;
   }
 
   public formatBatchResponsesAsMessages(
@@ -55,9 +92,14 @@ export class ImapGetMessagesService {
       ConnectedAccountWorkspaceEntity,
       'handle' | 'handleAliases'
     >,
+    folder: string,
   ): MessageWithParticipants[] {
     return batchResults.flatMap((batchResult) => {
-      return this.formatBatchResponseAsMessages(batchResult, connectedAccount);
+      return this.formatBatchResponseAsMessages(
+        batchResult,
+        connectedAccount,
+        folder,
+      );
     });
   }
 
@@ -67,11 +109,12 @@ export class ImapGetMessagesService {
       ConnectedAccountWorkspaceEntity,
       'handle' | 'handleAliases'
     >,
+    folder: string,
   ): MessageWithParticipants[] {
     const messages = batchResults.map((result) => {
       if (!result.parsed) {
         this.logger.warn(
-          `Message ${result.messageId} could not be parsed - likely not found in current folders`,
+          `Message UID ${result.uid} could not be parsed - likely not found in current folders`,
         );
 
         return undefined;
@@ -79,8 +122,9 @@ export class ImapGetMessagesService {
 
       return this.createMessageFromParsedMail(
         result.parsed,
-        result.messageId,
+        result.uid.toString(),
         connectedAccount,
+        folder,
       );
     });
 
@@ -95,11 +139,12 @@ export class ImapGetMessagesService {
 
   private createMessageFromParsedMail(
     parsed: ParsedMail,
-    messageId: string,
+    uid: string,
     connectedAccount: Pick<
       ConnectedAccountWorkspaceEntity,
       'handle' | 'handleAliases'
     >,
+    folder: string,
   ): MessageWithParticipants {
     const participants = this.extractAllParticipants(parsed);
     const attachments = this.extractAttachments(parsed);
@@ -120,9 +165,9 @@ export class ImapGetMessagesService {
     const subject = sanitizeString(parsed.subject || '');
 
     return {
-      externalId: messageId,
-      messageThreadExternalId: threadId || messageId,
-      headerMessageId: parsed.messageId || messageId,
+      externalId: `${folder}:${uid}`,
+      messageThreadExternalId: threadId || parsed.messageId || uid,
+      headerMessageId: parsed.messageId || uid,
       subject: subject,
       text: text,
       receivedAt: parsed.date || new Date(),
