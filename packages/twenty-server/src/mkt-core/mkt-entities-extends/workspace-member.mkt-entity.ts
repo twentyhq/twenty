@@ -153,4 +153,16 @@ export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   accountOwnerForMktTemplates: Relation<MktTemplateWorkspaceEntity[]>;
+
+  // @WorkspaceRelation({
+  //   standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.accountOwnerForMktKpiTemplates,
+  //   type: RelationType.ONE_TO_MANY,
+  //   label: msg`Account Owner For KPI Templates`,
+  //   description: msg`Account owner for KPI templates`,
+  //   icon: 'IconTemplate',
+  //   inverseSideTarget: () => MktKpiTemplateWorkspaceEntity,
+  //   inverseSideFieldKey: 'accountOwner',
+  //   onDelete: RelationOnDeleteAction.SET_NULL,
+  // })
+  // accountOwnerForMktKpiTemplates: Relation<MktKpiTemplateWorkspaceEntity[]>;
 }

@@ -18,6 +18,9 @@ import { MktOrganizationLevelWorkspaceEntity } from 'src/mkt-core/mkt-organizati
 import { MktEmploymentStatusWorkspaceEntity } from 'src/mkt-core/mkt-employment-status/mkt-employment-status.workspace-entity';
 import { MktStaffStatusHistoryWorkspaceEntity } from 'src/mkt-core/mkt-staff-status-history/mkt-staff-status-history.workspace-entity';
 import { MktDepartmentWorkspaceEntity } from 'src/mkt-core/mkt-department/mkt-department.workspace-entity';
+import { MktKpiWorkspaceEntity } from 'src/mkt-core/mkt-kpi/mkt-kpi.workspace-entity';
+import { MktKpiTemplateWorkspaceEntity } from 'src/mkt-core/mkt-kpi-template/mkt-kpi-template.workspace-entity';
+import { MktKpiHistoryWorkspaceEntity } from 'src/mkt-core/mkt-kpi-history/mkt-kpi-history.workspace-entity';
 
 export const MKT_WORKSPACE_ENTITIES = [
   // Product
@@ -52,4 +55,8 @@ export const MKT_WORKSPACE_ENTITIES = [
 
 export const MKT_FINAL_WORKSPACE_ENTITIES = [
   MktStaffStatusHistoryWorkspaceEntity,
+  // KPI System
+  MktKpiWorkspaceEntity,
+  MktKpiTemplateWorkspaceEntity,
+  MktKpiHistoryWorkspaceEntity,
 ];

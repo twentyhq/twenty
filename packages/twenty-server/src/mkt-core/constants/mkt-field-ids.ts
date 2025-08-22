@@ -119,7 +119,7 @@ export const MKT_ORDER_FIELD_IDS = {
 export const MKT_ORDER_ITEM_FIELD_IDS = {
   // fields
   name: 'f1e2d3c4-b5a6-9786-5432-109876543210',
-  quantity: '2b3c4d5e-6f70-8192-3456-789012345678',
+  quantity: '2b3c4d5e-6d70-8192-3456-789012345678',
   unitPrice: '3c4d5e6f-7081-9293-4567-890123456789',
   totalPrice: '4d5e6f70-8192-a3b4-5678-901234567890',
   snapshotProductName: '3c3f5fdd-434f-4f02-aa07-59f1df4dd241',
@@ -281,6 +281,33 @@ export const TIMELINE_ACTIVITY_MKT_FIELD_IDS = {
   mktTemplate: 'f0fb46f9-c26f-4154-b17e-326ca166f8c9',
   mktPayment: 'bf8a9b90-6d5e-4f40-9c30-8b7f6e5d4c50',
   mktPaymentMethod: 'cf8a9b91-6d5e-4f41-9c31-8b7f6e5d4c51',
+  //kpi system - removed timeline activity references as they're not implemented
+};
+
+// KPI TEMPLATE HISTORY
+export const MKT_KPI_TEMPLATE_HISTORY_FIELD_IDS = {
+  // relation to KPI Template
+  kpiTemplate: '50505050-7a8b-9c0d-1e2f-3a4b5c6d7e8f',
+
+  // change information
+  changeType: '50505050-8b9c-0d1e-2f3a-4b5c6d7e8f9a',
+  oldValue: '50505050-9c0d-1e2f-3a4b-5c6d7e8f9a0b',
+  newValue: '50505050-0d1e-2f3a-4b5c-6d7e8f9a0b1c',
+  changeReason: '50505050-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
+  changeDescription: '50505050-2f3a-4b5c-6d7e-8f9a0b1c2d3e',
+
+  // change context
+  changedByWorkspaceMember: '50505050-3a4b-5c6d-7e8f-9a0b1c2d3e4f',
+  changeSource: '50505050-4b5c-6d7e-8f9a-0b1c2d3e4f5a',
+  changeTimestamp: '50505050-5c6d-7e8f-9a0b-1c2d3e4f5a6b',
+
+  // additional data
+  additionalData: '50505050-6d7e-8f9a-0b1c-2d3e4f5a6b7c',
+
+  // standard fields
+  position: '50505050-7e8f-9a0b-1c2d-3e4f5a6b7c8d',
+  createdBy: '50505050-8f9a-0b1c-2d3e-4f5a6b7c8d9e',
+  searchVector: '50505050-9a0b-1c2d-3e4f-5a6b7c8d9e0f',
 };
 
 //EXTENDS FROM WORKSPACE_MEMBER_STANDARD_FIELD_IDS
@@ -301,6 +328,9 @@ export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   //invoices
   accountOwnerForMktInvoices: 'ab600d66-5755-4934-b5c3-19036927cf92',
   accountOwnerForMktTemplates: 'a88096b8-e818-4421-afc2-5b1ab207aca3',
+  //kpi system
+  accountOwnerForMktKpiTemplates: '40404040-7c8d-9e0f-1a2b-3c4d5e6f7a8b',
+  changedKpiHistories: '40404040-0b1c-2d3e-4f5a-6b7c8d9e0f1a',
 };
 
 export const MKT_RESELLER_TIER_FIELD_IDS = {
@@ -342,9 +372,9 @@ export const MKT_RESELLER_FIELD_IDS = {
   customDomain: 'f2a3b4c5-d6e7-8f9a-0b1c-d2e3f4a5b6c8',
   isCustomDomainEnabled: 'a3b4c5d6-e7f8-9a0b-1c2d-e3f4a5b6c7d9',
   // status & performance
-  status: 'b4c5d6e7-f8a9-0b1c-2d3e-f4a5b6c7d8ea',
+  status: 'b4c5d6e7-f8a9-0b1c-2d3e-4f5a6b7c8d9e',
   actualRevenue: 'c5d6e7f8-a9b0-1c2d-3e4f-a5b6c7d8e9fb',
-  lastRevenueUpdate: 'd6e7f8a9-b0c1-2d3e-4f5a-b6c7d8e9fafc',
+  lastRevenueUpdate: 'd6e7f8a9-b0c1-2d3e-4f5a-6b7c8d9e0f1a',
   // tracking
   position: 'e7f8a9b0-c1d2-3e4f-5a6b-c7d8e9fafbfd',
   createdBy: 'f8a9b0c1-d2e3-4f5a-6b7c-d8e9fafbfcfe',
@@ -360,7 +390,7 @@ export const MKT_RESELLER_TIER_HISTORY_FIELD_IDS = {
   // fields
   changeType: 'd2e3f4a5-b6c7-8d9e-afbf-cfdfea0fb1fc',
   changeReason: 'e3f4a5b6-c7d8-9eaf-bfc0-dfea0fb1fc2d',
-  actualRevenue: 'f4a5b6c7-d8e9-afb0-c1df-ea0fb1fc2d3e',
+  actualRevenue: 'f4a5b6c7-d8e9-0f1a-2b3c-4d5e6f7a8b9c',
   changedAt: 'a5b6c7d8-e9af-b0c1-d2ea-0fb1fc2d3e4f',
   changedBy: 'b6c7d8e9-afb0-c1d2-e3fb-1fc2d3e4f5a6',
   effectiveFrom: 'c7d8e9af-b0c1-d2e3-f4fc-2d3e4f5a6b7c',
@@ -459,4 +489,116 @@ export const MKT_DEPARTMENT_FIELD_IDS = {
   // standard fields
   position: 'f8a9b0c1-d2e3-4f5a-6b7c-8d9e0f1a2b3c',
   createdBy: 'a9b0c1d2-e3f4-5a6b-7c8d-9e0f1a2b3c4d',
+};
+
+export const MKT_KPI_FIELD_IDS = {
+  // basic kpi information
+  kpiName: '20202020-7a8b-9c0d-1e2f-3a4b5c6d7e8f',
+  kpiCode: '20202020-8b9c-0d1e-2f3a-4b5c6d7e8f9a',
+  kpiType: '20202020-9c0d-1e2f-3a4b-5c6d7e8f9a0b',
+  kpiCategory: '20202020-0d1e-2f3a-4b5c-6d7e8f9a0b1c',
+  description: '20202020-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
+
+  // target and actual values
+  targetValue: '20202020-2f3a-4b5c-6d7e-8f9a0b1c2d3e',
+  actualValue: '20202020-3a4b-5c6d-7e8f-9a0b1c2d3e4f',
+  unitOfMeasure: '20202020-4b5c-6d7e-8f9a-0b1c2d3e4f5a',
+
+  // time period
+  periodType: '20202020-5c6d-7e8f-9a0b-1c2d3e4f5a6b',
+  periodYear: '20202020-6d7e-8f9a-0b1c-2d3e4f5a6b7c',
+  periodQuarter: '20202020-7e8f-9a0b-1c2d-3e4f5a6b7c8d',
+  periodMonth: '20202020-8f9a-0b1c-2d3e-4f5a6b7c8d9e',
+  periodWeek: '20202020-9a0b-1c2d-3e4f-5a6b7c8d9e0f',
+  periodStartDate: '20202020-0b1c-2d3e-4f5a-6b7c8d9e0f1a',
+  periodEndDate: '20202020-1c2d-3e4f-5a6b-7c8d9e0f1a2b',
+
+  // assignment
+  assigneeType: '20202020-2d3e-4f5a-6b7c-8d9e0f1a2b3c',
+  assigneeWorkspaceMember: '20202020-3e4f-5a6b-7c8d-9e0f1a2b3c4d',
+  assigneeDepartment: '20202020-4f5a-6b7c-8d9e-0f1a2b3c4d5e',
+
+  // status and progress
+  status: '20202020-5a6b-7c8d-9e0f-1a2b3c4d5e6f',
+  achievedAt: '20202020-6b7c-8d9e-0f1a-2b3c4d5e6f7a',
+
+  // calculation configuration
+  isAutoCalculated: '20202020-7c8d-9e0f-1a2b-3c4d5e6f7a8b',
+  calculationFormula: '20202020-8d9e-0b1c-2d3e-4d5e6f7a8b9c',
+  alertThresholds: '20202020-9e0f-1a2b-3c4d-5e6f7a8b9c0d',
+
+  // additional information
+  notes: '20202020-0f1a-2b3c-4d5e-6f7a8b9c0d1e',
+  priority: '20202020-1a2b-3c4d-5e6f-7a8b9c0d1e2f',
+  weight: '20202020-2b3c-4d5e-6f7a-8b9c0d1e2f3a',
+
+  // standard fields
+  position: '20202020-3c4d-5e6f-7a8b-9c0d1e2f3a4b',
+  createdBy: '20202020-4d5e-6f7a-8b9c-0d1e2f3a4b5c',
+  createdByPerson: '20202020-5e6f-7a8b-9c0d-1e2f3a4b5c6d',
+
+  // relations
+  kpiHistories: '20202020-6f7a-8b9c-0d1e-2f3a4b5c6d7e',
+};
+
+export const MKT_KPI_TEMPLATE_FIELD_IDS = {
+  // basic template information
+  templateName: '30303030-7a8b-9c0d-1e2f-3a4b5c6d7e8f',
+  templateCode: '30303030-8b9c-0d1e-2f3a-4b5c6d7e8f9a',
+  description: '30303030-9c0d-1e2f-3a4b-5c6d7e8f9a0b',
+
+  // target application
+  targetRole: '30303030-0d1e-2f3a-4b5c-6d7e8f9a0b1c',
+
+  // default kpi configuration
+  kpiType: '30303030-2f3a-4b5c-6d7e-8f9a0b1c2d3e',
+  kpiCategory: '30303030-3a4b-5c6d-7e8f-9a0b1c2d3e4f',
+  unitOfMeasure: '30303030-4b5c-6d7e-8f9a-0b1c2d3e4f5a',
+  defaultTargetValue: '30303030-5c6d-7e8f-9a0b-1c2d3e4f5a6b',
+  periodType: '30303030-6d7e-8f9a-0b1c-2d3e4f5a6b7c',
+
+  // calculation configuration
+  isAutoCalculated: '30303030-7e8f-9a0b-1c2d-3e4f5a6b7c8d',
+  calculationFormula: '30303030-8f9a-0b1c-2d3e-4f5a6b7c8d9e',
+
+  // template configuration
+  isActive: '30303030-9a0b-1c2d-3e4f-5a6b7c8d9e0f',
+  isDefault: '30303030-0b1c-2d3e-4f5a-6b7c8d9e0f1a',
+  priority: '30303030-1c2d-3e4f-5a6b-7c8d9e0f1a2b',
+  weight: '30303030-2d3e-4f5a-6b7c-8d9e0f1a2b3c',
+  templateConfig: '30303030-3e4f-5a6b-7c8d-9e0f1a2b3c4d',
+
+  // standard fields
+  position: '30303030-4f5a-6b7c-8d9e-0f1a2b3c4d5e',
+  createdBy: '30303030-5a6b-7c8d-9e0f-1a2b3c4d5e6f',
+  createdByPerson: '30303030-6b7c-8d9e-0f1a-2b3c4d5e6f7a',
+
+  // relations
+  accountOwner: '30303030-7c8d-9e0f-1a2b-3c4d5e6f7a8b',
+  searchVector: '30303030-9e0f-1a2b-3c4d-5e6f7a8b9c0d',
+};
+
+export const MKT_KPI_HISTORY_FIELD_IDS = {
+  // relation to KPI
+  kpi: '40404040-7a8b-9c0d-1e2f-3a4b5c6d7e8f',
+
+  // change information
+  changeType: '40404040-8b9c-0d1e-2f3a-4b5c6d7e8f9a',
+  oldValue: '40404040-9c0d-1e2f-3a4b-5c6d7e8f9a0b',
+  newValue: '40404040-0d1e-2f3a-4b5c-6d7e8f9a0b1c',
+  changeReason: '40404040-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
+  changeDescription: '40404040-2f3a-4b5c-6d7e-8f9a0b1c2d3e',
+
+  // change context
+  changedByWorkspaceMember: '40404040-3a4b-5c6d-7e8f-9a0b1c2d3e4f',
+  changeSource: '40404040-4b5c-6d7e-8f9a-0b1c2d3e4f5a',
+  changeTimestamp: '40404040-5c6d-7e8f-9a0b-1c2d3e4f5a6b',
+
+  // additional data
+  additionalData: '40404040-6d7e-8f9a-0b1c-2d3e4f5a6b7c',
+
+  // standard fields
+  position: '40404040-7e8f-9a0b-1c2d-3e4f5a6b7c8d',
+  createdBy: '40404040-8f9a-0b1c-2d3e-4f5a6b7c8d9e',
+  searchVector: '40404040-9a0b-1c2d-3e4f-5a6b7c8d9e0f',
 };
