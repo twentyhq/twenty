@@ -24,6 +24,7 @@ import {
 import { MKT_VARIANT_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktLicenseWorkspaceEntity } from 'src/mkt-core/license/mkt-license.workspace-entity';
+import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
 import { MktProductWorkspaceEntity } from 'src/mkt-core/product/standard-objects/mkt-product.workspace-entity';
 import { MktVariantAttributeWorkspaceEntity } from 'src/mkt-core/variant_attribute/mkt-variant-attribute.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
@@ -187,6 +188,19 @@ export class MktVariantWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   mktLicenses: Relation<MktLicenseWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: MKT_VARIANT_FIELD_IDS.mktOrderItems,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Order Items`,
+    description: msg`Order Items of the variant`,
+    icon: 'IconShoppingCart',
+    inverseSideTarget: () => MktOrderItemWorkspaceEntity,
+    inverseSideFieldKey: 'mktVariant',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  mktOrderItems: Relation<MktOrderItemWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: MKT_VARIANT_FIELD_IDS.timelineActivities,

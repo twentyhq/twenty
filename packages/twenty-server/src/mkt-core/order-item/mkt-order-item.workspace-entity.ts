@@ -25,6 +25,7 @@ import { MKT_ORDER_ITEM_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
 import { MktProductWorkspaceEntity } from 'src/mkt-core/product/standard-objects/mkt-product.workspace-entity';
+import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const SEARCH_FIELDS_FOR_ORDER_ITEM: FieldTypeAndNameMetadata[] = [
@@ -165,6 +166,22 @@ export class MktOrderItemWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('mktProduct')
   mktProductId?: string;
+
+  @WorkspaceRelation({
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.mktVariant,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Variant`,
+    description: msg`Variant for this order item`,
+    icon: 'IconBox',
+    inverseSideTarget: () => MktVariantWorkspaceEntity,
+    inverseSideFieldKey: 'mktOrderItems',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  mktVariant?: Relation<MktVariantWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('mktVariant')
+  mktVariantId: string | null;
 
   // Temporarily commented out due to TimelineActivityMktEntity not being a registered entity
   // @WorkspaceRelation({
