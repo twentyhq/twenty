@@ -7,9 +7,7 @@ import { type RecordGqlOperationVariables } from '@/object-record/graphql/types/
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useReadFindManyRecordsQueryInCache = ({
   objectMetadataItem,
@@ -21,10 +19,6 @@ export const useReadFindManyRecordsQueryInCache = ({
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
-  const featureFlags = useFeatureFlagsMap();
-  const isFieldsPermissionsEnabled =
-    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
 
   const readFindManyRecordsQueryInCache = <
     T extends ObjectRecord = ObjectRecord,
@@ -40,7 +34,6 @@ export const useReadFindManyRecordsQueryInCache = ({
       objectMetadataItems,
       recordGqlFields,
       objectPermissionsByObjectMetadataId,
-      isFieldsPermissionsEnabled,
     });
 
     const existingRecordsQueryResult =

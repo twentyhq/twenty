@@ -9,7 +9,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
@@ -179,24 +178,12 @@ export class WorkspacePermissionsCacheService {
   }): Promise<ObjectsPermissionsByRoleIdDeprecated> {
     let roles: RoleEntity[] = [];
 
-    const workspaceFeatureFlagsMap =
-      await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap(
-        { workspaceId },
-      );
-
-    const isFieldPermissionsEnabled =
-      workspaceFeatureFlagsMap[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
-
     roles = await this.roleRepository.find({
       where: {
         workspaceId,
         ...(roleIds ? { id: In(roleIds) } : {}),
       },
-      relations: [
-        'objectPermissions',
-        'permissionFlags',
-        ...(isFieldPermissionsEnabled ? ['fieldPermissions'] : []),
-      ],
+      relations: ['objectPermissions', 'permissionFlags', 'fieldPermissions'],
     });
 
     const workspaceObjectMetadataCollection =
@@ -256,22 +243,20 @@ export class WorkspacePermissionsCacheService {
             canDestroy,
           );
 
-          if (isFieldPermissionsEnabled) {
-            const fieldPermissions = role.fieldPermissions.filter(
-              (fieldPermission) =>
-                fieldPermission.objectMetadataId === objectMetadataId,
-            );
+          const fieldPermissions = role.fieldPermissions.filter(
+            (fieldPermission) =>
+              fieldPermission.objectMetadataId === objectMetadataId,
+          );
 
-            for (const fieldPermission of fieldPermissions) {
-              if (
-                isDefined(fieldPermission.canReadFieldValue) ||
-                isDefined(fieldPermission.canUpdateFieldValue)
-              ) {
-                restrictedFields[fieldPermission.fieldMetadataId] = {
-                  canRead: fieldPermission.canReadFieldValue,
-                  canUpdate: fieldPermission.canUpdateFieldValue,
-                };
-              }
+          for (const fieldPermission of fieldPermissions) {
+            if (
+              isDefined(fieldPermission.canReadFieldValue) ||
+              isDefined(fieldPermission.canUpdateFieldValue)
+            ) {
+              restrictedFields[fieldPermission.fieldMetadataId] = {
+                canRead: fieldPermission.canReadFieldValue,
+                canUpdate: fieldPermission.canUpdateFieldValue,
+              };
             }
           }
         }

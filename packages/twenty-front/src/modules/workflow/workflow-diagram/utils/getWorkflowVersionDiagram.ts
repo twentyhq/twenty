@@ -13,29 +13,19 @@ const EMPTY_DIAGRAM: WorkflowDiagram = {
 };
 
 const getEdgeTypeToCreateByDefault = ({
-  isWorkflowFilteringEnabled,
   isEditable,
 }: {
-  isWorkflowFilteringEnabled: boolean;
   isEditable: boolean;
 }): WorkflowDiagramEdgeType => {
-  if (isWorkflowFilteringEnabled) {
-    return isEditable ? 'empty-filter--editable' : 'empty-filter--readonly';
-  }
-
-  return isEditable
-    ? 'filtering-disabled--editable'
-    : 'filtering-disabled--readonly';
+  return isEditable ? 'empty-filter--editable' : 'empty-filter--readonly';
 };
 
 export const getWorkflowVersionDiagram = ({
   workflowVersion,
-  isWorkflowFilteringEnabled,
   isWorkflowBranchEnabled,
   isEditable,
 }: {
   workflowVersion: WorkflowVersion | undefined;
-  isWorkflowFilteringEnabled: boolean;
   isWorkflowBranchEnabled?: boolean;
   isEditable: boolean;
 }): WorkflowDiagram => {
@@ -47,7 +37,6 @@ export const getWorkflowVersionDiagram = ({
     trigger: workflowVersion.trigger ?? undefined,
     steps: workflowVersion.steps ?? [],
     defaultEdgeType: getEdgeTypeToCreateByDefault({
-      isWorkflowFilteringEnabled,
       isEditable,
     }),
     isWorkflowBranchEnabled,

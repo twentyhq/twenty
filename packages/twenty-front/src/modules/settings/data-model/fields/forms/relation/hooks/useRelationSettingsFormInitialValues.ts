@@ -4,6 +4,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
+import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { type SettingsDataModelFieldPreviewCardProps } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
@@ -51,9 +52,14 @@ export const useRelationSettingsFormInitialValues = ({
   const initialRelationType =
     relationTypeFromFieldMetadata ?? RelationType.ONE_TO_MANY;
 
+  const targetIsMorphRelation =
+    isDefined(relationFieldMetadataItem) &&
+    isFieldMorphRelation(relationFieldMetadataItem);
+
   return {
     disableFieldEdition:
-      relationFieldMetadataItem && !relationFieldMetadataItem.isCustom,
+      relationFieldMetadataItem &&
+      (!relationFieldMetadataItem.isCustom || targetIsMorphRelation),
     disableRelationEdition: !!relationFieldMetadataItem,
     initialRelationFieldMetadataItem: relationFieldMetadataItem ?? {
       icon: initialRelationObjectMetadataItem.icon ?? 'IconUsers',

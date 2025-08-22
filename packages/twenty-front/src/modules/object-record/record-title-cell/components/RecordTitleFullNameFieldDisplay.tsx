@@ -1,6 +1,6 @@
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFullNameFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useFullNameFieldDisplay';
-import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useRecordTitleCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -40,7 +40,7 @@ export const RecordTitleFullNameFieldDisplay = ({
 }) => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
-  const { openInlineCell } = useInlineCell();
+  const { openRecordTitleCell } = useRecordTitleCell();
 
   const { fieldValue } = useFullNameFieldDisplay();
 
@@ -71,7 +71,15 @@ export const RecordTitleFullNameFieldDisplay = ({
           },
         });
 
-        openInlineCell();
+        openRecordTitleCell({
+          recordId,
+          fieldName: fieldDefinition.metadata.fieldName,
+          instanceId: getRecordFieldInputInstanceId({
+            recordId,
+            fieldName: fieldDefinition.metadata.fieldName,
+            prefix: containerType,
+          }),
+        });
       }}
     >
       {!content ? (
