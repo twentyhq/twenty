@@ -1,9 +1,5 @@
 {
   "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "module": "commonjs",
-    "types": ["jest", "node"]
-  },
   "include": [
     "jest.config.mjs",
     "setupTests.ts",
