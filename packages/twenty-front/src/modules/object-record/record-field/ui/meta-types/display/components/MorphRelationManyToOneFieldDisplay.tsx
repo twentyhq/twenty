@@ -6,39 +6,24 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const MorphRelationManyToOneFieldDisplay = () => {
-  const { fieldValues, fieldDefinition, generateRecordChipData } =
+  const { morphFieldValuesWithObjectName } =
     useMorphRelationToOneFieldDisplay();
 
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
 
-  if (!isDefined(fieldValues)) {
+  if (!isDefined(morphFieldValuesWithObjectName?.value)) {
     return null;
   }
-
-  const fieldValue = fieldValues
-    .filter((fieldValue) => isDefined(fieldValue.value))
-    .pop();
-
-  if (!isDefined(fieldValue?.value)) {
-    return null;
-  }
-
-  const morphRelationSelected = fieldDefinition.metadata.morphRelations.find(
-    (morphRelation) =>
-      morphRelation.targetObjectMetadata.nameSingular === fieldValue.fieldName,
-  );
 
   const isWorkspaceMemberFieldMetadataRelation =
-    morphRelationSelected?.targetObjectMetadata.nameSingular ===
+    morphFieldValuesWithObjectName.objectNameSingular ===
     CoreObjectNameSingular.WorkspaceMember;
-
-  const recordChipData = generateRecordChipData(fieldValue.value);
 
   return (
     <RecordChip
-      key={recordChipData.recordId}
-      objectNameSingular={recordChipData.objectNameSingular}
-      record={fieldValue.value}
+      key={morphFieldValuesWithObjectName.value.id}
+      objectNameSingular={morphFieldValuesWithObjectName.objectNameSingular}
+      record={morphFieldValuesWithObjectName.value}
       forceDisableClick={
         isWorkspaceMemberFieldMetadataRelation || disableChipClick
       }

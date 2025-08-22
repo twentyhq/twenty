@@ -8,28 +8,39 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const MorphRelationOneToManyFieldDisplay = () => {
-  const { fieldValues } = useMorphRelationFromManyFieldDisplay();
+  const { morphValuesWithObjectNameSingular } =
+    useMorphRelationFromManyFieldDisplay();
   const { isFocused } = useFieldFocus();
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
 
-  if (!fieldValues) {
+  if (!morphValuesWithObjectNameSingular) {
     return null;
   }
 
   return (
     <ExpandableList isChipCountDisplayed={isFocused}>
-      {fieldValues.filter(isDefined).map((record) => {
-        const recordChipData = record.generateRecordChipData(record.value);
-        return (
-          <RecordChip
-            key={recordChipData.recordId}
-            objectNameSingular={recordChipData.objectNameSingular}
-            record={record.value}
-            forceDisableClick={disableChipClick}
-            triggerEvent={triggerEvent}
-          />
-        );
-      })}
+      {morphValuesWithObjectNameSingular
+        .filter(isDefined)
+
+        .map((morphValueWithObjectNameSingular) => {
+          return (
+            <>
+              {morphValueWithObjectNameSingular.value.map((record) => {
+                return (
+                  <RecordChip
+                    key={record.id}
+                    objectNameSingular={
+                      morphValueWithObjectNameSingular.objectNameSingular
+                    }
+                    record={record}
+                    forceDisableClick={disableChipClick}
+                    triggerEvent={triggerEvent}
+                  />
+                );
+              })}
+            </>
+          );
+        })}
     </ExpandableList>
   );
 };

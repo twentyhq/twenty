@@ -1,20 +1,19 @@
-import { isArray, isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
 
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
-import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
-
-import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateDefaultRecordChipData';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
-import { useRecordFieldValues } from '@/object-record/record-store/contexts/RecordFieldValuesSelectorContext';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+
+import { recordStoreMorphManyToOneValueWithObjectNameFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreMorphManyToOneValueWithObjectNameFamilySelector';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useMorphRelationToOneFieldDisplay = () => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
@@ -37,26 +36,15 @@ export const useMorphRelationToOneFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const computedFieldNames =
-    fieldDefinition.metadata.morphRelations?.map((morphRelation) =>
-      computeMorphRelationFieldName({
-        fieldName,
-        relationDirection: RelationType.MANY_TO_ONE,
-        nameSingular: morphRelation.targetObjectMetadata.nameSingular,
-        namePlural: morphRelation.targetObjectMetadata.namePlural,
-      }),
-    ) ?? [];
-
-  const fieldValues = useRecordFieldValues<
-    {
-      values: ObjectRecord[];
-      fieldName: string;
-    }[]
-  >(recordId, computedFieldNames)?.filter((fieldValue) =>
-    isDefined(fieldValue.values),
+  const morphFieldValueWithObjectName = useRecoilValue(
+    recordStoreMorphManyToOneValueWithObjectNameFamilySelector({
+      recordId,
+      morphRelations: fieldDefinition.metadata.morphRelations,
+      fieldName,
+    }),
   );
 
-  if (!isDefined(fieldValues)) {
+  if (!isDefined(morphFieldValueWithObjectName)) {
     return {
       fieldDefinition,
       fieldValues: [],
@@ -68,19 +56,6 @@ export const useMorphRelationToOneFieldDisplay = () => {
       }),
     };
   }
-
-  const fieldValuesFlattened = fieldValues?.flatMap((fieldValue) => {
-    if (isArray(fieldValue.values)) {
-      return fieldValue.values.map((value) => ({
-        fieldName: fieldValue.fieldName,
-        value,
-      }));
-    }
-    return {
-      fieldName: fieldValue.fieldName,
-      value: fieldValue.values,
-    };
-  });
 
   const maxWidthForField =
     isDefined(button) && isDefined(maxWidth)
@@ -94,25 +69,10 @@ export const useMorphRelationToOneFieldDisplay = () => {
     throw new Error('Object metadata name singular is not a non-empty string');
   }
 
-  const fieldChipGenerator =
-    chipGeneratorPerObjectPerField[
-      fieldDefinition.metadata.objectMetadataNameSingular
-    ]?.[fieldDefinition.metadata.fieldName];
-  const generateRecordChipData = isDefined(fieldChipGenerator)
-    ? fieldChipGenerator
-    : (record: ObjectRecord) =>
-        generateDefaultRecordChipData({
-          record,
-          objectNameSingular:
-            fieldDefinition.metadata.morphRelations[0].targetObjectMetadata
-              .nameSingular,
-        });
-
   return {
     fieldDefinition,
-    fieldValues: fieldValuesFlattened,
+    morphFieldValuesWithObjectName: morphFieldValueWithObjectName,
     maxWidth: maxWidthForField,
     recordId,
-    generateRecordChipData,
   };
 };

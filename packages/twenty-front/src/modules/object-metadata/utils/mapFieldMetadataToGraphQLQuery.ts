@@ -82,19 +82,8 @@ export const mapFieldMetadataToGraphQLQuery = ({
         );
 
         if (!objectPermission.canReadObjectRecords) {
-          gqlMorphField += '';
+          continue;
         }
-      }
-
-      const joinColumnName = computeMorphRelationFieldJoinColumnName({
-        name: fieldMetadata.name,
-        targetObjectMetadataNameSingular:
-          morphRelation.targetObjectMetadata.nameSingular,
-      });
-      if (gqlField === joinColumnName) {
-        gqlMorphField += `${gqlField}
-  `;
-        continue;
       }
 
       if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
@@ -114,6 +103,17 @@ export const mapFieldMetadataToGraphQLQuery = ({
       }
 
       if (fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE) {
+        const joinColumnName = computeMorphRelationFieldJoinColumnName({
+          name: fieldMetadata.name,
+          targetObjectMetadataNameSingular:
+            morphRelation.targetObjectMetadata.nameSingular,
+        });
+        if (gqlField === joinColumnName) {
+          gqlMorphField += `${gqlField}
+    `;
+          continue;
+        }
+
         gqlMorphField += `${relationFieldName}
 ${mapObjectMetadataToGraphQLQuery({
   objectMetadataItems,
