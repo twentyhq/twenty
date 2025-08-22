@@ -37,7 +37,7 @@ export class MktOrderUpdateOnePreQueryHook
       return payload;
     }
 
-    // Kiểm tra xem status có thay đổi thành paid không
+    // check if status is paid
     if (input.status === OrderStatus.PAID) {
       const workspaceId =
         this.scopedWorkspaceContextFactory.create().workspaceId;
@@ -46,7 +46,7 @@ export class MktOrderUpdateOnePreQueryHook
         return payload;
       }
 
-      // Lấy order hiện tại để so sánh status
+      // get current order to check status
       const orderRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderWorkspaceEntity>(
           workspaceId,
@@ -59,7 +59,7 @@ export class MktOrderUpdateOnePreQueryHook
       });
 
       if (currentOrder && currentOrder.status !== OrderStatus.PAID) {
-        // Status thay đổi thành paid, trigger license generation job
+        // status changed to paid, trigger license generation job
         const jobData: LicenseGenerationJobData = {
           orderId,
           workspaceId,

@@ -6,7 +6,7 @@ export interface LicenseApiResponse {
   licenseKey: string;
   status: string;
   expiresAt: string;
-  // Thêm các field khác tùy theo API response
+  // add other fields according to API response
 }
 
 @Injectable()
@@ -22,7 +22,7 @@ export class MktLicenseApiService {
     try {
       this.logger.log(`Fetching license from API for order: ${orderId}`);
 
-      // Thay thế URL API thực tế của bạn
+      // replace with actual API URL
       const apiUrl =
         process.env.LICENSE_API_URL ||
         'https://api.license-provider.com/licenses';
@@ -31,7 +31,7 @@ export class MktLicenseApiService {
         this.httpService.post<LicenseApiResponse>(apiUrl, {
           orderId,
           orderName,
-          // Thêm các thông tin khác cần thiết
+          // add other necessary information
         }),
       );
 

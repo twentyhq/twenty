@@ -33,11 +33,11 @@ export class LicenseGenerationJob {
     this.logger.log(`Processing license generation for order: ${data.orderId}`);
 
     try {
-      // Tạo workspace context
+      // create workspace context
       const workspaceContext = this.scopedWorkspaceContextFactory.create();
       workspaceContext.workspaceId = data.workspaceId;
 
-      // Lấy order repository
+      // get order repository
       const orderRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderWorkspaceEntity>(
           data.workspaceId,
@@ -45,7 +45,7 @@ export class LicenseGenerationJob {
           { shouldBypassPermissionChecks: true },
         );
 
-      // Lấy license repository
+      // get license repository
       const licenseRepository =
         await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktLicenseWorkspaceEntity>(
           data.workspaceId,
@@ -53,7 +53,7 @@ export class LicenseGenerationJob {
           { shouldBypassPermissionChecks: true },
         );
 
-      // Tìm order
+      // find order
       const order = await orderRepository.findOne({
         where: { id: data.orderId },
       });
@@ -62,7 +62,7 @@ export class LicenseGenerationJob {
         return;
       }
 
-      // Kiểm tra xem order đã có license chưa
+      // check if order has license
       const existingLicenses = await licenseRepository.find({
         where: { mktOrderId: data.orderId },
       });
@@ -73,14 +73,14 @@ export class LicenseGenerationJob {
         return;
       }
 
-      // Gọi API để lấy license
+      // call API to get license
       const licenseApiResponse =
         await this.mktLicenseApiService.fetchLicenseFromApi(
           data.orderId,
           order.name,
         );
 
-      // Tạo license mới
+      // create new license
       const newLicense = licenseRepository.create({
         name: `License for ${order.name}`,
         licenseKey: licenseApiResponse.licenseKey,
@@ -88,10 +88,10 @@ export class LicenseGenerationJob {
         activatedAt: new Date().toISOString(),
         expiresAt: licenseApiResponse.expiresAt,
         mktOrderId: data.orderId,
-        // Thêm các field khác nếu cần
+        // add other fields if needed
       });
 
-      // Lưu license
+      // save license
       await licenseRepository.save(newLicense);
 
       this.logger.log(
