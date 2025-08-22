@@ -1,11 +1,11 @@
 import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from '@/workflow/workflow-variables/constants/CaptureAllVariableTagInnerRegex';
 import { type VariableSearchResult } from '@/workflow/workflow-variables/hooks/useSearchVariable';
 import {
+  type FieldOutputSchemaV2,
   type RecordFieldNodeValue,
   type RecordOutputSchemaV2,
 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/utils/isRecordOutputSchemaV2';
-import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const getRecordObjectLabel = (
@@ -14,64 +14,25 @@ const getRecordObjectLabel = (
   return recordSchema.object.label;
 };
 
-class FieldAccessor {
-  static getLabel(
-    fieldKey: string,
-    schema: RecordFieldNodeValue,
-  ): string | undefined {
-    if (isRecordOutputSchemaV2(schema)) {
-      return schema.fields[fieldKey]?.label;
-    }
-    return schema[fieldKey]?.label;
-  }
+const getFieldFromSchema = (
+  fieldKey: string,
+  recordSchema: RecordFieldNodeValue,
+): FieldOutputSchemaV2 | undefined => {
+  return isRecordOutputSchemaV2(recordSchema)
+    ? recordSchema.fields[fieldKey]
+    : recordSchema[fieldKey];
+};
 
-  static getFieldMetadataId(
-    fieldKey: string,
-    schema: RecordFieldNodeValue,
-  ): string | undefined {
-    if (isRecordOutputSchemaV2(schema)) {
-      return schema.fields[fieldKey]?.fieldMetadataId;
-    }
-    return schema[fieldKey]?.fieldMetadataId;
-  }
-
-  static getFieldMetadataType(
-    fieldKey: string,
-    schema: RecordFieldNodeValue,
-  ): FieldMetadataType | undefined {
-    if (isRecordOutputSchemaV2(schema)) {
-      return schema.fields[fieldKey]?.type;
-    }
-    return schema[fieldKey]?.type;
-  }
-
-  static isCompositeSubField(
-    fieldKey: string,
-    schema: RecordFieldNodeValue,
-  ): boolean {
-    if (isRecordOutputSchemaV2(schema)) {
-      return false; // Record schemas don't have composite sub-fields at the top level
-    }
-    return schema[fieldKey]?.isCompositeSubField ?? false;
-  }
-
-  static getFieldValue(
-    fieldKey: string,
-    schema: RecordFieldNodeValue,
-  ): RecordFieldNodeValue | undefined {
-    if (isRecordOutputSchemaV2(schema)) {
-      return schema.fields[fieldKey]?.value;
-    }
-    return schema[fieldKey]?.value;
-  }
-
-  static hasField(fieldKey: string, schema: RecordFieldNodeValue): boolean {
-    if (isRecordOutputSchemaV2(schema)) {
-      return isDefined(schema.fields[fieldKey]);
-    }
-    return isDefined(schema[fieldKey]);
-  }
-}
+const getCompositeSubFieldName = (
+  recordSchema: RecordFieldNodeValue,
+  fieldKey: string,
+): string | undefined => {
+  return isRecordOutputSchemaV2(recordSchema)
+    ? undefined
+    : recordSchema[fieldKey]?.isCompositeSubField
+      ? fieldKey
+      : undefined;
+};
 
 const navigateToTargetField = (
   startingSchema: RecordOutputSchemaV2,
@@ -81,19 +42,17 @@ const navigateToTargetField = (
   const pathLabels: string[] = [];
 
   for (const pathSegment of pathSegments) {
-    if (
-      !isDefined(currentSchema) ||
-      !FieldAccessor.hasField(pathSegment, currentSchema)
-    ) {
+    const field = getFieldFromSchema(pathSegment, currentSchema);
+
+    if (!isDefined(field)) {
       return null; // Path not found
     }
 
-    const fieldLabel = FieldAccessor.getLabel(pathSegment, currentSchema);
-    if (isDefined(fieldLabel)) {
-      pathLabels.push(fieldLabel);
+    if (isDefined(field.label)) {
+      pathLabels.push(field.label);
     }
 
-    const nextSchema = FieldAccessor.getFieldValue(pathSegment, currentSchema);
+    const nextSchema = field.value;
     if (!isDefined(nextSchema)) {
       return null; // Dead end in path
     }
@@ -111,11 +70,12 @@ const buildVariableResult = (
   targetFieldName: string,
   isFullRecord: boolean,
 ): VariableSearchResult => {
+  const targetField = getFieldFromSchema(targetFieldName, targetSchema);
   // Determine the variable label based on whether we want the full record or a specific field
   const variableLabel =
     isFullRecord && isRecordOutputSchemaV2(targetSchema)
       ? getRecordObjectLabel(targetSchema)
-      : FieldAccessor.getLabel(targetFieldName, targetSchema);
+      : targetField?.label;
 
   if (!variableLabel) {
     return {
@@ -132,20 +92,12 @@ const buildVariableResult = (
   return {
     variableLabel,
     variablePathLabel,
-    variableType: FieldAccessor.getFieldMetadataType(
-      targetFieldName,
+    variableType: targetField?.type,
+    fieldMetadataId: targetField?.fieldMetadataId,
+    compositeFieldSubFieldName: getCompositeSubFieldName(
       targetSchema,
+      targetFieldName,
     ),
-    fieldMetadataId: FieldAccessor.getFieldMetadataId(
-      targetFieldName,
-      targetSchema,
-    ),
-    compositeFieldSubFieldName: FieldAccessor.isCompositeSubField(
-      targetFieldName,
-      targetSchema,
-    )
-      ? targetFieldName
-      : undefined,
   };
 };
 
