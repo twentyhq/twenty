@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
+
 import { firstValueFrom } from 'rxjs';
 
 export interface LicenseApiResponse {
@@ -36,6 +37,7 @@ export class MktLicenseApiService {
       );
 
       this.logger.log(`Successfully fetched license for order: ${orderId}`);
+
       return response.data;
     } catch (error) {
       this.logger.error(
@@ -47,7 +49,9 @@ export class MktLicenseApiService {
         status: 'INACTIVE',
         expiresAt: '2025-08-22',
       };
+
       this.logger.log(`Mock response:`, mockResponse);
+
       return mockResponse;
       //throw error;
     }

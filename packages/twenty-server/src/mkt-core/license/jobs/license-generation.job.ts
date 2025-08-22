@@ -35,6 +35,7 @@ export class LicenseGenerationJob {
     try {
       // create workspace context
       const workspaceContext = this.scopedWorkspaceContextFactory.create();
+
       workspaceContext.workspaceId = data.workspaceId;
 
       // get order repository
@@ -57,8 +58,10 @@ export class LicenseGenerationJob {
       const order = await orderRepository.findOne({
         where: { id: data.orderId },
       });
+
       if (!order) {
         this.logger.error(`Order ${data.orderId} not found`);
+
         return;
       }
 
@@ -66,10 +69,12 @@ export class LicenseGenerationJob {
       const existingLicenses = await licenseRepository.find({
         where: { mktOrderId: data.orderId },
       });
+
       if (existingLicenses.length > 0) {
         this.logger.log(
           `Order ${data.orderId} already has licenses, skipping generation`,
         );
+
         return;
       }
 
