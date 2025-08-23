@@ -3,14 +3,11 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 
 const WORKFLOW_OBJECT_NAMES = ['workflowVersion', 'workflowRun'];
 
-export const isWorkflowSubObject = (
+export const isWorkflowRunObject = (
   objectMetadata: ObjectMetadataEntity,
 ): boolean => {
   if (objectMetadata.standardId) {
-    return (
-      objectMetadata.standardId === STANDARD_OBJECT_IDS.workflowVersion ||
-      objectMetadata.standardId === STANDARD_OBJECT_IDS.workflowRun
-    );
+    return objectMetadata.standardId === STANDARD_OBJECT_IDS.workflowRun;
   }
 
   return WORKFLOW_OBJECT_NAMES.includes(objectMetadata.nameSingular);
