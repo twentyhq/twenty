@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import { FieldMetadataType } from '../../types/FieldMetadataType';
+import { StepLogicalOperator } from '../../types/StepFilters';
+import { ViewFilterOperand } from '../../types/ViewFilterOperand';
 import { StepStatus } from '../types/WorkflowRunStateStepInfos';
 
 // Base schemas
@@ -146,8 +148,25 @@ export const workflowAiAgentActionSettingsSchema =
 export const workflowFilterActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
-      stepFilterGroups: z.array(z.any()),
-      stepFilters: z.array(z.any()),
+      stepFilterGroups: z.array(z.object({
+        id: z.string(),
+        logicalOperator: z.nativeEnum(StepLogicalOperator),
+        parentStepFilterGroupId: z.string().optional(),
+        positionInStepFilterGroup: z.number().optional(),
+      })),
+      stepFilters: z.array(z.object({
+        id: z.string(),
+        type: z.string(),
+        label: z.string(),
+        stepOutputKey: z.string(),
+        operand: z.nativeEnum(ViewFilterOperand),
+        value: z.string(),
+        displayValue: z.string(),
+        stepFilterGroupId: z.string(),
+        positionInStepFilterGroup: z.number().optional(),
+        fieldMetadataId: z.string().optional(),
+        compositeFieldSubFieldName: z.string().optional(),
+      })),
     }),
   });
 
