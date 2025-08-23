@@ -7,6 +7,8 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
+import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -20,6 +22,7 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
+import { WORKFLOW_CREATION_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/workflow-creation-agent';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
 
@@ -46,7 +49,10 @@ export class WorkspaceManagerService {
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(RoleTargetsEntity, 'core')
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
+    @InjectRepository(AgentEntity, 'core')
+    private readonly agentRepository: Repository<AgentEntity>,
     private readonly agentService: AgentService,
+    private readonly agentHandoffService: AgentHandoffService,
   ) {}
 
   public async init({
@@ -194,6 +200,22 @@ export class WorkspaceManagerService {
       },
       workspaceId,
     );
+
+    const workflowCreationAgent = await this.agentRepository.findOne({
+      where: { standardId: WORKFLOW_CREATION_AGENT.standardId },
+    });
+
+    if (!workflowCreationAgent) {
+      throw new Error('Workflow Creation Agent not found');
+    }
+
+    await this.agentHandoffService.createHandoff({
+      fromAgentId: agent.id,
+      toAgentId: workflowCreationAgent.id,
+      workspaceId,
+      description:
+        'Handoff from routing agent to workflow creation agent for processing workflow creation requests',
+    });
 
     await this.workspaceRepository.update(workspaceId, {
       defaultAgentId: agent.id,
