@@ -1,6 +1,5 @@
 ---
-description: 
-globs: 
+description: React state management guidelines for Twenty CRM
 alwaysApply: false
 ---
 # React State Management

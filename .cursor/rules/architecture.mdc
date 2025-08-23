@@ -1,9 +1,4 @@
 ---
-description: 
-globs: 
-alwaysApply: false
----
----
 description: Twenty CRM architecture overview - monorepo structure, tech stack, and development principles
 globs: []
 alwaysApply: true
