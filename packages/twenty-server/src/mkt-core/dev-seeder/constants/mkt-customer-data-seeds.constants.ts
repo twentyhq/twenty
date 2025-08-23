@@ -1,4 +1,13 @@
-type MktCustomerDataSeed = {
+import {
+  MKT_CUSTOMER_LIFECYCLE_STAGE,
+  MKT_CUSTOMER_STATUS,
+  MKT_CUSTOMER_TAGS,
+  MKT_CUSTOMER_TIER,
+  MKT_CUSTOMER_TYPE,
+} from 'src/mkt-core/constants/mkt-customer.constant';
+
+// prettier-ignore
+export type MKT_CUSTOMER_DATA_SEED = {
   id: string;
   name: string;
   type: MKT_CUSTOMER_TYPE;
@@ -21,55 +30,7 @@ type MktCustomerDataSeed = {
 };
 
 // prettier-ignore
-export enum MKT_CUSTOMER_TYPE {
-  INDIVIDUAL = 'individual',
-  BUSINESS = 'business',
-  ORGANIZATION = 'organization',
-  OTHER = 'other',
-}
-
-// prettier-ignore
-export enum MKT_CUSTOMER_STATUS {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  LEAD = 'lead',
-  PROSPECT = 'prospect',
-  CUSTOMER = 'customer',
-}
-
-// prettier-ignore
-export enum MKT_CUSTOMER_TIER {
-  TIER_1 = 'tier_1',
-  TIER_2 = 'tier_2',
-  TIER_3 = 'tier_3',
-  TIER_4 = 'tier_4',
-  TIER_5 = 'tier_5',
-}
-
-// prettier-ignore
-export enum MKT_CUSTOMER_LIFECYCLE_STAGE {
-  LEAD = 'lead',
-  PROSPECT = 'prospect',
-  CUSTOMER = 'customer',
-  CHURNED = 'churned',
-  RETENTION = 'retention',
-  UPSELL = 'upsell',
-  CROSS_SELL = 'cross_sell',
-  REACTIVATION = 'reactivation',
-}
-
-// prettier-ignore
-export enum MKT_CUSTOMER_TAGS {
-  NEW = 'new',
-  RETURNING = 'returning',
-  LOYAL = 'loyal',
-  VIP = 'vip',
-  CHURNED = 'churned',
-  RETENTION = 'retention',
-}
-
-// prettier-ignore
-export const MKT_CUSTOMER_DATA_SEED_COLUMNS: (keyof MktCustomerDataSeed)[] = [
+export const MKT_CUSTOMER_DATA_SEED_COLUMNS: (keyof MKT_CUSTOMER_DATA_SEED)[] = [
   'id',
   'name',
   'type',
@@ -108,7 +69,7 @@ export const MKT_CUSTOMER_DATA_SEEDS_IDS = {
 };
 
 // prettier-ignore
-export const MKT_CUSTOMER_DATA_SEEDS: MktCustomerDataSeed[] = [
+export const MKT_CUSTOMER_DATA_SEEDS: MKT_CUSTOMER_DATA_SEED[] = [
   {
     id: MKT_CUSTOMER_DATA_SEEDS_IDS.ID_1,
     name: 'John Doe',
@@ -119,8 +80,8 @@ export const MKT_CUSTOMER_DATA_SEEDS: MktCustomerDataSeed[] = [
     companyName: 'John Doe Inc.',
     address: '123 Main St, Anytown, USA',
     status: MKT_CUSTOMER_STATUS.ACTIVE,
-    tier: MKT_CUSTOMER_TIER.TIER_1,
-    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.LEAD,
+    tier: MKT_CUSTOMER_TIER.INDIVIDUAL,
+    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.PROSPECTIVE,
     registrationDate: '2021-01-01',
     totalOrderValue: 1000,
     churnRiskScore: 0.5,
@@ -137,8 +98,8 @@ export const MKT_CUSTOMER_DATA_SEEDS: MktCustomerDataSeed[] = [
     companyName: 'Jane Smith Inc.',
     address: '456 Main St, Anytown, USA',
     status: MKT_CUSTOMER_STATUS.ACTIVE,
-    tier: MKT_CUSTOMER_TIER.TIER_2,
-    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.PROSPECT,
+    tier: MKT_CUSTOMER_TIER.SMALL,
+    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.PROSPECTIVE,
     registrationDate: '2021-01-01',
     totalOrderValue: 1000,
     churnRiskScore: 0.5,
@@ -155,8 +116,8 @@ export const MKT_CUSTOMER_DATA_SEEDS: MktCustomerDataSeed[] = [
     companyName: 'Jim Beam Inc.',
     address: '789 Main St, Anytown, USA',
     status: MKT_CUSTOMER_STATUS.ACTIVE,
-    tier: MKT_CUSTOMER_TIER.TIER_3,
-    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.CUSTOMER,
+    tier: MKT_CUSTOMER_TIER.MEDIUM,
+    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.TRIAL,
     registrationDate: '2021-01-01',
     totalOrderValue: 1000,
     churnRiskScore: 0.5,
@@ -173,8 +134,8 @@ export const MKT_CUSTOMER_DATA_SEEDS: MktCustomerDataSeed[] = [
     companyName: 'John Doe Inc.',
     address: '123 Main St, Anytown, USA',
     status: MKT_CUSTOMER_STATUS.ACTIVE,
-    tier: MKT_CUSTOMER_TIER.TIER_4,
-    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.CUSTOMER,
+    tier: MKT_CUSTOMER_TIER.ENTERPRISE,
+    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.LOYAL,
     registrationDate: '2021-01-01',
     totalOrderValue: 1000,
     churnRiskScore: 0.5,
@@ -191,8 +152,8 @@ export const MKT_CUSTOMER_DATA_SEEDS: MktCustomerDataSeed[] = [
     companyName: 'John Doe Inc.',
     address: '123 Main St, Anytown, USA',
     status: MKT_CUSTOMER_STATUS.ACTIVE,
-    tier: MKT_CUSTOMER_TIER.TIER_5,
-    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.CUSTOMER,
+    tier: MKT_CUSTOMER_TIER.OTHER,
+    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.LOYAL,
     registrationDate: '2021-01-01',
     totalOrderValue: 1000,
     churnRiskScore: 0.5,
@@ -209,8 +170,8 @@ export const MKT_CUSTOMER_DATA_SEEDS: MktCustomerDataSeed[] = [
     companyName: 'John Doe Inc.',
     address: '123 Main St, Anytown, USA',
     status: MKT_CUSTOMER_STATUS.ACTIVE,
-    tier: MKT_CUSTOMER_TIER.TIER_5,
-    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.CUSTOMER,
+    tier: MKT_CUSTOMER_TIER.OTHER,
+    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.LOYAL,
     registrationDate: '2021-01-01',
     totalOrderValue: 1000,
     churnRiskScore: 0.5,
@@ -227,8 +188,8 @@ export const MKT_CUSTOMER_DATA_SEEDS: MktCustomerDataSeed[] = [
     companyName: 'John Doe Inc.',
     address: '123 Main St, Anytown, USA',
     status: MKT_CUSTOMER_STATUS.ACTIVE,
-    tier: MKT_CUSTOMER_TIER.TIER_5,
-    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.CUSTOMER,
+    tier: MKT_CUSTOMER_TIER.OTHER,
+    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.LOYAL,
     registrationDate: '2021-01-01',
     totalOrderValue: 1000,
     churnRiskScore: 0.5,
@@ -245,8 +206,8 @@ export const MKT_CUSTOMER_DATA_SEEDS: MktCustomerDataSeed[] = [
     companyName: 'John Doe Inc.',
     address: '123 Main St, Anytown, USA',
     status: MKT_CUSTOMER_STATUS.ACTIVE,
-    tier: MKT_CUSTOMER_TIER.TIER_5,
-    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.CUSTOMER,
+    tier: MKT_CUSTOMER_TIER.OTHER,
+    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.LOYAL,
     registrationDate: '2021-01-01',
     totalOrderValue: 1000,
     churnRiskScore: 0.5,
@@ -263,8 +224,8 @@ export const MKT_CUSTOMER_DATA_SEEDS: MktCustomerDataSeed[] = [
     companyName: 'John Doe Inc.',
     address: '123 Main St, Anytown, USA',
     status: MKT_CUSTOMER_STATUS.ACTIVE,
-    tier: MKT_CUSTOMER_TIER.TIER_5,
-    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.CUSTOMER,
+    tier: MKT_CUSTOMER_TIER.OTHER,
+    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.LOYAL,
     registrationDate: '2021-01-01',
     totalOrderValue: 1000,
     churnRiskScore: 0.5,
@@ -281,8 +242,8 @@ export const MKT_CUSTOMER_DATA_SEEDS: MktCustomerDataSeed[] = [
     companyName: 'John Doe Inc.',
     address: '123 Main St, Anytown, USA',
     status: MKT_CUSTOMER_STATUS.ACTIVE,
-    tier: MKT_CUSTOMER_TIER.TIER_5,
-    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.CUSTOMER,
+    tier: MKT_CUSTOMER_TIER.OTHER,
+    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.LOYAL,
     registrationDate: '2021-01-01',
     totalOrderValue: 1000,
     churnRiskScore: 0.5,
@@ -299,8 +260,8 @@ export const MKT_CUSTOMER_DATA_SEEDS: MktCustomerDataSeed[] = [
     companyName: 'John Doe Inc.',
     address: '123 Main St, Anytown, USA',
     status: MKT_CUSTOMER_STATUS.ACTIVE,
-    tier: MKT_CUSTOMER_TIER.TIER_5,
-    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.CUSTOMER,
+    tier: MKT_CUSTOMER_TIER.OTHER,
+    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.LOYAL,
 
     registrationDate: '2021-01-01',
     totalOrderValue: 1000,
@@ -318,8 +279,8 @@ export const MKT_CUSTOMER_DATA_SEEDS: MktCustomerDataSeed[] = [
     companyName: 'John Doe Inc.',
     address: '123 Main St, Anytown, USA',
     status: MKT_CUSTOMER_STATUS.ACTIVE,
-    tier: MKT_CUSTOMER_TIER.TIER_5,
-    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.CUSTOMER,
+    tier: MKT_CUSTOMER_TIER.OTHER,
+    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.LOYAL,
     registrationDate: '2021-01-01',
     totalOrderValue: 1000,
     churnRiskScore: 0.5,
@@ -336,8 +297,8 @@ export const MKT_CUSTOMER_DATA_SEEDS: MktCustomerDataSeed[] = [
     companyName: 'John Doe Inc.',
     address: '123 Main St, Anytown, USA',
     status: MKT_CUSTOMER_STATUS.ACTIVE,
-    tier: MKT_CUSTOMER_TIER.TIER_5,
-    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.CUSTOMER,
+    tier: MKT_CUSTOMER_TIER.OTHER,
+    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.LOYAL,
 
     registrationDate: '2021-01-01',
     totalOrderValue: 1000,
@@ -355,8 +316,8 @@ export const MKT_CUSTOMER_DATA_SEEDS: MktCustomerDataSeed[] = [
     companyName: 'John Doe Inc.',
     address: '123 Main St, Anytown, USA',
     status: MKT_CUSTOMER_STATUS.ACTIVE,
-    tier: MKT_CUSTOMER_TIER.TIER_5,
-    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.CUSTOMER,
+    tier: MKT_CUSTOMER_TIER.OTHER,
+    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.LOYAL,
 
     registrationDate: '2021-01-01',
     totalOrderValue: 1000,
@@ -374,8 +335,8 @@ export const MKT_CUSTOMER_DATA_SEEDS: MktCustomerDataSeed[] = [
     companyName: 'John Doe Inc.',
     address: '123 Main St, Anytown, USA',
     status: MKT_CUSTOMER_STATUS.ACTIVE,
-    tier: MKT_CUSTOMER_TIER.TIER_5,
-    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.CUSTOMER,
+    tier: MKT_CUSTOMER_TIER.OTHER,
+    lifecycleStage: MKT_CUSTOMER_LIFECYCLE_STAGE.LOYAL,
 
     registrationDate: '2021-01-01',
     totalOrderValue: 1000,
