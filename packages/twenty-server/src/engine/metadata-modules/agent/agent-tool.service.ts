@@ -150,6 +150,6 @@ export class AgentToolService {
       return {};
     }
 
-    return this.workflowToolService.generateWorkflowTools(workspaceId);
+    return this.workflowToolService.generateWorkflowTools(workspaceId, role.id);
   }
 }

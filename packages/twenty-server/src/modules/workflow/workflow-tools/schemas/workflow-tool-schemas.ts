@@ -97,3 +97,46 @@ export const computeStepOutputSchemaSchema = z.object({
     .union([workflowTriggerSchema, workflowActionSchema])
     .describe('The workflow step configuration'),
 });
+
+export const createCompleteWorkflowSchema = z.object({
+  name: z.string().describe('The name of the workflow'),
+  description: z
+    .string()
+    .optional()
+    .describe('Optional description of the workflow'),
+  trigger: workflowTriggerSchema,
+  steps: z
+    .array(workflowActionSchema)
+    .describe('Array of workflow action steps'),
+  stepPositions: z
+    .array(
+      z.object({
+        stepId: z
+          .string()
+          .describe('The ID of the step (use "trigger" for trigger step)'),
+        position: z.object({
+          x: z.number().describe('X coordinate for the step position'),
+          y: z.number().describe('Y coordinate for the step position'),
+        }),
+      }),
+    )
+    .optional()
+    .describe('Optional array of step positions for layout'),
+  edges: z
+    .array(
+      z.object({
+        source: z
+          .string()
+          .describe(
+            'The ID of the source step (use "trigger" for trigger step)',
+          ),
+        target: z.string().describe('The ID of the target step'),
+      }),
+    )
+    .optional()
+    .describe('Optional array of connections between steps'),
+  activate: z
+    .boolean()
+    .optional()
+    .describe('Whether to activate the workflow immediately (default: false)'),
+});
