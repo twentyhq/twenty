@@ -1,10 +1,10 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
-    ResponsivePie,
-    type ComputedDatum,
-    type DatumId,
-    type PieCustomLayerProps,
+  ResponsivePie,
+  type ComputedDatum,
+  type DatumId,
+  type PieCustomLayerProps,
 } from '@nivo/pie';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,8 +13,8 @@ import { createGradientDef } from '../utils/createGradientDef';
 import { createGraphColorRegistry } from '../utils/createGraphColorRegistry';
 import { getColorSchemeByIndex } from '../utils/getColorSchemeByIndex';
 import {
-    formatGraphValue,
-    type GraphValueFormatOptions,
+  formatGraphValue,
+  type GraphValueFormatOptions,
 } from '../utils/graphFormatters';
 import { GraphWidgetLegend } from './GraphWidgetLegend';
 import { GraphWidgetTooltip } from './GraphWidgetTooltip';
