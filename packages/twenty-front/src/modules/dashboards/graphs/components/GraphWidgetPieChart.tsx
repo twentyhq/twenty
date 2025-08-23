@@ -16,6 +16,7 @@ import {
     formatGraphValue,
     type GraphValueFormatOptions,
 } from '../utils/graphFormatters';
+import { GraphWidgetLegend } from './GraphWidgetLegend';
 import { GraphWidgetTooltip } from './GraphWidgetTooltip';
 
 type GraphWidgetPieChartProps = {
@@ -38,39 +39,6 @@ const StyledChartContainer = styled.div`
   flex: 1;
   position: relative;
   width: 100%;
-`;
-
-const StyledLegendContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing(3)};
-
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing(2)} 0;
-`;
-
-const StyledLegendItem = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-`;
-
-const StyledLegendLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-`;
-
-const StyledLegendValue = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-`;
-
-const StyledDot = styled.div<{ $color: string }>`
-  background: ${({ $color }) => $color};
-  border-radius: 50%;
-  height: 6px;
-  width: 6px;
-  flex-shrink: 0;
 `;
 
 export const GraphWidgetPieChart = ({
@@ -164,17 +132,14 @@ export const GraphWidgetPieChart = ({
       return null;
     }
 
-    // Draw lines at the end of each slice (which creates lines between all slices)
     return (
       <g>
         {dataWithArc.map((datum) => {
-          // Find the corresponding enriched data item to get the color scheme
           const enrichedItem = enrichedData.find((d) => d.id === datum.id);
           const lineColor = enrichedItem
             ? enrichedItem.colorScheme.solid
             : theme.border.color.strong;
 
-          // Calculate line position at the end angle of this slice
           const angle = datum.arc.endAngle - Math.PI / 2;
           const x1 = centerX + Math.cos(angle) * innerRadius;
           const y1 = centerY + Math.sin(angle) * innerRadius;
@@ -213,28 +178,18 @@ export const GraphWidgetPieChart = ({
           onMouseLeave={() => setHoveredSliceId(null)}
           defs={defs}
           fill={fill}
-          layers={[
-            'arcs',
-            renderSliceEndLines,
-            'arcLinkLabels',
-            'arcLabels',
-            'legends',
-          ]}
+          layers={['arcs', renderSliceEndLines]}
         />
       </StyledChartContainer>
-      {showLegend && (
-        <StyledLegendContainer>
-          {enrichedData.map((item) => (
-            <StyledLegendItem key={item.id}>
-              <StyledDot $color={item.colorScheme.solid} />
-              <StyledLegendLabel>{item.label || item.id}</StyledLegendLabel>
-              <StyledLegendValue>
-                {formatGraphValue(item.value, formatOptions)}
-              </StyledLegendValue>
-            </StyledLegendItem>
-          ))}
-        </StyledLegendContainer>
-      )}
+      <GraphWidgetLegend
+        show={showLegend}
+        items={enrichedData.map((item) => ({
+          id: item.id,
+          label: item.label || item.id,
+          formattedValue: formatGraphValue(item.value, formatOptions),
+          color: item.colorScheme.solid,
+        }))}
+      />
     </StyledContainer>
   );
 };

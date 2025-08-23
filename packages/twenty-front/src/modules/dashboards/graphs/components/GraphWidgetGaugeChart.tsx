@@ -1,6 +1,9 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ResponsiveRadialBar } from '@nivo/radial-bar';
+import {
+  type RadialBarCustomLayerProps,
+  ResponsiveRadialBar,
+} from '@nivo/radial-bar';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
@@ -12,6 +15,7 @@ import {
   formatGraphValue,
   type GraphValueFormatOptions,
 } from '../utils/graphFormatters';
+import { GraphWidgetLegend } from './GraphWidgetLegend';
 import { GraphWidgetTooltip } from './GraphWidgetTooltip';
 
 type GraphWidgetGaugeChartProps = {
@@ -19,6 +23,7 @@ type GraphWidgetGaugeChartProps = {
   min: number;
   max: number;
   showValue?: boolean;
+  showLegend?: boolean;
   legendLabel: string;
   tooltipHref?: string;
   id: string;
@@ -46,42 +51,12 @@ const StyledH1Title = styled(H1Title)`
   transform: translate(-50%, -150%);
 `;
 
-const StyledLegendContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(3)};
-  justify-content: center;
-`;
-
-const StyledLegendItem = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-`;
-
-const StyledLegendLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-`;
-
-const StyledLegendValue = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-`;
-
-const StyledDot = styled.div<{ $color: string }>`
-  background: ${({ $color }) => $color};
-  border-radius: 50%;
-  height: 6px;
-  width: 6px;
-  flex-shrink: 0;
-`;
-
 export const GraphWidgetGaugeChart = ({
   value,
   min,
   max,
   showValue = true,
+  showLegend = true,
   legendLabel,
   tooltipHref,
   id,
@@ -132,8 +107,7 @@ export const GraphWidgetGaugeChart = ({
   };
 
   const renderTooltip = () => {
-    const percentageValue = normalizedValue.toFixed(1);
-    const formattedWithPercentage = `${formattedValue} (${percentageValue}%)`;
+    const formattedWithPercentage = `${formattedValue} (${normalizedValue.toFixed(1)}%)`;
 
     return (
       <GraphWidgetTooltip
@@ -149,11 +123,44 @@ export const GraphWidgetGaugeChart = ({
     );
   };
 
+  const renderValueEndLine = (props: RadialBarCustomLayerProps) => {
+    if (clampedNormalizedValue === 0) {
+      return null;
+    }
+
+    const { center, bars } = props;
+
+    const valueBar = bars?.find((bar) => bar.data.x === 'value');
+    if (!valueBar) {
+      return null;
+    }
+
+    const endAngle = valueBar.arc.endAngle - Math.PI / 2;
+    const arcInnerRadius = valueBar.arc.innerRadius;
+    const arcOuterRadius = valueBar.arc.outerRadius;
+
+    const [centerX, centerY] = center;
+    const x1 = centerX + Math.cos(endAngle) * arcInnerRadius;
+    const y1 = centerY + Math.sin(endAngle) * arcInnerRadius;
+    const x2 = centerX + Math.cos(endAngle) * arcOuterRadius;
+    const y2 = centerY + Math.sin(endAngle) * arcOuterRadius;
+
+    return (
+      <g>
+        <line
+          x1={x1}
+          y1={y1}
+          x2={x2}
+          y2={y2}
+          stroke={colorScheme.solid}
+          strokeWidth={1}
+        />
+      </g>
+    );
+  };
+
   return (
-    <StyledContainer
-      id={id}
-      style={{ cursor: isDefined(tooltipHref) ? 'pointer' : 'default' }}
-    >
+    <StyledContainer>
       <StyledChartContainer>
         <ResponsiveRadialBar
           data={data}
@@ -182,6 +189,7 @@ export const GraphWidgetGaugeChart = ({
           radialAxisEnd={null}
           circularAxisInner={null}
           circularAxisOuter={null}
+          layers={['bars', renderValueEndLine]}
         />
         {showValue && (
           <StyledH1Title
@@ -190,13 +198,17 @@ export const GraphWidgetGaugeChart = ({
           />
         )}
       </StyledChartContainer>
-      <StyledLegendContainer>
-        <StyledLegendItem>
-          <StyledDot $color={colorScheme.solid} />
-          <StyledLegendLabel>{legendLabel}</StyledLegendLabel>
-          <StyledLegendValue>{formattedValue}</StyledLegendValue>
-        </StyledLegendItem>
-      </StyledLegendContainer>
+      <GraphWidgetLegend
+        show={showLegend}
+        items={[
+          {
+            id: 'gauge',
+            label: legendLabel,
+            formattedValue: formattedValue,
+            color: colorScheme.solid,
+          },
+        ]}
+      />
     </StyledContainer>
   );
 };
