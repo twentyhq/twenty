@@ -8,8 +8,8 @@ import { createGradientDef } from '../utils/createGradientDef';
 import { createGraphColorRegistry } from '../utils/createGraphColorRegistry';
 import { getColorSchemeByIndex } from '../utils/getColorSchemeByIndex';
 import {
-    formatGraphValue,
-    type GraphValueFormatOptions,
+  formatGraphValue,
+  type GraphValueFormatOptions,
 } from '../utils/graphFormatters';
 import { GraphWidgetLegend } from './GraphWidgetLegend';
 import { GraphWidgetTooltip } from './GraphWidgetTooltip';
