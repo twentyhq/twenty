@@ -24,9 +24,29 @@ import {
   MKT_CONTRACT_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-contract-data-seeds.constants';
 import {
+  MKT_CUSTOMER_DATA_SEED_COLUMNS,
+  MKT_CUSTOMER_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-customer-data-seeds.constants';
+import {
+  MKT_DEPARTMENT_DATA_SEED_COLUMNS,
+  MKT_DEPARTMENT_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-department-data-seeds.constants';
+import {
+  MKT_EMPLOYMENT_STATUS_DATA_SEED_COLUMNS,
+  MKT_EMPLOYMENT_STATUS_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-employment-status-data-seeds.constants';
+import {
   MKT_INVOICE_DATA_SEED_COLUMNS,
   MKT_INVOICE_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-invoice-data-seeds.constants';
+import {
+  MKT_KPI_DATA_SEED_COLUMNS,
+  MKT_KPI_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-kpi-data-seeds.constants';
+import {
+  MKT_KPI_TEMPLATE_DATA_SEED_COLUMNS,
+  MKT_KPI_TEMPLATE_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-kpi-template-data-seeds.constants';
 import {
   MKT_LICENSE_DATA_SEED_COLUMNS,
   MKT_LICENSE_DATA_SEEDS,
@@ -40,9 +60,9 @@ import {
   MKT_ORDER_ITEM_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-order-item-data-seeds.constants';
 import {
-  MKT_TEMPLATE_DATA_SEED_COLUMNS,
-  MKT_TEMPLATE_DATA_SEEDS,
-} from 'src/mkt-core/dev-seeder/constants/mkt-template-data-seeds.constants';
+  MKT_ORGANIZATION_LEVEL_DATA_SEED_COLUMNS,
+  MKT_ORGANIZATION_LEVEL_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-organization-level-data-seeds.constants';
 import {
   MKT_PAYMENT_DATA_SEED_COLUMNS,
   MKT_PAYMENT_DATA_SEEDS,
@@ -52,41 +72,25 @@ import {
   MKT_PAYMENT_METHOD_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-payment-method-data-seeds.constants';
 import {
-  MKT_RESELLER_TIER_DATA_SEED_COLUMNS,
-  MKT_RESELLER_TIER_DATA_SEEDS,
-} from 'src/mkt-core/dev-seeder/constants/mkt-reseller-tier-data-seeds.constants';
-import {
   MKT_RESELLER_DATA_SEED_COLUMNS,
   MKT_RESELLER_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-reseller-data-seeds.constants';
+import {
+  MKT_RESELLER_TIER_DATA_SEED_COLUMNS,
+  MKT_RESELLER_TIER_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-reseller-tier-data-seeds.constants';
 import {
   MKT_RESELLER_TIER_HISTORY_DATA_SEED_COLUMNS,
   MKT_RESELLER_TIER_HISTORY_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-reseller-tier-history-data-seeds.constants';
 import {
-  MKT_ORGANIZATION_LEVEL_DATA_SEED_COLUMNS,
-  MKT_ORGANIZATION_LEVEL_DATA_SEEDS,
-} from 'src/mkt-core/dev-seeder/constants/mkt-organization-level-data-seeds.constants';
-import {
-  MKT_EMPLOYMENT_STATUS_DATA_SEED_COLUMNS,
-  MKT_EMPLOYMENT_STATUS_DATA_SEEDS,
-} from 'src/mkt-core/dev-seeder/constants/mkt-employment-status-data-seeds.constants';
-import {
   MKT_STAFF_STATUS_HISTORY_DATA_SEED_COLUMNS,
   MKT_STAFF_STATUS_HISTORY_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-staff-status-history-data-seeds.constants';
 import {
-  MKT_DEPARTMENT_DATA_SEED_COLUMNS,
-  MKT_DEPARTMENT_DATA_SEEDS,
-} from 'src/mkt-core/dev-seeder/constants/mkt-department-data-seeds.constants';
-import {
-  MKT_KPI_DATA_SEED_COLUMNS,
-  MKT_KPI_DATA_SEEDS,
-} from 'src/mkt-core/dev-seeder/constants/mkt-kpi-data-seeds.constants';
-import {
-  MKT_KPI_TEMPLATE_DATA_SEED_COLUMNS,
-  MKT_KPI_TEMPLATE_DATA_SEEDS,
-} from 'src/mkt-core/dev-seeder/constants/mkt-kpi-template-data-seeds.constants';
+  MKT_TEMPLATE_DATA_SEED_COLUMNS,
+  MKT_TEMPLATE_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-template-data-seeds.constants';
 
 export const MKT_RECORD_SEEDS_CONFIGS = [
   // Product configs
@@ -203,5 +207,11 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     tableName: 'mktKpiTemplate',
     pgColumns: MKT_KPI_TEMPLATE_DATA_SEED_COLUMNS,
     recordSeeds: MKT_KPI_TEMPLATE_DATA_SEEDS,
+  },
+  // Customer configs
+  {
+    tableName: 'mktCustomer',
+    pgColumns: MKT_CUSTOMER_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_CUSTOMER_DATA_SEEDS,
   },
 ];

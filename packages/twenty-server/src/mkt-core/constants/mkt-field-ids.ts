@@ -7,6 +7,35 @@
 
 // TODO: check if this can be deleted
 
+export const MKT_CUSTOMER_FIELD_IDS = {
+  // fields
+  name: 'bc3ac7d1-2e1c-4fe0-a43d-0fa961552cb6',
+  type: '204aef63-5db1-43d4-b1d6-d01f36df5558',
+  email: 'fbd13f57-d03b-48c4-9e23-ef6c0a412244',
+  phone: '9e0b45ef-5ca8-4d71-a087-96aae069287f',
+  taxCode: '57685c22-fab6-4be8-85b2-5e4420274698',
+  companyName: 'b10c1418-0f38-4f63-8363-b7fbf3f7dd94',
+  address: '35ce5702-4618-4488-8e00-5d78a96596c3',
+  status: '805eddee-a726-41c2-a996-74c3f976b2cc',
+  tier: '4103c22a-f604-4f24-aa53-799cb97ce6d0',
+  lifecycleStage: 'dae0670f-1e04-407b-bc1e-e8c40c9834d7',
+  registrationDate: '7fb838c4-c6d2-4965-9685-3aa15f861aab',
+  totalOrderValue: '3142cb73-ef17-4d43-87e5-d32551bea490',
+  churnRiskScore: '04537b93-1bb2-47d7-b5b6-46f37c07dc4b',
+  engagementScore: 'fa17e8e2-a908-48c0-aad6-81a220a99946',
+  tags: '940e3766-a147-4cf4-bd50-805b1c8c8880',
+  // relations
+  salesId: '78be7072-50eb-4edc-81fc-c3e25658d7bd',
+  supportId: 'a1ed4146-269d-46a5-ac7e-7cba043974e1',
+  affiliateId: '940e3766-a147-4cf4-bd50-805b1c8c8880',
+  // common relations or fields
+  position: 'e3ca3ebd-4812-4c82-abde-e14b13a01829',
+  createdBy: '4e6d0176-22f4-4b25-bbf2-0a3ed6d7a5e1',
+  accountOwner: '0ccf0130-8651-4165-b061-a1d1c3bd7aa7',
+  timelineActivities: '78be7072-50eb-4edc-81fc-c3e25658d7bd',
+  searchVector: 'a1ed4146-269d-46a5-ac7e-7cba043974e1',
+};
+
 export const MKT_PRODUCT_FIELD_IDS = {
   name: 'f96cff34-9749-4e6e-bdf1-87feb2d63c5b',
   code: '18f99112-4829-4c38-a455-d7be4ad976a2',
@@ -312,6 +341,8 @@ export const MKT_KPI_TEMPLATE_HISTORY_FIELD_IDS = {
 
 //EXTENDS FROM WORKSPACE_MEMBER_STANDARD_FIELD_IDS
 export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
+  //customers
+  accountOwnerForMktCustomers: '06129dff-8941-4cd4-aed8-e5e89e986fd2',
   //products
   accountOwnerForMktProducts: 'fa7e06e6-3d12-4185-928a-db45e0257b95',
   accountOwnerForMktAttributes: '84954c00-5b31-46ab-9b6c-e95b81ae8d94',

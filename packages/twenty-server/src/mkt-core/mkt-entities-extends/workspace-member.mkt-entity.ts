@@ -9,16 +9,29 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { MktAttributeWorkspaceEntity } from 'src/mkt-core/attribute/mkt-attribute.workspace-entity';
 import { WORKSPACE_MEMBER_MKT_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MktContractWorkspaceEntity } from 'src/mkt-core/contract/mkt-contract.workspace-entity';
+import { MktCustomerWorkspaceEntity } from 'src/mkt-core/customer/mkt-customer.workspace-entity';
 import { MktInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/mkt-invoice.workspace-entity';
 import { MktLicenseWorkspaceEntity } from 'src/mkt-core/license/mkt-license.workspace-entity';
 import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
 import { MktProductWorkspaceEntity } from 'src/mkt-core/product/standard-objects/mkt-product.workspace-entity';
+import { MktTemplateWorkspaceEntity } from 'src/mkt-core/template/mkt-template.workspace-entity';
 import { MktValueWorkspaceEntity } from 'src/mkt-core/value/mkt-value.workspace-entity';
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
 import { MktVariantAttributeWorkspaceEntity } from 'src/mkt-core/variant_attribute/mkt-variant-attribute.workspace-entity';
-import { MktTemplateWorkspaceEntity } from 'src/mkt-core/template/mkt-template.workspace-entity';
 
 export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.accountOwnerForMktCustomers,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Account Owner For Customers`,
+    description: msg`Account owner for customers`,
+    icon: 'IconUser',
+    inverseSideTarget: () => MktCustomerWorkspaceEntity,
+    inverseSideFieldKey: 'accountOwner',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  accountOwnerForMktCustomers: Relation<MktCustomerWorkspaceEntity[]>;
+
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.accountOwnerForMktProducts,
     type: RelationType.ONE_TO_MANY,
