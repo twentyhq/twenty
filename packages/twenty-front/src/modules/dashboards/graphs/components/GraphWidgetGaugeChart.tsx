@@ -97,7 +97,13 @@ export const GraphWidgetGaugeChart = ({
   ];
 
   const gradientId = `gaugeGradient-${id}`;
-  const gradientDef = createGradientDef(colorScheme, gradientId, isHovered);
+  const gaugeAngle = -90 + (clampedNormalizedValue / 100) * 90;
+  const gradientDef = createGradientDef(
+    colorScheme,
+    gradientId,
+    isHovered,
+    gaugeAngle,
+  );
   const defs = [gradientDef];
 
   const handleClick = () => {

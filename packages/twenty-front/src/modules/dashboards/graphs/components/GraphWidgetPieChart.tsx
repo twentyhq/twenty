@@ -1,10 +1,10 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
-  ResponsivePie,
-  type ComputedDatum,
-  type DatumId,
-  type PieCustomLayerProps,
+    ResponsivePie,
+    type ComputedDatum,
+    type DatumId,
+    type PieCustomLayerProps,
 } from '@nivo/pie';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,8 +13,8 @@ import { createGradientDef } from '../utils/createGradientDef';
 import { createGraphColorRegistry } from '../utils/createGraphColorRegistry';
 import { getColorSchemeByIndex } from '../utils/getColorSchemeByIndex';
 import {
-  formatGraphValue,
-  type GraphValueFormatOptions,
+    formatGraphValue,
+    type GraphValueFormatOptions,
 } from '../utils/graphFormatters';
 import { GraphWidgetLegend } from './GraphWidgetLegend';
 import { GraphWidgetTooltip } from './GraphWidgetTooltip';
@@ -67,22 +67,34 @@ export const GraphWidgetPieChart = ({
 
   const totalValue = data.reduce((sum, item) => sum + item.value, 0);
 
+  let cumulativeAngle = 0;
   const enrichedData = data.map((item, index) => {
     const colorScheme = getColorSchemeByIndex(colorRegistry, index);
     const isHovered = hoveredSliceId === item.id;
     const gradientId = `${colorScheme.name}Gradient-${id}-${index}`;
+    const percentage = totalValue > 0 ? (item.value / totalValue) * 100 : 0;
+
+    const sliceAngle = (percentage / 100) * 360;
+    const middleAngle = cumulativeAngle + sliceAngle / 2;
+    cumulativeAngle += sliceAngle;
 
     return {
       ...item,
       gradientId,
       colorScheme,
       isHovered,
-      percentage: totalValue > 0 ? (item.value / totalValue) * 100 : 0,
+      percentage,
+      middleAngle,
     };
   });
 
   const defs = enrichedData.map((item) =>
-    createGradientDef(item.colorScheme, item.gradientId, item.isHovered),
+    createGradientDef(
+      item.colorScheme,
+      item.gradientId,
+      item.isHovered,
+      item.middleAngle,
+    ),
   );
 
   const fill = enrichedData.map((item) => ({
