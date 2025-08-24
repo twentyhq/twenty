@@ -48,8 +48,8 @@ export class HttpTool implements Tool {
           : 'application/json';
 
         if (shouldSetContentType) {
-          requestOptions.headers = {
-            ...requestOptions.headers,
+          axiosConfig.headers = {
+            ...axiosConfig.headers,
             'content-type': contentTypeValue,
           };
         }
