@@ -9,11 +9,12 @@
 
 export { CONTENT_TYPE_VALUES_HTTP_REQUEST } from './constants/contentTypeValuesHttpRequest';
 export { TRIGGER_STEP_ID } from './constants/TriggerStepId';
-export type { BodyType } from './types/worflowHttpRequestStep';
+export type { BodyType } from './types/workflowHttpRequestStep';
+export { StepStatus } from './types/WorkflowRunStateStepInfos';
 export type {
   WorkflowRunStepInfo,
-  WorkflowRunStepInfos,
+  WorkflowRunStepInfos
 } from './types/WorkflowRunStateStepInfos';
-export { StepStatus } from './types/WorkflowRunStateStepInfos';
 export { bodyParsersHttpRequestStep } from './utils/bodyParsersHttpRequestStep';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
+
