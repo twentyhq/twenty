@@ -7,7 +7,6 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
-
 describe('Restricted fields', () => {
   let personCity: string;
   let memberRoleId: string;
