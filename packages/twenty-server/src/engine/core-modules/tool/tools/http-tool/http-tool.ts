@@ -32,9 +32,11 @@ export class HttpTool implements Tool {
 
       if (isMethodForBody && body) {
         axiosConfig.data = bodyParsersHttpRequestStep(bodyType, body);
-        const hasContentTypeHeader = Object.keys(headers).some(
-          (key) => key.toLowerCase() === 'content-type',
-        );
+        const hasContentTypeHeader =
+          headers &&
+          Object.keys(headers).some(
+            (key) => key.toLowerCase() === 'content-type',
+          );
 
         const isFormData = bodyType === 'FormData';
         const isNoneType = bodyType === 'None';

@@ -9,7 +9,7 @@ import {
   type BodyType,
   CONTENT_TYPE_VALUES_HTTP_REQUEST,
 } from 'twenty-shared/workflow';
-import { HttpRequestBody } from '../constants/HttpRequest';
+import { type HttpRequestBody } from '../constants/HttpRequest';
 
 const convertFlatVariablesToNestedContext = (flatVariables: {
   [variablePath: string]: any;
@@ -44,7 +44,7 @@ export const useTestHttpRequest = (actionId: string) => {
     url: string,
     headers: Record<string, string>,
     method: string,
-    body?: HttpRequestBody,
+    body?: HttpRequestBody | string,
     bodyType?: BodyType,
   ): Promise<HttpRequestTestData['output']> => {
     const requestOptions: RequestInit = {
@@ -119,10 +119,16 @@ export const useTestHttpRequest = (actionId: string) => {
         httpRequestFormData.headers,
         nestedVariableContext,
       );
-      const substitutedBody = resolveInput(
+      const substitutedBodyRaw = resolveInput(
         httpRequestFormData.body,
         nestedVariableContext,
       );
+
+      const substitutedBody: HttpRequestBody | string | undefined =
+        typeof substitutedBodyRaw === 'string' ||
+        typeof substitutedBodyRaw === 'object'
+          ? substitutedBodyRaw
+          : undefined;
 
       const output = await callFetchRequest(
         substitutedUrl as string,
