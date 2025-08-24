@@ -34,7 +34,7 @@ import { HttpRequestExecutionResult } from './HttpRequestExecutionResult';
 import { HttpRequestTestVariableInput } from './HttpRequestTestVariableInput';
 import { KeyValuePairInput } from './KeyValuePairInput';
 import { isDefined } from 'twenty-shared/utils';
-import { BodyType } from 'twenty-shared/workflow';
+import { type BodyType } from 'twenty-shared/workflow';
 
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
