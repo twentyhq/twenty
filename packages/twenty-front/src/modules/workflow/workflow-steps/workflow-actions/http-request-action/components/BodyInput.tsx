@@ -13,7 +13,7 @@ import styled from '@emotion/styled';
 import { isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { parseJson } from 'twenty-shared/utils';
-import { BodyType } from 'twenty-shared/workflow';
+import { type BodyType } from 'twenty-shared/workflow';
 import { IconFileText, IconKey } from 'twenty-ui/display';
 import { type JsonValue } from 'type-fest';
 import { KeyValuePairInput } from './KeyValuePairInput';
