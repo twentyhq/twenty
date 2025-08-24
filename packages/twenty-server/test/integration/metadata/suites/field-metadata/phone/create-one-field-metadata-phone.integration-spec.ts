@@ -3,9 +3,9 @@ import { type CountryCode } from 'libphonenumber-js';
 import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import {
   type AdditionalPhoneMetadata,
@@ -324,7 +324,7 @@ describe('Phone field metadata tests suite', () => {
   let createdObjectMetadataId: string;
 
   beforeAll(async () => {
-    const { data } = await forceCreateOneObjectMetadata({
+    const { data } = await createOneObjectMetadata({
       input: {
         nameSingular: 'myTestObject',
         namePlural: 'myTestObjects',
