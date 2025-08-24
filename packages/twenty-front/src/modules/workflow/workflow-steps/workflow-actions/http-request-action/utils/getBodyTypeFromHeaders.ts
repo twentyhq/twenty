@@ -1,12 +1,13 @@
+import { isDefined } from 'twenty-shared/utils';
 import {
-  BodyType,
+  type BodyType,
   CONTENT_TYPE_VALUES_HTTP_REQUEST,
 } from 'twenty-shared/workflow';
 
 export const getBodyTypeFromHeaders = (
   headers?: Record<string, string>,
 ): BodyType | null => {
-  if (!headers) return null;
+  if (!isDefined(headers)) return null;
 
   const headerEntries = Object.entries(headers);
 
@@ -14,10 +15,9 @@ export const getBodyTypeFromHeaders = (
     const [key, val] = headerEntries[i];
     if (key.toLowerCase() === 'content-type') {
       const match = Object.entries(CONTENT_TYPE_VALUES_HTTP_REQUEST).find(
-        ([bodyTypeKey, contentTypeVal]) =>
-          val.toLowerCase().includes(contentTypeVal),
+        ([, contentTypeVal]) => val.toLowerCase().includes(contentTypeVal),
       );
-      if (match) {
+      if (isDefined(match)) {
         const [bodyTypeKey] = match;
         return bodyTypeKey as BodyType;
       }

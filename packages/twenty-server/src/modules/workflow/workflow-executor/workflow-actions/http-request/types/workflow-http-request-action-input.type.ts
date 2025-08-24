@@ -1,4 +1,4 @@
-import { BodyType } from 'twenty-shared/workflow';
+import { type BodyType } from 'twenty-shared/workflow';
 
 export type WorkflowHttpRequestActionInput = {
   url: string;

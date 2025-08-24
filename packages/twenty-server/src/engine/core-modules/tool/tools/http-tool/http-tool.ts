@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
 import axios, { type AxiosRequestConfig } from 'axios';
+import {
+  bodyParsersHttpRequestStep,
+  CONTENT_TYPE_VALUES_HTTP_REQUEST,
+} from 'twenty-shared/workflow';
 
 import { HttpToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/http-tool/http-tool.schema';
 import { type HttpRequestInput } from 'src/engine/core-modules/tool/tools/http-tool/types/http-request-input.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import {
-  bodyParsersHttpRequestStep,
-  CONTENT_TYPE_VALUES_HTTP_REQUEST,
-} from 'twenty-shared/workflow';
 @Injectable()
 export class HttpTool implements Tool {
   description =

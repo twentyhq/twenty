@@ -6,7 +6,7 @@ import { useRecoilState } from 'recoil';
 import { resolveInput } from 'twenty-shared/utils';
 import {
   bodyParsersHttpRequestStep,
-  BodyType,
+  type BodyType,
   CONTENT_TYPE_VALUES_HTTP_REQUEST,
 } from 'twenty-shared/workflow';
 
