@@ -1,8 +1,14 @@
 import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
+import { type HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { resolveInput } from 'twenty-shared/utils';
+import {
+  bodyParsersHttpRequestStep,
+  BodyType,
+  CONTENT_TYPE_VALUES_HTTP_REQUEST,
+} from 'twenty-shared/workflow';
 
 const convertFlatVariablesToNestedContext = (flatVariables: {
   [variablePath: string]: any;
@@ -33,13 +39,72 @@ export const useTestHttpRequest = (actionId: string) => {
     httpRequestTestDataFamilyState(actionId),
   );
 
+  const callFetchRequest = async (
+    url: string,
+    headers: Record<string, string>,
+    method: string,
+    body?: any,
+    bodyType?: BodyType,
+  ): Promise<HttpRequestTestData['output']> => {
+    const requestOptions: RequestInit = {
+      method: method,
+      headers: headers as Record<string, string>,
+    };
+    if (['POST', 'PUT', 'PATCH'].includes(method)) {
+      if (body !== undefined) {
+        requestOptions.body = bodyParsersHttpRequestStep(bodyType, body);
+
+        if (
+          !Object.keys(headers).some(
+            (key) => key.toLowerCase() === 'content-type',
+          ) &&
+          bodyType !== 'FormData'
+        ) {
+          requestOptions.headers = {
+            ...requestOptions.headers,
+            ...{
+              'content-type':
+                bodyType && bodyType !== 'None'
+                  ? CONTENT_TYPE_VALUES_HTTP_REQUEST[bodyType] ||
+                    'application/json'
+                  : 'application/json',
+            },
+          };
+        }
+      }
+    }
+
+    const response = await fetch(url as string, requestOptions);
+
+    let responseData: string;
+    const contentType = response.headers.get('content-type');
+
+    if (contentType !== null && contentType.includes('application/json')) {
+      const jsonData = await response.json();
+      responseData = JSON.stringify(jsonData, null, 2);
+    } else {
+      responseData = await response.text();
+    }
+
+    const responseHeaders: Record<string, string> = {};
+    response.headers.forEach((value, key) => {
+      responseHeaders[key] = value;
+    });
+
+    return {
+      data: responseData,
+      status: response.status,
+      statusText: response.statusText,
+      headers: responseHeaders,
+      error: undefined,
+    };
+  };
   const testHttpRequest = async (
     httpRequestFormData: HttpRequestFormData,
     variableValues: { [variablePath: string]: any },
   ) => {
     setIsTesting(true);
     const startTime = Date.now();
-
     try {
       const nestedVariableContext =
         convertFlatVariablesToNestedContext(variableValues);
@@ -56,53 +121,27 @@ export const useTestHttpRequest = (actionId: string) => {
         nestedVariableContext,
       );
 
-      const requestOptions: RequestInit = {
-        method: httpRequestFormData.method,
-        headers: substitutedHeaders as Record<string, string>,
-      };
+      const output = await callFetchRequest(
+        substitutedUrl as string,
+        substitutedHeaders as Record<string, string>,
+        httpRequestFormData.method,
+        substitutedBody,
+        httpRequestFormData.bodyType,
+      );
 
-      if (['POST', 'PUT', 'PATCH'].includes(httpRequestFormData.method)) {
-        if (substitutedBody !== undefined) {
-          if (typeof substitutedBody === 'string') {
-            requestOptions.body = substitutedBody;
-          } else {
-            requestOptions.body = JSON.stringify(substitutedBody);
-          }
-        }
-      }
-
-      const response = await fetch(substitutedUrl as string, requestOptions);
+      const contentType = output?.headers?.['content-type'];
+      const language = contentType?.includes('application/json')
+        ? 'json'
+        : 'plaintext';
       const duration = Date.now() - startTime;
-
-      let responseData: string;
-      const contentType = response.headers.get('content-type');
-
-      if (contentType !== null && contentType.includes('application/json')) {
-        const jsonData = await response.json();
-        responseData = JSON.stringify(jsonData, null, 2);
-      } else {
-        responseData = await response.text();
-      }
-
-      const responseHeaders: Record<string, string> = {};
-      response.headers.forEach((value, key) => {
-        responseHeaders[key] = value;
-      });
-
+      const outputWithDuration = {
+        ...output,
+        duration,
+      };
       setHttpRequestTestData((prev) => ({
         ...prev,
-        output: {
-          data: responseData,
-          status: response.status,
-          statusText: response.statusText,
-          headers: responseHeaders,
-          duration,
-          error: undefined,
-        },
-        language:
-          contentType !== null && contentType.includes('application/json')
-            ? 'json'
-            : 'plaintext',
+        output: outputWithDuration,
+        language,
       }));
     } catch (error) {
       const duration = Date.now() - startTime;
