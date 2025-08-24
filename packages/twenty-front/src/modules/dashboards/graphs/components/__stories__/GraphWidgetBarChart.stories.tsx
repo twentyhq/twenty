@@ -217,10 +217,12 @@ export const Horizontal: Story = {
         data={args.data}
         indexBy={args.indexBy}
         keys={args.keys}
+        layout={args.layout}
         showLegend={args.showLegend}
         showGrid={args.showGrid}
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
+        suffix={args.suffix}
         tooltipHref={args.tooltipHref}
         id={args.id}
       />
