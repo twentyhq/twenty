@@ -126,7 +126,7 @@ export const useTestHttpRequest = (actionId: string) => {
 
       const substitutedBody: HttpRequestBody | string | undefined =
         typeof substitutedBodyRaw === 'string' ||
-        typeof substitutedBodyRaw === 'object'
+        (typeof substitutedBodyRaw === 'object' && substitutedBodyRaw !== null)
           ? substitutedBodyRaw
           : undefined;
 
