@@ -1,9 +1,12 @@
+import { BodyType } from 'twenty-shared/workflow';
+
 const {
   HTTP_METHODS,
   METHODS_WITH_BODY,
   DEFAULT_JSON_BODY_PLACEHOLDER,
   JSON_RESPONSE_PLACEHOLDER,
   DEFAULT_HTTP_REQUEST_OUTPUT_VALUE,
+  BODY_TYPES,
 } = {
   HTTP_METHODS: [
     { label: 'GET', value: 'GET' },
@@ -12,6 +15,7 @@ const {
     { label: 'PATCH', value: 'PATCH' },
     { label: 'DELETE', value: 'DELETE' },
   ] as const,
+  BODY_TYPES: ['keyValue', 'rawJson', 'FormData', 'Text', 'None'] as const,
   METHODS_WITH_BODY: ['POST', 'PUT', 'PATCH'] as const,
   DEFAULT_JSON_BODY_PLACEHOLDER:
     '{\n  "key": "value"\n "another_key": "{{workflow.variable}}" \n}',
@@ -38,9 +42,11 @@ export type HttpRequestFormData = {
   method: HttpMethod;
   headers: Record<string, string>;
   body?: HttpRequestBody | string;
+  bodyType?: BodyType;
 };
 
 export {
+  BODY_TYPES,
   DEFAULT_HTTP_REQUEST_OUTPUT_VALUE,
   DEFAULT_JSON_BODY_PLACEHOLDER,
   HTTP_METHODS,
