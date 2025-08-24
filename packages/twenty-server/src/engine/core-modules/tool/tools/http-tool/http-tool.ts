@@ -32,22 +32,23 @@ export class HttpTool implements Tool {
 
       if (isMethodForBody && body) {
         axiosConfig.data = bodyParsersHttpRequestStep(bodyType, body);
-        if (
-          headers &&
-          !Object.keys(headers).some(
-            (key) =>
-              key.toLowerCase() === 'content-type' && bodyType !== 'FormData',
-          )
-        ) {
-          axiosConfig.headers = {
-            ...axiosConfig.headers,
-            ...{
-              'content-type':
-                bodyType && bodyType !== 'None'
-                  ? CONTENT_TYPE_VALUES_HTTP_REQUEST[bodyType] ||
-                    'application/json'
-                  : 'application/json',
-            },
+        const hasContentTypeHeader = Object.keys(headers).some(
+          (key) => key.toLowerCase() === 'content-type',
+        );
+
+        const isFormData = bodyType === 'FormData';
+        const isNoneType = bodyType === 'None';
+        const shouldSetContentType =
+          !hasContentTypeHeader && !isFormData && !isNoneType;
+
+        const contentTypeValue = bodyType
+          ? CONTENT_TYPE_VALUES_HTTP_REQUEST[bodyType] || 'application/json'
+          : 'application/json';
+
+        if (shouldSetContentType) {
+          requestOptions.headers = {
+            ...requestOptions.headers,
+            'content-type': contentTypeValue,
           };
         }
       }

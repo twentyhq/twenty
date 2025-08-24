@@ -14,9 +14,11 @@ export const getBodyTypeFromHeaders = (
   for (let i = headerEntries.length - 1; i >= 0; i--) {
     const [key, val] = headerEntries[i];
     if (key.toLowerCase() === 'content-type') {
-      const match = Object.entries(CONTENT_TYPE_VALUES_HTTP_REQUEST).find(
-        ([, contentTypeVal]) => val.toLowerCase().includes(contentTypeVal),
-      );
+      const match = Object.entries(CONTENT_TYPE_VALUES_HTTP_REQUEST)
+        .filter(([bodyTypeKey]) => bodyTypeKey !== 'None')
+        .find(
+          ([, contentTypeVal]) => val.trim().toLowerCase() === contentTypeVal,
+        );
       if (isDefined(match)) {
         const [bodyTypeKey] = match;
         return bodyTypeKey as BodyType;
