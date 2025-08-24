@@ -5,34 +5,78 @@ import { ViewFilterOperand } from '../../types/ViewFilterOperand';
 import { StepStatus } from '../types/WorkflowRunStateStepInfos';
 
 // Base schemas
-export const objectRecordSchema = z.record(z.any());
+export const objectRecordSchema = z
+  .record(z.any())
+  .describe(
+    'Record data object. Use nested objects for relationships (e.g., "company": {"id": "{{reference}}"}). Common patterns:\n' +
+    '- Person: {"name": {"firstName": "John", "lastName": "Doe"}, "emails": {"primaryEmail": "john@example.com"}, "company": {"id": "{{trigger.object.id}}"}}\n' +
+    '- Company: {"name": "Acme Corp", "domainName": {"primaryLinkUrl": "https://acme.com"}}\n' +
+    '- Task: {"title": "Follow up", "status": "TODO", "assignee": {"id": "{{user.id}}"}}',
+  );
 
 export const baseWorkflowActionSettingsSchema = z.object({
-  input: z.object({}).passthrough(),
-  outputSchema: z.object({}).passthrough(),
+  input: z
+    .object({})
+    .passthrough()
+    .describe('Input data for the workflow action. Structure depends on the action type.'),
+  outputSchema: z
+    .object({})
+    .passthrough()
+    .describe(
+      'Schema defining the output data structure. This data can be referenced in subsequent steps using {{stepId.fieldName}}.',
+    ),
   errorHandlingOptions: z.object({
     retryOnFailure: z.object({
-      value: z.boolean(),
+      value: z.boolean().describe('Whether to retry the action if it fails.'),
     }),
     continueOnFailure: z.object({
-      value: z.boolean(),
+      value: z.boolean().describe('Whether to continue to the next step if this action fails.'),
     }),
   }),
 });
 
 export const baseWorkflowActionSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  valid: z.boolean(),
-  nextStepIds: z.array(z.string()).optional().nullable(),
-  position: z.object({ x: z.number(), y: z.number() }).optional().nullable(),
+  id: z
+    .string()
+    .describe('Unique identifier for the workflow step. Must be unique within the workflow.'),
+  name: z
+    .string()
+    .describe('Human-readable name for the workflow step. Should clearly describe what the step does.'),
+  valid: z
+    .boolean()
+    .describe('Whether the step configuration is valid. Set to true when all required fields are properly configured.'),
+  nextStepIds: z
+    .array(z.string())
+    .optional()
+    .nullable()
+    .describe('Array of step IDs that this step connects to. Leave empty or null for the final step.'),
+  position: z
+    .object({ x: z.number(), y: z.number() })
+    .optional()
+    .nullable()
+    .describe('Position coordinates for the step in the workflow diagram.'),
 });
 
 export const baseTriggerSchema = z.object({
-  name: z.string().optional(),
-  type: z.enum(['DATABASE_EVENT', 'MANUAL', 'CRON', 'WEBHOOK']),
-  position: z.object({ x: z.number(), y: z.number() }).optional().nullable(),
-  nextStepIds: z.array(z.string()).optional().nullable(),
+  name: z
+    .string()
+    .optional()
+    .describe('Human-readable name for the trigger. Optional but recommended for clarity.'),
+  type: z
+    .enum(['DATABASE_EVENT', 'MANUAL', 'CRON', 'WEBHOOK'])
+    .describe(
+      'Type of trigger. DATABASE_EVENT for record changes, MANUAL for user-initiated, CRON for scheduled, WEBHOOK for external calls.',
+    ),
+  position: z
+    .object({ x: z.number(), y: z.number() })
+    .optional()
+    .nullable()
+    .describe('Position coordinates for the trigger in the workflow diagram. Use (0, 0) for the trigger step.'),
+  nextStepIds: z
+    .array(z.string())
+    .optional()
+    .nullable()
+    .describe('Array of step IDs that the trigger connects to. These are the first steps in the workflow.'),
 });
 
 // Action settings schemas
@@ -58,8 +102,15 @@ export const workflowSendEmailActionSettingsSchema =
 export const workflowCreateRecordActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
-      objectName: z.string(),
-      objectRecord: objectRecordSchema,
+      objectName: z
+        .string()
+        .describe(
+          'The name of the object to create a record in. Must be lowercase (e.g., "person", "company", "task").',
+        ),
+      objectRecord: objectRecordSchema
+        .describe(
+          'The record data to create.',
+        )
     }),
   });
 
@@ -239,25 +290,45 @@ export const workflowActionSchema = z.discriminatedUnion('type', [
 export const workflowDatabaseEventTriggerSchema = baseTriggerSchema.extend({
   type: z.literal('DATABASE_EVENT'),
   settings: z.object({
-    eventName: z.string()
-      .regex(/^[a-z][a-z0-9_]*\.(created|updated|deleted)$/, 'Event name must follow the pattern: objectName.action (e.g., "company.created", "person.updated")')
-      .describe('Event name in format: objectName.action (e.g., "company.created", "person.updated", "task.deleted")'),
+    eventName: z
+      .string()
+      .regex(
+        /^[a-z][a-z0-9_]*\.(created|updated|deleted)$/,
+        'Event name must follow the pattern: objectName.action (e.g., "company.created", "person.updated")',
+      )
+      .describe(
+        'Event name in format: objectName.action (e.g., "company.created", "person.updated", "task.deleted"). Use lowercase object names.',
+      ),
     input: z.object({}).passthrough().optional(),
-    outputSchema: z.object({}).passthrough(),
+    outputSchema: z
+      .object({})
+      .passthrough()
+      .describe(
+        'Schema defining the output data structure. For database events, this includes the record that triggered the workflow accessible via {{trigger.object.fieldName}}.',
+      ),
     objectType: z.string().optional(),
     fields: z.array(z.string()).optional().nullable(),
   }),
-});
+}).describe(
+  'Database event trigger that fires when a record is created, updated, or deleted. The triggered record is accessible in workflow steps via {{trigger.object.fieldName}}.',
+);
 
 export const workflowManualTriggerSchema = baseTriggerSchema.extend({
   type: z.literal('MANUAL'),
   settings: z.object({
     objectType: z.string().optional(),
-    outputSchema: z.object({}).passthrough(),
+    outputSchema: z
+      .object({})
+      .passthrough()
+      .describe(
+        'Schema defining the output data structure. When a record is selected, it is accessible via {{trigger.record.fieldName}}. When no record is selected, no data is available.',
+      ),
     icon: z.string().optional(),
     isPinned: z.boolean().optional(),
   }),
-});
+}).describe(
+  'Manual trigger that can be launched by the user. If a record is selected when launched, it is accessible via {{trigger.record.fieldName}}. If no record is selected, no data context is available.',
+);
 
 export const workflowCronTriggerSchema = baseTriggerSchema.extend({
   type: z.literal('CRON'),

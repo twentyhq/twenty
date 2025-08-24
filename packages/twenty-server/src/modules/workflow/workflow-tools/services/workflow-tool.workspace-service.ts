@@ -65,39 +65,12 @@ Common mistakes to avoid:
 - Missing the "objectRecord" field in CREATE_RECORD actions
 - Using "fieldsToUpdate" instead of "objectRecord" in CREATE_RECORD actions
 
-EXAMPLE CORRECT FORMAT:
-{
-  "name": "Example Workflow",
-  "trigger": {
-    "type": "DATABASE_EVENT",
-    "settings": {
-      "eventName": "company.created",
-      "outputSchema": {}
-    }
-  },
-  "steps": [
-    {
-      "id": "createTaskStep",
-      "name": "Create Task",
-      "type": "CREATE_RECORD",
-      "valid": true,
-      "settings": {
-        "input": {
-          "objectName": "Task",
-          "objectRecord": {
-            "title": "New Company Added",
-            "status": "TODO"
-          }
-        },
-        "outputSchema": {},
-        "errorHandlingOptions": {
-          "retryOnFailure": {"value": true},
-          "continueOnFailure": {"value": false}
-        }
-      }
-    }
-  ]
-}
+IMPORTANT: The tool schema provides comprehensive field descriptions, examples, and validation rules. Always refer to the schema for:
+- Field requirements and data types
+- Common object patterns and field structures
+- Proper relationship field formats
+- Variable reference syntax (e.g., {{trigger.object.fieldName}})
+- Error handling options
 
 This is the most efficient way for AI to create workflows as it handles all the complexity in one call.`,
       parameters: createCompleteWorkflowSchema,
