@@ -8,17 +8,14 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { deleteRole } from 'test/integration/graphql/utils/delete-one-role.util';
 import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { updateWorkspaceMemberRole } from 'test/integration/graphql/utils/update-workspace-member-role.util';
 import { upsertFieldPermissions } from 'test/integration/graphql/utils/upsert-field-permissions.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -83,15 +80,6 @@ describe('Field update permissions restrictions', () => {
   };
 
   beforeAll(async () => {
-    // Enable the feature flag
-    const enablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED,
-      true,
-    );
-
-    await makeGraphqlAPIRequest(enablePermissionsQuery);
-
     // Get the original Member role ID for restoration later
     const getRolesQuery = {
       query: `
@@ -182,15 +170,6 @@ describe('Field update permissions restrictions', () => {
   });
 
   afterAll(async () => {
-    // Restore the feature flag
-    const disablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED,
-      false,
-    );
-
-    await makeGraphqlAPIRequest(disablePermissionsQuery);
-
     // Restore original role
     const restoreMemberRoleQuery = {
       query: `
