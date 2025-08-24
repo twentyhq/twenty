@@ -7,7 +7,10 @@ import { type HttpRequestInput } from 'src/engine/core-modules/tool/tools/http-t
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-
+import {
+  bodyParsersHttpRequestStep,
+  CONTENT_TYPE_VALUES_HTTP_REQUEST,
+} from 'twenty-shared/workflow';
 @Injectable()
 export class HttpTool implements Tool {
   description =
@@ -15,7 +18,10 @@ export class HttpTool implements Tool {
   parameters = HttpToolParametersZodSchema;
 
   async execute(parameters: ToolInput): Promise<ToolOutput> {
-    const { url, method, headers, body } = parameters as HttpRequestInput;
+    const { url, method, headers, body, bodyType } =
+      parameters as HttpRequestInput;
+
+    const isMethodForBody = ['POST', 'PUT', 'PATCH'].includes(method);
 
     try {
       const axiosConfig: AxiosRequestConfig = {
@@ -24,8 +30,26 @@ export class HttpTool implements Tool {
         headers,
       };
 
-      if (['POST', 'PUT', 'PATCH'].includes(method) && body) {
-        axiosConfig.data = body;
+      if (isMethodForBody && body) {
+        axiosConfig.data = bodyParsersHttpRequestStep(bodyType, body);
+        if (
+          headers &&
+          !Object.keys(headers).some(
+            (key) =>
+              key.toLowerCase() === 'content-type' && bodyType !== 'FormData',
+          )
+        ) {
+          axiosConfig.headers = {
+            ...axiosConfig.headers,
+            ...{
+              'content-type':
+                bodyType && bodyType !== 'None'
+                  ? CONTENT_TYPE_VALUES_HTTP_REQUEST[bodyType] ||
+                    'application/json'
+                  : 'application/json',
+            },
+          };
+        }
       }
 
       const response = await axios(axiosConfig);
