@@ -29,7 +29,7 @@ export const updateOneObjectMetadata = async ({
   if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
       response,
-      errorMessage: 'Object Metadata update have failed but should not',
+      errorMessage: 'Object Metadata update has failed but should not',
     });
   }
 

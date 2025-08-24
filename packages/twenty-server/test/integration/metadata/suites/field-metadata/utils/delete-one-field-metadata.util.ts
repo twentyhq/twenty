@@ -28,7 +28,7 @@ export const deleteOneFieldMetadata = async ({
 
   if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
-      errorMessage: 'Field metadata deletion should not have fail',
+      errorMessage: 'Field metadata deletion should not have failed',
       response,
     });
   }

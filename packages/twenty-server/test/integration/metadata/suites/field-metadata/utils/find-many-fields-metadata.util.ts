@@ -28,7 +28,7 @@ export const findManyFieldsMetadata = async ({
 
   if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
-      errorMessage: 'Field metadata retrieval should not have fail',
+      errorMessage: 'Field metadata retrieval should not have failed',
       response,
     });
   }
