@@ -9,6 +9,11 @@ import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { isDefined } from 'twenty-shared/utils';
 
+/**
+ * This testing function util should be use for local debugging only
+ * Please do not call this method in prod ci
+ * Each test should handle and adopt black box testing pattern
+ */
 export const forceCreateOneObjectMetadata = async ({
   input: {
     labelSingular = LISTING_NAME_SINGULAR,

@@ -4,7 +4,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -57,7 +57,7 @@ describe('Delete Object metadata with relation should succeed', () => {
       data: {
         createOneObject: { id: objectMetadataPersonId },
       },
-    } = await forceCreateOneObjectMetadata({
+    } = await createOneObjectMetadata({
       input: {
         nameSingular: 'personForRelation',
         namePlural: 'peopleForRelation',
@@ -73,7 +73,7 @@ describe('Delete Object metadata with relation should succeed', () => {
       data: {
         createOneObject: { id: objectMetadataOpportunityId },
       },
-    } = await forceCreateOneObjectMetadata({
+    } = await createOneObjectMetadata({
       input: {
         nameSingular: 'opportunityForRelation',
         namePlural: 'opportunitiesForRelation',
