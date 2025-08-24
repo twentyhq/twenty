@@ -1,11 +1,15 @@
-import { BodyType } from '../types/worflowHttpRequestStep';
+import { BodyType } from '../types/workflowHttpRequestStep';
 
 type InputData = Record<string, any> | string;
 
 const parseUrlEncoded = (data: InputData): string => {
   let parsed: InputData;
   if (typeof data === 'string') {
-    parsed = JSON.parse(data);
+    try {
+      parsed = JSON.parse(data);
+    } catch {
+      parsed = data;
+    }
   } else {
     parsed = data;
   }

@@ -9,6 +9,7 @@ import {
   type BodyType,
   CONTENT_TYPE_VALUES_HTTP_REQUEST,
 } from 'twenty-shared/workflow';
+import { HttpRequestBody } from '../constants/HttpRequest';
 
 const convertFlatVariablesToNestedContext = (flatVariables: {
   [variablePath: string]: any;
@@ -43,32 +44,34 @@ export const useTestHttpRequest = (actionId: string) => {
     url: string,
     headers: Record<string, string>,
     method: string,
-    body?: any,
+    body?: HttpRequestBody,
     bodyType?: BodyType,
   ): Promise<HttpRequestTestData['output']> => {
     const requestOptions: RequestInit = {
-      method: method,
+      method,
       headers: headers as Record<string, string>,
     };
     if (['POST', 'PUT', 'PATCH'].includes(method)) {
       if (body !== undefined) {
         requestOptions.body = bodyParsersHttpRequestStep(bodyType, body);
 
-        if (
-          !Object.keys(headers).some(
-            (key) => key.toLowerCase() === 'content-type',
-          ) &&
-          bodyType !== 'FormData'
-        ) {
+        const hasContentTypeHeader = Object.keys(headers).some(
+          (key) => key.toLowerCase() === 'content-type',
+        );
+
+        const isFormData = bodyType === 'FormData';
+        const isNoneType = bodyType === 'None';
+        const shouldSetContentType =
+          !hasContentTypeHeader && !isFormData && !isNoneType;
+
+        const contentTypeValue = bodyType
+          ? CONTENT_TYPE_VALUES_HTTP_REQUEST[bodyType] || 'application/json'
+          : 'application/json';
+
+        if (shouldSetContentType) {
           requestOptions.headers = {
             ...requestOptions.headers,
-            ...{
-              'content-type':
-                bodyType && bodyType !== 'None'
-                  ? CONTENT_TYPE_VALUES_HTTP_REQUEST[bodyType] ||
-                    'application/json'
-                  : 'application/json',
-            },
+            'content-type': contentTypeValue,
           };
         }
       }
