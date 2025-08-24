@@ -15,7 +15,6 @@ import {
 } from 'ai';
 import { In, Repository } from 'typeorm';
 
-import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -67,27 +66,6 @@ export class AgentExecutionService {
     private readonly fileRepository: Repository<FileEntity>,
   ) {}
 
-  private async validateApiKey(provider: ModelProvider): Promise<void> {
-    let apiKey: string | undefined;
-
-    switch (provider) {
-      case ModelProvider.OPENAI:
-        apiKey = this.twentyConfigService.get('OPENAI_API_KEY');
-        break;
-      case ModelProvider.ANTHROPIC:
-        apiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
-        break;
-      default:
-        return;
-    }
-    if (!apiKey) {
-      throw new AgentException(
-        `${provider.toUpperCase()} API key not configured`,
-        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
-      );
-    }
-  }
-
   async prepareAIRequestConfig({
     messages,
     prompt,
@@ -126,7 +104,7 @@ export class AgentExecutionService {
 
       const provider = aiModel.provider;
 
-      await this.validateApiKey(provider);
+      await this.aiModelRegistryService.validateApiKey(provider);
 
       const tools = agent
         ? await this.agentToolService.generateToolsForAgent(

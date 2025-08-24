@@ -182,4 +182,23 @@ export class AiModelRegistryService {
   refreshRegistry(): void {
     this.buildModelRegistry();
   }
+
+  async validateApiKey(provider: ModelProvider): Promise<void> {
+    let apiKey: string | undefined;
+
+    switch (provider) {
+      case ModelProvider.OPENAI:
+        apiKey = this.twentyConfigService.get('OPENAI_API_KEY');
+        break;
+      case ModelProvider.ANTHROPIC:
+        apiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
+        break;
+      default:
+        return;
+    }
+
+    if (!apiKey) {
+      throw new Error(`${provider.toUpperCase()} API key not configured`);
+    }
+  }
 }
