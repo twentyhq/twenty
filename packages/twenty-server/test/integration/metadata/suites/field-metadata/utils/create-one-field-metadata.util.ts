@@ -34,7 +34,7 @@ export const createOneFieldMetadata = async <T extends FieldMetadataType>({
 
   if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
-      errorMessage: 'Field metadata creation should not have fail',
+      errorMessage: 'Field metadata creation should not have failed',
       response,
     });
   }

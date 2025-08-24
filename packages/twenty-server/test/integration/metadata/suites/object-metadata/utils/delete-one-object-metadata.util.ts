@@ -29,7 +29,7 @@ export const deleteOneObjectMetadata = async ({
   if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
       response,
-      errorMessage: 'Object Metadata deletion have failed but should not',
+      errorMessage: 'Object Metadata deletion has failed but should not',
     });
   }
 
