@@ -55,6 +55,7 @@ import { Tag, type TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
+import { WorkflowDiagramConnection } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramConnection';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -496,6 +497,7 @@ export const WorkflowDiagramCanvasBase = ({
         nodesConnectable={isWorkflowBranchEnabled ? nodesConnectable : false}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
         preventScrolling={false}
+        connectionLineComponent={WorkflowDiagramConnection}
       >
         <Background color={theme.border.color.medium} size={2} />
 
