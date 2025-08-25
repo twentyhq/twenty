@@ -1,11 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { generateText } from 'ai';
+import { generateText, type ToolSet } from 'ai';
 import { Repository } from 'typeorm';
 
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
+import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
+import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { AGENT_HANDOFF_PROMPT_TEMPLATE } from 'src/engine/metadata-modules/agent/constants/agent-handoff-prompt.const';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { WorkflowToolWorkspaceService as WorkflowToolService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 
 import { AgentHandoffService } from './agent-handoff.service';
 import { AgentEntity } from './agent.entity';
@@ -26,8 +32,14 @@ export class AgentHandoffExecutorService {
   constructor(
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
+    @InjectRepository(RoleTargetsEntity, 'core')
+    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly agentHandoffService: AgentHandoffService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly toolAdapterService: ToolAdapterService,
+    private readonly toolService: ToolService,
+    private readonly workflowToolService: WorkflowToolService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   async executeHandoff(handoffRequest: HandoffRequest) {
@@ -69,13 +81,20 @@ export class AgentHandoffExecutorService {
         );
       }
 
+      const tools = await this.generateToolsForAgent(toAgentId, workspaceId);
+
       const aiRequestConfig = {
         system: targetAgent.prompt,
         prompt: this.createHandoffPrompt(handoffRequest),
+        tools,
         model: registeredModel.model,
       };
 
       const textResponse = await generateText(aiRequestConfig);
+
+      this.logger.log(
+        `Successfully executed handoff to agent ${toAgentId} with response length: ${textResponse.text.length}`,
+      );
 
       return textResponse.text;
     } catch (error) {
@@ -91,6 +110,62 @@ export class AgentHandoffExecutorService {
         error: error.message,
       };
     }
+  }
+
+  private async generateToolsForAgent(
+    agentId: string,
+    workspaceId: string,
+  ): Promise<ToolSet> {
+    let tools = {};
+
+    try {
+      const actionTools = await this.toolAdapterService.getTools();
+
+      tools = { ...actionTools };
+
+      const roleTarget = await this.roleTargetsRepository.findOne({
+        where: {
+          agentId,
+          workspaceId,
+        },
+        select: ['roleId'],
+      });
+
+      if (!roleTarget?.roleId) {
+        return tools;
+      }
+
+      const roleId = roleTarget.roleId;
+
+      const hasWorkflowPermission =
+        this.permissionsService.checkRolePermissions(
+          roleTarget.role,
+          PermissionFlagType.WORKFLOWS,
+        );
+
+      if (hasWorkflowPermission) {
+        const workflowTools =
+          await this.workflowToolService.generateWorkflowTools(
+            workspaceId,
+            roleId,
+          );
+
+        tools = { ...tools, ...workflowTools };
+      }
+
+      const databaseTools = await this.toolService.listTools(
+        roleId,
+        workspaceId,
+      );
+
+      tools = { ...tools, ...databaseTools };
+    } catch (toolError) {
+      this.logger.warn(
+        `Failed to generate tools for agent ${agentId}: ${toolError.message}. Proceeding without tools.`,
+      );
+    }
+
+    return tools;
   }
 
   private createHandoffPrompt(handoffRequest: HandoffRequest): string {
