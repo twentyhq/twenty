@@ -8,7 +8,6 @@ import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/comp
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
-import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';
 import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -25,6 +24,7 @@ import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter, IconPlus, IconTrash } from 'twenty-ui/display';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { useEdgeState } from '@/workflow/workflow-diagram/hooks/useEdgeState';
 
 type WorkflowDiagramDefaultEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
 
@@ -45,7 +45,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
 
   const { isInRightDrawer } = useContext(ActionMenuContext);
 
-  const { isEdgeHovered } = useEdgeHovered();
+  const { isEdgeHovered } = useEdgeState();
 
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -129,7 +129,9 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
           labelY={labelY}
         >
           <WorkflowDiagramEdgeV2VisibilityContainer
-            shouldDisplay={nodeCreationStarted || isEdgeHovered(id)}
+            shouldDisplay={
+              nodeCreationStarted || isEdgeHovered({ source, target })
+            }
           >
             <WorkflowDiagramEdgeButtonGroup
               iconButtons={[
