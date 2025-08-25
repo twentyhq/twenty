@@ -127,6 +127,7 @@ export const createAgentToolTestModule =
           provide: PermissionsService,
           useValue: {
             hasToolPermission: jest.fn(),
+            checkRolePermissions: jest.fn().mockReturnValue(true),
           },
         },
         {
@@ -146,7 +147,7 @@ export const createAgentToolTestModule =
         {
           provide: WorkflowToolWorkspaceService,
           useValue: {
-            getWorkspace: jest.fn().mockResolvedValue({ id: testWorkspaceId }),
+            generateWorkflowTools: jest.fn().mockResolvedValue({}),
           },
         },
       ],
