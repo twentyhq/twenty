@@ -58,6 +58,40 @@ const Container = ({ children }: { children: React.ReactNode }) => (
   <div style={{ width: '250px', height: '200px' }}>{children}</div>
 );
 
+export const WithCustomColors: Story = {
+  args: {
+    value: 75,
+    min: 0,
+    max: 100,
+    color: 'purple',
+    displayType: 'number',
+    suffix: '%',
+    showValue: true,
+    legendLabel: 'Progress',
+    tooltipHref: 'https://example.com/progress',
+    id: 'gauge-chart-purple',
+  },
+  render: (args) => (
+    <Container>
+      <GraphWidgetGaugeChart
+        value={args.value}
+        min={args.min}
+        max={args.max}
+        color={args.color}
+        displayType={args.displayType}
+        decimals={args.decimals}
+        prefix={args.prefix}
+        suffix={args.suffix}
+        showValue={args.showValue}
+        showLegend={args.showLegend}
+        legendLabel={args.legendLabel}
+        tooltipHref={args.tooltipHref}
+        id={args.id}
+      />
+    </Container>
+  ),
+};
+
 export const Default: Story = {
   args: {
     value: 0.5,
