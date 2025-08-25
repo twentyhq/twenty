@@ -1,13 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { generateText, type ToolSet } from 'ai';
+import { CoreMessage, generateText, type ToolSet } from 'ai';
 import { Repository } from 'typeorm';
 
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
-import { AGENT_HANDOFF_PROMPT_TEMPLATE } from 'src/engine/metadata-modules/agent/constants/agent-handoff-prompt.const';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
@@ -21,8 +20,7 @@ export type HandoffRequest = {
   fromAgentId: string;
   toAgentId: string;
   workspaceId: string;
-  reason: string;
-  context?: string;
+  messages?: CoreMessage[];
 };
 
 @Injectable()
@@ -44,7 +42,7 @@ export class AgentHandoffExecutorService {
 
   async executeHandoff(handoffRequest: HandoffRequest) {
     try {
-      const { fromAgentId, toAgentId, workspaceId } = handoffRequest;
+      const { fromAgentId, toAgentId, workspaceId, messages } = handoffRequest;
 
       const canHandoff = await this.agentHandoffService.canHandoffTo({
         fromAgentId,
@@ -85,7 +83,7 @@ export class AgentHandoffExecutorService {
 
       const aiRequestConfig = {
         system: targetAgent.prompt,
-        prompt: this.createHandoffPrompt(handoffRequest),
+        messages,
         tools,
         model: registeredModel.model,
       };
@@ -128,7 +126,7 @@ export class AgentHandoffExecutorService {
           agentId,
           workspaceId,
         },
-        select: ['roleId'],
+        relations: ['role'],
       });
 
       if (!roleTarget?.roleId) {
@@ -166,14 +164,5 @@ export class AgentHandoffExecutorService {
     }
 
     return tools;
-  }
-
-  private createHandoffPrompt(handoffRequest: HandoffRequest): string {
-    const { reason, context } = handoffRequest;
-
-    return AGENT_HANDOFF_PROMPT_TEMPLATE.replace('{reason}', reason).replace(
-      '{context}',
-      context || 'No additional context provided',
-    );
   }
 }
