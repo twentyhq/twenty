@@ -155,7 +155,12 @@ This is the most efficient way for AI to create workflows as it handles all the 
           this.logger.error(
             `Failed to create complete workflow: ${error.message}`,
           );
-          throw error;
+
+          return {
+            success: false,
+            error: error.message,
+            message: `Failed to create workflow "${parameters.name}": ${error.message}`,
+          };
         }
       },
     };
@@ -166,10 +171,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
       parameters: createWorkflowVersionStepSchema,
       execute: async (parameters: CreateWorkflowVersionStepInput) => {
         try {
-          this.logger.log(
-            `Creating workflow version step: ${parameters.stepType}`,
-          );
-
           return await this.workflowVersionStepService.createWorkflowVersionStep(
             {
               workspaceId,
@@ -180,7 +181,12 @@ This is the most efficient way for AI to create workflows as it handles all the 
           this.logger.error(
             `Failed to create workflow version step: ${error.message}`,
           );
-          throw error;
+
+          return {
+            success: false,
+            error: error.message,
+            message: `Failed to create workflow version step: ${error.message}`,
+          };
         }
       },
     };
@@ -191,10 +197,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
       parameters: updateWorkflowVersionStepSchema,
       execute: async (parameters: UpdateWorkflowVersionStepInput) => {
         try {
-          this.logger.log(
-            `Updating workflow version step: ${parameters.step.id}`,
-          );
-
           return await this.workflowVersionStepService.updateWorkflowVersionStep(
             {
               workspaceId,
@@ -206,7 +208,12 @@ This is the most efficient way for AI to create workflows as it handles all the 
           this.logger.error(
             `Failed to update workflow version step: ${error.message}`,
           );
-          throw error;
+
+          return {
+            success: false,
+            error: error.message,
+            message: `Failed to update workflow version step: ${error.message}`,
+          };
         }
       },
     };
@@ -220,10 +227,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
         stepId: string;
       }) => {
         try {
-          this.logger.log(
-            `Deleting workflow version step: ${parameters.stepId}`,
-          );
-
           return await this.workflowVersionStepService.deleteWorkflowVersionStep(
             {
               workspaceId,
@@ -235,7 +238,12 @@ This is the most efficient way for AI to create workflows as it handles all the 
           this.logger.error(
             `Failed to delete workflow version step: ${error.message}`,
           );
-          throw error;
+
+          return {
+            success: false,
+            error: error.message,
+            message: `Failed to delete workflow version step: ${error.message}`,
+          };
         }
       },
     };
@@ -250,10 +258,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
         target: string;
       }) => {
         try {
-          this.logger.log(
-            `Creating workflow version edge from ${parameters.source} to ${parameters.target}`,
-          );
-
           return await this.workflowVersionEdgeService.createWorkflowVersionEdge(
             {
               source: parameters.source,
@@ -266,7 +270,12 @@ This is the most efficient way for AI to create workflows as it handles all the 
           this.logger.error(
             `Failed to create workflow version edge: ${error.message}`,
           );
-          throw error;
+
+          return {
+            success: false,
+            error: error.message,
+            message: `Failed to create workflow version edge: ${error.message}`,
+          };
         }
       },
     };
@@ -280,10 +289,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
         target: string;
       }) => {
         try {
-          this.logger.log(
-            `Deleting workflow version edge from ${parameters.source} to ${parameters.target}`,
-          );
-
           return await this.workflowVersionEdgeService.deleteWorkflowVersionEdge(
             {
               source: parameters.source,
@@ -296,7 +301,12 @@ This is the most efficient way for AI to create workflows as it handles all the 
           this.logger.error(
             `Failed to delete workflow version edge: ${error.message}`,
           );
-          throw error;
+
+          return {
+            success: false,
+            error: error.message,
+            message: `Failed to delete workflow version edge: ${error.message}`,
+          };
         }
       },
     };
@@ -310,10 +320,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
         workflowVersionIdToCopy: string;
       }) => {
         try {
-          this.logger.log(
-            `Creating draft from workflow version: ${parameters.workflowVersionIdToCopy}`,
-          );
-
           return await this.workflowVersionService.createDraftFromWorkflowVersion(
             {
               workspaceId,
@@ -325,7 +331,12 @@ This is the most efficient way for AI to create workflows as it handles all the 
           this.logger.error(
             `Failed to create draft from workflow version: ${error.message}`,
           );
-          throw error;
+
+          return {
+            success: false,
+            error: error.message,
+            message: `Failed to create draft from workflow version: ${error.message}`,
+          };
         }
       },
     };
@@ -336,10 +347,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
       parameters: updateWorkflowVersionPositionsSchema,
       execute: async (parameters: UpdateWorkflowVersionPositionsInput) => {
         try {
-          this.logger.log(
-            `Updating workflow version step positions for version: ${parameters.workflowVersionId}`,
-          );
-
           return await this.workflowVersionService.updateWorkflowVersionPositions(
             {
               workflowVersionId: parameters.workflowVersionId,
@@ -351,7 +358,12 @@ This is the most efficient way for AI to create workflows as it handles all the 
           this.logger.error(
             `Failed to update workflow version step positions: ${error.message}`,
           );
-          throw error;
+
+          return {
+            success: false,
+            error: error.message,
+            message: `Failed to update workflow version step positions: ${error.message}`,
+          };
         }
       },
     };
@@ -362,10 +374,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
       parameters: activateWorkflowVersionSchema,
       execute: async (parameters: { workflowVersionId: string }) => {
         try {
-          this.logger.log(
-            `Activating workflow version: ${parameters.workflowVersionId}`,
-          );
-
           return await this.workflowTriggerService.activateWorkflowVersion(
             parameters.workflowVersionId,
           );
@@ -373,7 +381,12 @@ This is the most efficient way for AI to create workflows as it handles all the 
           this.logger.error(
             `Failed to activate workflow version: ${error.message}`,
           );
-          throw error;
+
+          return {
+            success: false,
+            error: error.message,
+            message: `Failed to activate workflow version: ${error.message}`,
+          };
         }
       },
     };
@@ -384,10 +397,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
       parameters: deactivateWorkflowVersionSchema,
       execute: async (parameters: { workflowVersionId: string }) => {
         try {
-          this.logger.log(
-            `Deactivating workflow version: ${parameters.workflowVersionId}`,
-          );
-
           return await this.workflowTriggerService.deactivateWorkflowVersion(
             parameters.workflowVersionId,
           );
@@ -395,7 +404,12 @@ This is the most efficient way for AI to create workflows as it handles all the 
           this.logger.error(
             `Failed to deactivate workflow version: ${error.message}`,
           );
-          throw error;
+
+          return {
+            success: false,
+            error: error.message,
+            message: `Failed to deactivate workflow version: ${error.message}`,
+          };
         }
       },
     };
@@ -416,7 +430,12 @@ This is the most efficient way for AI to create workflows as it handles all the 
           this.logger.error(
             `Failed to compute step output schema: ${error.message}`,
           );
-          throw error;
+
+          return {
+            success: false,
+            error: error.message,
+            message: `Failed to compute step output schema: ${error.message}`,
+          };
         }
       },
     };
