@@ -1,10 +1,10 @@
-import { workflowSelectedEdgeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedEdgeComponentState';
+import { workflowSelectedEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowSelectedEdgeComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { type WorkflowDiagramNodeHandles } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeHandles';
-import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagramEdge';
-import { workflowHoveredEdgeComponentState } from '@/workflow/workflow-diagram/states/workflowHoveredEdgeComponentState';
+import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdge';
+import { workflowHoveredEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowHoveredEdgeComponentState';
 import { useReactFlow } from '@xyflow/react';
-import { EdgeBranchArrowMarker } from '@/workflow/workflow-diagram/constants/EdgeBranchArrowMarker';
+import { EdgeBranchArrowMarker } from '@/workflow/workflow-diagram/workflow-edges/constants/EdgeBranchArrowMarker';
 
 export const useEdgeState = () => {
   const reactflow = useReactFlow();

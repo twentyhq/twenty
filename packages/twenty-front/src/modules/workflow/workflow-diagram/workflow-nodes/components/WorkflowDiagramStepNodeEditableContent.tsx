@@ -1,6 +1,6 @@
 import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
-import { useEdgeState } from '@/workflow/workflow-diagram/hooks/useEdgeState';
+import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { type WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
