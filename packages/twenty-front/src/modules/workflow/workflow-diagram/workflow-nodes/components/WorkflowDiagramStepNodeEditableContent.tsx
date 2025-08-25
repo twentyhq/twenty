@@ -13,11 +13,12 @@ import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/wo
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import styled from '@emotion/styled';
-import { Position } from '@xyflow/react';
+import { Position, useConnection } from '@xyflow/react';
 import { useState } from 'react';
 import { capitalize } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
+import { useIsTarget } from '@/workflow/workflow-diagram/workflow-edges/hooks/useIsTarget';
 
 const StyledAddStepButtonContainer = styled.div<{
   shouldDisplay: boolean;
@@ -100,8 +101,15 @@ export const WorkflowDiagramStepNodeEditableContent = ({
 
   const { isNodeCreationStarted } = useStartNodeCreation();
 
+  const { isTarget } = useIsTarget();
+
   const { getNodeHandlesSelectedState, getNodeHandlesHoveredState } =
     useEdgeState();
+
+  const connection = useConnection();
+
+  const isSourceConnection =
+    connection.inProgress && connection.fromNode.id === id;
 
   const handlesSelectedState = getNodeHandlesSelectedState(id);
 
@@ -109,7 +117,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
 
   return (
     <>
-      {data.nodeType !== 'trigger' && (
+      {data.nodeType !== 'trigger' && isTarget(id) && (
         <WorkflowDiagramHandleEditable
           type="target"
           position={Position.Top}
@@ -164,7 +172,9 @@ export const WorkflowDiagramStepNodeEditableContent = ({
       <WorkflowDiagramHandleEditable
         type="source"
         position={Position.Bottom}
-        selected={handlesSelectedState.sourceHandle || selected}
+        selected={
+          handlesSelectedState.sourceHandle || selected || isSourceConnection
+        }
         hovered={handlesHoveredState.sourceHandle}
       />
     </>
