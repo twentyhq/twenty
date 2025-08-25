@@ -1,4 +1,4 @@
-import { EdgeBranchArrowMarker } from '@/workflow/workflow-diagram/constants/EdgeBranchArrowMarker';
+import { EdgeBranchArrowMarker } from '@/workflow/workflow-diagram/workflow-edges/constants/EdgeBranchArrowMarker';
 import { useTheme } from '@emotion/react';
 
 export const WorkflowDiagramCustomMarkers = () => {
