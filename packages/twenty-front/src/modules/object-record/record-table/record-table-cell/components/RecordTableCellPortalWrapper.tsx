@@ -1,11 +1,11 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
+import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
-import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { createPortal } from 'react-dom';
@@ -28,8 +28,8 @@ export const RecordTableCellPortalWrapper = ({
 
   const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
 
-  const visibleTableColumns = useRecoilComponentValue(
-    visibleTableColumnsComponentSelector,
+  const visibleRecordFields = useRecoilComponentValue(
+    visibleRecordFieldsComponentSelector,
   );
 
   const recordId = allRecordIds.at(position.row);
@@ -62,11 +62,13 @@ export const RecordTableCellPortalWrapper = ({
         >
           <RecordTableCellContext.Provider
             value={{
-              columnDefinition: visibleTableColumns[position.column],
+              recordField: visibleRecordFields[position.column],
               cellPosition: position,
             }}
           >
-            <RecordTableCellFieldContextWrapper>
+            <RecordTableCellFieldContextWrapper
+              recordField={visibleRecordFields[position.column]}
+            >
               {children}
             </RecordTableCellFieldContextWrapper>
           </RecordTableCellContext.Provider>
