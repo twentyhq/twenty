@@ -9,9 +9,10 @@ import {
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type GraphColor } from '../types/GraphColor';
 import { createGradientDef } from '../utils/createGradientDef';
 import { createGraphColorRegistry } from '../utils/createGraphColorRegistry';
-import { getColorSchemeByIndex } from '../utils/getColorSchemeByIndex';
+import { getColorScheme } from '../utils/getColorScheme';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
@@ -20,7 +21,12 @@ import { GraphWidgetLegend } from './GraphWidgetLegend';
 import { GraphWidgetTooltip } from './GraphWidgetTooltip';
 
 type GraphWidgetPieChartProps = {
-  data: Array<{ id: string; value: number; label?: string }>;
+  data: Array<{
+    id: string;
+    value: number;
+    label?: string;
+    color?: GraphColor;
+  }>;
   showLegend?: boolean;
   tooltipHref?: string;
   id: string;
@@ -77,7 +83,7 @@ export const GraphWidgetPieChart = ({
 
   let cumulativeAngle = 0;
   const enrichedData = data.map((item, index) => {
-    const colorScheme = getColorSchemeByIndex(colorRegistry, index);
+    const colorScheme = getColorScheme(colorRegistry, item.color, index);
     const isHovered = hoveredSliceId === item.id;
     const gradientId = `${colorScheme.name}Gradient-${id}-${index}`;
     const percentage = totalValue > 0 ? (item.value / totalValue) * 100 : 0;

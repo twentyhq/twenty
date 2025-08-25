@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useTheme } from '@emotion/react';
+import { type GraphColor } from '../types/GraphColor';
 import { createGradientDef } from '../utils/createGradientDef';
 import { createGraphColorRegistry } from '../utils/createGraphColorRegistry';
-import { getColorSchemeByIndex } from '../utils/getColorSchemeByIndex';
+import { getColorScheme } from '../utils/getColorScheme';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
@@ -14,10 +15,12 @@ import {
 import { GraphWidgetLegend } from './GraphWidgetLegend';
 import { GraphWidgetTooltip } from './GraphWidgetTooltip';
 
+type SeriesKey = string | { key: string; color?: GraphColor };
+
 type GraphWidgetBarChartProps = {
   data: BarDatum[];
   indexBy: string;
-  keys: string[];
+  keys: SeriesKey[];
   showLegend?: boolean;
   showGrid?: boolean;
   showValues?: boolean;
@@ -93,14 +96,16 @@ export const GraphWidgetBarChart = ({
     key: string;
     indexValue: string | number;
     gradientId: string;
-    colorScheme: ReturnType<typeof getColorSchemeByIndex>;
+    colorScheme: ReturnType<typeof getColorScheme>;
     isHovered: boolean;
   }> = [];
 
   data.forEach((dataPoint) => {
     const indexValue = dataPoint[indexBy];
-    keys.forEach((key, keyIndex) => {
-      const colorScheme = getColorSchemeByIndex(colorRegistry, keyIndex);
+    keys.forEach((keyItem, keyIndex) => {
+      const key = typeof keyItem === 'string' ? keyItem : keyItem.key;
+      const color = typeof keyItem === 'object' ? keyItem.color : undefined;
+      const colorScheme = getColorScheme(colorRegistry, color, keyIndex);
       const isHovered =
         hoveredBar?.key === key && hoveredBar?.indexValue === indexValue;
       const gradientId = `gradient-${id}-${key}-${indexValue}`;
@@ -115,8 +120,10 @@ export const GraphWidgetBarChart = ({
     });
   });
 
-  const enrichedKeys = keys.map((key, index) => {
-    const colorScheme = getColorSchemeByIndex(colorRegistry, index);
+  const enrichedKeys = keys.map((keyItem, index) => {
+    const key = typeof keyItem === 'string' ? keyItem : keyItem.key;
+    const color = typeof keyItem === 'object' ? keyItem.color : undefined;
+    const colorScheme = getColorScheme(colorRegistry, color, index);
     return {
       key,
       colorScheme,
@@ -213,7 +220,7 @@ export const GraphWidgetBarChart = ({
       <StyledChartContainer $isClickable={isDefined(tooltipHref)}>
         <ResponsiveBar
           data={data}
-          keys={keys}
+          keys={keys.map((k) => (typeof k === 'string' ? k : k.key))}
           indexBy={indexBy}
           margin={{ top: 20, right: 20, bottom: 60, left: 70 }}
           padding={0.3}
@@ -223,10 +230,13 @@ export const GraphWidgetBarChart = ({
           indexScale={{ type: 'band', round: true }}
           colors={getBarColor}
           defs={defs}
-          fill={keys.map((key) => ({
-            match: { id: key },
-            id: barConfigs.find((b) => b.key === key)!.gradientId,
-          }))}
+          fill={keys.map((keyItem) => {
+            const key = typeof keyItem === 'string' ? keyItem : keyItem.key;
+            return {
+              match: { id: key },
+              id: barConfigs.find((b) => b.key === key)!.gradientId,
+            };
+          })}
           axisTop={null}
           axisRight={null}
           axisBottom={axisBottomConfig}

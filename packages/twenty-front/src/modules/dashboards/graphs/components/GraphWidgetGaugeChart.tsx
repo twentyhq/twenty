@@ -8,9 +8,10 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 
+import { type GraphColor } from '../types/GraphColor';
 import { createGradientDef } from '../utils/createGradientDef';
 import { createGraphColorRegistry } from '../utils/createGraphColorRegistry';
-import { getColorSchemeByName } from '../utils/getColorSchemeByName';
+import { getColorScheme } from '../utils/getColorScheme';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
@@ -22,6 +23,7 @@ type GraphWidgetGaugeChartProps = {
   value: number;
   min: number;
   max: number;
+  color?: GraphColor;
   showValue?: boolean;
   showLegend?: boolean;
   legendLabel: string;
@@ -63,6 +65,7 @@ export const GraphWidgetGaugeChart = ({
   value,
   min,
   max,
+  color = 'blue',
   showValue = true,
   showLegend = true,
   legendLabel,
@@ -78,8 +81,7 @@ export const GraphWidgetGaugeChart = ({
   const [isHovered, setIsHovered] = useState(false);
 
   const colorRegistry = createGraphColorRegistry(theme);
-  const colorScheme =
-    getColorSchemeByName(colorRegistry, 'blue') || colorRegistry.blue;
+  const colorScheme = getColorScheme(colorRegistry, color);
 
   const formatOptions: GraphValueFormatOptions = {
     displayType,

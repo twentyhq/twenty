@@ -270,6 +270,51 @@ export const WithValues: Story = {
   ),
 };
 
+export const WithCustomColors: Story = {
+  args: {
+    data: [
+      { month: 'Jan', sales: 120, leads: 45, conversions: 12 },
+      { month: 'Feb', sales: 150, leads: 52, conversions: 15 },
+      { month: 'Mar', sales: 180, leads: 48, conversions: 18 },
+      { month: 'Apr', sales: 140, leads: 60, conversions: 14 },
+      { month: 'May', sales: 200, leads: 55, conversions: 20 },
+    ],
+    indexBy: 'month',
+    keys: [
+      { key: 'sales', color: 'orange' },
+      { key: 'leads', color: 'turquoise' },
+      { key: 'conversions', color: 'pink' },
+    ],
+    seriesLabels: {
+      sales: 'Sales',
+      leads: 'Leads',
+      conversions: 'Conversions',
+    },
+    showLegend: true,
+    showGrid: true,
+    xAxisLabel: 'Month',
+    yAxisLabel: 'Count',
+    tooltipHref: 'https://example.com/metrics',
+    id: 'bar-chart-custom-colors',
+  },
+  render: (args) => (
+    <Container>
+      <GraphWidgetBarChart
+        data={args.data}
+        indexBy={args.indexBy}
+        keys={args.keys}
+        seriesLabels={args.seriesLabels}
+        showLegend={args.showLegend}
+        showGrid={args.showGrid}
+        xAxisLabel={args.xAxisLabel}
+        yAxisLabel={args.yAxisLabel}
+        tooltipHref={args.tooltipHref}
+        id={args.id}
+      />
+    </Container>
+  ),
+};
+
 export const SingleSeries: Story = {
   args: {
     data: [

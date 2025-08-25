@@ -46,6 +46,35 @@ const Container = ({ children }: { children: React.ReactNode }) => (
   <div style={{ width: '300px', height: '300px' }}>{children}</div>
 );
 
+export const WithCustomColors: Story = {
+  args: {
+    data: [
+      { id: 'segment1', value: 30, label: 'Segment A', color: 'blue' },
+      { id: 'segment2', value: 25, label: 'Segment B', color: 'purple' },
+      { id: 'segment3', value: 20, label: 'Segment C', color: 'turquoise' },
+      { id: 'segment4', value: 15, label: 'Segment D', color: 'orange' },
+      { id: 'segment5', value: 10, label: 'Segment E', color: 'pink' },
+    ],
+    showLegend: true,
+    tooltipHref: 'https://example.com/segments',
+    id: 'pie-chart-custom-colors',
+  },
+  render: (args) => (
+    <Container>
+      <GraphWidgetPieChart
+        data={args.data}
+        displayType={args.displayType}
+        prefix={args.prefix}
+        suffix={args.suffix}
+        decimals={args.decimals}
+        showLegend={args.showLegend}
+        tooltipHref={args.tooltipHref}
+        id={args.id}
+      />
+    </Container>
+  ),
+};
+
 export const Default: Story = {
   args: {
     data: [
