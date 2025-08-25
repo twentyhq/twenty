@@ -1939,7 +1939,6 @@ bkkpkht.ga
 bkkpkht.gq
 bkkpkht.ml
 bko.kr
-bla-bla.com
 blackbird.ws
 blackburnfans.com
 blackburnmail.com
