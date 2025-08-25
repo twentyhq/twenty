@@ -102,7 +102,8 @@ export const WorkflowStepFilterValueInput = ({
     variableType === FieldMetadataType.SELECT;
 
   const isFullRecord =
-    selectedFieldMetadataItem?.name === 'id' &&
+    isDefined(stepFilter.isFullRecord) &&
+    stepFilter.isFullRecord &&
     isDefined(objectMetadataItem?.nameSingular);
 
   const isDateField =

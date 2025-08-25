@@ -24,9 +24,7 @@ const TEXT_STEP_FILTER: StepFilter = {
   id: 'filter-1',
   stepFilterGroupId: 'filter-group-1',
   stepOutputKey: 'company.name',
-  displayValue: 'Company Name',
   type: 'text',
-  label: 'Company Name',
   value: 'Acme',
   operand: ViewFilterOperand.Contains,
 };

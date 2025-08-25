@@ -15,13 +15,12 @@ export type StepFilterGroup = {
 export type StepFilter = {
   id: string;
   type: string;
-  label: string;
   stepOutputKey: string;
   operand: ViewFilterOperand;
   value: string;
-  displayValue: string;
   stepFilterGroupId: string;
   positionInStepFilterGroup?: number;
   fieldMetadataId?: string;
   compositeFieldSubFieldName?: string;
+  isFullRecord?: boolean;
 };
