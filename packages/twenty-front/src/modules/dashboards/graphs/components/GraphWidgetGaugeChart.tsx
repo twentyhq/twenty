@@ -38,10 +38,18 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledChartContainer = styled.div`
+const StyledChartContainer = styled.div<{ $isClickable?: boolean }>`
   flex: 1;
   position: relative;
   width: 100%;
+
+  ${({ $isClickable }) =>
+    $isClickable &&
+    `
+    svg g path[fill^="url(#"] {
+      cursor: pointer;
+    }
+  `}
 `;
 
 const StyledH1Title = styled(H1Title)`
@@ -167,7 +175,7 @@ export const GraphWidgetGaugeChart = ({
 
   return (
     <StyledContainer>
-      <StyledChartContainer>
+      <StyledChartContainer $isClickable={isDefined(tooltipHref)}>
         <ResponsiveRadialBar
           data={data}
           startAngle={-90}

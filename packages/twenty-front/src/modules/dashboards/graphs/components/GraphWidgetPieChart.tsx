@@ -35,10 +35,18 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledChartContainer = styled.div`
+const StyledChartContainer = styled.div<{ $isClickable?: boolean }>`
   flex: 1;
   position: relative;
   width: 100%;
+
+  ${({ $isClickable }) =>
+    $isClickable &&
+    `
+    svg g path[fill^="url(#"] {
+      cursor: pointer;
+    }
+  `}
 `;
 
 export const GraphWidgetPieChart = ({
@@ -176,7 +184,7 @@ export const GraphWidgetPieChart = ({
 
   return (
     <StyledContainer id={id}>
-      <StyledChartContainer>
+      <StyledChartContainer $isClickable={isDefined(tooltipHref)}>
         <ResponsivePie
           data={data}
           innerRadius={0.8}

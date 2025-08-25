@@ -39,10 +39,18 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledChartContainer = styled.div`
+const StyledChartContainer = styled.div<{ $isClickable?: boolean }>`
   flex: 1;
   position: relative;
   width: 100%;
+
+  ${({ $isClickable }) =>
+    $isClickable &&
+    `
+    svg g[transform] rect[fill^="url(#gradient-"] {
+      cursor: pointer;
+    }
+  `}
 `;
 
 export const GraphWidgetBarChart = ({
@@ -81,7 +89,6 @@ export const GraphWidgetBarChart = ({
     customFormatter,
   };
 
-  // Create enriched data structure for all bars
   const barConfigs: Array<{
     key: string;
     indexValue: string | number;
@@ -203,7 +210,7 @@ export const GraphWidgetBarChart = ({
 
   return (
     <StyledContainer id={id}>
-      <StyledChartContainer>
+      <StyledChartContainer $isClickable={isDefined(tooltipHref)}>
         <ResponsiveBar
           data={data}
           keys={keys}
