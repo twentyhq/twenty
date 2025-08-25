@@ -25,6 +25,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { MKT_LICENSE_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
+import { MktCustomerWorkspaceEntity } from 'src/mkt-core/customer/mkt-customer.workspace-entity';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
@@ -187,6 +188,22 @@ export class MktLicenseWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('mktVariant')
   mktVariantId: string | null;
+
+  @WorkspaceRelation({
+    standardId: MKT_LICENSE_FIELD_IDS.mktCustomer,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Customer`,
+    description: msg`License customer`,
+    icon: 'IconUser',
+    inverseSideTarget: () => MktCustomerWorkspaceEntity,
+    inverseSideFieldKey: 'mktLicenses',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  mktCustomer: Relation<MktCustomerWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('mktCustomer')
+  mktCustomerId: string | null;
 
   @WorkspaceRelation({
     standardId: MKT_LICENSE_FIELD_IDS.mktOrder,
