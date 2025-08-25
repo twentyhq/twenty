@@ -4,10 +4,10 @@ import { useFilteredSearchRecordQuery } from '@/search/hooks/useFilteredSearchRe
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const useSingleRecordPickerRecords = ({
-  objectNameSingular,
+  objectNameSingulars,
   excludedRecordIds = [],
 }: {
-  objectNameSingular: string;
+  objectNameSingulars: string[];
   excludedRecordIds?: string[];
 }) => {
   const recordPickerSearchFilter = useRecoilComponentValue(
@@ -17,12 +17,13 @@ export const useSingleRecordPickerRecords = ({
   const selectedRecordId = useRecoilComponentValue(
     singleRecordPickerSelectedIdComponentState,
   );
-
+  // todo @guillim: understand why selectoed record are not setup initially
+  console.log('selectedRecordId', selectedRecordId);
   const records = useFilteredSearchRecordQuery({
     searchFilter: recordPickerSearchFilter,
     selectedIds: selectedRecordId ? [selectedRecordId] : [],
     excludedRecordIds: excludedRecordIds,
-    objectNameSingular,
+    objectNameSingulars,
   });
 
   return { records };

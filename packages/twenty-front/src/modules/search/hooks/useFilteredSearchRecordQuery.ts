@@ -8,13 +8,13 @@ export const useFilteredSearchRecordQuery = ({
   selectedIds,
   limit,
   excludedRecordIds = [],
-  objectNameSingular,
+  objectNameSingulars,
   searchFilter,
 }: {
   selectedIds: string[];
   limit?: number;
   excludedRecordIds?: string[];
-  objectNameSingular: string;
+  objectNameSingulars: string[];
   searchFilter?: string;
 }): {
   selectedRecords: SingleRecordPickerRecord[];
@@ -26,7 +26,7 @@ export const useFilteredSearchRecordQuery = ({
 
   const { loading: selectedRecordsLoading, searchRecords: selectedRecords } =
     useObjectRecordSearchRecords({
-      objectNameSingular,
+      objectNameSingulars,
       filter: selectedIdsFilter,
       skip: !selectedIds.length,
       searchInput: '',
@@ -36,7 +36,7 @@ export const useFilteredSearchRecordQuery = ({
     loading: filteredSelectedRecordsLoading,
     searchRecords: filteredSelectedRecords,
   } = useObjectRecordSearchRecords({
-    objectNameSingular,
+    objectNameSingulars,
     filter: selectedIdsFilter,
     skip: !selectedIds.length,
     searchInput: searchFilter,
@@ -48,7 +48,7 @@ export const useFilteredSearchRecordQuery = ({
     : undefined;
   const { loading: recordsToSelectLoading, searchRecords: recordsToSelect } =
     useObjectRecordSearchRecords({
-      objectNameSingular,
+      objectNameSingulars,
       filter: notFilter,
       limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
       searchInput: searchFilter,
