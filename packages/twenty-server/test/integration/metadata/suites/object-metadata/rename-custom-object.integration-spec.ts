@@ -6,8 +6,6 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-const LISTING_NAME_SINGULAR = 'listing';
-
 describe('Custom object renaming', () => {
   let listingObjectId = '';
 
