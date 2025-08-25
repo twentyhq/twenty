@@ -61,8 +61,8 @@ export const useRelationSettingsFormInitialValues = ({
 
   return {
     disableFieldEdition:
-      relationFieldMetadataItem?.isCustom === true ||
-      !isDefined(relationFieldMetadataItem),
+      isDefined(relationFieldMetadataItem) &&
+      relationFieldMetadataItem?.isCustom === true,
     disableRelationEdition: !!relationFieldMetadataItem,
     initialRelationFieldMetadataItem: relationFieldMetadataItem ?? {
       icon: initialRelationObjectMetadataItem.icon ?? 'IconUsers',
