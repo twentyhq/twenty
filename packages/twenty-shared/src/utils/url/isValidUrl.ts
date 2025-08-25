@@ -1,4 +1,4 @@
-import { absoluteUrlSchema } from './absoluteUrlSchema';
+import { absoluteUrlSchema } from '@/utils/url/absoluteUrlSchema';
 
 export const isValidUrl = (url: string): boolean => {
   const result = absoluteUrlSchema.safeParse(url);

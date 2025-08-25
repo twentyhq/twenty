@@ -1,5 +1,5 @@
-import { getURLSafely } from '../getURLSafely';
-import { isDefined } from '../validation/isDefined';
+import { getURLSafely } from '@/utils/getURLSafely';
+import { isDefined } from '@/utils/validation';
 
 export const lowercaseUrlOriginAndRemoveTrailingSlash = (rawUrl: string) => {
   const url = getURLSafely(rawUrl);

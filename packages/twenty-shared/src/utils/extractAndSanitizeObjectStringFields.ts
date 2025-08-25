@@ -1,4 +1,4 @@
-import { trimAndRemoveDuplicatedWhitespacesFromString } from './trim-and-remove-duplicated-whitespaces-from-string';
+import { trimAndRemoveDuplicatedWhitespacesFromString } from '@/utils/trim-and-remove-duplicated-whitespaces-from-string';
 
 export const extractAndSanitizeObjectStringFields = <
   T extends object,
