@@ -1,8 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
+import diff from 'microdiff';
+import { type FromTo } from 'twenty-shared/types';
+
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
 type AgentComparatorResult = {
   action:
@@ -12,59 +16,83 @@ type AgentComparatorResult = {
   object: FlatAgent;
 };
 
+type WorkspaceAgentComparatorArgs = FromTo<FlatAgent[], 'FlatAgents'>;
+
+const agentPropertiesToIgnore = ['id', 'createdAt', 'updatedAt', 'workspaceId'];
+
 @Injectable()
 export class WorkspaceAgentComparator {
   compare({
     fromFlatAgents,
     toFlatAgents,
-  }: {
-    fromFlatAgents: FlatAgent[];
-    toFlatAgents: FlatAgent[];
-  }): AgentComparatorResult[] {
+  }: WorkspaceAgentComparatorArgs): AgentComparatorResult[] {
     const results: AgentComparatorResult[] = [];
 
-    for (const toAgent of toFlatAgents) {
-      const existingAgent = fromFlatAgents.find(
-        (agent) => agent.uniqueIdentifier === toAgent.uniqueIdentifier,
-      );
+    const keyFactory = (agent: FlatAgent) => agent.uniqueIdentifier;
 
-      if (!existingAgent) {
-        results.push({
-          action: ComparatorAction.CREATE,
-          object: toAgent,
-        });
-      }
-    }
+    const fromAgentMap = transformMetadataForComparison(fromFlatAgents, {
+      shouldIgnoreProperty: (property) =>
+        agentPropertiesToIgnore.includes(property),
+      keyFactory,
+    });
 
-    for (const fromAgent of fromFlatAgents) {
-      const targetAgent = toFlatAgents.find(
-        (agent) => agent.uniqueIdentifier === fromAgent.uniqueIdentifier,
-      );
+    const toAgentMap = transformMetadataForComparison(toFlatAgents, {
+      shouldIgnoreProperty: (property) =>
+        agentPropertiesToIgnore.includes(property),
+      keyFactory,
+    });
 
-      if (targetAgent) {
-        if (
-          fromAgent.name !== targetAgent.name ||
-          fromAgent.label !== targetAgent.label ||
-          fromAgent.description !== targetAgent.description ||
-          fromAgent.icon !== targetAgent.icon ||
-          fromAgent.prompt !== targetAgent.prompt ||
-          fromAgent.modelId !== targetAgent.modelId ||
-          fromAgent.responseFormat !== targetAgent.responseFormat ||
-          fromAgent.isCustom !== targetAgent.isCustom
-        ) {
-          results.push({
-            action: ComparatorAction.UPDATE,
-            object: {
-              ...targetAgent,
-              id: fromAgent.id,
-            },
-          });
+    const agentDifferences = diff(fromAgentMap, toAgentMap);
+
+    for (const difference of agentDifferences) {
+      const uniqueIdentifier = difference.path[0] as string;
+
+      switch (difference.type) {
+        case 'CREATE': {
+          const toAgent = toFlatAgents.find(
+            (agent) => keyFactory(agent) === uniqueIdentifier,
+          );
+
+          if (toAgent) {
+            results.push({
+              action: ComparatorAction.CREATE,
+              object: toAgent,
+            });
+          }
+          break;
         }
-      } else {
-        results.push({
-          action: ComparatorAction.DELETE,
-          object: fromAgent,
-        });
+        case 'CHANGE': {
+          const fromAgent = fromFlatAgents.find(
+            (agent) => keyFactory(agent) === uniqueIdentifier,
+          );
+          const toAgent = toFlatAgents.find(
+            (agent) => keyFactory(agent) === uniqueIdentifier,
+          );
+
+          if (fromAgent && toAgent) {
+            results.push({
+              action: ComparatorAction.UPDATE,
+              object: {
+                ...toAgent,
+                id: fromAgent.id,
+              },
+            });
+          }
+          break;
+        }
+        case 'REMOVE': {
+          const fromAgent = fromFlatAgents.find(
+            (agent) => keyFactory(agent) === uniqueIdentifier,
+          );
+
+          if (fromAgent && difference.path.length === 1) {
+            results.push({
+              action: ComparatorAction.DELETE,
+              object: fromAgent,
+            });
+          }
+          break;
+        }
       }
     }
 
