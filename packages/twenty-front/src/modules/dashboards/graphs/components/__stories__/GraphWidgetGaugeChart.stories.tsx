@@ -20,10 +20,23 @@ const meta: Meta<typeof GraphWidgetGaugeChart> = {
     max: {
       control: { type: 'number' },
     },
-    unit: {
+    displayType: {
+      control: 'select',
+      options: ['percentage', 'number', 'shortNumber', 'currency', 'custom'],
+    },
+    prefix: {
       control: 'text',
     },
+    suffix: {
+      control: 'text',
+    },
+    decimals: {
+      control: 'number',
+    },
     showValue: {
+      control: 'boolean',
+    },
+    showLegend: {
       control: 'boolean',
     },
     legendLabel: {
@@ -47,10 +60,10 @@ const Container = ({ children }: { children: React.ReactNode }) => (
 
 export const Default: Story = {
   args: {
-    value: 50,
+    value: 0.5,
     min: 0,
-    max: 100,
-    unit: '%',
+    max: 1,
+    displayType: 'percentage',
     showValue: true,
     legendLabel: 'Conversion rate',
     tooltipHref: 'https://example.com',
@@ -62,8 +75,12 @@ export const Default: Story = {
         value={args.value}
         min={args.min}
         max={args.max}
-        unit={args.unit}
+        displayType={args.displayType}
+        decimals={args.decimals}
+        prefix={args.prefix}
+        suffix={args.suffix}
         showValue={args.showValue}
+        showLegend={args.showLegend}
         legendLabel={args.legendLabel}
         tooltipHref={args.tooltipHref}
         id={args.id}
@@ -81,10 +98,10 @@ export const Catalog: Story = {
           name: 'value',
           values: [0, 25, 50, 75, 100],
           props: (value: number) => ({
-            value,
+            value: value / 100,
             min: 0,
-            max: 100,
-            unit: '%',
+            max: 1,
+            displayType: 'percentage' as const,
             id: `gauge-chart-catalog-${value}`,
           }),
           labels: (value: number) => {
@@ -107,11 +124,11 @@ export const Catalog: Story = {
         value={args.value}
         min={args.min}
         max={args.max}
-        unit={args.unit}
+        displayType={args.displayType}
         showValue={true}
         legendLabel="Percentage"
         tooltipHref="https://example.com"
-        id={args.id}
+        id="gauge-chart-catalog"
       />
     </Container>
   ),
@@ -122,7 +139,7 @@ export const WithoutValue: Story = {
     value: 65,
     min: 0,
     max: 100,
-    unit: '%',
+    displayType: 'percentage',
     showValue: false,
     legendLabel: 'Conversion rate',
     tooltipHref: 'https://example.com',
@@ -134,8 +151,12 @@ export const WithoutValue: Story = {
         value={args.value}
         min={args.min}
         max={args.max}
-        unit={args.unit}
+        displayType={args.displayType}
+        decimals={args.decimals}
+        prefix={args.prefix}
+        suffix={args.suffix}
         showValue={args.showValue}
+        showLegend={args.showLegend}
         legendLabel={args.legendLabel}
         tooltipHref={args.tooltipHref}
         id={args.id}
@@ -149,7 +170,7 @@ export const Revenue: Story = {
     value: 750,
     min: 0,
     max: 1000,
-    unit: 'K',
+    displayType: 'shortNumber',
     showValue: true,
     legendLabel: 'Revenue',
     tooltipHref: 'https://example.com',
@@ -161,8 +182,12 @@ export const Revenue: Story = {
         value={args.value}
         min={args.min}
         max={args.max}
-        unit={args.unit}
+        displayType={args.displayType}
+        decimals={args.decimals}
+        prefix={args.prefix}
+        suffix={args.suffix}
         showValue={args.showValue}
+        showLegend={args.showLegend}
         legendLabel={args.legendLabel}
         tooltipHref={args.tooltipHref}
         id={args.id}
@@ -176,7 +201,7 @@ export const Temperature: Story = {
     value: 22,
     min: -10,
     max: 40,
-    unit: '°C',
+    suffix: '°C',
     showValue: true,
     legendLabel: 'Temperature',
     tooltipHref: 'https://example.com',
@@ -188,8 +213,12 @@ export const Temperature: Story = {
         value={args.value}
         min={args.min}
         max={args.max}
-        unit={args.unit}
+        displayType={args.displayType}
+        decimals={args.decimals}
+        prefix={args.prefix}
+        suffix={args.suffix}
         showValue={args.showValue}
+        showLegend={args.showLegend}
         legendLabel={args.legendLabel}
         tooltipHref={args.tooltipHref}
         id={args.id}
@@ -203,7 +232,7 @@ export const Storage: Story = {
     value: 384,
     min: 0,
     max: 512,
-    unit: 'GB',
+    suffix: ' GB',
     showValue: true,
     legendLabel: 'Storage Used',
     tooltipHref: 'https://example.com',
@@ -215,8 +244,12 @@ export const Storage: Story = {
         value={args.value}
         min={args.min}
         max={args.max}
-        unit={args.unit}
+        displayType={args.displayType}
+        decimals={args.decimals}
+        prefix={args.prefix}
+        suffix={args.suffix}
         showValue={args.showValue}
+        showLegend={args.showLegend}
         legendLabel={args.legendLabel}
         tooltipHref={args.tooltipHref}
         id={args.id}
@@ -230,7 +263,8 @@ export const Rating: Story = {
     value: 4.2,
     min: 0,
     max: 5,
-    unit: ' ⭐',
+    suffix: ' ⭐',
+    decimals: 1,
     showValue: true,
     legendLabel: 'Average Rating',
     tooltipHref: 'https://example.com',
@@ -242,8 +276,43 @@ export const Rating: Story = {
         value={args.value}
         min={args.min}
         max={args.max}
-        unit={args.unit}
+        displayType={args.displayType}
+        decimals={args.decimals}
+        prefix={args.prefix}
+        suffix={args.suffix}
         showValue={args.showValue}
+        showLegend={args.showLegend}
+        legendLabel={args.legendLabel}
+        tooltipHref={args.tooltipHref}
+        id={args.id}
+      />
+    </Container>
+  ),
+};
+
+export const WithoutLegend: Story = {
+  args: {
+    value: 65,
+    min: 0,
+    max: 100,
+    displayType: 'percentage',
+    showValue: true,
+    legendLabel: 'Conversion rate',
+    tooltipHref: 'https://example.com',
+    id: 'gauge-chart-without-legend',
+  },
+  render: (args) => (
+    <Container>
+      <GraphWidgetGaugeChart
+        value={args.value}
+        min={args.min}
+        max={args.max}
+        displayType={args.displayType}
+        decimals={args.decimals}
+        prefix={args.prefix}
+        suffix={args.suffix}
+        showValue={args.showValue}
+        showLegend={false}
         legendLabel={args.legendLabel}
         tooltipHref={args.tooltipHref}
         id={args.id}
