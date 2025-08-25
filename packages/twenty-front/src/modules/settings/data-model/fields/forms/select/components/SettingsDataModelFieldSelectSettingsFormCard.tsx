@@ -1,19 +1,15 @@
-import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 import { type z } from 'zod';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import {
   type settingsDataModelFieldMultiSelectFormSchema,
   SettingsDataModelFieldSelectForm,
   type settingsDataModelFieldSelectFormSchema,
 } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
-import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
-import {
-  SettingsDataModelFieldPreviewCard,
-  type SettingsDataModelFieldPreviewCardProps,
-} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
+import { type FieldMetadataType } from 'twenty-shared/types';
+import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
 type SettingsDataModelFieldSelectOrMultiSelectFormValues = z.infer<
   | typeof settingsDataModelFieldSelectFormSchema
@@ -21,53 +17,40 @@ type SettingsDataModelFieldSelectOrMultiSelectFormValues = z.infer<
 >;
 
 type SettingsDataModelFieldSelectSettingsFormCardProps = {
-  fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    | 'icon'
-    | 'label'
-    | 'type'
-    | 'defaultValue'
-    | 'options'
-    | 'isUnique'
-    | 'isCustom'
-  >;
-} & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
-
-const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
-  display: grid;
-  flex: 1 1 100%;
-`;
+  objectNameSingular: string;
+  fieldType: FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT;
+  existingFieldMetadataId: string;
+};
 
 export const SettingsDataModelFieldSelectSettingsFormCard = ({
-  fieldMetadataItem,
-  objectMetadataItem,
+  objectNameSingular,
+  fieldType,
+  existingFieldMetadataId,
 }: SettingsDataModelFieldSelectSettingsFormCardProps) => {
-  const { initialOptions, initialDefaultValue } =
-    useSelectSettingsFormInitialValues({
-      fieldMetadataItem,
-    });
-
-  const { watch: watchFormValue } =
-    useFormContext<SettingsDataModelFieldSelectOrMultiSelectFormValues>();
+  const { watch: watchFormValue } = useFormContext<
+    SettingsDataModelFieldSelectOrMultiSelectFormValues &
+      SettingsDataModelFieldEditFormValues
+  >();
 
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <StyledFieldPreviewCard
+        <SettingsDataModelFieldPreviewWidget
           fieldMetadataItem={{
-            ...fieldMetadataItem,
-            defaultValue: watchFormValue('defaultValue', initialDefaultValue),
-            options: watchFormValue('options', initialOptions),
+            type: fieldType,
+            label: watchFormValue('label'),
+            icon: watchFormValue('icon'),
+            defaultValue: watchFormValue('defaultValue'),
+            options: watchFormValue('options'),
           }}
-          objectMetadataItem={objectMetadataItem}
+          objectNameSingular={objectNameSingular}
         />
       }
       form={
-        <>
-          <SettingsDataModelFieldSelectForm
-            fieldMetadataItem={fieldMetadataItem}
-          />
-        </>
+        <SettingsDataModelFieldSelectForm
+          fieldType={fieldType}
+          existingFieldMetadataId={existingFieldMetadataId}
+        />
       }
     />
   );

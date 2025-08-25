@@ -29,7 +29,7 @@ export const RecordTableCellFieldContextGeneric = ({
   const updateRecord = useContext(RecordUpdateContext);
 
   let hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
-
+  // todo @guillim : adjust this to handle morph relations permissions display
   if (
     isFieldRelationToOneObject(columnDefinition) ||
     isFieldRelationFromManyObjects(columnDefinition)

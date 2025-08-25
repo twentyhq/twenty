@@ -1,5 +1,6 @@
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
+import { coreViewsState } from '@/views/states/coreViewState';
 import { type View } from '@/views/types/View';
+import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { selectorFamily } from 'recoil';
 
 export const prefetchViewFromViewIdFamilySelector = selectorFamily<
@@ -10,7 +11,9 @@ export const prefetchViewFromViewIdFamilySelector = selectorFamily<
   get:
     ({ viewId }) =>
     ({ get }) => {
-      const views = get(prefetchViewsState);
+      const coreViews = get(coreViewsState);
+
+      const views = coreViews.map(convertCoreViewToView);
       return views?.find((view) => view.id === viewId);
     },
 });

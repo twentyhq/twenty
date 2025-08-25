@@ -1,4 +1,5 @@
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
+import { coreViewsState } from '@/views/states/coreViewState';
+import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { selectorFamily } from 'recoil';
 
 export const prefetchViewIdsFromObjectMetadataItemFamilySelector =
@@ -7,7 +8,9 @@ export const prefetchViewIdsFromObjectMetadataItemFamilySelector =
     get:
       ({ objectMetadataItemId }) =>
       ({ get }) => {
-        const views = get(prefetchViewsState);
+        const coreViews = get(coreViewsState);
+
+        const views = coreViews.map(convertCoreViewToView);
         return views
           .filter((view) => view.objectMetadataId === objectMetadataItemId)
           .map((view) => view.id);

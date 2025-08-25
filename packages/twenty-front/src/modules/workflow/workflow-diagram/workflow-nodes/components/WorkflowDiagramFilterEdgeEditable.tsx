@@ -14,7 +14,6 @@ import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/comp
 import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
 import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
 import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
-import { useEdgeHovered } from '@/workflow/workflow-diagram/hooks/useEdgeHovered';
 import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
@@ -48,6 +47,7 @@ import {
 import { IconButtonGroup } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { FeatureFlagKey } from '~/generated/graphql';
+import { useEdgeState } from '@/workflow/workflow-diagram/hooks/useEdgeState';
 
 type WorkflowDiagramFilterEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
 
@@ -80,7 +80,6 @@ const StyledConfiguredFilterContainer = styled.div`
 `;
 
 export const WorkflowDiagramFilterEdgeEditable = ({
-  id,
   source,
   target,
   sourceY,
@@ -118,7 +117,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
 
-  const { isEdgeHovered } = useEdgeHovered();
+  const { isEdgeHovered } = useEdgeState();
 
   const setWorkflowDiagramPanOnDrag = useSetRecoilComponentState(
     workflowDiagramPanOnDragComponentState,
@@ -197,7 +196,9 @@ export const WorkflowDiagramFilterEdgeEditable = ({
         >
           <WorkflowDiagramEdgeV2VisibilityContainer shouldDisplay>
             <StyledConfiguredFilterContainer>
-              {isEdgeHovered(id) || isDropdownOpen || nodeCreationStarted ? (
+              {isEdgeHovered({ source, target }) ||
+              isDropdownOpen ||
+              nodeCreationStarted ? (
                 <WorkflowDiagramEdgeButtonGroup
                   iconButtons={[
                     {

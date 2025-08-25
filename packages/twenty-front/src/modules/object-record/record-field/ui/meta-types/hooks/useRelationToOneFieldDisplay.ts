@@ -48,7 +48,7 @@ export const useRelationToOneFieldDisplay = () => {
     !isDefined(fieldDefinition.metadata.objectMetadataNameSingular) ||
     !isNonEmptyString(fieldDefinition.metadata.objectMetadataNameSingular)
   ) {
-    throw new Error('Object metadata name singular is not a non-empty string');
+    throw new Error('Object metadata name singular is empty');
   }
 
   const fieldChipGenerator =

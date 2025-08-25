@@ -8,22 +8,28 @@ import { FeatureFlagKey } from '~/generated/graphql';
 
 type WorkflowDiagramHandleEditableProps = HandleProps & {
   selected: boolean;
+  hovered?: boolean;
 };
 
 const HANDLE_SCALE_ON_HOVER = 1.5;
 
 const StyledHandle = styled(Handle, {
   shouldForwardProp: (prop) =>
-    prop !== 'disableHoverEffect' && prop !== 'selected',
+    prop !== 'disableHoverEffect' && prop !== 'selected' && prop !== 'hovered',
 })<{
   disableHoverEffect: boolean;
   selected: boolean;
+  hovered?: boolean;
 }>`
   &.react-flow__handle {
     height: ${NODE_HANDLE_HEIGHT_PX}px;
     width: ${NODE_HANDLE_WIDTH_PX}px;
-    border-color: ${({ theme, selected }) =>
-      selected ? theme.color.blue : theme.border.color.strong};
+    border-color: ${({ theme, selected, hovered }) =>
+      selected
+        ? theme.color.blue
+        : hovered
+          ? theme.font.color.light
+          : theme.border.color.strong};
     background: ${({ theme, selected }) =>
       selected ? theme.adaptiveColors.blue1 : theme.background.primary};
     transition:
@@ -79,6 +85,7 @@ export const WorkflowDiagramHandleEditable = ({
   type,
   position,
   selected,
+  hovered = false,
 }: WorkflowDiagramHandleEditableProps) => {
   const isWorkflowBranchEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
@@ -90,6 +97,7 @@ export const WorkflowDiagramHandleEditable = ({
       position={position}
       disableHoverEffect={!isWorkflowBranchEnabled}
       selected={selected}
+      hovered={hovered}
     />
   );
 };
