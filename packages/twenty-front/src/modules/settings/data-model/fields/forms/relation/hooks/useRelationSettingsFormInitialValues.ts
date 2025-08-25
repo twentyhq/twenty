@@ -60,8 +60,7 @@ export const useRelationSettingsFormInitialValues = ({
     relationTypeFromFieldMetadata ?? RelationType.ONE_TO_MANY;
 
   return {
-    disableFieldEdition:
-      relationFieldMetadataItem && relationFieldMetadataItem.isCustom,
+    disableFieldEdition: relationFieldMetadataItem?.isCustom === false,
     disableRelationEdition: !!relationFieldMetadataItem,
     initialRelationFieldMetadataItem: relationFieldMetadataItem ?? {
       icon: initialRelationObjectMetadataItem.icon ?? 'IconUsers',
