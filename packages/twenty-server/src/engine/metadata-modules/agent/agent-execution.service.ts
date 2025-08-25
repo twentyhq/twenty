@@ -60,6 +60,7 @@ export class AgentExecutionService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
     @InjectRepository(FileEntity, 'core')
@@ -84,27 +85,8 @@ export class AgentExecutionService {
         );
       }
 
-      const aiModel = this.aiModelRegistryService.getEffectiveModelConfig(
-        agent?.modelId ?? 'auto',
-      );
-
-      if (agent && !aiModel) {
-        const error = `AI model with id ${agent.modelId} not found`;
-
-        this.logger.error(error);
-        throw new AgentException(
-          error,
-          AgentExceptionCode.AGENT_EXECUTION_FAILED,
-        );
-      }
-
-      this.logger.log(
-        `Resolved model: ${aiModel.modelId} (provider: ${aiModel.provider})`,
-      );
-
-      const provider = aiModel.provider;
-
-      await this.aiModelRegistryService.validateApiKey(provider);
+      const registeredModel =
+        await this.aiModelRegistryService.resolveModelForAgent(agent);
 
       const tools = agent
         ? await this.agentToolService.generateToolsForAgent(
@@ -114,17 +96,6 @@ export class AgentExecutionService {
         : {};
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
-
-      const registeredModel = this.aiModelRegistryService.getModel(
-        aiModel.modelId,
-      );
-
-      if (!registeredModel) {
-        throw new AgentException(
-          `Model ${aiModel.modelId} not found in registry`,
-          AgentExceptionCode.AGENT_EXECUTION_FAILED,
-        );
-      }
 
       return {
         system,

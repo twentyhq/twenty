@@ -1,13 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { CoreMessage, generateObject, generateText, ToolSet } from 'ai';
+import { generateObject, generateText, ToolSet } from 'ai';
 import { Repository } from 'typeorm';
 
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AgentExecutionResult } from 'src/engine/metadata-modules/agent/agent-execution.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import {
@@ -26,7 +25,6 @@ export class AiAgentExecutorService {
   private readonly logger = new Logger(AiAgentExecutorService.name);
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly toolAdapterService: ToolAdapterService,
     @InjectRepository(RoleTargetsEntity, 'core')
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
@@ -76,74 +74,6 @@ export class AiAgentExecutorService {
     };
   }
 
-  async prepareAIRequestConfig({
-    messages,
-    prompt,
-    system,
-    agent,
-  }: {
-    system: string;
-    agent: AgentEntity | null;
-    prompt?: string;
-    messages?: CoreMessage[];
-  }) {
-    try {
-      const aiModel = this.aiModelRegistryService.getEffectiveModelConfig(
-        agent?.modelId ?? 'auto',
-      );
-
-      if (agent && !aiModel) {
-        const error = `AI model with id ${agent.modelId} not found`;
-
-        this.logger.error(error);
-        throw new AgentException(
-          error,
-          AgentExceptionCode.AGENT_EXECUTION_FAILED,
-        );
-      }
-
-      this.logger.log(
-        `Resolved model: ${aiModel.modelId} (provider: ${aiModel.provider})`,
-      );
-
-      const provider = aiModel.provider;
-
-      await this.aiModelRegistryService.validateApiKey(provider);
-
-      const tools = agent
-        ? await this.getTools(agent.id, agent.workspaceId)
-        : {};
-
-      this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
-
-      const registeredModel = this.aiModelRegistryService.getModel(
-        aiModel.modelId,
-      );
-
-      if (!registeredModel) {
-        throw new AgentException(
-          `Model ${aiModel.modelId} not found in registry`,
-          AgentExceptionCode.AGENT_EXECUTION_FAILED,
-        );
-      }
-
-      return {
-        system,
-        tools,
-        model: registeredModel.model,
-        ...(messages && { messages }),
-        ...(prompt && { prompt }),
-        maxSteps: AGENT_CONFIG.MAX_STEPS,
-      };
-    } catch (error) {
-      this.logger.error(
-        `Failed to prepare AI request config for agent ${agent?.id ?? 'no agent'}`,
-        error instanceof Error ? error.stack : error,
-      );
-      throw error;
-    }
-  }
-
   async executeAgent({
     agent,
     schema,
@@ -155,12 +85,22 @@ export class AiAgentExecutorService {
     userPrompt: string;
   }): Promise<AgentExecutionResult> {
     try {
-      const aiRequestConfig = await this.prepareAIRequestConfig({
+      const registeredModel =
+        await this.aiModelRegistryService.resolveModelForAgent(agent);
+
+      const tools = agent
+        ? await this.getTools(agent.id, agent.workspaceId)
+        : {};
+
+      this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
+
+      const textResponse = await generateText({
         system: `You are executing as part of a workflow automation. ${agent ? agent.prompt : ''}`,
-        agent,
+        tools,
+        model: registeredModel.model,
         prompt: userPrompt,
+        maxSteps: AGENT_CONFIG.MAX_STEPS,
       });
-      const textResponse = await generateText(aiRequestConfig);
 
       if (Object.keys(schema).length === 0) {
         return {
@@ -170,7 +110,7 @@ export class AiAgentExecutorService {
       }
       const output = await generateObject({
         system: AGENT_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
-        model: aiRequestConfig.model,
+        model: registeredModel.model,
         prompt: `Based on the following execution results, generate the structured output according to the schema:
 
                  Execution Results: ${textResponse.text}

@@ -183,6 +183,19 @@ export class AiModelRegistryService {
     this.buildModelRegistry();
   }
 
+  async resolveModelForAgent(agent: { modelId: string } | null) {
+    const aiModel = this.getEffectiveModelConfig(agent?.modelId ?? 'auto');
+
+    await this.validateApiKey(aiModel.provider);
+    const registeredModel = this.getModel(aiModel.modelId);
+
+    if (!registeredModel) {
+      throw new Error(`Model ${aiModel.modelId} not found in registry`);
+    }
+
+    return registeredModel;
+  }
+
   async validateApiKey(provider: ModelProvider): Promise<void> {
     let apiKey: string | undefined;
 
