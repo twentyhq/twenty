@@ -93,6 +93,12 @@ import {
 } from 'src/mkt-core/dev-seeder/constants/mkt-template-data-seeds.constants';
 
 export const MKT_RECORD_SEEDS_CONFIGS = [
+  // Customer configs
+  {
+    tableName: 'mktCustomer',
+    pgColumns: MKT_CUSTOMER_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_CUSTOMER_DATA_SEEDS,
+  },
   // Product configs
   {
     tableName: 'mktProduct',
@@ -207,11 +213,5 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     tableName: 'mktKpiTemplate',
     pgColumns: MKT_KPI_TEMPLATE_DATA_SEED_COLUMNS,
     recordSeeds: MKT_KPI_TEMPLATE_DATA_SEEDS,
-  },
-  // Customer configs
-  {
-    tableName: 'mktCustomer',
-    pgColumns: MKT_CUSTOMER_DATA_SEED_COLUMNS,
-    recordSeeds: MKT_CUSTOMER_DATA_SEEDS,
   },
 ];
