@@ -28,6 +28,7 @@ export const MKT_CUSTOMER_FIELD_IDS = {
   salesId: '78be7072-50eb-4edc-81fc-c3e25658d7bd',
   supportId: 'a1ed4146-269d-46a5-ac7e-7cba043974e1',
   affiliateId: '940e3766-a147-4cf4-bd50-805b1c8c8880',
+  mktLicenses: '4ac28e1a-089a-45d3-9725-b40861e98b15',
   // common relations or fields
   position: 'e3ca3ebd-4812-4c82-abde-e14b13a01829',
   createdBy: '4e6d0176-22f4-4b25-bbf2-0a3ed6d7a5e1',
@@ -181,7 +182,7 @@ export const MKT_LICENSE_FIELD_IDS = {
   deviceInfo: '7dc3c246-0a81-48b0-9343-70bf0431dfca',
   notes: 'dbf0752c-ed7c-45eb-88c0-e390ec42aed0',
   // relations
-  person: '11a10308-2c5c-4322-847d-4ec12d056d9c',
+  mktCustomer: '11a10308-2c5c-4322-847d-4ec12d056d9c',
   mktSales: '4bb927d7-a6d2-4746-b771-731cb6ab9950', // nullable
   mktVariant: 'f2d1ae3c-12d8-4e24-8cb5-dc82d422f12b',
   mktAffiliate: '8e48e8f3-5ad3-4936-b570-e061ef2e5959', // nullable
