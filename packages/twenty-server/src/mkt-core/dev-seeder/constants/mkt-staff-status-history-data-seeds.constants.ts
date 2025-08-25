@@ -1,4 +1,4 @@
-import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 import { MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS } from './mkt-employment-status-data-seeds.constants';
 
@@ -62,7 +62,7 @@ export const MKT_STAFF_STATUS_HISTORY_DATA_SEEDS: MktStaffStatusHistoryDataSeed[
     // Initial hiring records - all staff starting with their first status
     {
       id: MKT_STAFF_STATUS_HISTORY_DATA_SEEDS_IDS.SALES_MANAGER_HIRE,
-      staffId: PERSON_DATA_SEED_IDS.ID_1,
+      staffId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       fromStatusId: null, // First status change
       toStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PERMANENT,
       changeDate: '2024-01-01T09:00:00Z',
@@ -77,12 +77,12 @@ export const MKT_STAFF_STATUS_HISTORY_DATA_SEEDS: MktStaffStatusHistoryDataSeed[
     },
     {
       id: MKT_STAFF_STATUS_HISTORY_DATA_SEEDS_IDS.SALES_REP_1_HIRE,
-      staffId: PERSON_DATA_SEED_IDS.ID_2,
+      staffId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       fromStatusId: null,
       toStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PERMANENT,
       changeDate: '2024-01-15T09:00:00Z',
       changeReason: 'Initial hiring as permanent employee',
-      approvedBy: PERSON_DATA_SEED_IDS.ID_3,
+      approvedBy: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
       notes:
         'Experienced sales representative hired directly as permanent staff',
       expectedEndDate: null,
@@ -93,12 +93,12 @@ export const MKT_STAFF_STATUS_HISTORY_DATA_SEEDS: MktStaffStatusHistoryDataSeed[
     },
     {
       id: MKT_STAFF_STATUS_HISTORY_DATA_SEEDS_IDS.SALES_REP_2_HIRE,
-      staffId: PERSON_DATA_SEED_IDS.ID_3,
+      staffId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
       fromStatusId: null,
       toStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PROBATION,
       changeDate: '2024-03-01T09:00:00Z',
       changeReason: 'Initial hiring with probation period',
-      approvedBy: PERSON_DATA_SEED_IDS.ID_4,
+      approvedBy: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       notes: 'New graduate hired with 3-month probation period',
       expectedEndDate: '2024-06-01',
       actualEndDate: null,
@@ -108,12 +108,12 @@ export const MKT_STAFF_STATUS_HISTORY_DATA_SEEDS: MktStaffStatusHistoryDataSeed[
     },
     {
       id: MKT_STAFF_STATUS_HISTORY_DATA_SEEDS_IDS.SALES_REP_2_PROBATION_END,
-      staffId: PERSON_DATA_SEED_IDS.ID_2,
+      staffId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       fromStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PROBATION,
       toStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PERMANENT,
       changeDate: '2024-06-01T09:00:00Z',
       changeReason: 'Successful completion of probation period',
-      approvedBy: PERSON_DATA_SEED_IDS.ID_3,
+      approvedBy: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
       notes:
         'Performed excellently during probation, confirmed as permanent employee',
       expectedEndDate: null,

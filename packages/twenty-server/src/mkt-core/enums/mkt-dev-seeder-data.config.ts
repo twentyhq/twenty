@@ -100,6 +100,25 @@ import {
   MKT_TEMPLATE_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-template-data-seeds.constants';
 
+export const MKT_RECORD_SEEDS_CONFIGS_FIRST_PHASE_TABLES = [
+  // Organization configs
+  {
+    tableName: 'mktOrganizationLevel',
+    pgColumns: MKT_ORGANIZATION_LEVEL_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_ORGANIZATION_LEVEL_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktEmploymentStatus',
+    pgColumns: MKT_EMPLOYMENT_STATUS_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_EMPLOYMENT_STATUS_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktDepartment',
+    pgColumns: MKT_DEPARTMENT_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_DEPARTMENT_DATA_SEEDS,
+  },
+];
+
 export const MKT_RECORD_SEEDS_CONFIGS = [
   // Customer configs
   {
@@ -200,27 +219,6 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     pgColumns: MKT_RESELLER_TIER_HISTORY_DATA_SEED_COLUMNS,
     recordSeeds: MKT_RESELLER_TIER_HISTORY_DATA_SEEDS,
   },
-  // Organization configs
-  {
-    tableName: 'mktOrganizationLevel',
-    pgColumns: MKT_ORGANIZATION_LEVEL_DATA_SEED_COLUMNS,
-    recordSeeds: MKT_ORGANIZATION_LEVEL_DATA_SEEDS,
-  },
-  {
-    tableName: 'mktEmploymentStatus',
-    pgColumns: MKT_EMPLOYMENT_STATUS_DATA_SEED_COLUMNS,
-    recordSeeds: MKT_EMPLOYMENT_STATUS_DATA_SEEDS,
-  },
-  {
-    tableName: 'mktDepartment',
-    pgColumns: MKT_DEPARTMENT_DATA_SEED_COLUMNS,
-    recordSeeds: MKT_DEPARTMENT_DATA_SEEDS,
-  },
-  {
-    tableName: 'mktStaffStatusHistory',
-    pgColumns: MKT_STAFF_STATUS_HISTORY_DATA_SEED_COLUMNS,
-    recordSeeds: MKT_STAFF_STATUS_HISTORY_DATA_SEEDS,
-  },
   // KPI System configs
   {
     tableName: 'mktKpi',
@@ -231,5 +229,17 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     tableName: 'mktKpiTemplate',
     pgColumns: MKT_KPI_TEMPLATE_DATA_SEED_COLUMNS,
     recordSeeds: MKT_KPI_TEMPLATE_DATA_SEEDS,
+  },
+  // Customer configs
+  {
+    tableName: 'mktCustomer',
+    pgColumns: MKT_CUSTOMER_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_CUSTOMER_DATA_SEEDS,
+  },
+  // Staff Status History - needs to be after workspace members
+  {
+    tableName: 'mktStaffStatusHistory',
+    pgColumns: MKT_STAFF_STATUS_HISTORY_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_STAFF_STATUS_HISTORY_DATA_SEEDS,
   },
 ];

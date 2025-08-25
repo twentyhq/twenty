@@ -12,11 +12,11 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSearchable } from 'src/engine/twenty-orm/decorators/workspace-is-searchable.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { MKT_KPI_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { MktKpiHistoryWorkspaceEntity } from 'src/mkt-core/mkt-kpi-history/mkt-kpi-history.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 import {
   MKT_KPI_TYPE_OPTIONS,
@@ -311,20 +311,19 @@ export class MktKpiWorkspaceEntity extends BaseWorkspaceEntity {
 
   // Relations
   @WorkspaceRelation({
-    standardId: MKT_KPI_FIELD_IDS.createdByPerson,
+    standardId: MKT_KPI_FIELD_IDS.assignedTo,
     type: RelationType.MANY_TO_ONE,
     label: msg`Created by Person`,
     description: msg`Person who created this KPI`,
     icon: 'IconUser',
-    inverseSideTarget: () => PersonWorkspaceEntity,
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'createdKpis',
-    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  createdByPerson: Relation<PersonWorkspaceEntity> | null;
+  assignedTo: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('createdByPerson')
-  createdByPersonId: string | null;
+  @WorkspaceJoinColumn('assignedTo')
+  assignedToId: string | null;
 
   @WorkspaceRelation({
     standardId: MKT_KPI_FIELD_IDS.kpiHistories,

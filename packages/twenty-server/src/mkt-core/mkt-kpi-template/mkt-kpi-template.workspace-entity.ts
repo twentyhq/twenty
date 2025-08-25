@@ -1,7 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -21,9 +20,9 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { MKT_KPI_TEMPLATE_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 import {
   MKT_KPI_TEMPLATE_TARGET_ROLE_OPTIONS,
@@ -245,20 +244,19 @@ export class MktKpiTemplateWorkspaceEntity extends BaseWorkspaceEntity {
 
   // Relations
   @WorkspaceRelation({
-    standardId: MKT_KPI_TEMPLATE_FIELD_IDS.createdByPerson,
+    standardId: MKT_KPI_TEMPLATE_FIELD_IDS.assignedTo,
     type: RelationType.MANY_TO_ONE,
     label: msg`Created by Person`,
-    description: msg`Person who created this KPI template`,
+    description: msg`Person who created this KPI`,
     icon: 'IconUser',
-    inverseSideTarget: () => PersonWorkspaceEntity,
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'createdKpiTemplates',
-    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  createdByPerson: Relation<PersonWorkspaceEntity> | null;
+  assignedTo: Relation<WorkspaceMemberWorkspaceEntity> | null;
 
-  @WorkspaceJoinColumn('createdByPerson')
-  createdByPersonId: string | null;
+  @WorkspaceJoinColumn('assignedTo')
+  assignedToId: string | null;
 
   @WorkspaceField({
     standardId: MKT_KPI_TEMPLATE_FIELD_IDS.searchVector,

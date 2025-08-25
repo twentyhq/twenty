@@ -1,4 +1,4 @@
-import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 type MktKpiTemplateDataSeed = {
   id: string;
@@ -19,7 +19,7 @@ type MktKpiTemplateDataSeed = {
   weight?: number;
   templateConfig?: object;
   position?: number;
-  createdByPersonId?: string | null;
+  assignedToId?: string | null;
 };
 
 export const MKT_KPI_TEMPLATE_DATA_SEED_COLUMNS: (keyof MktKpiTemplateDataSeed)[] =
@@ -42,7 +42,7 @@ export const MKT_KPI_TEMPLATE_DATA_SEED_COLUMNS: (keyof MktKpiTemplateDataSeed)[
     'weight',
     'templateConfig',
     'position',
-    'createdByPersonId',
+    'assignedToId',
   ];
 
 export const MKT_KPI_TEMPLATE_DATA_SEEDS_IDS = {
@@ -89,7 +89,7 @@ export const MKT_KPI_TEMPLATE_DATA_SEEDS: MktKpiTemplateDataSeed[] = [
       },
     },
     position: 1,
-    createdByPersonId: PERSON_DATA_SEED_IDS.ID_1,
+    assignedToId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   {
@@ -117,7 +117,7 @@ export const MKT_KPI_TEMPLATE_DATA_SEEDS: MktKpiTemplateDataSeed[] = [
       },
     },
     position: 2,
-    createdByPersonId: PERSON_DATA_SEED_IDS.ID_2,
+    assignedToId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 
   // Senior Sales Templates
@@ -146,7 +146,7 @@ export const MKT_KPI_TEMPLATE_DATA_SEEDS: MktKpiTemplateDataSeed[] = [
       },
     },
     position: 3,
-    createdByPersonId: PERSON_DATA_SEED_IDS.ID_3,
+    assignedToId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   {
@@ -174,7 +174,7 @@ export const MKT_KPI_TEMPLATE_DATA_SEEDS: MktKpiTemplateDataSeed[] = [
       },
     },
     position: 4,
-    createdByPersonId: PERSON_DATA_SEED_IDS.ID_4,
+    assignedToId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
   },
 
   // Team Leader Templates
@@ -204,7 +204,7 @@ export const MKT_KPI_TEMPLATE_DATA_SEEDS: MktKpiTemplateDataSeed[] = [
       includeTeamMembers: true,
     },
     position: 5,
-    createdByPersonId: null,
+    assignedToId: null,
   },
 
   // Support Templates
@@ -233,7 +233,7 @@ export const MKT_KPI_TEMPLATE_DATA_SEEDS: MktKpiTemplateDataSeed[] = [
       },
     },
     position: 6,
-    createdByPersonId: null,
+    assignedToId: null,
   },
 
   {
@@ -261,7 +261,7 @@ export const MKT_KPI_TEMPLATE_DATA_SEEDS: MktKpiTemplateDataSeed[] = [
       },
     },
     position: 7,
-    createdByPersonId: null,
+    assignedToId: null,
   },
 
   // Marketing Templates
@@ -290,7 +290,7 @@ export const MKT_KPI_TEMPLATE_DATA_SEEDS: MktKpiTemplateDataSeed[] = [
       },
     },
     position: 8,
-    createdByPersonId: null,
+    assignedToId: null,
   },
 
   // Operations Templates
@@ -320,7 +320,7 @@ export const MKT_KPI_TEMPLATE_DATA_SEEDS: MktKpiTemplateDataSeed[] = [
       manualTracking: true,
     },
     position: 9,
-    createdByPersonId: null,
+    assignedToId: null,
   },
 
   // General Templates
@@ -350,6 +350,6 @@ export const MKT_KPI_TEMPLATE_DATA_SEEDS: MktKpiTemplateDataSeed[] = [
       selfAssessment: true,
     },
     position: 10,
-    createdByPersonId: null,
+    assignedToId: null,
   },
 ];

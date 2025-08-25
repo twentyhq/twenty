@@ -10,9 +10,6 @@ type PersonDataSeed = {
   linkedinLinkPrimaryLinkUrl: string;
   jobTitle: string;
   companyId: string;
-  departmentId: string | null;
-  employmentStatusId: string | null;
-  organizationLevelId: string | null;
   createdBySource: string;
   createdByWorkspaceMemberId: string;
   createdByName: string;
@@ -30,9 +27,6 @@ export const PERSON_DATA_SEED_COLUMNS: (keyof PersonDataSeed)[] = [
   'linkedinLinkPrimaryLinkUrl',
   'jobTitle',
   'companyId',
-  'departmentId',
-  'employmentStatusId',
-  'organizationLevelId',
   'createdBySource',
   'createdByWorkspaceMemberId',
   'createdByName',
@@ -1255,9 +1249,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1',
     jobTitle: 'Surveyor, minerals',
     companyId: COMPANY_DATA_SEED_IDS.ID_1,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1276,9 +1267,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-2',
     jobTitle: 'Armed forces logistics/support/administrative officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_1,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1297,9 +1285,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-3',
     jobTitle: 'Engineer, manufacturing systems',
     companyId: COMPANY_DATA_SEED_IDS.ID_2,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1318,9 +1303,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-4',
     jobTitle: 'Learning disability nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_2,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1339,9 +1321,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-5',
     jobTitle: 'Optometrist',
     companyId: COMPANY_DATA_SEED_IDS.ID_3,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1360,9 +1339,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-6',
     jobTitle: 'Farm manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_3,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1381,9 +1357,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-7',
     jobTitle: 'Therapist, nutritional',
     companyId: COMPANY_DATA_SEED_IDS.ID_4,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1402,9 +1375,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-8',
     jobTitle: 'Paramedic',
     companyId: COMPANY_DATA_SEED_IDS.ID_4,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1423,9 +1393,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-9',
     jobTitle: 'Media planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_5,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1444,9 +1411,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-10',
     jobTitle: 'Special effects artist',
     companyId: COMPANY_DATA_SEED_IDS.ID_5,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1465,9 +1429,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-11',
     jobTitle: 'Engineer, land',
     companyId: COMPANY_DATA_SEED_IDS.ID_6,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1486,9 +1447,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-12',
     jobTitle: 'Race relations officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_6,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1507,9 +1465,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-13',
     jobTitle: 'Museum/gallery exhibitions officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_7,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1528,9 +1483,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-14',
     jobTitle: 'Wellsite geologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_7,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1549,9 +1501,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-15',
     jobTitle: 'Surveyor, building control',
     companyId: COMPANY_DATA_SEED_IDS.ID_8,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1570,9 +1519,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-16',
     jobTitle: 'Ergonomist',
     companyId: COMPANY_DATA_SEED_IDS.ID_8,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1591,9 +1537,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-17',
     jobTitle: 'Exercise physiologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_9,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1612,9 +1555,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-18',
     jobTitle: 'Clinical scientist, histocompatibility and immunogenetics',
     companyId: COMPANY_DATA_SEED_IDS.ID_9,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1633,9 +1573,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-19',
     jobTitle: 'Wellsite geologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_10,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1654,9 +1591,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-20',
     jobTitle: 'Radiographer, therapeutic',
     companyId: COMPANY_DATA_SEED_IDS.ID_10,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1675,9 +1609,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-21',
     jobTitle: 'Health visitor',
     companyId: COMPANY_DATA_SEED_IDS.ID_11,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1696,9 +1627,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-22',
     jobTitle: 'Social research officer, government',
     companyId: COMPANY_DATA_SEED_IDS.ID_11,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1717,9 +1645,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-23',
     jobTitle: 'Forest/woodland manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_12,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1738,9 +1663,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-24',
     jobTitle: 'Surgeon',
     companyId: COMPANY_DATA_SEED_IDS.ID_12,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1759,9 +1681,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-25',
     jobTitle: 'Hydrogeologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_13,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1780,9 +1699,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-26',
     jobTitle: 'Engineer, site',
     companyId: COMPANY_DATA_SEED_IDS.ID_13,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1801,9 +1717,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-27',
     jobTitle: 'Government social research officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_14,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1822,9 +1735,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-28',
     jobTitle: 'Horticultural therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_14,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1843,9 +1753,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-29',
     jobTitle: 'Administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_15,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1864,9 +1771,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-30',
     jobTitle: 'Geneticist, molecular',
     companyId: COMPANY_DATA_SEED_IDS.ID_15,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1885,9 +1789,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-31',
     jobTitle: 'Applications developer',
     companyId: COMPANY_DATA_SEED_IDS.ID_16,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1906,9 +1807,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-32',
     jobTitle: 'Chief Marketing Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_16,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1927,9 +1825,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-33',
     jobTitle: 'Teacher, music',
     companyId: COMPANY_DATA_SEED_IDS.ID_17,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1948,9 +1843,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-34',
     jobTitle: 'Television floor manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_17,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1969,9 +1861,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-35',
     jobTitle: 'Investment banker, operational',
     companyId: COMPANY_DATA_SEED_IDS.ID_18,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1990,9 +1879,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-36',
     jobTitle: 'Veterinary surgeon',
     companyId: COMPANY_DATA_SEED_IDS.ID_18,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2011,9 +1897,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-37',
     jobTitle: 'Financial controller',
     companyId: COMPANY_DATA_SEED_IDS.ID_19,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2032,9 +1915,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-38',
     jobTitle: 'Engineer, electrical',
     companyId: COMPANY_DATA_SEED_IDS.ID_19,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2053,9 +1933,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-39',
     jobTitle: 'Horticulturist, amenity',
     companyId: COMPANY_DATA_SEED_IDS.ID_20,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2074,9 +1951,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-40',
     jobTitle: 'Geographical information systems officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_20,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2095,9 +1969,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-41',
     jobTitle: 'Logistics and distribution manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_21,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2116,9 +1987,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-42',
     jobTitle: 'Designer, graphic',
     companyId: COMPANY_DATA_SEED_IDS.ID_21,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2137,9 +2005,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-43',
     jobTitle: 'Sub',
     companyId: COMPANY_DATA_SEED_IDS.ID_22,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2158,9 +2023,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-44',
     jobTitle: 'Financial adviser',
     companyId: COMPANY_DATA_SEED_IDS.ID_22,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2179,9 +2041,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-45',
     jobTitle: 'Osteopath',
     companyId: COMPANY_DATA_SEED_IDS.ID_23,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2200,9 +2059,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-46',
     jobTitle: 'Microbiologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_23,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2221,9 +2077,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-47',
     jobTitle: 'Accounting technician',
     companyId: COMPANY_DATA_SEED_IDS.ID_24,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2242,9 +2095,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-48',
     jobTitle: 'Production assistant, television',
     companyId: COMPANY_DATA_SEED_IDS.ID_24,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2263,9 +2113,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-49',
     jobTitle: 'Clinical cytogeneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_25,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2284,9 +2131,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-50',
     jobTitle: 'Media buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_25,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2305,9 +2149,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-51',
     jobTitle: 'Metallurgist',
     companyId: COMPANY_DATA_SEED_IDS.ID_26,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2326,9 +2167,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-52',
     jobTitle: 'Agricultural engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_26,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2347,9 +2185,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-53',
     jobTitle: 'Recycling officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_27,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2368,9 +2203,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-54',
     jobTitle: 'Psychotherapist, child',
     companyId: COMPANY_DATA_SEED_IDS.ID_27,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2389,9 +2221,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-55',
     jobTitle: 'Arts development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_28,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2410,9 +2239,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-56',
     jobTitle: 'IT technical support officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_28,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2431,9 +2257,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-57',
     jobTitle: 'Scientist, biomedical',
     companyId: COMPANY_DATA_SEED_IDS.ID_29,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2452,9 +2275,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-58',
     jobTitle: 'Patent attorney',
     companyId: COMPANY_DATA_SEED_IDS.ID_29,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2473,9 +2293,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-59',
     jobTitle: 'Environmental manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_30,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2494,9 +2311,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-60',
     jobTitle: 'Statistician',
     companyId: COMPANY_DATA_SEED_IDS.ID_30,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2515,9 +2329,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-61',
     jobTitle: 'Designer, blown glass/stained glass',
     companyId: COMPANY_DATA_SEED_IDS.ID_31,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2536,9 +2347,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-62',
     jobTitle: 'Nature conservation officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_31,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2557,9 +2365,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-63',
     jobTitle: 'Engineer, electronics',
     companyId: COMPANY_DATA_SEED_IDS.ID_32,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2578,9 +2383,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-64',
     jobTitle: 'Land/geomatics surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_32,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2599,9 +2401,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-65',
     jobTitle: 'Research officer, political party',
     companyId: COMPANY_DATA_SEED_IDS.ID_33,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2620,9 +2419,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-66',
     jobTitle: 'Prison officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_33,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2641,9 +2437,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-67',
     jobTitle: 'Geochemist',
     companyId: COMPANY_DATA_SEED_IDS.ID_34,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2662,9 +2455,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-68',
     jobTitle: 'Fine artist',
     companyId: COMPANY_DATA_SEED_IDS.ID_34,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2683,9 +2473,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-69',
     jobTitle: 'Warden/ranger',
     companyId: COMPANY_DATA_SEED_IDS.ID_35,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2704,9 +2491,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-70',
     jobTitle: 'Video editor',
     companyId: COMPANY_DATA_SEED_IDS.ID_35,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2725,9 +2509,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-71',
     jobTitle: 'Conservation officer, nature',
     companyId: COMPANY_DATA_SEED_IDS.ID_36,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2746,9 +2527,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-72',
     jobTitle: 'Wellsite geologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_36,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2767,9 +2545,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-73',
     jobTitle: 'Scientist, water quality',
     companyId: COMPANY_DATA_SEED_IDS.ID_37,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2788,9 +2563,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-74',
     jobTitle: 'Designer, furniture',
     companyId: COMPANY_DATA_SEED_IDS.ID_37,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2809,9 +2581,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-75',
     jobTitle: 'Tourism officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_38,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2830,9 +2599,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-76',
     jobTitle: 'Transport planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_38,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2851,9 +2617,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-77',
     jobTitle: 'Scientist, research (medical)',
     companyId: COMPANY_DATA_SEED_IDS.ID_39,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2872,9 +2635,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-78',
     jobTitle: 'Therapist, drama',
     companyId: COMPANY_DATA_SEED_IDS.ID_39,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2893,9 +2653,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-79',
     jobTitle: 'Associate Professor',
     companyId: COMPANY_DATA_SEED_IDS.ID_40,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2914,9 +2671,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-80',
     jobTitle: 'Hydrographic surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_40,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2935,9 +2689,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-81',
     jobTitle: 'Learning disability nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_41,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2956,9 +2707,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-82',
     jobTitle: 'Technical brewer',
     companyId: COMPANY_DATA_SEED_IDS.ID_41,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2977,9 +2725,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-83',
     jobTitle: 'Accountant, chartered',
     companyId: COMPANY_DATA_SEED_IDS.ID_42,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2998,9 +2743,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-84',
     jobTitle: 'Producer, television/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_42,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3019,9 +2761,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-85',
     jobTitle: 'Therapist, art',
     companyId: COMPANY_DATA_SEED_IDS.ID_43,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3040,9 +2779,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-86',
     jobTitle: 'Exhibition designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_43,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3061,9 +2797,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-87',
     jobTitle: 'Surveyor, land/geomatics',
     companyId: COMPANY_DATA_SEED_IDS.ID_44,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3082,9 +2815,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-88',
     jobTitle: 'Paediatric nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_44,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3103,9 +2833,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-89',
     jobTitle: 'Site engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_45,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3124,9 +2851,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-90',
     jobTitle: 'Sports therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_45,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3145,9 +2869,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-91',
     jobTitle: 'Designer, interior/spatial',
     companyId: COMPANY_DATA_SEED_IDS.ID_46,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3166,9 +2887,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-92',
     jobTitle: 'Civil engineer, consulting',
     companyId: COMPANY_DATA_SEED_IDS.ID_46,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3187,9 +2905,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-93',
     jobTitle: 'Office manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_47,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3208,9 +2923,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-94',
     jobTitle: "Barrister's clerk",
     companyId: COMPANY_DATA_SEED_IDS.ID_47,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3229,9 +2941,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-95',
     jobTitle: 'Lecturer, higher education',
     companyId: COMPANY_DATA_SEED_IDS.ID_48,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3250,9 +2959,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-96',
     jobTitle: 'Psychologist, clinical',
     companyId: COMPANY_DATA_SEED_IDS.ID_48,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3271,9 +2977,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-97',
     jobTitle: 'Immunologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_49,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3292,9 +2995,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-98',
     jobTitle: 'Professor Emeritus',
     companyId: COMPANY_DATA_SEED_IDS.ID_49,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3313,9 +3013,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-99',
     jobTitle: 'Ship broker',
     companyId: COMPANY_DATA_SEED_IDS.ID_50,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3334,9 +3031,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-100',
     jobTitle: 'Network engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_50,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3355,9 +3049,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-101',
     jobTitle: 'Information officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_51,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3376,9 +3067,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-102',
     jobTitle: 'Civil Service fast streamer',
     companyId: COMPANY_DATA_SEED_IDS.ID_51,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3397,9 +3085,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-103',
     jobTitle: 'Editorial assistant',
     companyId: COMPANY_DATA_SEED_IDS.ID_52,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3418,9 +3103,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-104',
     jobTitle: 'Quality manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_52,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3439,9 +3121,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-105',
     jobTitle: 'Air cabin crew',
     companyId: COMPANY_DATA_SEED_IDS.ID_53,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3460,9 +3139,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-106',
     jobTitle: 'Museum/gallery conservator',
     companyId: COMPANY_DATA_SEED_IDS.ID_53,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3481,9 +3157,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-107',
     jobTitle: 'Radio broadcast assistant',
     companyId: COMPANY_DATA_SEED_IDS.ID_54,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3502,9 +3175,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-108',
     jobTitle: 'Market researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_54,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3523,9 +3193,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-109',
     jobTitle: 'Environmental manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_55,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3544,9 +3211,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-110',
     jobTitle: 'Operations geologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_55,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3565,9 +3229,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-111',
     jobTitle: 'Surveyor, commercial/residential',
     companyId: COMPANY_DATA_SEED_IDS.ID_56,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3586,9 +3247,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-112',
     jobTitle: 'Engineer, maintenance (IT)',
     companyId: COMPANY_DATA_SEED_IDS.ID_56,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3607,9 +3265,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-113',
     jobTitle: 'Psychologist, forensic',
     companyId: COMPANY_DATA_SEED_IDS.ID_57,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3628,9 +3283,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-114',
     jobTitle: 'Nurse, adult',
     companyId: COMPANY_DATA_SEED_IDS.ID_57,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3649,9 +3301,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-115',
     jobTitle: 'Dramatherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_58,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3670,9 +3319,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-116',
     jobTitle: 'Surveyor, minerals',
     companyId: COMPANY_DATA_SEED_IDS.ID_58,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3691,9 +3337,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-117',
     jobTitle: 'Programme researcher, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_59,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3712,9 +3355,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-118',
     jobTitle: 'Fast food restaurant manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_59,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3733,9 +3373,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-119',
     jobTitle: 'Surgeon',
     companyId: COMPANY_DATA_SEED_IDS.ID_60,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3754,9 +3391,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-120',
     jobTitle: 'Fine artist',
     companyId: COMPANY_DATA_SEED_IDS.ID_60,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3775,9 +3409,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-121',
     jobTitle: 'Visual merchandiser',
     companyId: COMPANY_DATA_SEED_IDS.ID_61,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3796,9 +3427,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-122',
     jobTitle: 'Radio producer',
     companyId: COMPANY_DATA_SEED_IDS.ID_61,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3817,9 +3445,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-123',
     jobTitle: 'Production assistant, television',
     companyId: COMPANY_DATA_SEED_IDS.ID_62,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3838,9 +3463,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-124',
     jobTitle: 'Television/film/video producer',
     companyId: COMPANY_DATA_SEED_IDS.ID_62,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3859,9 +3481,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-125',
     jobTitle: 'Accountant, chartered public finance',
     companyId: COMPANY_DATA_SEED_IDS.ID_63,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3880,9 +3499,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-126',
     jobTitle: 'Accommodation manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_63,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3901,9 +3517,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-127',
     jobTitle: 'Music tutor',
     companyId: COMPANY_DATA_SEED_IDS.ID_64,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3922,9 +3535,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-128',
     jobTitle: 'Theme park manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_64,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3943,9 +3553,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-129',
     jobTitle: 'Artist',
     companyId: COMPANY_DATA_SEED_IDS.ID_65,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3964,9 +3571,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-130',
     jobTitle: 'Special effects artist',
     companyId: COMPANY_DATA_SEED_IDS.ID_65,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3985,9 +3589,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-131',
     jobTitle: 'Lobbyist',
     companyId: COMPANY_DATA_SEED_IDS.ID_66,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4006,9 +3607,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-132',
     jobTitle: 'Secretary, company',
     companyId: COMPANY_DATA_SEED_IDS.ID_66,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4027,9 +3625,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-133',
     jobTitle: 'Product manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_67,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4048,9 +3643,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-134',
     jobTitle: 'Sound technician, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_67,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4069,9 +3661,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-135',
     jobTitle: 'Editorial assistant',
     companyId: COMPANY_DATA_SEED_IDS.ID_68,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4090,9 +3679,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-136',
     jobTitle: 'Energy manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_68,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4111,9 +3697,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-137',
     jobTitle: 'Medical secretary',
     companyId: COMPANY_DATA_SEED_IDS.ID_69,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4132,9 +3715,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-138',
     jobTitle: 'Armed forces operational officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_69,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4153,9 +3733,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-139',
     jobTitle: 'Call centre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_70,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4174,9 +3751,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-140',
     jobTitle: 'Automotive engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_70,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4195,9 +3769,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-141',
     jobTitle: 'Surveyor, building',
     companyId: COMPANY_DATA_SEED_IDS.ID_71,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4216,9 +3787,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-142',
     jobTitle: 'Clinical cytogeneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_71,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4237,9 +3805,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-143',
     jobTitle: 'Surveyor, rural practice',
     companyId: COMPANY_DATA_SEED_IDS.ID_72,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4258,9 +3823,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-144',
     jobTitle: 'Multimedia programmer',
     companyId: COMPANY_DATA_SEED_IDS.ID_72,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4279,9 +3841,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-145',
     jobTitle: 'Arts development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_73,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4300,9 +3859,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-146',
     jobTitle: 'Engineer, energy',
     companyId: COMPANY_DATA_SEED_IDS.ID_73,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4321,9 +3877,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-147',
     jobTitle: 'Armed forces operational officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_74,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4342,9 +3895,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-148',
     jobTitle: 'Call centre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_74,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4363,9 +3913,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-149',
     jobTitle: 'Arts administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_75,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4384,9 +3931,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-150',
     jobTitle: 'Community pharmacist',
     companyId: COMPANY_DATA_SEED_IDS.ID_75,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4405,9 +3949,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-151',
     jobTitle: 'Equities trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_76,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4426,9 +3967,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-152',
     jobTitle: 'Maintenance engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_76,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4447,9 +3985,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-153',
     jobTitle: 'General practice doctor',
     companyId: COMPANY_DATA_SEED_IDS.ID_77,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4468,9 +4003,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-154',
     jobTitle: 'Public relations officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_77,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4489,9 +4021,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-155',
     jobTitle: 'Advertising account planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_78,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4510,9 +4039,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-156',
     jobTitle: 'Actuary',
     companyId: COMPANY_DATA_SEED_IDS.ID_78,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4531,9 +4057,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-157',
     jobTitle: 'Tourism officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_79,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4552,9 +4075,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-158',
     jobTitle: 'Editor, magazine features',
     companyId: COMPANY_DATA_SEED_IDS.ID_79,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4573,9 +4093,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-159',
     jobTitle: 'Commercial art gallery manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_80,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4594,9 +4111,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-160',
     jobTitle: 'Engineer, production',
     companyId: COMPANY_DATA_SEED_IDS.ID_80,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4615,9 +4129,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-161',
     jobTitle: 'Osteopath',
     companyId: COMPANY_DATA_SEED_IDS.ID_81,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4636,9 +4147,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-162',
     jobTitle: 'Production engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_81,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4657,9 +4165,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-163',
     jobTitle: 'Interior and spatial designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_82,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4678,9 +4183,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-164',
     jobTitle: 'Engineer, electronics',
     companyId: COMPANY_DATA_SEED_IDS.ID_82,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4699,9 +4201,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-165',
     jobTitle: 'Designer, blown glass/stained glass',
     companyId: COMPANY_DATA_SEED_IDS.ID_83,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4720,9 +4219,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-166',
     jobTitle: 'Higher education lecturer',
     companyId: COMPANY_DATA_SEED_IDS.ID_83,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4741,9 +4237,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-167',
     jobTitle: 'Environmental manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_84,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4762,9 +4255,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-168',
     jobTitle: 'Health and safety inspector',
     companyId: COMPANY_DATA_SEED_IDS.ID_84,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4783,9 +4273,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-169',
     jobTitle: 'Banker',
     companyId: COMPANY_DATA_SEED_IDS.ID_85,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4804,9 +4291,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-170',
     jobTitle: 'Educational psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_85,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4825,9 +4309,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-171',
     jobTitle: 'Arboriculturist',
     companyId: COMPANY_DATA_SEED_IDS.ID_86,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4846,9 +4327,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-172',
     jobTitle: 'Chiropractor',
     companyId: COMPANY_DATA_SEED_IDS.ID_86,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4867,9 +4345,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-173',
     jobTitle: 'Leisure centre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_87,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4888,9 +4363,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-174',
     jobTitle: 'Press photographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_87,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4909,9 +4381,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-175',
     jobTitle: 'Broadcast engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_88,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4930,9 +4399,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-176',
     jobTitle: 'General practice doctor',
     companyId: COMPANY_DATA_SEED_IDS.ID_88,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4951,9 +4417,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-177',
     jobTitle: 'Nurse, mental health',
     companyId: COMPANY_DATA_SEED_IDS.ID_89,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4972,9 +4435,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-178',
     jobTitle: 'Industrial buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_89,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4993,9 +4453,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-179',
     jobTitle: 'General practice doctor',
     companyId: COMPANY_DATA_SEED_IDS.ID_90,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5014,9 +4471,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-180',
     jobTitle: 'Insurance broker',
     companyId: COMPANY_DATA_SEED_IDS.ID_90,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5035,9 +4489,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-181',
     jobTitle: 'Engineer, broadcasting (operations)',
     companyId: COMPANY_DATA_SEED_IDS.ID_91,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5056,9 +4507,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-182',
     jobTitle: 'Clinical embryologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_91,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5077,9 +4525,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-183',
     jobTitle: 'Programmer, multimedia',
     companyId: COMPANY_DATA_SEED_IDS.ID_92,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5098,9 +4543,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-184',
     jobTitle: 'Catering manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_92,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5119,9 +4561,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-185',
     jobTitle: 'Event organiser',
     companyId: COMPANY_DATA_SEED_IDS.ID_93,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5140,9 +4579,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-186',
     jobTitle: 'Charity officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_93,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5161,9 +4597,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-187',
     jobTitle: 'Trading standards officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_94,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5182,9 +4615,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-188',
     jobTitle: 'Nutritional therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_94,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5203,9 +4633,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-189',
     jobTitle: 'Journalist, broadcasting',
     companyId: COMPANY_DATA_SEED_IDS.ID_95,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5224,9 +4651,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-190',
     jobTitle: 'Licensed conveyancer',
     companyId: COMPANY_DATA_SEED_IDS.ID_95,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5245,9 +4669,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-191',
     jobTitle: 'Product manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_96,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5266,9 +4687,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-192',
     jobTitle: 'Community education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_96,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5287,9 +4705,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-193',
     jobTitle: 'Insurance account manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_97,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5308,9 +4723,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-194',
     jobTitle: 'Careers information officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_97,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5329,9 +4741,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-195',
     jobTitle: 'Arboriculturist',
     companyId: COMPANY_DATA_SEED_IDS.ID_98,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5350,9 +4759,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-196',
     jobTitle: 'Logistics and distribution manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_98,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5371,9 +4777,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-197',
     jobTitle: 'Freight forwarder',
     companyId: COMPANY_DATA_SEED_IDS.ID_99,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5392,9 +4795,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-198',
     jobTitle: 'Learning disability nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_99,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5413,9 +4813,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-199',
     jobTitle: 'Legal secretary',
     companyId: COMPANY_DATA_SEED_IDS.ID_100,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5434,9 +4831,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-200',
     jobTitle: 'Surveyor, minerals',
     companyId: COMPANY_DATA_SEED_IDS.ID_100,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5455,9 +4849,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-201',
     jobTitle: 'Structural engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_101,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5476,9 +4867,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-202',
     jobTitle: 'Chartered public finance accountant',
     companyId: COMPANY_DATA_SEED_IDS.ID_101,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5497,9 +4885,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-203',
     jobTitle: 'Colour technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_102,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5518,9 +4903,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-204',
     jobTitle: 'Sports development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_102,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5539,9 +4921,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-205',
     jobTitle: 'Broadcast journalist',
     companyId: COMPANY_DATA_SEED_IDS.ID_103,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5560,9 +4939,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-206',
     jobTitle: 'Bonds trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_103,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5581,9 +4957,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-207',
     jobTitle: 'Production engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_104,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5602,9 +4975,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-208',
     jobTitle: 'Surveyor, building control',
     companyId: COMPANY_DATA_SEED_IDS.ID_104,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5623,9 +4993,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-209',
     jobTitle: 'Regulatory affairs officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_105,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5644,9 +5011,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-210',
     jobTitle: 'Therapist, sports',
     companyId: COMPANY_DATA_SEED_IDS.ID_105,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5665,9 +5029,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-211',
     jobTitle: 'Pathologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_106,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5686,9 +5047,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-212',
     jobTitle: 'Ophthalmologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_106,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5707,9 +5065,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-213',
     jobTitle: 'Recruitment consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_107,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5728,9 +5083,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-214',
     jobTitle: 'Ergonomist',
     companyId: COMPANY_DATA_SEED_IDS.ID_107,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5749,9 +5101,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-215',
     jobTitle: 'Nature conservation officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_108,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5770,9 +5119,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-216',
     jobTitle: 'Research officer, trade union',
     companyId: COMPANY_DATA_SEED_IDS.ID_108,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5791,9 +5137,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-217',
     jobTitle: 'Bonds trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_109,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5812,9 +5155,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-218',
     jobTitle: 'Waste management officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_109,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5833,9 +5173,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-219',
     jobTitle: 'Pathologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_110,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5854,9 +5191,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-220',
     jobTitle: 'Loss adjuster, chartered',
     companyId: COMPANY_DATA_SEED_IDS.ID_110,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5875,9 +5209,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-221',
     jobTitle: 'Land/geomatics surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_111,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5896,9 +5227,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-222',
     jobTitle: 'Theme park manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_111,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5917,9 +5245,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-223',
     jobTitle: 'Community education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_112,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5938,9 +5263,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-224',
     jobTitle: 'Arts administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_112,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5959,9 +5281,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-225',
     jobTitle: 'Oncologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_113,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5980,9 +5299,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-226',
     jobTitle: 'Engineer, biomedical',
     companyId: COMPANY_DATA_SEED_IDS.ID_113,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6001,9 +5317,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-227',
     jobTitle: 'Charity fundraiser',
     companyId: COMPANY_DATA_SEED_IDS.ID_114,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6022,9 +5335,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-228',
     jobTitle: 'Web designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_114,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6043,9 +5353,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-229',
     jobTitle: 'Airline pilot',
     companyId: COMPANY_DATA_SEED_IDS.ID_115,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6064,9 +5371,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-230',
     jobTitle: 'Immigration officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_115,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6085,9 +5389,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-231',
     jobTitle: 'Chief Marketing Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_116,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6106,9 +5407,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-232',
     jobTitle: 'Public house manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_116,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6127,9 +5425,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-233',
     jobTitle: 'Media planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_117,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6148,9 +5443,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-234',
     jobTitle: 'Surveyor, insurance',
     companyId: COMPANY_DATA_SEED_IDS.ID_117,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6169,9 +5461,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-235',
     jobTitle: 'Engineer, automotive',
     companyId: COMPANY_DATA_SEED_IDS.ID_118,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6190,9 +5479,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-236',
     jobTitle: 'Pharmacist, hospital',
     companyId: COMPANY_DATA_SEED_IDS.ID_118,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6211,9 +5497,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-237',
     jobTitle: 'Financial trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_119,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6232,9 +5515,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-238',
     jobTitle: 'Facilities manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_119,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6253,9 +5533,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-239',
     jobTitle: 'IT technical support officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_120,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6274,9 +5551,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-240',
     jobTitle: 'Chiropodist',
     companyId: COMPANY_DATA_SEED_IDS.ID_120,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6295,9 +5569,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-241',
     jobTitle: 'QuickActions analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_121,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6316,9 +5587,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-242',
     jobTitle: 'Sound technician, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_121,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6337,9 +5605,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-243',
     jobTitle: 'Research officer, political party',
     companyId: COMPANY_DATA_SEED_IDS.ID_122,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6358,9 +5623,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-244',
     jobTitle: 'Naval architect',
     companyId: COMPANY_DATA_SEED_IDS.ID_122,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6379,9 +5641,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-245',
     jobTitle: 'Purchasing manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_123,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6400,9 +5659,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-246',
     jobTitle: 'Physiotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_123,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6421,9 +5677,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-247',
     jobTitle: 'Materials engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_124,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6442,9 +5695,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-248',
     jobTitle: 'Educational psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_124,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6463,9 +5713,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-249',
     jobTitle: 'Geologist, engineering',
     companyId: COMPANY_DATA_SEED_IDS.ID_125,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6484,9 +5731,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-250',
     jobTitle: 'Art therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_125,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6505,9 +5749,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-251',
     jobTitle: 'Retail merchandiser',
     companyId: COMPANY_DATA_SEED_IDS.ID_126,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6526,9 +5767,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-252',
     jobTitle: 'Therapist, nutritional',
     companyId: COMPANY_DATA_SEED_IDS.ID_126,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6547,9 +5785,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-253',
     jobTitle: 'Dispensing optician',
     companyId: COMPANY_DATA_SEED_IDS.ID_127,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6568,9 +5803,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-254',
     jobTitle: 'Diagnostic radiographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_127,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6589,9 +5821,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-255',
     jobTitle: 'Surveyor, insurance',
     companyId: COMPANY_DATA_SEED_IDS.ID_128,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6610,9 +5839,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-256',
     jobTitle: 'Tour manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_128,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6631,9 +5857,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-257',
     jobTitle: 'Engineer, electrical',
     companyId: COMPANY_DATA_SEED_IDS.ID_129,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6652,9 +5875,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-258',
     jobTitle: 'Corporate investment banker',
     companyId: COMPANY_DATA_SEED_IDS.ID_129,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6673,9 +5893,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-259',
     jobTitle: 'Forensic psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_130,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6694,9 +5911,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-260',
     jobTitle: 'Youth worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_130,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6715,9 +5929,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-261',
     jobTitle: 'Location manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_131,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6736,9 +5947,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-262',
     jobTitle: 'Programmer, multimedia',
     companyId: COMPANY_DATA_SEED_IDS.ID_131,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6757,9 +5965,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-263',
     jobTitle: 'Archaeologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_132,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6778,9 +5983,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-264',
     jobTitle: 'Mechanical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_132,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6799,9 +6001,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-265',
     jobTitle: 'Sports development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_133,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6820,9 +6019,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-266',
     jobTitle: 'Clinical molecular geneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_133,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6841,9 +6037,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-267',
     jobTitle: 'Engineer, water',
     companyId: COMPANY_DATA_SEED_IDS.ID_134,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6862,9 +6055,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-268',
     jobTitle: 'Pension scheme manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_134,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6883,9 +6073,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-269',
     jobTitle: 'Pharmacist, community',
     companyId: COMPANY_DATA_SEED_IDS.ID_135,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6904,9 +6091,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-270',
     jobTitle: 'Aeronautical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_135,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6925,9 +6109,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-271',
     jobTitle: 'Water quality scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_136,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6946,9 +6127,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-272',
     jobTitle: 'Local government officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_136,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6967,9 +6145,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-273',
     jobTitle: 'Paediatric nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_137,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6988,9 +6163,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-274',
     jobTitle: 'Multimedia specialist',
     companyId: COMPANY_DATA_SEED_IDS.ID_137,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7009,9 +6181,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-275',
     jobTitle: 'Medical laboratory scientific officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_138,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7030,9 +6199,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-276',
     jobTitle: 'Solicitor',
     companyId: COMPANY_DATA_SEED_IDS.ID_138,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7051,9 +6217,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-277',
     jobTitle: 'Actor',
     companyId: COMPANY_DATA_SEED_IDS.ID_139,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7072,9 +6235,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-278',
     jobTitle: 'Press sub',
     companyId: COMPANY_DATA_SEED_IDS.ID_139,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7093,9 +6253,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-279',
     jobTitle: 'Food technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_140,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7114,9 +6271,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-280',
     jobTitle: 'Pension scheme manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_140,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7135,9 +6289,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-281',
     jobTitle: 'Occupational psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_141,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7156,9 +6307,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-282',
     jobTitle: 'Nutritional therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_141,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7177,9 +6325,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-283',
     jobTitle: 'Clinical research associate',
     companyId: COMPANY_DATA_SEED_IDS.ID_142,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7198,9 +6343,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-284',
     jobTitle: 'Bookseller',
     companyId: COMPANY_DATA_SEED_IDS.ID_142,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7219,9 +6361,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-285',
     jobTitle: 'Arts development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_143,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7240,9 +6379,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-286',
     jobTitle: 'Multimedia specialist',
     companyId: COMPANY_DATA_SEED_IDS.ID_143,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7261,9 +6397,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-287',
     jobTitle: 'Phytotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_144,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7282,9 +6415,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-288',
     jobTitle: 'Conservation officer, nature',
     companyId: COMPANY_DATA_SEED_IDS.ID_144,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7303,9 +6433,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-289',
     jobTitle: 'Field trials officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_145,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7324,9 +6451,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-290',
     jobTitle: 'Exhibition designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_145,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7345,9 +6469,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-291',
     jobTitle: 'Psychologist, occupational',
     companyId: COMPANY_DATA_SEED_IDS.ID_146,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7366,9 +6487,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-292',
     jobTitle: 'Network engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_146,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7387,9 +6505,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-293',
     jobTitle: 'Technical brewer',
     companyId: COMPANY_DATA_SEED_IDS.ID_147,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7408,9 +6523,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-294',
     jobTitle: 'Geneticist, molecular',
     companyId: COMPANY_DATA_SEED_IDS.ID_147,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7429,9 +6541,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-295',
     jobTitle: 'Writer',
     companyId: COMPANY_DATA_SEED_IDS.ID_148,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7450,9 +6559,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-296',
     jobTitle: 'Chief Marketing Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_148,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7471,9 +6577,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-297',
     jobTitle: 'Farm manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_149,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7492,9 +6595,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-298',
     jobTitle: 'QuickActions analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_149,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7513,9 +6613,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-299',
     jobTitle: 'Sports therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_150,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7534,9 +6631,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-300',
     jobTitle: 'Manufacturing engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_150,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7555,9 +6649,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-301',
     jobTitle: 'Water engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_151,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7576,9 +6667,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-302',
     jobTitle: 'Designer, industrial/product',
     companyId: COMPANY_DATA_SEED_IDS.ID_151,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7597,9 +6685,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-303',
     jobTitle: 'Surveyor, insurance',
     companyId: COMPANY_DATA_SEED_IDS.ID_152,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7618,9 +6703,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-304',
     jobTitle: 'Ecologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_152,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7639,9 +6721,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-305',
     jobTitle: 'Biomedical scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_153,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7660,9 +6739,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-306',
     jobTitle: 'Designer, interior/spatial',
     companyId: COMPANY_DATA_SEED_IDS.ID_153,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7681,9 +6757,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-307',
     jobTitle: 'Medical illustrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_154,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7702,9 +6775,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-308',
     jobTitle: 'Systems analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_154,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7723,9 +6793,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-309',
     jobTitle: 'Radio broadcast assistant',
     companyId: COMPANY_DATA_SEED_IDS.ID_155,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7744,9 +6811,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-310',
     jobTitle: 'Data processing manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_155,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7765,9 +6829,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-311',
     jobTitle: 'Trade union research officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_156,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7786,9 +6847,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-312',
     jobTitle: 'Lecturer, higher education',
     companyId: COMPANY_DATA_SEED_IDS.ID_156,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7807,9 +6865,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-313',
     jobTitle: 'Pensions consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_157,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7828,9 +6883,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-314',
     jobTitle: 'Optometrist',
     companyId: COMPANY_DATA_SEED_IDS.ID_157,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7849,9 +6901,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-315',
     jobTitle: 'Armed forces operational officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_158,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7870,9 +6919,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-316',
     jobTitle: 'Editor, magazine features',
     companyId: COMPANY_DATA_SEED_IDS.ID_158,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7891,9 +6937,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-317',
     jobTitle: 'Press sub',
     companyId: COMPANY_DATA_SEED_IDS.ID_159,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7912,9 +6955,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-318',
     jobTitle: 'Catering manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_159,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7933,9 +6973,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-319',
     jobTitle: 'Production assistant, radio',
     companyId: COMPANY_DATA_SEED_IDS.ID_160,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7954,9 +6991,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-320',
     jobTitle: 'Pensions consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_160,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7975,9 +7009,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-321',
     jobTitle: 'Printmaker',
     companyId: COMPANY_DATA_SEED_IDS.ID_161,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7996,9 +7027,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-322',
     jobTitle: 'Psychologist, forensic',
     companyId: COMPANY_DATA_SEED_IDS.ID_161,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8017,9 +7045,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-323',
     jobTitle: 'Hospital doctor',
     companyId: COMPANY_DATA_SEED_IDS.ID_162,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8038,9 +7063,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-324',
     jobTitle: 'Lighting technician, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_162,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8059,9 +7081,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-325',
     jobTitle: 'Bonds trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_163,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8080,9 +7099,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-326',
     jobTitle: 'Hospital pharmacist',
     companyId: COMPANY_DATA_SEED_IDS.ID_163,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8101,9 +7117,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-327',
     jobTitle: 'Podiatrist',
     companyId: COMPANY_DATA_SEED_IDS.ID_164,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8122,9 +7135,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-328',
     jobTitle: "Politician's assistant",
     companyId: COMPANY_DATA_SEED_IDS.ID_164,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8143,9 +7153,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-329',
     jobTitle: 'Geochemist',
     companyId: COMPANY_DATA_SEED_IDS.ID_165,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8164,9 +7171,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-330',
     jobTitle: 'Pensions consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_165,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8185,9 +7189,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-331',
     jobTitle: 'Metallurgist',
     companyId: COMPANY_DATA_SEED_IDS.ID_166,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8206,9 +7207,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-332',
     jobTitle: 'Conservation officer, historic buildings',
     companyId: COMPANY_DATA_SEED_IDS.ID_166,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8227,9 +7225,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-333',
     jobTitle: 'Sound technician, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_167,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8248,9 +7243,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-334',
     jobTitle: 'Contracting civil engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_167,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8269,9 +7261,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-335',
     jobTitle: 'Community pharmacist',
     companyId: COMPANY_DATA_SEED_IDS.ID_168,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8290,9 +7279,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-336',
     jobTitle: 'Civil Service administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_168,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8311,9 +7297,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-337',
     jobTitle: 'Designer, furniture',
     companyId: COMPANY_DATA_SEED_IDS.ID_169,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8332,9 +7315,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-338',
     jobTitle: 'Commissioning editor',
     companyId: COMPANY_DATA_SEED_IDS.ID_169,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8353,9 +7333,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-339',
     jobTitle: 'Merchant navy officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_170,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8374,9 +7351,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-340',
     jobTitle: 'Lecturer, further education',
     companyId: COMPANY_DATA_SEED_IDS.ID_170,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8395,9 +7369,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-341',
     jobTitle: 'Corporate investment banker',
     companyId: COMPANY_DATA_SEED_IDS.ID_171,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8416,9 +7387,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-342',
     jobTitle: 'Scientist, clinical (histocompatibility and immunogenetics)',
     companyId: COMPANY_DATA_SEED_IDS.ID_171,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8437,9 +7405,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-343',
     jobTitle: 'Press sub',
     companyId: COMPANY_DATA_SEED_IDS.ID_172,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8458,9 +7423,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-344',
     jobTitle: 'Plant breeder/geneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_172,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8479,9 +7441,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-345',
     jobTitle: 'Dealer',
     companyId: COMPANY_DATA_SEED_IDS.ID_173,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8500,9 +7459,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-346',
     jobTitle: 'Phytotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_173,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8521,9 +7477,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-347',
     jobTitle: 'TEFL teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_174,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8542,9 +7495,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-348',
     jobTitle: 'Brewing technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_174,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8563,9 +7513,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-349',
     jobTitle: 'Chief Executive Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_175,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8584,9 +7531,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-350',
     jobTitle: 'Chiropractor',
     companyId: COMPANY_DATA_SEED_IDS.ID_175,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8605,9 +7549,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-351',
     jobTitle: 'Agricultural engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_176,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8626,9 +7567,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-352',
     jobTitle: 'Surveyor, quantity',
     companyId: COMPANY_DATA_SEED_IDS.ID_176,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8647,9 +7585,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-353',
     jobTitle: 'Translator',
     companyId: COMPANY_DATA_SEED_IDS.ID_177,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8668,9 +7603,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-354',
     jobTitle: 'Accountant, chartered certified',
     companyId: COMPANY_DATA_SEED_IDS.ID_177,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8689,9 +7621,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-355',
     jobTitle: 'Advertising copywriter',
     companyId: COMPANY_DATA_SEED_IDS.ID_178,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8710,9 +7639,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-356',
     jobTitle: 'Materials engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_178,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8731,9 +7657,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-357',
     jobTitle: 'Soil scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_179,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8752,9 +7675,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-358',
     jobTitle: 'Therapeutic radiographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_179,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8773,9 +7693,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-359',
     jobTitle: 'Theatre director',
     companyId: COMPANY_DATA_SEED_IDS.ID_180,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8794,9 +7711,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-360',
     jobTitle: 'Medical illustrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_180,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8815,9 +7729,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-361',
     jobTitle: 'Teaching laboratory technician',
     companyId: COMPANY_DATA_SEED_IDS.ID_181,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8836,9 +7747,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-362',
     jobTitle: 'Product/process development scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_181,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8857,9 +7765,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-363',
     jobTitle: 'Surveyor, hydrographic',
     companyId: COMPANY_DATA_SEED_IDS.ID_182,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8878,9 +7783,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-364',
     jobTitle: 'Engineer, communications',
     companyId: COMPANY_DATA_SEED_IDS.ID_182,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8899,9 +7801,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-365',
     jobTitle: 'Engineer, production',
     companyId: COMPANY_DATA_SEED_IDS.ID_183,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8920,9 +7819,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-366',
     jobTitle: 'Health and safety inspector',
     companyId: COMPANY_DATA_SEED_IDS.ID_183,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8941,9 +7837,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-367',
     jobTitle: 'Training and development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_184,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8962,9 +7855,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-368',
     jobTitle: 'Tourist information centre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_184,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8983,9 +7873,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-369',
     jobTitle: 'Pharmacist, community',
     companyId: COMPANY_DATA_SEED_IDS.ID_185,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9004,9 +7891,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-370',
     jobTitle: 'Mechanical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_185,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9025,9 +7909,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-371',
     jobTitle: 'Pharmacologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_186,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9046,9 +7927,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-372',
     jobTitle: 'Furniture conservator/restorer',
     companyId: COMPANY_DATA_SEED_IDS.ID_186,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9067,9 +7945,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-373',
     jobTitle: 'Cytogeneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_187,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9088,9 +7963,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-374',
     jobTitle: 'Commercial/residential surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_187,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9109,9 +7981,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-375',
     jobTitle: 'Advertising copywriter',
     companyId: COMPANY_DATA_SEED_IDS.ID_188,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9130,9 +7999,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-376',
     jobTitle: 'Chief Operating Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_188,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9151,9 +8017,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-377',
     jobTitle: 'Nurse, learning disability',
     companyId: COMPANY_DATA_SEED_IDS.ID_189,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9172,9 +8035,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-378',
     jobTitle: 'Education officer, environmental',
     companyId: COMPANY_DATA_SEED_IDS.ID_189,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9193,9 +8053,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-379',
     jobTitle: 'Civil engineer, consulting',
     companyId: COMPANY_DATA_SEED_IDS.ID_190,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9214,9 +8071,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-380',
     jobTitle: 'Commercial/residential surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_190,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9235,9 +8089,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-381',
     jobTitle: 'Higher education lecturer',
     companyId: COMPANY_DATA_SEED_IDS.ID_191,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9256,9 +8107,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-382',
     jobTitle: 'Corporate treasurer',
     companyId: COMPANY_DATA_SEED_IDS.ID_191,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9277,9 +8125,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-383',
     jobTitle: 'Actuary',
     companyId: COMPANY_DATA_SEED_IDS.ID_192,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9298,9 +8143,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-384',
     jobTitle: 'Mental health nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_192,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9319,9 +8161,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-385',
     jobTitle: 'Counselling psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_193,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9340,9 +8179,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-386',
     jobTitle: 'Scientific laboratory technician',
     companyId: COMPANY_DATA_SEED_IDS.ID_193,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9361,9 +8197,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-387',
     jobTitle: "Politician's assistant",
     companyId: COMPANY_DATA_SEED_IDS.ID_194,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9382,9 +8215,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-388',
     jobTitle: 'Medical secretary',
     companyId: COMPANY_DATA_SEED_IDS.ID_194,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9403,9 +8233,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-389',
     jobTitle: 'Osteopath',
     companyId: COMPANY_DATA_SEED_IDS.ID_195,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9424,9 +8251,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-390',
     jobTitle: 'Designer, graphic',
     companyId: COMPANY_DATA_SEED_IDS.ID_195,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9445,9 +8269,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-391',
     jobTitle: 'Claims inspector/assessor',
     companyId: COMPANY_DATA_SEED_IDS.ID_196,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9466,9 +8287,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-392',
     jobTitle: 'Artist',
     companyId: COMPANY_DATA_SEED_IDS.ID_196,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9487,9 +8305,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-393',
     jobTitle: 'Lecturer, further education',
     companyId: COMPANY_DATA_SEED_IDS.ID_197,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9508,9 +8323,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-394',
     jobTitle: 'Conservator, furniture',
     companyId: COMPANY_DATA_SEED_IDS.ID_197,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9529,9 +8341,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-395',
     jobTitle: 'Teaching laboratory technician',
     companyId: COMPANY_DATA_SEED_IDS.ID_198,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9550,9 +8359,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-396',
     jobTitle: 'Passenger transport manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_198,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9571,9 +8377,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-397',
     jobTitle: 'Conservator, furniture',
     companyId: COMPANY_DATA_SEED_IDS.ID_199,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9592,9 +8395,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-398',
     jobTitle: 'Education officer, community',
     companyId: COMPANY_DATA_SEED_IDS.ID_199,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9613,9 +8413,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-399',
     jobTitle: 'Surveyor, land/geomatics',
     companyId: COMPANY_DATA_SEED_IDS.ID_200,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9634,9 +8431,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-400',
     jobTitle: 'Doctor, general practice',
     companyId: COMPANY_DATA_SEED_IDS.ID_200,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9655,9 +8449,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-401',
     jobTitle: 'Museum/gallery curator',
     companyId: COMPANY_DATA_SEED_IDS.ID_201,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9676,9 +8467,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-402',
     jobTitle: 'Tour manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_201,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9697,9 +8485,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-403',
     jobTitle: 'Adult guidance worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_202,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9718,9 +8503,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-404',
     jobTitle: 'Press photographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_202,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9739,9 +8521,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-405',
     jobTitle: 'Theatre stage manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_203,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9760,9 +8539,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-406',
     jobTitle: 'Air cabin crew',
     companyId: COMPANY_DATA_SEED_IDS.ID_203,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9781,9 +8557,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-407',
     jobTitle: 'Osteopath',
     companyId: COMPANY_DATA_SEED_IDS.ID_204,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9802,9 +8575,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-408',
     jobTitle: 'Public house manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_204,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9823,9 +8593,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-409',
     jobTitle: 'Call centre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_205,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9844,9 +8611,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-410',
     jobTitle: 'Media buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_205,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9865,9 +8629,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-411',
     jobTitle: 'Environmental education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_206,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9886,9 +8647,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-412',
     jobTitle: 'Acupuncturist',
     companyId: COMPANY_DATA_SEED_IDS.ID_206,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9907,9 +8665,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-413',
     jobTitle: 'Theatre director',
     companyId: COMPANY_DATA_SEED_IDS.ID_207,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9928,9 +8683,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-414',
     jobTitle: 'Office manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_207,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9949,9 +8701,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-415',
     jobTitle: 'Scientist, forensic',
     companyId: COMPANY_DATA_SEED_IDS.ID_208,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9970,9 +8719,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-416',
     jobTitle: 'Furniture conservator/restorer',
     companyId: COMPANY_DATA_SEED_IDS.ID_208,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9991,9 +8737,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-417',
     jobTitle: 'Catering manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_209,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10012,9 +8755,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-418',
     jobTitle: 'Air traffic controller',
     companyId: COMPANY_DATA_SEED_IDS.ID_209,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10033,9 +8773,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-419',
     jobTitle: 'Catering manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_210,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10054,9 +8791,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-420',
     jobTitle: 'Product designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_210,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10075,9 +8809,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-421',
     jobTitle: 'Theatre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_211,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10096,9 +8827,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-422',
     jobTitle: 'Financial trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_211,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10117,9 +8845,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-423',
     jobTitle: 'Horticultural consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_212,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10138,9 +8863,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-424',
     jobTitle: 'Dietitian',
     companyId: COMPANY_DATA_SEED_IDS.ID_212,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10159,9 +8881,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-425',
     jobTitle: 'Press photographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_213,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10180,9 +8899,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-426',
     jobTitle: 'Transport planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_213,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10201,9 +8917,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-427',
     jobTitle: 'Engineer, land',
     companyId: COMPANY_DATA_SEED_IDS.ID_214,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10222,9 +8935,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-428',
     jobTitle: 'Community arts worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_214,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10243,9 +8953,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-429',
     jobTitle: 'Television camera operator',
     companyId: COMPANY_DATA_SEED_IDS.ID_215,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10264,9 +8971,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-430',
     jobTitle: 'Science writer',
     companyId: COMPANY_DATA_SEED_IDS.ID_215,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10285,9 +8989,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-431',
     jobTitle: 'Runner, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_216,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10306,9 +9007,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-432',
     jobTitle: 'Scientist, research (medical)',
     companyId: COMPANY_DATA_SEED_IDS.ID_216,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10327,9 +9025,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-433',
     jobTitle: 'Radiographer, therapeutic',
     companyId: COMPANY_DATA_SEED_IDS.ID_217,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10348,9 +9043,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-434',
     jobTitle: 'Public house manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_217,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10369,9 +9061,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-435',
     jobTitle: 'Neurosurgeon',
     companyId: COMPANY_DATA_SEED_IDS.ID_218,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10390,9 +9079,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-436',
     jobTitle: 'Ranger/warden',
     companyId: COMPANY_DATA_SEED_IDS.ID_218,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10411,9 +9097,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-437',
     jobTitle: 'Translator',
     companyId: COMPANY_DATA_SEED_IDS.ID_219,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10432,9 +9115,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-438',
     jobTitle: 'Holiday representative',
     companyId: COMPANY_DATA_SEED_IDS.ID_219,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10453,9 +9133,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-439',
     jobTitle: 'Gaffer',
     companyId: COMPANY_DATA_SEED_IDS.ID_220,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10474,9 +9151,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-440',
     jobTitle: 'Emergency planning/management officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_220,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10495,9 +9169,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-441',
     jobTitle: 'Waste management officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_221,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10516,9 +9187,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-442',
     jobTitle: 'Embryologist, clinical',
     companyId: COMPANY_DATA_SEED_IDS.ID_221,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10537,9 +9205,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-443',
     jobTitle: 'Conservation officer, nature',
     companyId: COMPANY_DATA_SEED_IDS.ID_222,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10558,9 +9223,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-444',
     jobTitle: 'Restaurant manager, fast food',
     companyId: COMPANY_DATA_SEED_IDS.ID_222,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10579,9 +9241,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-445',
     jobTitle: 'Nutritional therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_223,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10600,9 +9259,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-446',
     jobTitle: 'Logistics and distribution manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_223,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10621,9 +9277,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-447',
     jobTitle: 'Museum education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_224,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10642,9 +9295,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-448',
     jobTitle: 'Teacher, adult education',
     companyId: COMPANY_DATA_SEED_IDS.ID_224,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10663,9 +9313,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-449',
     jobTitle: 'Exhibition designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_225,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10684,9 +9331,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-450',
     jobTitle: 'Industrial buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_225,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10705,9 +9349,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-451',
     jobTitle: 'Surveyor, planning and development',
     companyId: COMPANY_DATA_SEED_IDS.ID_226,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10726,9 +9367,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-452',
     jobTitle: 'Trade mark attorney',
     companyId: COMPANY_DATA_SEED_IDS.ID_226,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10747,9 +9385,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-453',
     jobTitle: 'Illustrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_227,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10768,9 +9403,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-454',
     jobTitle: 'Archivist',
     companyId: COMPANY_DATA_SEED_IDS.ID_227,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10789,9 +9421,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-455',
     jobTitle: 'Oncologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_228,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10810,9 +9439,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-456',
     jobTitle: 'Investment analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_228,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10831,9 +9457,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-457',
     jobTitle: 'Tourism officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_229,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10852,9 +9475,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-458',
     jobTitle: 'Civil engineer, consulting',
     companyId: COMPANY_DATA_SEED_IDS.ID_229,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10873,9 +9493,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-459',
     jobTitle: 'Financial controller',
     companyId: COMPANY_DATA_SEED_IDS.ID_230,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10894,9 +9511,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-460',
     jobTitle: 'Theatre director',
     companyId: COMPANY_DATA_SEED_IDS.ID_230,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10915,9 +9529,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-461',
     jobTitle: 'Musician',
     companyId: COMPANY_DATA_SEED_IDS.ID_231,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10936,9 +9547,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-462',
     jobTitle: 'Midwife',
     companyId: COMPANY_DATA_SEED_IDS.ID_231,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10957,9 +9565,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-463',
     jobTitle: 'General practice doctor',
     companyId: COMPANY_DATA_SEED_IDS.ID_232,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10978,9 +9583,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-464',
     jobTitle: 'Teacher, early years/pre',
     companyId: COMPANY_DATA_SEED_IDS.ID_232,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10999,9 +9601,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-465',
     jobTitle: 'Engineer, energy',
     companyId: COMPANY_DATA_SEED_IDS.ID_233,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11020,9 +9619,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-466',
     jobTitle: 'Trade union research officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_233,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11041,9 +9637,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-467',
     jobTitle: 'Air broker',
     companyId: COMPANY_DATA_SEED_IDS.ID_234,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11062,9 +9655,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-468',
     jobTitle: 'Sports administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_234,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11083,9 +9673,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-469',
     jobTitle: 'Occupational psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_235,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11104,9 +9691,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-470',
     jobTitle: 'Publishing rights manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_235,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11125,9 +9709,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-471',
     jobTitle: 'Chief Technology Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_236,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11146,9 +9727,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-472',
     jobTitle: 'Biochemist, clinical',
     companyId: COMPANY_DATA_SEED_IDS.ID_236,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11167,9 +9745,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-473',
     jobTitle: 'Medical sales representative',
     companyId: COMPANY_DATA_SEED_IDS.ID_237,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11188,9 +9763,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-474',
     jobTitle: 'Learning disability nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_237,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11209,9 +9781,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-475',
     jobTitle: 'Public relations officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_238,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11230,9 +9799,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-476',
     jobTitle: 'Ambulance person',
     companyId: COMPANY_DATA_SEED_IDS.ID_238,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11251,9 +9817,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-477',
     jobTitle: 'Animal technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_239,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11272,9 +9835,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-478',
     jobTitle: 'Historic buildings inspector/conservation officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_239,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11293,9 +9853,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-479',
     jobTitle: 'Theatre stage manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_240,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11314,9 +9871,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-480',
     jobTitle: 'Dramatherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_240,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11335,9 +9889,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-481',
     jobTitle: 'Catering manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_241,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11356,9 +9907,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-482',
     jobTitle: 'Logistics and distribution manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_241,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11377,9 +9925,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-483',
     jobTitle: 'English as a second language teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_242,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11398,9 +9943,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-484',
     jobTitle: 'Research scientist (maths)',
     companyId: COMPANY_DATA_SEED_IDS.ID_242,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11419,9 +9961,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-485',
     jobTitle: 'Games developer',
     companyId: COMPANY_DATA_SEED_IDS.ID_243,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11440,9 +9979,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-486',
     jobTitle: 'Teacher, secondary school',
     companyId: COMPANY_DATA_SEED_IDS.ID_243,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11461,9 +9997,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-487',
     jobTitle: 'Clinical molecular geneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_244,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11482,9 +10015,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-488',
     jobTitle: 'Learning disability nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_244,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11503,9 +10033,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-489',
     jobTitle: 'Accountant, chartered management',
     companyId: COMPANY_DATA_SEED_IDS.ID_245,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11524,9 +10051,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-490',
     jobTitle: 'Teacher, English as a foreign language',
     companyId: COMPANY_DATA_SEED_IDS.ID_245,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11545,9 +10069,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-491',
     jobTitle: 'Building services engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_246,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11566,9 +10087,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-492',
     jobTitle: 'Research officer, trade union',
     companyId: COMPANY_DATA_SEED_IDS.ID_246,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11587,9 +10105,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-493',
     jobTitle: 'Psychologist, counselling',
     companyId: COMPANY_DATA_SEED_IDS.ID_247,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11608,9 +10123,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-494',
     jobTitle: 'Surveyor, commercial/residential',
     companyId: COMPANY_DATA_SEED_IDS.ID_247,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11629,9 +10141,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-495',
     jobTitle: 'Cabin crew',
     companyId: COMPANY_DATA_SEED_IDS.ID_248,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11650,9 +10159,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-496',
     jobTitle: 'Sports development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_248,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11671,9 +10177,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-497',
     jobTitle: 'Theatre stage manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_249,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11692,9 +10195,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-498',
     jobTitle: 'Engineer, water',
     companyId: COMPANY_DATA_SEED_IDS.ID_249,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11713,9 +10213,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-499',
     jobTitle: 'Runner, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_250,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11734,9 +10231,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-500',
     jobTitle: 'Dentist',
     companyId: COMPANY_DATA_SEED_IDS.ID_250,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11755,9 +10249,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-501',
     jobTitle: 'Public relations officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_251,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11776,9 +10267,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-502',
     jobTitle: 'Therapist, sports',
     companyId: COMPANY_DATA_SEED_IDS.ID_251,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11797,9 +10285,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-503',
     jobTitle: 'Therapeutic radiographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_252,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11818,9 +10303,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-504',
     jobTitle: 'Herpetologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_252,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11839,9 +10321,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-505',
     jobTitle: 'Armed forces technical officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_253,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11860,9 +10339,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-506',
     jobTitle: 'Homeopath',
     companyId: COMPANY_DATA_SEED_IDS.ID_253,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11881,9 +10357,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-507',
     jobTitle: 'Clothing/textile technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_254,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11902,9 +10375,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-508',
     jobTitle: 'Trading standards officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_254,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11923,9 +10393,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-509',
     jobTitle: 'Scientist, marine',
     companyId: COMPANY_DATA_SEED_IDS.ID_255,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11944,9 +10411,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-510',
     jobTitle: 'Metallurgist',
     companyId: COMPANY_DATA_SEED_IDS.ID_255,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11965,9 +10429,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-511',
     jobTitle: 'Teacher, primary school',
     companyId: COMPANY_DATA_SEED_IDS.ID_256,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11986,9 +10447,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-512',
     jobTitle: 'Textile designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_256,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12007,9 +10465,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-513',
     jobTitle: 'General practice doctor',
     companyId: COMPANY_DATA_SEED_IDS.ID_257,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12028,9 +10483,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-514',
     jobTitle: 'Television floor manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_257,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12049,9 +10501,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-515',
     jobTitle: 'Social researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_258,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12070,9 +10519,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-516',
     jobTitle: 'Early years teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_258,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12091,9 +10537,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-517',
     jobTitle: 'Teaching laboratory technician',
     companyId: COMPANY_DATA_SEED_IDS.ID_259,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12112,9 +10555,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-518',
     jobTitle: 'Development worker, international aid',
     companyId: COMPANY_DATA_SEED_IDS.ID_259,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12133,9 +10573,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-519',
     jobTitle: 'Archaeologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_260,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12154,9 +10591,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-520',
     jobTitle: 'Accounting technician',
     companyId: COMPANY_DATA_SEED_IDS.ID_260,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12175,9 +10609,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-521',
     jobTitle: 'Retail buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_261,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12196,9 +10627,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-522',
     jobTitle: 'Environmental health practitioner',
     companyId: COMPANY_DATA_SEED_IDS.ID_261,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12217,9 +10645,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-523',
     jobTitle: 'Games developer',
     companyId: COMPANY_DATA_SEED_IDS.ID_262,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12238,9 +10663,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-524',
     jobTitle: 'Surveyor, land/geomatics',
     companyId: COMPANY_DATA_SEED_IDS.ID_262,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12259,9 +10681,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-525',
     jobTitle: 'Exercise physiologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_263,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12280,9 +10699,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-526',
     jobTitle: 'Forest/woodland manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_263,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12301,9 +10717,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-527',
     jobTitle: 'Camera operator',
     companyId: COMPANY_DATA_SEED_IDS.ID_264,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12322,9 +10735,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-528',
     jobTitle: 'Publishing copy',
     companyId: COMPANY_DATA_SEED_IDS.ID_264,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12343,9 +10753,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-529',
     jobTitle: 'Geologist, engineering',
     companyId: COMPANY_DATA_SEED_IDS.ID_265,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12364,9 +10771,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-530',
     jobTitle: 'Youth worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_265,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12385,9 +10789,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-531',
     jobTitle: 'Graphic designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_266,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12406,9 +10807,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-532',
     jobTitle: 'Therapist, art',
     companyId: COMPANY_DATA_SEED_IDS.ID_266,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12427,9 +10825,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-533',
     jobTitle: 'Programme researcher, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_267,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12448,9 +10843,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-534',
     jobTitle: 'Hydrologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_267,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12469,9 +10861,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-535',
     jobTitle: 'Logistics and distribution manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_268,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12490,9 +10879,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-536',
     jobTitle: 'Location manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_268,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12511,9 +10897,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-537',
     jobTitle: 'Nurse, mental health',
     companyId: COMPANY_DATA_SEED_IDS.ID_269,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12532,9 +10915,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-538',
     jobTitle: 'Water engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_269,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12553,9 +10933,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-539',
     jobTitle: 'Hospital doctor',
     companyId: COMPANY_DATA_SEED_IDS.ID_270,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12574,9 +10951,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-540',
     jobTitle: 'Administrator, sports',
     companyId: COMPANY_DATA_SEED_IDS.ID_270,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12595,9 +10969,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-541',
     jobTitle: 'Administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_271,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12616,9 +10987,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-542',
     jobTitle: 'Environmental consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_271,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12637,9 +11005,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-543',
     jobTitle: 'Advice worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_272,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12658,9 +11023,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-544',
     jobTitle: 'Therapist, occupational',
     companyId: COMPANY_DATA_SEED_IDS.ID_272,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12679,9 +11041,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-545',
     jobTitle: 'Press photographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_273,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12700,9 +11059,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-546',
     jobTitle: 'Advertising account executive',
     companyId: COMPANY_DATA_SEED_IDS.ID_273,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12721,9 +11077,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-547',
     jobTitle: 'Animator',
     companyId: COMPANY_DATA_SEED_IDS.ID_274,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12742,9 +11095,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-548',
     jobTitle: 'Producer, television/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_274,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12763,9 +11113,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-549',
     jobTitle: 'Ophthalmologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_275,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12784,9 +11131,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-550',
     jobTitle: 'Museum education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_275,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12805,9 +11149,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-551',
     jobTitle: 'Actor',
     companyId: COMPANY_DATA_SEED_IDS.ID_276,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12826,9 +11167,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-552',
     jobTitle: 'Surveyor, planning and development',
     companyId: COMPANY_DATA_SEED_IDS.ID_276,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12847,9 +11185,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-553',
     jobTitle: 'Senior tax professional/tax inspector',
     companyId: COMPANY_DATA_SEED_IDS.ID_277,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12868,9 +11203,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-554',
     jobTitle: 'Lecturer, further education',
     companyId: COMPANY_DATA_SEED_IDS.ID_277,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12889,9 +11221,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-555',
     jobTitle: 'Engineer, structural',
     companyId: COMPANY_DATA_SEED_IDS.ID_278,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12910,9 +11239,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-556',
     jobTitle: 'Exercise physiologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_278,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12931,9 +11257,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-557',
     jobTitle: 'Clinical embryologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_279,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12952,9 +11275,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-558',
     jobTitle: 'Air traffic controller',
     companyId: COMPANY_DATA_SEED_IDS.ID_279,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12973,9 +11293,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-559',
     jobTitle: 'Seismic interpreter',
     companyId: COMPANY_DATA_SEED_IDS.ID_280,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12994,9 +11311,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-560',
     jobTitle: 'Insurance risk surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_280,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13015,9 +11329,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-561',
     jobTitle: 'Engineer, electrical',
     companyId: COMPANY_DATA_SEED_IDS.ID_281,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13036,9 +11347,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-562',
     jobTitle: 'Legal secretary',
     companyId: COMPANY_DATA_SEED_IDS.ID_281,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13057,9 +11365,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-563',
     jobTitle: 'Advertising art director',
     companyId: COMPANY_DATA_SEED_IDS.ID_282,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13078,9 +11383,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-564',
     jobTitle: 'Teacher, secondary school',
     companyId: COMPANY_DATA_SEED_IDS.ID_282,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13099,9 +11401,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-565',
     jobTitle: 'IT sales professional',
     companyId: COMPANY_DATA_SEED_IDS.ID_283,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13120,9 +11419,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-566',
     jobTitle: 'Education officer, environmental',
     companyId: COMPANY_DATA_SEED_IDS.ID_283,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13141,9 +11437,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-567',
     jobTitle: 'Diplomatic Services operational officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_284,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13162,9 +11455,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-568',
     jobTitle: 'Armed forces operational officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_284,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13183,9 +11473,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-569',
     jobTitle: 'Administrator, arts',
     companyId: COMPANY_DATA_SEED_IDS.ID_285,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13204,9 +11491,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-570',
     jobTitle: 'Osteopath',
     companyId: COMPANY_DATA_SEED_IDS.ID_285,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13225,9 +11509,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-571',
     jobTitle: 'Financial planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_286,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13246,9 +11527,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-572',
     jobTitle: 'Glass blower/designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_286,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13267,9 +11545,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-573',
     jobTitle: 'Teacher, primary school',
     companyId: COMPANY_DATA_SEED_IDS.ID_287,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13288,9 +11563,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-574',
     jobTitle: 'Recycling officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_287,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13309,9 +11581,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-575',
     jobTitle: 'Production engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_288,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13330,9 +11599,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-576',
     jobTitle: 'Chief Technology Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_288,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13351,9 +11617,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-577',
     jobTitle: 'Financial manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_289,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13372,9 +11635,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-578',
     jobTitle: 'Geneticist, molecular',
     companyId: COMPANY_DATA_SEED_IDS.ID_289,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13393,9 +11653,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-579',
     jobTitle: 'Proofreader',
     companyId: COMPANY_DATA_SEED_IDS.ID_290,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13414,9 +11671,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-580',
     jobTitle: 'Diplomatic Services operational officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_290,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13435,9 +11689,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-581',
     jobTitle: 'Field trials officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_291,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13456,9 +11707,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-582',
     jobTitle: 'Ceramics designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_291,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13477,9 +11725,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-583',
     jobTitle: 'Therapist, nutritional',
     companyId: COMPANY_DATA_SEED_IDS.ID_292,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13498,9 +11743,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-584',
     jobTitle: 'IT consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_292,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13519,9 +11761,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-585',
     jobTitle: 'Corporate treasurer',
     companyId: COMPANY_DATA_SEED_IDS.ID_293,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13540,9 +11779,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-586',
     jobTitle: 'Textile designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_293,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13561,9 +11797,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-587',
     jobTitle: 'Maintenance engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_294,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13582,9 +11815,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-588',
     jobTitle: 'Customer service manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_294,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13603,9 +11833,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-589',
     jobTitle: 'Theatre director',
     companyId: COMPANY_DATA_SEED_IDS.ID_295,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13624,9 +11851,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-590',
     jobTitle: 'Geophysical data processor',
     companyId: COMPANY_DATA_SEED_IDS.ID_295,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13645,9 +11869,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-591',
     jobTitle: 'Civil engineer, contracting',
     companyId: COMPANY_DATA_SEED_IDS.ID_296,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13666,9 +11887,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-592',
     jobTitle: 'Chief Marketing Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_296,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13687,9 +11905,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-593',
     jobTitle: 'Psychologist, educational',
     companyId: COMPANY_DATA_SEED_IDS.ID_297,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13708,9 +11923,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-594',
     jobTitle: 'Research officer, government',
     companyId: COMPANY_DATA_SEED_IDS.ID_297,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13729,9 +11941,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-595',
     jobTitle: 'Cartographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_298,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13750,9 +11959,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-596',
     jobTitle: 'Sales promotion account executive',
     companyId: COMPANY_DATA_SEED_IDS.ID_298,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13771,9 +11977,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-597',
     jobTitle: 'Consulting civil engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_299,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13792,9 +11995,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-598',
     jobTitle: 'Heritage manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_299,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13813,9 +12013,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-599',
     jobTitle: 'Systems analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_300,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13834,9 +12031,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-600',
     jobTitle: 'Building control surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_300,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13855,9 +12049,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-601',
     jobTitle: 'Solicitor',
     companyId: COMPANY_DATA_SEED_IDS.ID_301,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13876,9 +12067,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-602',
     jobTitle: 'International aid/development worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_301,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13897,9 +12085,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-603',
     jobTitle: 'Pharmacist, hospital',
     companyId: COMPANY_DATA_SEED_IDS.ID_302,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13918,9 +12103,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-604',
     jobTitle: 'Exhibitions officer, museum/gallery',
     companyId: COMPANY_DATA_SEED_IDS.ID_302,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13939,9 +12121,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-605',
     jobTitle: 'Production assistant, television',
     companyId: COMPANY_DATA_SEED_IDS.ID_303,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13960,9 +12139,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-606',
     jobTitle: 'Learning mentor',
     companyId: COMPANY_DATA_SEED_IDS.ID_303,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13981,9 +12157,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-607',
     jobTitle: 'Drilling engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_304,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14002,9 +12175,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-608',
     jobTitle: 'Chartered management accountant',
     companyId: COMPANY_DATA_SEED_IDS.ID_304,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14023,9 +12193,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-609',
     jobTitle: 'Science writer',
     companyId: COMPANY_DATA_SEED_IDS.ID_305,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14044,9 +12211,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-610',
     jobTitle: 'Merchandiser, retail',
     companyId: COMPANY_DATA_SEED_IDS.ID_305,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14065,9 +12229,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-611',
     jobTitle: 'Media planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_306,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14086,9 +12247,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-612',
     jobTitle: 'Multimedia specialist',
     companyId: COMPANY_DATA_SEED_IDS.ID_306,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14107,9 +12265,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-613',
     jobTitle: 'Geophysical data processor',
     companyId: COMPANY_DATA_SEED_IDS.ID_307,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14128,9 +12283,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-614',
     jobTitle: 'Health and safety inspector',
     companyId: COMPANY_DATA_SEED_IDS.ID_307,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14149,9 +12301,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-615',
     jobTitle: 'Lecturer, higher education',
     companyId: COMPANY_DATA_SEED_IDS.ID_308,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14170,9 +12319,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-616',
     jobTitle: 'Psychotherapist, child',
     companyId: COMPANY_DATA_SEED_IDS.ID_308,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14191,9 +12337,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-617',
     jobTitle: 'Agricultural engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_309,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14212,9 +12355,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-618',
     jobTitle: 'Scientist, product/process development',
     companyId: COMPANY_DATA_SEED_IDS.ID_309,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14233,9 +12373,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-619',
     jobTitle: 'Electrical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_310,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14254,9 +12391,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-620',
     jobTitle: 'Chief of Staff',
     companyId: COMPANY_DATA_SEED_IDS.ID_310,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14275,9 +12409,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-621',
     jobTitle: 'Charity officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_311,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14296,9 +12427,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-622',
     jobTitle: 'Futures trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_311,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14317,9 +12445,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-623',
     jobTitle: 'Camera operator',
     companyId: COMPANY_DATA_SEED_IDS.ID_312,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14338,9 +12463,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-624',
     jobTitle: 'Automotive engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_312,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14359,9 +12481,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-625',
     jobTitle: 'Learning disability nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_313,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14380,9 +12499,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-626',
     jobTitle: 'Scientist, research (physical sciences)',
     companyId: COMPANY_DATA_SEED_IDS.ID_313,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14401,9 +12517,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-627',
     jobTitle: 'Biomedical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_314,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14422,9 +12535,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-628',
     jobTitle: 'Designer, textile',
     companyId: COMPANY_DATA_SEED_IDS.ID_314,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14443,9 +12553,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-629',
     jobTitle: 'Pharmacist, community',
     companyId: COMPANY_DATA_SEED_IDS.ID_315,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14464,9 +12571,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-630',
     jobTitle: 'Electronics engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_315,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14485,9 +12589,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-631',
     jobTitle: 'Control and instrumentation engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_316,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14506,9 +12607,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-632',
     jobTitle: 'Sports therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_316,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14527,9 +12625,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-633',
     jobTitle: 'Dance movement psychotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_317,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14548,9 +12643,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-634',
     jobTitle: 'Graphic designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_317,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14569,9 +12661,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-635',
     jobTitle: 'Advertising account executive',
     companyId: COMPANY_DATA_SEED_IDS.ID_318,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14590,9 +12679,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-636',
     jobTitle: 'Occupational therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_318,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14611,9 +12697,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-637',
     jobTitle: 'Designer, jewellery',
     companyId: COMPANY_DATA_SEED_IDS.ID_319,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14632,9 +12715,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-638',
     jobTitle: 'Farm manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_319,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14653,9 +12733,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-639',
     jobTitle: 'Doctor, hospital',
     companyId: COMPANY_DATA_SEED_IDS.ID_320,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14674,9 +12751,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-640',
     jobTitle: 'Office manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_320,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14695,9 +12769,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-641',
     jobTitle: 'Industrial buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_321,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14716,9 +12787,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-642',
     jobTitle: 'Engineer, biomedical',
     companyId: COMPANY_DATA_SEED_IDS.ID_321,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14737,9 +12805,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-643',
     jobTitle: 'English as a second language teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_322,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14758,9 +12823,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-644',
     jobTitle: 'Games developer',
     companyId: COMPANY_DATA_SEED_IDS.ID_322,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14779,9 +12841,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-645',
     jobTitle: 'TEFL teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_323,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14800,9 +12859,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-646',
     jobTitle: 'Chartered legal executive (England and Wales)',
     companyId: COMPANY_DATA_SEED_IDS.ID_323,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14821,9 +12877,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-647',
     jobTitle: 'Designer, fashion/clothing',
     companyId: COMPANY_DATA_SEED_IDS.ID_324,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14842,9 +12895,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-648',
     jobTitle: 'Environmental manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_324,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14863,9 +12913,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-649',
     jobTitle: 'Hydrologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_325,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14884,9 +12931,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-650',
     jobTitle: 'Designer, television/film set',
     companyId: COMPANY_DATA_SEED_IDS.ID_325,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14905,9 +12949,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-651',
     jobTitle: 'Local government officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_326,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14926,9 +12967,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-652',
     jobTitle: 'IT sales professional',
     companyId: COMPANY_DATA_SEED_IDS.ID_326,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14947,9 +12985,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-653',
     jobTitle: 'Charity officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_327,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14968,9 +13003,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-654',
     jobTitle: 'Professor Emeritus',
     companyId: COMPANY_DATA_SEED_IDS.ID_327,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14989,9 +13021,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-655',
     jobTitle: 'Chief Marketing Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_328,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15010,9 +13039,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-656',
     jobTitle: 'Scientist, product/process development',
     companyId: COMPANY_DATA_SEED_IDS.ID_328,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15031,9 +13057,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-657',
     jobTitle: 'Programmer, systems',
     companyId: COMPANY_DATA_SEED_IDS.ID_329,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15052,9 +13075,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-658',
     jobTitle: 'Interior and spatial designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_329,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15073,9 +13093,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-659',
     jobTitle: 'Personal assistant',
     companyId: COMPANY_DATA_SEED_IDS.ID_330,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15094,9 +13111,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-660',
     jobTitle: 'Broadcast presenter',
     companyId: COMPANY_DATA_SEED_IDS.ID_330,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15115,9 +13129,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-661',
     jobTitle: 'Actor',
     companyId: COMPANY_DATA_SEED_IDS.ID_331,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15136,9 +13147,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-662',
     jobTitle: 'Adult guidance worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_331,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15157,9 +13165,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-663',
     jobTitle: 'Occupational hygienist',
     companyId: COMPANY_DATA_SEED_IDS.ID_332,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15178,9 +13183,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-664',
     jobTitle: 'Futures trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_332,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15199,9 +13201,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-665',
     jobTitle: 'Television camera operator',
     companyId: COMPANY_DATA_SEED_IDS.ID_333,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15220,9 +13219,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-666',
     jobTitle: 'Engineer, maintenance (IT)',
     companyId: COMPANY_DATA_SEED_IDS.ID_333,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15241,9 +13237,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-667',
     jobTitle: 'Clinical cytogeneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_334,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15262,9 +13255,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-668',
     jobTitle: 'Colour technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_334,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15283,9 +13273,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-669',
     jobTitle: 'Engineer, petroleum',
     companyId: COMPANY_DATA_SEED_IDS.ID_335,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15304,9 +13291,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-670',
     jobTitle: 'Scientist, biomedical',
     companyId: COMPANY_DATA_SEED_IDS.ID_335,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15325,9 +13309,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-671',
     jobTitle: 'Clinical embryologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_336,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15346,9 +13327,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-672',
     jobTitle: 'Industrial/product designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_336,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15367,9 +13345,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-673',
     jobTitle: 'Radio producer',
     companyId: COMPANY_DATA_SEED_IDS.ID_337,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15388,9 +13363,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-674',
     jobTitle: 'Diagnostic radiographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_337,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15409,9 +13381,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-675',
     jobTitle: 'Radiation protection practitioner',
     companyId: COMPANY_DATA_SEED_IDS.ID_338,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15430,9 +13399,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-676',
     jobTitle: 'Producer, radio',
     companyId: COMPANY_DATA_SEED_IDS.ID_338,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15451,9 +13417,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-677',
     jobTitle: 'Product designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_339,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15472,9 +13435,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-678',
     jobTitle: 'Television camera operator',
     companyId: COMPANY_DATA_SEED_IDS.ID_339,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15493,9 +13453,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-679',
     jobTitle: 'Police officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_340,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15514,9 +13471,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-680',
     jobTitle: 'Ranger/warden',
     companyId: COMPANY_DATA_SEED_IDS.ID_340,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15535,9 +13489,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-681',
     jobTitle: 'Forensic scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_341,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15556,9 +13507,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-682',
     jobTitle: 'Freight forwarder',
     companyId: COMPANY_DATA_SEED_IDS.ID_341,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15577,9 +13525,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-683',
     jobTitle: 'Petroleum engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_342,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15598,9 +13543,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-684',
     jobTitle: 'Neurosurgeon',
     companyId: COMPANY_DATA_SEED_IDS.ID_342,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15619,9 +13561,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-685',
     jobTitle: 'Glass blower/designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_343,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15640,9 +13579,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-686',
     jobTitle: 'Automotive engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_343,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15661,9 +13597,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-687',
     jobTitle: 'Therapist, sports',
     companyId: COMPANY_DATA_SEED_IDS.ID_344,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15682,9 +13615,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-688',
     jobTitle: 'Editor, commissioning',
     companyId: COMPANY_DATA_SEED_IDS.ID_344,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15703,9 +13633,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-689',
     jobTitle: 'Homeopath',
     companyId: COMPANY_DATA_SEED_IDS.ID_345,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15724,9 +13651,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-690',
     jobTitle: 'Mechanical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_345,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15745,9 +13669,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-691',
     jobTitle: 'Scientist, research (physical sciences)',
     companyId: COMPANY_DATA_SEED_IDS.ID_346,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15766,9 +13687,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-692',
     jobTitle: 'Market researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_346,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15787,9 +13705,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-693',
     jobTitle: 'Teacher, primary school',
     companyId: COMPANY_DATA_SEED_IDS.ID_347,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15808,9 +13723,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-694',
     jobTitle: 'Illustrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_347,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15829,9 +13741,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-695',
     jobTitle: 'Hotel manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_348,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15850,9 +13759,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-696',
     jobTitle: 'Engineer, mining',
     companyId: COMPANY_DATA_SEED_IDS.ID_348,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15871,9 +13777,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-697',
     jobTitle: 'Medical physicist',
     companyId: COMPANY_DATA_SEED_IDS.ID_349,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15892,9 +13795,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-698',
     jobTitle: 'Patent examiner',
     companyId: COMPANY_DATA_SEED_IDS.ID_349,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15913,9 +13813,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-699',
     jobTitle: 'Therapist, drama',
     companyId: COMPANY_DATA_SEED_IDS.ID_350,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15934,9 +13831,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-700',
     jobTitle: 'Chiropodist',
     companyId: COMPANY_DATA_SEED_IDS.ID_350,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15955,9 +13849,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-701',
     jobTitle: 'Cabin crew',
     companyId: COMPANY_DATA_SEED_IDS.ID_351,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15976,9 +13867,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-702',
     jobTitle: 'Technical author',
     companyId: COMPANY_DATA_SEED_IDS.ID_351,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15997,9 +13885,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-703',
     jobTitle: 'Technical sales engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_352,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16018,9 +13903,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-704',
     jobTitle: 'Solicitor, Scotland',
     companyId: COMPANY_DATA_SEED_IDS.ID_352,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16039,9 +13921,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-705',
     jobTitle: 'Aeronautical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_353,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16060,9 +13939,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-706',
     jobTitle: 'Counselling psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_353,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16081,9 +13957,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-707',
     jobTitle: 'Medical laboratory scientific officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_354,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16102,9 +13975,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-708',
     jobTitle: 'English as a foreign language teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_354,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16123,9 +13993,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-709',
     jobTitle: 'Phytotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_355,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16144,9 +14011,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-710',
     jobTitle: 'Trade mark attorney',
     companyId: COMPANY_DATA_SEED_IDS.ID_355,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16165,9 +14029,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-711',
     jobTitle: 'Site engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_356,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16186,9 +14047,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-712',
     jobTitle: 'Seismic interpreter',
     companyId: COMPANY_DATA_SEED_IDS.ID_356,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16207,9 +14065,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-713',
     jobTitle: 'Music tutor',
     companyId: COMPANY_DATA_SEED_IDS.ID_357,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16228,9 +14083,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-714',
     jobTitle: 'Public house manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_357,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16249,9 +14101,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-715',
     jobTitle: 'Horticulturist, commercial',
     companyId: COMPANY_DATA_SEED_IDS.ID_358,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16270,9 +14119,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-716',
     jobTitle: 'Counsellor',
     companyId: COMPANY_DATA_SEED_IDS.ID_358,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16291,9 +14137,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-717',
     jobTitle: 'Recruitment consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_359,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16312,9 +14155,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-718',
     jobTitle: 'Scientist, research (maths)',
     companyId: COMPANY_DATA_SEED_IDS.ID_359,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16333,9 +14173,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-719',
     jobTitle: 'Public relations account executive',
     companyId: COMPANY_DATA_SEED_IDS.ID_360,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16354,9 +14191,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-720',
     jobTitle: "Nurse, children's",
     companyId: COMPANY_DATA_SEED_IDS.ID_360,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16375,9 +14209,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-721',
     jobTitle: 'Therapist, speech and language',
     companyId: COMPANY_DATA_SEED_IDS.ID_361,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16396,9 +14227,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-722',
     jobTitle: 'Primary school teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_361,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16417,9 +14245,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-723',
     jobTitle: 'Education administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_362,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16438,9 +14263,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-724',
     jobTitle: 'Engineer, civil (consulting)',
     companyId: COMPANY_DATA_SEED_IDS.ID_362,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16459,9 +14281,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-725',
     jobTitle: 'Naval architect',
     companyId: COMPANY_DATA_SEED_IDS.ID_363,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16480,9 +14299,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-726',
     jobTitle: 'Corporate treasurer',
     companyId: COMPANY_DATA_SEED_IDS.ID_363,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16501,9 +14317,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-727',
     jobTitle: 'Primary school teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_364,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16522,9 +14335,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-728',
     jobTitle: 'Optician, dispensing',
     companyId: COMPANY_DATA_SEED_IDS.ID_364,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16543,9 +14353,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-729',
     jobTitle: 'Operational investment banker',
     companyId: COMPANY_DATA_SEED_IDS.ID_365,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16564,9 +14371,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-730',
     jobTitle: 'Clinical cytogeneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_365,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16585,9 +14389,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-731',
     jobTitle: 'Housing manager/officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_366,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16606,9 +14407,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-732',
     jobTitle: 'Further education lecturer',
     companyId: COMPANY_DATA_SEED_IDS.ID_366,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16627,9 +14425,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-733',
     jobTitle: 'Merchant navy officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_367,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16648,9 +14443,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-734',
     jobTitle: 'Producer, radio',
     companyId: COMPANY_DATA_SEED_IDS.ID_367,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16669,9 +14461,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-735',
     jobTitle: 'Investment analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_368,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16690,9 +14479,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-736',
     jobTitle: 'Dispensing optician',
     companyId: COMPANY_DATA_SEED_IDS.ID_368,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16711,9 +14497,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-737',
     jobTitle: 'Sports development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_369,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16732,9 +14515,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-738',
     jobTitle: 'Tax adviser',
     companyId: COMPANY_DATA_SEED_IDS.ID_369,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16753,9 +14533,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-739',
     jobTitle: 'Visual merchandiser',
     companyId: COMPANY_DATA_SEED_IDS.ID_370,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16774,9 +14551,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-740',
     jobTitle: 'Records manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_370,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16795,9 +14569,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-741',
     jobTitle: 'Local government officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_371,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16816,9 +14587,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-742',
     jobTitle: 'Ecologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_371,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16837,9 +14605,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-743',
     jobTitle: 'QuickActions analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_372,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16858,9 +14623,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-744',
     jobTitle: 'Surveyor, mining',
     companyId: COMPANY_DATA_SEED_IDS.ID_372,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16879,9 +14641,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-745',
     jobTitle: 'Financial controller',
     companyId: COMPANY_DATA_SEED_IDS.ID_373,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16900,9 +14659,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-746',
     jobTitle: 'Site engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_373,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16921,9 +14677,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-747',
     jobTitle: 'Radiographer, therapeutic',
     companyId: COMPANY_DATA_SEED_IDS.ID_374,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16942,9 +14695,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-748',
     jobTitle: 'Illustrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_374,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16963,9 +14713,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-749',
     jobTitle: 'Physiotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_375,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16984,9 +14731,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-750',
     jobTitle: 'Health physicist',
     companyId: COMPANY_DATA_SEED_IDS.ID_375,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17005,9 +14749,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-751',
     jobTitle: 'Psychiatric nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_376,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17026,9 +14767,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-752',
     jobTitle: 'Education officer, community',
     companyId: COMPANY_DATA_SEED_IDS.ID_376,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17047,9 +14785,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-753',
     jobTitle: 'Adult nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_377,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17068,9 +14803,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-754',
     jobTitle: 'Accountant, chartered management',
     companyId: COMPANY_DATA_SEED_IDS.ID_377,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17089,9 +14821,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-755',
     jobTitle: 'Computer games developer',
     companyId: COMPANY_DATA_SEED_IDS.ID_378,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17110,9 +14839,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-756',
     jobTitle: 'Theatre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_378,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17131,9 +14857,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-757',
     jobTitle: 'Scientist, research (maths)',
     companyId: COMPANY_DATA_SEED_IDS.ID_379,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17152,9 +14875,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-758',
     jobTitle: 'Surveyor, building',
     companyId: COMPANY_DATA_SEED_IDS.ID_379,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17173,9 +14893,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-759',
     jobTitle: 'Mental health nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_380,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17194,9 +14911,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-760',
     jobTitle: 'Environmental health practitioner',
     companyId: COMPANY_DATA_SEED_IDS.ID_380,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17215,9 +14929,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-761',
     jobTitle: 'Legal secretary',
     companyId: COMPANY_DATA_SEED_IDS.ID_381,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17236,9 +14947,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-762',
     jobTitle: 'Therapist, speech and language',
     companyId: COMPANY_DATA_SEED_IDS.ID_381,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17257,9 +14965,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-763',
     jobTitle: 'Editor, film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_382,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17278,9 +14983,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-764',
     jobTitle: 'Charity fundraiser',
     companyId: COMPANY_DATA_SEED_IDS.ID_382,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17299,9 +15001,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-765',
     jobTitle: 'Conservator, furniture',
     companyId: COMPANY_DATA_SEED_IDS.ID_383,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17320,9 +15019,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-766',
     jobTitle: 'Immunologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_383,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17341,9 +15037,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-767',
     jobTitle: 'Stage manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_384,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17362,9 +15055,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-768',
     jobTitle: 'Advertising account executive',
     companyId: COMPANY_DATA_SEED_IDS.ID_384,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17383,9 +15073,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-769',
     jobTitle: 'Customer service manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_385,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17404,9 +15091,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-770',
     jobTitle: 'Planning and development surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_385,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17425,9 +15109,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-771',
     jobTitle: 'Surveyor, mining',
     companyId: COMPANY_DATA_SEED_IDS.ID_386,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17446,9 +15127,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-772',
     jobTitle: 'Journalist, broadcasting',
     companyId: COMPANY_DATA_SEED_IDS.ID_386,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17467,9 +15145,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-773',
     jobTitle: 'Minerals surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_387,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17488,9 +15163,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-774',
     jobTitle: 'Biomedical scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_387,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17509,9 +15181,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-775',
     jobTitle: 'Production assistant, television',
     companyId: COMPANY_DATA_SEED_IDS.ID_388,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17530,9 +15199,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-776',
     jobTitle: 'Engineer, biomedical',
     companyId: COMPANY_DATA_SEED_IDS.ID_388,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17551,9 +15217,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-777',
     jobTitle: 'Broadcast journalist',
     companyId: COMPANY_DATA_SEED_IDS.ID_389,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17572,9 +15235,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-778',
     jobTitle: 'Public relations account executive',
     companyId: COMPANY_DATA_SEED_IDS.ID_389,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17593,9 +15253,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-779',
     jobTitle: 'Optometrist',
     companyId: COMPANY_DATA_SEED_IDS.ID_390,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17614,9 +15271,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-780',
     jobTitle: 'Teacher, English as a foreign language',
     companyId: COMPANY_DATA_SEED_IDS.ID_390,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17635,9 +15289,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-781',
     jobTitle: 'Trading standards officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_391,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17656,9 +15307,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-782',
     jobTitle: 'Radiation protection practitioner',
     companyId: COMPANY_DATA_SEED_IDS.ID_391,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17677,9 +15325,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-783',
     jobTitle: 'Firefighter',
     companyId: COMPANY_DATA_SEED_IDS.ID_392,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17698,9 +15343,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-784',
     jobTitle: 'Geoscientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_392,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17719,9 +15361,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-785',
     jobTitle: 'Nurse, learning disability',
     companyId: COMPANY_DATA_SEED_IDS.ID_393,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17740,9 +15379,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-786',
     jobTitle: 'Chartered public finance accountant',
     companyId: COMPANY_DATA_SEED_IDS.ID_393,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17761,9 +15397,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-787',
     jobTitle: 'Patent attorney',
     companyId: COMPANY_DATA_SEED_IDS.ID_394,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17782,9 +15415,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-788',
     jobTitle: 'Financial risk analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_394,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17803,9 +15433,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-789',
     jobTitle: 'Patent attorney',
     companyId: COMPANY_DATA_SEED_IDS.ID_395,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17824,9 +15451,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-790',
     jobTitle: 'Surveyor, mining',
     companyId: COMPANY_DATA_SEED_IDS.ID_395,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17845,9 +15469,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-791',
     jobTitle: 'Therapeutic radiographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_396,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17866,9 +15487,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-792',
     jobTitle: 'Leisure centre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_396,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17887,9 +15505,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-793',
     jobTitle: 'Emergency planning/management officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_397,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17908,9 +15523,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-794',
     jobTitle: 'Operational researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_397,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17929,9 +15541,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-795',
     jobTitle: 'Engineer, manufacturing systems',
     companyId: COMPANY_DATA_SEED_IDS.ID_398,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17950,9 +15559,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-796',
     jobTitle: 'Automotive engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_398,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17971,9 +15577,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-797',
     jobTitle: 'Scientist, forensic',
     companyId: COMPANY_DATA_SEED_IDS.ID_399,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17992,9 +15595,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-798',
     jobTitle: 'Health promotion specialist',
     companyId: COMPANY_DATA_SEED_IDS.ID_399,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18013,9 +15613,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-799',
     jobTitle: 'Camera operator',
     companyId: COMPANY_DATA_SEED_IDS.ID_400,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18034,9 +15631,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-800',
     jobTitle: 'Art therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_400,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18055,9 +15649,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-801',
     jobTitle: 'IT sales professional',
     companyId: COMPANY_DATA_SEED_IDS.ID_401,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18076,9 +15667,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-802',
     jobTitle: 'Psychologist, clinical',
     companyId: COMPANY_DATA_SEED_IDS.ID_401,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18097,9 +15685,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-803',
     jobTitle: 'Ceramics designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_402,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18118,9 +15703,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-804',
     jobTitle: 'Designer, furniture',
     companyId: COMPANY_DATA_SEED_IDS.ID_402,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18139,9 +15721,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-805',
     jobTitle: 'Government social research officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_403,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18160,9 +15739,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-806',
     jobTitle: 'Librarian, public',
     companyId: COMPANY_DATA_SEED_IDS.ID_403,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18181,9 +15757,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-807',
     jobTitle: 'Energy engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_404,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18202,9 +15775,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-808',
     jobTitle: 'Rural practice surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_404,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18223,9 +15793,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-809',
     jobTitle: 'Estate manager/land agent',
     companyId: COMPANY_DATA_SEED_IDS.ID_405,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18244,9 +15811,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-810',
     jobTitle: 'Armed forces technical officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_405,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18265,9 +15829,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-811',
     jobTitle: 'Programme researcher, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_406,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18286,9 +15847,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-812',
     jobTitle: 'Ranger/warden',
     companyId: COMPANY_DATA_SEED_IDS.ID_406,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18307,9 +15865,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-813',
     jobTitle: 'Commercial/residential surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_407,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18328,9 +15883,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-814',
     jobTitle: 'Tax inspector',
     companyId: COMPANY_DATA_SEED_IDS.ID_407,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18349,9 +15901,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-815',
     jobTitle: 'Clinical cytogeneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_408,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18370,9 +15919,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-816',
     jobTitle: 'Pathologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_408,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18391,9 +15937,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-817',
     jobTitle: 'Publishing copy',
     companyId: COMPANY_DATA_SEED_IDS.ID_409,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18412,9 +15955,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-818',
     jobTitle: 'Ship broker',
     companyId: COMPANY_DATA_SEED_IDS.ID_409,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18433,9 +15973,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-819',
     jobTitle: 'Economist',
     companyId: COMPANY_DATA_SEED_IDS.ID_410,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18454,9 +15991,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-820',
     jobTitle: 'IT trainer',
     companyId: COMPANY_DATA_SEED_IDS.ID_410,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18475,9 +16009,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-821',
     jobTitle: 'Nurse, adult',
     companyId: COMPANY_DATA_SEED_IDS.ID_411,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18496,9 +16027,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-822',
     jobTitle: 'Psychiatric nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_411,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18517,9 +16045,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-823',
     jobTitle: 'Psychologist, prison and probation services',
     companyId: COMPANY_DATA_SEED_IDS.ID_412,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18538,9 +16063,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-824',
     jobTitle: 'Pharmacist, hospital',
     companyId: COMPANY_DATA_SEED_IDS.ID_412,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18559,9 +16081,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-825',
     jobTitle: 'Magazine features editor',
     companyId: COMPANY_DATA_SEED_IDS.ID_413,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18580,9 +16099,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-826',
     jobTitle: 'Exercise physiologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_413,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18601,9 +16117,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-827',
     jobTitle: 'Exhibitions officer, museum/gallery',
     companyId: COMPANY_DATA_SEED_IDS.ID_414,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18622,9 +16135,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-828',
     jobTitle: 'Commercial horticulturist',
     companyId: COMPANY_DATA_SEED_IDS.ID_414,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18643,9 +16153,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-829',
     jobTitle: 'Data processing manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_415,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18664,9 +16171,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-830',
     jobTitle: 'Radiographer, therapeutic',
     companyId: COMPANY_DATA_SEED_IDS.ID_415,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18685,9 +16189,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-831',
     jobTitle: 'Research scientist (life sciences)',
     companyId: COMPANY_DATA_SEED_IDS.ID_416,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18706,9 +16207,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-832',
     jobTitle: 'Chief Marketing Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_416,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18727,9 +16225,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-833',
     jobTitle: 'Claims inspector/assessor',
     companyId: COMPANY_DATA_SEED_IDS.ID_417,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18748,9 +16243,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-834',
     jobTitle: 'Web designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_417,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18769,9 +16261,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-835',
     jobTitle: 'Environmental education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_418,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18790,9 +16279,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-836',
     jobTitle: 'Ranger/warden',
     companyId: COMPANY_DATA_SEED_IDS.ID_418,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18811,9 +16297,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-837',
     jobTitle: 'Environmental consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_419,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18832,9 +16315,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-838',
     jobTitle: 'Garment/textile technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_419,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18853,9 +16333,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-839',
     jobTitle: 'Analytical chemist',
     companyId: COMPANY_DATA_SEED_IDS.ID_420,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18874,9 +16351,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-840',
     jobTitle: 'Field trials officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_420,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18895,9 +16369,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-841',
     jobTitle: 'Ecologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_421,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18916,9 +16387,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-842',
     jobTitle: 'Photographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_421,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18937,9 +16405,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-843',
     jobTitle: 'Community development worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_422,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18958,9 +16423,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-844',
     jobTitle: 'Secretary/administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_422,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18979,9 +16441,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-845',
     jobTitle: 'Environmental education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_423,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19000,9 +16459,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-846',
     jobTitle: 'Engineer, technical sales',
     companyId: COMPANY_DATA_SEED_IDS.ID_423,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19021,9 +16477,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-847',
     jobTitle: 'Optometrist',
     companyId: COMPANY_DATA_SEED_IDS.ID_424,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19042,9 +16495,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-848',
     jobTitle: 'Medical secretary',
     companyId: COMPANY_DATA_SEED_IDS.ID_424,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19063,9 +16513,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-849',
     jobTitle: 'Surveyor, land/geomatics',
     companyId: COMPANY_DATA_SEED_IDS.ID_425,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19084,9 +16531,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-850',
     jobTitle: 'Buyer, industrial',
     companyId: COMPANY_DATA_SEED_IDS.ID_425,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19105,9 +16549,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-851',
     jobTitle: 'Trading standards officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_426,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19126,9 +16567,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-852',
     jobTitle: 'Herpetologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_426,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19147,9 +16585,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-853',
     jobTitle: 'Training and development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_427,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19168,9 +16603,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-854',
     jobTitle: 'Architect',
     companyId: COMPANY_DATA_SEED_IDS.ID_427,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19189,9 +16621,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-855',
     jobTitle: 'Radio producer',
     companyId: COMPANY_DATA_SEED_IDS.ID_428,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19210,9 +16639,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-856',
     jobTitle: 'Management consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_428,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19231,9 +16657,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-857',
     jobTitle: 'Theatre stage manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_429,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19252,9 +16675,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-858',
     jobTitle: 'Pharmacist, community',
     companyId: COMPANY_DATA_SEED_IDS.ID_429,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19273,9 +16693,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-859',
     jobTitle: 'Research scientist (life sciences)',
     companyId: COMPANY_DATA_SEED_IDS.ID_430,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19294,9 +16711,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-860',
     jobTitle: 'Psychologist, clinical',
     companyId: COMPANY_DATA_SEED_IDS.ID_430,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19315,9 +16729,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-861',
     jobTitle: 'Geologist, wellsite',
     companyId: COMPANY_DATA_SEED_IDS.ID_431,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19336,9 +16747,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-862',
     jobTitle: 'Freight forwarder',
     companyId: COMPANY_DATA_SEED_IDS.ID_431,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19357,9 +16765,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-863',
     jobTitle: 'Civil engineer, contracting',
     companyId: COMPANY_DATA_SEED_IDS.ID_432,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19378,9 +16783,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-864',
     jobTitle: 'Media buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_432,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19399,9 +16801,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-865',
     jobTitle: 'Sports administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_433,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19420,9 +16819,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-866',
     jobTitle: 'Scientist, research (maths)',
     companyId: COMPANY_DATA_SEED_IDS.ID_433,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19441,9 +16837,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-867',
     jobTitle: 'Early years teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_434,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19462,9 +16855,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-868',
     jobTitle: 'Scientific laboratory technician',
     companyId: COMPANY_DATA_SEED_IDS.ID_434,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19483,9 +16873,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-869',
     jobTitle: 'Librarian, public',
     companyId: COMPANY_DATA_SEED_IDS.ID_435,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19504,9 +16891,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-870',
     jobTitle: 'Maintenance engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_435,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19525,9 +16909,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-871',
     jobTitle: 'Financial risk analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_436,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19546,9 +16927,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-872',
     jobTitle: 'Emergency planning/management officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_436,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19567,9 +16945,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-873',
     jobTitle: 'Catering manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_437,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19588,9 +16963,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-874',
     jobTitle: 'Engineer, materials',
     companyId: COMPANY_DATA_SEED_IDS.ID_437,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19609,9 +16981,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-875',
     jobTitle: 'Health service manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_438,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19630,9 +16999,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-876',
     jobTitle: 'Town planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_438,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19651,9 +17017,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-877',
     jobTitle: 'Industrial buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_439,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19672,9 +17035,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-878',
     jobTitle: 'Secretary, company',
     companyId: COMPANY_DATA_SEED_IDS.ID_439,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19693,9 +17053,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-879',
     jobTitle: 'Nutritional therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_440,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19714,9 +17071,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-880',
     jobTitle: "Politician's assistant",
     companyId: COMPANY_DATA_SEED_IDS.ID_440,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19735,9 +17089,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-881',
     jobTitle: 'Historic buildings inspector/conservation officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_441,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19756,9 +17107,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-882',
     jobTitle: 'Mental health nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_441,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19777,9 +17125,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-883',
     jobTitle: 'Designer, television/film set',
     companyId: COMPANY_DATA_SEED_IDS.ID_442,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19798,9 +17143,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-884',
     jobTitle: 'Engineer, automotive',
     companyId: COMPANY_DATA_SEED_IDS.ID_442,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19819,9 +17161,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-885',
     jobTitle: 'Financial planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_443,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19840,9 +17179,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-886',
     jobTitle: 'Chartered public finance accountant',
     companyId: COMPANY_DATA_SEED_IDS.ID_443,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19861,9 +17197,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-887',
     jobTitle: 'Ecologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_444,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19882,9 +17215,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-888',
     jobTitle: 'Statistician',
     companyId: COMPANY_DATA_SEED_IDS.ID_444,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19903,9 +17233,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-889',
     jobTitle: 'Multimedia specialist',
     companyId: COMPANY_DATA_SEED_IDS.ID_445,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19924,9 +17251,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-890',
     jobTitle: 'Communications engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_445,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19945,9 +17269,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-891',
     jobTitle: 'Occupational therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_446,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19966,9 +17287,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-892',
     jobTitle: 'Wellsite geologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_446,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19987,9 +17305,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-893',
     jobTitle: 'Agricultural consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_447,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20008,9 +17323,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-894',
     jobTitle: 'Ergonomist',
     companyId: COMPANY_DATA_SEED_IDS.ID_447,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20029,9 +17341,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-895',
     jobTitle: 'Banker',
     companyId: COMPANY_DATA_SEED_IDS.ID_448,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20050,9 +17359,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-896',
     jobTitle: 'Geochemist',
     companyId: COMPANY_DATA_SEED_IDS.ID_448,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20071,9 +17377,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-897',
     jobTitle: 'Editor, commissioning',
     companyId: COMPANY_DATA_SEED_IDS.ID_449,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20092,9 +17395,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-898',
     jobTitle: 'Education administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_449,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20113,9 +17413,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-899',
     jobTitle: 'Corporate treasurer',
     companyId: COMPANY_DATA_SEED_IDS.ID_450,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20134,9 +17431,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-900',
     jobTitle: 'Land',
     companyId: COMPANY_DATA_SEED_IDS.ID_450,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20155,9 +17449,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-901',
     jobTitle: 'Pathologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_451,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20176,9 +17467,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-902',
     jobTitle: 'Sports development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_451,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20197,9 +17485,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-903',
     jobTitle: 'Consulting civil engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_452,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20218,9 +17503,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-904',
     jobTitle: 'Site engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_452,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20239,9 +17521,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-905',
     jobTitle: 'Engineer, broadcasting (operations)',
     companyId: COMPANY_DATA_SEED_IDS.ID_453,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20260,9 +17539,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-906',
     jobTitle: 'Presenter, broadcasting',
     companyId: COMPANY_DATA_SEED_IDS.ID_453,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20281,9 +17557,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-907',
     jobTitle: 'Homeopath',
     companyId: COMPANY_DATA_SEED_IDS.ID_454,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20302,9 +17575,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-908',
     jobTitle: 'Bonds trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_454,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20323,9 +17593,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-909',
     jobTitle: 'Civil Service fast streamer',
     companyId: COMPANY_DATA_SEED_IDS.ID_455,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20344,9 +17611,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-910',
     jobTitle: 'Historic buildings inspector/conservation officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_455,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20365,9 +17629,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-911',
     jobTitle: 'Community development worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_456,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20386,9 +17647,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-912',
     jobTitle: 'Social researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_456,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20407,9 +17665,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-913',
     jobTitle: 'Systems analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_457,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20428,9 +17683,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-914',
     jobTitle: 'Museum/gallery exhibitions officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_457,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20449,9 +17701,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-915',
     jobTitle: 'Financial trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_458,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20470,9 +17719,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-916',
     jobTitle: 'Cartographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_458,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20491,9 +17737,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-917',
     jobTitle: 'Engineer, aeronautical',
     companyId: COMPANY_DATA_SEED_IDS.ID_459,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20512,9 +17755,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-918',
     jobTitle: 'Surveyor, building',
     companyId: COMPANY_DATA_SEED_IDS.ID_459,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20533,9 +17773,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-919',
     jobTitle: 'Environmental consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_460,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20554,9 +17791,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-920',
     jobTitle: 'Oceanographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_460,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20575,9 +17809,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-921',
     jobTitle: 'Hydrographic surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_461,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20596,9 +17827,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-922',
     jobTitle: 'Metallurgist',
     companyId: COMPANY_DATA_SEED_IDS.ID_461,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20617,9 +17845,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-923',
     jobTitle: 'Engineer, biomedical',
     companyId: COMPANY_DATA_SEED_IDS.ID_462,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20638,9 +17863,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-924',
     jobTitle: 'Hospital pharmacist',
     companyId: COMPANY_DATA_SEED_IDS.ID_462,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20659,9 +17881,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-925',
     jobTitle: 'Actuary',
     companyId: COMPANY_DATA_SEED_IDS.ID_463,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20680,9 +17899,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-926',
     jobTitle: 'Sport and exercise psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_463,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20701,9 +17917,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-927',
     jobTitle: 'Merchandiser, retail',
     companyId: COMPANY_DATA_SEED_IDS.ID_464,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20722,9 +17935,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-928',
     jobTitle: 'Lighting technician, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_464,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20743,9 +17953,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-929',
     jobTitle: 'Biomedical scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_465,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20764,9 +17971,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-930',
     jobTitle: 'Clinical biochemist',
     companyId: COMPANY_DATA_SEED_IDS.ID_465,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20785,9 +17989,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-931',
     jobTitle: 'Lobbyist',
     companyId: COMPANY_DATA_SEED_IDS.ID_466,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20806,9 +18007,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-932',
     jobTitle: 'Commissioning editor',
     companyId: COMPANY_DATA_SEED_IDS.ID_466,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20827,9 +18025,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-933',
     jobTitle: 'Wellsite geologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_467,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20848,9 +18043,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-934',
     jobTitle: 'Barista',
     companyId: COMPANY_DATA_SEED_IDS.ID_467,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20869,9 +18061,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-935',
     jobTitle: 'Scientist, biomedical',
     companyId: COMPANY_DATA_SEED_IDS.ID_468,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20890,9 +18079,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-936',
     jobTitle: 'Retail manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_468,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20911,9 +18097,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-937',
     jobTitle: 'Commercial art gallery manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_469,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20932,9 +18115,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-938',
     jobTitle: 'Investment banker, corporate',
     companyId: COMPANY_DATA_SEED_IDS.ID_469,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20953,9 +18133,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-939',
     jobTitle: 'Corporate treasurer',
     companyId: COMPANY_DATA_SEED_IDS.ID_470,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20974,9 +18151,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-940',
     jobTitle: 'Research officer, trade union',
     companyId: COMPANY_DATA_SEED_IDS.ID_470,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20995,9 +18169,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-941',
     jobTitle: 'Investment banker, corporate',
     companyId: COMPANY_DATA_SEED_IDS.ID_471,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21016,9 +18187,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-942',
     jobTitle: 'Counselling psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_471,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21037,9 +18205,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-943',
     jobTitle: 'Biomedical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_472,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21058,9 +18223,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-944',
     jobTitle: 'Ophthalmologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_472,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21079,9 +18241,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-945',
     jobTitle: 'Physiotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_473,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21100,9 +18259,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-946',
     jobTitle: 'Video editor',
     companyId: COMPANY_DATA_SEED_IDS.ID_473,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21121,9 +18277,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-947',
     jobTitle: 'Marketing executive',
     companyId: COMPANY_DATA_SEED_IDS.ID_474,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21142,9 +18295,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-948',
     jobTitle: 'Mudlogger',
     companyId: COMPANY_DATA_SEED_IDS.ID_474,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21163,9 +18313,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-949',
     jobTitle: 'Interpreter',
     companyId: COMPANY_DATA_SEED_IDS.ID_475,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21184,9 +18331,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-950',
     jobTitle: 'Public house manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_475,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21205,9 +18349,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-951',
     jobTitle: 'Tree surgeon',
     companyId: COMPANY_DATA_SEED_IDS.ID_476,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21226,9 +18367,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-952',
     jobTitle: 'Land',
     companyId: COMPANY_DATA_SEED_IDS.ID_476,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21247,9 +18385,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-953',
     jobTitle: 'Graphic designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_477,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21268,9 +18403,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-954',
     jobTitle: 'Stage manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_477,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21289,9 +18421,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-955',
     jobTitle: 'Trade union research officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_478,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21310,9 +18439,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-956',
     jobTitle: 'Lecturer, further education',
     companyId: COMPANY_DATA_SEED_IDS.ID_478,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21331,9 +18457,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-957',
     jobTitle: 'Mechanical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_479,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21352,9 +18475,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-958',
     jobTitle: 'Surveyor, mining',
     companyId: COMPANY_DATA_SEED_IDS.ID_479,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21373,9 +18493,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-959',
     jobTitle: 'Development worker, international aid',
     companyId: COMPANY_DATA_SEED_IDS.ID_480,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21394,9 +18511,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-960',
     jobTitle: 'Therapeutic radiographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_480,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21415,9 +18529,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-961',
     jobTitle: 'Engineer, control and instrumentation',
     companyId: COMPANY_DATA_SEED_IDS.ID_481,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21436,9 +18547,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-962',
     jobTitle: 'Psychologist, clinical',
     companyId: COMPANY_DATA_SEED_IDS.ID_481,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21457,9 +18565,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-963',
     jobTitle: 'Public relations officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_482,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21478,9 +18583,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-964',
     jobTitle: 'Tax inspector',
     companyId: COMPANY_DATA_SEED_IDS.ID_482,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21499,9 +18601,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-965',
     jobTitle: 'Merchant navy officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_483,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21520,9 +18619,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-966',
     jobTitle: 'Contracting civil engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_483,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21541,9 +18637,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-967',
     jobTitle: 'Metallurgist',
     companyId: COMPANY_DATA_SEED_IDS.ID_484,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21562,9 +18655,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-968',
     jobTitle: 'Glass blower/designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_484,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21583,9 +18673,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-969',
     jobTitle: 'Geophysicist/field seismologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_485,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21604,9 +18691,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-970',
     jobTitle: 'Chiropodist',
     companyId: COMPANY_DATA_SEED_IDS.ID_485,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21625,9 +18709,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-971',
     jobTitle: 'Communications engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_486,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21646,9 +18727,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-972',
     jobTitle: 'Solicitor, Scotland',
     companyId: COMPANY_DATA_SEED_IDS.ID_486,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21667,9 +18745,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-973',
     jobTitle: 'Automotive engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_487,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21688,9 +18763,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-974',
     jobTitle: 'Occupational hygienist',
     companyId: COMPANY_DATA_SEED_IDS.ID_487,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21709,9 +18781,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-975',
     jobTitle: 'Firefighter',
     companyId: COMPANY_DATA_SEED_IDS.ID_488,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21730,9 +18799,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-976',
     jobTitle: 'Scientist, water quality',
     companyId: COMPANY_DATA_SEED_IDS.ID_488,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21751,9 +18817,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-977',
     jobTitle: 'Graphic designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_489,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21772,9 +18835,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-978',
     jobTitle: 'Chief Strategy Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_489,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21793,9 +18853,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-979',
     jobTitle: 'Corporate investment banker',
     companyId: COMPANY_DATA_SEED_IDS.ID_490,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21814,9 +18871,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-980',
     jobTitle: 'Community pharmacist',
     companyId: COMPANY_DATA_SEED_IDS.ID_490,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21835,9 +18889,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-981',
     jobTitle: 'Technical sales engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_491,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21856,9 +18907,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-982',
     jobTitle: 'Research scientist (physical sciences)',
     companyId: COMPANY_DATA_SEED_IDS.ID_491,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21877,9 +18925,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-983',
     jobTitle: 'Energy manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_492,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21898,9 +18943,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-984',
     jobTitle: 'Lobbyist',
     companyId: COMPANY_DATA_SEED_IDS.ID_492,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21919,9 +18961,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-985',
     jobTitle: 'Energy engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_493,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21940,9 +18979,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-986',
     jobTitle: 'Pilot, airline',
     companyId: COMPANY_DATA_SEED_IDS.ID_493,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21961,9 +18997,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-987',
     jobTitle: 'Therapist, drama',
     companyId: COMPANY_DATA_SEED_IDS.ID_494,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21982,9 +19015,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-988',
     jobTitle: 'Merchandiser, retail',
     companyId: COMPANY_DATA_SEED_IDS.ID_494,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22003,9 +19033,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-989',
     jobTitle: 'Museum/gallery exhibitions officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_495,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22024,9 +19051,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-990',
     jobTitle: 'Animal nutritionist',
     companyId: COMPANY_DATA_SEED_IDS.ID_495,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22045,9 +19069,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-991',
     jobTitle: 'Curator',
     companyId: COMPANY_DATA_SEED_IDS.ID_496,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22066,9 +19087,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-992',
     jobTitle: 'Marine scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_496,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22087,9 +19105,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-993',
     jobTitle: 'Graphic designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_497,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22108,9 +19123,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-994',
     jobTitle: 'Producer, television/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_497,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22129,9 +19141,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-995',
     jobTitle: 'Surveyor, quantity',
     companyId: COMPANY_DATA_SEED_IDS.ID_498,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22150,9 +19159,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-996',
     jobTitle: 'Public house manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_498,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22171,9 +19177,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-997',
     jobTitle: 'Clinical cytogeneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_499,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22192,9 +19195,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-998',
     jobTitle: 'Research scientist (maths)',
     companyId: COMPANY_DATA_SEED_IDS.ID_499,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22213,9 +19213,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-999',
     jobTitle: 'Immunologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_500,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22234,9 +19231,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1000',
     jobTitle: 'Counselling psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_500,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22255,9 +19249,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1001',
     jobTitle: 'Cytogeneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_501,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22276,9 +19267,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1002',
     jobTitle: 'Equities trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_501,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22297,9 +19285,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1003',
     jobTitle: 'Ecologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_502,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22318,9 +19303,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1004',
     jobTitle: 'Media buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_502,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22339,9 +19321,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1005',
     jobTitle: 'Ecologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_503,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22360,9 +19339,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1006',
     jobTitle: 'Clothing/textile technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_503,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22381,9 +19357,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1007',
     jobTitle: 'Psychotherapist, child',
     companyId: COMPANY_DATA_SEED_IDS.ID_504,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22402,9 +19375,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1008',
     jobTitle: 'Agricultural engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_504,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22423,9 +19393,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1009',
     jobTitle: 'Editorial assistant',
     companyId: COMPANY_DATA_SEED_IDS.ID_505,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22444,9 +19411,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1010',
     jobTitle: 'Counselling psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_505,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22465,9 +19429,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1011',
     jobTitle: 'Cabin crew',
     companyId: COMPANY_DATA_SEED_IDS.ID_506,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22486,9 +19447,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1012',
     jobTitle: 'Financial controller',
     companyId: COMPANY_DATA_SEED_IDS.ID_506,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22507,9 +19465,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1013',
     jobTitle: 'Psychotherapist, child',
     companyId: COMPANY_DATA_SEED_IDS.ID_507,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22528,9 +19483,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1014',
     jobTitle: 'Chartered management accountant',
     companyId: COMPANY_DATA_SEED_IDS.ID_507,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22549,9 +19501,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1015',
     jobTitle: 'Acupuncturist',
     companyId: COMPANY_DATA_SEED_IDS.ID_508,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22570,9 +19519,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1016',
     jobTitle: 'Housing manager/officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_508,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22591,9 +19537,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1017',
     jobTitle: 'Herpetologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_509,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22612,9 +19555,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1018',
     jobTitle: 'Secondary school teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_509,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22633,9 +19573,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1019',
     jobTitle: 'Therapist, occupational',
     companyId: COMPANY_DATA_SEED_IDS.ID_510,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22654,9 +19591,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1020',
     jobTitle: 'Quality manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_510,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22675,9 +19609,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1021',
     jobTitle: 'Nutritional therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_511,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22696,9 +19627,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1022',
     jobTitle: 'Management consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_511,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22717,9 +19645,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1023',
     jobTitle: 'Chiropodist',
     companyId: COMPANY_DATA_SEED_IDS.ID_512,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22738,9 +19663,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1024',
     jobTitle: 'Presenter, broadcasting',
     companyId: COMPANY_DATA_SEED_IDS.ID_512,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22759,9 +19681,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1025',
     jobTitle: 'Psychologist, sport and exercise',
     companyId: COMPANY_DATA_SEED_IDS.ID_513,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22780,9 +19699,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1026',
     jobTitle: 'Development worker, community',
     companyId: COMPANY_DATA_SEED_IDS.ID_513,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22801,9 +19717,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1027',
     jobTitle: 'English as a foreign language teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_514,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22822,9 +19735,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1028',
     jobTitle: 'Designer, jewellery',
     companyId: COMPANY_DATA_SEED_IDS.ID_514,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22843,9 +19753,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1029',
     jobTitle: 'Naval architect',
     companyId: COMPANY_DATA_SEED_IDS.ID_515,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22864,9 +19771,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1030',
     jobTitle: 'Meteorologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_515,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22885,9 +19789,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1031',
     jobTitle: 'Investment banker, corporate',
     companyId: COMPANY_DATA_SEED_IDS.ID_516,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22906,9 +19807,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1032',
     jobTitle: 'Environmental health practitioner',
     companyId: COMPANY_DATA_SEED_IDS.ID_516,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22927,9 +19825,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1033',
     jobTitle: 'Pharmacologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_517,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22948,9 +19843,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1034',
     jobTitle: 'Arts administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_517,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22969,9 +19861,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1035',
     jobTitle: 'Water engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_518,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22990,9 +19879,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1036',
     jobTitle: 'Clinical molecular geneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_518,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23011,9 +19897,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1037',
     jobTitle: 'Engineer, automotive',
     companyId: COMPANY_DATA_SEED_IDS.ID_519,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23032,9 +19915,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1038',
     jobTitle: 'Learning disability nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_519,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23053,9 +19933,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1039',
     jobTitle: 'Consulting civil engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_520,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23074,9 +19951,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1040',
     jobTitle: 'Artist',
     companyId: COMPANY_DATA_SEED_IDS.ID_520,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23095,9 +19969,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1041',
     jobTitle: 'Armed forces training and education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_521,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23116,9 +19987,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1042',
     jobTitle: 'Gaffer',
     companyId: COMPANY_DATA_SEED_IDS.ID_521,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23137,9 +20005,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1043',
     jobTitle: 'Mechanical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_522,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23158,9 +20023,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1044',
     jobTitle: 'Magazine journalist',
     companyId: COMPANY_DATA_SEED_IDS.ID_522,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23179,9 +20041,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1045',
     jobTitle: 'Scientist, research (physical sciences)',
     companyId: COMPANY_DATA_SEED_IDS.ID_523,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23200,9 +20059,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1046',
     jobTitle: 'Armed forces training and education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_523,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23221,9 +20077,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1047',
     jobTitle: 'Journalist, broadcasting',
     companyId: COMPANY_DATA_SEED_IDS.ID_524,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23242,9 +20095,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1048',
     jobTitle: 'Retail manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_524,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23263,9 +20113,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1049',
     jobTitle: 'Landscape architect',
     companyId: COMPANY_DATA_SEED_IDS.ID_525,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23284,9 +20131,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1050',
     jobTitle: 'Clinical psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_525,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23305,9 +20149,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1051',
     jobTitle: 'Podiatrist',
     companyId: COMPANY_DATA_SEED_IDS.ID_526,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23326,9 +20167,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1052',
     jobTitle: 'Media buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_526,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23347,9 +20185,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1053',
     jobTitle: 'Personal assistant',
     companyId: COMPANY_DATA_SEED_IDS.ID_527,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23368,9 +20203,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1054',
     jobTitle: 'Waste management officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_527,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23389,9 +20221,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1055',
     jobTitle: 'Accountant, chartered certified',
     companyId: COMPANY_DATA_SEED_IDS.ID_528,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23410,9 +20239,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1056',
     jobTitle: 'Nutritional therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_528,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23431,9 +20257,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1057',
     jobTitle: 'Industrial/product designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_529,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23452,9 +20275,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1058',
     jobTitle: 'Chartered management accountant',
     companyId: COMPANY_DATA_SEED_IDS.ID_529,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23473,9 +20293,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1059',
     jobTitle: 'Data scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_530,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23494,9 +20311,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1060',
     jobTitle: 'Brewing technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_530,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23515,9 +20329,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1061',
     jobTitle: 'Conservation officer, nature',
     companyId: COMPANY_DATA_SEED_IDS.ID_531,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23536,9 +20347,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1062',
     jobTitle: 'Press sub',
     companyId: COMPANY_DATA_SEED_IDS.ID_531,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23557,9 +20365,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1063',
     jobTitle: 'Telecommunications researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_532,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23578,9 +20383,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1064',
     jobTitle: 'Immigration officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_532,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23599,9 +20401,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1065',
     jobTitle: 'Purchasing manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_533,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23620,9 +20419,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1066',
     jobTitle: 'Education officer, museum',
     companyId: COMPANY_DATA_SEED_IDS.ID_533,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23641,9 +20437,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1067',
     jobTitle: 'General practice doctor',
     companyId: COMPANY_DATA_SEED_IDS.ID_534,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23662,9 +20455,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1068',
     jobTitle: 'Counsellor',
     companyId: COMPANY_DATA_SEED_IDS.ID_534,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23683,9 +20473,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1069',
     jobTitle: 'Private music teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_535,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23704,9 +20491,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1070',
     jobTitle: 'Clinical biochemist',
     companyId: COMPANY_DATA_SEED_IDS.ID_535,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23725,9 +20509,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1071',
     jobTitle: 'Firefighter',
     companyId: COMPANY_DATA_SEED_IDS.ID_536,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23746,9 +20527,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1072',
     jobTitle: 'Administrator, education',
     companyId: COMPANY_DATA_SEED_IDS.ID_536,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23767,9 +20545,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1073',
     jobTitle: 'Sports coach',
     companyId: COMPANY_DATA_SEED_IDS.ID_537,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23788,9 +20563,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1074',
     jobTitle: 'Product designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_537,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23809,9 +20581,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1075',
     jobTitle: 'Research scientist (maths)',
     companyId: COMPANY_DATA_SEED_IDS.ID_538,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23830,9 +20599,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1076',
     jobTitle: 'Clinical psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_538,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23851,9 +20617,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1077',
     jobTitle: 'Writer',
     companyId: COMPANY_DATA_SEED_IDS.ID_539,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23872,9 +20635,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1078',
     jobTitle: 'Archaeologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_539,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23893,9 +20653,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1079',
     jobTitle: 'Film/video editor',
     companyId: COMPANY_DATA_SEED_IDS.ID_540,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23914,9 +20671,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1080',
     jobTitle: 'Higher education careers adviser',
     companyId: COMPANY_DATA_SEED_IDS.ID_540,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23935,9 +20689,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1081',
     jobTitle: 'Plant breeder/geneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_541,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23956,9 +20707,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1082',
     jobTitle: 'Bookseller',
     companyId: COMPANY_DATA_SEED_IDS.ID_541,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23977,9 +20725,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1083',
     jobTitle: 'Publishing rights manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_542,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23998,9 +20743,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1084',
     jobTitle: 'Chief Operating Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_542,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24019,9 +20761,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1085',
     jobTitle: 'Engineer, energy',
     companyId: COMPANY_DATA_SEED_IDS.ID_543,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24040,9 +20779,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1086',
     jobTitle: 'Manufacturing engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_543,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24061,9 +20797,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1087',
     jobTitle: 'Garment/textile technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_544,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24082,9 +20815,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1088',
     jobTitle: 'Data scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_544,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24103,9 +20833,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1089',
     jobTitle: 'Manufacturing systems engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_545,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24124,9 +20851,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1090',
     jobTitle: 'Art therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_545,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24145,9 +20869,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1091',
     jobTitle: 'Land',
     companyId: COMPANY_DATA_SEED_IDS.ID_546,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24166,9 +20887,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1092',
     jobTitle: 'Product manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_546,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24187,9 +20905,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1093',
     jobTitle: 'Immunologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_547,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24208,9 +20923,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1094',
     jobTitle: 'Warehouse manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_547,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24229,9 +20941,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1095',
     jobTitle: 'Loss adjuster, chartered',
     companyId: COMPANY_DATA_SEED_IDS.ID_548,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24250,9 +20959,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1096',
     jobTitle: 'Historic buildings inspector/conservation officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_548,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24271,9 +20977,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1097',
     jobTitle: 'Presenter, broadcasting',
     companyId: COMPANY_DATA_SEED_IDS.ID_549,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24292,9 +20995,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1098',
     jobTitle: 'Production assistant, radio',
     companyId: COMPANY_DATA_SEED_IDS.ID_549,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24313,9 +21013,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1099',
     jobTitle: 'Heritage manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_550,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24334,9 +21031,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1100',
     jobTitle: 'Surveyor, insurance',
     companyId: COMPANY_DATA_SEED_IDS.ID_550,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24355,9 +21049,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1101',
     jobTitle: 'Probation officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_551,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24376,9 +21067,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1102',
     jobTitle: 'Environmental health practitioner',
     companyId: COMPANY_DATA_SEED_IDS.ID_551,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24397,9 +21085,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1103',
     jobTitle: 'Psychologist, sport and exercise',
     companyId: COMPANY_DATA_SEED_IDS.ID_552,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24418,9 +21103,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1104',
     jobTitle: 'Engineer, water',
     companyId: COMPANY_DATA_SEED_IDS.ID_552,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24439,9 +21121,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1105',
     jobTitle: 'Water engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_553,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24460,9 +21139,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1106',
     jobTitle: 'Dancer',
     companyId: COMPANY_DATA_SEED_IDS.ID_553,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24481,9 +21157,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1107',
     jobTitle: 'Community development worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_554,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24502,9 +21175,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1108',
     jobTitle: 'Computer games developer',
     companyId: COMPANY_DATA_SEED_IDS.ID_554,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24523,9 +21193,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1109',
     jobTitle: 'Farm manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_555,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24544,9 +21211,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1110',
     jobTitle: 'Sales executive',
     companyId: COMPANY_DATA_SEED_IDS.ID_555,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24565,9 +21229,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1111',
     jobTitle: 'Textile designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_556,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24586,9 +21247,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1112',
     jobTitle: 'Operational researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_556,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24607,9 +21265,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1113',
     jobTitle: 'Community development worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_557,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24628,9 +21283,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1114',
     jobTitle: 'Engineer, control and instrumentation',
     companyId: COMPANY_DATA_SEED_IDS.ID_557,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24649,9 +21301,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1115',
     jobTitle: 'Plant breeder/geneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_558,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24670,9 +21319,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1116',
     jobTitle: 'Museum/gallery conservator',
     companyId: COMPANY_DATA_SEED_IDS.ID_558,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24691,9 +21337,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1117',
     jobTitle: 'Senior tax professional/tax inspector',
     companyId: COMPANY_DATA_SEED_IDS.ID_559,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24712,9 +21355,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1118',
     jobTitle: 'Child psychotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_559,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24733,9 +21373,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1119',
     jobTitle: 'Quantity surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_560,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24754,9 +21391,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1120',
     jobTitle: 'Civil engineer, consulting',
     companyId: COMPANY_DATA_SEED_IDS.ID_560,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24775,9 +21409,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1121',
     jobTitle: 'Forest/woodland manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_561,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24796,9 +21427,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1122',
     jobTitle: 'Waste management officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_561,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24817,9 +21445,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1123',
     jobTitle: 'Therapist, music',
     companyId: COMPANY_DATA_SEED_IDS.ID_562,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24838,9 +21463,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1124',
     jobTitle: 'Community arts worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_562,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24859,9 +21481,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1125',
     jobTitle: 'Land/geomatics surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_563,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24880,9 +21499,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1126',
     jobTitle: 'Translator',
     companyId: COMPANY_DATA_SEED_IDS.ID_563,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24901,9 +21517,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1127',
     jobTitle: 'Therapeutic radiographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_564,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24922,9 +21535,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1128',
     jobTitle: 'Architect',
     companyId: COMPANY_DATA_SEED_IDS.ID_564,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24943,9 +21553,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1129',
     jobTitle: 'Social researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_565,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24964,9 +21571,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1130',
     jobTitle: 'Advice worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_565,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24985,9 +21589,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1131',
     jobTitle: 'Press sub',
     companyId: COMPANY_DATA_SEED_IDS.ID_566,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25006,9 +21607,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1132',
     jobTitle: 'Operational researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_566,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25027,9 +21625,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1133',
     jobTitle: 'Research officer, government',
     companyId: COMPANY_DATA_SEED_IDS.ID_567,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25048,9 +21643,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1134',
     jobTitle: 'Chief Marketing Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_567,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25069,9 +21661,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1135',
     jobTitle: 'Engineer, building services',
     companyId: COMPANY_DATA_SEED_IDS.ID_568,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25090,9 +21679,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1136',
     jobTitle: 'Engineer, maintenance',
     companyId: COMPANY_DATA_SEED_IDS.ID_568,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25111,9 +21697,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1137',
     jobTitle: 'Runner, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_569,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25132,9 +21715,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1138',
     jobTitle: 'Patent attorney',
     companyId: COMPANY_DATA_SEED_IDS.ID_569,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25153,9 +21733,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1139',
     jobTitle: 'Cartographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_570,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25174,9 +21751,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1140',
     jobTitle: 'Patent attorney',
     companyId: COMPANY_DATA_SEED_IDS.ID_570,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25195,9 +21769,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1141',
     jobTitle: 'Nurse, adult',
     companyId: COMPANY_DATA_SEED_IDS.ID_571,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25216,9 +21787,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1142',
     jobTitle: 'Designer, furniture',
     companyId: COMPANY_DATA_SEED_IDS.ID_571,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25237,9 +21805,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1143',
     jobTitle: 'Editor, magazine features',
     companyId: COMPANY_DATA_SEED_IDS.ID_572,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25258,9 +21823,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1144',
     jobTitle: 'Scientific laboratory technician',
     companyId: COMPANY_DATA_SEED_IDS.ID_572,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25279,9 +21841,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1145',
     jobTitle: 'Careers information officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_573,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25300,9 +21859,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1146',
     jobTitle: 'Insurance broker',
     companyId: COMPANY_DATA_SEED_IDS.ID_573,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25321,9 +21877,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1147',
     jobTitle: 'Therapist, occupational',
     companyId: COMPANY_DATA_SEED_IDS.ID_574,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25342,9 +21895,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1148',
     jobTitle: 'Journalist, magazine',
     companyId: COMPANY_DATA_SEED_IDS.ID_574,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25363,9 +21913,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1149',
     jobTitle: 'Database administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_575,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25384,9 +21931,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1150',
     jobTitle: 'Financial planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_575,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25405,9 +21949,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1151',
     jobTitle: 'Quality manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_576,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25426,9 +21967,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1152',
     jobTitle: 'Estate manager/land agent',
     companyId: COMPANY_DATA_SEED_IDS.ID_576,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25447,9 +21985,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1153',
     jobTitle: 'Materials engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_577,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25468,9 +22003,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1154',
     jobTitle: 'Dietitian',
     companyId: COMPANY_DATA_SEED_IDS.ID_577,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25489,9 +22021,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1155',
     jobTitle: 'Copy',
     companyId: COMPANY_DATA_SEED_IDS.ID_578,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25510,9 +22039,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1156',
     jobTitle: 'Personal assistant',
     companyId: COMPANY_DATA_SEED_IDS.ID_578,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25531,9 +22057,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1157',
     jobTitle: 'Multimedia specialist',
     companyId: COMPANY_DATA_SEED_IDS.ID_579,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25552,9 +22075,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1158',
     jobTitle: 'Chartered legal executive (England and Wales)',
     companyId: COMPANY_DATA_SEED_IDS.ID_579,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25573,9 +22093,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1159',
     jobTitle: 'Radiographer, diagnostic',
     companyId: COMPANY_DATA_SEED_IDS.ID_580,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25594,9 +22111,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1160',
     jobTitle: 'Lecturer, higher education',
     companyId: COMPANY_DATA_SEED_IDS.ID_580,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25615,9 +22129,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1161',
     jobTitle: 'Building services engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_581,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25636,9 +22147,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1162',
     jobTitle: 'Insurance risk surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_581,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25657,9 +22165,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1163',
     jobTitle: 'Research officer, trade union',
     companyId: COMPANY_DATA_SEED_IDS.ID_582,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25678,9 +22183,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1164',
     jobTitle: 'Therapeutic radiographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_582,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25699,9 +22201,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1165',
     jobTitle: 'Production engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_583,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25720,9 +22219,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1166',
     jobTitle: 'Charity fundraiser',
     companyId: COMPANY_DATA_SEED_IDS.ID_583,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25741,9 +22237,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1167',
     jobTitle: 'Educational psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_584,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25762,9 +22255,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1168',
     jobTitle: 'Equality and diversity officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_584,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25783,9 +22273,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1169',
     jobTitle: 'Production engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_585,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25804,9 +22291,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1170',
     jobTitle: 'Fitness centre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_585,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25825,9 +22309,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1171',
     jobTitle: 'Oceanographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_586,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25846,9 +22327,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1172',
     jobTitle: 'Sports therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_586,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25867,9 +22345,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1173',
     jobTitle: 'Manufacturing engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_587,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25888,9 +22363,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1174',
     jobTitle: 'Animal nutritionist',
     companyId: COMPANY_DATA_SEED_IDS.ID_587,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25909,9 +22381,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1175',
     jobTitle: 'TEFL teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_588,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25930,9 +22399,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1176',
     jobTitle: 'Logistics and distribution manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_588,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25951,9 +22417,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1177',
     jobTitle: 'Editor, commissioning',
     companyId: COMPANY_DATA_SEED_IDS.ID_589,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25972,9 +22435,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1178',
     jobTitle: 'Chiropodist',
     companyId: COMPANY_DATA_SEED_IDS.ID_589,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25993,9 +22453,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1179',
     jobTitle: 'Therapist, drama',
     companyId: COMPANY_DATA_SEED_IDS.ID_590,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26014,9 +22471,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1180',
     jobTitle: 'Mudlogger',
     companyId: COMPANY_DATA_SEED_IDS.ID_590,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26035,9 +22489,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1181',
     jobTitle: 'Barista',
     companyId: COMPANY_DATA_SEED_IDS.ID_591,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26056,9 +22507,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1182',
     jobTitle: 'Systems developer',
     companyId: COMPANY_DATA_SEED_IDS.ID_591,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26077,9 +22525,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1183',
     jobTitle: 'Psychologist, sport and exercise',
     companyId: COMPANY_DATA_SEED_IDS.ID_592,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26098,9 +22543,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1184',
     jobTitle: 'Senior tax professional/tax inspector',
     companyId: COMPANY_DATA_SEED_IDS.ID_592,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26119,9 +22561,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1185',
     jobTitle: 'Engineer, water',
     companyId: COMPANY_DATA_SEED_IDS.ID_593,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26140,9 +22579,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1186',
     jobTitle: 'Journalist, magazine',
     companyId: COMPANY_DATA_SEED_IDS.ID_593,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26161,9 +22597,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1187',
     jobTitle: 'Herpetologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_594,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26182,9 +22615,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1188',
     jobTitle: 'Youth worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_594,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26203,9 +22633,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1189',
     jobTitle: 'Teacher, adult education',
     companyId: COMPANY_DATA_SEED_IDS.ID_595,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26224,9 +22651,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1190',
     jobTitle: 'Ranger/warden',
     companyId: COMPANY_DATA_SEED_IDS.ID_595,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26245,9 +22669,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1191',
     jobTitle: 'Designer, industrial/product',
     companyId: COMPANY_DATA_SEED_IDS.ID_596,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26266,9 +22687,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1192',
     jobTitle: 'Editor, film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_596,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26287,9 +22705,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1193',
     jobTitle: 'Horticulturist, amenity',
     companyId: COMPANY_DATA_SEED_IDS.ID_597,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26308,9 +22723,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1194',
     jobTitle: 'Child psychotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_597,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26329,9 +22741,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1195',
     jobTitle: 'Technical author',
     companyId: COMPANY_DATA_SEED_IDS.ID_598,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26350,9 +22759,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1196',
     jobTitle: 'Geoscientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_598,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26371,9 +22777,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1197',
     jobTitle: 'Ship broker',
     companyId: COMPANY_DATA_SEED_IDS.ID_599,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26392,9 +22795,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1198',
     jobTitle: 'Best boy',
     companyId: COMPANY_DATA_SEED_IDS.ID_599,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26413,9 +22813,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1199',
     jobTitle: 'Chemical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_599,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -26434,9 +22831,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     linkedinLinkPrimaryLinkUrl: 'https://linkedin.com/in/person-1200',
     jobTitle: 'Radiographer, diagnostic',
     companyId: COMPANY_DATA_SEED_IDS.ID_599,
-    departmentId: null,
-    employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
