@@ -7,14 +7,14 @@ import {
   SettingsDataModelFieldCurrencyForm,
   type SettingsDataModelFieldCurrencyFormValues,
 } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
-import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
 type SettingsDataModelFieldCurrencySettingsFormCardProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'name' | 'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
+    'name' | 'icon' | 'type' | 'defaultValue' | 'settings'
   >;
   objectNameSingular: string;
 };
@@ -29,13 +29,10 @@ export const SettingsDataModelFieldCurrencySettingsFormCard = ({
   fieldMetadataItem,
   objectNameSingular,
 }: SettingsDataModelFieldCurrencySettingsFormCardProps) => {
-  const { initialDefaultValue, initialSettingsValue } =
-    useCurrencySettingsFormInitialValues({
-      fieldMetadataItem,
-    });
-
-  const { watch: watchFormValue } =
-    useFormContext<SettingsDataModelFieldCurrencyFormValues>();
+  const { watch } = useFormContext<
+    SettingsDataModelFieldCurrencyFormValues &
+      SettingsDataModelFieldEditFormValues
+  >();
 
   return (
     <SettingsDataModelPreviewFormCard
@@ -43,8 +40,10 @@ export const SettingsDataModelFieldCurrencySettingsFormCard = ({
         <StyledFieldPreviewCard
           fieldMetadataItem={{
             ...fieldMetadataItem,
-            defaultValue: watchFormValue('defaultValue', initialDefaultValue),
-            settings: watchFormValue('settings', initialSettingsValue),
+            label: watch('label'),
+            icon: watch('icon'),
+            defaultValue: watch('defaultValue'),
+            settings: watch('settings'),
           }}
           objectNameSingular={objectNameSingular}
         />

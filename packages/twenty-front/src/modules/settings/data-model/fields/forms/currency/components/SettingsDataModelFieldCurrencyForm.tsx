@@ -24,10 +24,7 @@ export type SettingsDataModelFieldCurrencyFormValues = z.infer<
 
 type SettingsDataModelFieldCurrencyFormProps = {
   disabled?: boolean;
-  fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
-  >;
+  fieldMetadataItem: Pick<FieldMetadataItem, 'defaultValue' | 'settings'>;
 };
 
 export const SettingsDataModelFieldCurrencyForm = ({

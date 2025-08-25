@@ -91,6 +91,7 @@ export const SettingsObjectFieldEdit = () => {
   }, [navigateApp, objectMetadataItem, fieldMetadataItem]);
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
+
   const canSave = isDirty && isValid && !isSubmitting;
 
   if (!isDefined(objectMetadataItem) || !isDefined(fieldMetadataItem)) {
