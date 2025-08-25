@@ -80,7 +80,6 @@ const StyledConfiguredFilterContainer = styled.div`
 `;
 
 export const WorkflowDiagramFilterEdgeEditable = ({
-  id,
   source,
   target,
   sourceY,

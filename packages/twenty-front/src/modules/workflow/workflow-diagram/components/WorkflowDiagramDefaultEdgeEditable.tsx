@@ -29,7 +29,6 @@ import { useEdgeState } from '@/workflow/workflow-diagram/hooks/useEdgeState';
 type WorkflowDiagramDefaultEdgeEditableProps = EdgeProps<WorkflowDiagramEdge>;
 
 export const WorkflowDiagramDefaultEdgeEditable = ({
-  id,
   source,
   target,
   sourceX,
