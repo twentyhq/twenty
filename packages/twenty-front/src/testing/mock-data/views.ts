@@ -1,10 +1,14 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import { ViewType } from '@/views/types/ViewType';
-import { ViewKey as CoreViewKey, ViewOpenRecordIn as CoreViewOpenRecordIn, ViewType as CoreViewType } from '~/generated-metadata/graphql';
+import {
+  ViewKey as CoreViewKey,
+  ViewOpenRecordIn as CoreViewOpenRecordIn,
+  ViewType as CoreViewType,
+} from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const companyObjectMetadata = getMockObjectMetadataItemOrThrow('company');
@@ -112,7 +116,7 @@ export const mockedCoreViewsData: CoreViewWithRelations[] = [
     openRecordIn: CoreViewOpenRecordIn.SIDE_PANEL,
     viewFilterGroups: [],
     viewGroups: [],
-    viewFields: [], 
+    viewFields: [],
     viewFilters: [],
     viewSorts: [],
     __typename: 'CoreView',
