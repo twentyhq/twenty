@@ -19,7 +19,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
 import { OIDCAuthGuard } from 'src/engine/core-modules/auth/guards/oidc-auth.guard';
@@ -42,6 +41,7 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller('auth')
+@UseFilters(AuthRestApiExceptionFilter)
 export class SSOAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
@@ -58,7 +58,6 @@ export class SSOAuthController {
 
   @Get('saml/metadata/:identityProviderId')
   @UseGuards(EnterpriseFeaturesEnabledGuard, PublicEndpointGuard)
-  @UseFilters(AuthRestApiExceptionFilter)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async generateMetadata(@Req() req: any): Promise<string | void> {
     return generateServiceProviderMetadata({
@@ -76,7 +75,6 @@ export class SSOAuthController {
 
   @Get('oidc/login/:identityProviderId')
   @UseGuards(EnterpriseFeaturesEnabledGuard, OIDCAuthGuard, PublicEndpointGuard)
-  @UseFilters(AuthRestApiExceptionFilter)
   async oidcAuth() {
     // As this method is protected by OIDC Auth guard, it will trigger OIDC SSO flow
     return;
@@ -84,7 +82,6 @@ export class SSOAuthController {
 
   @Get('saml/login/:identityProviderId')
   @UseGuards(EnterpriseFeaturesEnabledGuard, SAMLAuthGuard, PublicEndpointGuard)
-  @UseFilters(AuthRestApiExceptionFilter)
   async samlAuth() {
     // As this method is protected by SAML Auth guard, it will trigger SAML SSO flow
     return;
@@ -92,14 +89,12 @@ export class SSOAuthController {
 
   @Get('oidc/callback')
   @UseGuards(EnterpriseFeaturesEnabledGuard, OIDCAuthGuard, PublicEndpointGuard)
-  @UseFilters(AuthOAuthExceptionFilter)
   async oidcAuthCallback(@Req() req: OIDCRequest, @Res() res: Response) {
     return await this.authCallback(req, res);
   }
 
   @Post('saml/callback/:identityProviderId')
   @UseGuards(EnterpriseFeaturesEnabledGuard, SAMLAuthGuard, PublicEndpointGuard)
-  @UseFilters(AuthOAuthExceptionFilter)
   async samlAuthCallback(@Req() req: SAMLRequest, @Res() res: Response) {
     try {
       return await this.authCallback(req, res);
