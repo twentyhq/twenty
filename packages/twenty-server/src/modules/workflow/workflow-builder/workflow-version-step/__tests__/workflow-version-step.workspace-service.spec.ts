@@ -115,7 +115,12 @@ describe('WorkflowVersionStepWorkspaceService', () => {
           },
         },
         { provide: ServerlessFunctionService, useValue: {} },
-        { provide: AgentEntity, useValue: {} },
+        {
+          provide: getRepositoryToken(AgentEntity, 'core'),
+          useValue: {
+            findOne: jest.fn(),
+          },
+        },
         {
           provide: getRepositoryToken(ObjectMetadataEntity, 'core'),
           useValue: {
