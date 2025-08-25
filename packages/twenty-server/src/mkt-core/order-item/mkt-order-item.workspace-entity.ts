@@ -27,6 +27,7 @@ import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-
 import { MktProductWorkspaceEntity } from 'src/mkt-core/product/standard-objects/mkt-product.workspace-entity';
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { MktComboWorkspaceEntity } from 'src/mkt-core/combo/mkt-combo.workspace-entity';
 
 const SEARCH_FIELDS_FOR_ORDER_ITEM: FieldTypeAndNameMetadata[] = [
   { name: 'name', type: FieldMetadataType.TEXT },
@@ -182,6 +183,22 @@ export class MktOrderItemWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('mktVariant')
   mktVariantId: string | null;
+
+  @WorkspaceRelation({
+    standardId: MKT_ORDER_ITEM_FIELD_IDS.mktCombo,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Combo`,
+    description: msg`Combo for this order item`,
+    icon: 'IconBox',
+    inverseSideTarget: () => MktComboWorkspaceEntity,
+    inverseSideFieldKey: 'mktOrderItems',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  mktCombo?: Relation<MktComboWorkspaceEntity>;
+
+  @WorkspaceJoinColumn('mktCombo')
+  mktComboId: string | null;
 
   // Temporarily commented out due to TimelineActivityMktEntity not being a registered entity
   // @WorkspaceRelation({
