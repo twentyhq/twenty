@@ -68,8 +68,9 @@ export const SettingsSecurityApprovedAccessDomain = () => {
           navigate(SettingsPath.Security);
         },
         onError: (error) => {
+          console.log(error.message)
           enqueueErrorSnackBar({
-            apolloError: error instanceof ApolloError ? error : undefined,
+            message :error ? error.message :"an error occurred",
           });
         },
       });
