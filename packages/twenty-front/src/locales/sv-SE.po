@@ -1204,6 +1204,11 @@ msgstr "Klicka på \"Lägg till utdatafält\" nedan för att definiera strukture
 msgid "Click on the checkmark to apply your changes."
 msgstr "Klicka på bocken för att tillämpa dina ändringar."
 
+#. js-lingui-id: d0rtA5
+#: src/modules/dashboards/graphs/components/GraphWidgetGaugeChart.tsx
+msgid "Click to see data"
+msgstr ""
+
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client ID"

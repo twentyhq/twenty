@@ -1204,6 +1204,11 @@ msgstr "Feu clic a \"Afegeix camp de sortida\" a continuació per definir l'estr
 msgid "Click on the checkmark to apply your changes."
 msgstr "Fes clic a la marca de verificació per aplicar els teus canvis."
 
+#. js-lingui-id: d0rtA5
+#: src/modules/dashboards/graphs/components/GraphWidgetGaugeChart.tsx
+msgid "Click to see data"
+msgstr ""
+
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client ID"
