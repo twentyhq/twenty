@@ -55,7 +55,6 @@ import { Tag, type TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { useEdgeState } from '@/workflow/workflow-diagram/hooks/useEdgeState';
-import { EdgeBranchArrowMarker } from '@/workflow/workflow-diagram/constants/EdgeBranchArrowMarker';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -453,29 +452,13 @@ export const WorkflowDiagramCanvasBase = ({
         source: hoveredEdge.source,
         target: hoveredEdge.target,
       });
-      reactflow.setEdges((edges) =>
-        edges.map((edge) =>
-          edge.id === hoveredEdge.id
-            ? {
-                ...edge,
-                markerEnd: EdgeBranchArrowMarker.Hover,
-              }
-            : edge,
-        ),
-      );
     },
-    [setEdgeHovered, reactflow],
+    [setEdgeHovered],
   );
 
   const onEdgeMouseLeave = useCallback(() => {
     clearEdgeHover();
-    reactflow.setEdges((edges) =>
-      edges.map((edge) => ({
-        ...edge,
-        markerEnd: EdgeBranchArrowMarker.Default,
-      })),
-    );
-  }, [clearEdgeHover, reactflow]);
+  }, [clearEdgeHover]);
 
   return (
     <StyledResetReactflowStyles ref={containerRef}>

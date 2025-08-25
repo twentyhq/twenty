@@ -25,6 +25,7 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
 
       if (!isDefined(selectedEdge)) {
         clearEdgeSelected();
+
         return;
       }
 
