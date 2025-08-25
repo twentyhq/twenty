@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isNumber } from 'class-validator';
 import { ListResponse, type ImapFlow } from 'imapflow';
 
-import { getSentFolderCandidatesByRegex } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-sent-folder-candidates-by-regex.util';
+import { getImapSentFolderCandidatesByRegex } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-sent-folder-candidates-by-regex.util';
 
 /**
  * Service to find sent folder using IMAP special-use flags
@@ -91,7 +91,7 @@ export class ImapFindSentFolderService {
     client: ImapFlow,
     list: ListResponse[],
   ): Promise<string | null> {
-    const regexCandidateFolders = getSentFolderCandidatesByRegex(list);
+    const regexCandidateFolders = getImapSentFolderCandidatesByRegex(list);
 
     for (const folder of regexCandidateFolders) {
       const messageCount = await this.getFolderMessageCount(client, folder);

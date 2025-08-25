@@ -1,6 +1,8 @@
 import { type ListResponse } from 'imapflow';
 
-export function getSentFolderCandidatesByRegex(list: ListResponse[]): string[] {
+export function getImapSentFolderCandidatesByRegex(
+  list: ListResponse[],
+): string[] {
   const sentFolderPattern = new RegExp(
     [
       // EN
