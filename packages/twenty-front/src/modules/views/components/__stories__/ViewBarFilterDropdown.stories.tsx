@@ -13,14 +13,11 @@ import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { ViewBarFilterDropdown } from '@/views/components/ViewBarFilterDropdown';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { ViewType } from '@/views/types/ViewType';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
-import { type View } from '@/views/types/View';
+import { coreViewsState } from '@/views/states/coreViewState';
 import { within } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
 import {
@@ -32,6 +29,10 @@ import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import {
+  mockedCoreViewsData,
+  mockedViewsData,
+} from '~/testing/mock-data/views';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const meta: Meta<typeof ViewBarFilterDropdown> = {
@@ -50,36 +51,20 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
       );
 
       const setPrefetchViews = useSetRecoilState(prefetchViewsState);
+      const setCoreViews = useSetRecoilState(coreViewsState);
 
-      const mockView: View = {
-        id: 'view-1',
-        name: 'Test View',
-        objectMetadataId: companyObjectMetadataItem.id,
-        viewFilters: [],
-        viewFilterGroups: [],
-        type: ViewType.Table,
-        key: null,
-        isCompact: false,
-        openRecordIn: ViewOpenRecordInType.SIDE_PANEL,
-        viewFields: [],
-        viewGroups: [],
-        viewSorts: [],
-        kanbanFieldMetadataId: '',
-        kanbanAggregateOperation: AggregateOperations.COUNT,
-        icon: '',
-        kanbanAggregateOperationFieldMetadataId: '',
-        position: 0,
-        __typename: 'View',
-      };
+      const mockView = mockedViewsData[0];
+      const mockCoreView = mockedCoreViewsData[0];
 
       setPrefetchViews([mockView]);
+      setCoreViews([mockCoreView]);
 
       const setCurrentViewId = useSetRecoilComponentState(
         contextStoreCurrentViewIdComponentState,
         MAIN_CONTEXT_STORE_INSTANCE_ID,
       );
 
-      setCurrentViewId('view-1');
+      setCurrentViewId(mockView.id);
 
       const columns = companyObjectMetadataItem.fields.map(
         (fieldMetadataItem, index) =>
