@@ -35,6 +35,7 @@ import {
 } from 'src/mkt-core/constants/mkt-customer.constant';
 import { MKT_CUSTOMER_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
+import { MktLicenseWorkspaceEntity } from 'src/mkt-core/license/mkt-license.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -230,6 +231,19 @@ export class MktCustomerWorkspaceEntity extends BaseWorkspaceEntity {
     description: msg`The creator of the record`,
   })
   createdBy: ActorMetadata;
+
+  @WorkspaceRelation({
+    standardId: MKT_CUSTOMER_FIELD_IDS.mktLicenses,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Licenses`,
+    description: msg`Licenses of the customer`,
+    icon: 'IconLicense',
+    inverseSideTarget: () => MktLicenseWorkspaceEntity,
+    inverseSideFieldKey: 'mktCustomer',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  mktLicenses: Relation<MktLicenseWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: MKT_CUSTOMER_FIELD_IDS.accountOwner,
