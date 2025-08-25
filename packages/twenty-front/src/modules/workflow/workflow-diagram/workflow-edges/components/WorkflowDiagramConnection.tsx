@@ -17,7 +17,7 @@ export const WorkflowDiagramConnection = ({
 
   const [path] = getBezierPath({
     sourceX: fromX,
-    sourceY: fromY,
+    sourceY: fromY + 4,
     targetX: toX,
     targetY: toY - 4,
   });
