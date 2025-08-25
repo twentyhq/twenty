@@ -1,5 +1,3 @@
-import { v4 } from 'uuid';
-
 import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -18,7 +16,6 @@ const getCreateViewAction = (
   return {
     type: 'create_view',
     view: {
-      id: v4(),
       objectMetadataId: flatObjectMetadata.id,
       type: ViewType.TABLE,
       name: `All ${flatObjectMetadata.labelPlural}`,

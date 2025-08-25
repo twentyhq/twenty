@@ -1,20 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
-import { QueryRunner } from 'typeorm';
-
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CreateViewAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-action-v2';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
-import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 
 @Injectable()
 export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActionHandler(
   'create_view',
 ) {
-  constructor(private readonly twentyORMGlobalManager: TwentyORMGlobalManager) {
+  constructor() {
     super();
   }
 
@@ -24,37 +21,29 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
     const { action, queryRunner, workspaceId } = context;
     const { view } = action;
 
-    const viewRepository = queryRunner.manager.getRepository<View>(View);
+    const { viewFields } = view;
 
-    await viewRepository.save({
+    const viewRepository = queryRunner.manager.getRepository<View>(View);
+    const viewFieldRepository =
+      queryRunner.manager.getRepository<ViewField>(ViewField);
+
+    const createdView = await viewRepository.save({
       ...view,
       workspaceId,
     });
+
+    await viewFieldRepository.save(
+      viewFields.map((viewField) => ({
+        ...viewField,
+        viewId: createdView.id,
+        workspaceId,
+      })),
+    );
   }
 
   async executeForWorkspaceSchema(
-    context: WorkspaceMigrationActionRunnerArgs<CreateViewAction>,
+    _context: WorkspaceMigrationActionRunnerArgs<CreateViewAction>,
   ): Promise<void> {
-    const { action, workspaceQueryRunner } = context;
-    const { view } = action;
-
-    await this.createWorkspaceFavorite(view.id, workspaceQueryRunner);
-  }
-
-  private async createWorkspaceFavorite(
-    viewId: string,
-    workspaceQueryRunner: QueryRunner,
-  ): Promise<void> {
-    const favoriteRepository =
-      workspaceQueryRunner.manager.getRepository<FavoriteWorkspaceEntity>(
-        'favorite',
-      );
-
-    const favoriteCount = await favoriteRepository.count();
-
-    await favoriteRepository.insert({
-      viewId,
-      position: favoriteCount,
-    });
+    return;
   }
 }

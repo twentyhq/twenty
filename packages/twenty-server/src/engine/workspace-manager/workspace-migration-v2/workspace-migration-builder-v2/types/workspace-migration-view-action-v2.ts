@@ -8,7 +8,7 @@ export type FlatViewField = Pick<
 
 export type FlatView = Pick<
   View,
-  'id' | 'name' | 'objectMetadataId' | 'type' | 'isCustom' | 'key' | 'icon'
+  'name' | 'objectMetadataId' | 'type' | 'isCustom' | 'key' | 'icon'
 > & {
   viewFields: FlatViewField[];
 };

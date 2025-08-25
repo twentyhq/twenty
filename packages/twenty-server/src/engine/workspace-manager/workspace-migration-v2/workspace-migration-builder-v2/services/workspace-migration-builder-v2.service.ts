@@ -10,7 +10,6 @@ import { deletedCreatedUpdatedMatrixDispatcher } from 'src/engine/workspace-mana
 import { WorkspaceMigrationV2FieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/field/services/workspace-migration-v2-field-actions-builder.service';
 import { buildWorkspaceMigrationIndexActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/index/workspace-migration-v2-index-actions-builder';
 import { WorkspaceMigrationV2ObjectActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/object/services/workspace-migration-v2-object-actions-builder.service';
-import { buildWorkspaceMigrationViewActions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/builders/view/workspace-migration-v2-view-actions-builder';
 import { WorkspaceMigrationV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-v2';
 import { computeUpdatedObjectMetadataDeletedCreatedUpdatedFieldMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-field-matrix.util';
 import { computeUpdatedObjectMetadataDeletedCreatedUpdatedIndexMatrix } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/compute-updated-object-metadata-deleted-created-updated-index-matrix.util';
@@ -119,10 +118,6 @@ export class WorkspaceMigrationBuilderV2Service {
         buildOptions.inferDeletionFromMissingObjectFieldIndex,
     });
 
-    const viewWorkspaceMigrationActions = buildWorkspaceMigrationViewActions({
-      createdFlatObjectMetadatas,
-    });
-
     const allValidateAndBuildResultFailures = [
       ...objectActionsValidateAndBuildResult.failed,
       ...fieldActionsValidateAndBuildResult.failed,
@@ -148,7 +143,6 @@ export class WorkspaceMigrationBuilderV2Service {
           ...fieldActionsValidateAndBuildResult.updated,
           ...createdObjectMetadataCreateIndexActions,
           ...indexWorkspaceMigrationActions,
-          ...viewWorkspaceMigrationActions,
         ],
       },
     };
