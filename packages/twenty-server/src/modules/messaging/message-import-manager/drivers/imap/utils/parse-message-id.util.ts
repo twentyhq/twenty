@@ -4,17 +4,17 @@ export type ParsedMessageId = {
 };
 
 export function parseMessageId(messageId: string): ParsedMessageId | null {
-  const separatorIndex = messageId.lastIndexOf(':');
+  const regex = /^(.+):(\d+)$/;
+  const match = regex.exec(messageId);
 
-  if (separatorIndex === -1) {
+  if (!match) {
     return null;
   }
 
-  const folder = messageId.slice(0, separatorIndex);
-  const uidStr = messageId.slice(separatorIndex + 1);
-  const uid = parseInt(uidStr, 10);
+  const [, folder, uidStr] = match;
+  const uid = Number(uidStr);
 
-  if (isNaN(uid)) {
+  if (!Number.isInteger(uid)) {
     return null;
   }
 

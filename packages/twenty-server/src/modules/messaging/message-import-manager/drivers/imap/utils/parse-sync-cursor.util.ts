@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 export type ImapSyncCursor = {
   highestUid: number;
   uidValidity: number;
@@ -5,7 +7,7 @@ export type ImapSyncCursor = {
 };
 
 export const parseSyncCursor = (cursor?: string): ImapSyncCursor | null => {
-  if (!cursor) {
+  if (!isDefined(cursor)) {
     return null;
   }
 
