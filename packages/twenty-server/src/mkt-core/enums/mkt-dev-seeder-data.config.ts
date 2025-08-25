@@ -20,6 +20,14 @@ import {
 } from 'src/mkt-core/dev-seeder/constants/mkt-variant-data-seeds.constants';
 //Order configs
 import {
+  MKT_COMBO_DATA_SEED_COLUMNS,
+  MKT_COMBO_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-combo-data-seeds.constants';
+import {
+  MKT_COMBO_VARIANT_DATA_SEED_COLUMNS,
+  MKT_COMBO_VARIANT_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-combo-variant-data-seeds.constants';
+import {
   MKT_CONTRACT_DATA_SEED_COLUMNS,
   MKT_CONTRACT_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-contract-data-seeds.constants';
@@ -93,6 +101,12 @@ import {
 } from 'src/mkt-core/dev-seeder/constants/mkt-template-data-seeds.constants';
 
 export const MKT_RECORD_SEEDS_CONFIGS = [
+  // Customer configs
+  {
+    tableName: 'mktCustomer',
+    pgColumns: MKT_CUSTOMER_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_CUSTOMER_DATA_SEEDS,
+  },
   // Product configs
   {
     tableName: 'mktProduct',
@@ -118,6 +132,16 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     tableName: 'mktVariantAttribute',
     pgColumns: MKT_VARIANT_ATTRIBUTE_DATA_SEED_COLUMNS,
     recordSeeds: MKT_VARIANT_ATTRIBUTE_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktCombo',
+    pgColumns: MKT_COMBO_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_COMBO_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktComboVariant',
+    pgColumns: MKT_COMBO_VARIANT_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_COMBO_VARIANT_DATA_SEEDS,
   },
   {
     tableName: 'mktTemplate',
@@ -207,11 +231,5 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     tableName: 'mktKpiTemplate',
     pgColumns: MKT_KPI_TEMPLATE_DATA_SEED_COLUMNS,
     recordSeeds: MKT_KPI_TEMPLATE_DATA_SEEDS,
-  },
-  // Customer configs
-  {
-    tableName: 'mktCustomer',
-    pgColumns: MKT_CUSTOMER_DATA_SEED_COLUMNS,
-    recordSeeds: MKT_CUSTOMER_DATA_SEEDS,
   },
 ];
