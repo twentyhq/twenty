@@ -55,6 +55,8 @@ import { Tag, type TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated/graphql';
 import { useEdgeState } from '@/workflow/workflow-diagram/hooks/useEdgeState';
+import { EDGE_BRANCH_ARROW_HOVER_MARKER_ID } from '@/workflow/workflow-diagram/constants/EdgeBranchArrowHoverMarkerId';
+import { EDGE_BRANCH_ARROW_MARKER_ID } from '@/workflow/workflow-diagram/constants/EdgeBranchArrowMarkerId';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -444,15 +446,37 @@ export const WorkflowDiagramCanvasBase = ({
   );
 
   const onEdgeMouseEnter = useCallback(
-    (_: React.MouseEvent<Element, MouseEvent>, edge: WorkflowDiagramEdge) => {
-      setEdgeHovered({ source: edge.source, target: edge.target });
+    (
+      _: React.MouseEvent<Element, MouseEvent>,
+      hoveredEdge: WorkflowDiagramEdge,
+    ) => {
+      setEdgeHovered({
+        source: hoveredEdge.source,
+        target: hoveredEdge.target,
+      });
+      reactflow.setEdges((edges) =>
+        edges.map((edge) =>
+          edge.id === hoveredEdge.id
+            ? {
+                ...edge,
+                markerEnd: EDGE_BRANCH_ARROW_HOVER_MARKER_ID,
+              }
+            : edge,
+        ),
+      );
     },
-    [setEdgeHovered],
+    [setEdgeHovered, reactflow],
   );
 
   const onEdgeMouseLeave = useCallback(() => {
     clearEdgeHover();
-  }, [clearEdgeHover]);
+    reactflow.setEdges((edges) =>
+      edges.map((edge) => ({
+        ...edge,
+        markerEnd: EDGE_BRANCH_ARROW_MARKER_ID,
+      })),
+    );
+  }, [clearEdgeHover, reactflow]);
 
   return (
     <StyledResetReactflowStyles ref={containerRef}>
