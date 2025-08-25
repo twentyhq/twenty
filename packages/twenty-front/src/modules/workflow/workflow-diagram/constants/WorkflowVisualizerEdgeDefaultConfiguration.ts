@@ -1,4 +1,4 @@
-import { EDGE_BRANCH_ARROW_MARKER_ID } from '@/workflow/workflow-diagram/constants/EdgeBranchArrowMarkerId';
+import { EdgeBranchArrowMarker } from '@/workflow/workflow-diagram/constants/EdgeBranchArrowMarker';
 import {
   type WorkflowDiagramEdge,
   type WorkflowDiagramEdgeType,
@@ -7,7 +7,7 @@ import {
 export const WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION = {
   type: 'empty-filter--readonly' satisfies WorkflowDiagramEdgeType,
   markerStart: undefined,
-  markerEnd: EDGE_BRANCH_ARROW_MARKER_ID,
+  markerEnd: EdgeBranchArrowMarker.Default,
   deletable: false,
   selectable: false,
   data: {

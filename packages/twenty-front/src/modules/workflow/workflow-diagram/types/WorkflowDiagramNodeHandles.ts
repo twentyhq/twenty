@@ -1,4 +1,4 @@
-export type WorkflowDiagramHandlesSelected = {
+export type WorkflowDiagramNodeHandles = {
   targetHandle: boolean;
   sourceHandle: boolean;
 };
