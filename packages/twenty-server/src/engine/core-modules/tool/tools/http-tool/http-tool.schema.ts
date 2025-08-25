@@ -13,6 +13,10 @@ export const HttpRequestInputZodSchema = z.object({
     .any()
     .optional()
     .describe('Request body for POST, PUT, PATCH requests'),
+  bodyType: z
+    .enum(['keyValue', 'rawJson', 'FormData', 'Text', 'None'])
+    .optional()
+    .describe('Type of request body format'),
 });
 
 export const HttpToolParametersZodSchema = z.object({
