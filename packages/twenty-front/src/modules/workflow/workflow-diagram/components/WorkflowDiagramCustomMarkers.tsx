@@ -1,6 +1,5 @@
-import { EDGE_BRANCH_ARROW_MARKER_ID } from '@/workflow/workflow-diagram/constants/EdgeBranchArrowMarkerId';
+import { EdgeBranchArrowMarker } from '@/workflow/workflow-diagram/constants/EdgeBranchArrowMarker';
 import { useTheme } from '@emotion/react';
-import { EDGE_BRANCH_ARROW_HOVER_MARKER_ID } from '@/workflow/workflow-diagram/constants/EdgeBranchArrowHoverMarkerId';
 
 export const WorkflowDiagramCustomMarkers = () => {
   const theme = useTheme();
@@ -9,7 +8,7 @@ export const WorkflowDiagramCustomMarkers = () => {
     <svg style={{ position: 'absolute', top: 0, left: 0 }}>
       <defs>
         <marker
-          id={EDGE_BRANCH_ARROW_MARKER_ID}
+          id={EdgeBranchArrowMarker.Default}
           markerHeight={8}
           markerWidth={10}
           refX={5}
@@ -23,7 +22,7 @@ export const WorkflowDiagramCustomMarkers = () => {
         </marker>
 
         <marker
-          id={EDGE_BRANCH_ARROW_HOVER_MARKER_ID}
+          id={EdgeBranchArrowMarker.Hover}
           markerHeight={8}
           markerWidth={10}
           refX={5}
