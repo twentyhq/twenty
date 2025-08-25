@@ -10,13 +10,13 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 
 describe.each(fieldMetadataEnumTypes)(
   'Update field metadata %s tests suite',
@@ -146,7 +146,6 @@ describe.each(fieldMetadataEnumTypes)(
     test.each(successfulTestCases)(
       'Update $title',
       async ({ context: { input, expectedOptions } }) => {
-
         const { ...updatePayload } = input;
 
         const { data, errors } = await updateOneFieldMetadata({
