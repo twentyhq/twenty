@@ -40,7 +40,6 @@ import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/not
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { MktKpiWorkspaceEntity } from 'src/mkt-core/mkt-kpi/mkt-kpi.workspace-entity';
 import { MktKpiTemplateWorkspaceEntity } from 'src/mkt-core/mkt-kpi-template/mkt-kpi-template.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
@@ -308,19 +307,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
-
-  @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.createdKpis,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Created KPIs`,
-    description: msg`KPIs created by this person`,
-    icon: 'IconTarget',
-    inverseSideTarget: () => MktKpiWorkspaceEntity,
-    inverseSideFieldKey: 'createdByPerson',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsSystem()
-  createdKpis: Relation<MktKpiWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.createdKpiTemplates,

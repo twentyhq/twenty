@@ -41,6 +41,7 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { MktStaffStatusHistoryWorkspaceEntity } from 'src/mkt-core/mkt-staff-status-history/mkt-staff-status-history.workspace-entity';
 import { MktOrganizationLevelWorkspaceEntity } from 'src/mkt-core/mkt-organization-level/mkt-organization-level.workspace-entity';
 import { MktEmploymentStatusWorkspaceEntity } from 'src/mkt-core/mkt-employment-status/mkt-employment-status.workspace-entity';
+import { MktKpiWorkspaceEntity } from 'src/mkt-core/mkt-kpi/mkt-kpi.workspace-entity';
 
 export enum WorkspaceMemberDateFormatEnum {
   SYSTEM = 'SYSTEM',
@@ -437,4 +438,16 @@ export class WorkspaceMemberWorkspaceEntity extends WorkspaceMemberMktEntity {
 
   @WorkspaceJoinColumn('employmentStatus')
   employmentStatusId: string | null;
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.createdKpis,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Created KPIs`,
+    description: msg`KPIs created by this person`,
+    icon: 'IconTarget',
+    inverseSideTarget: () => MktKpiWorkspaceEntity,
+    inverseSideFieldKey: 'assignedTo',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsSystem()
+  createdKpis: Relation<MktKpiWorkspaceEntity[]>;
 }

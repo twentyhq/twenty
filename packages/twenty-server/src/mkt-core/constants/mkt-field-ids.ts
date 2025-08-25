@@ -566,7 +566,7 @@ export const MKT_KPI_FIELD_IDS = {
   // standard fields
   position: '20202020-3c4d-5e6f-7a8b-9c0d1e2f3a4b',
   createdBy: '20202020-4d5e-6f7a-8b9c-0d1e2f3a4b5c',
-  createdByPerson: '20202020-5e6f-7a8b-9c0d-1e2f3a4b5c6d',
+  assignedTo: '20202020-5e6f-7a8b-9c0d-1e2f3a4b5c6d',
 
   // relations
   kpiHistories: '20202020-6f7a-8b9c-0d1e-2f3a4b5c6d7e',

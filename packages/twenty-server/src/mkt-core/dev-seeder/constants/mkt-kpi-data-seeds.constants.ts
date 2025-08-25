@@ -1,5 +1,5 @@
 import { MktKpiCode } from 'src/mkt-core/mkt-kpi/constants/mkt-kpi-options';
-import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 type MktKpiDataSeed = {
   id: string;
@@ -28,7 +28,7 @@ type MktKpiDataSeed = {
   priority?: string;
   weight?: number;
   position?: number;
-  createdByPersonId: string | null;
+  assignedToId: string | null;
 };
 
 export const MKT_KPI_DATA_SEED_COLUMNS: (keyof MktKpiDataSeed)[] = [
@@ -58,7 +58,7 @@ export const MKT_KPI_DATA_SEED_COLUMNS: (keyof MktKpiDataSeed)[] = [
   'priority',
   'weight',
   'position',
-  'createdByPersonId',
+  'assignedToId',
 ];
 
 export const MKT_KPI_DATA_SEEDS_IDS = {
@@ -106,7 +106,7 @@ export const MKT_KPI_DATA_SEEDS: MktKpiDataSeed[] = [
     priority: 'HIGH',
     weight: 100,
     position: 1,
-    createdByPersonId: PERSON_DATA_SEED_IDS.ID_501,
+    assignedToId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
   },
 
   // New Customers KPI
@@ -140,7 +140,7 @@ export const MKT_KPI_DATA_SEEDS: MktKpiDataSeed[] = [
     priority: 'HIGH',
     weight: 80,
     position: 2,
-    createdByPersonId: PERSON_DATA_SEED_IDS.ID_2,
+    assignedToId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
   },
 
   // Sales Conversion Rate KPI
@@ -174,7 +174,7 @@ export const MKT_KPI_DATA_SEEDS: MktKpiDataSeed[] = [
     priority: 'MEDIUM',
     weight: 70,
     position: 3,
-    createdByPersonId: PERSON_DATA_SEED_IDS.ID_6,
+    assignedToId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
   },
 
   // Support Response Time KPI
@@ -208,7 +208,7 @@ export const MKT_KPI_DATA_SEEDS: MktKpiDataSeed[] = [
     priority: 'HIGH',
     weight: 90,
     position: 4,
-    createdByPersonId: null,
+    assignedToId: null,
   },
 
   // Customer Satisfaction KPI
@@ -242,7 +242,7 @@ export const MKT_KPI_DATA_SEEDS: MktKpiDataSeed[] = [
     priority: 'MEDIUM',
     weight: 85,
     position: 5,
-    createdByPersonId: null,
+    assignedToId: null,
   },
 
   // Monthly Calls KPI
@@ -276,7 +276,7 @@ export const MKT_KPI_DATA_SEEDS: MktKpiDataSeed[] = [
     priority: 'MEDIUM',
     weight: 60,
     position: 6,
-    createdByPersonId: null,
+    assignedToId: null,
   },
 
   // Demos Completed KPI
@@ -310,7 +310,7 @@ export const MKT_KPI_DATA_SEEDS: MktKpiDataSeed[] = [
     priority: 'MEDIUM',
     weight: 65,
     position: 7,
-    createdByPersonId: null,
+    assignedToId: null,
   },
 
   // Deals Closed KPI
@@ -344,7 +344,7 @@ export const MKT_KPI_DATA_SEEDS: MktKpiDataSeed[] = [
     priority: 'HIGH',
     weight: 95,
     position: 8,
-    createdByPersonId: null,
+    assignedToId: null,
   },
 
   // Customer Retention KPI
@@ -379,7 +379,7 @@ export const MKT_KPI_DATA_SEEDS: MktKpiDataSeed[] = [
     priority: 'HIGH',
     weight: 88,
     position: 9,
-    createdByPersonId: null,
+    assignedToId: null,
   },
 
   // Tech Project Completion KPI
@@ -413,6 +413,6 @@ export const MKT_KPI_DATA_SEEDS: MktKpiDataSeed[] = [
     priority: 'MEDIUM',
     weight: 75,
     position: 10,
-    createdByPersonId: PERSON_DATA_SEED_IDS.ID_3,
+    assignedToId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
   },
 ];
