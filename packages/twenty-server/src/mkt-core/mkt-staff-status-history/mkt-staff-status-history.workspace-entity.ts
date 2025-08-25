@@ -1,7 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
@@ -15,7 +14,7 @@ import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MKT_STAFF_STATUS_HISTORY_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceEntity({
   standardId: MKT_OBJECT_IDS.mktStaffStatusHistory,
@@ -35,11 +34,10 @@ export class MktStaffStatusHistoryWorkspaceEntity extends BaseWorkspaceEntity {
     label: msg`Staff`,
     description: msg`Staff member this history belongs to`,
     icon: 'IconUser',
-    inverseSideTarget: () => PersonWorkspaceEntity,
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'staffStatusHistories',
-    onDelete: RelationOnDeleteAction.CASCADE,
   })
-  staff: Relation<PersonWorkspaceEntity>;
+  staff: Relation<WorkspaceMemberWorkspaceEntity>;
 
   @WorkspaceJoinColumn('staff')
   staffId: string;

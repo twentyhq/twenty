@@ -1,4 +1,5 @@
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
+import { MKT_DEPARTMENT_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-department-data-seeds.constants';
 
 type WorkspaceMemberDataSeed = {
   id: string;
@@ -8,6 +9,7 @@ type WorkspaceMemberDataSeed = {
   colorScheme: string;
   userEmail: string;
   userId: string;
+  departmentId: string | null;
 };
 
 export const WORKSPACE_MEMBER_DATA_SEED_COLUMNS: (keyof WorkspaceMemberDataSeed)[] =
@@ -19,6 +21,7 @@ export const WORKSPACE_MEMBER_DATA_SEED_COLUMNS: (keyof WorkspaceMemberDataSeed)
     'colorScheme',
     'userEmail',
     'userId',
+    'departmentId',
   ];
 
 export const WORKSPACE_MEMBER_DATA_SEED_IDS = {
@@ -37,6 +40,7 @@ export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
     colorScheme: 'Light',
     userEmail: 'tim@apple.dev',
     userId: USER_DATA_SEED_IDS.TIM,
+    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.TECH,
   },
   {
     id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -46,6 +50,7 @@ export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
     colorScheme: 'Light',
     userEmail: 'jony.ive@apple.dev',
     userId: USER_DATA_SEED_IDS.JONY,
+    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.SALES,
   },
   {
     id: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
@@ -55,6 +60,7 @@ export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
     colorScheme: 'Light',
     userEmail: 'phil.schiler@apple.dev',
     userId: USER_DATA_SEED_IDS.PHIL,
+    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.HR,
   },
   {
     id: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
@@ -64,5 +70,6 @@ export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
     colorScheme: 'Light',
     userEmail: 'jane.austen@apple.dev',
     userId: USER_DATA_SEED_IDS.JANE,
+    departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.SUPPORT,
   },
 ];

@@ -40,8 +40,6 @@ import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/not
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { MktStaffStatusHistoryWorkspaceEntity } from 'src/mkt-core/mkt-staff-status-history/mkt-staff-status-history.workspace-entity';
-import { MktDepartmentWorkspaceEntity } from 'src/mkt-core/mkt-department/mkt-department.workspace-entity';
 import { MktEmploymentStatusWorkspaceEntity } from 'src/mkt-core/mkt-employment-status/mkt-employment-status.workspace-entity';
 import { MktOrganizationLevelWorkspaceEntity } from 'src/mkt-core/mkt-organization-level/mkt-organization-level.workspace-entity';
 import { MktKpiWorkspaceEntity } from 'src/mkt-core/mkt-kpi/mkt-kpi.workspace-entity';
@@ -198,22 +196,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('company')
   companyId: string | null;
-
-  @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.department,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Department`,
-    description: msg`Person's department`,
-    icon: 'IconBuilding',
-    inverseSideTarget: () => MktDepartmentWorkspaceEntity,
-    inverseSideFieldKey: 'people',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsNullable()
-  department: Relation<MktDepartmentWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('department')
-  departmentId: string | null;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,
@@ -379,19 +361,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   statusExpectedEndDate: string | null;
-
-  @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.staffStatusHistories,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Staff Status Histories`,
-    description: msg`Staff employment status change history`,
-    icon: 'IconHistory',
-    inverseSideTarget: () => MktStaffStatusHistoryWorkspaceEntity,
-    inverseSideFieldKey: 'staff',
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsSystem()
-  staffStatusHistories: Relation<MktStaffStatusHistoryWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.createdKpis,

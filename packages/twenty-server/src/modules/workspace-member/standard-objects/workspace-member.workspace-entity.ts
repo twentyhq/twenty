@@ -36,6 +36,9 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberMktEntity } from 'src/mkt-core/mkt-entities-extends/workspace-member.mkt-entity';
+import { MktDepartmentWorkspaceEntity } from 'src/mkt-core/mkt-department/mkt-department.workspace-entity';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { MktStaffStatusHistoryWorkspaceEntity } from 'src/mkt-core/mkt-staff-status-history/mkt-staff-status-history.workspace-entity';
 
 export enum WorkspaceMemberDateFormatEnum {
   SYSTEM = 'SYSTEM',
@@ -374,4 +377,32 @@ export class WorkspaceMemberWorkspaceEntity extends WorkspaceMemberMktEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.department,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Department`,
+    description: msg`Person's department`,
+    icon: 'IconBuilding',
+    inverseSideTarget: () => MktDepartmentWorkspaceEntity,
+    inverseSideFieldKey: 'people',
+  })
+  @WorkspaceIsNullable()
+  department: Relation<MktDepartmentWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('department')
+  departmentId: string | null;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.staffStatusHistories,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Staff Status Histories`,
+    description: msg`Staff employment status change history`,
+    icon: 'IconHistory',
+    inverseSideTarget: () => MktStaffStatusHistoryWorkspaceEntity,
+    inverseSideFieldKey: 'staff',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  staffStatusHistories: Relation<MktStaffStatusHistoryWorkspaceEntity[]>;
 }
