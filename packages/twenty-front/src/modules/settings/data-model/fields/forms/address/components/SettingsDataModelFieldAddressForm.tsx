@@ -1,7 +1,6 @@
 import { Separator } from '@/settings/components/Separator';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
   addressSchema as addressFieldDefaultValueSchema,
   addressSettingsSchema,
@@ -30,10 +29,7 @@ import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFro
 type SettingsDataModelFieldAddressFormProps = {
   disabled?: boolean;
   defaultCountry?: string;
-  fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
-  >;
+  existingFieldMetadataId: string;
 };
 
 export const settingsDataModelFieldAddressFormSchema = z.object({
@@ -47,7 +43,7 @@ export type SettingsDataModelFieldTextFormValues = z.infer<
 
 export const SettingsDataModelFieldAddressForm = ({
   disabled,
-  fieldMetadataItem,
+  existingFieldMetadataId,
 }: SettingsDataModelFieldAddressFormProps) => {
   const { t } = useLingui();
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
@@ -67,7 +63,7 @@ export const SettingsDataModelFieldAddressForm = ({
       })),
   ];
   const { initialDisplaySubFields, resetDefaultValueField } =
-    useAddressSettingsFormInitialValues({ fieldMetadataItem });
+    useAddressSettingsFormInitialValues({ existingFieldMetadataId });
 
   const { closeDropdown } = useCloseDropdown();
   const reset = () => {

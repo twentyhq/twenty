@@ -1,21 +1,18 @@
 import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import {
   SettingsDataModelFieldCurrencyForm,
   type SettingsDataModelFieldCurrencyFormValues,
 } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
 import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
 type SettingsDataModelFieldCurrencySettingsFormCardProps = {
   disabled?: boolean;
-  fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    'name' | 'icon' | 'type' | 'defaultValue' | 'settings'
-  >;
+  existingFieldMetadataId: string;
   objectNameSingular: string;
 };
 
@@ -26,7 +23,7 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
 
 export const SettingsDataModelFieldCurrencySettingsFormCard = ({
   disabled,
-  fieldMetadataItem,
+  existingFieldMetadataId,
   objectNameSingular,
 }: SettingsDataModelFieldCurrencySettingsFormCardProps) => {
   const { watch } = useFormContext<
@@ -39,7 +36,7 @@ export const SettingsDataModelFieldCurrencySettingsFormCard = ({
       preview={
         <StyledFieldPreviewCard
           fieldMetadataItem={{
-            ...fieldMetadataItem,
+            type: FieldMetadataType.CURRENCY,
             label: watch('label'),
             icon: watch('icon'),
             defaultValue: watch('defaultValue'),
@@ -51,7 +48,7 @@ export const SettingsDataModelFieldCurrencySettingsFormCard = ({
       form={
         <SettingsDataModelFieldCurrencyForm
           disabled={disabled}
-          fieldMetadataItem={fieldMetadataItem}
+          existingFieldMetadataId={existingFieldMetadataId}
         />
       }
     />

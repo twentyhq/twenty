@@ -111,7 +111,6 @@ export const Number: Story = {
 export const Rating: Story = {
   args: {
     fieldMetadataItem: {
-      name: 'engagement',
       icon: 'IconHandClick',
       label: 'Engagement',
       type: FieldMetadataType.RATING,

@@ -5,12 +5,13 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { SettingsDataModelFieldPreview } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreview';
 import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { Card, CardContent } from 'twenty-ui/layout';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 type SettingsDataModelFieldPreviewCardProps = {
   className?: string;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'name' | 'icon' | 'label' | 'type' | 'defaultValue' | 'options' | 'settings'
+    'icon' | 'label' | 'type' | 'defaultValue' | 'options' | 'settings'
   >;
   objectNameSingular: string;
   shrink?: boolean;
@@ -48,7 +49,15 @@ export const SettingsDataModelFieldPreviewCard = ({
         />
         <SettingsDataModelFieldPreview
           objectNameSingular={objectMetadataItem.nameSingular}
-          fieldMetadataItem={fieldMetadataItem}
+          fieldMetadataItem={{
+            label: fieldMetadataItem.label,
+            icon: fieldMetadataItem.icon,
+            defaultValue: fieldMetadataItem.defaultValue,
+            options: fieldMetadataItem.options,
+            settings: fieldMetadataItem.settings,
+            type: fieldMetadataItem.type,
+            name: computeMetadataNameFromLabel(fieldMetadataItem.label),
+          }}
           shrink={shrink}
           withFieldLabel={withFieldLabel}
         />

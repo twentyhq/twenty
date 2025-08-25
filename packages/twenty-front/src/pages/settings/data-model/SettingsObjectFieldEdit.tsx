@@ -237,7 +237,8 @@ export const SettingsObjectFieldEdit = () => {
                         />
                       )}
                       <SettingsDataModelFieldSettingsFormCard
-                        fieldMetadataItem={fieldMetadataItem}
+                        fieldType={fieldMetadataItem.type}
+                        existingFieldMetadataId={fieldMetadataItem.id}
                         objectNameSingular={objectMetadataItem.nameSingular}
                       />
                     </Section>

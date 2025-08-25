@@ -1,19 +1,16 @@
 import styled from '@emotion/styled';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
 import { SettingsDataModelFieldTextForm } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm';
 import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { useFormContext } from 'react-hook-form';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 type SettingsDataModelFieldTextSettingsFormCardProps = {
   disabled?: boolean;
-  fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    'name' | 'icon' | 'label' | 'type' | 'isCustom' | 'settings'
-  >;
+  existingFieldMetadataId: string;
   objectNameSingular: string;
 };
 
@@ -23,7 +20,7 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
 
 export const SettingsDataModelFieldTextSettingsFormCard = ({
   disabled,
-  fieldMetadataItem,
+  existingFieldMetadataId,
   objectNameSingular,
 }: SettingsDataModelFieldTextSettingsFormCardProps) => {
   const { watch } = useFormContext();
@@ -33,7 +30,9 @@ export const SettingsDataModelFieldTextSettingsFormCard = ({
       preview={
         <StyledFieldPreviewCard
           fieldMetadataItem={{
-            ...fieldMetadataItem,
+            label: watch('label'),
+            icon: watch('icon'),
+            type: FieldMetadataType.TEXT,
             settings: watch('settings'),
           }}
           objectNameSingular={objectNameSingular}
@@ -43,10 +42,11 @@ export const SettingsDataModelFieldTextSettingsFormCard = ({
         <>
           <SettingsDataModelFieldTextForm
             disabled={disabled}
-            fieldMetadataItem={fieldMetadataItem}
+            existingFieldMetadataId={existingFieldMetadataId}
           />
           <SettingsDataModelFieldIsUniqueForm
-            fieldMetadataItem={fieldMetadataItem}
+            fieldType={FieldMetadataType.TEXT}
+            existingFieldMetadataId={existingFieldMetadataId}
             objectNameSingular={objectNameSingular}
           />
         </>
