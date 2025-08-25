@@ -1939,7 +1939,6 @@ bkkpkht.ga
 bkkpkht.gq
 bkkpkht.ml
 bko.kr
-bla-bla.com
 blackbird.ws
 blackburnfans.com
 blackburnmail.com
@@ -16343,6 +16342,7 @@ zzom.co.ukgmail.com
 zzom.co.ukhitmail.com
 zzom.co.uksina.com
 zzz.com
-zzz.pl`;
+zzz.pl
+`;
 
 export const emailProvidersSet = new Set(emailProviders.split('\n'));

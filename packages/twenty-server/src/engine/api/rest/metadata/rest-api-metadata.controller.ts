@@ -1,12 +1,12 @@
 import {
   Controller,
-  Get,
   Delete,
+  Get,
+  Patch,
   Post,
+  Put,
   Req,
   Res,
-  Patch,
-  Put,
   UseGuards,
 } from '@nestjs/common';
 
