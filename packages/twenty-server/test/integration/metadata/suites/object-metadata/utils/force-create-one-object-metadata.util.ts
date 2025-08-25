@@ -1,7 +1,3 @@
-import {
-  LISTING_NAME_PLURAL,
-  LISTING_NAME_SINGULAR,
-} from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { type CreateOneObjectFactoryInput } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata-query-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -16,16 +12,16 @@ import { isDefined } from 'twenty-shared/utils';
  */
 export const forceCreateOneObjectMetadata = async ({
   input: {
-    labelSingular = LISTING_NAME_SINGULAR,
-    labelPlural = LISTING_NAME_PLURAL,
-    nameSingular = LISTING_NAME_SINGULAR,
-    namePlural = LISTING_NAME_PLURAL,
-    isLabelSyncedWithName = true,
+    labelSingular,
+    labelPlural,
+    nameSingular,
+    namePlural,
+    isLabelSyncedWithName = false,
     icon = 'IconBuildingSkyscraper',
     ...rest
   },
 }: {
-  input: Partial<CreateOneObjectFactoryInput>;
+  input: CreateOneObjectFactoryInput;
 }) => {
   const result = await createOneObjectMetadata({
     input: {
