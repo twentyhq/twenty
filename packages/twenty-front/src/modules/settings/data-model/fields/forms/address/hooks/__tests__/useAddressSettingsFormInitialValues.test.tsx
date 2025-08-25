@@ -1,4 +1,3 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { renderHook } from '@testing-library/react';
 import { useFormContext } from 'react-hook-form';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -68,11 +67,11 @@ describe('useAddressSettingsFormInitialValues', () => {
   });
 
   it('should return all address subfields when settings.subFields is null', () => {
-    const fieldMetadataItem: Pick<FieldMetadataItem, 'settings'> = {
-      settings: {
-        subFields: null,
-      },
-    };
+    // const fieldMetadataItem: Pick<FieldMetadataItem, 'settings'> = {
+    //   settings: {
+    //     subFields: null,
+    //   },
+    // };
 
     const { result } = renderHook(
       () =>
@@ -95,11 +94,11 @@ describe('useAddressSettingsFormInitialValues', () => {
   });
 
   it('should return all address subfields when settings.subFields is empty array', () => {
-    const fieldMetadataItem: Pick<FieldMetadataItem, 'settings'> = {
-      settings: {
-        subFields: [],
-      },
-    };
+    // const fieldMetadataItem: Pick<FieldMetadataItem, 'settings'> = {
+    //   settings: {
+    //     subFields: [],
+    //   },
+    // };
 
     const { result } = renderHook(
       () =>
@@ -122,11 +121,11 @@ describe('useAddressSettingsFormInitialValues', () => {
   });
 
   it('should return configured subFields when they exist', () => {
-    const fieldMetadataItem: Pick<FieldMetadataItem, 'settings'> = {
-      settings: {
-        subFields: ['addressStreet1', 'addressCity', 'addressCountry'],
-      },
-    };
+    // const fieldMetadataItem: Pick<FieldMetadataItem, 'settings'> = {
+    //   settings: {
+    //     subFields: ['addressStreet1', 'addressCity', 'addressCountry'],
+    //   },
+    // };
 
     const { result } = renderHook(
       () =>

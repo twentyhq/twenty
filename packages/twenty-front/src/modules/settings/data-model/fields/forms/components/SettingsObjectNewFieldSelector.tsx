@@ -64,7 +64,6 @@ const StyledSearchInput = styled(SettingsTextInput)`
 
 export const SettingsObjectNewFieldSelector = ({
   excludedFieldTypes = [],
-  fieldMetadataItem,
   objectNamePlural,
 }: SettingsObjectNewFieldSelectorProps) => {
   const theme = useTheme();
