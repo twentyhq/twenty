@@ -1,5 +1,4 @@
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
-import { useUpdateTableColumn } from '@/object-record/record-field/hooks/useUpdateTableColumn';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
@@ -17,8 +16,8 @@ export const useMoveRecordField = (recordTableId?: string) => {
 
   const { updateRecordField } = useUpdateRecordField(recordTableId);
 
-  const { updateTableColumn } = useUpdateTableColumn(recordTableId);
-
+  // TODO: fix this we want to move left and right of VISIBLE record fields,
+  // because otherwise it will just do nothing while moving left and right of non visible record fields
   const moveRecordField = useRecoilCallback(
     ({ snapshot }) =>
       ({
@@ -84,22 +83,9 @@ export const useMoveRecordField = (recordTableId?: string) => {
               position: currentRecordFieldNewPosition,
             }),
           ]);
-
-          updateTableColumn(targetRecordField.fieldMetadataItemId, {
-            position: targetRecordFieldNewPosition,
-          });
-
-          updateTableColumn(currentRecordField.fieldMetadataItemId, {
-            position: currentRecordFieldNewPosition,
-          });
         }
       },
-    [
-      currentRecordFieldsCallbackState,
-      updateTableColumn,
-      saveViewFields,
-      updateRecordField,
-    ],
+    [currentRecordFieldsCallbackState, saveViewFields, updateRecordField],
   );
 
   return { moveRecordField };
