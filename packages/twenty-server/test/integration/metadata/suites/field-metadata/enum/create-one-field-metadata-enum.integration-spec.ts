@@ -4,11 +4,12 @@ import {
   LISTING_NAME_PLURAL,
   LISTING_NAME_SINGULAR,
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { isDefined } from 'twenty-shared/utils';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 
 describe.each(fieldMetadataEnumTypes)(
   'Create field metadata %s tests suite',
@@ -25,6 +26,7 @@ describe.each(fieldMetadataEnumTypes)(
 
     beforeEach(async () => {
       const { data } = await createOneObjectMetadata({
+        expectToFail: false,
         input: {
           labelSingular: LISTING_NAME_SINGULAR,
           labelPlural: LISTING_NAME_PLURAL,
@@ -39,7 +41,17 @@ describe.each(fieldMetadataEnumTypes)(
     });
 
     afterEach(async () => {
+      await updateOneObjectMetadata({
+        input: {
+          idToUpdate: createdObjectMetadataId,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+        expectToFail: false,
+      });
       await deleteOneObjectMetadata({
+        expectToFail: false,
         input: { idToDelete: createdObjectMetadataId },
       });
     });

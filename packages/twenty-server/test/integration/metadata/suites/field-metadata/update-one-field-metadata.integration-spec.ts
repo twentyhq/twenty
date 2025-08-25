@@ -17,6 +17,7 @@ describe('updateOne', () => {
 
     beforeEach(async () => {
       const { data } = await createOneObjectMetadata({
+        expectToFail: false,
         input: {
           labelSingular: LISTING_NAME_SINGULAR,
           labelPlural: LISTING_NAME_PLURAL,
@@ -30,6 +31,7 @@ describe('updateOne', () => {
       listingObjectId = data.createOneObject.id;
 
       const { data: createdFieldMetadata } = await createOneFieldMetadata({
+        expectToFail: false,
         input: {
           objectMetadataId: listingObjectId,
           type: FieldMetadataType.TEXT,
@@ -43,6 +45,7 @@ describe('updateOne', () => {
     });
     afterEach(async () => {
       await deleteOneObjectMetadata({
+        expectToFail: false,
         input: { idToDelete: listingObjectId },
       });
     });

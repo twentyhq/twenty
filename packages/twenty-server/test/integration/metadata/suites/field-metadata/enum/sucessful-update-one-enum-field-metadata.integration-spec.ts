@@ -16,19 +16,20 @@ import {
   type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 
 describe.each(fieldMetadataEnumTypes)(
   'Update field metadata %s tests suite',
   (testedFieldMetadataType) => {
     let createdObjectMetadataId: string;
+    let createdFieldMetadataId: string;
     const testCases =
       UPDATE_ENUM_FIELD_METADATA_TEST_CASES[testedFieldMetadataType];
 
     if (!isDefined(testCases)) {
       return;
     }
-    const { failing: failingTestCases, successful: successfulTestCases } =
-      testCases;
+    const { successful: successfulTestCases } = testCases;
     const initialOptions: CreateOneFieldFactoryInput['options'] = [
       {
         label: 'Option 1',
@@ -46,6 +47,7 @@ describe.each(fieldMetadataEnumTypes)(
 
     beforeEach(async () => {
       const { data } = await createOneObjectMetadata({
+        expectToFail: false,
         input: {
           labelSingular: LISTING_NAME_SINGULAR,
           labelPlural: LISTING_NAME_PLURAL,
@@ -57,18 +59,11 @@ describe.each(fieldMetadataEnumTypes)(
       });
 
       createdObjectMetadataId = data.createOneObject.id;
-    });
 
-    afterEach(async () => {
-      await deleteOneObjectMetadata({
-        input: { idToDelete: createdObjectMetadataId },
-      });
-    });
-
-    it('Should update default value to null even if it was set before', async () => {
       const {
         data: { createOneField },
       } = await createOneFieldMetadata({
+        expectToFail: false,
         input: {
           objectMetadataId: createdObjectMetadataId,
           type: testedFieldMetadataType,
@@ -78,12 +73,31 @@ describe.each(fieldMetadataEnumTypes)(
           options: initialOptions,
         },
         gqlFields: `
-        id
-        type
-        `,
+          id
+          type
+          `,
       });
 
-      const createdFieldMetadata = createOneField.id;
+      createdFieldMetadataId = createOneField.id;
+    });
+
+    afterEach(async () => {
+      await updateOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: createdObjectMetadataId,
+          updatePayload: {
+            isActive: false,
+          },
+        },
+      });
+      await deleteOneObjectMetadata({
+        expectToFail: false,
+        input: { idToDelete: createdObjectMetadataId },
+      });
+    });
+
+    it('Should update default value to null even if it was set before', async () => {
       const isMultiSelect =
         testedFieldMetadataType === FieldMetadataType.MULTI_SELECT;
       const rawDefaultValue = `'${initialOptions[0].value}'`;
@@ -93,7 +107,7 @@ describe.each(fieldMetadataEnumTypes)(
 
       const { data: firstUpdate } = await updateOneFieldMetadata({
         input: {
-          idToUpdate: createdFieldMetadata,
+          idToUpdate: createdFieldMetadataId,
           updatePayload: {
             defaultValue: expectedDefaultValue,
           },
@@ -111,7 +125,7 @@ describe.each(fieldMetadataEnumTypes)(
       const updatedOptions = initialOptions.slice(1);
       const { data: secondUpdate, errors } = await updateOneFieldMetadata({
         input: {
-          idToUpdate: createdFieldMetadata,
+          idToUpdate: createdFieldMetadataId,
           updatePayload: {
             defaultValue: null,
             options: updatedOptions,
@@ -132,30 +146,12 @@ describe.each(fieldMetadataEnumTypes)(
     test.each(successfulTestCases)(
       'Update $title',
       async ({ context: { input, expectedOptions } }) => {
-        const {
-          data: { createOneField },
-        } = await createOneFieldMetadata({
-          input: {
-            objectMetadataId: createdObjectMetadataId,
-            type: testedFieldMetadataType,
-            name: 'testField',
-            label: 'Test Field',
-            isLabelSyncedWithName: false,
-            options: initialOptions,
-          },
-          gqlFields: `
-          id
-          type
-          `,
-        });
-
-        const createdFieldMetadata = createOneField.id;
 
         const { ...updatePayload } = input;
 
         const { data, errors } = await updateOneFieldMetadata({
           input: {
-            idToUpdate: createdFieldMetadata,
+            idToUpdate: createdFieldMetadataId,
             updatePayload,
           },
           gqlFields: `
@@ -188,47 +184,6 @@ describe.each(fieldMetadataEnumTypes)(
         if (isDefined(input.defaultValue)) {
           expect(data.updateOneField.defaultValue).toEqual(input.defaultValue);
         }
-      },
-    );
-
-    test.each(failingTestCases)(
-      'Update $title',
-      async ({ context: { input } }) => {
-        const {
-          data: { createOneField },
-        } = await createOneFieldMetadata({
-          input: {
-            objectMetadataId: createdObjectMetadataId,
-            type: testedFieldMetadataType,
-            name: 'testField',
-            label: 'Test Field',
-            isLabelSyncedWithName: false,
-            options: initialOptions,
-          },
-          gqlFields: `
-          id
-          type
-          `,
-        });
-
-        const createdFieldMetadata = createOneField.id;
-
-        const { ...updatePayload } = input;
-
-        const { data, errors } = await updateOneFieldMetadata({
-          input: {
-            idToUpdate: createdFieldMetadata,
-            updatePayload,
-          },
-          gqlFields: `
-        id
-        options
-        `,
-        });
-
-        expect(data).toBeNull();
-        expect(errors).toBeDefined();
-        expect(errors).toMatchSnapshot();
       },
     );
   },
