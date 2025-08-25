@@ -36,13 +36,6 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/
 import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberMktEntity } from 'src/mkt-core/mkt-entities-extends/workspace-member.mkt-entity';
-import { MktDepartmentWorkspaceEntity } from 'src/mkt-core/mkt-department/mkt-department.workspace-entity';
-import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
-import { MktStaffStatusHistoryWorkspaceEntity } from 'src/mkt-core/mkt-staff-status-history/mkt-staff-status-history.workspace-entity';
-import { MktOrganizationLevelWorkspaceEntity } from 'src/mkt-core/mkt-organization-level/mkt-organization-level.workspace-entity';
-import { MktEmploymentStatusWorkspaceEntity } from 'src/mkt-core/mkt-employment-status/mkt-employment-status.workspace-entity';
-import { MktKpiWorkspaceEntity } from 'src/mkt-core/mkt-kpi/mkt-kpi.workspace-entity';
-import { MktKpiTemplateWorkspaceEntity } from 'src/mkt-core/mkt-kpi-template/mkt-kpi-template.workspace-entity';
 
 export enum WorkspaceMemberDateFormatEnum {
   SYSTEM = 'SYSTEM',
@@ -381,87 +374,4 @@ export class WorkspaceMemberWorkspaceEntity extends WorkspaceMemberMktEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
-
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.department,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Department`,
-    description: msg`Person's department`,
-    icon: 'IconBuilding',
-    inverseSideTarget: () => MktDepartmentWorkspaceEntity,
-    inverseSideFieldKey: 'people',
-  })
-  @WorkspaceIsNullable()
-  department: Relation<MktDepartmentWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('department')
-  departmentId: string | null;
-
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.staffStatusHistories,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Staff Status Histories`,
-    description: msg`Staff employment status change history`,
-    icon: 'IconHistory',
-    inverseSideTarget: () => MktStaffStatusHistoryWorkspaceEntity,
-    inverseSideFieldKey: 'staff',
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsSystem()
-  staffStatusHistories: Relation<MktStaffStatusHistoryWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.organizationLevel,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Organization Level`,
-    description: msg`Person's organization level`,
-    icon: 'IconHierarchy',
-    inverseSideTarget: () => MktOrganizationLevelWorkspaceEntity,
-    inverseSideFieldKey: 'people',
-  })
-  @WorkspaceIsNullable()
-  organizationLevel: Relation<MktOrganizationLevelWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('organizationLevel')
-  organizationLevelId: string | null;
-
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.employmentStatus,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Employment Status`,
-    description: msg`Person's employment status`,
-    icon: 'IconUserCheck',
-    inverseSideTarget: () => MktEmploymentStatusWorkspaceEntity,
-    inverseSideFieldKey: 'people',
-  })
-  @WorkspaceIsNullable()
-  employmentStatus: Relation<MktEmploymentStatusWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('employmentStatus')
-  employmentStatusId: string | null;
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.createdKpis,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Created KPIs`,
-    description: msg`KPIs created by this person`,
-    icon: 'IconTarget',
-    inverseSideTarget: () => MktKpiWorkspaceEntity,
-    inverseSideFieldKey: 'assignedTo',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsSystem()
-  createdKpis: Relation<MktKpiWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.createdKpiTemplates,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Created KPI Templates`,
-    description: msg`KPI templates created by this person`,
-    icon: 'IconTemplate',
-    inverseSideTarget: () => MktKpiTemplateWorkspaceEntity,
-    inverseSideFieldKey: 'assignedTo',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsSystem()
-  createdKpiTemplates: Relation<MktKpiTemplateWorkspaceEntity[]>;
 }
