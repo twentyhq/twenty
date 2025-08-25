@@ -2,18 +2,20 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
-import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateDefaultRecordChipData';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
-import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+
+import { recordStoreMorphManyToOneValueWithObjectNameFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreMorphManyToOneValueWithObjectNameFamilySelector';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useRelationToOneFieldDisplay = () => {
+export const useMorphRelationToOneFieldDisplay = () => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
 
   const { chipGeneratorPerObjectPerField } = useContext(
@@ -25,8 +27,8 @@ export const useRelationToOneFieldDisplay = () => {
   }
 
   assertFieldMetadata(
-    FieldMetadataType.RELATION,
-    isFieldRelation,
+    FieldMetadataType.MORPH_RELATION,
+    isFieldMorphRelation,
     fieldDefinition,
   );
 
@@ -34,10 +36,26 @@ export const useRelationToOneFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue<ObjectRecord | undefined>(
-    recordId,
-    fieldName,
+  const morphFieldValueWithObjectName = useRecoilValue(
+    recordStoreMorphManyToOneValueWithObjectNameFamilySelector({
+      recordId,
+      morphRelations: fieldDefinition.metadata.morphRelations,
+      fieldName,
+    }),
   );
+
+  if (!isDefined(morphFieldValueWithObjectName)) {
+    return {
+      fieldDefinition,
+      fieldValues: [],
+      maxWidth: maxWidth,
+      recordId,
+      generateRecordChipData: () => ({
+        recordId: '',
+        objectNameSingular: '',
+      }),
+    };
+  }
 
   const maxWidthForField =
     isDefined(button) && isDefined(maxWidth)
@@ -48,27 +66,13 @@ export const useRelationToOneFieldDisplay = () => {
     !isDefined(fieldDefinition.metadata.objectMetadataNameSingular) ||
     !isNonEmptyString(fieldDefinition.metadata.objectMetadataNameSingular)
   ) {
-    throw new Error('Object metadata name singular is empty');
+    throw new Error('Object metadata name singular is not a non-empty string');
   }
-
-  const fieldChipGenerator =
-    chipGeneratorPerObjectPerField[
-      fieldDefinition.metadata.objectMetadataNameSingular
-    ]?.[fieldDefinition.metadata.fieldName];
-  const generateRecordChipData = isDefined(fieldChipGenerator)
-    ? fieldChipGenerator
-    : (record: ObjectRecord) =>
-        generateDefaultRecordChipData({
-          record,
-          objectNameSingular:
-            fieldDefinition.metadata.relationObjectMetadataNameSingular,
-        });
 
   return {
     fieldDefinition,
-    fieldValue,
+    morphFieldValuesWithObjectName: morphFieldValueWithObjectName,
     maxWidth: maxWidthForField,
     recordId,
-    generateRecordChipData,
   };
 };

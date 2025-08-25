@@ -1,56 +1,47 @@
-import styled from '@emotion/styled';
-
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
 import { SettingsDataModelFieldTextForm } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm';
-import {
-  SettingsDataModelFieldPreviewCard,
-  type SettingsDataModelFieldPreviewCardProps,
-} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 import { useFormContext } from 'react-hook-form';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 type SettingsDataModelFieldTextSettingsFormCardProps = {
   disabled?: boolean;
-  fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'isCustom' | 'settings'
-  > &
-    Partial<{ id: string }>;
-} & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
-
-const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
-  flex: 1 1 100%;
-`;
+  existingFieldMetadataId: string;
+  objectNameSingular: string;
+};
 
 export const SettingsDataModelFieldTextSettingsFormCard = ({
   disabled,
-  fieldMetadataItem,
-  objectMetadataItem,
+  existingFieldMetadataId,
+  objectNameSingular,
 }: SettingsDataModelFieldTextSettingsFormCardProps) => {
   const { watch } = useFormContext();
 
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <StyledFieldPreviewCard
+        <SettingsDataModelFieldPreviewWidget
           fieldMetadataItem={{
-            ...fieldMetadataItem,
+            label: watch('label'),
+            icon: watch('icon'),
+            type: FieldMetadataType.TEXT,
             settings: watch('settings'),
           }}
-          objectMetadataItem={objectMetadataItem}
+          objectNameSingular={objectNameSingular}
         />
       }
       form={
         <>
           <SettingsDataModelFieldTextForm
             disabled={disabled}
-            fieldMetadataItem={fieldMetadataItem}
+            existingFieldMetadataId={existingFieldMetadataId}
           />
           <SettingsDataModelFieldIsUniqueForm
-            fieldMetadataItem={fieldMetadataItem}
-            objectMetadataItem={objectMetadataItem}
+            fieldType={FieldMetadataType.TEXT}
+            existingFieldMetadataId={existingFieldMetadataId}
+            objectNameSingular={objectNameSingular}
           />
         </>
       }

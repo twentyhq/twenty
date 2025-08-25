@@ -1,41 +1,36 @@
+import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getFieldPreviewValue';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { pascalCase } from '~/utils/string/pascalCase';
 
 type UsePreviewRecordParams = {
-  objectMetadataItem: Pick<
-    ObjectMetadataItem,
-    | 'fields'
-    | 'labelIdentifierFieldMetadataId'
-    | 'labelSingular'
-    | 'nameSingular'
-  >;
+  objectNameSingular: string;
   skip?: boolean;
 };
 
 export const usePreviewRecord = ({
-  objectMetadataItem,
+  objectNameSingular,
   skip: skipFromProps,
 }: UsePreviewRecordParams): ObjectRecord | null => {
-  const labelIdentifierFieldMetadataItem =
-    getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+  const { labelIdentifierFieldMetadataItem } =
+    useLabelIdentifierFieldMetadataItem({
+      objectNameSingular,
+    });
+
   const skip = skipFromProps || !labelIdentifierFieldMetadataItem;
 
   let recordGqlFields: Record<string, boolean> | undefined = undefined;
-  if (objectMetadataItem.nameSingular === CoreObjectNameSingular.NoteTarget)
+  if (objectNameSingular === CoreObjectNameSingular.NoteTarget)
     recordGqlFields = { id: true, note: true };
-  if (objectMetadataItem.nameSingular === CoreObjectNameSingular.TaskTarget)
+  if (objectNameSingular === CoreObjectNameSingular.TaskTarget)
     recordGqlFields = { id: true, task: true };
 
   const { records } = useFindManyRecords({
-    objectNameSingular: objectMetadataItem.nameSingular,
+    objectNameSingular,
     recordGqlFields,
     limit: 1,
     skip,
@@ -55,15 +50,14 @@ export const usePreviewRecord = ({
     return firstRecord;
   }
 
-  const fieldPreviewValue =
-    labelIdentifierFieldMetadataItem.type === FieldMetadataType.TEXT
-      ? objectMetadataItem.labelSingular
-      : getFieldPreviewValue({
-          fieldMetadataItem: labelIdentifierFieldMetadataItem,
-        });
+  const fieldPreviewValue = getFieldPreviewValue({
+    fieldType: labelIdentifierFieldMetadataItem.type,
+    fieldSettings: labelIdentifierFieldMetadataItem.settings,
+    defaultValue: labelIdentifierFieldMetadataItem.defaultValue,
+  });
 
   const placeholderRecord = {
-    __typename: pascalCase(objectMetadataItem.nameSingular),
+    __typename: pascalCase(objectNameSingular),
     id: '',
     [labelIdentifierFieldMetadataItem.name]: fieldPreviewValue,
   };

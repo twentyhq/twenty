@@ -5,6 +5,8 @@ import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/g
 import { generateDepthOneWithoutRelationsRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneWithoutRelationsRecordGqlFields';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 export const useRecordTableRecordGqlFields = ({
   objectMetadataItem,
@@ -30,11 +32,41 @@ export const useRecordTableRecordGqlFields = ({
       objectMetadataItem,
     });
 
+  const gqlFieldsList = Object.fromEntries(
+    visibleTableColumns.flatMap((column) => {
+      const isMorphRelation = column.type === FieldMetadataType.MORPH_RELATION;
+
+      if (!isMorphRelation) {
+        return [[column.metadata.fieldName, true]];
+      }
+
+      const fieldMetadataItem = objectMetadataItem.fields.find(
+        (field) => field.id === column.fieldMetadataId,
+      );
+      if (
+        !isDefined(fieldMetadataItem) ||
+        !isDefined(fieldMetadataItem.morphRelations)
+      ) {
+        throw new Error(
+          `Field ${column.metadata.fieldName} is missing, please refresh the page. If the problem persists, please contact support.`,
+        );
+      }
+
+      return fieldMetadataItem.morphRelations.map((morphRelation) => [
+        computeMorphRelationFieldName({
+          fieldName: fieldMetadataItem.name,
+          relationDirection: morphRelation.type,
+          nameSingular: morphRelation.targetObjectMetadata.nameSingular,
+          namePlural: morphRelation.targetObjectMetadata.namePlural,
+        }),
+        true,
+      ]);
+    }),
+  );
+
   const recordGqlFields: Record<string, any> = {
     ...allDepthOneWithoutRelationsRecordGqlFields,
-    ...Object.fromEntries(
-      visibleTableColumns.map((column) => [column.metadata.fieldName, true]),
-    ),
+    ...gqlFieldsList,
     noteTargets: generateDepthOneRecordGqlFields({
       objectMetadataItem: noteTargetObjectMetadataItem,
     }),

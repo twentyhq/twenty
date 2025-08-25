@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { TEXT_DATA_MODEL_SELECT_OPTIONS } from '@/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions';
 import { Select } from '@/ui/input/components/Select';
@@ -10,16 +10,7 @@ import { z } from 'zod';
 
 type SettingsDataModelFieldTextFormProps = {
   disabled?: boolean;
-  fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    | 'icon'
-    | 'label'
-    | 'type'
-    | 'defaultValue'
-    | 'settings'
-    | 'isUnique'
-    | 'isCustom'
-  >;
+  existingFieldMetadataId: string;
 };
 
 const textFieldDefaultValueSchema = z.object({
@@ -36,16 +27,20 @@ export type SettingsDataModelFieldTextFormValues = z.infer<
 
 export const SettingsDataModelFieldTextForm = ({
   disabled,
-  fieldMetadataItem,
+  existingFieldMetadataId,
 }: SettingsDataModelFieldTextFormProps) => {
   const { t } = useLingui();
+
+  const { fieldMetadataItem: existingFieldMetadataItem } =
+    useFieldMetadataItemById(existingFieldMetadataId);
 
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
   return (
     <Controller
       name="settings"
       defaultValue={{
-        displayedMaxRows: fieldMetadataItem?.settings?.displayedMaxRows || 0,
+        displayedMaxRows:
+          existingFieldMetadataItem?.settings?.displayedMaxRows || 0,
       }}
       control={control}
       render={({ field: { onChange, value } }) => {

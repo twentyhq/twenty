@@ -10,4 +10,4 @@ export const isFieldMorphRelationManyToOne = (
   field: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>,
 ): field is FieldDefinition<FieldMorphRelationMetadata> =>
   isFieldMorphRelation(field) &&
-  field.metadata.morphRelations?.[0].type === RelationType.MANY_TO_ONE;
+  field.metadata.relationType === RelationType.MANY_TO_ONE;

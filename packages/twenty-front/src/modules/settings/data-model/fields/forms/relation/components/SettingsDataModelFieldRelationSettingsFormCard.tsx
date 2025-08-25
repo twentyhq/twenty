@@ -1,8 +1,6 @@
-import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import {
@@ -11,58 +9,35 @@ import {
 } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
 import { SettingsDataModelFieldRelationPreviewContent } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationPreviewContent';
 import { SettingsDataModelRelationPreviewImage } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationPreviewImageCard';
-import { useRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/relation/hooks/useRelationSettingsFormInitialValues';
-import {
-  SettingsDataModelFieldPreviewCard,
-  type SettingsDataModelFieldPreviewCardProps,
-} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelRelationFieldPreviewSubWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelRelationFieldPreviewSubWidget';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import {
-  FieldMetadataType,
-  type Relation,
-  RelationType,
-} from '~/generated-metadata/graphql';
-type SettingsDataModelFieldRelationSettingsFormCardProps = {
-  fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> &
-    Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
-  relationFieldMetadataItem?: FieldMetadataItem;
-} & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
-const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
-  flex: 1 1 100%;
-`;
+type SettingsDataModelFieldRelationSettingsFormCardProps = {
+  existingFieldMetadataId: string;
+  objectNameSingular: string;
+};
 
 export const SettingsDataModelFieldRelationSettingsFormCard = ({
-  fieldMetadataItem,
-  objectMetadataItem,
+  existingFieldMetadataId,
+  objectNameSingular,
 }: SettingsDataModelFieldRelationSettingsFormCardProps) => {
-  const { watch: watchFormValue } =
-    useFormContext<SettingsDataModelFieldRelationFormValues>();
-  const { findObjectMetadataItemById } = useFilteredObjectMetadataItems();
+  const { watch } = useFormContext<
+    SettingsDataModelFieldRelationFormValues &
+      SettingsDataModelFieldEditFormValues
+  >();
   const isMobile = useIsMobile();
-  const {
-    initialRelationObjectMetadataItem,
-    initialRelationType,
-    initialRelationFieldMetadataItem,
-  } = useRelationSettingsFormInitialValues({
-    fieldMetadataItem,
-    objectMetadataItem,
-  });
 
-  const relationObjectMetadataId = watchFormValue(
-    'relation.objectMetadataId',
-    initialRelationObjectMetadataItem?.id,
-  );
-  const relationObjectMetadataItem = findObjectMetadataItemById(
-    relationObjectMetadataId,
-  );
+  const { objectMetadataItems } = useObjectMetadataItems();
 
-  if (!relationObjectMetadataItem) return null;
-
-  const relationType: RelationType = watchFormValue(
-    'relation.type',
-    initialRelationType,
+  const relationObjectMetadataId = watch('relation.objectMetadataId');
+  const relationObjectMetadataItem = objectMetadataItems.find(
+    (item) => item.id === relationObjectMetadataId,
   );
+  const relationTargetField = watch('relation.field');
+
+  const relationType: RelationType = watch('relation.type');
   const relationTypeConfig = RELATION_TYPES[relationType];
 
   const oppositeRelationType =
@@ -74,56 +49,50 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
     <SettingsDataModelPreviewFormCard
       preview={
         <SettingsDataModelFieldRelationPreviewContent isMobile={isMobile}>
-          <StyledFieldPreviewCard
+          <SettingsDataModelRelationFieldPreviewSubWidget
             fieldMetadataItem={{
-              ...fieldMetadataItem,
-              relation: {
-                type: relationType,
-              } as Relation,
+              icon: watch('icon'),
+              label: watch('label'),
+              type: FieldMetadataType.RELATION,
+              settings: {
+                relationType: relationType,
+              },
             }}
             shrink
-            objectMetadataItem={objectMetadataItem}
-            relationObjectMetadataItem={relationObjectMetadataItem}
-            pluralizeLabel={
-              watchFormValue('relation.type') === RelationType.MANY_TO_ONE
+            objectNameSingulars={[objectNameSingular]}
+            fieldPreviewTargetObjectNameSingular={
+              relationObjectMetadataItem?.nameSingular ?? 'company'
             }
+            pluralizeLabel={relationType === RelationType.ONE_TO_MANY}
           />
           <SettingsDataModelRelationPreviewImage
-            src={relationTypeConfig.imageSrc}
-            flip={relationTypeConfig.isImageFlipped}
-            alt={relationTypeConfig.label}
+            src={relationTypeConfig?.imageSrc}
+            flip={relationTypeConfig?.isImageFlipped}
+            alt={relationTypeConfig?.label}
             isMobile={isMobile}
           />
-          <StyledFieldPreviewCard
+          <SettingsDataModelRelationFieldPreviewSubWidget
             fieldMetadataItem={{
-              ...initialRelationFieldMetadataItem,
-              icon: watchFormValue(
-                'relation.field.icon',
-                initialRelationFieldMetadataItem.icon,
-              ),
-              label:
-                watchFormValue(
-                  'relation.field.label',
-                  initialRelationFieldMetadataItem.label,
-                ) || 'Field name',
+              icon: relationTargetField?.icon,
+              label: relationTargetField?.label,
               type: FieldMetadataType.RELATION,
-              relation: {
-                type: oppositeRelationType,
-              } as Relation,
+              settings: {
+                relationType: oppositeRelationType,
+              },
             }}
             shrink
-            objectMetadataItem={relationObjectMetadataItem}
-            relationObjectMetadataItem={objectMetadataItem}
-            pluralizeLabel={
-              watchFormValue('relation.type') !== RelationType.MANY_TO_ONE
-            }
+            objectNameSingulars={[
+              relationObjectMetadataItem?.nameSingular ?? 'company',
+            ]}
+            fieldPreviewTargetObjectNameSingular={objectNameSingular}
+            pluralizeLabel={oppositeRelationType === RelationType.ONE_TO_MANY}
           />
         </SettingsDataModelFieldRelationPreviewContent>
       }
       form={
         <SettingsDataModelFieldRelationForm
-          fieldMetadataItem={fieldMetadataItem}
-          objectMetadataItem={objectMetadataItem}
+          existingFieldMetadataId={existingFieldMetadataId}
+          objectMetadataItem={relationObjectMetadataItem}
         />
       }
     />
