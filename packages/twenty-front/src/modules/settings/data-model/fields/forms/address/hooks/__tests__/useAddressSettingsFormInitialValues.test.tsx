@@ -1,6 +1,9 @@
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { renderHook } from '@testing-library/react';
 import { useFormContext } from 'react-hook-form';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { useAddressSettingsFormInitialValues } from '../useAddressSettingsFormInitialValues';
 
 jest.mock('react-hook-form', () => ({
@@ -14,6 +17,7 @@ const mockUseFormContext = useFormContext as jest.MockedFunction<
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
+  objectMetadataItems: generatedMockObjectMetadataItems,
 });
 
 describe('useAddressSettingsFormInitialValues', () => {
@@ -121,11 +125,16 @@ describe('useAddressSettingsFormInitialValues', () => {
   });
 
   it('should return configured subFields when they exist', () => {
-    // const fieldMetadataItem: Pick<FieldMetadataItem, 'settings'> = {
-    //   settings: {
-    //     subFields: ['addressStreet1', 'addressCity', 'addressCountry'],
-    //   },
-    // };
+    const newGeneratedMockObjectMetadataItems = addNewAddressToMetadataItems(
+      generatedMockObjectMetadataItems,
+      'new-field',
+      ['addressStreet1', 'addressCity', 'addressCountry'],
+    );
+
+    const WrapperSpecific = getJestMetadataAndApolloMocksWrapper({
+      apolloMocks: [],
+      objectMetadataItems: newGeneratedMockObjectMetadataItems,
+    });
 
     const { result } = renderHook(
       () =>
@@ -133,7 +142,7 @@ describe('useAddressSettingsFormInitialValues', () => {
           existingFieldMetadataId: 'new-field',
         }),
       {
-        wrapper: Wrapper,
+        wrapper: WrapperSpecific,
       },
     );
 
@@ -170,13 +179,21 @@ describe('useAddressSettingsFormInitialValues', () => {
   });
 
   it('should handle partial subFields configuration', () => {
+    const WrapperSpecific = getJestMetadataAndApolloMocksWrapper({
+      apolloMocks: [],
+      objectMetadataItems: addNewAddressToMetadataItems(
+        generatedMockObjectMetadataItems,
+        'new-field',
+        ['addressStreet1', 'addressCity'],
+      ),
+    });
     const { result } = renderHook(
       () =>
         useAddressSettingsFormInitialValues({
           existingFieldMetadataId: 'new-field',
         }),
       {
-        wrapper: Wrapper,
+        wrapper: WrapperSpecific,
       },
     );
 
@@ -186,3 +203,28 @@ describe('useAddressSettingsFormInitialValues', () => {
     ]);
   });
 });
+
+const addNewAddressToMetadataItems = (
+  generatedMockObjectMetadataItems: ObjectMetadataItem[],
+  fieldNameId: string,
+  subFields: string[],
+) => {
+  return generatedMockObjectMetadataItems
+    .filter((item) => item.nameSingular === 'company')
+    .map((item) => {
+      const fields = item.fields;
+      const addressField = fields.find(
+        (field) => field.type === FieldMetadataType.ADDRESS,
+      );
+      if (!addressField) {
+        throw new Error('Address field not found');
+      }
+      const newField = {
+        ...addressField,
+        id: fieldNameId,
+        type: FieldMetadataType.ADDRESS,
+        settings: { subFields },
+      };
+      return { ...item, fields: [...fields, newField] };
+    });
+};
