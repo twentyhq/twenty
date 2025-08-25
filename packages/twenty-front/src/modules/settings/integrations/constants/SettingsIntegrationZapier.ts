@@ -38,5 +38,12 @@ export const SETTINGS_INTEGRATION_ZAPIER_CATEGORY: SettingsIntegrationCategory =
         text: 'Create a company when a Tally form is sent',
         link: 'https://zapier.com/apps/twenty/integrations/tally',
       },
+      {
+        from: { key: 'twenty', image: '/images/integrations/twenty-logo.svg' },
+        to: { key: 'linkup', image: '/images/integrations/linkup-logo.png' },
+        type: 'Use',
+        text: 'Enrich company data using Linkup AI search',
+        link: 'https://zapier.com/apps/twenty/integrations/linkup',
+      },
     ],
   };
