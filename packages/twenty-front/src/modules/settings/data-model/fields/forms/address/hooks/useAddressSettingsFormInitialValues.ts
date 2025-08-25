@@ -23,6 +23,19 @@ export const useAddressSettingsFormInitialValues = ({
       ? fieldMetadataItem.settings.subFields
       : allAddressSubFields;
 
+  const defaultDefaultValue = {
+    addressStreet1: "''",
+    addressStreet2: null,
+    addressCity: null,
+    addressState: null,
+    addressPostcode: null,
+    addressCountry: null,
+    addressLat: null,
+    addressLng: null,
+  };
+  const initialDefaultValue =
+    fieldMetadataItem?.defaultValue ?? defaultDefaultValue;
+
   const { resetField } = useFormContext<SettingsDataModelFieldTextFormValues>();
 
   const resetDefaultValueField = () => {
@@ -32,6 +45,7 @@ export const useAddressSettingsFormInitialValues = ({
   };
 
   return {
+    initialDefaultValue,
     initialDisplaySubFields,
     resetDefaultValueField,
   };

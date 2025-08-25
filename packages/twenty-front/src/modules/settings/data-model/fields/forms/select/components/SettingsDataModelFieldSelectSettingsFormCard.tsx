@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 import { type z } from 'zod';
 
@@ -8,7 +7,7 @@ import {
   SettingsDataModelFieldSelectForm,
   type settingsDataModelFieldSelectFormSchema,
 } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
-import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
@@ -23,13 +22,6 @@ type SettingsDataModelFieldSelectSettingsFormCardProps = {
   existingFieldMetadataId: string;
 };
 
-const StyledSettingsDataModelFieldPreviewCard = styled(
-  SettingsDataModelFieldPreviewCard,
-)`
-  display: grid;
-  flex: 1 1 100%;
-`;
-
 export const SettingsDataModelFieldSelectSettingsFormCard = ({
   objectNameSingular,
   fieldType,
@@ -43,7 +35,7 @@ export const SettingsDataModelFieldSelectSettingsFormCard = ({
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <StyledSettingsDataModelFieldPreviewCard
+        <SettingsDataModelFieldPreviewWidget
           fieldMetadataItem={{
             type: fieldType,
             label: watchFormValue('label'),
@@ -55,12 +47,10 @@ export const SettingsDataModelFieldSelectSettingsFormCard = ({
         />
       }
       form={
-        <>
-          <SettingsDataModelFieldSelectForm
-            fieldType={fieldType}
-            existingFieldMetadataId={existingFieldMetadataId}
-          />
-        </>
+        <SettingsDataModelFieldSelectForm
+          fieldType={fieldType}
+          existingFieldMetadataId={existingFieldMetadataId}
+        />
       }
     />
   );

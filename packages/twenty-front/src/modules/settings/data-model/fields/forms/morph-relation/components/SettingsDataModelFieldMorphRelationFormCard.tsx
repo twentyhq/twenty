@@ -1,8 +1,6 @@
-import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import {
@@ -11,36 +9,30 @@ import {
 } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm';
 import { SettingsDataModelFieldRelationPreviewContent } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationPreviewContent';
 import { SettingsDataModelRelationPreviewImage } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationPreviewImageCard';
-import { SettingsDataModelRelationFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelRelationFieldPreviewCard';
+import { SettingsDataModelRelationFieldPreviewSubWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelRelationFieldPreviewSubWidget';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
 type SettingsDataModelFieldMorphRelationFormCardProps = {
-  fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    'name' | 'icon' | 'label' | 'type'
-  >;
+  existingFieldMetadataId: string;
   objectNameSingular: string;
 };
 
-const StyledMorphRelationFieldPreviewCard = styled(
-  SettingsDataModelRelationFieldPreviewCard,
-)`
-  flex: 1 1 100%;
-`;
-
 export const SettingsDataModelFieldMorphRelationFormCard = ({
-  fieldMetadataItem,
+  existingFieldMetadataId,
   objectNameSingular,
 }: SettingsDataModelFieldMorphRelationFormCardProps) => {
-  const { watch: watchFormValue } =
-    useFormContext<SettingsDataModelFieldMorphRelationFormValues>();
+  const { watch } = useFormContext<
+    SettingsDataModelFieldMorphRelationFormValues &
+      SettingsDataModelFieldEditFormValues
+  >();
   const isMobile = useIsMobile();
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const relationObjectMetadataIds = watchFormValue(
+  const relationObjectMetadataIds: string[] = watch(
     'morphRelationObjectMetadataIds',
   );
 
@@ -52,8 +44,7 @@ export const SettingsDataModelFieldMorphRelationFormCard = ({
 
   const fallbackRelationObjectMetadataItem = objectMetadataItems[0];
 
-  const relationType: RelationType = watchFormValue('relationType');
-  const targetFieldName = watchFormValue('targetFieldLabel');
+  const relationType: RelationType = watch('relationType');
 
   const relationTypeConfig = RELATION_TYPES[relationType];
 
@@ -66,9 +57,11 @@ export const SettingsDataModelFieldMorphRelationFormCard = ({
     <SettingsDataModelPreviewFormCard
       preview={
         <SettingsDataModelFieldRelationPreviewContent isMobile={isMobile}>
-          <StyledMorphRelationFieldPreviewCard
+          <SettingsDataModelRelationFieldPreviewSubWidget
             fieldMetadataItem={{
-              ...fieldMetadataItem,
+              icon: watch('icon'),
+              label: watch('label'),
+              type: FieldMetadataType.MORPH_RELATION,
               settings: {
                 relationType,
               },
@@ -79,9 +72,7 @@ export const SettingsDataModelFieldMorphRelationFormCard = ({
               relationObjectMetadataItems[0]?.nameSingular ??
               fallbackRelationObjectMetadataItem.nameSingular
             }
-            pluralizeLabel={
-              watchFormValue('relationType') === RelationType.MANY_TO_ONE
-            }
+            pluralizeLabel={watch('relationType') === RelationType.MANY_TO_ONE}
           />
           <SettingsDataModelRelationPreviewImage
             src={relationTypeConfig.imageSrc}
@@ -89,11 +80,10 @@ export const SettingsDataModelFieldMorphRelationFormCard = ({
             alt={relationTypeConfig.label}
             isMobile={isMobile}
           />
-          <StyledMorphRelationFieldPreviewCard
+          <SettingsDataModelRelationFieldPreviewSubWidget
             fieldMetadataItem={{
-              name: targetFieldName,
-              icon: fieldMetadataItem.icon,
-              label: fieldMetadataItem.label,
+              icon: watch('iconOnDestination'),
+              label: watch('targetFieldLabel'),
               type: FieldMetadataType.RELATION,
               settings: {
                 relationType: oppositeRelationType,
@@ -106,15 +96,13 @@ export const SettingsDataModelFieldMorphRelationFormCard = ({
                 : [fallbackRelationObjectMetadataItem.nameSingular]
             }
             fieldPreviewTargetObjectNameSingular={objectNameSingular}
-            pluralizeLabel={
-              watchFormValue('relationType') !== RelationType.MANY_TO_ONE
-            }
+            pluralizeLabel={watch('relationType') !== RelationType.MANY_TO_ONE}
           />
         </SettingsDataModelFieldRelationPreviewContent>
       }
       form={
         <SettingsDataModelFieldMorphRelationForm
-          fieldMetadataItem={fieldMetadataItem}
+          existingFieldMetadataId={existingFieldMetadataId}
         />
       }
     />

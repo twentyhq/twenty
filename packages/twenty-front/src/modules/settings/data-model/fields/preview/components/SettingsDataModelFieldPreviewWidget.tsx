@@ -7,7 +7,7 @@ import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/co
 import { Card, CardContent } from 'twenty-ui/layout';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
-type SettingsDataModelFieldPreviewCardProps = {
+type SettingsDataModelFieldPreviewWidgetProps = {
   className?: string;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
@@ -17,6 +17,7 @@ type SettingsDataModelFieldPreviewCardProps = {
   shrink?: boolean;
   withFieldLabel?: boolean;
   pluralizeLabel?: boolean;
+  fullWidth?: boolean;
 };
 
 const StyledCard = styled(Card)`
@@ -28,14 +29,14 @@ const StyledCardContent = styled(CardContent)`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const SettingsDataModelFieldPreviewCard = ({
+export const SettingsDataModelFieldPreviewWidget = ({
   className,
   fieldMetadataItem,
   objectNameSingular,
   shrink,
   withFieldLabel = true,
   pluralizeLabel = false,
-}: SettingsDataModelFieldPreviewCardProps) => {
+}: SettingsDataModelFieldPreviewWidgetProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });

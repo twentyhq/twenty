@@ -8,14 +8,17 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
+import { isNonEmptyString } from '@sniptt/guards';
 import { computeMorphRelationFieldName } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { v4 } from 'uuid';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 type SettingsDataModelRelationFieldPreviewProps = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'name' | 'icon' | 'label' | 'type' | 'settings'
+    'icon' | 'label' | 'type' | 'settings'
   >;
   relationTargetObjectNameSingular: string;
   shrink?: boolean;
@@ -68,7 +71,9 @@ export const SettingsDataModelRelationFieldPreview = ({
     relationObjectNameSingular: relationTargetObjectNameSingular,
   });
 
-  const fieldName = fieldMetadataItem.name;
+  const fieldName = isNonEmptyString(fieldMetadataItem.label)
+    ? computeMetadataNameFromLabel(fieldMetadataItem.label)
+    : v4();
   const recordId = `${relationTargetObjectNameSingular}-${fieldName}-preview`;
 
   const metadata = {
@@ -93,12 +98,12 @@ export const SettingsDataModelRelationFieldPreview = ({
           gqlFieldName={
             fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION
               ? computeMorphRelationFieldName({
-                  fieldName: fieldMetadataItem.name ?? '',
+                  fieldName: fieldName ?? '',
                   relationDirection: fieldMetadataItem.settings?.relationType,
                   nameSingular: relationTargetObjectNameSingular,
                   namePlural: relationTargetObjectMetadataItem.namePlural,
                 })
-              : fieldMetadataItem.name
+              : fieldName
           }
           value={fieldPreviewValue}
         />

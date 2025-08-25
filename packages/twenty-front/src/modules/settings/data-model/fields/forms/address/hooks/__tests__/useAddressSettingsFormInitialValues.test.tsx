@@ -1,6 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { renderHook } from '@testing-library/react';
 import { useFormContext } from 'react-hook-form';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { useAddressSettingsFormInitialValues } from '../useAddressSettingsFormInitialValues';
 
 jest.mock('react-hook-form', () => ({
@@ -12,6 +13,10 @@ const mockUseFormContext = useFormContext as jest.MockedFunction<
   typeof useFormContext
 >;
 
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+});
+
 describe('useAddressSettingsFormInitialValues', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -21,8 +26,14 @@ describe('useAddressSettingsFormInitialValues', () => {
   });
 
   it('should return all address subfields when no fieldMetadataItem is provided', () => {
-    const { result } = renderHook(() =>
-      useAddressSettingsFormInitialValues({}),
+    const { result } = renderHook(
+      () =>
+        useAddressSettingsFormInitialValues({
+          existingFieldMetadataId: 'new-field',
+        }),
+      {
+        wrapper: Wrapper,
+      },
     );
 
     expect(result.current.initialDisplaySubFields).toEqual([
@@ -36,12 +47,14 @@ describe('useAddressSettingsFormInitialValues', () => {
   });
 
   it('should return all address subfields when fieldMetadataItem has no settings', () => {
-    const fieldMetadataItem: Pick<FieldMetadataItem, 'settings'> = {
-      settings: undefined,
-    };
-
-    const { result } = renderHook(() =>
-      useAddressSettingsFormInitialValues({ fieldMetadataItem }),
+    const { result } = renderHook(
+      () =>
+        useAddressSettingsFormInitialValues({
+          existingFieldMetadataId: 'new-field',
+        }),
+      {
+        wrapper: Wrapper,
+      },
     );
 
     expect(result.current.initialDisplaySubFields).toEqual([
@@ -61,8 +74,14 @@ describe('useAddressSettingsFormInitialValues', () => {
       },
     };
 
-    const { result } = renderHook(() =>
-      useAddressSettingsFormInitialValues({ fieldMetadataItem }),
+    const { result } = renderHook(
+      () =>
+        useAddressSettingsFormInitialValues({
+          existingFieldMetadataId: 'new-field',
+        }),
+      {
+        wrapper: Wrapper,
+      },
     );
 
     expect(result.current.initialDisplaySubFields).toEqual([
@@ -82,8 +101,14 @@ describe('useAddressSettingsFormInitialValues', () => {
       },
     };
 
-    const { result } = renderHook(() =>
-      useAddressSettingsFormInitialValues({ fieldMetadataItem }),
+    const { result } = renderHook(
+      () =>
+        useAddressSettingsFormInitialValues({
+          existingFieldMetadataId: 'new-field',
+        }),
+      {
+        wrapper: Wrapper,
+      },
     );
 
     expect(result.current.initialDisplaySubFields).toEqual([
@@ -103,8 +128,14 @@ describe('useAddressSettingsFormInitialValues', () => {
       },
     };
 
-    const { result } = renderHook(() =>
-      useAddressSettingsFormInitialValues({ fieldMetadataItem }),
+    const { result } = renderHook(
+      () =>
+        useAddressSettingsFormInitialValues({
+          existingFieldMetadataId: 'new-field',
+        }),
+      {
+        wrapper: Wrapper,
+      },
     );
 
     expect(result.current.initialDisplaySubFields).toEqual([
@@ -115,8 +146,14 @@ describe('useAddressSettingsFormInitialValues', () => {
   });
 
   it('should call resetField with all address subFields when resetDefaultValueField is called', () => {
-    const { result } = renderHook(() =>
-      useAddressSettingsFormInitialValues({}),
+    const { result } = renderHook(
+      () =>
+        useAddressSettingsFormInitialValues({
+          existingFieldMetadataId: 'new-field',
+        }),
+      {
+        wrapper: Wrapper,
+      },
     );
 
     result.current.resetDefaultValueField();
@@ -134,14 +171,14 @@ describe('useAddressSettingsFormInitialValues', () => {
   });
 
   it('should handle partial subFields configuration', () => {
-    const fieldMetadataItem: Pick<FieldMetadataItem, 'settings'> = {
-      settings: {
-        subFields: ['addressStreet1', 'addressCity'],
+    const { result } = renderHook(
+      () =>
+        useAddressSettingsFormInitialValues({
+          existingFieldMetadataId: 'new-field',
+        }),
+      {
+        wrapper: Wrapper,
       },
-    };
-
-    const { result } = renderHook(() =>
-      useAddressSettingsFormInitialValues({ fieldMetadataItem }),
     );
 
     expect(result.current.initialDisplaySubFields).toEqual([

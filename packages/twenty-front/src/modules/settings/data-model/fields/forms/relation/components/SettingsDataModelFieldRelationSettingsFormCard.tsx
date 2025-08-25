@@ -1,8 +1,6 @@
-import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import {
@@ -11,41 +9,35 @@ import {
 } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
 import { SettingsDataModelFieldRelationPreviewContent } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationPreviewContent';
 import { SettingsDataModelRelationPreviewImage } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationPreviewImageCard';
-import { SettingsDataModelRelationFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelRelationFieldPreviewCard';
+import { SettingsDataModelRelationFieldPreviewSubWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelRelationFieldPreviewSubWidget';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
 type SettingsDataModelFieldRelationSettingsFormCardProps = {
-  fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    'name' | 'icon' | 'label' | 'type'
-  >;
+  existingFieldMetadataId: string;
   objectNameSingular: string;
 };
 
-const StyledSettingsDataModelRelationFieldPreviewCard = styled(
-  SettingsDataModelRelationFieldPreviewCard,
-)`
-  flex: 1 1 100%;
-`;
-
 export const SettingsDataModelFieldRelationSettingsFormCard = ({
-  fieldMetadataItem,
+  existingFieldMetadataId,
   objectNameSingular,
 }: SettingsDataModelFieldRelationSettingsFormCardProps) => {
-  const { watch: watchFormValue } =
-    useFormContext<SettingsDataModelFieldRelationFormValues>();
+  const { watch } = useFormContext<
+    SettingsDataModelFieldRelationFormValues &
+      SettingsDataModelFieldEditFormValues
+  >();
   const isMobile = useIsMobile();
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const relationObjectMetadataId = watchFormValue('relation.objectMetadataId');
+  const relationObjectMetadataId = watch('relation.objectMetadataId');
   const relationObjectMetadataItem = objectMetadataItems.find(
     (item) => item.id === relationObjectMetadataId,
   );
-  const relationTargetField = watchFormValue('relation.field');
+  const relationTargetField = watch('relation.field');
 
-  const relationType: RelationType = watchFormValue('relation.type');
+  const relationType: RelationType = watch('relation.type');
   const relationTypeConfig = RELATION_TYPES[relationType];
 
   const oppositeRelationType =
@@ -57,11 +49,10 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
     <SettingsDataModelPreviewFormCard
       preview={
         <SettingsDataModelFieldRelationPreviewContent isMobile={isMobile}>
-          <StyledSettingsDataModelRelationFieldPreviewCard
+          <SettingsDataModelRelationFieldPreviewSubWidget
             fieldMetadataItem={{
-              name: fieldMetadataItem.name,
-              icon: fieldMetadataItem.icon,
-              label: fieldMetadataItem.label,
+              icon: watch('icon'),
+              label: watch('label'),
               type: FieldMetadataType.RELATION,
               settings: {
                 relationType: relationType,
@@ -80,11 +71,10 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
             alt={relationTypeConfig?.label}
             isMobile={isMobile}
           />
-          <StyledSettingsDataModelRelationFieldPreviewCard
+          <SettingsDataModelRelationFieldPreviewSubWidget
             fieldMetadataItem={{
-              name: relationTargetField?.name ?? '',
-              icon: relationTargetField?.icon ?? '',
-              label: relationTargetField?.label ?? '',
+              icon: relationTargetField?.icon,
+              label: relationTargetField?.label,
               type: FieldMetadataType.RELATION,
               settings: {
                 relationType: oppositeRelationType,
@@ -101,7 +91,7 @@ export const SettingsDataModelFieldRelationSettingsFormCard = ({
       }
       form={
         <SettingsDataModelFieldRelationForm
-          fieldMetadataItem={fieldMetadataItem}
+          existingFieldMetadataId={existingFieldMetadataId}
           objectMetadataItem={relationObjectMetadataItem}
         />
       }

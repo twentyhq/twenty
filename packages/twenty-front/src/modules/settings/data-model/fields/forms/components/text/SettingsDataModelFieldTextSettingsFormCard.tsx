@@ -1,10 +1,8 @@
-import styled from '@emotion/styled';
-
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
 import { SettingsDataModelFieldTextForm } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm';
-import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 import { useFormContext } from 'react-hook-form';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -13,10 +11,6 @@ type SettingsDataModelFieldTextSettingsFormCardProps = {
   existingFieldMetadataId: string;
   objectNameSingular: string;
 };
-
-const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
-  flex: 1 1 100%;
-`;
 
 export const SettingsDataModelFieldTextSettingsFormCard = ({
   disabled,
@@ -28,7 +22,7 @@ export const SettingsDataModelFieldTextSettingsFormCard = ({
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <StyledFieldPreviewCard
+        <SettingsDataModelFieldPreviewWidget
           fieldMetadataItem={{
             label: watch('label'),
             icon: watch('icon'),

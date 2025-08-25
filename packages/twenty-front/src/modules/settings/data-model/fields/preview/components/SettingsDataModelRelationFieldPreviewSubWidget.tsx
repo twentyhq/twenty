@@ -7,10 +7,10 @@ import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/co
 import { isDefined } from 'twenty-shared/utils';
 import { Card, CardContent } from 'twenty-ui/layout';
 
-export type SettingsDataModelRelationFieldPreviewCardProps = {
+export type SettingsDataModelRelationFieldPreviewSubWidgetProps = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'name' | 'icon' | 'label' | 'type' | 'defaultValue' | 'options' | 'settings'
+    'icon' | 'label' | 'type' | 'settings'
   >;
   objectNameSingulars: string[];
   fieldPreviewTargetObjectNameSingular: string;
@@ -29,7 +29,7 @@ const StyledCardContent = styled(CardContent)`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const SettingsDataModelRelationFieldPreviewCard = ({
+export const SettingsDataModelRelationFieldPreviewSubWidget = ({
   className,
   fieldMetadataItem,
   objectNameSingulars,
@@ -37,7 +37,7 @@ export const SettingsDataModelRelationFieldPreviewCard = ({
   shrink,
   withFieldLabel = true,
   pluralizeLabel = false,
-}: SettingsDataModelRelationFieldPreviewCardProps) => {
+}: SettingsDataModelRelationFieldPreviewSubWidgetProps) => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const targetObjectMetadataItems = objectNameSingulars

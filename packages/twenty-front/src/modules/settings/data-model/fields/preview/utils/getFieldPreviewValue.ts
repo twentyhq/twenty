@@ -29,6 +29,7 @@ export const getFieldPreviewValue = ({
       fieldMetadataItem: {
         type: fieldType,
         settings: fieldSettings,
+        defaultValue,
       },
       shouldComputeFunctionDefaultValue: true,
     });

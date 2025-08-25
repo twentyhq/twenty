@@ -62,33 +62,23 @@ export const SettingsDataModelFieldAddressForm = ({
           Flag({ width: props.size, height: props.size }),
       })),
   ];
-  const { initialDisplaySubFields, resetDefaultValueField } =
-    useAddressSettingsFormInitialValues({ existingFieldMetadataId });
+  const {
+    initialDisplaySubFields,
+    initialDefaultValue,
+    resetDefaultValueField,
+  } = useAddressSettingsFormInitialValues({ existingFieldMetadataId });
 
   const { closeDropdown } = useCloseDropdown();
   const reset = () => {
     resetDefaultValueField();
     closeDropdown('addressSubFieldsId');
   };
-  const defaultDefaultValue = {
-    addressStreet1: "''",
-    addressStreet2: null,
-    addressCity: null,
-    addressState: null,
-    addressPostcode: null,
-    addressCountry: null,
-    addressLat: null,
-    addressLng: null,
-  };
 
   return (
     <>
       <Controller
         name="defaultValue"
-        defaultValue={{
-          ...defaultDefaultValue,
-          ...fieldMetadataItem?.defaultValue,
-        }}
+        defaultValue={initialDefaultValue}
         control={control}
         render={({ field: { onChange, value } }) => {
           const defaultCountry = value?.addressCountry || '';

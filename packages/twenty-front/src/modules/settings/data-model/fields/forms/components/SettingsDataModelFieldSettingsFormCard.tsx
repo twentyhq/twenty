@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import omit from 'lodash.omit';
 import { z } from 'zod';
 
@@ -29,9 +28,10 @@ import {
   settingsDataModelFieldSelectFormSchema,
 } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
 import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectSettingsFormCard';
-import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 import { useFormContext } from 'react-hook-form';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
 const isUniqueFieldFormSchema = z.object({
   isUnique: z.boolean().nullable().default(false),
@@ -138,10 +138,6 @@ type SettingsDataModelFieldSettingsFormCardProps = {
   objectNameSingular: string;
 };
 
-const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
-  flex: 1 1 100%;
-`;
-
 const previewableTypes = [
   FieldMetadataType.ARRAY,
   FieldMetadataType.ADDRESS,
@@ -169,7 +165,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   fieldType,
   objectNameSingular,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
-  const { watch } = useFormContext<SettingsDataModelFieldSettingsFormValues>();
+  const { watch } = useFormContext<SettingsDataModelFieldEditFormValues>();
 
   if (!previewableTypes.includes(fieldType)) {
     return null;
@@ -276,7 +272,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <StyledFieldPreviewCard
+        <SettingsDataModelFieldPreviewWidget
           fieldMetadataItem={{
             type: fieldType,
             label: watch('label'),

@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
@@ -7,7 +6,7 @@ import {
   SettingsDataModelFieldDateForm,
   type SettingsDataModelFieldDateFormValues,
 } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
-import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
@@ -17,11 +16,6 @@ type SettingsDataModelFieldDateSettingsFormCardProps = {
   existingFieldMetadataId: string;
   objectNameSingular: string;
 };
-
-const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
-  display: grid;
-  flex: 1 1 100%;
-`;
 
 export const SettingsDataModelFieldDateSettingsFormCard = ({
   disabled,
@@ -36,7 +30,7 @@ export const SettingsDataModelFieldDateSettingsFormCard = ({
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <StyledFieldPreviewCard
+        <SettingsDataModelFieldPreviewWidget
           fieldMetadataItem={{
             type: fieldType,
             label: watch('label'),

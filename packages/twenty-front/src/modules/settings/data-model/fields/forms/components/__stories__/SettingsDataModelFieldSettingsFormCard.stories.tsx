@@ -37,7 +37,8 @@ const meta: Meta<typeof SettingsDataModelFieldSettingsFormCard> = {
     I18nFrontDecorator,
   ],
   args: {
-    fieldMetadataItem,
+    existingFieldMetadataId: fieldMetadataItem.id,
+    fieldType: FieldMetadataType.TEXT,
     objectNameSingular: mockedCompanyObjectMetadataItem.nameSingular,
   },
   parameters: {
@@ -53,19 +54,16 @@ export const Default: Story = {};
 
 export const WithRelationForm: Story = {
   args: {
-    fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
-      ({ name }) => name === 'people',
-    ),
+    existingFieldMetadataId: 'new-field',
+    fieldType: FieldMetadataType.RELATION,
+    objectNameSingular: 'company',
   },
 };
 
 export const WithSelectForm: Story = {
   args: {
-    fieldMetadataItem: {
-      name: 'industry',
-      label: 'Industry',
-      icon: 'IconBuildingFactory2',
-      type: FieldMetadataType.SELECT,
-    },
+    existingFieldMetadataId: 'new-field',
+    fieldType: FieldMetadataType.SELECT,
+    objectNameSingular: 'company',
   },
 };

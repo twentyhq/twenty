@@ -9,7 +9,7 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
-import { SettingsDataModelFieldPreviewCard } from '../SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelFieldPreviewWidget } from '../SettingsDataModelFieldPreviewWidget';
 
 const mockedCompanyObjectMetadataItem =
   getMockObjectMetadataItemOrThrow('company');
@@ -20,10 +20,10 @@ const mockedOpportunityObjectMetadataItem =
 const mockedPersonObjectMetadataItem =
   getMockObjectMetadataItemOrThrow('person');
 
-const meta: Meta<typeof SettingsDataModelFieldPreviewCard> = {
+const meta: Meta<typeof SettingsDataModelFieldPreviewWidget> = {
   title:
-    'Modules/Settings/DataModel/Fields/Preview/SettingsDataModelFieldPreviewCard',
-  component: SettingsDataModelFieldPreviewCard,
+    'Modules/Settings/DataModel/Fields/Preview/SettingsDataModelFieldPreviewWidget',
+  component: SettingsDataModelFieldPreviewWidget,
   decorators: [
     MemoryRouterDecorator,
     ComponentDecorator,
@@ -40,7 +40,7 @@ const meta: Meta<typeof SettingsDataModelFieldPreviewCard> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SettingsDataModelFieldPreviewCard>;
+type Story = StoryObj<typeof SettingsDataModelFieldPreviewWidget>;
 
 export const LabelIdentifier: Story = {
   args: {

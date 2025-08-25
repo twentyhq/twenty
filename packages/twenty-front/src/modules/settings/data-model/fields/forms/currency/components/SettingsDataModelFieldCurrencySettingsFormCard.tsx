@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
@@ -6,7 +5,7 @@ import {
   SettingsDataModelFieldCurrencyForm,
   type SettingsDataModelFieldCurrencyFormValues,
 } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
-import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
@@ -15,11 +14,6 @@ type SettingsDataModelFieldCurrencySettingsFormCardProps = {
   existingFieldMetadataId: string;
   objectNameSingular: string;
 };
-
-const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
-  display: grid;
-  flex: 1 1 100%;
-`;
 
 export const SettingsDataModelFieldCurrencySettingsFormCard = ({
   disabled,
@@ -34,7 +28,7 @@ export const SettingsDataModelFieldCurrencySettingsFormCard = ({
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <StyledFieldPreviewCard
+        <SettingsDataModelFieldPreviewWidget
           fieldMetadataItem={{
             type: FieldMetadataType.CURRENCY,
             label: watch('label'),
