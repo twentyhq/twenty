@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
-import { IsNull, Not, type Repository, type EntityManager } from 'typeorm';
+import { IsNull, Not, type EntityManager, type Repository } from 'typeorm';
 
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
@@ -13,6 +13,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceAgentComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-agent.comparator';
 import { StandardAgentFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-agent.factory';
 import { standardAgentDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents';
+import { WORKFLOW_CREATION_AGENT } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/agents/workflow-creation-agent';
 import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 
 @Injectable()
@@ -75,6 +76,14 @@ export class WorkspaceSyncAgentService {
             roleRepository,
             roleTargetsRepository,
           );
+
+          if (createdAgent.standardId === WORKFLOW_CREATION_AGENT.standardId) {
+            await this.createAgentHandoffToWorkflowCreationAgent(
+              createdAgent.id,
+              context.workspaceId,
+              manager,
+            );
+          }
           break;
         }
 
@@ -151,6 +160,62 @@ export class WorkspaceSyncAgentService {
     } catch (error) {
       this.logger.error(
         `Failed to assign admin role to workflow creation agent: ${error.message}`,
+      );
+    }
+  }
+
+  private async createAgentHandoffToWorkflowCreationAgent(
+    workflowCreationAgentId: string,
+    workspaceId: string,
+    manager: EntityManager,
+  ): Promise<void> {
+    try {
+      const agentRepository = manager.getRepository(AgentEntity);
+      const defaultAgent = await agentRepository.findOne({
+        where: {
+          workspaceId,
+        },
+      });
+
+      if (!defaultAgent) {
+        this.logger.warn(
+          `Default agent not found for workspace ${workspaceId}. Agent handoff will not be created.`,
+        );
+
+        return;
+      }
+
+      const agentHandoffRepository = manager.getRepository('agentHandoff');
+      const existingHandoff = await agentHandoffRepository.findOne({
+        where: {
+          fromAgentId: defaultAgent.id,
+          toAgentId: workflowCreationAgentId,
+          workspaceId,
+        },
+      });
+
+      if (existingHandoff) {
+        this.logger.log(
+          `Agent handoff from default agent to workflow creation agent already exists for workspace ${workspaceId}`,
+        );
+
+        return;
+      }
+
+      await agentHandoffRepository.save({
+        fromAgentId: defaultAgent.id,
+        toAgentId: workflowCreationAgentId,
+        workspaceId,
+        description:
+          'Handoff from default agent to workflow creation agent for processing workflow creation requests',
+      });
+
+      this.logger.log(
+        `Successfully created agent handoff from default agent to workflow creation agent for workspace ${workspaceId}`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to create agent handoff to workflow creation agent: ${error.message}`,
       );
     }
   }
