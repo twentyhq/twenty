@@ -10,6 +10,11 @@ import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { fromAgentEntityToFlatAgent } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-flat-agent.util';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { AGENT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agents.util';
+import {
+  SEED_APPLE_WORKSPACE_ID,
+  SEED_YCOMBINATOR_WORKSPACE_ID,
+} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { WorkspaceAgentComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-agent.comparator';
 import { StandardAgentFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-agent.factory';
 import { standardAgentDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents';
@@ -171,11 +176,30 @@ export class WorkspaceSyncAgentService {
   ): Promise<void> {
     try {
       const agentRepository = manager.getRepository(AgentEntity);
-      const defaultAgent = await agentRepository.findOne({
-        where: {
-          workspaceId,
-        },
-      });
+
+      let defaultAgent: AgentEntity | null = null;
+
+      if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
+        defaultAgent = await agentRepository.findOne({
+          where: {
+            id: AGENT_DATA_SEED_IDS.APPLE_DEFAULT_AGENT,
+            workspaceId,
+          },
+        });
+      } else if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
+        defaultAgent = await agentRepository.findOne({
+          where: {
+            id: AGENT_DATA_SEED_IDS.YCOMBINATOR_DEFAULT_AGENT,
+            workspaceId,
+          },
+        });
+      } else {
+        defaultAgent = await agentRepository.findOne({
+          where: {
+            workspaceId,
+          },
+        });
+      }
 
       if (!defaultAgent) {
         this.logger.warn(
