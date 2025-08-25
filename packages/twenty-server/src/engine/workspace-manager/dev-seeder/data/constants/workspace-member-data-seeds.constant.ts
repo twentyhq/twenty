@@ -1,6 +1,7 @@
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { MKT_DEPARTMENT_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-department-data-seeds.constants';
 import { MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-organization-level-data-seeds.constants';
+import { MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-employment-status-data-seeds.constants';
 
 type WorkspaceMemberDataSeed = {
   id: string;
@@ -12,6 +13,7 @@ type WorkspaceMemberDataSeed = {
   userId: string;
   departmentId: string | null;
   organizationLevelId: string | null;
+  employmentStatusId: string | null;
 };
 
 export const WORKSPACE_MEMBER_DATA_SEED_COLUMNS: (keyof WorkspaceMemberDataSeed)[] =
@@ -25,6 +27,7 @@ export const WORKSPACE_MEMBER_DATA_SEED_COLUMNS: (keyof WorkspaceMemberDataSeed)
     'userId',
     'departmentId',
     'organizationLevelId',
+    'employmentStatusId',
   ];
 
 export const WORKSPACE_MEMBER_DATA_SEED_IDS = {
@@ -45,6 +48,7 @@ export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
     userId: USER_DATA_SEED_IDS.TIM,
     departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.TECH,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.MANAGER,
+    employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.CONTRACT,
   },
   {
     id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -56,6 +60,7 @@ export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
     userId: USER_DATA_SEED_IDS.JONY,
     departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.SALES,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.DIRECTOR,
+    employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.INTERNSHIP,
   },
   {
     id: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
@@ -67,6 +72,7 @@ export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
     userId: USER_DATA_SEED_IDS.PHIL,
     departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.HR,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.TEAM_LEAD,
+    employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.PART_TIME,
   },
   {
     id: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
@@ -78,5 +84,6 @@ export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
     userId: USER_DATA_SEED_IDS.JANE,
     departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.SUPPORT,
     organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.SENIOR_STAFF,
+    employmentStatusId: MKT_EMPLOYMENT_STATUS_DATA_SEEDS_IDS.RESIGNED,
   },
 ];

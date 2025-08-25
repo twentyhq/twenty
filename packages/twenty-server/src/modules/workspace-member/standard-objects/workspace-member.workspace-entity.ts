@@ -40,6 +40,7 @@ import { MktDepartmentWorkspaceEntity } from 'src/mkt-core/mkt-department/mkt-de
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { MktStaffStatusHistoryWorkspaceEntity } from 'src/mkt-core/mkt-staff-status-history/mkt-staff-status-history.workspace-entity';
 import { MktOrganizationLevelWorkspaceEntity } from 'src/mkt-core/mkt-organization-level/mkt-organization-level.workspace-entity';
+import { MktEmploymentStatusWorkspaceEntity } from 'src/mkt-core/mkt-employment-status/mkt-employment-status.workspace-entity';
 
 export enum WorkspaceMemberDateFormatEnum {
   SYSTEM = 'SYSTEM',
@@ -421,4 +422,19 @@ export class WorkspaceMemberWorkspaceEntity extends WorkspaceMemberMktEntity {
 
   @WorkspaceJoinColumn('organizationLevel')
   organizationLevelId: string | null;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.employmentStatus,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Employment Status`,
+    description: msg`Person's employment status`,
+    icon: 'IconUserCheck',
+    inverseSideTarget: () => MktEmploymentStatusWorkspaceEntity,
+    inverseSideFieldKey: 'people',
+  })
+  @WorkspaceIsNullable()
+  employmentStatus: Relation<MktEmploymentStatusWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('employmentStatus')
+  employmentStatusId: string | null;
 }

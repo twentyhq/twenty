@@ -40,7 +40,6 @@ import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/not
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { MktEmploymentStatusWorkspaceEntity } from 'src/mkt-core/mkt-employment-status/mkt-employment-status.workspace-entity';
 import { MktKpiWorkspaceEntity } from 'src/mkt-core/mkt-kpi/mkt-kpi.workspace-entity';
 import { MktKpiTemplateWorkspaceEntity } from 'src/mkt-core/mkt-kpi-template/mkt-kpi-template.workspace-entity';
 
@@ -309,41 +308,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
-
-  @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.employmentStatus,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Employment Status`,
-    description: msg`Person's employment status`,
-    icon: 'IconUserCheck',
-    inverseSideTarget: () => MktEmploymentStatusWorkspaceEntity,
-    inverseSideFieldKey: 'people',
-  })
-  @WorkspaceIsNullable()
-  employmentStatus: Relation<MktEmploymentStatusWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('employmentStatus')
-  employmentStatusId: string | null;
-
-  @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.statusStartDate,
-    type: FieldMetadataType.DATE_TIME,
-    label: msg`Status Start Date`,
-    description: msg`Date when current employment status started`,
-    icon: 'IconCalendarEvent',
-  })
-  @WorkspaceIsNullable()
-  statusStartDate: string | null;
-
-  @WorkspaceField({
-    standardId: PERSON_STANDARD_FIELD_IDS.statusExpectedEndDate,
-    type: FieldMetadataType.DATE,
-    label: msg`Status Expected End Date`,
-    description: msg`Expected end date for current employment status`,
-    icon: 'IconCalendarDue',
-  })
-  @WorkspaceIsNullable()
-  statusExpectedEndDate: string | null;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.createdKpis,
