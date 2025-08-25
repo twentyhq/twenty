@@ -106,8 +106,7 @@ export const useSearchVariable = ({
 
   return searchVariableThroughBaseOutputSchema({
     stepName: stepOutputSchema.name,
-    baseOutputSchema:
-      stepOutputSchema.outputSchema as unknown as BaseOutputSchemaV2,
+    baseOutputSchema: stepOutputSchema.outputSchema as BaseOutputSchemaV2,
     rawVariableName,
     isFullRecord,
   });
