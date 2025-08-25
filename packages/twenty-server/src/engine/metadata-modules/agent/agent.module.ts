@@ -14,10 +14,12 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { AgentRoleModule } from 'src/engine/metadata-modules/agent-role/agent-role.module';
 import { AgentChatController } from 'src/engine/metadata-modules/agent/agent-chat.controller';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { AgentChatMessageEntity } from './agent-chat-message.entity';
 import { AgentChatThreadEntity } from './agent-chat-thread.entity';
@@ -57,10 +59,12 @@ import { AgentService } from './agent.service';
     FileUploadModule,
     FileModule,
     ObjectMetadataModule,
+    PermissionsModule,
     WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,
     TokenModule,
     DomainManagerModule,
+    WorkflowToolsModule,
   ],
   controllers: [AgentChatController],
   providers: [

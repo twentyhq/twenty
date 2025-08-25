@@ -15,7 +15,6 @@ import {
 } from 'ai';
 import { In, Repository } from 'typeorm';
 
-import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -61,32 +60,12 @@ export class AgentExecutionService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
     @InjectRepository(FileEntity, 'core')
     private readonly fileRepository: Repository<FileEntity>,
   ) {}
-
-  private async validateApiKey(provider: ModelProvider): Promise<void> {
-    let apiKey: string | undefined;
-
-    switch (provider) {
-      case ModelProvider.OPENAI:
-        apiKey = this.twentyConfigService.get('OPENAI_API_KEY');
-        break;
-      case ModelProvider.ANTHROPIC:
-        apiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
-        break;
-      default:
-        return;
-    }
-    if (!apiKey) {
-      throw new AgentException(
-        `${provider.toUpperCase()} API key not configured`,
-        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
-      );
-    }
-  }
 
   async prepareAIRequestConfig({
     messages,
@@ -106,27 +85,8 @@ export class AgentExecutionService {
         );
       }
 
-      const aiModel = this.aiModelRegistryService.getEffectiveModelConfig(
-        agent?.modelId ?? 'auto',
-      );
-
-      if (agent && !aiModel) {
-        const error = `AI model with id ${agent.modelId} not found`;
-
-        this.logger.error(error);
-        throw new AgentException(
-          error,
-          AgentExceptionCode.AGENT_EXECUTION_FAILED,
-        );
-      }
-
-      this.logger.log(
-        `Resolved model: ${aiModel.modelId} (provider: ${aiModel.provider})`,
-      );
-
-      const provider = aiModel.provider;
-
-      await this.validateApiKey(provider);
+      const registeredModel =
+        await this.aiModelRegistryService.resolveModelForAgent(agent);
 
       const tools = agent
         ? await this.agentToolService.generateToolsForAgent(
@@ -136,17 +96,6 @@ export class AgentExecutionService {
         : {};
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
-
-      const registeredModel = this.aiModelRegistryService.getModel(
-        aiModel.modelId,
-      );
-
-      if (!registeredModel) {
-        throw new AgentException(
-          `Model ${aiModel.modelId} not found in registry`,
-          AgentExceptionCode.AGENT_EXECUTION_FAILED,
-        );
-      }
 
       return {
         system,

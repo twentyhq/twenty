@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ToolSet } from 'ai';
 import { Repository } from 'typeorm';
-import { z } from 'zod';
 
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
@@ -11,7 +10,11 @@ import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/a
 import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { AGENT_HANDOFF_DESCRIPTION_TEMPLATE } from 'src/engine/metadata-modules/agent/constants/agent-handoff-description.const';
+import { AGENT_HANDOFF_SCHEMA } from 'src/engine/metadata-modules/agent/constants/agent-handoff-schema.const';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { WorkflowToolWorkspaceService as WorkflowToolService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 import { camelCase } from 'src/utils/camel-case';
 
 @Injectable()
@@ -24,6 +27,8 @@ export class AgentToolService {
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly toolService: ToolService,
     private readonly toolAdapterService: ToolAdapterService,
+    private readonly workflowToolService: WorkflowToolService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   async generateToolsForAgent(
@@ -61,7 +66,14 @@ export class AgentToolService {
       workspaceId,
     );
 
-    return { ...databaseTools, ...actionTools, ...handoffTools };
+    const workflowTools = await this.generateWorkflowTools(role, workspaceId);
+
+    return {
+      ...databaseTools,
+      ...actionTools,
+      ...handoffTools,
+      ...workflowTools,
+    };
   }
 
   private async generateHandoffTools(
@@ -76,27 +88,6 @@ export class AgentToolService {
     const handoffTools = handoffs.reduce<ToolSet>((tools, handoff) => {
       const toolName = `handoff_to_${camelCase(handoff.toAgent.name)}`;
 
-      const handoffSchema = z.object({
-        toolDescription: z
-          .string()
-          .describe(
-            "A clear, human-readable status message describing the handoff being made. This will be shown to the user while the handoff is being processed, so phrase it as a present-tense status update (e.g., 'Transferring you to the sales agent for pricing information').",
-          ),
-        input: z.object({
-          reason: z
-            .string()
-            .describe(
-              'Brief explanation of why this handoff is needed (e.g., "User needs pricing information", "User requires technical support", "User wants to discuss billing")',
-            ),
-          context: z
-            .string()
-            .optional()
-            .describe(
-              'Any relevant context or information to pass to the receiving agent (e.g., user preferences, previous conversation details, specific requirements)',
-            ),
-        }),
-      });
-
       tools[toolName] = {
         description:
           handoff.description ||
@@ -105,14 +96,13 @@ export class AgentToolService {
             '{agentName}',
             handoff.toAgent.name,
           ),
-        parameters: handoffSchema,
-        execute: async ({ input: { reason, context } }) => {
+        parameters: AGENT_HANDOFF_SCHEMA,
+        execute: async ({ input }) => {
           const result = await this.agentHandoffExecutorService.executeHandoff({
             fromAgentId: agentId,
             toAgentId: handoff.toAgent.id,
             workspaceId,
-            reason,
-            context,
+            messages: input.messages,
           });
 
           return result;
@@ -123,5 +113,21 @@ export class AgentToolService {
     }, {});
 
     return handoffTools;
+  }
+
+  private async generateWorkflowTools(
+    role: RoleEntity,
+    workspaceId: string,
+  ): Promise<ToolSet> {
+    const hasWorkflowPermission = this.permissionsService.checkRolePermissions(
+      role,
+      PermissionFlagType.WORKFLOWS,
+    );
+
+    if (!hasWorkflowPermission) {
+      return {};
+    }
+
+    return this.workflowToolService.generateWorkflowTools(workspaceId, role.id);
   }
 }
