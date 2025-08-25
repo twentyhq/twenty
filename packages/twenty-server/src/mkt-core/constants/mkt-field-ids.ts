@@ -602,7 +602,8 @@ export const MKT_KPI_TEMPLATE_FIELD_IDS = {
   // standard fields
   position: '30303030-4f5a-6b7c-8d9e-0f1a2b3c4d5e',
   createdBy: '30303030-5a6b-7c8d-9e0f-1a2b3c4d5e6f',
-  createdByPerson: '30303030-6b7c-8d9e-0f1a-2b3c4d5e6f7a',
+  assignedTo: '30303030-6b7c-8d9e-0f1a-2b3c4d5e6f7a',
+  assignedToId: '1d0e7e5a-53bb-4fd0-a74a-af26d8ca5d96',
 
   // relations
   accountOwner: '30303030-7c8d-9e0f-1a2b-3c4d5e6f7a8b',

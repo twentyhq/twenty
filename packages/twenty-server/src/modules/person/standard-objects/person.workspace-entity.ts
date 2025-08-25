@@ -40,7 +40,6 @@ import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/not
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
-import { MktKpiTemplateWorkspaceEntity } from 'src/mkt-core/mkt-kpi-template/mkt-kpi-template.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
@@ -307,17 +306,4 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
-
-  @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.createdKpiTemplates,
-    type: RelationType.ONE_TO_MANY,
-    label: msg`Created KPI Templates`,
-    description: msg`KPI templates created by this person`,
-    icon: 'IconTemplate',
-    inverseSideTarget: () => MktKpiTemplateWorkspaceEntity,
-    inverseSideFieldKey: 'createdByPerson',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsSystem()
-  createdKpiTemplates: Relation<MktKpiTemplateWorkspaceEntity[]>;
 }
