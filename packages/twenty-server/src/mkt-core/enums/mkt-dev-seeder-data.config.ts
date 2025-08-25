@@ -112,6 +112,12 @@ export const MKT_RECORD_SEEDS_CONFIGS_FIRST_PHASE_TABLES = [
 ];
 
 export const MKT_RECORD_SEEDS_CONFIGS = [
+  // Customer configs
+  {
+    tableName: 'mktCustomer',
+    pgColumns: MKT_CUSTOMER_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_CUSTOMER_DATA_SEEDS,
+  },
   // Product configs
   {
     tableName: 'mktProduct',
