@@ -146,7 +146,7 @@ describe('AgentToolService Integration', () => {
       expect(tools).toEqual({});
     });
 
-    it('should filter out workflow-related objects', async () => {
+    it('should filter out workflow-run objects', async () => {
       const workflowObject = {
         ...context.testObjectMetadata,
         nameSingular: 'workflow',
@@ -187,7 +187,7 @@ describe('AgentToolService Integration', () => {
         context.testWorkspaceId,
       );
 
-      expect(Object.keys(tools)).toHaveLength(1);
+      expect(Object.keys(tools)).toHaveLength(7);
     });
   });
 
