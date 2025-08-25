@@ -29,7 +29,6 @@ jobs:
     runs-on: depot-ubuntu-24.04-8
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -68,7 +67,6 @@ jobs:
     env:
       SHARD_COUNTER: 4
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     steps:
       - name: Fetch local actions
         uses: actions/checkout@v4
@@ -128,7 +126,6 @@ jobs:
     env:
       REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
       CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     steps:
       - uses: actions/checkout@v4
         with:
@@ -152,7 +149,6 @@ jobs:
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
     env:
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
       TASK_CACHE_KEY: front-task-${{ matrix.task }}
     strategy:
       matrix:

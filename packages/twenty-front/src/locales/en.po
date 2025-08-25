@@ -1199,6 +1199,11 @@ msgstr "Click on \"Add Output Field\" below to define the structure of your AI a
 msgid "Click on the checkmark to apply your changes."
 msgstr "Click on the checkmark to apply your changes."
 
+#. js-lingui-id: d0rtA5
+#: src/modules/dashboards/graphs/components/GraphWidgetGaugeChart.tsx
+msgid "Click to see data"
+msgstr "Click to see data"
+
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client ID"

@@ -1204,6 +1204,11 @@ msgstr "点击下面的 \"添加输出字段\" 来定义你的 AI 代理的响�
 msgid "Click on the checkmark to apply your changes."
 msgstr "点击复选标记应用更改。"
 
+#. js-lingui-id: d0rtA5
+#: src/modules/dashboards/graphs/components/GraphWidgetGaugeChart.tsx
+msgid "Click to see data"
+msgstr ""
+
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Client ID"

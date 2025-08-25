@@ -15,7 +15,7 @@ runs:
         key: ${{ inputs.key }}
         path: |
           .cache
-          .nx/cache
+          .nx
           node_modules/.cache
           packages/*/node_modules/.cache
           ${{ inputs.additional-paths }}

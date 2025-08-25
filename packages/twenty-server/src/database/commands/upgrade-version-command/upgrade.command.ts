@@ -229,6 +229,11 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
+    const commands_140: VersionCommands = {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [],
+    };
+
     this.allCommands = {
       '0.53.0': commands_053,
       '0.54.0': commands_054,
@@ -238,6 +243,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.1.0': commands_110,
       '1.2.0': commands_120,
       '1.3.0': commands_130,
+      '1.4.0': commands_140,
     };
   }
 

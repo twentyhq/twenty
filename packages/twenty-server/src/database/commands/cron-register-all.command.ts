@@ -10,6 +10,7 @@ import { CalendarOngoingStaleCronCommand } from 'src/modules/calendar/calendar-e
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
 import { MessagingOngoingStaleCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-ongoing-stale.cron.command';
+import { WorkflowCleanWorkflowRunsCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-clean-workflow-runs.cron.command';
 import { WorkflowHandleStaledRunsCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-handle-staled-runs.cron.command';
 import { WorkflowRunEnqueueCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-run-enqueue.cron.command';
 import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
@@ -33,6 +34,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly checkCustomDomainValidRecordsCronCommand: CheckCustomDomainValidRecordsCronCommand,
     private readonly workflowRunEnqueueCronCommand: WorkflowRunEnqueueCronCommand,
     private readonly workflowHandleStaledRunsCronCommand: WorkflowHandleStaledRunsCronCommand,
+    private readonly workflowCleanWorkflowRunsCronCommand: WorkflowCleanWorkflowRunsCommand,
   ) {
     super();
   }
@@ -84,6 +86,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'WorkflowHandleStaledRuns',
         command: this.workflowHandleStaledRunsCronCommand,
+      },
+      {
+        name: 'WorkflowCleanWorkflowRuns',
+        command: this.workflowCleanWorkflowRunsCronCommand,
       },
     ];
 

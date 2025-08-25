@@ -8,6 +8,7 @@ import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-m
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { filterMorphRelationDuplicateFieldsDTO } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -67,6 +68,11 @@ export type IndexFieldMetadataLoaderPayload = {
   indexMetadata: Pick<IndexMetadataInterface, 'id'>;
 };
 
+export type ObjectMetadataLoaderPayload = {
+  workspaceId: string;
+  objectMetadataId: string;
+};
+
 @Injectable()
 export class DataloaderService {
   constructor(
@@ -82,6 +88,7 @@ export class DataloaderService {
     const fieldMetadataLoader = this.createFieldMetadataLoader();
     const indexMetadataLoader = this.createIndexMetadataLoader();
     const indexFieldMetadataLoader = this.createIndexFieldMetadataLoader();
+    const objectMetadataLoader = this.createObjectMetadataLoader();
 
     return {
       relationLoader,
@@ -89,6 +96,7 @@ export class DataloaderService {
       fieldMetadataLoader,
       indexMetadataLoader,
       indexFieldMetadataLoader,
+      objectMetadataLoader,
     };
   }
 
@@ -250,7 +258,9 @@ export class DataloaderService {
             });
           });
 
-          return filterMorphRelationDuplicateFieldsDTO(fields);
+          return filterMorphRelationDuplicateFieldsDTO<FieldMetadataDTO>(
+            fields,
+          );
         });
 
         return fieldMetadataCollection;
@@ -304,6 +314,27 @@ export class DataloaderService {
           );
         },
       );
+    });
+  }
+
+  private createObjectMetadataLoader() {
+    return new DataLoader<
+      ObjectMetadataLoaderPayload,
+      ObjectMetadataItemWithFieldMaps | null
+    >(async (dataLoaderParams: ObjectMetadataLoaderPayload[]) => {
+      const workspaceId = dataLoaderParams[0].workspaceId;
+      const objectMetadataIds = dataLoaderParams.map(
+        (dataLoaderParam) => dataLoaderParam.objectMetadataId,
+      );
+
+      const { objectMetadataMaps } =
+        await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+          { workspaceId },
+        );
+
+      return objectMetadataIds.map((objectMetadataId) => {
+        return objectMetadataMaps.byId[objectMetadataId] || null;
+      });
     });
   }
 }

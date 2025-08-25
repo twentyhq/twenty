@@ -35,8 +35,6 @@ jobs:
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 45
     runs-on: depot-ubuntu-24.04-8
-    env:
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
