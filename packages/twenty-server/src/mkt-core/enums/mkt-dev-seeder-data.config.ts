@@ -20,6 +20,14 @@ import {
 } from 'src/mkt-core/dev-seeder/constants/mkt-variant-data-seeds.constants';
 //Order configs
 import {
+  MKT_COMBO_DATA_SEED_COLUMNS,
+  MKT_COMBO_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-combo-data-seeds.constants';
+import {
+  MKT_COMBO_VARIANT_DATA_SEED_COLUMNS,
+  MKT_COMBO_VARIANT_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-combo-variant-data-seeds.constants';
+import {
   MKT_CONTRACT_DATA_SEED_COLUMNS,
   MKT_CONTRACT_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-contract-data-seeds.constants';
@@ -124,6 +132,16 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     tableName: 'mktVariantAttribute',
     pgColumns: MKT_VARIANT_ATTRIBUTE_DATA_SEED_COLUMNS,
     recordSeeds: MKT_VARIANT_ATTRIBUTE_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktCombo',
+    pgColumns: MKT_COMBO_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_COMBO_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktComboVariant',
+    pgColumns: MKT_COMBO_VARIANT_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_COMBO_VARIANT_DATA_SEEDS,
   },
   {
     tableName: 'mktTemplate',

@@ -97,7 +97,7 @@ export const MKT_VARIANT_FIELD_IDS = {
   mktProduct: '7cfa6d7b-db26-4fb5-9beb-3ec348f9fed7',
   mktVariantAttribute: 'b57069ab-7e21-4823-a61f-8de0726bfbe1',
   mktOrderItems: 'f0e7b2d7-aa06-4173-bb81-0b0060da95ae',
-
+  mktComboVariants: 'b594a150-07df-4c1e-aae1-86c25e195a63',
   // common relations or fields
   position: '03ed978a-61d9-46a6-8d28-bf0964437849',
   createdBy: 'e87d1e5d-e0f5-4ed0-ab23-3ebbb0a1beae',
@@ -116,6 +116,38 @@ export const MKT_VARIANT_ATTRIBUTE_FIELD_IDS = {
   accountOwner: '94f09209-0fc6-41c8-aed7-29e882f4551b',
   timelineActivities: '9a2679ed-def4-4b4e-818c-28e5ae723bf0',
   searchVector: '4d4928e3-c0f1-4bc7-a777-a051f54f0e3a',
+};
+
+export const MKT_COMBO_FIELD_IDS = {
+  // fields
+  name: '99043074-8401-41df-8a06-7a4046c926c6',
+  description: '8edce791-47ca-4176-b860-28e7bd78e21b',
+  price: '26883384-31dc-423e-affe-62da7ee52c9f',
+  status: '15987ddb-ddc6-49c3-baa5-8efcffb7a94a',
+  // relations
+  mktComboVariants: 'fe91d850-43ab-4402-9ff8-fe2b0ad8b98d',
+  mktOrderItems: '2686efc6-922a-4a5b-9fdd-4224111e9170',
+  // common relations or fields
+  position: 'e6f9f40b-eb19-4390-bbda-05e07e1751e6',
+  createdBy: '04775818-c461-433f-99d0-215fdb9337bf',
+  accountOwner: 'cd7abf69-3d66-48ff-b192-402715f5355b',
+  timelineActivities: '9edb03a2-204c-4fc1-aa54-72790acc5aba',
+  searchVector: '0e0b0b65-b8de-4e29-95b1-7cbe63744be2',
+};
+
+export const MKT_COMBO_VARIANT_FIELD_IDS = {
+  // fields
+  name: 'dfe28f31-3093-460e-87e2-97d308105c8f',
+  quantity: '240219f0-538c-4e42-9160-4e37d0c3f916',
+  // relations
+  mktCombo: 'b9802ad4-4e08-4d40-a6d3-1de7f92e5756',
+  mktVariant: '0f3e6c07-12b8-487c-b5cc-7272945bea9f',
+  // common relations or fields
+  position: '5ccba7a3-a54c-458e-bd04-75bcb989ff84',
+  createdBy: '00c68d0b-24d4-4e1a-be1d-a26af47c11a8',
+  accountOwner: '89effb22-9513-409c-abfc-947465be7c22',
+  timelineActivities: 'f74902f8-df88-4938-a87e-27f01cb8e120',
+  searchVector: '89dd1f65-ac8e-4561-af0e-2cdd10987866',
 };
 
 export const MKT_ORDER_FIELD_IDS = {
@@ -137,6 +169,7 @@ export const MKT_ORDER_FIELD_IDS = {
   mktInvoices: '0d4664c7-90ef-491a-8a34-02cdf51ef518',
   items: '5c818b2a-bd61-4423-b1bc-ac89781f4324',
   person: '4d6b6ef3-6d6b-4323-9e4f-a7f01d97e68d',
+  mktComboVariants: '28a25b7e-3b7e-4746-ac46-7ac7a2a1d67b',
   //common relations or fields
   position: '9d970deb-f1e5-4cc4-8b36-9ad83ca03ee5',
   createdBy: '6d52adfa-9230-4df0-84fc-d51c646e8538',
@@ -162,7 +195,7 @@ export const MKT_ORDER_ITEM_FIELD_IDS = {
   mktOrder: '7081a3b4-c5d6-e7f8-8901-234567890123',
   mktProduct: '81a3b4c5-d6e7-f890-9012-345678901234',
   mktVariant: '63c0be01-54b2-4b5e-b24c-7879c881b479',
-
+  mktCombo: '45c7d839-e7f7-44db-9d86-37dc84415dd5',
   // common relations or fields
   position: '5e6f7081-9293-b4c5-6789-012345678901',
   createdBy: '6f708192-a3b4-c5d6-7890-123456789012',
@@ -301,6 +334,9 @@ export const TIMELINE_ACTIVITY_MKT_FIELD_IDS = {
   mktVariant: 'b6ecb5e1-14c8-4aaa-b715-e26ed4e81e62',
   mktValue: '9022a8c1-5948-473e-a361-1ddfb017a4f2',
   mktVariantAttribute: 'f656fa33-96e7-42a0-8f4f-f35dfcb0acae',
+  //combos
+  mktCombo: '94442c1a-1e57-4038-9e5c-dac724d92a74',
+  mktComboVariant: 'dffcadf4-8f5e-4530-8794-61230d68324a',
   //orders
   mktOrder: 'e0919045-74af-4800-bb40-ccef297253a9',
   mktLicense: '4b8283ce-daa4-4f11-87d0-2ade1cd6dc81',
@@ -350,6 +386,9 @@ export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   accountOwnerForMktVariants: '27b1e5ab-980b-4c3c-8168-c8ed77e86363',
   accountOwnerForMktValues: '7bdf395c-9f67-4fc9-9149-e58ba5c135de',
   accountOwnerForMktVariantAttributes: '6cd393a4-db2a-4cc6-b444-8e9ca99f93ec',
+  //combos
+  accountOwnerForMktCombos: '90e6970d-8c23-4562-8c25-cece175b20e8',
+  accountOwnerForMktComboVariants: '35abe762-d4e7-4c16-b4c6-e22c990dc0b5',
   //orders
   accountOwnerForMktOrders: 'dbbf2703-8803-4c21-9b10-2cf38b045d4b',
   accountOwnerForMktLicenses: 'a343e640-2214-4896-a0e2-830ee854a778',
