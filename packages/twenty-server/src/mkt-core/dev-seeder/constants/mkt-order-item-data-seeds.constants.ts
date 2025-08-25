@@ -1,3 +1,9 @@
+import { MKT_VARIANT_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-variant-data-seeds.constants';
+import { MKT_COMBO_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-combo-data-seeds.constants';
+
+import { MKT_ORDER_DATA_SEEDS_IDS } from './mkt-order-data-seeds.constants';
+import { MKT_PRODUCT_DATA_SEEDS_IDS } from './mkt-product-data-seeds.constants';
+
 type MktOrderItemDataSeed = {
   id: string;
   name: string;
@@ -64,14 +70,6 @@ export const MKT_ORDER_ITEM_DATA_SEEDS_IDS = {
   ID_19: '6ba7b813-9dad-11d1-80b4-00c04fd430c8',
   ID_20: '6ba7b814-9dad-11d1-80b4-00c04fd430c8',
 };
-
-import { MKT_VARIANT_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-variant-data-seeds.constants';
-
-// Import order and product seed IDs for relationships
-import { MKT_COMBO_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-combo-data-seeds.constants';
-
-import { MKT_ORDER_DATA_SEEDS_IDS } from './mkt-order-data-seeds.constants';
-import { MKT_PRODUCT_DATA_SEEDS_IDS } from './mkt-product-data-seeds.constants';
 
 // prettier-ignore
 export const MKT_ORDER_ITEM_DATA_SEEDS: MktOrderItemDataSeed[] = [

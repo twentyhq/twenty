@@ -358,16 +358,6 @@ export const PERSON_STANDARD_FIELD_IDS = {
   calendarEventParticipants: '20202020-52ee-45e9-a702-b64b3753e3a9',
   timelineActivities: '20202020-a43e-4873-9c23-e522de906ce5',
   searchVector: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
-  organizationLevelId: '20202020-9a8b-4c5d-6e7f-8901234567a0',
-  employmentStatusId: '20202020-0b9c-4d5e-6f80-9012345678a1',
-  employmentStatus: '20202020-5c3d-6e7f-8091-234567890123',
-  statusStartDate: '20202020-1c0d-4e5f-7081-901234567890',
-  statusExpectedEndDate: '20202020-2d1e-4f60-8192-012345678901',
-  staffStatusHistories: '20202020-3e2f-5071-9203-123456789012',
-  department: '20202020-4f30-6182-a304-234567890123',
-  organizationLevel: '20202020-5040-7293-b405-345678901234',
-  createdKpis: '20202020-7e8f-9a0b-1c2d-3e4f5a6b7c8d',
-  createdKpiTemplates: '20202020-8f9a-0b1c-2d3e-4f5a6b7c8d9e',
 };
 
 export const TASK_STANDARD_FIELD_IDS = {
@@ -543,6 +533,15 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',
   searchVector: '20202020-46d0-4e7f-bc26-74c0edaeb619',
   calendarStartDay: '20202020-92d0-1d7f-a126-25ededa6b142',
+  // custom field standard IDs
+  department: '20202020-4f30-6182-a304-234567890123',
+  organizationLevel: '20202020-5040-7293-b405-345678901234',
+  organizationLevelId: '20202020-9a8b-4c5d-6e7f-8901234567a0',
+  employmentStatusId: '20202020-0b9c-4d5e-6f80-9012345678a1',
+  employmentStatus: '20202020-5c3d-6e7f-8091-234567890123',
+  staffStatusHistories: '20202020-3e2f-5071-9203-123456789012',
+  createdKpis: '20202020-7e8f-9a0b-1c2d-3e4f5a6b7c8d',
+  createdKpiTemplates: '20202020-8f9a-0b1c-2d3e-4f5a6b7c8d9e',
 };
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {

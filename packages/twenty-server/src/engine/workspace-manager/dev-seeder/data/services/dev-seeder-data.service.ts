@@ -94,9 +94,13 @@ import {
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { prefillViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-views';
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
-import { MKT_RECORD_SEEDS_CONFIGS } from 'src/mkt-core/enums/mkt-dev-seeder-data.config';
+import {
+  MKT_RECORD_SEEDS_CONFIGS,
+  MKT_RECORD_SEEDS_CONFIGS_FIRST_PHASE_TABLES,
+} from 'src/mkt-core/enums/mkt-dev-seeder-data.config';
 
 const RECORD_SEEDS_CONFIGS = [
+  ...MKT_RECORD_SEEDS_CONFIGS_FIRST_PHASE_TABLES,
   {
     tableName: 'workspaceMember',
     pgColumns: WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
