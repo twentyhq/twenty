@@ -11,7 +11,6 @@ type PersonDataSeed = {
   jobTitle: string;
   companyId: string;
   employmentStatusId: string | null;
-  organizationLevelId: string | null;
   createdBySource: string;
   createdByWorkspaceMemberId: string;
   createdByName: string;
@@ -30,7 +29,6 @@ export const PERSON_DATA_SEED_COLUMNS: (keyof PersonDataSeed)[] = [
   'jobTitle',
   'companyId',
   'employmentStatusId',
-  'organizationLevelId',
   'createdBySource',
   'createdByWorkspaceMemberId',
   'createdByName',
@@ -1254,7 +1252,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, minerals',
     companyId: COMPANY_DATA_SEED_IDS.ID_1,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1274,7 +1271,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Armed forces logistics/support/administrative officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_1,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1294,7 +1290,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, manufacturing systems',
     companyId: COMPANY_DATA_SEED_IDS.ID_2,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1314,7 +1309,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Learning disability nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_2,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1334,7 +1328,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Optometrist',
     companyId: COMPANY_DATA_SEED_IDS.ID_3,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1354,7 +1347,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Farm manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_3,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1374,7 +1366,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, nutritional',
     companyId: COMPANY_DATA_SEED_IDS.ID_4,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1394,7 +1385,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Paramedic',
     companyId: COMPANY_DATA_SEED_IDS.ID_4,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1414,7 +1404,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Media planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_5,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1434,7 +1423,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Special effects artist',
     companyId: COMPANY_DATA_SEED_IDS.ID_5,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1454,7 +1442,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, land',
     companyId: COMPANY_DATA_SEED_IDS.ID_6,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1474,7 +1461,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Race relations officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_6,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1494,7 +1480,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Museum/gallery exhibitions officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_7,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1514,7 +1499,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Wellsite geologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_7,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1534,7 +1518,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, building control',
     companyId: COMPANY_DATA_SEED_IDS.ID_8,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1554,7 +1537,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ergonomist',
     companyId: COMPANY_DATA_SEED_IDS.ID_8,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1574,7 +1556,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Exercise physiologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_9,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1594,7 +1575,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical scientist, histocompatibility and immunogenetics',
     companyId: COMPANY_DATA_SEED_IDS.ID_9,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1614,7 +1594,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Wellsite geologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_10,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1634,7 +1613,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Radiographer, therapeutic',
     companyId: COMPANY_DATA_SEED_IDS.ID_10,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1654,7 +1632,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Health visitor',
     companyId: COMPANY_DATA_SEED_IDS.ID_11,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1674,7 +1651,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Social research officer, government',
     companyId: COMPANY_DATA_SEED_IDS.ID_11,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1694,7 +1670,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Forest/woodland manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_12,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1714,7 +1689,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surgeon',
     companyId: COMPANY_DATA_SEED_IDS.ID_12,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1734,7 +1708,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Hydrogeologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_13,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1754,7 +1727,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, site',
     companyId: COMPANY_DATA_SEED_IDS.ID_13,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1774,7 +1746,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Government social research officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_14,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1794,7 +1765,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Horticultural therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_14,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1814,7 +1784,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_15,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1834,7 +1803,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Geneticist, molecular',
     companyId: COMPANY_DATA_SEED_IDS.ID_15,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1854,7 +1822,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Applications developer',
     companyId: COMPANY_DATA_SEED_IDS.ID_16,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1874,7 +1841,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chief Marketing Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_16,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1894,7 +1860,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Teacher, music',
     companyId: COMPANY_DATA_SEED_IDS.ID_17,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1914,7 +1879,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Television floor manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_17,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1934,7 +1898,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Investment banker, operational',
     companyId: COMPANY_DATA_SEED_IDS.ID_18,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1954,7 +1917,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Veterinary surgeon',
     companyId: COMPANY_DATA_SEED_IDS.ID_18,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1974,7 +1936,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Financial controller',
     companyId: COMPANY_DATA_SEED_IDS.ID_19,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -1994,7 +1955,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, electrical',
     companyId: COMPANY_DATA_SEED_IDS.ID_19,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2014,7 +1974,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Horticulturist, amenity',
     companyId: COMPANY_DATA_SEED_IDS.ID_20,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2034,7 +1993,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Geographical information systems officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_20,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2054,7 +2012,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Logistics and distribution manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_21,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2074,7 +2031,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, graphic',
     companyId: COMPANY_DATA_SEED_IDS.ID_21,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2094,7 +2050,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sub',
     companyId: COMPANY_DATA_SEED_IDS.ID_22,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2114,7 +2069,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Financial adviser',
     companyId: COMPANY_DATA_SEED_IDS.ID_22,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2134,7 +2088,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Osteopath',
     companyId: COMPANY_DATA_SEED_IDS.ID_23,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2154,7 +2107,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Microbiologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_23,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2174,7 +2126,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Accounting technician',
     companyId: COMPANY_DATA_SEED_IDS.ID_24,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2194,7 +2145,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Production assistant, television',
     companyId: COMPANY_DATA_SEED_IDS.ID_24,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2214,7 +2164,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical cytogeneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_25,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2234,7 +2183,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Media buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_25,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2254,7 +2202,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Metallurgist',
     companyId: COMPANY_DATA_SEED_IDS.ID_26,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2274,7 +2221,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Agricultural engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_26,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2294,7 +2240,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Recycling officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_27,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2314,7 +2259,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychotherapist, child',
     companyId: COMPANY_DATA_SEED_IDS.ID_27,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2334,7 +2278,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Arts development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_28,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2354,7 +2297,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'IT technical support officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_28,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2374,7 +2316,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, biomedical',
     companyId: COMPANY_DATA_SEED_IDS.ID_29,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2394,7 +2335,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Patent attorney',
     companyId: COMPANY_DATA_SEED_IDS.ID_29,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2414,7 +2354,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Environmental manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_30,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2434,7 +2373,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Statistician',
     companyId: COMPANY_DATA_SEED_IDS.ID_30,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2454,7 +2392,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, blown glass/stained glass',
     companyId: COMPANY_DATA_SEED_IDS.ID_31,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2474,7 +2411,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Nature conservation officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_31,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2494,7 +2430,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, electronics',
     companyId: COMPANY_DATA_SEED_IDS.ID_32,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2514,7 +2449,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Land/geomatics surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_32,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2534,7 +2468,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Research officer, political party',
     companyId: COMPANY_DATA_SEED_IDS.ID_33,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2554,7 +2487,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Prison officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_33,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2574,7 +2506,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Geochemist',
     companyId: COMPANY_DATA_SEED_IDS.ID_34,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2594,7 +2525,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Fine artist',
     companyId: COMPANY_DATA_SEED_IDS.ID_34,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2614,7 +2544,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Warden/ranger',
     companyId: COMPANY_DATA_SEED_IDS.ID_35,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2634,7 +2563,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Video editor',
     companyId: COMPANY_DATA_SEED_IDS.ID_35,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2654,7 +2582,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Conservation officer, nature',
     companyId: COMPANY_DATA_SEED_IDS.ID_36,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2674,7 +2601,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Wellsite geologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_36,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2694,7 +2620,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, water quality',
     companyId: COMPANY_DATA_SEED_IDS.ID_37,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2714,7 +2639,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, furniture',
     companyId: COMPANY_DATA_SEED_IDS.ID_37,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2734,7 +2658,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Tourism officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_38,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2754,7 +2677,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Transport planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_38,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2774,7 +2696,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, research (medical)',
     companyId: COMPANY_DATA_SEED_IDS.ID_39,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2794,7 +2715,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, drama',
     companyId: COMPANY_DATA_SEED_IDS.ID_39,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2814,7 +2734,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Associate Professor',
     companyId: COMPANY_DATA_SEED_IDS.ID_40,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2834,7 +2753,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Hydrographic surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_40,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2854,7 +2772,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Learning disability nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_41,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2874,7 +2791,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Technical brewer',
     companyId: COMPANY_DATA_SEED_IDS.ID_41,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2894,7 +2810,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Accountant, chartered',
     companyId: COMPANY_DATA_SEED_IDS.ID_42,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2914,7 +2829,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Producer, television/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_42,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2934,7 +2848,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, art',
     companyId: COMPANY_DATA_SEED_IDS.ID_43,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2954,7 +2867,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Exhibition designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_43,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2974,7 +2886,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, land/geomatics',
     companyId: COMPANY_DATA_SEED_IDS.ID_44,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -2994,7 +2905,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Paediatric nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_44,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3014,7 +2924,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Site engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_45,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3034,7 +2943,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sports therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_45,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3054,7 +2962,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, interior/spatial',
     companyId: COMPANY_DATA_SEED_IDS.ID_46,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3074,7 +2981,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Civil engineer, consulting',
     companyId: COMPANY_DATA_SEED_IDS.ID_46,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3094,7 +3000,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Office manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_47,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3114,7 +3019,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: "Barrister's clerk",
     companyId: COMPANY_DATA_SEED_IDS.ID_47,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3134,7 +3038,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Lecturer, higher education',
     companyId: COMPANY_DATA_SEED_IDS.ID_48,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3154,7 +3057,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychologist, clinical',
     companyId: COMPANY_DATA_SEED_IDS.ID_48,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3174,7 +3076,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Immunologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_49,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3194,7 +3095,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Professor Emeritus',
     companyId: COMPANY_DATA_SEED_IDS.ID_49,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3214,7 +3114,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ship broker',
     companyId: COMPANY_DATA_SEED_IDS.ID_50,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3234,7 +3133,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Network engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_50,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3254,7 +3152,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Information officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_51,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3274,7 +3171,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Civil Service fast streamer',
     companyId: COMPANY_DATA_SEED_IDS.ID_51,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3294,7 +3190,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Editorial assistant',
     companyId: COMPANY_DATA_SEED_IDS.ID_52,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3314,7 +3209,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Quality manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_52,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3334,7 +3228,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Air cabin crew',
     companyId: COMPANY_DATA_SEED_IDS.ID_53,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3354,7 +3247,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Museum/gallery conservator',
     companyId: COMPANY_DATA_SEED_IDS.ID_53,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3374,7 +3266,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Radio broadcast assistant',
     companyId: COMPANY_DATA_SEED_IDS.ID_54,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3394,7 +3285,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Market researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_54,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3414,7 +3304,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Environmental manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_55,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3434,7 +3323,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Operations geologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_55,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3454,7 +3342,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, commercial/residential',
     companyId: COMPANY_DATA_SEED_IDS.ID_56,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3474,7 +3361,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, maintenance (IT)',
     companyId: COMPANY_DATA_SEED_IDS.ID_56,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3494,7 +3380,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychologist, forensic',
     companyId: COMPANY_DATA_SEED_IDS.ID_57,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3514,7 +3399,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Nurse, adult',
     companyId: COMPANY_DATA_SEED_IDS.ID_57,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3534,7 +3418,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Dramatherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_58,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3554,7 +3437,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, minerals',
     companyId: COMPANY_DATA_SEED_IDS.ID_58,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3574,7 +3456,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Programme researcher, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_59,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3594,7 +3475,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Fast food restaurant manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_59,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3614,7 +3494,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surgeon',
     companyId: COMPANY_DATA_SEED_IDS.ID_60,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3634,7 +3513,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Fine artist',
     companyId: COMPANY_DATA_SEED_IDS.ID_60,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3654,7 +3532,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Visual merchandiser',
     companyId: COMPANY_DATA_SEED_IDS.ID_61,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3674,7 +3551,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Radio producer',
     companyId: COMPANY_DATA_SEED_IDS.ID_61,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3694,7 +3570,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Production assistant, television',
     companyId: COMPANY_DATA_SEED_IDS.ID_62,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3714,7 +3589,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Television/film/video producer',
     companyId: COMPANY_DATA_SEED_IDS.ID_62,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3734,7 +3608,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Accountant, chartered public finance',
     companyId: COMPANY_DATA_SEED_IDS.ID_63,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3754,7 +3627,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Accommodation manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_63,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3774,7 +3646,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Music tutor',
     companyId: COMPANY_DATA_SEED_IDS.ID_64,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3794,7 +3665,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Theme park manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_64,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3814,7 +3684,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Artist',
     companyId: COMPANY_DATA_SEED_IDS.ID_65,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3834,7 +3703,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Special effects artist',
     companyId: COMPANY_DATA_SEED_IDS.ID_65,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3854,7 +3722,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Lobbyist',
     companyId: COMPANY_DATA_SEED_IDS.ID_66,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3874,7 +3741,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Secretary, company',
     companyId: COMPANY_DATA_SEED_IDS.ID_66,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3894,7 +3760,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Product manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_67,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3914,7 +3779,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sound technician, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_67,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3934,7 +3798,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Editorial assistant',
     companyId: COMPANY_DATA_SEED_IDS.ID_68,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3954,7 +3817,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Energy manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_68,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3974,7 +3836,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Medical secretary',
     companyId: COMPANY_DATA_SEED_IDS.ID_69,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -3994,7 +3855,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Armed forces operational officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_69,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4014,7 +3874,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Call centre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_70,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4034,7 +3893,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Automotive engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_70,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4054,7 +3912,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, building',
     companyId: COMPANY_DATA_SEED_IDS.ID_71,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4074,7 +3931,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical cytogeneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_71,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4094,7 +3950,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, rural practice',
     companyId: COMPANY_DATA_SEED_IDS.ID_72,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4114,7 +3969,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Multimedia programmer',
     companyId: COMPANY_DATA_SEED_IDS.ID_72,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4134,7 +3988,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Arts development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_73,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4154,7 +4007,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, energy',
     companyId: COMPANY_DATA_SEED_IDS.ID_73,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4174,7 +4026,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Armed forces operational officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_74,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4194,7 +4045,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Call centre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_74,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4214,7 +4064,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Arts administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_75,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4234,7 +4083,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Community pharmacist',
     companyId: COMPANY_DATA_SEED_IDS.ID_75,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4254,7 +4102,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Equities trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_76,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4274,7 +4121,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Maintenance engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_76,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4294,7 +4140,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'General practice doctor',
     companyId: COMPANY_DATA_SEED_IDS.ID_77,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4314,7 +4159,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Public relations officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_77,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4334,7 +4178,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Advertising account planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_78,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4354,7 +4197,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Actuary',
     companyId: COMPANY_DATA_SEED_IDS.ID_78,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4374,7 +4216,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Tourism officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_79,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4394,7 +4235,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Editor, magazine features',
     companyId: COMPANY_DATA_SEED_IDS.ID_79,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4414,7 +4254,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Commercial art gallery manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_80,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4434,7 +4273,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, production',
     companyId: COMPANY_DATA_SEED_IDS.ID_80,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4454,7 +4292,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Osteopath',
     companyId: COMPANY_DATA_SEED_IDS.ID_81,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4474,7 +4311,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Production engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_81,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4494,7 +4330,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Interior and spatial designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_82,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4514,7 +4349,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, electronics',
     companyId: COMPANY_DATA_SEED_IDS.ID_82,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4534,7 +4368,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, blown glass/stained glass',
     companyId: COMPANY_DATA_SEED_IDS.ID_83,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4554,7 +4387,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Higher education lecturer',
     companyId: COMPANY_DATA_SEED_IDS.ID_83,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4574,7 +4406,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Environmental manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_84,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4594,7 +4425,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Health and safety inspector',
     companyId: COMPANY_DATA_SEED_IDS.ID_84,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4614,7 +4444,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Banker',
     companyId: COMPANY_DATA_SEED_IDS.ID_85,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4634,7 +4463,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Educational psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_85,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4654,7 +4482,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Arboriculturist',
     companyId: COMPANY_DATA_SEED_IDS.ID_86,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4674,7 +4501,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chiropractor',
     companyId: COMPANY_DATA_SEED_IDS.ID_86,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4694,7 +4520,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Leisure centre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_87,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4714,7 +4539,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Press photographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_87,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4734,7 +4558,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Broadcast engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_88,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4754,7 +4577,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'General practice doctor',
     companyId: COMPANY_DATA_SEED_IDS.ID_88,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4774,7 +4596,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Nurse, mental health',
     companyId: COMPANY_DATA_SEED_IDS.ID_89,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4794,7 +4615,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Industrial buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_89,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4814,7 +4634,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'General practice doctor',
     companyId: COMPANY_DATA_SEED_IDS.ID_90,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4834,7 +4653,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Insurance broker',
     companyId: COMPANY_DATA_SEED_IDS.ID_90,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4854,7 +4672,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, broadcasting (operations)',
     companyId: COMPANY_DATA_SEED_IDS.ID_91,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4874,7 +4691,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical embryologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_91,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4894,7 +4710,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Programmer, multimedia',
     companyId: COMPANY_DATA_SEED_IDS.ID_92,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4914,7 +4729,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Catering manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_92,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4934,7 +4748,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Event organiser',
     companyId: COMPANY_DATA_SEED_IDS.ID_93,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4954,7 +4767,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Charity officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_93,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4974,7 +4786,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Trading standards officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_94,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -4994,7 +4805,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Nutritional therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_94,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5014,7 +4824,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Journalist, broadcasting',
     companyId: COMPANY_DATA_SEED_IDS.ID_95,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5034,7 +4843,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Licensed conveyancer',
     companyId: COMPANY_DATA_SEED_IDS.ID_95,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5054,7 +4862,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Product manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_96,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5074,7 +4881,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Community education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_96,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5094,7 +4900,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Insurance account manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_97,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5114,7 +4919,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Careers information officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_97,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5134,7 +4938,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Arboriculturist',
     companyId: COMPANY_DATA_SEED_IDS.ID_98,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5154,7 +4957,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Logistics and distribution manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_98,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5174,7 +4976,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Freight forwarder',
     companyId: COMPANY_DATA_SEED_IDS.ID_99,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5194,7 +4995,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Learning disability nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_99,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5214,7 +5014,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Legal secretary',
     companyId: COMPANY_DATA_SEED_IDS.ID_100,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5234,7 +5033,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, minerals',
     companyId: COMPANY_DATA_SEED_IDS.ID_100,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5254,7 +5052,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Structural engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_101,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5274,7 +5071,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chartered public finance accountant',
     companyId: COMPANY_DATA_SEED_IDS.ID_101,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5294,7 +5090,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Colour technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_102,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5314,7 +5109,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sports development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_102,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5334,7 +5128,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Broadcast journalist',
     companyId: COMPANY_DATA_SEED_IDS.ID_103,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5354,7 +5147,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Bonds trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_103,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5374,7 +5166,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Production engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_104,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5394,7 +5185,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, building control',
     companyId: COMPANY_DATA_SEED_IDS.ID_104,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5414,7 +5204,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Regulatory affairs officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_105,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5434,7 +5223,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, sports',
     companyId: COMPANY_DATA_SEED_IDS.ID_105,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5454,7 +5242,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pathologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_106,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5474,7 +5261,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ophthalmologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_106,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5494,7 +5280,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Recruitment consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_107,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5514,7 +5299,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ergonomist',
     companyId: COMPANY_DATA_SEED_IDS.ID_107,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5534,7 +5318,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Nature conservation officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_108,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5554,7 +5337,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Research officer, trade union',
     companyId: COMPANY_DATA_SEED_IDS.ID_108,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5574,7 +5356,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Bonds trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_109,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5594,7 +5375,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Waste management officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_109,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5614,7 +5394,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pathologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_110,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5634,7 +5413,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Loss adjuster, chartered',
     companyId: COMPANY_DATA_SEED_IDS.ID_110,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5654,7 +5432,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Land/geomatics surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_111,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5674,7 +5451,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Theme park manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_111,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5694,7 +5470,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Community education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_112,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5714,7 +5489,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Arts administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_112,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5734,7 +5508,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Oncologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_113,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5754,7 +5527,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, biomedical',
     companyId: COMPANY_DATA_SEED_IDS.ID_113,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5774,7 +5546,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Charity fundraiser',
     companyId: COMPANY_DATA_SEED_IDS.ID_114,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5794,7 +5565,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Web designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_114,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5814,7 +5584,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Airline pilot',
     companyId: COMPANY_DATA_SEED_IDS.ID_115,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5834,7 +5603,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Immigration officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_115,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5854,7 +5622,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chief Marketing Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_116,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5874,7 +5641,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Public house manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_116,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5894,7 +5660,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Media planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_117,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5914,7 +5679,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, insurance',
     companyId: COMPANY_DATA_SEED_IDS.ID_117,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5934,7 +5698,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, automotive',
     companyId: COMPANY_DATA_SEED_IDS.ID_118,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5954,7 +5717,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pharmacist, hospital',
     companyId: COMPANY_DATA_SEED_IDS.ID_118,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5974,7 +5736,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Financial trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_119,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -5994,7 +5755,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Facilities manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_119,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6014,7 +5774,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'IT technical support officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_120,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6034,7 +5793,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chiropodist',
     companyId: COMPANY_DATA_SEED_IDS.ID_120,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6054,7 +5812,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'QuickActions analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_121,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6074,7 +5831,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sound technician, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_121,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6094,7 +5850,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Research officer, political party',
     companyId: COMPANY_DATA_SEED_IDS.ID_122,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6114,7 +5869,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Naval architect',
     companyId: COMPANY_DATA_SEED_IDS.ID_122,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6134,7 +5888,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Purchasing manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_123,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6154,7 +5907,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Physiotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_123,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6174,7 +5926,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Materials engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_124,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6194,7 +5945,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Educational psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_124,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6214,7 +5964,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Geologist, engineering',
     companyId: COMPANY_DATA_SEED_IDS.ID_125,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6234,7 +5983,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Art therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_125,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6254,7 +6002,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Retail merchandiser',
     companyId: COMPANY_DATA_SEED_IDS.ID_126,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6274,7 +6021,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, nutritional',
     companyId: COMPANY_DATA_SEED_IDS.ID_126,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6294,7 +6040,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Dispensing optician',
     companyId: COMPANY_DATA_SEED_IDS.ID_127,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6314,7 +6059,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Diagnostic radiographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_127,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6334,7 +6078,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, insurance',
     companyId: COMPANY_DATA_SEED_IDS.ID_128,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6354,7 +6097,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Tour manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_128,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6374,7 +6116,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, electrical',
     companyId: COMPANY_DATA_SEED_IDS.ID_129,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6394,7 +6135,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Corporate investment banker',
     companyId: COMPANY_DATA_SEED_IDS.ID_129,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6414,7 +6154,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Forensic psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_130,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6434,7 +6173,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Youth worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_130,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6454,7 +6192,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Location manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_131,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6474,7 +6211,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Programmer, multimedia',
     companyId: COMPANY_DATA_SEED_IDS.ID_131,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6494,7 +6230,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Archaeologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_132,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6514,7 +6249,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Mechanical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_132,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6534,7 +6268,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sports development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_133,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6554,7 +6287,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical molecular geneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_133,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6574,7 +6306,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, water',
     companyId: COMPANY_DATA_SEED_IDS.ID_134,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6594,7 +6325,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pension scheme manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_134,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6614,7 +6344,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pharmacist, community',
     companyId: COMPANY_DATA_SEED_IDS.ID_135,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6634,7 +6363,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Aeronautical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_135,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6654,7 +6382,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Water quality scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_136,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6674,7 +6401,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Local government officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_136,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6694,7 +6420,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Paediatric nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_137,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6714,7 +6439,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Multimedia specialist',
     companyId: COMPANY_DATA_SEED_IDS.ID_137,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6734,7 +6458,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Medical laboratory scientific officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_138,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6754,7 +6477,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Solicitor',
     companyId: COMPANY_DATA_SEED_IDS.ID_138,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6774,7 +6496,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Actor',
     companyId: COMPANY_DATA_SEED_IDS.ID_139,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6794,7 +6515,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Press sub',
     companyId: COMPANY_DATA_SEED_IDS.ID_139,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6814,7 +6534,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Food technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_140,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6834,7 +6553,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pension scheme manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_140,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6854,7 +6572,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Occupational psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_141,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6874,7 +6591,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Nutritional therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_141,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6894,7 +6610,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical research associate',
     companyId: COMPANY_DATA_SEED_IDS.ID_142,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6914,7 +6629,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Bookseller',
     companyId: COMPANY_DATA_SEED_IDS.ID_142,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6934,7 +6648,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Arts development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_143,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6954,7 +6667,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Multimedia specialist',
     companyId: COMPANY_DATA_SEED_IDS.ID_143,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6974,7 +6686,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Phytotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_144,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -6994,7 +6705,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Conservation officer, nature',
     companyId: COMPANY_DATA_SEED_IDS.ID_144,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7014,7 +6724,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Field trials officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_145,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7034,7 +6743,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Exhibition designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_145,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7054,7 +6762,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychologist, occupational',
     companyId: COMPANY_DATA_SEED_IDS.ID_146,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7074,7 +6781,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Network engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_146,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7094,7 +6800,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Technical brewer',
     companyId: COMPANY_DATA_SEED_IDS.ID_147,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7114,7 +6819,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Geneticist, molecular',
     companyId: COMPANY_DATA_SEED_IDS.ID_147,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7134,7 +6838,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Writer',
     companyId: COMPANY_DATA_SEED_IDS.ID_148,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7154,7 +6857,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chief Marketing Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_148,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7174,7 +6876,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Farm manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_149,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7194,7 +6895,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'QuickActions analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_149,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7214,7 +6914,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sports therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_150,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7234,7 +6933,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Manufacturing engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_150,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7254,7 +6952,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Water engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_151,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7274,7 +6971,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, industrial/product',
     companyId: COMPANY_DATA_SEED_IDS.ID_151,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7294,7 +6990,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, insurance',
     companyId: COMPANY_DATA_SEED_IDS.ID_152,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7314,7 +7009,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ecologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_152,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7334,7 +7028,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Biomedical scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_153,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7354,7 +7047,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, interior/spatial',
     companyId: COMPANY_DATA_SEED_IDS.ID_153,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7374,7 +7066,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Medical illustrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_154,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7394,7 +7085,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Systems analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_154,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7414,7 +7104,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Radio broadcast assistant',
     companyId: COMPANY_DATA_SEED_IDS.ID_155,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7434,7 +7123,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Data processing manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_155,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7454,7 +7142,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Trade union research officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_156,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7474,7 +7161,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Lecturer, higher education',
     companyId: COMPANY_DATA_SEED_IDS.ID_156,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7494,7 +7180,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pensions consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_157,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7514,7 +7199,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Optometrist',
     companyId: COMPANY_DATA_SEED_IDS.ID_157,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7534,7 +7218,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Armed forces operational officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_158,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7554,7 +7237,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Editor, magazine features',
     companyId: COMPANY_DATA_SEED_IDS.ID_158,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7574,7 +7256,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Press sub',
     companyId: COMPANY_DATA_SEED_IDS.ID_159,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7594,7 +7275,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Catering manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_159,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7614,7 +7294,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Production assistant, radio',
     companyId: COMPANY_DATA_SEED_IDS.ID_160,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7634,7 +7313,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pensions consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_160,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7654,7 +7332,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Printmaker',
     companyId: COMPANY_DATA_SEED_IDS.ID_161,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7674,7 +7351,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychologist, forensic',
     companyId: COMPANY_DATA_SEED_IDS.ID_161,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7694,7 +7370,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Hospital doctor',
     companyId: COMPANY_DATA_SEED_IDS.ID_162,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7714,7 +7389,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Lighting technician, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_162,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7734,7 +7408,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Bonds trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_163,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7754,7 +7427,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Hospital pharmacist',
     companyId: COMPANY_DATA_SEED_IDS.ID_163,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7774,7 +7446,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Podiatrist',
     companyId: COMPANY_DATA_SEED_IDS.ID_164,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7794,7 +7465,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: "Politician's assistant",
     companyId: COMPANY_DATA_SEED_IDS.ID_164,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7814,7 +7484,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Geochemist',
     companyId: COMPANY_DATA_SEED_IDS.ID_165,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7834,7 +7503,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pensions consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_165,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7854,7 +7522,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Metallurgist',
     companyId: COMPANY_DATA_SEED_IDS.ID_166,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7874,7 +7541,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Conservation officer, historic buildings',
     companyId: COMPANY_DATA_SEED_IDS.ID_166,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7894,7 +7560,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sound technician, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_167,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7914,7 +7579,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Contracting civil engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_167,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7934,7 +7598,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Community pharmacist',
     companyId: COMPANY_DATA_SEED_IDS.ID_168,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7954,7 +7617,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Civil Service administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_168,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7974,7 +7636,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, furniture',
     companyId: COMPANY_DATA_SEED_IDS.ID_169,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -7994,7 +7655,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Commissioning editor',
     companyId: COMPANY_DATA_SEED_IDS.ID_169,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8014,7 +7674,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Merchant navy officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_170,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8034,7 +7693,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Lecturer, further education',
     companyId: COMPANY_DATA_SEED_IDS.ID_170,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8054,7 +7712,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Corporate investment banker',
     companyId: COMPANY_DATA_SEED_IDS.ID_171,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8074,7 +7731,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, clinical (histocompatibility and immunogenetics)',
     companyId: COMPANY_DATA_SEED_IDS.ID_171,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8094,7 +7750,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Press sub',
     companyId: COMPANY_DATA_SEED_IDS.ID_172,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8114,7 +7769,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Plant breeder/geneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_172,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8134,7 +7788,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Dealer',
     companyId: COMPANY_DATA_SEED_IDS.ID_173,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8154,7 +7807,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Phytotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_173,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8174,7 +7826,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'TEFL teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_174,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8194,7 +7845,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Brewing technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_174,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8214,7 +7864,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chief Executive Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_175,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8234,7 +7883,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chiropractor',
     companyId: COMPANY_DATA_SEED_IDS.ID_175,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8254,7 +7902,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Agricultural engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_176,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8274,7 +7921,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, quantity',
     companyId: COMPANY_DATA_SEED_IDS.ID_176,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8294,7 +7940,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Translator',
     companyId: COMPANY_DATA_SEED_IDS.ID_177,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8314,7 +7959,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Accountant, chartered certified',
     companyId: COMPANY_DATA_SEED_IDS.ID_177,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8334,7 +7978,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Advertising copywriter',
     companyId: COMPANY_DATA_SEED_IDS.ID_178,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8354,7 +7997,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Materials engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_178,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8374,7 +8016,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Soil scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_179,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8394,7 +8035,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapeutic radiographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_179,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8414,7 +8054,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Theatre director',
     companyId: COMPANY_DATA_SEED_IDS.ID_180,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8434,7 +8073,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Medical illustrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_180,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8454,7 +8092,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Teaching laboratory technician',
     companyId: COMPANY_DATA_SEED_IDS.ID_181,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8474,7 +8111,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Product/process development scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_181,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8494,7 +8130,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, hydrographic',
     companyId: COMPANY_DATA_SEED_IDS.ID_182,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8514,7 +8149,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, communications',
     companyId: COMPANY_DATA_SEED_IDS.ID_182,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8534,7 +8168,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, production',
     companyId: COMPANY_DATA_SEED_IDS.ID_183,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8554,7 +8187,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Health and safety inspector',
     companyId: COMPANY_DATA_SEED_IDS.ID_183,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8574,7 +8206,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Training and development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_184,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8594,7 +8225,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Tourist information centre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_184,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8614,7 +8244,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pharmacist, community',
     companyId: COMPANY_DATA_SEED_IDS.ID_185,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8634,7 +8263,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Mechanical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_185,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8654,7 +8282,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pharmacologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_186,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8674,7 +8301,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Furniture conservator/restorer',
     companyId: COMPANY_DATA_SEED_IDS.ID_186,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8694,7 +8320,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Cytogeneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_187,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8714,7 +8339,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Commercial/residential surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_187,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8734,7 +8358,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Advertising copywriter',
     companyId: COMPANY_DATA_SEED_IDS.ID_188,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8754,7 +8377,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chief Operating Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_188,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8774,7 +8396,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Nurse, learning disability',
     companyId: COMPANY_DATA_SEED_IDS.ID_189,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8794,7 +8415,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Education officer, environmental',
     companyId: COMPANY_DATA_SEED_IDS.ID_189,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8814,7 +8434,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Civil engineer, consulting',
     companyId: COMPANY_DATA_SEED_IDS.ID_190,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8834,7 +8453,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Commercial/residential surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_190,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8854,7 +8472,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Higher education lecturer',
     companyId: COMPANY_DATA_SEED_IDS.ID_191,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8874,7 +8491,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Corporate treasurer',
     companyId: COMPANY_DATA_SEED_IDS.ID_191,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8894,7 +8510,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Actuary',
     companyId: COMPANY_DATA_SEED_IDS.ID_192,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8914,7 +8529,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Mental health nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_192,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8934,7 +8548,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Counselling psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_193,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8954,7 +8567,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientific laboratory technician',
     companyId: COMPANY_DATA_SEED_IDS.ID_193,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8974,7 +8586,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: "Politician's assistant",
     companyId: COMPANY_DATA_SEED_IDS.ID_194,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -8994,7 +8605,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Medical secretary',
     companyId: COMPANY_DATA_SEED_IDS.ID_194,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9014,7 +8624,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Osteopath',
     companyId: COMPANY_DATA_SEED_IDS.ID_195,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9034,7 +8643,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, graphic',
     companyId: COMPANY_DATA_SEED_IDS.ID_195,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9054,7 +8662,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Claims inspector/assessor',
     companyId: COMPANY_DATA_SEED_IDS.ID_196,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9074,7 +8681,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Artist',
     companyId: COMPANY_DATA_SEED_IDS.ID_196,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9094,7 +8700,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Lecturer, further education',
     companyId: COMPANY_DATA_SEED_IDS.ID_197,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9114,7 +8719,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Conservator, furniture',
     companyId: COMPANY_DATA_SEED_IDS.ID_197,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9134,7 +8738,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Teaching laboratory technician',
     companyId: COMPANY_DATA_SEED_IDS.ID_198,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9154,7 +8757,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Passenger transport manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_198,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9174,7 +8776,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Conservator, furniture',
     companyId: COMPANY_DATA_SEED_IDS.ID_199,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9194,7 +8795,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Education officer, community',
     companyId: COMPANY_DATA_SEED_IDS.ID_199,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9214,7 +8814,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, land/geomatics',
     companyId: COMPANY_DATA_SEED_IDS.ID_200,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9234,7 +8833,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Doctor, general practice',
     companyId: COMPANY_DATA_SEED_IDS.ID_200,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9254,7 +8852,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Museum/gallery curator',
     companyId: COMPANY_DATA_SEED_IDS.ID_201,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9274,7 +8871,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Tour manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_201,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9294,7 +8890,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Adult guidance worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_202,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9314,7 +8909,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Press photographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_202,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9334,7 +8928,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Theatre stage manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_203,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9354,7 +8947,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Air cabin crew',
     companyId: COMPANY_DATA_SEED_IDS.ID_203,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9374,7 +8966,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Osteopath',
     companyId: COMPANY_DATA_SEED_IDS.ID_204,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9394,7 +8985,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Public house manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_204,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9414,7 +9004,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Call centre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_205,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9434,7 +9023,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Media buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_205,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9454,7 +9042,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Environmental education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_206,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9474,7 +9061,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Acupuncturist',
     companyId: COMPANY_DATA_SEED_IDS.ID_206,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9494,7 +9080,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Theatre director',
     companyId: COMPANY_DATA_SEED_IDS.ID_207,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9514,7 +9099,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Office manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_207,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9534,7 +9118,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, forensic',
     companyId: COMPANY_DATA_SEED_IDS.ID_208,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9554,7 +9137,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Furniture conservator/restorer',
     companyId: COMPANY_DATA_SEED_IDS.ID_208,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9574,7 +9156,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Catering manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_209,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9594,7 +9175,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Air traffic controller',
     companyId: COMPANY_DATA_SEED_IDS.ID_209,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9614,7 +9194,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Catering manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_210,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9634,7 +9213,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Product designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_210,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9654,7 +9232,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Theatre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_211,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9674,7 +9251,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Financial trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_211,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9694,7 +9270,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Horticultural consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_212,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9714,7 +9289,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Dietitian',
     companyId: COMPANY_DATA_SEED_IDS.ID_212,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9734,7 +9308,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Press photographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_213,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9754,7 +9327,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Transport planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_213,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9774,7 +9346,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, land',
     companyId: COMPANY_DATA_SEED_IDS.ID_214,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9794,7 +9365,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Community arts worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_214,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9814,7 +9384,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Television camera operator',
     companyId: COMPANY_DATA_SEED_IDS.ID_215,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9834,7 +9403,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Science writer',
     companyId: COMPANY_DATA_SEED_IDS.ID_215,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9854,7 +9422,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Runner, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_216,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9874,7 +9441,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, research (medical)',
     companyId: COMPANY_DATA_SEED_IDS.ID_216,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9894,7 +9460,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Radiographer, therapeutic',
     companyId: COMPANY_DATA_SEED_IDS.ID_217,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9914,7 +9479,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Public house manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_217,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9934,7 +9498,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Neurosurgeon',
     companyId: COMPANY_DATA_SEED_IDS.ID_218,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9954,7 +9517,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ranger/warden',
     companyId: COMPANY_DATA_SEED_IDS.ID_218,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9974,7 +9536,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Translator',
     companyId: COMPANY_DATA_SEED_IDS.ID_219,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -9994,7 +9555,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Holiday representative',
     companyId: COMPANY_DATA_SEED_IDS.ID_219,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10014,7 +9574,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Gaffer',
     companyId: COMPANY_DATA_SEED_IDS.ID_220,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10034,7 +9593,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Emergency planning/management officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_220,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10054,7 +9612,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Waste management officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_221,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10074,7 +9631,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Embryologist, clinical',
     companyId: COMPANY_DATA_SEED_IDS.ID_221,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10094,7 +9650,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Conservation officer, nature',
     companyId: COMPANY_DATA_SEED_IDS.ID_222,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10114,7 +9669,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Restaurant manager, fast food',
     companyId: COMPANY_DATA_SEED_IDS.ID_222,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10134,7 +9688,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Nutritional therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_223,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10154,7 +9707,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Logistics and distribution manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_223,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10174,7 +9726,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Museum education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_224,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10194,7 +9745,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Teacher, adult education',
     companyId: COMPANY_DATA_SEED_IDS.ID_224,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10214,7 +9764,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Exhibition designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_225,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10234,7 +9783,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Industrial buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_225,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10254,7 +9802,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, planning and development',
     companyId: COMPANY_DATA_SEED_IDS.ID_226,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10274,7 +9821,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Trade mark attorney',
     companyId: COMPANY_DATA_SEED_IDS.ID_226,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10294,7 +9840,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Illustrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_227,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10314,7 +9859,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Archivist',
     companyId: COMPANY_DATA_SEED_IDS.ID_227,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10334,7 +9878,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Oncologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_228,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10354,7 +9897,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Investment analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_228,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10374,7 +9916,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Tourism officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_229,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10394,7 +9935,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Civil engineer, consulting',
     companyId: COMPANY_DATA_SEED_IDS.ID_229,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10414,7 +9954,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Financial controller',
     companyId: COMPANY_DATA_SEED_IDS.ID_230,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10434,7 +9973,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Theatre director',
     companyId: COMPANY_DATA_SEED_IDS.ID_230,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10454,7 +9992,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Musician',
     companyId: COMPANY_DATA_SEED_IDS.ID_231,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10474,7 +10011,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Midwife',
     companyId: COMPANY_DATA_SEED_IDS.ID_231,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10494,7 +10030,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'General practice doctor',
     companyId: COMPANY_DATA_SEED_IDS.ID_232,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10514,7 +10049,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Teacher, early years/pre',
     companyId: COMPANY_DATA_SEED_IDS.ID_232,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10534,7 +10068,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, energy',
     companyId: COMPANY_DATA_SEED_IDS.ID_233,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10554,7 +10087,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Trade union research officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_233,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10574,7 +10106,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Air broker',
     companyId: COMPANY_DATA_SEED_IDS.ID_234,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10594,7 +10125,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sports administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_234,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10614,7 +10144,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Occupational psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_235,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10634,7 +10163,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Publishing rights manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_235,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10654,7 +10182,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chief Technology Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_236,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10674,7 +10201,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Biochemist, clinical',
     companyId: COMPANY_DATA_SEED_IDS.ID_236,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10694,7 +10220,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Medical sales representative',
     companyId: COMPANY_DATA_SEED_IDS.ID_237,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10714,7 +10239,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Learning disability nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_237,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10734,7 +10258,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Public relations officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_238,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10754,7 +10277,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ambulance person',
     companyId: COMPANY_DATA_SEED_IDS.ID_238,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10774,7 +10296,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Animal technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_239,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10794,7 +10315,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Historic buildings inspector/conservation officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_239,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10814,7 +10334,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Theatre stage manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_240,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10834,7 +10353,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Dramatherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_240,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10854,7 +10372,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Catering manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_241,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10874,7 +10391,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Logistics and distribution manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_241,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10894,7 +10410,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'English as a second language teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_242,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10914,7 +10429,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Research scientist (maths)',
     companyId: COMPANY_DATA_SEED_IDS.ID_242,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10934,7 +10448,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Games developer',
     companyId: COMPANY_DATA_SEED_IDS.ID_243,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10954,7 +10467,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Teacher, secondary school',
     companyId: COMPANY_DATA_SEED_IDS.ID_243,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10974,7 +10486,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical molecular geneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_244,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -10994,7 +10505,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Learning disability nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_244,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11014,7 +10524,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Accountant, chartered management',
     companyId: COMPANY_DATA_SEED_IDS.ID_245,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11034,7 +10543,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Teacher, English as a foreign language',
     companyId: COMPANY_DATA_SEED_IDS.ID_245,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11054,7 +10562,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Building services engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_246,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11074,7 +10581,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Research officer, trade union',
     companyId: COMPANY_DATA_SEED_IDS.ID_246,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11094,7 +10600,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychologist, counselling',
     companyId: COMPANY_DATA_SEED_IDS.ID_247,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11114,7 +10619,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, commercial/residential',
     companyId: COMPANY_DATA_SEED_IDS.ID_247,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11134,7 +10638,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Cabin crew',
     companyId: COMPANY_DATA_SEED_IDS.ID_248,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11154,7 +10657,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sports development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_248,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11174,7 +10676,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Theatre stage manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_249,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11194,7 +10695,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, water',
     companyId: COMPANY_DATA_SEED_IDS.ID_249,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11214,7 +10714,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Runner, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_250,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11234,7 +10733,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Dentist',
     companyId: COMPANY_DATA_SEED_IDS.ID_250,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11254,7 +10752,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Public relations officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_251,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11274,7 +10771,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, sports',
     companyId: COMPANY_DATA_SEED_IDS.ID_251,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11294,7 +10790,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapeutic radiographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_252,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11314,7 +10809,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Herpetologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_252,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11334,7 +10828,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Armed forces technical officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_253,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11354,7 +10847,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Homeopath',
     companyId: COMPANY_DATA_SEED_IDS.ID_253,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11374,7 +10866,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clothing/textile technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_254,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11394,7 +10885,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Trading standards officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_254,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11414,7 +10904,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, marine',
     companyId: COMPANY_DATA_SEED_IDS.ID_255,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11434,7 +10923,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Metallurgist',
     companyId: COMPANY_DATA_SEED_IDS.ID_255,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11454,7 +10942,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Teacher, primary school',
     companyId: COMPANY_DATA_SEED_IDS.ID_256,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11474,7 +10961,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Textile designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_256,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11494,7 +10980,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'General practice doctor',
     companyId: COMPANY_DATA_SEED_IDS.ID_257,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11514,7 +10999,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Television floor manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_257,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11534,7 +11018,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Social researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_258,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11554,7 +11037,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Early years teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_258,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11574,7 +11056,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Teaching laboratory technician',
     companyId: COMPANY_DATA_SEED_IDS.ID_259,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11594,7 +11075,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Development worker, international aid',
     companyId: COMPANY_DATA_SEED_IDS.ID_259,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11614,7 +11094,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Archaeologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_260,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11634,7 +11113,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Accounting technician',
     companyId: COMPANY_DATA_SEED_IDS.ID_260,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11654,7 +11132,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Retail buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_261,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11674,7 +11151,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Environmental health practitioner',
     companyId: COMPANY_DATA_SEED_IDS.ID_261,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11694,7 +11170,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Games developer',
     companyId: COMPANY_DATA_SEED_IDS.ID_262,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11714,7 +11189,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, land/geomatics',
     companyId: COMPANY_DATA_SEED_IDS.ID_262,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11734,7 +11208,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Exercise physiologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_263,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11754,7 +11227,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Forest/woodland manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_263,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11774,7 +11246,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Camera operator',
     companyId: COMPANY_DATA_SEED_IDS.ID_264,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11794,7 +11265,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Publishing copy',
     companyId: COMPANY_DATA_SEED_IDS.ID_264,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11814,7 +11284,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Geologist, engineering',
     companyId: COMPANY_DATA_SEED_IDS.ID_265,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11834,7 +11303,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Youth worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_265,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11854,7 +11322,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Graphic designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_266,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11874,7 +11341,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, art',
     companyId: COMPANY_DATA_SEED_IDS.ID_266,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11894,7 +11360,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Programme researcher, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_267,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11914,7 +11379,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Hydrologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_267,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11934,7 +11398,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Logistics and distribution manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_268,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11954,7 +11417,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Location manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_268,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11974,7 +11436,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Nurse, mental health',
     companyId: COMPANY_DATA_SEED_IDS.ID_269,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -11994,7 +11455,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Water engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_269,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12014,7 +11474,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Hospital doctor',
     companyId: COMPANY_DATA_SEED_IDS.ID_270,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12034,7 +11493,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Administrator, sports',
     companyId: COMPANY_DATA_SEED_IDS.ID_270,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12054,7 +11512,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_271,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12074,7 +11531,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Environmental consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_271,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12094,7 +11550,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Advice worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_272,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12114,7 +11569,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, occupational',
     companyId: COMPANY_DATA_SEED_IDS.ID_272,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12134,7 +11588,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Press photographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_273,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12154,7 +11607,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Advertising account executive',
     companyId: COMPANY_DATA_SEED_IDS.ID_273,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12174,7 +11626,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Animator',
     companyId: COMPANY_DATA_SEED_IDS.ID_274,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12194,7 +11645,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Producer, television/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_274,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12214,7 +11664,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ophthalmologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_275,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12234,7 +11683,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Museum education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_275,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12254,7 +11702,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Actor',
     companyId: COMPANY_DATA_SEED_IDS.ID_276,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12274,7 +11721,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, planning and development',
     companyId: COMPANY_DATA_SEED_IDS.ID_276,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12294,7 +11740,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Senior tax professional/tax inspector',
     companyId: COMPANY_DATA_SEED_IDS.ID_277,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12314,7 +11759,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Lecturer, further education',
     companyId: COMPANY_DATA_SEED_IDS.ID_277,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12334,7 +11778,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, structural',
     companyId: COMPANY_DATA_SEED_IDS.ID_278,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12354,7 +11797,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Exercise physiologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_278,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12374,7 +11816,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical embryologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_279,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12394,7 +11835,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Air traffic controller',
     companyId: COMPANY_DATA_SEED_IDS.ID_279,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12414,7 +11854,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Seismic interpreter',
     companyId: COMPANY_DATA_SEED_IDS.ID_280,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12434,7 +11873,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Insurance risk surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_280,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12454,7 +11892,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, electrical',
     companyId: COMPANY_DATA_SEED_IDS.ID_281,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12474,7 +11911,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Legal secretary',
     companyId: COMPANY_DATA_SEED_IDS.ID_281,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12494,7 +11930,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Advertising art director',
     companyId: COMPANY_DATA_SEED_IDS.ID_282,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12514,7 +11949,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Teacher, secondary school',
     companyId: COMPANY_DATA_SEED_IDS.ID_282,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12534,7 +11968,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'IT sales professional',
     companyId: COMPANY_DATA_SEED_IDS.ID_283,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12554,7 +11987,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Education officer, environmental',
     companyId: COMPANY_DATA_SEED_IDS.ID_283,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12574,7 +12006,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Diplomatic Services operational officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_284,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12594,7 +12025,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Armed forces operational officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_284,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12614,7 +12044,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Administrator, arts',
     companyId: COMPANY_DATA_SEED_IDS.ID_285,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12634,7 +12063,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Osteopath',
     companyId: COMPANY_DATA_SEED_IDS.ID_285,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12654,7 +12082,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Financial planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_286,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12674,7 +12101,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Glass blower/designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_286,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12694,7 +12120,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Teacher, primary school',
     companyId: COMPANY_DATA_SEED_IDS.ID_287,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12714,7 +12139,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Recycling officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_287,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12734,7 +12158,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Production engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_288,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12754,7 +12177,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chief Technology Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_288,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12774,7 +12196,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Financial manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_289,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12794,7 +12215,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Geneticist, molecular',
     companyId: COMPANY_DATA_SEED_IDS.ID_289,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12814,7 +12234,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Proofreader',
     companyId: COMPANY_DATA_SEED_IDS.ID_290,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12834,7 +12253,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Diplomatic Services operational officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_290,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12854,7 +12272,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Field trials officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_291,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12874,7 +12291,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ceramics designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_291,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12894,7 +12310,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, nutritional',
     companyId: COMPANY_DATA_SEED_IDS.ID_292,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12914,7 +12329,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'IT consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_292,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12934,7 +12348,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Corporate treasurer',
     companyId: COMPANY_DATA_SEED_IDS.ID_293,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12954,7 +12367,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Textile designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_293,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12974,7 +12386,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Maintenance engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_294,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -12994,7 +12405,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Customer service manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_294,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13014,7 +12424,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Theatre director',
     companyId: COMPANY_DATA_SEED_IDS.ID_295,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13034,7 +12443,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Geophysical data processor',
     companyId: COMPANY_DATA_SEED_IDS.ID_295,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13054,7 +12462,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Civil engineer, contracting',
     companyId: COMPANY_DATA_SEED_IDS.ID_296,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13074,7 +12481,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chief Marketing Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_296,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13094,7 +12500,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychologist, educational',
     companyId: COMPANY_DATA_SEED_IDS.ID_297,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13114,7 +12519,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Research officer, government',
     companyId: COMPANY_DATA_SEED_IDS.ID_297,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13134,7 +12538,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Cartographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_298,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13154,7 +12557,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sales promotion account executive',
     companyId: COMPANY_DATA_SEED_IDS.ID_298,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13174,7 +12576,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Consulting civil engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_299,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13194,7 +12595,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Heritage manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_299,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13214,7 +12614,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Systems analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_300,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13234,7 +12633,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Building control surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_300,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13254,7 +12652,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Solicitor',
     companyId: COMPANY_DATA_SEED_IDS.ID_301,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13274,7 +12671,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'International aid/development worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_301,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13294,7 +12690,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pharmacist, hospital',
     companyId: COMPANY_DATA_SEED_IDS.ID_302,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13314,7 +12709,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Exhibitions officer, museum/gallery',
     companyId: COMPANY_DATA_SEED_IDS.ID_302,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13334,7 +12728,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Production assistant, television',
     companyId: COMPANY_DATA_SEED_IDS.ID_303,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13354,7 +12747,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Learning mentor',
     companyId: COMPANY_DATA_SEED_IDS.ID_303,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13374,7 +12766,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Drilling engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_304,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13394,7 +12785,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chartered management accountant',
     companyId: COMPANY_DATA_SEED_IDS.ID_304,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13414,7 +12804,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Science writer',
     companyId: COMPANY_DATA_SEED_IDS.ID_305,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13434,7 +12823,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Merchandiser, retail',
     companyId: COMPANY_DATA_SEED_IDS.ID_305,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13454,7 +12842,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Media planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_306,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13474,7 +12861,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Multimedia specialist',
     companyId: COMPANY_DATA_SEED_IDS.ID_306,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13494,7 +12880,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Geophysical data processor',
     companyId: COMPANY_DATA_SEED_IDS.ID_307,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13514,7 +12899,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Health and safety inspector',
     companyId: COMPANY_DATA_SEED_IDS.ID_307,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13534,7 +12918,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Lecturer, higher education',
     companyId: COMPANY_DATA_SEED_IDS.ID_308,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13554,7 +12937,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychotherapist, child',
     companyId: COMPANY_DATA_SEED_IDS.ID_308,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13574,7 +12956,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Agricultural engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_309,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13594,7 +12975,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, product/process development',
     companyId: COMPANY_DATA_SEED_IDS.ID_309,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13614,7 +12994,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Electrical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_310,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13634,7 +13013,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chief of Staff',
     companyId: COMPANY_DATA_SEED_IDS.ID_310,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13654,7 +13032,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Charity officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_311,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13674,7 +13051,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Futures trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_311,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13694,7 +13070,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Camera operator',
     companyId: COMPANY_DATA_SEED_IDS.ID_312,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13714,7 +13089,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Automotive engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_312,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13734,7 +13108,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Learning disability nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_313,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13754,7 +13127,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, research (physical sciences)',
     companyId: COMPANY_DATA_SEED_IDS.ID_313,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13774,7 +13146,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Biomedical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_314,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13794,7 +13165,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, textile',
     companyId: COMPANY_DATA_SEED_IDS.ID_314,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13814,7 +13184,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pharmacist, community',
     companyId: COMPANY_DATA_SEED_IDS.ID_315,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13834,7 +13203,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Electronics engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_315,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13854,7 +13222,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Control and instrumentation engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_316,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13874,7 +13241,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sports therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_316,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13894,7 +13260,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Dance movement psychotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_317,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13914,7 +13279,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Graphic designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_317,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13934,7 +13298,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Advertising account executive',
     companyId: COMPANY_DATA_SEED_IDS.ID_318,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13954,7 +13317,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Occupational therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_318,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13974,7 +13336,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, jewellery',
     companyId: COMPANY_DATA_SEED_IDS.ID_319,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -13994,7 +13355,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Farm manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_319,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14014,7 +13374,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Doctor, hospital',
     companyId: COMPANY_DATA_SEED_IDS.ID_320,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14034,7 +13393,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Office manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_320,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14054,7 +13412,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Industrial buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_321,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14074,7 +13431,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, biomedical',
     companyId: COMPANY_DATA_SEED_IDS.ID_321,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14094,7 +13450,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'English as a second language teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_322,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14114,7 +13469,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Games developer',
     companyId: COMPANY_DATA_SEED_IDS.ID_322,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14134,7 +13488,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'TEFL teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_323,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14154,7 +13507,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chartered legal executive (England and Wales)',
     companyId: COMPANY_DATA_SEED_IDS.ID_323,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14174,7 +13526,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, fashion/clothing',
     companyId: COMPANY_DATA_SEED_IDS.ID_324,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14194,7 +13545,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Environmental manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_324,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14214,7 +13564,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Hydrologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_325,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14234,7 +13583,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, television/film set',
     companyId: COMPANY_DATA_SEED_IDS.ID_325,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14254,7 +13602,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Local government officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_326,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14274,7 +13621,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'IT sales professional',
     companyId: COMPANY_DATA_SEED_IDS.ID_326,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14294,7 +13640,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Charity officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_327,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14314,7 +13659,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Professor Emeritus',
     companyId: COMPANY_DATA_SEED_IDS.ID_327,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14334,7 +13678,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chief Marketing Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_328,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14354,7 +13697,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, product/process development',
     companyId: COMPANY_DATA_SEED_IDS.ID_328,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14374,7 +13716,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Programmer, systems',
     companyId: COMPANY_DATA_SEED_IDS.ID_329,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14394,7 +13735,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Interior and spatial designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_329,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14414,7 +13754,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Personal assistant',
     companyId: COMPANY_DATA_SEED_IDS.ID_330,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14434,7 +13773,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Broadcast presenter',
     companyId: COMPANY_DATA_SEED_IDS.ID_330,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14454,7 +13792,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Actor',
     companyId: COMPANY_DATA_SEED_IDS.ID_331,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14474,7 +13811,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Adult guidance worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_331,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14494,7 +13830,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Occupational hygienist',
     companyId: COMPANY_DATA_SEED_IDS.ID_332,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14514,7 +13849,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Futures trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_332,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14534,7 +13868,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Television camera operator',
     companyId: COMPANY_DATA_SEED_IDS.ID_333,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14554,7 +13887,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, maintenance (IT)',
     companyId: COMPANY_DATA_SEED_IDS.ID_333,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14574,7 +13906,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical cytogeneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_334,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14594,7 +13925,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Colour technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_334,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14614,7 +13944,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, petroleum',
     companyId: COMPANY_DATA_SEED_IDS.ID_335,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14634,7 +13963,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, biomedical',
     companyId: COMPANY_DATA_SEED_IDS.ID_335,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14654,7 +13982,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical embryologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_336,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14674,7 +14001,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Industrial/product designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_336,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14694,7 +14020,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Radio producer',
     companyId: COMPANY_DATA_SEED_IDS.ID_337,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14714,7 +14039,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Diagnostic radiographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_337,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14734,7 +14058,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Radiation protection practitioner',
     companyId: COMPANY_DATA_SEED_IDS.ID_338,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14754,7 +14077,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Producer, radio',
     companyId: COMPANY_DATA_SEED_IDS.ID_338,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14774,7 +14096,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Product designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_339,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14794,7 +14115,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Television camera operator',
     companyId: COMPANY_DATA_SEED_IDS.ID_339,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14814,7 +14134,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Police officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_340,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14834,7 +14153,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ranger/warden',
     companyId: COMPANY_DATA_SEED_IDS.ID_340,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14854,7 +14172,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Forensic scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_341,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14874,7 +14191,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Freight forwarder',
     companyId: COMPANY_DATA_SEED_IDS.ID_341,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14894,7 +14210,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Petroleum engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_342,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14914,7 +14229,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Neurosurgeon',
     companyId: COMPANY_DATA_SEED_IDS.ID_342,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14934,7 +14248,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Glass blower/designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_343,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14954,7 +14267,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Automotive engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_343,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14974,7 +14286,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, sports',
     companyId: COMPANY_DATA_SEED_IDS.ID_344,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -14994,7 +14305,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Editor, commissioning',
     companyId: COMPANY_DATA_SEED_IDS.ID_344,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15014,7 +14324,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Homeopath',
     companyId: COMPANY_DATA_SEED_IDS.ID_345,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15034,7 +14343,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Mechanical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_345,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15054,7 +14362,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, research (physical sciences)',
     companyId: COMPANY_DATA_SEED_IDS.ID_346,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15074,7 +14381,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Market researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_346,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15094,7 +14400,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Teacher, primary school',
     companyId: COMPANY_DATA_SEED_IDS.ID_347,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15114,7 +14419,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Illustrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_347,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15134,7 +14438,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Hotel manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_348,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15154,7 +14457,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, mining',
     companyId: COMPANY_DATA_SEED_IDS.ID_348,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15174,7 +14476,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Medical physicist',
     companyId: COMPANY_DATA_SEED_IDS.ID_349,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15194,7 +14495,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Patent examiner',
     companyId: COMPANY_DATA_SEED_IDS.ID_349,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15214,7 +14514,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, drama',
     companyId: COMPANY_DATA_SEED_IDS.ID_350,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15234,7 +14533,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chiropodist',
     companyId: COMPANY_DATA_SEED_IDS.ID_350,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15254,7 +14552,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Cabin crew',
     companyId: COMPANY_DATA_SEED_IDS.ID_351,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15274,7 +14571,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Technical author',
     companyId: COMPANY_DATA_SEED_IDS.ID_351,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15294,7 +14590,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Technical sales engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_352,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15314,7 +14609,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Solicitor, Scotland',
     companyId: COMPANY_DATA_SEED_IDS.ID_352,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15334,7 +14628,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Aeronautical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_353,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15354,7 +14647,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Counselling psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_353,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15374,7 +14666,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Medical laboratory scientific officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_354,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15394,7 +14685,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'English as a foreign language teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_354,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15414,7 +14704,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Phytotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_355,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15434,7 +14723,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Trade mark attorney',
     companyId: COMPANY_DATA_SEED_IDS.ID_355,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15454,7 +14742,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Site engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_356,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15474,7 +14761,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Seismic interpreter',
     companyId: COMPANY_DATA_SEED_IDS.ID_356,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15494,7 +14780,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Music tutor',
     companyId: COMPANY_DATA_SEED_IDS.ID_357,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15514,7 +14799,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Public house manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_357,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15534,7 +14818,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Horticulturist, commercial',
     companyId: COMPANY_DATA_SEED_IDS.ID_358,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15554,7 +14837,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Counsellor',
     companyId: COMPANY_DATA_SEED_IDS.ID_358,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15574,7 +14856,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Recruitment consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_359,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15594,7 +14875,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, research (maths)',
     companyId: COMPANY_DATA_SEED_IDS.ID_359,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15614,7 +14894,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Public relations account executive',
     companyId: COMPANY_DATA_SEED_IDS.ID_360,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15634,7 +14913,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: "Nurse, children's",
     companyId: COMPANY_DATA_SEED_IDS.ID_360,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15654,7 +14932,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, speech and language',
     companyId: COMPANY_DATA_SEED_IDS.ID_361,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15674,7 +14951,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Primary school teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_361,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15694,7 +14970,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Education administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_362,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15714,7 +14989,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, civil (consulting)',
     companyId: COMPANY_DATA_SEED_IDS.ID_362,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15734,7 +15008,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Naval architect',
     companyId: COMPANY_DATA_SEED_IDS.ID_363,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15754,7 +15027,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Corporate treasurer',
     companyId: COMPANY_DATA_SEED_IDS.ID_363,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15774,7 +15046,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Primary school teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_364,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15794,7 +15065,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Optician, dispensing',
     companyId: COMPANY_DATA_SEED_IDS.ID_364,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15814,7 +15084,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Operational investment banker',
     companyId: COMPANY_DATA_SEED_IDS.ID_365,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15834,7 +15103,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical cytogeneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_365,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15854,7 +15122,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Housing manager/officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_366,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15874,7 +15141,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Further education lecturer',
     companyId: COMPANY_DATA_SEED_IDS.ID_366,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15894,7 +15160,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Merchant navy officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_367,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15914,7 +15179,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Producer, radio',
     companyId: COMPANY_DATA_SEED_IDS.ID_367,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15934,7 +15198,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Investment analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_368,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15954,7 +15217,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Dispensing optician',
     companyId: COMPANY_DATA_SEED_IDS.ID_368,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15974,7 +15236,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sports development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_369,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -15994,7 +15255,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Tax adviser',
     companyId: COMPANY_DATA_SEED_IDS.ID_369,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16014,7 +15274,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Visual merchandiser',
     companyId: COMPANY_DATA_SEED_IDS.ID_370,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16034,7 +15293,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Records manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_370,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16054,7 +15312,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Local government officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_371,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16074,7 +15331,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ecologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_371,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16094,7 +15350,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'QuickActions analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_372,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16114,7 +15369,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, mining',
     companyId: COMPANY_DATA_SEED_IDS.ID_372,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16134,7 +15388,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Financial controller',
     companyId: COMPANY_DATA_SEED_IDS.ID_373,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16154,7 +15407,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Site engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_373,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16174,7 +15426,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Radiographer, therapeutic',
     companyId: COMPANY_DATA_SEED_IDS.ID_374,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16194,7 +15445,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Illustrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_374,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16214,7 +15464,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Physiotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_375,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16234,7 +15483,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Health physicist',
     companyId: COMPANY_DATA_SEED_IDS.ID_375,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16254,7 +15502,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychiatric nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_376,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16274,7 +15521,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Education officer, community',
     companyId: COMPANY_DATA_SEED_IDS.ID_376,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16294,7 +15540,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Adult nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_377,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16314,7 +15559,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Accountant, chartered management',
     companyId: COMPANY_DATA_SEED_IDS.ID_377,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16334,7 +15578,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Computer games developer',
     companyId: COMPANY_DATA_SEED_IDS.ID_378,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16354,7 +15597,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Theatre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_378,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16374,7 +15616,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, research (maths)',
     companyId: COMPANY_DATA_SEED_IDS.ID_379,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16394,7 +15635,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, building',
     companyId: COMPANY_DATA_SEED_IDS.ID_379,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16414,7 +15654,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Mental health nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_380,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16434,7 +15673,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Environmental health practitioner',
     companyId: COMPANY_DATA_SEED_IDS.ID_380,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16454,7 +15692,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Legal secretary',
     companyId: COMPANY_DATA_SEED_IDS.ID_381,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16474,7 +15711,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, speech and language',
     companyId: COMPANY_DATA_SEED_IDS.ID_381,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16494,7 +15730,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Editor, film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_382,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16514,7 +15749,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Charity fundraiser',
     companyId: COMPANY_DATA_SEED_IDS.ID_382,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16534,7 +15768,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Conservator, furniture',
     companyId: COMPANY_DATA_SEED_IDS.ID_383,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16554,7 +15787,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Immunologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_383,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16574,7 +15806,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Stage manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_384,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16594,7 +15825,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Advertising account executive',
     companyId: COMPANY_DATA_SEED_IDS.ID_384,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16614,7 +15844,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Customer service manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_385,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16634,7 +15863,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Planning and development surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_385,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16654,7 +15882,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, mining',
     companyId: COMPANY_DATA_SEED_IDS.ID_386,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16674,7 +15901,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Journalist, broadcasting',
     companyId: COMPANY_DATA_SEED_IDS.ID_386,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16694,7 +15920,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Minerals surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_387,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16714,7 +15939,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Biomedical scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_387,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16734,7 +15958,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Production assistant, television',
     companyId: COMPANY_DATA_SEED_IDS.ID_388,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16754,7 +15977,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, biomedical',
     companyId: COMPANY_DATA_SEED_IDS.ID_388,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16774,7 +15996,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Broadcast journalist',
     companyId: COMPANY_DATA_SEED_IDS.ID_389,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16794,7 +16015,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Public relations account executive',
     companyId: COMPANY_DATA_SEED_IDS.ID_389,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16814,7 +16034,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Optometrist',
     companyId: COMPANY_DATA_SEED_IDS.ID_390,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16834,7 +16053,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Teacher, English as a foreign language',
     companyId: COMPANY_DATA_SEED_IDS.ID_390,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16854,7 +16072,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Trading standards officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_391,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16874,7 +16091,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Radiation protection practitioner',
     companyId: COMPANY_DATA_SEED_IDS.ID_391,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16894,7 +16110,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Firefighter',
     companyId: COMPANY_DATA_SEED_IDS.ID_392,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16914,7 +16129,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Geoscientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_392,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16934,7 +16148,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Nurse, learning disability',
     companyId: COMPANY_DATA_SEED_IDS.ID_393,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16954,7 +16167,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chartered public finance accountant',
     companyId: COMPANY_DATA_SEED_IDS.ID_393,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16974,7 +16186,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Patent attorney',
     companyId: COMPANY_DATA_SEED_IDS.ID_394,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -16994,7 +16205,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Financial risk analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_394,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17014,7 +16224,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Patent attorney',
     companyId: COMPANY_DATA_SEED_IDS.ID_395,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17034,7 +16243,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, mining',
     companyId: COMPANY_DATA_SEED_IDS.ID_395,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17054,7 +16262,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapeutic radiographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_396,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17074,7 +16281,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Leisure centre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_396,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17094,7 +16300,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Emergency planning/management officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_397,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17114,7 +16319,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Operational researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_397,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17134,7 +16338,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, manufacturing systems',
     companyId: COMPANY_DATA_SEED_IDS.ID_398,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17154,7 +16357,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Automotive engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_398,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17174,7 +16376,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, forensic',
     companyId: COMPANY_DATA_SEED_IDS.ID_399,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17194,7 +16395,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Health promotion specialist',
     companyId: COMPANY_DATA_SEED_IDS.ID_399,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17214,7 +16414,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Camera operator',
     companyId: COMPANY_DATA_SEED_IDS.ID_400,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17234,7 +16433,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Art therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_400,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17254,7 +16452,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'IT sales professional',
     companyId: COMPANY_DATA_SEED_IDS.ID_401,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17274,7 +16471,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychologist, clinical',
     companyId: COMPANY_DATA_SEED_IDS.ID_401,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17294,7 +16490,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ceramics designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_402,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17314,7 +16509,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, furniture',
     companyId: COMPANY_DATA_SEED_IDS.ID_402,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17334,7 +16528,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Government social research officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_403,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17354,7 +16547,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Librarian, public',
     companyId: COMPANY_DATA_SEED_IDS.ID_403,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17374,7 +16566,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Energy engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_404,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17394,7 +16585,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Rural practice surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_404,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17414,7 +16604,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Estate manager/land agent',
     companyId: COMPANY_DATA_SEED_IDS.ID_405,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17434,7 +16623,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Armed forces technical officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_405,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17454,7 +16642,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Programme researcher, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_406,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17474,7 +16661,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ranger/warden',
     companyId: COMPANY_DATA_SEED_IDS.ID_406,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17494,7 +16680,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Commercial/residential surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_407,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17514,7 +16699,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Tax inspector',
     companyId: COMPANY_DATA_SEED_IDS.ID_407,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17534,7 +16718,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical cytogeneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_408,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17554,7 +16737,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pathologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_408,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17574,7 +16756,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Publishing copy',
     companyId: COMPANY_DATA_SEED_IDS.ID_409,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17594,7 +16775,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ship broker',
     companyId: COMPANY_DATA_SEED_IDS.ID_409,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17614,7 +16794,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Economist',
     companyId: COMPANY_DATA_SEED_IDS.ID_410,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17634,7 +16813,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'IT trainer',
     companyId: COMPANY_DATA_SEED_IDS.ID_410,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17654,7 +16832,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Nurse, adult',
     companyId: COMPANY_DATA_SEED_IDS.ID_411,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17674,7 +16851,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychiatric nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_411,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17694,7 +16870,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychologist, prison and probation services',
     companyId: COMPANY_DATA_SEED_IDS.ID_412,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17714,7 +16889,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pharmacist, hospital',
     companyId: COMPANY_DATA_SEED_IDS.ID_412,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17734,7 +16908,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Magazine features editor',
     companyId: COMPANY_DATA_SEED_IDS.ID_413,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17754,7 +16927,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Exercise physiologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_413,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17774,7 +16946,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Exhibitions officer, museum/gallery',
     companyId: COMPANY_DATA_SEED_IDS.ID_414,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17794,7 +16965,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Commercial horticulturist',
     companyId: COMPANY_DATA_SEED_IDS.ID_414,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17814,7 +16984,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Data processing manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_415,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17834,7 +17003,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Radiographer, therapeutic',
     companyId: COMPANY_DATA_SEED_IDS.ID_415,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17854,7 +17022,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Research scientist (life sciences)',
     companyId: COMPANY_DATA_SEED_IDS.ID_416,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17874,7 +17041,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chief Marketing Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_416,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17894,7 +17060,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Claims inspector/assessor',
     companyId: COMPANY_DATA_SEED_IDS.ID_417,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17914,7 +17079,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Web designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_417,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17934,7 +17098,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Environmental education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_418,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17954,7 +17117,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ranger/warden',
     companyId: COMPANY_DATA_SEED_IDS.ID_418,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17974,7 +17136,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Environmental consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_419,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -17994,7 +17155,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Garment/textile technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_419,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18014,7 +17174,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Analytical chemist',
     companyId: COMPANY_DATA_SEED_IDS.ID_420,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18034,7 +17193,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Field trials officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_420,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18054,7 +17212,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ecologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_421,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18074,7 +17231,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Photographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_421,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18094,7 +17250,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Community development worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_422,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18114,7 +17269,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Secretary/administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_422,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18134,7 +17288,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Environmental education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_423,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18154,7 +17307,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, technical sales',
     companyId: COMPANY_DATA_SEED_IDS.ID_423,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18174,7 +17326,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Optometrist',
     companyId: COMPANY_DATA_SEED_IDS.ID_424,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18194,7 +17345,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Medical secretary',
     companyId: COMPANY_DATA_SEED_IDS.ID_424,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18214,7 +17364,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, land/geomatics',
     companyId: COMPANY_DATA_SEED_IDS.ID_425,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18234,7 +17383,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Buyer, industrial',
     companyId: COMPANY_DATA_SEED_IDS.ID_425,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18254,7 +17402,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Trading standards officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_426,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18274,7 +17421,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Herpetologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_426,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18294,7 +17440,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Training and development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_427,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18314,7 +17459,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Architect',
     companyId: COMPANY_DATA_SEED_IDS.ID_427,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18334,7 +17478,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Radio producer',
     companyId: COMPANY_DATA_SEED_IDS.ID_428,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18354,7 +17497,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Management consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_428,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18374,7 +17516,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Theatre stage manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_429,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18394,7 +17535,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pharmacist, community',
     companyId: COMPANY_DATA_SEED_IDS.ID_429,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18414,7 +17554,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Research scientist (life sciences)',
     companyId: COMPANY_DATA_SEED_IDS.ID_430,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18434,7 +17573,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychologist, clinical',
     companyId: COMPANY_DATA_SEED_IDS.ID_430,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18454,7 +17592,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Geologist, wellsite',
     companyId: COMPANY_DATA_SEED_IDS.ID_431,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18474,7 +17611,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Freight forwarder',
     companyId: COMPANY_DATA_SEED_IDS.ID_431,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18494,7 +17630,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Civil engineer, contracting',
     companyId: COMPANY_DATA_SEED_IDS.ID_432,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18514,7 +17649,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Media buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_432,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18534,7 +17668,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sports administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_433,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18554,7 +17687,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, research (maths)',
     companyId: COMPANY_DATA_SEED_IDS.ID_433,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18574,7 +17706,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Early years teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_434,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18594,7 +17725,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientific laboratory technician',
     companyId: COMPANY_DATA_SEED_IDS.ID_434,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18614,7 +17744,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Librarian, public',
     companyId: COMPANY_DATA_SEED_IDS.ID_435,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18634,7 +17763,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Maintenance engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_435,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18654,7 +17782,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Financial risk analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_436,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18674,7 +17801,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Emergency planning/management officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_436,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18694,7 +17820,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Catering manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_437,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18714,7 +17839,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, materials',
     companyId: COMPANY_DATA_SEED_IDS.ID_437,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18734,7 +17858,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Health service manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_438,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18754,7 +17877,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Town planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_438,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18774,7 +17896,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Industrial buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_439,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18794,7 +17915,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Secretary, company',
     companyId: COMPANY_DATA_SEED_IDS.ID_439,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18814,7 +17934,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Nutritional therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_440,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18834,7 +17953,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: "Politician's assistant",
     companyId: COMPANY_DATA_SEED_IDS.ID_440,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18854,7 +17972,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Historic buildings inspector/conservation officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_441,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18874,7 +17991,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Mental health nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_441,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18894,7 +18010,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, television/film set',
     companyId: COMPANY_DATA_SEED_IDS.ID_442,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18914,7 +18029,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, automotive',
     companyId: COMPANY_DATA_SEED_IDS.ID_442,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18934,7 +18048,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Financial planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_443,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18954,7 +18067,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chartered public finance accountant',
     companyId: COMPANY_DATA_SEED_IDS.ID_443,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18974,7 +18086,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ecologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_444,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -18994,7 +18105,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Statistician',
     companyId: COMPANY_DATA_SEED_IDS.ID_444,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19014,7 +18124,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Multimedia specialist',
     companyId: COMPANY_DATA_SEED_IDS.ID_445,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19034,7 +18143,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Communications engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_445,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19054,7 +18162,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Occupational therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_446,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19074,7 +18181,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Wellsite geologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_446,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19094,7 +18200,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Agricultural consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_447,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19114,7 +18219,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ergonomist',
     companyId: COMPANY_DATA_SEED_IDS.ID_447,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19134,7 +18238,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Banker',
     companyId: COMPANY_DATA_SEED_IDS.ID_448,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19154,7 +18257,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Geochemist',
     companyId: COMPANY_DATA_SEED_IDS.ID_448,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19174,7 +18276,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Editor, commissioning',
     companyId: COMPANY_DATA_SEED_IDS.ID_449,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19194,7 +18295,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Education administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_449,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19214,7 +18314,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Corporate treasurer',
     companyId: COMPANY_DATA_SEED_IDS.ID_450,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19234,7 +18333,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Land',
     companyId: COMPANY_DATA_SEED_IDS.ID_450,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19254,7 +18352,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pathologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_451,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19274,7 +18371,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sports development officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_451,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19294,7 +18390,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Consulting civil engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_452,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19314,7 +18409,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Site engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_452,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19334,7 +18428,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, broadcasting (operations)',
     companyId: COMPANY_DATA_SEED_IDS.ID_453,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19354,7 +18447,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Presenter, broadcasting',
     companyId: COMPANY_DATA_SEED_IDS.ID_453,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19374,7 +18466,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Homeopath',
     companyId: COMPANY_DATA_SEED_IDS.ID_454,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19394,7 +18485,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Bonds trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_454,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19414,7 +18504,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Civil Service fast streamer',
     companyId: COMPANY_DATA_SEED_IDS.ID_455,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19434,7 +18523,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Historic buildings inspector/conservation officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_455,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19454,7 +18542,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Community development worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_456,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19474,7 +18561,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Social researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_456,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19494,7 +18580,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Systems analyst',
     companyId: COMPANY_DATA_SEED_IDS.ID_457,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19514,7 +18599,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Museum/gallery exhibitions officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_457,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19534,7 +18618,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Financial trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_458,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19554,7 +18637,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Cartographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_458,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19574,7 +18656,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, aeronautical',
     companyId: COMPANY_DATA_SEED_IDS.ID_459,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19594,7 +18675,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, building',
     companyId: COMPANY_DATA_SEED_IDS.ID_459,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19614,7 +18694,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Environmental consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_460,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19634,7 +18713,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Oceanographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_460,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19654,7 +18732,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Hydrographic surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_461,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19674,7 +18751,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Metallurgist',
     companyId: COMPANY_DATA_SEED_IDS.ID_461,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19694,7 +18770,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, biomedical',
     companyId: COMPANY_DATA_SEED_IDS.ID_462,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19714,7 +18789,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Hospital pharmacist',
     companyId: COMPANY_DATA_SEED_IDS.ID_462,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19734,7 +18808,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Actuary',
     companyId: COMPANY_DATA_SEED_IDS.ID_463,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19754,7 +18827,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sport and exercise psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_463,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19774,7 +18846,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Merchandiser, retail',
     companyId: COMPANY_DATA_SEED_IDS.ID_464,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19794,7 +18865,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Lighting technician, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_464,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19814,7 +18884,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Biomedical scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_465,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19834,7 +18903,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical biochemist',
     companyId: COMPANY_DATA_SEED_IDS.ID_465,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19854,7 +18922,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Lobbyist',
     companyId: COMPANY_DATA_SEED_IDS.ID_466,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19874,7 +18941,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Commissioning editor',
     companyId: COMPANY_DATA_SEED_IDS.ID_466,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19894,7 +18960,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Wellsite geologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_467,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19914,7 +18979,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Barista',
     companyId: COMPANY_DATA_SEED_IDS.ID_467,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19934,7 +18998,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, biomedical',
     companyId: COMPANY_DATA_SEED_IDS.ID_468,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19954,7 +19017,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Retail manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_468,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19974,7 +19036,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Commercial art gallery manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_469,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -19994,7 +19055,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Investment banker, corporate',
     companyId: COMPANY_DATA_SEED_IDS.ID_469,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20014,7 +19074,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Corporate treasurer',
     companyId: COMPANY_DATA_SEED_IDS.ID_470,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20034,7 +19093,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Research officer, trade union',
     companyId: COMPANY_DATA_SEED_IDS.ID_470,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20054,7 +19112,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Investment banker, corporate',
     companyId: COMPANY_DATA_SEED_IDS.ID_471,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20074,7 +19131,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Counselling psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_471,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20094,7 +19150,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Biomedical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_472,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20114,7 +19169,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ophthalmologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_472,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20134,7 +19188,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Physiotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_473,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20154,7 +19207,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Video editor',
     companyId: COMPANY_DATA_SEED_IDS.ID_473,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20174,7 +19226,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Marketing executive',
     companyId: COMPANY_DATA_SEED_IDS.ID_474,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20194,7 +19245,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Mudlogger',
     companyId: COMPANY_DATA_SEED_IDS.ID_474,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20214,7 +19264,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Interpreter',
     companyId: COMPANY_DATA_SEED_IDS.ID_475,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20234,7 +19283,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Public house manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_475,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20254,7 +19302,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Tree surgeon',
     companyId: COMPANY_DATA_SEED_IDS.ID_476,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20274,7 +19321,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Land',
     companyId: COMPANY_DATA_SEED_IDS.ID_476,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20294,7 +19340,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Graphic designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_477,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20314,7 +19359,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Stage manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_477,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20334,7 +19378,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Trade union research officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_478,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20354,7 +19397,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Lecturer, further education',
     companyId: COMPANY_DATA_SEED_IDS.ID_478,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20374,7 +19416,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Mechanical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_479,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20394,7 +19435,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, mining',
     companyId: COMPANY_DATA_SEED_IDS.ID_479,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20414,7 +19454,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Development worker, international aid',
     companyId: COMPANY_DATA_SEED_IDS.ID_480,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20434,7 +19473,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapeutic radiographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_480,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20454,7 +19492,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, control and instrumentation',
     companyId: COMPANY_DATA_SEED_IDS.ID_481,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20474,7 +19511,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychologist, clinical',
     companyId: COMPANY_DATA_SEED_IDS.ID_481,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20494,7 +19530,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Public relations officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_482,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20514,7 +19549,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Tax inspector',
     companyId: COMPANY_DATA_SEED_IDS.ID_482,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20534,7 +19568,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Merchant navy officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_483,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20554,7 +19587,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Contracting civil engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_483,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20574,7 +19606,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Metallurgist',
     companyId: COMPANY_DATA_SEED_IDS.ID_484,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20594,7 +19625,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Glass blower/designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_484,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20614,7 +19644,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Geophysicist/field seismologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_485,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20634,7 +19663,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chiropodist',
     companyId: COMPANY_DATA_SEED_IDS.ID_485,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20654,7 +19682,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Communications engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_486,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20674,7 +19701,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Solicitor, Scotland',
     companyId: COMPANY_DATA_SEED_IDS.ID_486,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20694,7 +19720,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Automotive engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_487,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20714,7 +19739,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Occupational hygienist',
     companyId: COMPANY_DATA_SEED_IDS.ID_487,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20734,7 +19758,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Firefighter',
     companyId: COMPANY_DATA_SEED_IDS.ID_488,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20754,7 +19777,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, water quality',
     companyId: COMPANY_DATA_SEED_IDS.ID_488,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20774,7 +19796,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Graphic designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_489,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20794,7 +19815,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chief Strategy Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_489,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20814,7 +19834,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Corporate investment banker',
     companyId: COMPANY_DATA_SEED_IDS.ID_490,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20834,7 +19853,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Community pharmacist',
     companyId: COMPANY_DATA_SEED_IDS.ID_490,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20854,7 +19872,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Technical sales engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_491,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20874,7 +19891,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Research scientist (physical sciences)',
     companyId: COMPANY_DATA_SEED_IDS.ID_491,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20894,7 +19910,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Energy manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_492,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20914,7 +19929,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Lobbyist',
     companyId: COMPANY_DATA_SEED_IDS.ID_492,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20934,7 +19948,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Energy engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_493,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20954,7 +19967,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pilot, airline',
     companyId: COMPANY_DATA_SEED_IDS.ID_493,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20974,7 +19986,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, drama',
     companyId: COMPANY_DATA_SEED_IDS.ID_494,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -20994,7 +20005,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Merchandiser, retail',
     companyId: COMPANY_DATA_SEED_IDS.ID_494,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21014,7 +20024,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Museum/gallery exhibitions officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_495,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21034,7 +20043,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Animal nutritionist',
     companyId: COMPANY_DATA_SEED_IDS.ID_495,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21054,7 +20062,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Curator',
     companyId: COMPANY_DATA_SEED_IDS.ID_496,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21074,7 +20081,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Marine scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_496,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21094,7 +20100,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Graphic designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_497,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21114,7 +20119,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Producer, television/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_497,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21134,7 +20138,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, quantity',
     companyId: COMPANY_DATA_SEED_IDS.ID_498,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21154,7 +20157,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Public house manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_498,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21174,7 +20176,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical cytogeneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_499,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21194,7 +20195,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Research scientist (maths)',
     companyId: COMPANY_DATA_SEED_IDS.ID_499,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21214,7 +20214,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Immunologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_500,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21234,7 +20233,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Counselling psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_500,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21254,7 +20252,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Cytogeneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_501,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21274,7 +20271,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Equities trader',
     companyId: COMPANY_DATA_SEED_IDS.ID_501,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21294,7 +20290,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ecologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_502,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21314,7 +20309,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Media buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_502,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21334,7 +20328,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ecologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_503,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21354,7 +20347,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clothing/textile technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_503,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21374,7 +20366,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychotherapist, child',
     companyId: COMPANY_DATA_SEED_IDS.ID_504,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21394,7 +20385,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Agricultural engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_504,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21414,7 +20404,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Editorial assistant',
     companyId: COMPANY_DATA_SEED_IDS.ID_505,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21434,7 +20423,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Counselling psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_505,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21454,7 +20442,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Cabin crew',
     companyId: COMPANY_DATA_SEED_IDS.ID_506,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21474,7 +20461,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Financial controller',
     companyId: COMPANY_DATA_SEED_IDS.ID_506,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21494,7 +20480,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychotherapist, child',
     companyId: COMPANY_DATA_SEED_IDS.ID_507,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21514,7 +20499,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chartered management accountant',
     companyId: COMPANY_DATA_SEED_IDS.ID_507,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21534,7 +20518,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Acupuncturist',
     companyId: COMPANY_DATA_SEED_IDS.ID_508,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21554,7 +20537,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Housing manager/officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_508,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21574,7 +20556,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Herpetologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_509,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21594,7 +20575,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Secondary school teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_509,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21614,7 +20594,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, occupational',
     companyId: COMPANY_DATA_SEED_IDS.ID_510,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21634,7 +20613,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Quality manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_510,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21654,7 +20632,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Nutritional therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_511,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21674,7 +20651,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Management consultant',
     companyId: COMPANY_DATA_SEED_IDS.ID_511,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21694,7 +20670,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chiropodist',
     companyId: COMPANY_DATA_SEED_IDS.ID_512,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21714,7 +20689,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Presenter, broadcasting',
     companyId: COMPANY_DATA_SEED_IDS.ID_512,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21734,7 +20708,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychologist, sport and exercise',
     companyId: COMPANY_DATA_SEED_IDS.ID_513,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21754,7 +20727,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Development worker, community',
     companyId: COMPANY_DATA_SEED_IDS.ID_513,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21774,7 +20746,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'English as a foreign language teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_514,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21794,7 +20765,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, jewellery',
     companyId: COMPANY_DATA_SEED_IDS.ID_514,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21814,7 +20784,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Naval architect',
     companyId: COMPANY_DATA_SEED_IDS.ID_515,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21834,7 +20803,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Meteorologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_515,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21854,7 +20822,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Investment banker, corporate',
     companyId: COMPANY_DATA_SEED_IDS.ID_516,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21874,7 +20841,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Environmental health practitioner',
     companyId: COMPANY_DATA_SEED_IDS.ID_516,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21894,7 +20860,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Pharmacologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_517,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21914,7 +20879,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Arts administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_517,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21934,7 +20898,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Water engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_518,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21954,7 +20917,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical molecular geneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_518,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21974,7 +20936,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, automotive',
     companyId: COMPANY_DATA_SEED_IDS.ID_519,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -21994,7 +20955,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Learning disability nurse',
     companyId: COMPANY_DATA_SEED_IDS.ID_519,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22014,7 +20974,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Consulting civil engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_520,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22034,7 +20993,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Artist',
     companyId: COMPANY_DATA_SEED_IDS.ID_520,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22054,7 +21012,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Armed forces training and education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_521,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22074,7 +21031,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Gaffer',
     companyId: COMPANY_DATA_SEED_IDS.ID_521,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22094,7 +21050,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Mechanical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_522,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22114,7 +21069,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Magazine journalist',
     companyId: COMPANY_DATA_SEED_IDS.ID_522,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22134,7 +21088,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientist, research (physical sciences)',
     companyId: COMPANY_DATA_SEED_IDS.ID_523,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22154,7 +21107,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Armed forces training and education officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_523,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22174,7 +21126,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Journalist, broadcasting',
     companyId: COMPANY_DATA_SEED_IDS.ID_524,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22194,7 +21145,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Retail manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_524,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22214,7 +21164,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Landscape architect',
     companyId: COMPANY_DATA_SEED_IDS.ID_525,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22234,7 +21183,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_525,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22254,7 +21202,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Podiatrist',
     companyId: COMPANY_DATA_SEED_IDS.ID_526,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22274,7 +21221,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Media buyer',
     companyId: COMPANY_DATA_SEED_IDS.ID_526,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22294,7 +21240,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Personal assistant',
     companyId: COMPANY_DATA_SEED_IDS.ID_527,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22314,7 +21259,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Waste management officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_527,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22334,7 +21278,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Accountant, chartered certified',
     companyId: COMPANY_DATA_SEED_IDS.ID_528,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22354,7 +21297,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Nutritional therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_528,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22374,7 +21316,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Industrial/product designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_529,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22394,7 +21335,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chartered management accountant',
     companyId: COMPANY_DATA_SEED_IDS.ID_529,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22414,7 +21354,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Data scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_530,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22434,7 +21373,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Brewing technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_530,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22454,7 +21392,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Conservation officer, nature',
     companyId: COMPANY_DATA_SEED_IDS.ID_531,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22474,7 +21411,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Press sub',
     companyId: COMPANY_DATA_SEED_IDS.ID_531,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22494,7 +21430,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Telecommunications researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_532,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22514,7 +21449,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Immigration officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_532,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22534,7 +21468,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Purchasing manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_533,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22554,7 +21487,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Education officer, museum',
     companyId: COMPANY_DATA_SEED_IDS.ID_533,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22574,7 +21506,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'General practice doctor',
     companyId: COMPANY_DATA_SEED_IDS.ID_534,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22594,7 +21525,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Counsellor',
     companyId: COMPANY_DATA_SEED_IDS.ID_534,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22614,7 +21544,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Private music teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_535,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22634,7 +21563,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical biochemist',
     companyId: COMPANY_DATA_SEED_IDS.ID_535,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22654,7 +21582,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Firefighter',
     companyId: COMPANY_DATA_SEED_IDS.ID_536,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22674,7 +21601,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Administrator, education',
     companyId: COMPANY_DATA_SEED_IDS.ID_536,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22694,7 +21620,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sports coach',
     companyId: COMPANY_DATA_SEED_IDS.ID_537,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22714,7 +21639,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Product designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_537,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22734,7 +21658,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Research scientist (maths)',
     companyId: COMPANY_DATA_SEED_IDS.ID_538,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22754,7 +21677,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Clinical psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_538,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22774,7 +21696,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Writer',
     companyId: COMPANY_DATA_SEED_IDS.ID_539,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22794,7 +21715,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Archaeologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_539,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22814,7 +21734,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Film/video editor',
     companyId: COMPANY_DATA_SEED_IDS.ID_540,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22834,7 +21753,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Higher education careers adviser',
     companyId: COMPANY_DATA_SEED_IDS.ID_540,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22854,7 +21772,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Plant breeder/geneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_541,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22874,7 +21791,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Bookseller',
     companyId: COMPANY_DATA_SEED_IDS.ID_541,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22894,7 +21810,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Publishing rights manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_542,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22914,7 +21829,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chief Operating Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_542,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22934,7 +21848,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, energy',
     companyId: COMPANY_DATA_SEED_IDS.ID_543,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22954,7 +21867,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Manufacturing engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_543,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22974,7 +21886,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Garment/textile technologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_544,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -22994,7 +21905,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Data scientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_544,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23014,7 +21924,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Manufacturing systems engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_545,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23034,7 +21943,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Art therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_545,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23054,7 +21962,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Land',
     companyId: COMPANY_DATA_SEED_IDS.ID_546,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23074,7 +21981,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Product manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_546,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23094,7 +22000,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Immunologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_547,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23114,7 +22019,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Warehouse manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_547,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23134,7 +22038,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Loss adjuster, chartered',
     companyId: COMPANY_DATA_SEED_IDS.ID_548,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23154,7 +22057,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Historic buildings inspector/conservation officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_548,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23174,7 +22076,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Presenter, broadcasting',
     companyId: COMPANY_DATA_SEED_IDS.ID_549,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23194,7 +22095,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Production assistant, radio',
     companyId: COMPANY_DATA_SEED_IDS.ID_549,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23214,7 +22114,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Heritage manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_550,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23234,7 +22133,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Surveyor, insurance',
     companyId: COMPANY_DATA_SEED_IDS.ID_550,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23254,7 +22152,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Probation officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_551,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23274,7 +22171,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Environmental health practitioner',
     companyId: COMPANY_DATA_SEED_IDS.ID_551,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23294,7 +22190,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychologist, sport and exercise',
     companyId: COMPANY_DATA_SEED_IDS.ID_552,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23314,7 +22209,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, water',
     companyId: COMPANY_DATA_SEED_IDS.ID_552,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23334,7 +22228,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Water engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_553,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23354,7 +22247,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Dancer',
     companyId: COMPANY_DATA_SEED_IDS.ID_553,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23374,7 +22266,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Community development worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_554,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23394,7 +22285,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Computer games developer',
     companyId: COMPANY_DATA_SEED_IDS.ID_554,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23414,7 +22304,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Farm manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_555,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23434,7 +22323,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sales executive',
     companyId: COMPANY_DATA_SEED_IDS.ID_555,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23454,7 +22342,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Textile designer',
     companyId: COMPANY_DATA_SEED_IDS.ID_556,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23474,7 +22361,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Operational researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_556,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23494,7 +22380,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Community development worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_557,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23514,7 +22399,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, control and instrumentation',
     companyId: COMPANY_DATA_SEED_IDS.ID_557,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23534,7 +22418,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Plant breeder/geneticist',
     companyId: COMPANY_DATA_SEED_IDS.ID_558,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23554,7 +22437,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Museum/gallery conservator',
     companyId: COMPANY_DATA_SEED_IDS.ID_558,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23574,7 +22456,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Senior tax professional/tax inspector',
     companyId: COMPANY_DATA_SEED_IDS.ID_559,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23594,7 +22475,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Child psychotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_559,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23614,7 +22494,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Quantity surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_560,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23634,7 +22513,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Civil engineer, consulting',
     companyId: COMPANY_DATA_SEED_IDS.ID_560,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23654,7 +22532,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Forest/woodland manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_561,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23674,7 +22551,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Waste management officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_561,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23694,7 +22570,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, music',
     companyId: COMPANY_DATA_SEED_IDS.ID_562,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23714,7 +22589,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Community arts worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_562,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23734,7 +22608,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Land/geomatics surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_563,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23754,7 +22627,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Translator',
     companyId: COMPANY_DATA_SEED_IDS.ID_563,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23774,7 +22646,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapeutic radiographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_564,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23794,7 +22665,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Architect',
     companyId: COMPANY_DATA_SEED_IDS.ID_564,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23814,7 +22684,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Social researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_565,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23834,7 +22703,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Advice worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_565,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23854,7 +22722,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Press sub',
     companyId: COMPANY_DATA_SEED_IDS.ID_566,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23874,7 +22741,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Operational researcher',
     companyId: COMPANY_DATA_SEED_IDS.ID_566,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23894,7 +22760,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Research officer, government',
     companyId: COMPANY_DATA_SEED_IDS.ID_567,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23914,7 +22779,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chief Marketing Officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_567,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23934,7 +22798,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, building services',
     companyId: COMPANY_DATA_SEED_IDS.ID_568,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23954,7 +22817,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, maintenance',
     companyId: COMPANY_DATA_SEED_IDS.ID_568,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23974,7 +22836,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Runner, broadcasting/film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_569,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -23994,7 +22855,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Patent attorney',
     companyId: COMPANY_DATA_SEED_IDS.ID_569,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24014,7 +22874,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Cartographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_570,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24034,7 +22893,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Patent attorney',
     companyId: COMPANY_DATA_SEED_IDS.ID_570,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24054,7 +22912,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Nurse, adult',
     companyId: COMPANY_DATA_SEED_IDS.ID_571,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24074,7 +22931,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, furniture',
     companyId: COMPANY_DATA_SEED_IDS.ID_571,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24094,7 +22950,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Editor, magazine features',
     companyId: COMPANY_DATA_SEED_IDS.ID_572,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24114,7 +22969,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Scientific laboratory technician',
     companyId: COMPANY_DATA_SEED_IDS.ID_572,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24134,7 +22988,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Careers information officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_573,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24154,7 +23007,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Insurance broker',
     companyId: COMPANY_DATA_SEED_IDS.ID_573,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24174,7 +23026,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, occupational',
     companyId: COMPANY_DATA_SEED_IDS.ID_574,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24194,7 +23045,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Journalist, magazine',
     companyId: COMPANY_DATA_SEED_IDS.ID_574,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24214,7 +23064,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Database administrator',
     companyId: COMPANY_DATA_SEED_IDS.ID_575,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24234,7 +23083,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Financial planner',
     companyId: COMPANY_DATA_SEED_IDS.ID_575,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24254,7 +23102,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Quality manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_576,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24274,7 +23121,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Estate manager/land agent',
     companyId: COMPANY_DATA_SEED_IDS.ID_576,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24294,7 +23140,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Materials engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_577,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24314,7 +23159,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Dietitian',
     companyId: COMPANY_DATA_SEED_IDS.ID_577,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24334,7 +23178,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Copy',
     companyId: COMPANY_DATA_SEED_IDS.ID_578,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24354,7 +23197,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Personal assistant',
     companyId: COMPANY_DATA_SEED_IDS.ID_578,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24374,7 +23216,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Multimedia specialist',
     companyId: COMPANY_DATA_SEED_IDS.ID_579,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24394,7 +23235,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chartered legal executive (England and Wales)',
     companyId: COMPANY_DATA_SEED_IDS.ID_579,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24414,7 +23254,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Radiographer, diagnostic',
     companyId: COMPANY_DATA_SEED_IDS.ID_580,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24434,7 +23273,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Lecturer, higher education',
     companyId: COMPANY_DATA_SEED_IDS.ID_580,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24454,7 +23292,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Building services engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_581,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24474,7 +23311,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Insurance risk surveyor',
     companyId: COMPANY_DATA_SEED_IDS.ID_581,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24494,7 +23330,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Research officer, trade union',
     companyId: COMPANY_DATA_SEED_IDS.ID_582,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24514,7 +23349,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapeutic radiographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_582,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24534,7 +23368,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Production engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_583,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24554,7 +23387,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Charity fundraiser',
     companyId: COMPANY_DATA_SEED_IDS.ID_583,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24574,7 +23406,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Educational psychologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_584,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24594,7 +23425,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Equality and diversity officer',
     companyId: COMPANY_DATA_SEED_IDS.ID_584,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WEBHOOK',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24614,7 +23444,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Production engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_585,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24634,7 +23463,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Fitness centre manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_585,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24654,7 +23482,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Oceanographer',
     companyId: COMPANY_DATA_SEED_IDS.ID_586,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24674,7 +23501,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Sports therapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_586,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'SYSTEM',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24694,7 +23520,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Manufacturing engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_587,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24714,7 +23539,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Animal nutritionist',
     companyId: COMPANY_DATA_SEED_IDS.ID_587,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'WORKFLOW',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24734,7 +23558,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'TEFL teacher',
     companyId: COMPANY_DATA_SEED_IDS.ID_588,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24754,7 +23577,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Logistics and distribution manager',
     companyId: COMPANY_DATA_SEED_IDS.ID_588,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24774,7 +23596,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Editor, commissioning',
     companyId: COMPANY_DATA_SEED_IDS.ID_589,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24794,7 +23615,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chiropodist',
     companyId: COMPANY_DATA_SEED_IDS.ID_589,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24814,7 +23634,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Therapist, drama',
     companyId: COMPANY_DATA_SEED_IDS.ID_590,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'CALENDAR',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24834,7 +23653,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Mudlogger',
     companyId: COMPANY_DATA_SEED_IDS.ID_590,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24854,7 +23672,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Barista',
     companyId: COMPANY_DATA_SEED_IDS.ID_591,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24874,7 +23691,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Systems developer',
     companyId: COMPANY_DATA_SEED_IDS.ID_591,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24894,7 +23710,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Psychologist, sport and exercise',
     companyId: COMPANY_DATA_SEED_IDS.ID_592,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24914,7 +23729,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Senior tax professional/tax inspector',
     companyId: COMPANY_DATA_SEED_IDS.ID_592,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24934,7 +23748,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Engineer, water',
     companyId: COMPANY_DATA_SEED_IDS.ID_593,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24954,7 +23767,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Journalist, magazine',
     companyId: COMPANY_DATA_SEED_IDS.ID_593,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24974,7 +23786,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Herpetologist',
     companyId: COMPANY_DATA_SEED_IDS.ID_594,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -24994,7 +23805,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Youth worker',
     companyId: COMPANY_DATA_SEED_IDS.ID_594,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25014,7 +23824,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Teacher, adult education',
     companyId: COMPANY_DATA_SEED_IDS.ID_595,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25034,7 +23843,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ranger/warden',
     companyId: COMPANY_DATA_SEED_IDS.ID_595,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25054,7 +23862,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Designer, industrial/product',
     companyId: COMPANY_DATA_SEED_IDS.ID_596,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25074,7 +23881,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Editor, film/video',
     companyId: COMPANY_DATA_SEED_IDS.ID_596,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'MANUAL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25094,7 +23900,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Horticulturist, amenity',
     companyId: COMPANY_DATA_SEED_IDS.ID_597,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25114,7 +23919,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Child psychotherapist',
     companyId: COMPANY_DATA_SEED_IDS.ID_597,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25134,7 +23938,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Technical author',
     companyId: COMPANY_DATA_SEED_IDS.ID_598,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25154,7 +23957,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Geoscientist',
     companyId: COMPANY_DATA_SEED_IDS.ID_598,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'API',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25174,7 +23976,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Ship broker',
     companyId: COMPANY_DATA_SEED_IDS.ID_599,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'IMPORT',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25194,7 +23995,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Best boy',
     companyId: COMPANY_DATA_SEED_IDS.ID_599,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25214,7 +24014,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Chemical engineer',
     companyId: COMPANY_DATA_SEED_IDS.ID_599,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -25234,7 +24033,6 @@ export const PERSON_DATA_SEEDS: PersonDataSeed[] = [
     jobTitle: 'Radiographer, diagnostic',
     companyId: COMPANY_DATA_SEED_IDS.ID_599,
     employmentStatusId: null,
-    organizationLevelId: null,
     
     createdBySource: 'EMAIL',
     createdByWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,

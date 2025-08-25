@@ -1,5 +1,6 @@
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { MKT_DEPARTMENT_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-department-data-seeds.constants';
+import { MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS } from 'src/mkt-core/dev-seeder/constants/mkt-organization-level-data-seeds.constants';
 
 type WorkspaceMemberDataSeed = {
   id: string;
@@ -10,6 +11,7 @@ type WorkspaceMemberDataSeed = {
   userEmail: string;
   userId: string;
   departmentId: string | null;
+  organizationLevelId: string | null;
 };
 
 export const WORKSPACE_MEMBER_DATA_SEED_COLUMNS: (keyof WorkspaceMemberDataSeed)[] =
@@ -22,6 +24,7 @@ export const WORKSPACE_MEMBER_DATA_SEED_COLUMNS: (keyof WorkspaceMemberDataSeed)
     'userEmail',
     'userId',
     'departmentId',
+    'organizationLevelId',
   ];
 
 export const WORKSPACE_MEMBER_DATA_SEED_IDS = {
@@ -41,6 +44,7 @@ export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
     userEmail: 'tim@apple.dev',
     userId: USER_DATA_SEED_IDS.TIM,
     departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.TECH,
+    organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.MANAGER,
   },
   {
     id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -51,6 +55,7 @@ export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
     userEmail: 'jony.ive@apple.dev',
     userId: USER_DATA_SEED_IDS.JONY,
     departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.SALES,
+    organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.DIRECTOR,
   },
   {
     id: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
@@ -61,6 +66,7 @@ export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
     userEmail: 'phil.schiler@apple.dev',
     userId: USER_DATA_SEED_IDS.PHIL,
     departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.HR,
+    organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.TEAM_LEAD,
   },
   {
     id: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
@@ -71,5 +77,6 @@ export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
     userEmail: 'jane.austen@apple.dev',
     userId: USER_DATA_SEED_IDS.JANE,
     departmentId: MKT_DEPARTMENT_DATA_SEEDS_IDS.SUPPORT,
+    organizationLevelId: MKT_ORGANIZATION_LEVEL_DATA_SEEDS_IDS.SENIOR_STAFF,
   },
 ];

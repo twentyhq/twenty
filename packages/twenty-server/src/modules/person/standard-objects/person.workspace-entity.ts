@@ -41,7 +41,6 @@ import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-obj
 import { TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { MktEmploymentStatusWorkspaceEntity } from 'src/mkt-core/mkt-employment-status/mkt-employment-status.workspace-entity';
-import { MktOrganizationLevelWorkspaceEntity } from 'src/mkt-core/mkt-organization-level/mkt-organization-level.workspace-entity';
 import { MktKpiWorkspaceEntity } from 'src/mkt-core/mkt-kpi/mkt-kpi.workspace-entity';
 import { MktKpiTemplateWorkspaceEntity } from 'src/mkt-core/mkt-kpi-template/mkt-kpi-template.workspace-entity';
 
@@ -310,22 +309,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
-
-  @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.organizationLevel,
-    type: RelationType.MANY_TO_ONE,
-    label: msg`Organization Level`,
-    description: msg`Person's organization level`,
-    icon: 'IconHierarchy',
-    inverseSideTarget: () => MktOrganizationLevelWorkspaceEntity,
-    inverseSideFieldKey: 'people',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @WorkspaceIsNullable()
-  organizationLevel: Relation<MktOrganizationLevelWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('organizationLevel')
-  organizationLevelId: string | null;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.employmentStatus,

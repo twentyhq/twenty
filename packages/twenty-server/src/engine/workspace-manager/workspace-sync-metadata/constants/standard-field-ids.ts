@@ -364,7 +364,6 @@ export const PERSON_STANDARD_FIELD_IDS = {
   statusStartDate: '20202020-1c0d-4e5f-7081-901234567890',
   statusExpectedEndDate: '20202020-2d1e-4f60-8192-012345678901',
   staffStatusHistories: '20202020-3e2f-5071-9203-123456789012',
-  organizationLevel: '20202020-5040-7293-b405-345678901234',
   createdKpis: '20202020-7e8f-9a0b-1c2d-3e4f5a6b7c8d',
   createdKpiTemplates: '20202020-8f9a-0b1c-2d3e-4f5a6b7c8d9e',
 };
@@ -545,6 +544,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   calendarStartDay: '20202020-92d0-1d7f-a126-25ededa6b142',
   // custom field standard IDs
   department: '20202020-4f30-6182-a304-234567890123',
+  organizationLevel: '20202020-5040-7293-b405-345678901234',
 };
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {

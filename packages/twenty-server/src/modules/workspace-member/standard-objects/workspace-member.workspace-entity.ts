@@ -39,6 +39,7 @@ import { WorkspaceMemberMktEntity } from 'src/mkt-core/mkt-entities-extends/work
 import { MktDepartmentWorkspaceEntity } from 'src/mkt-core/mkt-department/mkt-department.workspace-entity';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { MktStaffStatusHistoryWorkspaceEntity } from 'src/mkt-core/mkt-staff-status-history/mkt-staff-status-history.workspace-entity';
+import { MktOrganizationLevelWorkspaceEntity } from 'src/mkt-core/mkt-organization-level/mkt-organization-level.workspace-entity';
 
 export enum WorkspaceMemberDateFormatEnum {
   SYSTEM = 'SYSTEM',
@@ -405,4 +406,19 @@ export class WorkspaceMemberWorkspaceEntity extends WorkspaceMemberMktEntity {
   })
   @WorkspaceIsSystem()
   staffStatusHistories: Relation<MktStaffStatusHistoryWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.organizationLevel,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Organization Level`,
+    description: msg`Person's organization level`,
+    icon: 'IconHierarchy',
+    inverseSideTarget: () => MktOrganizationLevelWorkspaceEntity,
+    inverseSideFieldKey: 'people',
+  })
+  @WorkspaceIsNullable()
+  organizationLevel: Relation<MktOrganizationLevelWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('organizationLevel')
+  organizationLevelId: string | null;
 }
