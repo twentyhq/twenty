@@ -5,6 +5,7 @@ import {
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -12,7 +13,7 @@ import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-me
 export const createOneObjectMetadata = async ({
   input,
   gqlFields,
-  expectToFail = false,
+  expectToFail,
 }: PerformMetadataQueryParams<CreateOneObjectFactoryInput>): CommonResponseBody<{
   createOneObject: ObjectMetadataEntity; // not accurate
 }> => {
@@ -23,10 +24,17 @@ export const createOneObjectMetadata = async ({
 
   const response = await makeMetadataAPIRequest(graphqlOperation);
 
-  if (expectToFail) {
+  if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
       errorMessage: 'Object Metadata creation should have failed but did not',
+    });
+  }
+
+  if (expectToFail === false) {
+    warnIfErrorButNotExpectedToFail({
+      response,
+      errorMessage: 'Object Metadata creation has failed but should not',
     });
   }
 

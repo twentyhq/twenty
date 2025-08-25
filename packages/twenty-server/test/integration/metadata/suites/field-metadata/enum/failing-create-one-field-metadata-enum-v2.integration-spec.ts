@@ -1,18 +1,24 @@
+import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { CREATE_ENUM_FIELD_METADATA_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/create-enum-field-metadata-test-cases';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import {
   LISTING_NAME_PLURAL,
   LISTING_NAME_SINGULAR,
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { isDefined } from 'twenty-shared/utils';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+import { eachTestingContextFilter } from 'twenty-shared/testing';
+import { isDefined } from 'twenty-shared/utils';
+import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
 describe.each(fieldMetadataEnumTypes)(
-  'Create field metadata %s tests suite',
+  'Create field metadata %s tests suite v2',
   (testedFieldMetadataType) => {
     let createdObjectMetadataId: string;
     const testCases =
@@ -21,12 +27,18 @@ describe.each(fieldMetadataEnumTypes)(
     if (!isDefined(testCases)) {
       return;
     }
-    const { failing: failingTestCases, successful: successfulTestCases } =
-      testCases;
+    const { failing: failingTestCases } = testCases;
 
-    beforeEach(async () => {
-      const { data } = await createOneObjectMetadata({
-        expectToFail: false,
+    beforeAll(async () => {
+      const enablePermissionsQuery = updateFeatureFlagFactory(
+        SEED_APPLE_WORKSPACE_ID,
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        true,
+      );
+
+      await makeGraphqlAPIRequest(enablePermissionsQuery);
+
+      const { data } = await forceCreateOneObjectMetadata({
         input: {
           labelSingular: LISTING_NAME_SINGULAR,
           labelPlural: LISTING_NAME_PLURAL,
@@ -40,63 +52,28 @@ describe.each(fieldMetadataEnumTypes)(
       createdObjectMetadataId = data.createOneObject.id;
     });
 
-    afterEach(async () => {
+    afterAll(async () => {
       await updateOneObjectMetadata({
+        expectToFail: false,
         input: {
           idToUpdate: createdObjectMetadataId,
-          updatePayload: {
-            isActive: false,
-          },
+          updatePayload: { isActive: false },
         },
-        expectToFail: false,
       });
       await deleteOneObjectMetadata({
         expectToFail: false,
         input: { idToDelete: createdObjectMetadataId },
       });
+      const enablePermissionsQuery = updateFeatureFlagFactory(
+        SEED_APPLE_WORKSPACE_ID,
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        false,
+      );
+
+      await makeGraphqlAPIRequest(enablePermissionsQuery);
     });
 
-    test.each(successfulTestCases)(
-      'Create $title',
-      async ({ context: { input, expectedOptions } }) => {
-        const { data, errors } = await createOneFieldMetadata<
-          typeof testedFieldMetadataType
-        >({
-          input: {
-            objectMetadataId: createdObjectMetadataId,
-            type: testedFieldMetadataType,
-            name: 'testField',
-            label: 'Test Field',
-            isLabelSyncedWithName: false,
-            ...input,
-          },
-          gqlFields: `
-        id
-        options
-        defaultValue
-        type
-        `,
-        });
-
-        expect(data).not.toBeNull();
-        expect(data.createOneField).toBeDefined();
-        expect(data.createOneField.type).toEqual(testedFieldMetadataType);
-
-        const createdOptions = data.createOneField.options;
-        const optionsToCompare = expectedOptions ?? input.options ?? [];
-
-        expect(errors).toBeUndefined();
-        expect(createdOptions?.length).toBe(optionsToCompare.length);
-        createdOptions?.forEach((option) => expect(option.id).toBeDefined());
-        expect(createdOptions).toMatchObject(optionsToCompare);
-
-        if (isDefined(input.defaultValue)) {
-          expect(data.createOneField.defaultValue).toEqual(input.defaultValue);
-        }
-      },
-    );
-
-    test.each(failingTestCases)(
+    test.each(eachTestingContextFilter(failingTestCases))(
       'Create $title',
       async ({ context: { input } }) => {
         const { data, errors } = await createOneFieldMetadata({
@@ -117,7 +94,9 @@ describe.each(fieldMetadataEnumTypes)(
 
         expect(data).toBeNull();
         expect(errors).toBeDefined();
-        expect(errors).toMatchSnapshot();
+        expect(errors).toMatchSnapshot(
+          extractRecordIdsAndDatesAsExpectAny(errors),
+        );
       },
     );
   },

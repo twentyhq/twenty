@@ -4,12 +4,13 @@ import {
   deleteOneObjectMetadataQueryFactory,
 } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata-query-factory.util';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
 export const deleteOneObjectMetadata = async ({
   input,
   gqlFields,
-  expectToFail = false,
+  expectToFail,
 }: PerformMetadataQueryParams<DeleteOneObjectFactoryInput>) => {
   const graphqlOperation = deleteOneObjectMetadataQueryFactory({
     input,
@@ -18,10 +19,17 @@ export const deleteOneObjectMetadata = async ({
 
   const response = await makeGraphqlAPIRequest(graphqlOperation);
 
-  if (expectToFail) {
+  if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
       errorMessage: 'Object Metadata deletion should have failed but did not',
+    });
+  }
+
+  if (expectToFail === false) {
+    warnIfErrorButNotExpectedToFail({
+      response,
+      errorMessage: 'Object Metadata deletion has failed but should not',
     });
   }
 

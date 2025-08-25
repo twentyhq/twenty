@@ -5,6 +5,7 @@ import {
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
 import { type PerformMetadataQueryParams } from 'test/integration/metadata/types/perform-metadata-query.type';
+import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 import { type FieldMetadataType } from 'twenty-shared/types';
 
@@ -13,7 +14,7 @@ import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadat
 export const createOneFieldMetadata = async <T extends FieldMetadataType>({
   input,
   gqlFields,
-  expectToFail = false,
+  expectToFail,
 }: PerformMetadataQueryParams<CreateOneFieldFactoryInput>): CommonResponseBody<{
   createOneField: FieldMetadataDTO<T>;
 }> => {
@@ -24,10 +25,17 @@ export const createOneFieldMetadata = async <T extends FieldMetadataType>({
 
   const response = await makeMetadataAPIRequest(graphqlOperation);
 
-  if (expectToFail) {
+  if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       response,
       errorMessage: 'Field Metadata creation should have failed but did not',
+    });
+  }
+
+  if (expectToFail === false) {
+    warnIfErrorButNotExpectedToFail({
+      errorMessage: 'Field metadata creation should not have failed',
+      response,
     });
   }
 
