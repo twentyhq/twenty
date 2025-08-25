@@ -20,7 +20,7 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { AppPath } from '@/types/AppPath';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
 import { coreViewsState } from '@/views/states/coreViewState';
-import { CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
 import { useEffect } from 'react';
@@ -202,7 +202,8 @@ export const UserProviderEffect = () => {
     setDateTimeFormat,
     setCurrentWorkspaceMembersWithDeleted,
     updateLocaleCatalog,
+    setCoreViews,
   ]);
 
-  return <></>;
+  return null;
 };
