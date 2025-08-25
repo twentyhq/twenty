@@ -4,7 +4,7 @@ import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFoc
 import { useMorphRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useMorphRelationFromManyFieldDisplay';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { useContext } from 'react';
+import { Fragment, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const MorphRelationOneToManyFieldDisplay = () => {
@@ -21,10 +21,9 @@ export const MorphRelationOneToManyFieldDisplay = () => {
     <ExpandableList isChipCountDisplayed={isFocused}>
       {morphValuesWithObjectNameSingular
         .filter(isDefined)
-
         .map((morphValueWithObjectNameSingular) => {
           return (
-            <>
+            <Fragment key={morphValueWithObjectNameSingular.objectNameSingular}>
               {morphValueWithObjectNameSingular.value.map((record) => {
                 return (
                   <RecordChip
@@ -38,7 +37,7 @@ export const MorphRelationOneToManyFieldDisplay = () => {
                   />
                 );
               })}
-            </>
+            </Fragment>
           );
         })}
     </ExpandableList>

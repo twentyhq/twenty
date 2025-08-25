@@ -34,6 +34,7 @@ export const SettingsDataModelFieldMorphRelationFormCard = ({
 
   const relationObjectMetadataIds: string[] = watch(
     'morphRelationObjectMetadataIds',
+    [],
   );
 
   const relationObjectMetadataItems = relationObjectMetadataIds
@@ -44,7 +45,10 @@ export const SettingsDataModelFieldMorphRelationFormCard = ({
 
   const fallbackRelationObjectMetadataItem = objectMetadataItems[0];
 
-  const relationType: RelationType = watch('relationType');
+  const relationType: RelationType = watch(
+    'relationType',
+    RelationType.ONE_TO_MANY,
+  );
 
   const relationTypeConfig = RELATION_TYPES[relationType];
 

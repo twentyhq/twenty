@@ -3,17 +3,16 @@ import styled from '@emotion/styled';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
-import { isNonEmptyString } from '@sniptt/guards';
 import { computeMorphRelationFieldName } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 type SettingsDataModelRelationFieldPreviewProps = {
   fieldMetadataItem: Pick<
@@ -71,9 +70,8 @@ export const SettingsDataModelRelationFieldPreview = ({
     relationObjectNameSingular: relationTargetObjectNameSingular,
   });
 
-  const fieldName = isNonEmptyString(fieldMetadataItem.label)
-    ? computeMetadataNameFromLabel(fieldMetadataItem.label)
-    : v4();
+  const fieldName = v4();
+
   const recordId = `${relationTargetObjectNameSingular}-${fieldName}-preview`;
 
   const metadata = {
@@ -83,7 +81,32 @@ export const SettingsDataModelRelationFieldPreview = ({
     options: [],
     settings: fieldMetadataItem.settings,
     relationType: fieldMetadataItem.settings?.relationType,
-    morphRelations: [],
+    morphRelations:
+      fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION
+        ? [
+            {
+              type: fieldMetadataItem.settings?.relationType,
+              sourceFieldMetadata: {
+                id: v4(),
+                name: fieldName,
+              },
+              targetFieldMetadata: {
+                id: v4(),
+                name: 'does-not-matter',
+              },
+              sourceObjectMetadata: {
+                id: v4(),
+                namePlural: 'does-not-matter',
+                nameSingular: 'does-not-matter',
+              },
+              targetObjectMetadata: {
+                id: v4(),
+                namePlural: relationTargetObjectMetadataItem.namePlural,
+                nameSingular: relationTargetObjectMetadataItem.nameSingular,
+              },
+            } satisfies FieldMetadataItemRelation,
+          ]
+        : [],
   };
 
   return (
