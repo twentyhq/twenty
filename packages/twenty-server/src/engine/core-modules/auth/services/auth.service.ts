@@ -685,6 +685,9 @@ export class AuthService {
       throw new AuthException(
         'User does not have access to this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: t`User does not have access to this workspace`,
+        },
       );
     }
   }
