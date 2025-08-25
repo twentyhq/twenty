@@ -118,7 +118,7 @@ export class ImapFindSentFolderService {
     // Based on imapsync's regextrans2 examples (originally "Sent|Sent Messages|Gesendet")
     // Extended with additional common localizations for broader provider/language support
     const sentFolderPattern =
-      /^(.*\/)?(sent|sent[\s_-]?(items|mail|messages|elements)?|envoy[éê]s?|[ée]l[ée]ments[\s_-]?envoy[éê]s|gesendet|gesendete[\s_-]?elemente|enviados?|elementos[\s_-]?enviados|itens[\s_-]?enviados|posta[\s_-]?inviata|inviati|보낸편지함|\[gmail\]\/sent[\s_-]?mail)$/i;
+      /^(.*\/)?((sent|gesendet|enviados?|inviati|보낸편지함|\[gmail\]\/sent[\s_-]?mail)|\w+[\s_-]?envoy[éê]s?)$/i;
 
     const regexCandidateFolders = [];
 
