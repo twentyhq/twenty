@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import { BaseEdge, type EdgeProps } from '@xyflow/react';
 import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { useEdgeSelected } from '@/workflow/workflow-diagram/hooks/useEdgeSelected';
+import { useEdgeState } from '@/workflow/workflow-diagram/hooks/useEdgeState';
 
 type WorkflowDiagramBaseEdgeProps = Pick<
   EdgeProps<WorkflowDiagramEdge>,
@@ -19,11 +19,17 @@ export const WorkflowDiagramBaseEdge = ({
 }: WorkflowDiagramBaseEdgeProps) => {
   const theme = useTheme();
 
-  const { isEdgeSelected } = useEdgeSelected();
+  const { isEdgeSelected, isEdgeHovered } = useEdgeState();
 
   const selected = isEdgeSelected({ source, target });
 
-  const stroke = selected ? theme.color.blue : theme.border.color.strong;
+  const isHovered = isEdgeHovered({ source, target });
+
+  const stroke = selected
+    ? theme.color.blue
+    : isHovered
+      ? theme.font.color.light
+      : theme.border.color.strong;
 
   return (
     <BaseEdge

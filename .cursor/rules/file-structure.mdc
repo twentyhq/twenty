@@ -1,7 +1,7 @@
 ---
-description: 
-globs: 
-alwaysApply: false
+description: File structure guidelines for Twenty CRM
+globs: []
+alwaysApply: true
 ---
 # File Structure Guidelines
 
