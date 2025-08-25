@@ -12,13 +12,3 @@ export type FlatView = Pick<
 > & {
   viewFields: FlatViewField[];
 };
-
-export type CreateViewAction = {
-  type: 'create_view';
-  view: FlatView;
-};
-
-export type WorkspaceMigrationViewActionV2 = CreateViewAction;
-
-export type WorkspaceMigrationViewActionTypeV2 =
-  WorkspaceMigrationViewActionV2['type'];

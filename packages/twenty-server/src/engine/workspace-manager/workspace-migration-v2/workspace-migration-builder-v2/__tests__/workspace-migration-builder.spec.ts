@@ -54,6 +54,7 @@ const expectedActionsTypeCounterChecker = ({
     deleteObject: 0,
     updateField: 0,
     updateObject: 0,
+    createView: 0,
   };
   const actualActionsTypeCounter = workspaceMigration.actions.reduce(
     (acc, action) => {

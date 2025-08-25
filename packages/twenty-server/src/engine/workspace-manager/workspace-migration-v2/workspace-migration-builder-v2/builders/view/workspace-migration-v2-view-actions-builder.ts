@@ -4,7 +4,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import {
   type CreateViewAction,
   type WorkspaceMigrationViewActionV2,
-} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-action-v2';
+} from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-action-v2.type';
 
 type BuildWorkspaceMigrationViewActionsArgs = {
   createdFlatObjectMetadatas: FlatObjectMetadata[];
@@ -18,7 +18,7 @@ const getCreateViewAction = (
     view: {
       objectMetadataId: flatObjectMetadata.id,
       type: ViewType.TABLE,
-      name: `All ${flatObjectMetadata.labelPlural}`,
+      name: `All {objectLabelPlural}`,
       key: ViewKey.INDEX,
       isCustom: false,
       icon: 'IconList',

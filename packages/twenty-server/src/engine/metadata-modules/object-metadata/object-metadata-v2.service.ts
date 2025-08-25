@@ -292,7 +292,7 @@ export class ObjectMetadataServiceV2 {
       );
     }
 
-    const view = await this.viewRepository.findOne({
+    const [view] = await this.viewRepository.find({
       where: {
         objectMetadataId: createdFlatObjectMetadata.id,
         key: ViewKey.INDEX,
