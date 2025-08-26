@@ -97,10 +97,11 @@ export class AgentExecutionService {
             agent.workspaceId,
           );
 
-        const handoffTools = this.agentHandoffToolService.generateHandoffTools(
-          agent.id,
-          agent.workspaceId,
-        );
+        const handoffTools =
+          await this.agentHandoffToolService.generateHandoffTools(
+            agent.id,
+            agent.workspaceId,
+          );
 
         tools = { ...baseTools, ...handoffTools };
       }
