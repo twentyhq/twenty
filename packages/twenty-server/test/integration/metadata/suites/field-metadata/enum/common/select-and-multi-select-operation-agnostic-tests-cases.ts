@@ -1,20 +1,9 @@
 import { type FieldMetadataEnumSuccessfulAndFailingTestCases } from 'test/integration/metadata/suites/field-metadata/enum/types/fieldMetadataEnumSuccessfulAndFailingTestCases';
 import { type UpdateCreateFieldMetadataSelectTestCase } from 'test/integration/metadata/suites/field-metadata/enum/types/update-create-field-metadata-enum-test-case';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-
-const basicFailingStringEdgeCaseInputs: {
-  label: string;
-  input: string | undefined | number | null;
-}[] = [
-  { input: '          ', label: 'only white spaces' },
-  { input: '', label: 'empty string' },
-  { input: null, label: 'null' },
-  { input: 22222, label: 'not a string' },
-  { input: 'a'.repeat(64), label: 'too long' },
-];
+import { BASIC_FAILING_STRING_EDGE_CASE_INPUTS } from 'test/constants/basic-failing-string-edge-case-inputs.constant';
 
 const stringFields: (keyof FieldMetadataComplexOption)[] = [
   'id',
@@ -23,7 +12,7 @@ const stringFields: (keyof FieldMetadataComplexOption)[] = [
 ];
 const fuzzedOptionsStringFieldFailingTestCases: UpdateCreateFieldMetadataSelectTestCase[] =
   stringFields.flatMap((field) => {
-    return basicFailingStringEdgeCaseInputs.map<UpdateCreateFieldMetadataSelectTestCase>(
+    return BASIC_FAILING_STRING_EDGE_CASE_INPUTS.map<UpdateCreateFieldMetadataSelectTestCase>(
       ({ input, label }) => ({
         title: `should fail with ${label} ${field}`,
         context: {
@@ -43,30 +32,9 @@ const fuzzedOptionsStringFieldFailingTestCases: UpdateCreateFieldMetadataSelectT
     );
   });
 
-const fuzzedDefaultValueFailingTestCases: UpdateCreateFieldMetadataSelectTestCase[] =
-  basicFailingStringEdgeCaseInputs
-    .filter((el) => isDefined(el.input))
-    .map(({ input, label }) => ({
-      title: `should fail with ${label} defaultValue`,
-      context: {
-        input: {
-          defaultValue: input,
-          options: [
-            {
-              label: 'Option 1',
-              value: 'OPTION_1',
-              color: 'green',
-              position: 1,
-            },
-          ],
-        },
-      },
-    }));
-
 export const SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_TEST_CASES: FieldMetadataEnumSuccessfulAndFailingTestCases =
   {
     failing: [
-      ...fuzzedDefaultValueFailingTestCases,
       ...fuzzedOptionsStringFieldFailingTestCases,
       {
         title: 'should fail with invalid option id',
