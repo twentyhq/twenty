@@ -18,8 +18,9 @@ import { useState } from 'react';
 import { capitalize } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
-import { useIsTarget } from '@/workflow/workflow-diagram/workflow-edges/hooks/useIsTarget';
+import { useIsConnectable } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useIsConnectable';
 import { css } from '@emotion/react';
+import { WorkflowDiagramHandleTopEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTopEditable';
 
 const StyledAddStepButtonContainer = styled.div<{
   shouldDisplay: boolean;
@@ -36,7 +37,7 @@ const StyledAddStepButtonContainer = styled.div<{
 `;
 
 const StyledNodeContainer = styled(WorkflowNodeContainer)<{
-  isConnectionInProgress?: boolean;
+  isConnectable?: boolean;
 }>`
   border-color: ${({ theme }) => theme.border.color.strong};
   background: ${({ theme }) => theme.background.secondary};
@@ -48,8 +49,8 @@ const StyledNodeContainer = styled(WorkflowNodeContainer)<{
         ${({ theme }) => theme.background.transparent.lighter} 100%
       ),
       ${({ theme }) => theme.background.secondary};
-    ${({ theme, isConnectionInProgress }) =>
-      isConnectionInProgress &&
+    ${({ theme, isConnectable }) =>
+      isConnectable &&
       css`
         border-color: ${theme.color.blue} !important;
       `};
@@ -109,7 +110,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
 
   const { isNodeCreationStarted } = useStartNodeCreation();
 
-  const { isTarget, isConnectionInProgress } = useIsTarget();
+  const { isConnectable } = useIsConnectable();
 
   const { getNodeHandlesSelectedState, getNodeHandlesHoveredState } =
     useEdgeState();
@@ -123,24 +124,18 @@ export const WorkflowDiagramStepNodeEditableContent = ({
 
   const handlesHoveredState = getNodeHandlesHoveredState(id);
 
+  const isNodeConnectable = isConnectable(id) && data.nodeType !== 'trigger';
+
   return (
     <>
-      {data.nodeType !== 'trigger' && isTarget(id) && (
-        <WorkflowDiagramHandleEditable
-          type="target"
-          position={Position.Top}
-          selected={handlesSelectedState.targetHandle}
-          hovered={handlesHoveredState.targetHandle}
-        />
-      )}
-
       <StyledNodeContainer
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
         onClick={onClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        isConnectionInProgress={isConnectionInProgress()}
+        isConnectable={isNodeConnectable}
       >
+        <WorkflowDiagramHandleTopEditable isConnectable={isNodeConnectable} />
         <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />
         </WorkflowNodeIconContainer>
@@ -185,7 +180,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
           handlesSelectedState.sourceHandle || selected || isSourceConnection
         }
         hovered={handlesHoveredState.sourceHandle || isHovered}
-        isConnectionInProgress={isConnectionInProgress()}
+        isConnectable={isNodeConnectable}
       />
     </>
   );

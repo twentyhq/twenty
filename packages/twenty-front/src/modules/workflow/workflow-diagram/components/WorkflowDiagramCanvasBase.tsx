@@ -498,6 +498,7 @@ export const WorkflowDiagramCanvasBase = ({
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
         preventScrolling={false}
         connectionLineComponent={WorkflowDiagramConnection}
+        connectionRadius={0}
       >
         <Background color={theme.border.color.medium} size={2} />
 

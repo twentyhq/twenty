@@ -9,7 +9,7 @@ import { FeatureFlagKey } from '~/generated/graphql';
 type WorkflowDiagramHandleEditableProps = HandleProps & {
   selected: boolean;
   hovered?: boolean;
-  isConnectionInProgress?: boolean;
+  isConnectable?: boolean;
 };
 
 const HANDLE_SCALE_ON_HOVER = 1.5;
@@ -19,13 +19,13 @@ const StyledHandle = styled(Handle, {
     prop !== 'disableHoverEffect' &&
     prop !== 'selected' &&
     prop !== 'hovered' &&
-    prop !== 'isConnectionInProgress',
+    prop !== 'isConnectable',
 })<{
   type: HandleProps['type'];
   disableHoverEffect: boolean;
   selected: boolean;
   hovered?: boolean;
-  isConnectionInProgress?: boolean;
+  isConnectable?: boolean;
 }>`
   &.react-flow__handle {
     opacity: ${({ type }) => (type === 'target' ? 0 : 1)};
@@ -35,10 +35,10 @@ const StyledHandle = styled(Handle, {
       theme,
       selected,
       hovered,
-      isConnectionInProgress,
+      isConnectable,
       disableHoverEffect,
     }) =>
-      selected || (hovered && isConnectionInProgress)
+      selected || (hovered && isConnectable)
         ? theme.color.blue
         : hovered && !disableHoverEffect
           ? theme.font.color.light
@@ -99,7 +99,7 @@ export const WorkflowDiagramHandleEditable = ({
   position,
   selected,
   hovered = false,
-  isConnectionInProgress = false,
+  isConnectable = false,
 }: WorkflowDiagramHandleEditableProps) => {
   const isWorkflowBranchEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
@@ -112,7 +112,7 @@ export const WorkflowDiagramHandleEditable = ({
       disableHoverEffect={!isWorkflowBranchEnabled}
       selected={selected}
       hovered={hovered}
-      isConnectionInProgress={isConnectionInProgress}
+      isConnectable={isConnectable}
     />
   );
 };
