@@ -93,7 +93,6 @@ export const AGENT_HANDOFF_SCHEMA = z.object({
           }),
         ]),
       )
-      .optional()
       .describe(
         'The conversation history to provide context to the specialist agent. Should include the latest user message/prompt and can include system, user, assistant, and tool messages with various content types.',
       ),
