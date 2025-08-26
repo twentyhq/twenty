@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { IconTwentyStarFilled } from '@ui/display';
 import { RATING_VALUES } from '@ui/fields/constants/RatingValues';
-import { FieldRatingValue } from '@ui/fields/types/FieldRatingValue';
+import { type FieldRatingValue } from '@ui/fields/types/FieldRatingValue';
 import { THEME_COMMON, ThemeContext } from '@ui/theme';
 import { useContext, useState } from 'react';
 
