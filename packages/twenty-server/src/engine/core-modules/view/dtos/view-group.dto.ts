@@ -27,10 +27,10 @@ export class ViewGroupDTO {
   @Field(() => UUIDScalarType, { nullable: false })
   workspaceId: string;
 
-  @Field(() => Date)
+  @Field()
   createdAt: Date;
 
-  @Field(() => Date)
+  @Field()
   updatedAt: Date;
 
   @Field(() => Date, { nullable: true })

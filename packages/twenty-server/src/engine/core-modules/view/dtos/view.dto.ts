@@ -59,10 +59,10 @@ export class ViewDTO {
   @Field(() => String, { nullable: true })
   anyFieldFilterValue?: string | null;
 
-  @Field(() => Date)
+  @Field()
   createdAt: Date;
 
-  @Field(() => Date)
+  @Field()
   updatedAt: Date;
 
   @Field(() => Date, { nullable: true })
