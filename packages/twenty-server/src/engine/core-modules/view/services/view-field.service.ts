@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import {
   ViewFieldException,
   ViewFieldExceptionCode,
@@ -16,11 +16,11 @@ import {
 @Injectable()
 export class ViewFieldService {
   constructor(
-    @InjectRepository(ViewField, 'core')
-    private readonly viewFieldRepository: Repository<ViewField>,
+    @InjectRepository(ViewFieldEntity, 'core')
+    private readonly viewFieldRepository: Repository<ViewFieldEntity>,
   ) {}
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewField[]> {
+  async findByWorkspaceId(workspaceId: string): Promise<ViewFieldEntity[]> {
     return this.viewFieldRepository.find({
       where: {
         workspaceId,
@@ -34,7 +34,7 @@ export class ViewFieldService {
   async findByViewId(
     workspaceId: string,
     viewId: string,
-  ): Promise<ViewField[]> {
+  ): Promise<ViewFieldEntity[]> {
     return this.viewFieldRepository.find({
       where: {
         workspaceId,
@@ -46,7 +46,10 @@ export class ViewFieldService {
     });
   }
 
-  async findById(id: string, workspaceId: string): Promise<ViewField | null> {
+  async findById(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewFieldEntity | null> {
     const viewField = await this.viewFieldRepository.findOne({
       where: {
         id,
@@ -59,7 +62,9 @@ export class ViewFieldService {
     return viewField || null;
   }
 
-  async create(viewFieldData: Partial<ViewField>): Promise<ViewField> {
+  async create(
+    viewFieldData: Partial<ViewFieldEntity>,
+  ): Promise<ViewFieldEntity> {
     if (!isDefined(viewFieldData.workspaceId)) {
       throw new ViewFieldException(
         generateViewFieldExceptionMessage(
@@ -110,8 +115,8 @@ export class ViewFieldService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: Partial<ViewField>,
-  ): Promise<ViewField> {
+    updateData: Partial<ViewFieldEntity>,
+  ): Promise<ViewFieldEntity> {
     const existingViewField = await this.findById(id, workspaceId);
 
     if (!isDefined(existingViewField)) {
@@ -132,7 +137,7 @@ export class ViewFieldService {
     return { ...existingViewField, ...updatedViewField };
   }
 
-  async delete(id: string, workspaceId: string): Promise<ViewField> {
+  async delete(id: string, workspaceId: string): Promise<ViewFieldEntity> {
     const viewField = await this.findById(id, workspaceId);
 
     if (!isDefined(viewField)) {

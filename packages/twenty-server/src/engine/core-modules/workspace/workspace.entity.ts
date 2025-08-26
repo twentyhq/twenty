@@ -30,12 +30,12 @@ import { ViewFilterDTO } from 'src/engine/core-modules/view/dtos/view-filter.dto
 import { ViewGroupDTO } from 'src/engine/core-modules/view/dtos/view-group.dto';
 import { ViewSortDTO } from 'src/engine/core-modules/view/dtos/view-sort.dto';
 import { ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
-import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
-import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
-import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
-import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
-import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
-import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
 import { AgentHandoffEntity } from 'src/engine/metadata-modules/agent/agent-handoff.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
@@ -157,31 +157,31 @@ export class Workspace {
   apiKeys: Relation<ApiKey[]>;
 
   @Field(() => [ViewDTO], { nullable: true })
-  @OneToMany(() => View, (view) => view.workspace)
-  views: Relation<View[]>;
+  @OneToMany(() => ViewEntity, (view) => view.workspace)
+  views: Relation<ViewEntity[]>;
 
   @Field(() => [ViewFieldDTO], { nullable: true })
-  @OneToMany(() => ViewField, (viewField) => viewField.workspace)
-  viewFields: Relation<ViewField[]>;
+  @OneToMany(() => ViewFieldEntity, (viewField) => viewField.workspace)
+  viewFields: Relation<ViewFieldEntity[]>;
 
   @Field(() => [ViewFilterDTO], { nullable: true })
-  @OneToMany(() => ViewFilter, (viewFilter) => viewFilter.workspace)
-  viewFilters: Relation<ViewFilter[]>;
+  @OneToMany(() => ViewFilterEntity, (viewFilter) => viewFilter.workspace)
+  viewFilters: Relation<ViewFilterEntity[]>;
 
   @Field(() => [ViewFilterGroupDTO], { nullable: true })
   @OneToMany(
-    () => ViewFilterGroup,
+    () => ViewFilterGroupEntity,
     (viewFilterGroup) => viewFilterGroup.workspace,
   )
-  viewFilterGroups: Relation<ViewFilterGroup[]>;
+  viewFilterGroups: Relation<ViewFilterGroupEntity[]>;
 
   @Field(() => [ViewGroupDTO], { nullable: true })
-  @OneToMany(() => ViewGroup, (viewGroup) => viewGroup.workspace)
-  viewGroups: Relation<ViewGroup[]>;
+  @OneToMany(() => ViewGroupEntity, (viewGroup) => viewGroup.workspace)
+  viewGroups: Relation<ViewGroupEntity[]>;
 
   @Field(() => [ViewSortDTO], { nullable: true })
-  @OneToMany(() => ViewSort, (viewSort) => viewSort.workspace)
-  viewSorts: Relation<ViewSort[]>;
+  @OneToMany(() => ViewSortEntity, (viewSort) => viewSort.workspace)
+  viewSorts: Relation<ViewSortEntity[]>;
 
   @Field()
   @Column({ default: 1 })

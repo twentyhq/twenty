@@ -5,20 +5,20 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { type ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 import { type ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 
 @Injectable()
 export class ViewSortSyncService {
   constructor(
-    @InjectRepository(ViewSort, 'core')
-    private readonly coreViewSortRepository: Repository<ViewSort>,
+    @InjectRepository(ViewSortEntity, 'core')
+    private readonly coreViewSortRepository: Repository<ViewSortEntity>,
   ) {}
 
   private parseUpdateDataFromDiff(
     diff: Partial<ObjectRecordDiff<ViewSortWorkspaceEntity>>,
-  ): Partial<ViewSort> {
+  ): Partial<ViewSortEntity> {
     const updateData: Record<string, unknown> = {};
 
     for (const key of Object.keys(diff)) {
@@ -35,7 +35,7 @@ export class ViewSortSyncService {
       }
     }
 
-    return updateData as Partial<ViewSort>;
+    return updateData as Partial<ViewSortEntity>;
   }
 
   public async createCoreViewSort(
@@ -49,7 +49,7 @@ export class ViewSortSyncService {
     const direction =
       workspaceViewSort.direction.toUpperCase() as ViewSortDirection;
 
-    const coreViewSort: Partial<ViewSort> = {
+    const coreViewSort: Partial<ViewSortEntity> = {
       id: workspaceViewSort.id,
       fieldMetadataId: workspaceViewSort.fieldMetadataId,
       viewId: workspaceViewSort.viewId,

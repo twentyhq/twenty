@@ -1,7 +1,4 @@
-import {
-  TEST_FIELD_METADATA_1_ID,
-  TEST_NOT_EXISTING_VIEW_FILTER_ID,
-} from 'test/integration/constants/test-view-ids.constants';
+import { TEST_NOT_EXISTING_VIEW_FILTER_ID } from 'test/integration/constants/test-view-ids.constants';
 import { createViewFilterOperationFactory } from 'test/integration/graphql/utils/create-view-filter-operation-factory.util';
 import { deleteViewFilterOperationFactory } from 'test/integration/graphql/utils/delete-view-filter-operation-factory.util';
 import { destroyViewFilterOperationFactory } from 'test/integration/graphql/utils/destroy-view-filter-operation-factory.util';
@@ -14,10 +11,14 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { updateViewFilterOperationFactory } from 'test/integration/graphql/utils/update-view-filter-operation-factory.util';
 import { createViewFilterData } from 'test/integration/graphql/utils/view-data-factory.util';
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import {
   assertViewFilterStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
@@ -28,12 +29,55 @@ import {
 
 describe('View Filter Resolver', () => {
   let testViewId: string;
+  let testObjectMetadataId: string;
+  let testFieldMetadataId: string;
+
+  beforeAll(async () => {
+    const {
+      data: {
+        createOneObject: { id: objectMetadataId },
+      },
+    } = await createOneObjectMetadata({
+      input: {
+        nameSingular: 'myTestObject',
+        namePlural: 'myTestObjects',
+        labelSingular: 'My Test Object',
+        labelPlural: 'My Test Objects',
+        icon: 'Icon123',
+      },
+    });
+
+    testObjectMetadataId = objectMetadataId;
+
+    const {
+      data: {
+        createOneField: { id: fieldMetadataId },
+      },
+    } = await createOneFieldMetadata({
+      input: {
+        name: 'testField',
+        label: 'Test Field',
+        type: FieldMetadataType.TEXT,
+        objectMetadataId: testObjectMetadataId,
+        isLabelSyncedWithName: true,
+      },
+    });
+
+    testFieldMetadataId = fieldMetadataId;
+  });
+
+  afterAll(async () => {
+    await deleteOneObjectMetadata({
+      input: { idToDelete: testObjectMetadataId },
+    });
+  });
 
   beforeEach(async () => {
     await cleanupViewRecords();
 
     const view = await createTestViewWithGraphQL({
       name: 'Test View for Filters',
+      objectMetadataId: testObjectMetadataId,
     });
 
     testViewId = view.id;
@@ -56,6 +100,7 @@ describe('View Filter Resolver', () => {
       const filterData = createViewFilterData(testViewId, {
         operand: ViewFilterOperand.CONTAINS,
         value: 'test',
+        fieldMetadataId: testFieldMetadataId,
       });
       const createOperation = createViewFilterOperationFactory({
         data: filterData,
@@ -71,7 +116,7 @@ describe('View Filter Resolver', () => {
       assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewFilters).toHaveLength(1);
       assertViewFilterStructure(response.body.data.getCoreViewFilters[0], {
-        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        fieldMetadataId: testFieldMetadataId,
         operand: ViewFilterOperand.CONTAINS,
         value: 'test',
         viewId: testViewId,
@@ -84,6 +129,7 @@ describe('View Filter Resolver', () => {
       const filterData = createViewFilterData(testViewId, {
         operand: ViewFilterOperand.IS,
         value: 'test value',
+        fieldMetadataId: testFieldMetadataId,
       });
 
       const operation = createViewFilterOperationFactory({ data: filterData });
@@ -91,7 +137,7 @@ describe('View Filter Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
       assertViewFilterStructure(response.body.data.createCoreViewFilter, {
-        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        fieldMetadataId: testFieldMetadataId,
         operand: ViewFilterOperand.IS,
         value: 'test value',
         viewId: testViewId,
@@ -102,6 +148,7 @@ describe('View Filter Resolver', () => {
       const filterData = createViewFilterData(testViewId, {
         operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
         value: 100,
+        fieldMetadataId: testFieldMetadataId,
       });
 
       const operation = createViewFilterOperationFactory({ data: filterData });
@@ -109,7 +156,7 @@ describe('View Filter Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
       assertViewFilterStructure(response.body.data.createCoreViewFilter, {
-        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        fieldMetadataId: testFieldMetadataId,
         operand: ViewFilterOperand.GREATER_THAN_OR_EQUAL,
         value: 100,
         viewId: testViewId,
@@ -121,6 +168,7 @@ describe('View Filter Resolver', () => {
         data: createViewFilterData(testViewId, {
           operand: ViewFilterOperand.IS,
           value: true,
+          fieldMetadataId: testFieldMetadataId,
         }),
       });
 
@@ -128,7 +176,7 @@ describe('View Filter Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
       assertViewFilterStructure(response.body.data.createCoreViewFilter, {
-        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
+        fieldMetadataId: testFieldMetadataId,
         operand: ViewFilterOperand.IS,
         value: true,
         viewId: testViewId,
@@ -142,6 +190,7 @@ describe('View Filter Resolver', () => {
         data: createViewFilterData(testViewId, {
           operand: ViewFilterOperand.CONTAINS,
           value: 'original',
+          fieldMetadataId: testFieldMetadataId,
         }),
       });
 
@@ -190,6 +239,7 @@ describe('View Filter Resolver', () => {
         data: createViewFilterData(testViewId, {
           operand: ViewFilterOperand.CONTAINS,
           value: 'to delete',
+          fieldMetadataId: testFieldMetadataId,
         }),
       });
 
@@ -230,6 +280,7 @@ describe('View Filter Resolver', () => {
         data: createViewFilterData(testViewId, {
           operand: ViewFilterOperand.CONTAINS,
           value: 'to destroy',
+          fieldMetadataId: testFieldMetadataId,
         }),
       });
 
