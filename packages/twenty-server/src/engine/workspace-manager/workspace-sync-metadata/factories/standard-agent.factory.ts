@@ -4,7 +4,7 @@ import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspac
 
 import { type AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
-import { fromStandardAgentDefinitionToFlatAgent } from 'src/engine/metadata-modules/flat-agent/utils/from-standard-agent-definition-to-flat-agent.util';
+import { transformStandardAgentDefinitionToFlatAgent } from 'src/engine/metadata-modules/flat-agent/utils/transform-standard-agent-definition-to-flat-agent.util';
 import { type StandardAgentDefinition } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-agents/types/standard-agent-definition.interface';
 
 @Injectable()
@@ -21,7 +21,7 @@ export class StandardAgentFactory {
         (agent) => agent.standardId === agentDefinition.standardId,
       );
 
-      const flatAgent = fromStandardAgentDefinitionToFlatAgent(
+      const flatAgent = transformStandardAgentDefinitionToFlatAgent(
         agentDefinition,
         context.workspaceId,
       );

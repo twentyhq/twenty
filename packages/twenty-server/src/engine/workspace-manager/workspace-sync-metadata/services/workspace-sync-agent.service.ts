@@ -7,7 +7,7 @@ import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-me
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
-import { fromAgentEntityToFlatAgent } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-flat-agent.util';
+import { transformAgentEntityToFlatAgent } from 'src/engine/metadata-modules/flat-agent/utils/transform-agent-entity-to-flat-agent.util';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { AGENT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agents.util';
@@ -55,7 +55,7 @@ export class WorkspaceSyncAgentService {
 
     const agentComparatorResults = this.workspaceAgentComparator.compare({
       fromFlatAgents: existingStandardAgentEntities.map(
-        fromAgentEntityToFlatAgent,
+        transformAgentEntityToFlatAgent,
       ),
       toFlatAgents: targetStandardAgents,
     });
