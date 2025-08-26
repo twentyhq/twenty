@@ -26,10 +26,10 @@ const StyledHandle = styled(Handle, {
     opacity: ${({ type }) => (type === 'target' ? 0 : 1)};
     height: ${NODE_HANDLE_HEIGHT_PX}px;
     width: ${NODE_HANDLE_WIDTH_PX}px;
-    border-color: ${({ theme, selected, hovered }) =>
+    border-color: ${({ theme, selected, hovered, disableHoverEffect }) =>
       selected
         ? theme.color.blue
-        : hovered
+        : hovered && !disableHoverEffect
           ? theme.font.color.light
           : theme.border.color.strong};
     background: ${({ theme, selected }) =>
