@@ -11,14 +11,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Default value for multi-select must be an array got invalid",
                 "userFriendlyMessage": "Multi-select field default value must be an array",
                 "value": "invalid",
@@ -57,14 +49,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Default value for multi-select must be an array got 'OPTION_424242'",
                 "userFriendlyMessage": "Multi-select field default value must be an array",
                 "value": "'OPTION_424242'",
@@ -101,14 +85,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Label must not contain a comma",
@@ -200,50 +176,18 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option position",
                 "value": [
                   {
                     "color": "green",
+                    "id": Any<String>,
                     "label": "Option 1",
                     "position": 1,
                     "value": "OPTION_1",
                   },
                   {
                     "color": "green",
-                    "label": "Option 2",
-                    "position": 1,
-                    "value": "OPTION_2",
-                  },
-                ],
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Duplicated option id",
-                "value": [
-                  {
-                    "color": "green",
-                    "label": "Option 1",
-                    "position": 1,
-                    "value": "OPTION_1",
-                  },
-                  {
-                    "color": "green",
+                    "id": Any<String>,
                     "label": "Option 2",
                     "position": 1,
                     "value": "OPTION_2",
@@ -284,50 +228,18 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Duplicated option id",
-                "value": [
-                  {
-                    "color": "green",
-                    "label": "Option 1",
-                    "position": 0,
-                    "value": "OPTION_1",
-                  },
-                  {
-                    "color": "green",
-                    "label": "Option 1",
-                    "position": 1,
-                    "value": "OPTION_1",
-                  },
-                ],
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option value",
                 "value": [
                   {
                     "color": "green",
+                    "id": Any<String>,
                     "label": "Option 1",
                     "position": 0,
                     "value": "OPTION_1",
                   },
                   {
                     "color": "green",
+                    "id": Any<String>,
                     "label": "Option 1",
                     "position": 1,
                     "value": "OPTION_1",
@@ -368,50 +280,18 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Duplicated option id",
-                "value": [
-                  {
-                    "color": "green",
-                    "label": "Option 1",
-                    "position": 1,
-                    "value": "OPTION_1",
-                  },
-                  {
-                    "color": "green",
-                    "label": "Option 2",
-                    "position": 2,
-                    "value": "OPTION_1",
-                  },
-                ],
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option value",
                 "value": [
                   {
                     "color": "green",
+                    "id": Any<String>,
                     "label": "Option 1",
                     "position": 1,
                     "value": "OPTION_1",
                   },
                   {
                     "color": "green",
+                    "id": Any<String>,
                     "label": "Option 2",
                     "position": 2,
                     "value": "OPTION_1",
@@ -450,14 +330,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "If defined default value must contain at least one value",
@@ -533,14 +405,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
@@ -622,14 +486,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option label "" is beneath 1 character",
                 "value": "",
               },
@@ -672,14 +528,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option value "" is beneath 1 character",
                 "value": "",
               },
@@ -720,14 +568,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
@@ -819,14 +659,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
                 "value": "Option 1 and some other things, /",
               },
@@ -862,14 +694,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value for multi-select must be an array got Option_1",
@@ -908,14 +732,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value for select must be a string got 22222",
@@ -993,14 +809,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option label must be a string",
                 "userFriendlyMessage": "Option label format not supported",
               },
@@ -1036,14 +844,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option value must be a string",
@@ -1125,14 +925,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option label is required",
                 "userFriendlyMessage": "Option label is required",
               },
@@ -1170,14 +962,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option value is required",
                 "userFriendlyMessage": "Option value is required",
               },
@@ -1213,14 +997,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
@@ -1302,14 +1078,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option label "" is beneath 1 character",
                 "value": "",
               },
@@ -1352,14 +1120,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option value "" is beneath 1 character",
                 "value": "",
               },
@@ -1400,14 +1160,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
@@ -1489,14 +1241,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option label exceeds 63 characters",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
@@ -1532,14 +1276,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option value exceeds 63 characters",
@@ -1584,14 +1320,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option label is required",
                 "userFriendlyMessage": "Option label is required",
               },
@@ -1627,14 +1355,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option value is required",
@@ -1711,14 +1431,6 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
                 "value": "'UNKNOWN_OPTION'",
               },
@@ -1754,14 +1466,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
@@ -1806,14 +1510,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Default value "'OPTION_424242'" must be one of the option values",
                 "value": "'OPTION_424242'",
               },
@@ -1849,14 +1545,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Label must not contain a comma",
@@ -1948,50 +1636,18 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option position",
                 "value": [
                   {
                     "color": "green",
+                    "id": Any<String>,
                     "label": "Option 1",
                     "position": 1,
                     "value": "OPTION_1",
                   },
                   {
                     "color": "green",
-                    "label": "Option 2",
-                    "position": 1,
-                    "value": "OPTION_2",
-                  },
-                ],
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Duplicated option id",
-                "value": [
-                  {
-                    "color": "green",
-                    "label": "Option 1",
-                    "position": 1,
-                    "value": "OPTION_1",
-                  },
-                  {
-                    "color": "green",
+                    "id": Any<String>,
                     "label": "Option 2",
                     "position": 1,
                     "value": "OPTION_2",
@@ -2032,50 +1688,18 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Duplicated option id",
-                "value": [
-                  {
-                    "color": "green",
-                    "label": "Option 1",
-                    "position": 0,
-                    "value": "OPTION_1",
-                  },
-                  {
-                    "color": "green",
-                    "label": "Option 1",
-                    "position": 1,
-                    "value": "OPTION_1",
-                  },
-                ],
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option value",
                 "value": [
                   {
                     "color": "green",
+                    "id": Any<String>,
                     "label": "Option 1",
                     "position": 0,
                     "value": "OPTION_1",
                   },
                   {
                     "color": "green",
+                    "id": Any<String>,
                     "label": "Option 1",
                     "position": 1,
                     "value": "OPTION_1",
@@ -2116,50 +1740,18 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Duplicated option id",
-                "value": [
-                  {
-                    "color": "green",
-                    "label": "Option 1",
-                    "position": 1,
-                    "value": "OPTION_1",
-                  },
-                  {
-                    "color": "green",
-                    "label": "Option 2",
-                    "position": 2,
-                    "value": "OPTION_1",
-                  },
-                ],
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Duplicated option value",
                 "value": [
                   {
                     "color": "green",
+                    "id": Any<String>,
                     "label": "Option 1",
                     "position": 1,
                     "value": "OPTION_1",
                   },
                   {
                     "color": "green",
+                    "id": Any<String>,
                     "label": "Option 2",
                     "position": 2,
                     "value": "OPTION_1",
@@ -2236,14 +1828,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
@@ -2325,14 +1909,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option label "" is beneath 1 character",
                 "value": "",
               },
@@ -2373,14 +1949,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option value "" is beneath 1 character",
@@ -2462,14 +2030,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
                 "value": "Option 1 and some other things, /",
               },
@@ -2505,14 +2065,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value for select must be a string got 22222",
@@ -2590,14 +2142,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option label must be a string",
                 "userFriendlyMessage": "Option label format not supported",
               },
@@ -2633,14 +2177,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option value must be a string",
@@ -2722,14 +2258,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option label is required",
                 "userFriendlyMessage": "Option label is required",
               },
@@ -2767,14 +2295,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option value is required",
                 "userFriendlyMessage": "Option value is required",
               },
@@ -2810,14 +2330,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
@@ -2899,14 +2411,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option label "" is beneath 1 character",
                 "value": "",
               },
@@ -2949,14 +2453,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option value "" is beneath 1 character",
                 "value": "",
               },
@@ -2997,14 +2493,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Default value should be as quoted string",
@@ -3086,14 +2574,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option label exceeds 63 characters",
                 "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
@@ -3129,14 +2609,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option value exceeds 63 characters",
@@ -3181,14 +2653,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
                 "message": "Option label is required",
                 "userFriendlyMessage": "Option label is required",
               },
@@ -3224,14 +2688,6 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
         "fieldMetadata": [
           {
             "errors": [
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is required",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Option id is invalid",
-              },
               {
                 "code": "INVALID_FIELD_INPUT",
                 "message": "Option value is required",
