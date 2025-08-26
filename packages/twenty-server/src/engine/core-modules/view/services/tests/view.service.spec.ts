@@ -7,11 +7,11 @@ import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import {
-    ViewException,
-    ViewExceptionCode,
-    ViewExceptionMessageKey,
-    generateViewExceptionMessage,
-    generateViewUserFriendlyExceptionMessage,
+  ViewException,
+  ViewExceptionCode,
+  ViewExceptionMessageKey,
+  generateViewExceptionMessage,
+  generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 

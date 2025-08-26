@@ -1,6 +1,6 @@
 import {
-    TEST_FIELD_METADATA_1_ID,
-    TEST_OBJECT_METADATA_1_ID,
+  TEST_FIELD_METADATA_1_ID,
+  TEST_OBJECT_METADATA_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
 
 import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
@@ -46,7 +46,9 @@ export const createViewFieldData = (
   ...overrides,
 });
 
-export const updateViewFieldData = (overrides: Partial<ViewFieldEntity> = {}) => ({
+export const updateViewFieldData = (
+  overrides: Partial<ViewFieldEntity> = {},
+) => ({
   position: 5,
   isVisible: false,
   size: 300,
@@ -63,7 +65,9 @@ export const createViewSortData = (
   ...overrides,
 });
 
-export const updateViewSortData = (overrides: Partial<ViewSortEntity> = {}) => ({
+export const updateViewSortData = (
+  overrides: Partial<ViewSortEntity> = {},
+) => ({
   direction: ViewSortDirection.DESC,
   ...overrides,
 });
@@ -79,7 +83,9 @@ export const createViewFilterData = (
   ...overrides,
 });
 
-export const updateViewFilterData = (overrides: Partial<ViewFilterEntity> = {}) => ({
+export const updateViewFilterData = (
+  overrides: Partial<ViewFilterEntity> = {},
+) => ({
   operand: ViewFilterOperand.IS_NOT,
   value: 'updated-value',
   ...overrides,
@@ -97,7 +103,9 @@ export const createViewGroupData = (
   ...overrides,
 });
 
-export const updateViewGroupData = (overrides: Partial<ViewGroupEntity> = {}) => ({
+export const updateViewGroupData = (
+  overrides: Partial<ViewGroupEntity> = {},
+) => ({
   fieldValue: 'updated-group-value',
   isVisible: false,
   position: 1,

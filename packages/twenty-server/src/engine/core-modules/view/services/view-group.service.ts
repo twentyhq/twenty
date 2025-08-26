@@ -6,11 +6,11 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
 import {
-    ViewGroupException,
-    ViewGroupExceptionCode,
-    ViewGroupExceptionMessageKey,
-    generateViewGroupExceptionMessage,
-    generateViewGroupUserFriendlyExceptionMessage,
+  ViewGroupException,
+  ViewGroupExceptionCode,
+  ViewGroupExceptionMessageKey,
+  generateViewGroupExceptionMessage,
+  generateViewGroupUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-group.exception';
 
 @Injectable()
@@ -46,7 +46,10 @@ export class ViewGroupService {
     });
   }
 
-  async findById(id: string, workspaceId: string): Promise<ViewGroupEntity | null> {
+  async findById(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewGroupEntity | null> {
     const viewGroup = await this.viewGroupRepository.findOne({
       where: {
         id,
@@ -59,7 +62,9 @@ export class ViewGroupService {
     return viewGroup || null;
   }
 
-  async create(viewGroupData: Partial<ViewGroupEntity>): Promise<ViewGroupEntity> {
+  async create(
+    viewGroupData: Partial<ViewGroupEntity>,
+  ): Promise<ViewGroupEntity> {
     if (!isDefined(viewGroupData.workspaceId)) {
       throw new ViewGroupException(
         generateViewGroupExceptionMessage(

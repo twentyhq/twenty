@@ -5,8 +5,8 @@ import { type ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared
 import { DataSource, Repository, type QueryRunner } from 'typeorm';
 
 import {
-    ActiveOrSuspendedWorkspacesMigrationCommandRunner,
-    type RunOnWorkspaceArgs,
+  ActiveOrSuspendedWorkspacesMigrationCommandRunner,
+  type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -431,7 +431,9 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
           : null,
       };
 
-      const repository = queryRunner.manager.getRepository(ViewFilterGroupEntity);
+      const repository = queryRunner.manager.getRepository(
+        ViewFilterGroupEntity,
+      );
 
       await repository.insert(coreViewFilterGroup);
     }

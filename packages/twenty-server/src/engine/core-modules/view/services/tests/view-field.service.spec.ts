@@ -5,11 +5,11 @@ import { type Repository } from 'typeorm';
 
 import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import {
-    ViewFieldException,
-    ViewFieldExceptionCode,
-    ViewFieldExceptionMessageKey,
-    generateViewFieldExceptionMessage,
-    generateViewFieldUserFriendlyExceptionMessage,
+  ViewFieldException,
+  ViewFieldExceptionCode,
+  ViewFieldExceptionMessageKey,
+  generateViewFieldExceptionMessage,
+  generateViewFieldUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
 import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
 

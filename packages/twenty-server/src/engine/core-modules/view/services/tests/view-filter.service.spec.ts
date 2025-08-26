@@ -6,11 +6,11 @@ import { type Repository } from 'typeorm';
 import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import {
-    ViewFilterException,
-    ViewFilterExceptionCode,
-    ViewFilterExceptionMessageKey,
-    generateViewFilterExceptionMessage,
-    generateViewFilterUserFriendlyExceptionMessage,
+  ViewFilterException,
+  ViewFilterExceptionCode,
+  ViewFilterExceptionMessageKey,
+  generateViewFilterExceptionMessage,
+  generateViewFilterUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
 import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
 

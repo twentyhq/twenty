@@ -6,11 +6,11 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import {
-    ViewFilterGroupException,
-    ViewFilterGroupExceptionCode,
-    ViewFilterGroupExceptionMessageKey,
-    generateViewFilterGroupExceptionMessage,
-    generateViewFilterGroupUserFriendlyExceptionMessage,
+  ViewFilterGroupException,
+  ViewFilterGroupExceptionCode,
+  ViewFilterGroupExceptionMessageKey,
+  generateViewFilterGroupExceptionMessage,
+  generateViewFilterGroupUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
 
 @Injectable()
@@ -20,7 +20,9 @@ export class ViewFilterGroupService {
     private readonly viewFilterGroupRepository: Repository<ViewFilterGroupEntity>,
   ) {}
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewFilterGroupEntity[]> {
+  async findByWorkspaceId(
+    workspaceId: string,
+  ): Promise<ViewFilterGroupEntity[]> {
     return this.viewFilterGroupRepository.find({
       where: {
         workspaceId,
@@ -144,7 +146,10 @@ export class ViewFilterGroupService {
     return { ...existingViewFilterGroup, ...updatedViewFilterGroup };
   }
 
-  async delete(id: string, workspaceId: string): Promise<ViewFilterGroupEntity> {
+  async delete(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewFilterGroupEntity> {
     const viewFilterGroup = await this.findById(id, workspaceId);
 
     if (!isDefined(viewFilterGroup)) {

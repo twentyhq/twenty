@@ -6,11 +6,11 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import {
-    ViewFilterException,
-    ViewFilterExceptionCode,
-    ViewFilterExceptionMessageKey,
-    generateViewFilterExceptionMessage,
-    generateViewFilterUserFriendlyExceptionMessage,
+  ViewFilterException,
+  ViewFilterExceptionCode,
+  ViewFilterExceptionMessageKey,
+  generateViewFilterExceptionMessage,
+  generateViewFilterUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
 
 @Injectable()
@@ -46,7 +46,10 @@ export class ViewFilterService {
     });
   }
 
-  async findById(id: string, workspaceId: string): Promise<ViewFilterEntity | null> {
+  async findById(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewFilterEntity | null> {
     const viewFilter = await this.viewFilterRepository.findOne({
       where: {
         id,
@@ -59,7 +62,9 @@ export class ViewFilterService {
     return viewFilter || null;
   }
 
-  async create(viewFilterData: Partial<ViewFilterEntity>): Promise<ViewFilterEntity> {
+  async create(
+    viewFilterData: Partial<ViewFilterEntity>,
+  ): Promise<ViewFilterEntity> {
     if (!isDefined(viewFilterData.workspaceId)) {
       throw new ViewFilterException(
         generateViewFilterExceptionMessage(

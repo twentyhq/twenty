@@ -6,11 +6,11 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import {
-    ViewFieldException,
-    ViewFieldExceptionCode,
-    ViewFieldExceptionMessageKey,
-    generateViewFieldExceptionMessage,
-    generateViewFieldUserFriendlyExceptionMessage,
+  ViewFieldException,
+  ViewFieldExceptionCode,
+  ViewFieldExceptionMessageKey,
+  generateViewFieldExceptionMessage,
+  generateViewFieldUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
 
 @Injectable()
@@ -46,7 +46,10 @@ export class ViewFieldService {
     });
   }
 
-  async findById(id: string, workspaceId: string): Promise<ViewFieldEntity | null> {
+  async findById(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewFieldEntity | null> {
     const viewField = await this.viewFieldRepository.findOne({
       where: {
         id,
@@ -59,7 +62,9 @@ export class ViewFieldService {
     return viewField || null;
   }
 
-  async create(viewFieldData: Partial<ViewFieldEntity>): Promise<ViewFieldEntity> {
+  async create(
+    viewFieldData: Partial<ViewFieldEntity>,
+  ): Promise<ViewFieldEntity> {
     if (!isDefined(viewFieldData.workspaceId)) {
       throw new ViewFieldException(
         generateViewFieldExceptionMessage(

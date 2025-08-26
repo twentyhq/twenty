@@ -6,11 +6,11 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import {
-    ViewSortException,
-    ViewSortExceptionCode,
-    ViewSortExceptionMessageKey,
-    generateViewSortExceptionMessage,
-    generateViewSortUserFriendlyExceptionMessage,
+  ViewSortException,
+  ViewSortExceptionCode,
+  ViewSortExceptionMessageKey,
+  generateViewSortExceptionMessage,
+  generateViewSortUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-sort.exception';
 
 @Injectable()
@@ -30,7 +30,10 @@ export class ViewSortService {
     });
   }
 
-  async findByViewId(workspaceId: string, viewId: string): Promise<ViewSortEntity[]> {
+  async findByViewId(
+    workspaceId: string,
+    viewId: string,
+  ): Promise<ViewSortEntity[]> {
     return this.viewSortRepository.find({
       where: {
         workspaceId,
@@ -41,7 +44,10 @@ export class ViewSortService {
     });
   }
 
-  async findById(id: string, workspaceId: string): Promise<ViewSortEntity | null> {
+  async findById(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewSortEntity | null> {
     const viewSort = await this.viewSortRepository.findOne({
       where: {
         id,

@@ -6,11 +6,11 @@ import { IsNull, Repository } from 'typeorm';
 
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import {
-    ViewException,
-    ViewExceptionCode,
-    ViewExceptionMessageKey,
-    generateViewExceptionMessage,
-    generateViewUserFriendlyExceptionMessage,
+  ViewException,
+  ViewExceptionCode,
+  ViewExceptionMessageKey,
+  generateViewExceptionMessage,
+  generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 
 @Injectable()
