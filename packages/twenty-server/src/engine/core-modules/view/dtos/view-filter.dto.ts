@@ -40,10 +40,10 @@ export class ViewFilterDTO {
   @Field(() => UUIDScalarType, { nullable: false })
   workspaceId: string;
 
-  @Field(() => Date, { nullable: false })
+  @Field(() => Date)
   createdAt: Date;
 
-  @Field(() => Date, { nullable: false })
+  @Field(() => Date)
   updatedAt: Date;
 
   @Field(() => Date, { nullable: true })
