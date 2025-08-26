@@ -11,6 +11,7 @@ import {
   generateText,
   type ImagePart,
   streamText,
+  ToolSet,
   type UserContent,
 } from 'ai';
 import { In, Repository } from 'typeorm';
@@ -88,7 +89,7 @@ export class AgentExecutionService {
       const registeredModel =
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 
-      let tools = {};
+      let tools: ToolSet = {};
 
       if (agent) {
         const baseTools =
