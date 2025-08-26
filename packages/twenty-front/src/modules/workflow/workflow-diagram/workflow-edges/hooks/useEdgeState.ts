@@ -56,10 +56,6 @@ export const useEdgeState = () => {
   };
 
   const setEdgeHovered = ({ source, target }: WorkflowDiagramEdge) => {
-    if (isEdgeSelected({ source, target })) {
-      return;
-    }
-
     setWorkflowHoveredEdge({ source, target });
 
     reactflow.setEdges((edges) =>
