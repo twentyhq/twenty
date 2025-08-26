@@ -8,7 +8,6 @@ import { FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE } from 'src/engine/m
 import { type FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-properties-to-compare.type';
 import { type FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isFlatFieldMetadataJsonbProperty } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-jsonb-property.util';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
@@ -81,22 +80,14 @@ export const compareTwoFlatFieldMetadata = ({
       case 'CHANGE': {
         const { oldValue, path, value } = difference;
         const property = path[0] as FlatFieldMetadataPropertiesToCompare;
-        const isJsonb = isFlatFieldMetadataJsonbProperty({
-          flatFieldMetadata: toFlatFieldMetadata,
-          property,
-        });
 
-        if (isJsonb) {
-          return {
-            from: parseJson(oldValue),
-            to: parseJson(value),
-            property,
-          };
-        }
-
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const from = parseJson<any>(oldValue);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const to = parseJson<any>(value);
         return {
-          from: oldValue,
-          to: value,
+          from,
+          to,
           property,
         };
       }
