@@ -10,7 +10,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { formatNumber } from '~/utils/format/number';
 import {
   type BillingPriceOutput,
-  BillingProductKey,
   type BillingSubscriptionItem,
 } from '~/generated/graphql';
 
@@ -48,7 +47,9 @@ export const MeteredPriceSelector = ({
       });
       enqueueSuccessSnackBar({ message: t`Price updated.` });
       setCurrentMeteredStripeId(
-        meteredBillingPrices.find((elm) => elm.stripePriceId === priceId),
+        meteredBillingPrices.find(
+          ({ stripePriceId }) => stripePriceId === priceId,
+        ),
       );
     } catch {
       enqueueErrorSnackBar({

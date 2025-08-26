@@ -72,7 +72,6 @@ export class BillingWebhookController {
 
       res.status(200).send(result).end();
     } catch (error) {
-      console.error(error);
       if (
         error instanceof BillingException ||
         error instanceof Stripe.errors.StripeError
