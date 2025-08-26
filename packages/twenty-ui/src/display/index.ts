@@ -404,6 +404,7 @@ export type {
 export type { InfoAccent, InfoProps } from './info/components/Info';
 export { Info } from './info/components/Info';
 export { Status } from './status/components/Status';
+export { EllipsisDisplay } from './text/components/EllipsisDisplay';
 export { HorizontalSeparator } from './text/components/HorizontalSeparator';
 export { SeparatorLineText } from './text/components/SeparatorLineText';
 export type { AppTooltipProps } from './tooltip/AppTooltip';

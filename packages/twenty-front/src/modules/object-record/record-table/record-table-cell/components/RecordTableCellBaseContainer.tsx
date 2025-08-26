@@ -1,5 +1,4 @@
-import { styled } from '@linaria/react';
-import { useContext, type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
@@ -8,51 +7,8 @@ import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/const
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
-import { BORDER_COMMON, ThemeContext } from 'twenty-ui/theme';
-
-const StyledBaseContainer = styled.div<{
-  fontColorExtraLight: string;
-  fontColorMedium: string;
-  backgroundColorTransparentSecondary: string;
-  backgroundColorSecondary: string;
-  fontColorSecondary: string;
-  isReadOnly: boolean;
-  borderColorBlue: string;
-}>`
-  align-items: center;
-  box-sizing: border-box;
-  cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
-  display: flex;
-  height: 32px;
-  position: relative;
-  user-select: none;
-
-  &.focus-active {
-    border-radius: ${BORDER_COMMON.radius.sm};
-    outline: 1px solid ${({ borderColorBlue }) => borderColorBlue};
-  }
-
-  &:hover {
-    ${(props) => {
-      if (!props.isReadOnly) return '';
-
-      return `
-        outline: 1px solid ${props.fontColorMedium};
-        border-radius: 0px;
-        background-color: ${props.backgroundColorSecondary};
-        color: ${props.fontColorSecondary};
-        
-        svg {
-          color: ${props.fontColorSecondary};
-        }
-        
-        img {
-          opacity: 0.64;
-        }
-      `;
-    }}
-  }
-`;
+import { RecordTableCellBaseContainerWrapper } from 'twenty-ui/record-table';
+import { ThemeContext } from 'twenty-ui/theme';
 
 export const RecordTableCellBaseContainer = ({
   children,
@@ -94,7 +50,7 @@ export const RecordTableCellBaseContainer = ({
   };
 
   return (
-    <StyledBaseContainer
+    <RecordTableCellBaseContainerWrapper
       onMouseLeave={handleContainerMouseLeave}
       onMouseMove={handleContainerMouseMove}
       onClick={handleContainerClick}
@@ -113,6 +69,6 @@ export const RecordTableCellBaseContainer = ({
       }
     >
       {children}
-    </StyledBaseContainer>
+    </RecordTableCellBaseContainerWrapper>
   );
 };

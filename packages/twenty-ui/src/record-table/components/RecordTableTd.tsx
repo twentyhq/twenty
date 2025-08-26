@@ -1,7 +1,7 @@
 import { type DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
+import { MOBILE_VIEWPORT, ThemeContext } from '@ui/theme';
 import { type ReactNode, useContext } from 'react';
-import { MOBILE_VIEWPORT, ThemeContext } from 'twenty-ui/theme';
 
 export const RECORD_TABLE_TD_WIDTH = '32px';
 

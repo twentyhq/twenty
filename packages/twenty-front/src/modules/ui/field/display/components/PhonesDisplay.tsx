@@ -3,11 +3,10 @@ import React, { useMemo } from 'react';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
-import { styled } from '@linaria/react';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { isDefined } from 'twenty-shared/utils';
+import { BasePhonesDisplay } from 'twenty-ui/fields';
 import { RoundedLink } from 'twenty-ui/navigation';
-import { THEME_COMMON } from 'twenty-ui/theme';
 import { logError } from '~/utils/logError';
 
 type PhonesDisplayProps = {
@@ -18,21 +17,6 @@ type PhonesDisplayProps = {
     event: React.MouseEvent<HTMLElement>,
   ) => void;
 };
-
-const themeSpacing = THEME_COMMON.spacingMultiplicator;
-
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeSpacing * 1}px;
-  justify-content: flex-start;
-
-  max-width: 100%;
-
-  overflow: hidden;
-
-  width: 100%;
-`;
 
 export const PhonesDisplay = ({
   value,
@@ -101,7 +85,7 @@ export const PhonesDisplay = ({
       })}
     </ExpandableList>
   ) : (
-    <StyledContainer>
+    <BasePhonesDisplay>
       {phones.map(({ number, callingCode }, index) => {
         const { parsedPhone, invalidPhone } =
           parsePhoneNumberOrReturnInvalidValue(callingCode + number);
@@ -117,7 +101,7 @@ export const PhonesDisplay = ({
           />
         );
       })}
-    </StyledContainer>
+    </BasePhonesDisplay>
   );
 };
 

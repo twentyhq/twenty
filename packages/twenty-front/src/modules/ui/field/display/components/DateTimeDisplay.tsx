@@ -2,9 +2,9 @@ import { type FieldDateMetadataSettings } from '@/object-record/record-field/ui/
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
+import { EllipsisDisplay } from 'twenty-ui/display';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
-import { EllipsisDisplay } from './EllipsisDisplay';
 
 type DateTimeDisplayProps = {
   value: string | null | undefined;

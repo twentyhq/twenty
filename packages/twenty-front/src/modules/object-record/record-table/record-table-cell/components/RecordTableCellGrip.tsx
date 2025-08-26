@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
-import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { IconListViewGrip } from 'twenty-ui/input';
+import { RecordTableTd } from 'twenty-ui/record-table';
 
 export const TABLE_CELL_GRIP_WIDTH = '16px';
 

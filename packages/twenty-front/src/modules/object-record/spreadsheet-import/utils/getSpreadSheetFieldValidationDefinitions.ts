@@ -1,4 +1,3 @@
-import { RATING_VALUES } from '@/object-record/record-field/ui/meta-types/constants/RatingValues';
 import { isFieldRatingValue } from '@/object-record/record-field/ui/types/guards/isFieldRatingValue';
 import { emailSchema } from '@/object-record/record-field/ui/validation-schemas/emailSchema';
 import { type SpreadsheetImportFieldValidationDefinition } from '@/spreadsheet-import/types';
@@ -12,6 +11,7 @@ import {
   isValidCountryCode,
   isValidUuid,
 } from 'twenty-shared/utils';
+import { RATING_VALUES } from 'twenty-ui/fields';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const getNumberValidationDefinition = (

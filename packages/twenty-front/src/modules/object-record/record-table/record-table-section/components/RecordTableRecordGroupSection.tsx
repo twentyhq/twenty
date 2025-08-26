@@ -7,7 +7,6 @@ import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useC
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { RecordTableRecordGroupStickyEffect } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupStickyEffect';
 import { useAggregateRecordsForRecordTableSection } from '@/object-record/record-table/record-table-section/hooks/useAggregateRecordsForRecordTableSection';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
@@ -17,6 +16,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
 import { IconChevronDown } from 'twenty-ui/display';
 import { AnimatedLightIconButton } from 'twenty-ui/input';
+import { RecordTableTd } from 'twenty-ui/record-table';
 
 const StyledTrContainer = styled.tr`
   cursor: pointer;

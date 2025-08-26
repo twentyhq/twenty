@@ -6,8 +6,8 @@ import {
   type FieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
-import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { isDefined } from 'twenty-shared/utils';
+import { EllipsisDisplay } from 'twenty-ui/display';
 import { formatAmount } from '~/utils/format/formatAmount';
 import { formatNumber } from '~/utils/format/number';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';

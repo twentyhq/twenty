@@ -1,8 +1,8 @@
 import { type MouseEvent } from 'react';
+import { EllipsisDisplay } from 'twenty-ui/display';
 
 import { LinkType, RoundedLink, SocialLink } from 'twenty-ui/navigation';
 import { checkUrlType } from '~/utils/checkUrlType';
-import { EllipsisDisplay } from './EllipsisDisplay';
 
 type URLDisplayProps = {
   value: string | null;

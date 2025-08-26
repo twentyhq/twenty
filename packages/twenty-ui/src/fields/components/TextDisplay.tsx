@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { isUndefined } from '@sniptt/guards';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { OverflowingTextWithTooltip } from '@ui/display';
 
 type TextDisplayProps = {
   text: string;

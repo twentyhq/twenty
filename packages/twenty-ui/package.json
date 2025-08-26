@@ -48,13 +48,16 @@
     "dist",
     "assets",
     "accessibility",
+    "assets",
     "components",
     "display",
     "feedback",
+    "fields",
     "input",
     "json-visualizer",
     "layout",
     "navigation",
+    "record-table",
     "testing",
     "theme",
     "utilities"
@@ -94,6 +97,11 @@
       "import": "./dist/feedback.mjs",
       "require": "./dist/feedback.cjs"
     },
+    "./fields": {
+      "types": "./dist/fields/index.d.ts",
+      "import": "./dist/fields.mjs",
+      "require": "./dist/fields.cjs"
+    },
     "./input": {
       "types": "./dist/input/index.d.ts",
       "import": "./dist/input.mjs",
@@ -113,6 +121,11 @@
       "types": "./dist/navigation/index.d.ts",
       "import": "./dist/navigation.mjs",
       "require": "./dist/navigation.cjs"
+    },
+    "./record-table": {
+      "types": "./dist/record-table/index.d.ts",
+      "import": "./dist/record-table.mjs",
+      "require": "./dist/record-table.cjs"
     },
     "./testing": {
       "types": "./dist/testing/index.d.ts",
@@ -147,6 +160,9 @@
       "feedback": [
         "dist/feedback/index.d.ts"
       ],
+      "fields": [
+        "dist/fields/index.d.ts"
+      ],
       "input": [
         "dist/input/index.d.ts"
       ],
@@ -158,6 +174,9 @@
       ],
       "navigation": [
         "dist/navigation/index.d.ts"
+      ],
+      "record-table": [
+        "dist/record-table/index.d.ts"
       ],
       "testing": [
         "dist/testing/index.d.ts"

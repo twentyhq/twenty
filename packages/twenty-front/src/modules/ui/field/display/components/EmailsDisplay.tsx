@@ -2,30 +2,14 @@ import { useMemo } from 'react';
 
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
-import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
+import { BaseEmailsDisplay } from 'twenty-ui/fields';
 import { RoundedLink } from 'twenty-ui/navigation';
-import { THEME_COMMON } from 'twenty-ui/theme';
 
 type EmailsDisplayProps = {
   value?: FieldEmailsValue;
   isFocused?: boolean;
 };
-
-const themeSpacing = THEME_COMMON.spacingMultiplicator;
-
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeSpacing * 1}px;
-  justify-content: flex-start;
-
-  max-width: 100%;
-
-  overflow: hidden;
-
-  width: 100%;
-`;
 
 export const EmailsDisplay = ({ value, isFocused }: EmailsDisplayProps) => {
   const emails = useMemo(
@@ -44,10 +28,10 @@ export const EmailsDisplay = ({ value, isFocused }: EmailsDisplayProps) => {
       ))}
     </ExpandableList>
   ) : (
-    <StyledContainer>
+    <BaseEmailsDisplay>
       {emails.map((email, index) => (
         <RoundedLink key={index} label={email} href={`mailto:${email}`} />
       ))}
-    </StyledContainer>
+    </BaseEmailsDisplay>
   );
 };

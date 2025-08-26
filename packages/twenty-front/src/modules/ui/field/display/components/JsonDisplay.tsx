@@ -1,4 +1,4 @@
-import { EllipsisDisplay } from './EllipsisDisplay';
+import { EllipsisDisplay } from 'twenty-ui/display';
 
 type JsonDisplayProps = {
   text: string;

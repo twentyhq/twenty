@@ -1,6 +1,5 @@
+import { EllipsisDisplay } from 'twenty-ui/display';
 import { formatNumber } from '~/utils/format/number';
-
-import { EllipsisDisplay } from './EllipsisDisplay';
 
 type MoneyDisplayProps = {
   value: number | null;

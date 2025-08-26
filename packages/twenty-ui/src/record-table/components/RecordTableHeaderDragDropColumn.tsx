@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
+import { ThemeContext } from '@ui/theme';
 import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme';
 
 const StyledTh = styled.th<{ backgroundColor: string }>`
   background: ${({ backgroundColor }) => backgroundColor};

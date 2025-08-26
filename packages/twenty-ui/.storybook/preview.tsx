@@ -9,7 +9,7 @@ const preview: Preview = {
 
       const theme = THEME_LIGHT;
 
-    /*  useEffect(() => {
+      /*  useEffect(() => {
         document.documentElement.className = mode === 'Dark' ? 'dark' : 'light';
       }, [mode]);*/
 

@@ -24,6 +24,8 @@
         "{projectRoot}/display/dist",
         "{projectRoot}/feedback/package.json",
         "{projectRoot}/feedback/dist",
+        "{projectRoot}/fields/package.json",
+        "{projectRoot}/fields/dist",
         "{projectRoot}/input/package.json",
         "{projectRoot}/input/dist",
         "{projectRoot}/json-visualizer/package.json",
@@ -32,6 +34,8 @@
         "{projectRoot}/layout/dist",
         "{projectRoot}/navigation/package.json",
         "{projectRoot}/navigation/dist",
+        "{projectRoot}/record-table/package.json",
+        "{projectRoot}/record-table/dist",
         "{projectRoot}/testing/package.json",
         "{projectRoot}/testing/dist",
         "{projectRoot}/theme/package.json",
@@ -104,7 +108,8 @@
     "storybook:coverage": {},
     "storybook:test": {
       "options": {
-        "port": 6007
+        "port": 6007,
+        "checkCoverage": false
       }
     },
     "storybook:serve-and-test:static": {

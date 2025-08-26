@@ -2,8 +2,8 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
-import { useContext, type ReactNode } from 'react';
-import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
+import { type ReactNode, useContext } from 'react';
+import { RecordTableCellDisplayContainer } from 'twenty-ui/record-table';
 
 export const RecordTableCellDisplayMode = ({
   children,

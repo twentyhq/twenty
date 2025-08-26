@@ -2,9 +2,9 @@ import styled from '@emotion/styled';
 
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { useTheme } from '@emotion/react';
 import { type IconComponent } from 'twenty-ui/display';
+import { RecordTableTd } from 'twenty-ui/record-table';
 
 const StyledRecordTableDraggableTr = styled.tr`
   cursor: pointer;

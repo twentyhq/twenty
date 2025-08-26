@@ -3,7 +3,7 @@ import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/co
 import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCell } from '@/object-record/record-table/record-table-cell/components/RecordTableCell';
 import { RecordTableCellWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellWrapper';
-import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
+import { RecordTableTd } from 'twenty-ui/record-table';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 export const RecordTableCellsVisible = () => {

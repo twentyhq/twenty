@@ -1,6 +1,6 @@
 import { useTextFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useTextFieldDisplay';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
-import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
+import { TextDisplay } from 'twenty-ui/fields';
 
 export const TextFieldDisplay = () => {
   const { fieldValue, fieldDefinition, displayedMaxRows } =
