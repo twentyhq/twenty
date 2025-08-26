@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
@@ -23,8 +23,8 @@ import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadat
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
-  ObjectMetadataException,
-  ObjectMetadataExceptionCode,
+    ObjectMetadataException,
+    ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
@@ -37,8 +37,8 @@ export class ObjectMetadataServiceV2 {
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly objectMetadataRelatedRecordsService: ObjectMetadataRelatedRecordsService,
-    @InjectRepository(View, 'core')
-    private readonly viewRepository: Repository<View>,
+    @InjectRepository(ViewEntity, 'core')
+    private readonly viewRepository: Repository<ViewEntity>,
   ) {}
 
   async updateOne({

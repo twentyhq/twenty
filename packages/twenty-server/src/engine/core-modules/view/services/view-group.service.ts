@@ -4,23 +4,23 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
 import {
-  ViewGroupException,
-  ViewGroupExceptionCode,
-  ViewGroupExceptionMessageKey,
-  generateViewGroupExceptionMessage,
-  generateViewGroupUserFriendlyExceptionMessage,
+    ViewGroupException,
+    ViewGroupExceptionCode,
+    ViewGroupExceptionMessageKey,
+    generateViewGroupExceptionMessage,
+    generateViewGroupUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-group.exception';
 
 @Injectable()
 export class ViewGroupService {
   constructor(
-    @InjectRepository(ViewGroup, 'core')
-    private readonly viewGroupRepository: Repository<ViewGroup>,
+    @InjectRepository(ViewGroupEntity, 'core')
+    private readonly viewGroupRepository: Repository<ViewGroupEntity>,
   ) {}
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewGroup[]> {
+  async findByWorkspaceId(workspaceId: string): Promise<ViewGroupEntity[]> {
     return this.viewGroupRepository.find({
       where: {
         workspaceId,
@@ -34,7 +34,7 @@ export class ViewGroupService {
   async findByViewId(
     workspaceId: string,
     viewId: string,
-  ): Promise<ViewGroup[]> {
+  ): Promise<ViewGroupEntity[]> {
     return this.viewGroupRepository.find({
       where: {
         workspaceId,
@@ -46,7 +46,7 @@ export class ViewGroupService {
     });
   }
 
-  async findById(id: string, workspaceId: string): Promise<ViewGroup | null> {
+  async findById(id: string, workspaceId: string): Promise<ViewGroupEntity | null> {
     const viewGroup = await this.viewGroupRepository.findOne({
       where: {
         id,
@@ -59,7 +59,7 @@ export class ViewGroupService {
     return viewGroup || null;
   }
 
-  async create(viewGroupData: Partial<ViewGroup>): Promise<ViewGroup> {
+  async create(viewGroupData: Partial<ViewGroupEntity>): Promise<ViewGroupEntity> {
     if (!isDefined(viewGroupData.workspaceId)) {
       throw new ViewGroupException(
         generateViewGroupExceptionMessage(
@@ -110,8 +110,8 @@ export class ViewGroupService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: Partial<ViewGroup>,
-  ): Promise<ViewGroup> {
+    updateData: Partial<ViewGroupEntity>,
+  ): Promise<ViewGroupEntity> {
     const existingViewGroup = await this.findById(id, workspaceId);
 
     if (!isDefined(existingViewGroup)) {
@@ -132,7 +132,7 @@ export class ViewGroupService {
     return { ...existingViewGroup, ...updatedViewGroup };
   }
 
-  async delete(id: string, workspaceId: string): Promise<ViewGroup> {
+  async delete(id: string, workspaceId: string): Promise<ViewGroupEntity> {
     const viewGroup = await this.findById(id, workspaceId);
 
     if (!isDefined(viewGroup)) {

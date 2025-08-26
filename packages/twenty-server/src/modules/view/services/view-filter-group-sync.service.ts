@@ -5,20 +5,20 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import { type ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
 import { type ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 
 @Injectable()
 export class ViewFilterGroupSyncService {
   constructor(
-    @InjectRepository(ViewFilterGroup, 'core')
-    private readonly coreViewFilterGroupRepository: Repository<ViewFilterGroup>,
+    @InjectRepository(ViewFilterGroupEntity, 'core')
+    private readonly coreViewFilterGroupRepository: Repository<ViewFilterGroupEntity>,
   ) {}
 
   private parseUpdateDataFromDiff(
     diff: Partial<ObjectRecordDiff<ViewFilterGroupWorkspaceEntity>>,
-  ): Partial<ViewFilterGroup> {
+  ): Partial<ViewFilterGroupEntity> {
     const updateData: Record<string, unknown> = {};
 
     for (const key of Object.keys(diff)) {
@@ -33,14 +33,14 @@ export class ViewFilterGroupSyncService {
       }
     }
 
-    return updateData as Partial<ViewFilterGroup>;
+    return updateData as Partial<ViewFilterGroupEntity>;
   }
 
   public async createCoreViewFilterGroup(
     workspaceId: string,
     workspaceViewFilterGroup: ViewFilterGroupWorkspaceEntity,
   ): Promise<void> {
-    const coreViewFilterGroup: Partial<ViewFilterGroup> = {
+    const coreViewFilterGroup: Partial<ViewFilterGroupEntity> = {
       id: workspaceViewFilterGroup.id,
       viewId: workspaceViewFilterGroup.viewId,
       logicalOperator:

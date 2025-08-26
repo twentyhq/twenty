@@ -1,21 +1,21 @@
 import {
-  TEST_FIELD_METADATA_1_ID,
-  TEST_OBJECT_METADATA_1_ID,
+    TEST_FIELD_METADATA_1_ID,
+    TEST_OBJECT_METADATA_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
 
-import { type ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
-import { type ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
-import { type ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
-import { type ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
-import { type ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
-import { type View } from 'src/engine/core-modules/view/entities/view.entity';
+import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { type ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { type ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { type ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { type ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { type ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 
-export const createViewData = (overrides: Partial<View> = {}) => ({
+export const createViewData = (overrides: Partial<ViewEntity> = {}) => ({
   name: 'Test View',
   objectMetadataId: TEST_OBJECT_METADATA_1_ID,
   icon: 'IconTable',
@@ -27,7 +27,7 @@ export const createViewData = (overrides: Partial<View> = {}) => ({
   ...overrides,
 });
 
-export const updateViewData = (overrides: Partial<View> = {}) => ({
+export const updateViewData = (overrides: Partial<ViewEntity> = {}) => ({
   name: 'Updated View',
   type: ViewType.KANBAN,
   isCompact: true,
@@ -36,7 +36,7 @@ export const updateViewData = (overrides: Partial<View> = {}) => ({
 
 export const createViewFieldData = (
   viewId: string,
-  overrides: Partial<ViewField> = {},
+  overrides: Partial<ViewFieldEntity> = {},
 ) => ({
   viewId,
   fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -46,7 +46,7 @@ export const createViewFieldData = (
   ...overrides,
 });
 
-export const updateViewFieldData = (overrides: Partial<ViewField> = {}) => ({
+export const updateViewFieldData = (overrides: Partial<ViewFieldEntity> = {}) => ({
   position: 5,
   isVisible: false,
   size: 300,
@@ -55,7 +55,7 @@ export const updateViewFieldData = (overrides: Partial<ViewField> = {}) => ({
 
 export const createViewSortData = (
   viewId: string,
-  overrides: Partial<ViewSort> = {},
+  overrides: Partial<ViewSortEntity> = {},
 ) => ({
   viewId,
   fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -63,14 +63,14 @@ export const createViewSortData = (
   ...overrides,
 });
 
-export const updateViewSortData = (overrides: Partial<ViewSort> = {}) => ({
+export const updateViewSortData = (overrides: Partial<ViewSortEntity> = {}) => ({
   direction: ViewSortDirection.DESC,
   ...overrides,
 });
 
 export const createViewFilterData = (
   viewId: string,
-  overrides: Partial<ViewFilter> = {},
+  overrides: Partial<ViewFilterEntity> = {},
 ) => ({
   viewId,
   fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -79,7 +79,7 @@ export const createViewFilterData = (
   ...overrides,
 });
 
-export const updateViewFilterData = (overrides: Partial<ViewFilter> = {}) => ({
+export const updateViewFilterData = (overrides: Partial<ViewFilterEntity> = {}) => ({
   operand: ViewFilterOperand.IS_NOT,
   value: 'updated-value',
   ...overrides,
@@ -87,7 +87,7 @@ export const updateViewFilterData = (overrides: Partial<ViewFilter> = {}) => ({
 
 export const createViewGroupData = (
   viewId: string,
-  overrides: Partial<ViewGroup> = {},
+  overrides: Partial<ViewGroupEntity> = {},
 ) => ({
   viewId,
   fieldMetadataId: TEST_FIELD_METADATA_1_ID,
@@ -97,7 +97,7 @@ export const createViewGroupData = (
   ...overrides,
 });
 
-export const updateViewGroupData = (overrides: Partial<ViewGroup> = {}) => ({
+export const updateViewGroupData = (overrides: Partial<ViewGroupEntity> = {}) => ({
   fieldValue: 'updated-group-value',
   isVisible: false,
   position: 1,
@@ -106,7 +106,7 @@ export const updateViewGroupData = (overrides: Partial<ViewGroup> = {}) => ({
 
 export const createViewFilterGroupData = (
   viewId: string,
-  overrides: Partial<ViewFilterGroup> = {},
+  overrides: Partial<ViewFilterGroupEntity> = {},
 ) => ({
   viewId,
   logicalOperator: ViewFilterGroupLogicalOperator.AND,
@@ -114,7 +114,7 @@ export const createViewFilterGroupData = (
 });
 
 export const updateViewFilterGroupData = (
-  overrides: Partial<ViewFilterGroup> = {},
+  overrides: Partial<ViewFilterGroupEntity> = {},
 ) => ({
   logicalOperator: ViewFilterGroupLogicalOperator.OR,
   ...overrides,

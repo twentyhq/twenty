@@ -1,4 +1,3 @@
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   CreateDateColumn,
@@ -12,10 +11,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 @Entity({ name: 'viewSort', schema: 'core' })
 @Index('IDX_VIEW_SORT_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
@@ -27,13 +26,18 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
     where: '"deletedAt" IS NULL',
   },
 )
-export class ViewSort {
-  @IDField(() => UUIDScalarType)
+export class ViewSortEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: false, type: 'uuid' })
   fieldMetadataId: string;
+
+  @ManyToOne(() => FieldMetadataEntity, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'fieldMetadataId' })
+  fieldMetadata: Relation<FieldMetadataEntity>;
 
   @Column({
     nullable: false,
@@ -64,9 +68,9 @@ export class ViewSort {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
 
-  @ManyToOne(() => View, (view) => view.viewSorts, {
+  @ManyToOne(() => ViewEntity, (view) => view.viewSorts, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'viewId' })
-  view: Relation<View>;
+  view: Relation<ViewEntity>;
 }

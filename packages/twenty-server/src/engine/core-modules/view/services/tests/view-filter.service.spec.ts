@@ -3,20 +3,20 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
-import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import {
-  ViewFilterException,
-  ViewFilterExceptionCode,
-  ViewFilterExceptionMessageKey,
-  generateViewFilterExceptionMessage,
-  generateViewFilterUserFriendlyExceptionMessage,
+    ViewFilterException,
+    ViewFilterExceptionCode,
+    ViewFilterExceptionMessageKey,
+    generateViewFilterExceptionMessage,
+    generateViewFilterUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter.exception';
 import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
 
 describe('ViewFilterService', () => {
   let viewFilterService: ViewFilterService;
-  let viewFilterRepository: Repository<ViewFilter>;
+  let viewFilterRepository: Repository<ViewFilterEntity>;
 
   const mockViewFilter = {
     id: 'view-filter-id',
@@ -29,14 +29,14 @@ describe('ViewFilterService', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
-  } as ViewFilter;
+  } as ViewFilterEntity;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ViewFilterService,
         {
-          provide: getRepositoryToken(ViewFilter, 'core'),
+          provide: getRepositoryToken(ViewFilterEntity, 'core'),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -50,8 +50,8 @@ describe('ViewFilterService', () => {
     }).compile();
 
     viewFilterService = module.get<ViewFilterService>(ViewFilterService);
-    viewFilterRepository = module.get<Repository<ViewFilter>>(
-      getRepositoryToken(ViewFilter, 'core'),
+    viewFilterRepository = module.get<Repository<ViewFilterEntity>>(
+      getRepositoryToken(ViewFilterEntity, 'core'),
     );
   });
 

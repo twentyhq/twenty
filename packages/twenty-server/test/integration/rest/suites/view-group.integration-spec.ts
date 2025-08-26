@@ -1,28 +1,28 @@
 import {
-  TEST_FIELD_METADATA_1_ID,
-  TEST_NOT_EXISTING_VIEW_GROUP_ID,
-  TEST_VIEW_1_ID,
+    TEST_FIELD_METADATA_1_ID,
+    TEST_NOT_EXISTING_VIEW_GROUP_ID,
+    TEST_VIEW_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
-  assertRestApiErrorResponse,
-  assertRestApiSuccessfulResponse,
+    assertRestApiErrorResponse,
+    assertRestApiSuccessfulResponse,
 } from 'test/integration/rest/utils/rest-test-assertions.util';
 import {
-  createTestViewGroupWithRestApi,
-  createTestViewWithRestApi,
-  deleteTestViewGroupWithRestApi,
+    createTestViewGroupWithRestApi,
+    createTestViewWithRestApi,
+    deleteTestViewGroupWithRestApi,
 } from 'test/integration/rest/utils/view-rest-api.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import {
-  assertViewGroupStructure,
-  cleanupViewRecords,
+    assertViewGroupStructure,
+    cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
 
-import { type ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { type ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
 import {
-  generateViewGroupExceptionMessage,
-  ViewGroupExceptionMessageKey,
+    generateViewGroupExceptionMessage,
+    ViewGroupExceptionMessageKey,
 } from 'src/engine/core-modules/view/exceptions/view-group.exception';
 
 describe('View Group REST API', () => {
@@ -113,10 +113,10 @@ describe('View Group REST API', () => {
       expect(response.body).toHaveLength(2);
 
       const group1 = response.body.find(
-        (group: ViewGroup) => group.id === viewGroup1.id,
+        (group: ViewGroupEntity) => group.id === viewGroup1.id,
       );
       const group2 = response.body.find(
-        (group: ViewGroup) => group.id === viewGroup2.id,
+        (group: ViewGroupEntity) => group.id === viewGroup2.id,
       );
 
       assertViewGroupStructure(group1, {

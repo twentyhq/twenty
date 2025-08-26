@@ -3,20 +3,20 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
-import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
 import {
-  ViewFilterGroupException,
-  ViewFilterGroupExceptionCode,
-  ViewFilterGroupExceptionMessageKey,
-  generateViewFilterGroupExceptionMessage,
-  generateViewFilterGroupUserFriendlyExceptionMessage,
+    ViewFilterGroupException,
+    ViewFilterGroupExceptionCode,
+    ViewFilterGroupExceptionMessageKey,
+    generateViewFilterGroupExceptionMessage,
+    generateViewFilterGroupUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
 import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/view-filter-group.service';
 
 describe('ViewFilterGroupService', () => {
   let viewFilterGroupService: ViewFilterGroupService;
-  let viewFilterGroupRepository: Repository<ViewFilterGroup>;
+  let viewFilterGroupRepository: Repository<ViewFilterGroupEntity>;
 
   const mockViewFilterGroup = {
     id: 'view-filter-group-id',
@@ -27,14 +27,14 @@ describe('ViewFilterGroupService', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
-  } as ViewFilterGroup;
+  } as ViewFilterGroupEntity;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ViewFilterGroupService,
         {
-          provide: getRepositoryToken(ViewFilterGroup, 'core'),
+          provide: getRepositoryToken(ViewFilterGroupEntity, 'core'),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -50,8 +50,8 @@ describe('ViewFilterGroupService', () => {
     viewFilterGroupService = module.get<ViewFilterGroupService>(
       ViewFilterGroupService,
     );
-    viewFilterGroupRepository = module.get<Repository<ViewFilterGroup>>(
-      getRepositoryToken(ViewFilterGroup, 'core'),
+    viewFilterGroupRepository = module.get<Repository<ViewFilterGroupEntity>>(
+      getRepositoryToken(ViewFilterGroupEntity, 'core'),
     );
   });
 

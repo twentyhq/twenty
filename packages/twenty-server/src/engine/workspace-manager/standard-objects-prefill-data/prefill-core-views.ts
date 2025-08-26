@@ -3,10 +3,10 @@ import { type ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared
 import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
-import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
-import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
-import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
@@ -30,7 +30,7 @@ export const prefillCoreViews = async (
   dataSource: DataSource,
   workspaceId: string,
   objectMetadataItems: ObjectMetadataEntity[],
-): Promise<View[]> => {
+): Promise<ViewEntity[]> => {
   const customObjectMetadataItems = objectMetadataItems.filter(
     (item) => item.isCustom,
   );
@@ -80,13 +80,13 @@ const createCoreViews = async (
   queryRunner: QueryRunner,
   workspaceId: string,
   viewDefinitions: ViewDefinition[],
-): Promise<View[]> => {
+): Promise<ViewEntity[]> => {
   const viewDefinitionsWithId = viewDefinitions.map((viewDefinition) => ({
     ...viewDefinition,
     id: v4(),
   }));
 
-  const coreViews: Partial<View>[] = viewDefinitionsWithId.map(
+  const coreViews: Partial<ViewEntity>[] = viewDefinitionsWithId.map(
     ({
       id,
       name,
@@ -120,12 +120,12 @@ const createCoreViews = async (
     }),
   );
 
-  const viewRepository = queryRunner.manager.getRepository(View);
+  const viewRepository = queryRunner.manager.getRepository(ViewEntity);
   const createdViews = await viewRepository.save(coreViews);
 
   for (const viewDefinition of viewDefinitionsWithId) {
     if (viewDefinition.fields && viewDefinition.fields.length > 0) {
-      const coreViewFields: Partial<ViewField>[] = viewDefinition.fields.map(
+      const coreViewFields: Partial<ViewFieldEntity>[] = viewDefinition.fields.map(
         (field) => ({
           fieldMetadataId: field.fieldMetadataId,
           position: field.position,
@@ -136,13 +136,13 @@ const createCoreViews = async (
         }),
       );
 
-      const viewFieldRepository = queryRunner.manager.getRepository(ViewField);
+      const viewFieldRepository = queryRunner.manager.getRepository(ViewFieldEntity);
 
       await viewFieldRepository.save(coreViewFields);
     }
 
     if (viewDefinition.filters && viewDefinition.filters.length > 0) {
-      const coreViewFilters: Partial<ViewFilter>[] = viewDefinition.filters.map(
+      const coreViewFilters: Partial<ViewFilterEntity>[] = viewDefinition.filters.map(
         (filter) => ({
           fieldMetadataId: filter.fieldMetadataId,
           viewId: viewDefinition.id,
@@ -155,7 +155,7 @@ const createCoreViews = async (
       );
 
       const viewFilterRepository =
-        queryRunner.manager.getRepository(ViewFilter);
+        queryRunner.manager.getRepository(ViewFilterEntity);
 
       await viewFilterRepository.save(coreViewFilters);
     }
@@ -165,7 +165,7 @@ const createCoreViews = async (
       viewDefinition.groups &&
       viewDefinition.groups.length > 0
     ) {
-      const coreViewGroups: Partial<ViewGroup>[] = viewDefinition.groups.map(
+      const coreViewGroups: Partial<ViewGroupEntity>[] = viewDefinition.groups.map(
         (group) => ({
           fieldMetadataId: group.fieldMetadataId,
           isVisible: group.isVisible,
@@ -176,7 +176,7 @@ const createCoreViews = async (
         }),
       );
 
-      const viewGroupRepository = queryRunner.manager.getRepository(ViewGroup);
+      const viewGroupRepository = queryRunner.manager.getRepository(ViewGroupEntity);
 
       await viewGroupRepository.save(coreViewGroups);
     }
