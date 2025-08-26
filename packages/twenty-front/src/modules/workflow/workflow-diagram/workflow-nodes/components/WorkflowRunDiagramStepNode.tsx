@@ -223,7 +223,11 @@ export const WorkflowRunDiagramStepNode = ({
         </WorkflowNodeRightPart>
       </StyledNodeContainer>
 
-      <WorkflowDiagramHandleSource selected={selected} readOnly />
+      <WorkflowDiagramHandleSource
+        runStatus={data.runStatus}
+        selected={selected}
+        readOnly
+      />
     </>
   );
 };
