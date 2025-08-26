@@ -19,6 +19,7 @@ import { capitalize } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
 import { useIsTarget } from '@/workflow/workflow-diagram/workflow-edges/hooks/useIsTarget';
+import { css } from '@emotion/react';
 
 const StyledAddStepButtonContainer = styled.div<{
   shouldDisplay: boolean;
@@ -34,7 +35,9 @@ const StyledAddStepButtonContainer = styled.div<{
   transform: translateX(-50%) translateY(100%);
 `;
 
-const StyledNodeContainer = styled(WorkflowNodeContainer)`
+const StyledNodeContainer = styled(WorkflowNodeContainer)<{
+  isConnectionInProgress?: boolean;
+}>`
   border-color: ${({ theme }) => theme.border.color.strong};
   background: ${({ theme }) => theme.background.secondary};
 
@@ -45,6 +48,11 @@ const StyledNodeContainer = styled(WorkflowNodeContainer)`
         ${({ theme }) => theme.background.transparent.lighter} 100%
       ),
       ${({ theme }) => theme.background.secondary};
+    ${({ theme, isConnectionInProgress }) =>
+      isConnectionInProgress &&
+      css`
+        border-color: ${theme.color.blue} !important;
+      `};
   }
 
   .selected & {
@@ -101,7 +109,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
 
   const { isNodeCreationStarted } = useStartNodeCreation();
 
-  const { isTarget } = useIsTarget();
+  const { isTarget, isConnectionInProgress } = useIsTarget();
 
   const { getNodeHandlesSelectedState, getNodeHandlesHoveredState } =
     useEdgeState();
@@ -131,6 +139,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         onClick={onClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        isConnectionInProgress={isConnectionInProgress()}
       >
         <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />
@@ -175,7 +184,8 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         selected={
           handlesSelectedState.sourceHandle || selected || isSourceConnection
         }
-        hovered={handlesHoveredState.sourceHandle}
+        hovered={handlesHoveredState.sourceHandle || isHovered}
+        isConnectionInProgress={isConnectionInProgress()}
       />
     </>
   );

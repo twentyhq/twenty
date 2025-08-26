@@ -13,6 +13,7 @@ const StyledNodeContainer = styled.div`
   box-sizing: border-box;
   cursor: pointer;
   position: relative;
+  transition: border-color 0.1s;
 `;
 
 export { StyledNodeContainer as WorkflowNodeContainer };
