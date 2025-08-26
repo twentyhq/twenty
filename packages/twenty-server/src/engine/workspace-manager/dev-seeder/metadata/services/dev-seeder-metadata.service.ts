@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -27,7 +25,6 @@ export class DevSeederMetadataService {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly typeORMService: TypeORMService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   private readonly workspaceConfigs: Record<
@@ -153,24 +150,15 @@ export class DevSeederMetadataService {
   }
 
   private async seedCoreViews(workspaceId: string): Promise<void> {
-    const featureFlags =
-      await this.featureFlagService.getWorkspaceFeatureFlagsMap(workspaceId);
+    const mainDataSource = this.typeORMService.getMainDataSource();
 
-    if (featureFlags[FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED]) {
-      const mainDataSource = this.typeORMService.getMainDataSource();
-
-      if (!mainDataSource) {
-        throw new Error('Could not connect to main data source');
-      }
-
-      const createdObjectMetadata =
-        await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
-
-      await prefillCoreViews(
-        mainDataSource,
-        workspaceId,
-        createdObjectMetadata,
-      );
+    if (!mainDataSource) {
+      throw new Error('Could not connect to main data source');
     }
+
+    const createdObjectMetadata =
+      await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
+
+    await prefillCoreViews(mainDataSource, workspaceId, createdObjectMetadata);
   }
 }

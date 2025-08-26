@@ -13,7 +13,6 @@ import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
-import { customAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesTableByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view';
@@ -31,14 +30,6 @@ export const prefillCoreViews = async (
   workspaceId: string,
   objectMetadataItems: ObjectMetadataEntity[],
 ): Promise<View[]> => {
-  const customObjectMetadataItems = objectMetadataItems.filter(
-    (item) => item.isCustom,
-  );
-
-  const customViews = customObjectMetadataItems.map((item) =>
-    customAllView(item, true),
-  );
-
   const views = [
     companiesAllView(objectMetadataItems, true),
     peopleAllView(objectMetadataItems, true),
@@ -51,7 +42,6 @@ export const prefillCoreViews = async (
     workflowsAllView(objectMetadataItems, true),
     workflowVersionsAllView(objectMetadataItems, true),
     workflowRunsAllView(objectMetadataItems, true),
-    ...customViews,
   ];
 
   const queryRunner = dataSource.createQueryRunner();
