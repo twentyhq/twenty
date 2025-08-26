@@ -2,20 +2,17 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
-import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
 import { WorkflowDropdownStepOutputItems } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowDropdownStepOutputItems';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { WorkflowVariablesDropdownWorkflowStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownWorkflowStepItems';
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
+import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
 
 import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
-import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
@@ -38,7 +35,6 @@ export const WorkflowStepFilterFieldSelect = ({
   const { readonly } = useContext(WorkflowStepFilterContext);
   const { t } = useLingui();
   const theme = useTheme();
-  const workflowVersionId = useWorkflowVersionIdOrThrow();
   const { closeDropdown } = useCloseDropdown();
   const { getIcon } = useIcons();
 
@@ -63,12 +59,11 @@ export const WorkflowStepFilterFieldSelect = ({
     part: 'stepId',
   });
 
-  const [stepOutputSchema] = useRecoilValue(
-    stepsOutputSchemaFamilySelector({
-      workflowVersionId,
-      stepIds: [stepId],
-    }),
-  );
+  const { variableLabel } = useSearchVariable({
+    stepId,
+    rawVariableName: stepFilter.stepOutputKey,
+    isFullRecord: stepFilter.isFullRecord ?? false,
+  });
 
   const {
     fieldMetadataItem: filterFieldMetadataItem,
@@ -91,16 +86,6 @@ export const WorkflowStepFilterFieldSelect = ({
   const handleBack = () => {
     setSelectedStep(undefined);
   };
-
-  if (!isDefined(stepId)) {
-    return null;
-  }
-
-  const { variableLabel } = searchVariableThroughOutputSchema({
-    stepOutputSchema,
-    rawVariableName: stepFilter.stepOutputKey,
-    isFullRecord: stepFilter.isFullRecord ?? false,
-  });
 
   const isSelectedFieldNotFound = !isDefined(variableLabel);
   const label = isSelectedFieldNotFound

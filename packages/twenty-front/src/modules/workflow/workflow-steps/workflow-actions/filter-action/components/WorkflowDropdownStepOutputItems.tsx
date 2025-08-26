@@ -153,25 +153,13 @@ export const WorkflowDropdownStepOutputItems = ({
       return;
     }
 
-    const isRelationField = currentSubStep.object.isRelationField ?? false;
-
-    if (isRelationField) {
-      updateStepFilter({
-        variableName: getVariableTemplateFromPath({
-          stepId: step.id,
-          path: currentPath,
-        }),
-        isFullRecord: true,
-      });
-    } else {
-      updateStepFilter({
-        variableName: getVariableTemplateFromPath({
-          stepId: step.id,
-          path: [...currentPath, currentSubStep.object.fieldIdName],
-        }),
-        isFullRecord: true,
-      });
-    }
+    updateStepFilter({
+      variableName: getVariableTemplateFromPath({
+        stepId: step.id,
+        path: [...currentPath, currentSubStep.object.fieldIdName],
+      }),
+      isFullRecord: true,
+    });
     onSelect();
   };
 
