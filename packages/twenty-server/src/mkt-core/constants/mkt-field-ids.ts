@@ -402,6 +402,10 @@ export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   //kpi system
   accountOwnerForMktKpiTemplates: '40404040-7c8d-9e0f-1a2b-3c4d5e6f7a8b',
   changedKpiHistories: '40404040-0b1c-2d3e-4f5a-6b7c8d9e0f1a',
+  // temporary permissions
+  grantedTemporaryPermissions: '60606060-4f5a-6b7c-8d9e-0f1a2b3c4d5e',
+  receivedTemporaryPermissions: '60606060-5a6b-7c8d-9e0f-1a2b3c4d5e6f',
+  revokedTemporaryPermissions: '60606060-6b7c-8d9e-0f1a-2b3c4d5e6f7a',
 };
 
 export const MKT_RESELLER_TIER_FIELD_IDS = {
@@ -673,4 +677,37 @@ export const MKT_KPI_HISTORY_FIELD_IDS = {
   position: '40404040-7e8f-9a0b-1c2d-3e4f5a6b7c8d',
   createdBy: '40404040-8f9a-0b1c-2d3e-4f5a6b7c8d9e',
   searchVector: '40404040-9a0b-1c2d-3e4f-5a6b7c8d9e0f',
+};
+
+export const MKT_TEMPORARY_PERMISSION_FIELD_IDS = {
+  // grantee information
+  granteeWorkspaceMember: '60606060-7a8b-9c0d-1e2f-3a4b5c6d7e8f',
+  granterWorkspaceMember: '60606060-8b9c-0d1e-2f3a-4b5c6d7e8f9a',
+
+  // permission scope
+  objectName: '60606060-9c0d-1e2f-3a4b-5c6d7e8f9a0b',
+  recordId: '60606060-0d1e-2f3a-4b5c-6d7e8f9a0b1c',
+
+  // permissions granted
+  canRead: '60606060-1e2f-3a4b-5c6d-7e8f9a0b1c2d',
+  canUpdate: '60606060-2f3a-4b5c-6d7e-8f9a0b1c2d3e',
+  canDelete: '60606060-3a4b-5c6d-7e8f-9a0b1c2d3e4f',
+
+  // time control
+  expiresAt: '60606060-4b5c-6d7e-8f9a-0b1c2d3e4f5a',
+
+  // justification
+  reason: '60606060-5c6d-7e8f-9a0b-1c2d3e4f5a6b',
+  purpose: '60606060-6d7e-8f9a-0b1c-2d3e4f5a6b7c',
+
+  // status tracking
+  isActive: '60606060-7e8f-9a0b-1c2d-3e4f5a6b7c8d',
+  revokedAt: '60606060-8f9a-0b1c-2d3e-4f5a6b7c8d9e',
+  revokedBy: '60606060-9a0b-1c2d-3e4f-5a6b7c8d9e0f',
+  revokeReason: '60606060-0b1c-2d3e-4f5a-6b7c8d9e0f1a',
+
+  // standard fields
+  position: '60606060-1c2d-3e4f-5a6b-7c8d9e0f1a2b',
+  createdBy: '60606060-2d3e-4f5a-6b7c-8d9e0f1a2b3c',
+  searchVector: '60606060-3e4f-5a6b-7c8d-9e0f1a2b3c4d',
 };

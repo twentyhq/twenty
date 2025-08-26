@@ -24,6 +24,7 @@ import { MktTemplateWorkspaceEntity } from 'src/mkt-core/template/mkt-template.w
 import { MktValueWorkspaceEntity } from 'src/mkt-core/value/mkt-value.workspace-entity';
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
 import { MktVariantAttributeWorkspaceEntity } from 'src/mkt-core/variant_attribute/mkt-variant-attribute.workspace-entity';
+import { MktTemporaryPermissionWorkspaceEntity } from 'src/mkt-core/mkt-temporary-permission/mkt-temporary-permission.workspace-entity';
 
 export const MKT_WORKSPACE_ENTITIES = [
   // Customer
@@ -67,4 +68,6 @@ export const MKT_FINAL_WORKSPACE_ENTITIES = [
   MktKpiWorkspaceEntity,
   MktKpiTemplateWorkspaceEntity,
   MktKpiHistoryWorkspaceEntity,
+  // Temporary Permission
+  MktTemporaryPermissionWorkspaceEntity,
 ];
