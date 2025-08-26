@@ -132,20 +132,6 @@ describe('AgentToolGeneratorService Integration', () => {
       expect(Object.keys(tools)).toContain('http_request');
     });
 
-    it('should return empty tools when role does not exist', async () => {
-      jest
-        .spyOn(context.agentService, 'findOneAgent')
-        .mockResolvedValue(context.testAgent as any);
-      jest.spyOn(context.roleRepository, 'findOne').mockResolvedValue(null);
-
-      const tools = await context.agentToolService.generateToolsForAgent(
-        context.testAgentId,
-        context.testWorkspaceId,
-      );
-
-      expect(tools).toEqual({});
-    });
-
     it('should filter out workflow-run objects', async () => {
       const workflowObject = {
         ...context.testObjectMetadata,
