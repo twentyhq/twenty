@@ -4,7 +4,7 @@ import { type WorkflowDiagramNodeHandles } from '@/workflow/workflow-diagram/typ
 import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdge';
 import { workflowHoveredEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowHoveredEdgeComponentState';
 import { useReactFlow } from '@xyflow/react';
-import { EdgeBranchArrowMarker } from '@/workflow/workflow-diagram/workflow-edges/constants/EdgeBranchArrowMarker';
+import { EDGE_BRANCH_ARROW_MARKER } from '@/workflow/workflow-diagram/workflow-edges/constants/EdgeBranchArrowMarker';
 
 export const useEdgeState = () => {
   const reactflow = useReactFlow();
@@ -59,13 +59,19 @@ export const useEdgeState = () => {
     setWorkflowSelectedEdge({ source, target });
 
     reactflow.setEdges((edges) =>
-      edges.map((edge) => ({
-        ...edge,
-        markerEnd:
-          edge.source === source && edge.target === target
-            ? EdgeBranchArrowMarker.Selected
-            : EdgeBranchArrowMarker.Default,
-      })),
+      edges.map((edge) => {
+        if (!(edge.source === source && edge.target === target)) {
+          return {
+            ...edge,
+            ...EDGE_BRANCH_ARROW_MARKER.Default,
+          };
+        }
+
+        return {
+          ...edge,
+          ...EDGE_BRANCH_ARROW_MARKER.Selected,
+        };
+      }),
     );
   };
 
@@ -80,16 +86,22 @@ export const useEdgeState = () => {
     setWorkflowHoveredEdge({ source, target });
 
     reactflow.setEdges((edges) =>
-      edges.map((edge) =>
-        edge.source === source &&
-        edge.target === target &&
-        edge.markerEnd !== EdgeBranchArrowMarker.Selected
-          ? {
-              ...edge,
-              markerEnd: EdgeBranchArrowMarker.Hover,
-            }
-          : edge,
-      ),
+      edges.map((edge) => {
+        if (
+          !(
+            edge.source === source &&
+            edge.target === target &&
+            edge.markerEnd !== EDGE_BRANCH_ARROW_MARKER.Selected.markerEnd
+          )
+        ) {
+          return edge;
+        }
+
+        return {
+          ...edge,
+          ...EDGE_BRANCH_ARROW_MARKER.Hover,
+        };
+      }),
     );
   };
 
@@ -99,7 +111,7 @@ export const useEdgeState = () => {
     reactflow.setEdges((edges) =>
       edges.map((edge) => ({
         ...edge,
-        markerEnd: EdgeBranchArrowMarker.Default,
+        ...EDGE_BRANCH_ARROW_MARKER.Default,
       })),
     );
   };
@@ -109,10 +121,10 @@ export const useEdgeState = () => {
 
     reactflow.setEdges((edges) =>
       edges.map((edge) =>
-        edge.markerEnd === EdgeBranchArrowMarker.Hover
+        edge.markerEnd === EDGE_BRANCH_ARROW_MARKER.Hover.markerEnd
           ? {
               ...edge,
-              markerEnd: EdgeBranchArrowMarker.Default,
+              ...EDGE_BRANCH_ARROW_MARKER.Default,
             }
           : edge,
       ),
