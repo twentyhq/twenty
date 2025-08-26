@@ -197,6 +197,7 @@ export const usePersistViewFilterRecords = () => {
             mutation: CREATE_CORE_VIEW_FILTER,
             variables: {
               input: {
+                id: viewFilter.id,
                 fieldMetadataId: viewFilter.fieldMetadataId,
                 viewId: view.id,
                 value: viewFilter.value,

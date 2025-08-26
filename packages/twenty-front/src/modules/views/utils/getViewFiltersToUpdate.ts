@@ -1,7 +1,7 @@
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { areViewFiltersEqual } from '@/views/utils/areViewFiltersEqual';
-import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
 import { isDefined } from 'twenty-shared/utils';
+import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
 
 export const getViewFiltersToUpdate = (
   currentViewFilters: ViewFilter[],

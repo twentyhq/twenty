@@ -119,6 +119,7 @@ export const usePersistViewGroupRecords = () => {
             mutation: CREATE_CORE_VIEW_GROUP,
             variables: {
               input: {
+                id: viewGroup.id,
                 viewId,
                 isVisible: viewGroup.isVisible,
                 position: viewGroup.position,

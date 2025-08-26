@@ -185,6 +185,7 @@ export const usePersistViewSortRecords = () => {
             mutation: CREATE_CORE_VIEW_SORT,
             variables: {
               input: {
+                id: viewSort.id,
                 fieldMetadataId: viewSort.fieldMetadataId,
                 viewId: view.id,
                 direction: convertViewSortDirectionToCore(viewSort.direction),

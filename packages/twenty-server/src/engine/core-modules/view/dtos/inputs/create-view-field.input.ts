@@ -6,6 +6,9 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 @InputType()
 export class CreateViewFieldInput {
   @Field(() => UUIDScalarType, { nullable: false })
+  id: string;
+
+  @Field(() => UUIDScalarType, { nullable: false })
   fieldMetadataId: string;
 
   @Field(() => UUIDScalarType, { nullable: false })

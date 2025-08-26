@@ -151,6 +151,7 @@ export const usePersistViewFieldRecords = () => {
             mutation: CREATE_CORE_VIEW_FIELD,
             variables: {
               input: {
+                id: viewField.id,
                 fieldMetadataId: viewField.fieldMetadataId,
                 viewId: view.id,
                 isVisible: viewField.isVisible,

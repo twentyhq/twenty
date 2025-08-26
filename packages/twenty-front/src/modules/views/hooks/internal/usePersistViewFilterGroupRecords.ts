@@ -231,6 +231,7 @@ export const usePersistViewFilterGroupRecords = () => {
         mutation: CREATE_CORE_VIEW_FILTER_GROUP,
         variables: {
           input: {
+            id: viewFilterGroup.id,
             viewId: view.id,
             parentViewFilterGroupId: viewFilterGroup.parentViewFilterGroupId,
             logicalOperator: viewFilterGroup.logicalOperator,

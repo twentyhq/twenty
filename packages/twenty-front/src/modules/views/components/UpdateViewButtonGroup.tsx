@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -15,6 +16,7 @@ import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAr
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter } from '@/views/hooks/useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter';
+import { useRefreshCoreViews } from '@/views/hooks/useRefreshCoreViews';
 import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
@@ -33,6 +35,10 @@ const StyledContainer = styled.div`
 
 export const UpdateViewButtonGroup = () => {
   const { saveCurrentViewFilterAndSorts } = useSaveCurrentViewFiltersAndSorts();
+
+  const { refreshCoreViews } = useRefreshCoreViews();
+
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const { setViewPickerMode } = useViewPickerMode();
 
@@ -72,6 +78,7 @@ export const UpdateViewButtonGroup = () => {
 
   const handleUpdateViewClick = async () => {
     await saveCurrentViewFilterAndSorts();
+    await refreshCoreViews(objectMetadataItem.id);
   };
 
   const { hasFiltersQueryParams } = useViewFromQueryParams();
