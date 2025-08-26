@@ -13,16 +13,13 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [
+    TypeOrmModule.forFeature([
         ObjectPermissionEntity,
         RoleEntity,
         ObjectMetadataEntity,
         FieldPermissionEntity,
         FieldMetadataEntity,
-      ],
-      'core',
-    ),
+      ]),
     WorkspaceCacheStorageModule,
     WorkspacePermissionsCacheModule,
   ],

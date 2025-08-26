@@ -35,7 +35,7 @@ describe('ViewFieldService', () => {
       providers: [
         ViewFieldService,
         {
-          provide: getRepositoryToken(ViewFieldEntity, 'core'),
+          provide: getRepositoryToken(ViewFieldEntity),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -50,7 +50,7 @@ describe('ViewFieldService', () => {
 
     viewFieldService = module.get<ViewFieldService>(ViewFieldService);
     viewFieldRepository = module.get<Repository<ViewFieldEntity>>(
-      getRepositoryToken(ViewFieldEntity, 'core'),
+      getRepositoryToken(ViewFieldEntity),
     );
   });
 

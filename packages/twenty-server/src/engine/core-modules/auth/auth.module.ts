@@ -78,8 +78,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     UserModule,
     WorkspaceManagerModule,
     TypeORMModule,
-    TypeOrmModule.forFeature(
-      [
+    TypeOrmModule.forFeature([
         Workspace,
         User,
         AppToken,
@@ -89,10 +88,8 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
         KeyValuePair,
         UserWorkspace,
         TwoFactorAuthenticationMethod,
-      ],
-      'core',
-    ),
-    TypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
+      ]),
+    TypeOrmModule.forFeature([ObjectMetadataEntity]),
     HttpModule,
     UserWorkspaceModule,
     WorkspaceModule,

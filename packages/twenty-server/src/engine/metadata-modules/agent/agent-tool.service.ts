@@ -20,7 +20,7 @@ export class AgentToolService {
     private readonly agentService: AgentService,
     private readonly agentHandoffService: AgentHandoffService,
     private readonly agentHandoffExecutorService: AgentHandoffExecutorService,
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly toolService: ToolService,
     private readonly toolAdapterService: ToolAdapterService,

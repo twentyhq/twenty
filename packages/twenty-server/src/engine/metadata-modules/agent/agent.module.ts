@@ -36,8 +36,7 @@ import { AgentService } from './agent.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [
+    TypeOrmModule.forFeature([
         AgentEntity,
         AgentHandoffEntity,
         RoleEntity,
@@ -46,9 +45,7 @@ import { AgentService } from './agent.service';
         AgentChatThreadEntity,
         FileEntity,
         UserWorkspace,
-      ],
-      'core',
-    ),
+      ]),
     AiModule,
     AgentRoleModule,
     ThrottlerModule,
@@ -82,10 +79,7 @@ import { AgentService } from './agent.service';
     AgentChatService,
     AgentStreamingService,
     AgentTitleGenerationService,
-    TypeOrmModule.forFeature(
-      [AgentEntity, AgentChatMessageEntity, AgentChatThreadEntity],
-      'core',
-    ),
+    TypeOrmModule.forFeature([AgentEntity, AgentChatMessageEntity, AgentChatThreadEntity]),
     AgentHandoffExecutorService,
     AgentHandoffService,
   ],

@@ -21,7 +21,7 @@ import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/bill
 export class BillingPlanService {
   protected readonly logger = new Logger(BillingPlanService.name);
   constructor(
-    @InjectRepository(BillingProduct, 'core')
+    @InjectRepository(BillingProduct)
     private readonly billingProductRepository: Repository<BillingProduct>,
   ) {}
 

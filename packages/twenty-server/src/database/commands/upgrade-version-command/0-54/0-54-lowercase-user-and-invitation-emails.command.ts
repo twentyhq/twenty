@@ -21,11 +21,11 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 })
 export class LowercaseUserAndInvitationEmailsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(User, 'core')
+    @InjectRepository(User)
     protected readonly userRepository: Repository<User>,
-    @InjectRepository(AppToken, 'core')
+    @InjectRepository(AppToken)
     protected readonly appTokenRepository: Repository<AppToken>,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {

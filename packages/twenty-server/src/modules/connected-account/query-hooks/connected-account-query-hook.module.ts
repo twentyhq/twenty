@@ -7,7 +7,7 @@ import { ConnectedAccountDeleteOnePreQueryHook } from 'src/modules/connected-acc
 
 @Module({
   imports: [
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
+    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
   ],
   providers: [ConnectedAccountDeleteOnePreQueryHook],
 })

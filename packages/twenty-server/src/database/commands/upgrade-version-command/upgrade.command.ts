@@ -45,7 +45,7 @@ export class DatabaseMigrationService {
   private logger = new Logger(DatabaseMigrationService.name);
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
@@ -129,7 +129,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
   override allCommands: AllCommands;
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyConfigService: TwentyConfigService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,

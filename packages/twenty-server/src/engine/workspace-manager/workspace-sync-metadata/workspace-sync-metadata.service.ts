@@ -28,7 +28,7 @@ export class WorkspaceSyncMetadataService {
   private readonly logger = new Logger(WorkspaceSyncMetadataService.name);
 
   constructor(
-    @InjectDataSource('core')
+    @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,

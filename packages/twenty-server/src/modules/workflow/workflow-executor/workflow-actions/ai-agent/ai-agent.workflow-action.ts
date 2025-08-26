@@ -27,7 +27,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
   constructor(
     private readonly agentExecutionService: AgentExecutionService,
     private readonly aiBillingService: AIBillingService,
-    @InjectRepository(AgentEntity, 'core')
+    @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
   ) {}
 

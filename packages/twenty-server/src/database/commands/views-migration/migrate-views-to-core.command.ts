@@ -39,11 +39,11 @@ import { convertViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/uti
 })
 export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly featureFlagService: FeatureFlagService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectDataSource('core')
+    @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);

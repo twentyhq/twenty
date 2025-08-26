@@ -24,7 +24,7 @@ export class AgentHandoffExecutorService {
   private readonly logger = new Logger(AgentHandoffExecutorService.name);
 
   constructor(
-    @InjectRepository(AgentEntity, 'core')
+    @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
     private readonly agentHandoffService: AgentHandoffService,
     private readonly aiModelRegistryService: AiModelRegistryService,

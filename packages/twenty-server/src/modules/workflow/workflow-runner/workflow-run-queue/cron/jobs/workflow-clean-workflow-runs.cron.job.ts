@@ -26,7 +26,7 @@ export class WorkflowCleanWorkflowRunsJob {
   private readonly logger = new Logger(WorkflowCleanWorkflowRunsJob.name);
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,

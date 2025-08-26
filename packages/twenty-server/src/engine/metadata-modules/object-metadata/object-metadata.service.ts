@@ -59,7 +59,7 @@ import { type CreateObjectInput } from './dtos/create-object.input';
 @Injectable()
 export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEntity> {
   constructor(
-    @InjectRepository(ObjectMetadataEntity, 'core')
+    @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
 
     private readonly dataSourceService: DataSourceService,

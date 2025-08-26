@@ -34,7 +34,7 @@ describe('ViewFilterGroupService', () => {
       providers: [
         ViewFilterGroupService,
         {
-          provide: getRepositoryToken(ViewFilterGroupEntity, 'core'),
+          provide: getRepositoryToken(ViewFilterGroupEntity),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -51,7 +51,7 @@ describe('ViewFilterGroupService', () => {
       ViewFilterGroupService,
     );
     viewFilterGroupRepository = module.get<Repository<ViewFilterGroupEntity>>(
-      getRepositoryToken(ViewFilterGroupEntity, 'core'),
+      getRepositoryToken(ViewFilterGroupEntity),
     );
   });
 

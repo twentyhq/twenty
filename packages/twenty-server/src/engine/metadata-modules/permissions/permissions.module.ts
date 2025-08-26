@@ -14,12 +14,9 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [RoleEntity, RoleTargetsEntity, ApiKey, Workspace],
-      'core',
-    ),
+    TypeOrmModule.forFeature([RoleEntity, RoleTargetsEntity, ApiKey, Workspace]),
     FeatureFlagModule,
-    TypeOrmModule.forFeature([UserWorkspace], 'core'),
+    TypeOrmModule.forFeature([UserWorkspace]),
     UserRoleModule,
     WorkspacePermissionsCacheModule,
   ],

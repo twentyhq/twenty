@@ -12,7 +12,7 @@ import { AiAgentWorkflowAction } from './ai-agent.workflow-action';
   imports: [
     AgentModule,
     AiModule,
-    TypeOrmModule.forFeature([AgentEntity], 'core'),
+    TypeOrmModule.forFeature([AgentEntity]),
   ],
   providers: [ScopedWorkspaceContextFactory, AiAgentWorkflowAction],
   exports: [AiAgentWorkflowAction],

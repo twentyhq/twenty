@@ -30,7 +30,7 @@ export class AgentStreamingService {
   private readonly logger = new Logger(AgentStreamingService.name);
 
   constructor(
-    @InjectRepository(AgentChatThreadEntity, 'core')
+    @InjectRepository(AgentChatThreadEntity)
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
     private readonly agentChatService: AgentChatService,
     private readonly agentExecutionService: AgentExecutionService,

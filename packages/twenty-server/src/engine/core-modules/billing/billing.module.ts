@@ -43,8 +43,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     MessageQueueModule,
     PermissionsModule,
     AiModule,
-    TypeOrmModule.forFeature(
-      [
+    TypeOrmModule.forFeature([
         BillingSubscription,
         BillingSubscriptionItem,
         BillingCustomer,
@@ -55,9 +54,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
         Workspace,
         UserWorkspace,
         FeatureFlag,
-      ],
-      'core',
-    ),
+      ]),
   ],
   providers: [
     BillingSubscriptionService,
