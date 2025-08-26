@@ -206,6 +206,9 @@ export class AiModelRegistryService {
       case ModelProvider.ANTHROPIC:
         apiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
         break;
+      case ModelProvider.OPENAI_COMPATIBLE:
+        apiKey = this.twentyConfigService.get('OPENAI_COMPATIBLE_API_KEY');
+        break;
       default:
         return;
     }
