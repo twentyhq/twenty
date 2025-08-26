@@ -19,10 +19,10 @@ export const prefetchViewIdsFromObjectMetadataItemFamilySelector =
         const featureFlags =
           extractFeatureFlagMapFromWorkspace(currentWorkspace);
 
-        const isCoreViewSyncingEnabled =
+        const isCoreViewEnabled =
           featureFlags[FeatureFlagKey.IS_CORE_VIEW_ENABLED];
 
-        const views = isCoreViewSyncingEnabled
+        const views = isCoreViewEnabled
           ? coreViews.map(convertCoreViewToView)
           : prefetchedViews;
 
