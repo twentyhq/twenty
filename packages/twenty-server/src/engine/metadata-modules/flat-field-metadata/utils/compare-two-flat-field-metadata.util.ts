@@ -85,6 +85,7 @@ export const compareTwoFlatFieldMetadata = ({
         const from = parseJson<any>(oldValue);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const to = parseJson<any>(value);
+
         return {
           from,
           to,
