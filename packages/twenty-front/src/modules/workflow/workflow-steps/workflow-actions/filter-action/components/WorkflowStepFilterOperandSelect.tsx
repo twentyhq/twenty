@@ -4,7 +4,7 @@ import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
-import { getViewFilterOperands } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/getStepFilterOperands';
+import { getStepFilterOperands } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/getStepFilterOperands';
 import { useContext } from 'react';
 import { type StepFilter, type ViewFilterOperand } from 'twenty-shared/types';
 
@@ -18,7 +18,7 @@ export const WorkflowStepFilterOperandSelect = ({
   const { readonly } = useContext(WorkflowStepFilterContext);
 
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
-  const operands = getViewFilterOperands({
+  const operands = getStepFilterOperands({
     filterType: stepFilter.type,
     subFieldName: stepFilter.compositeFieldSubFieldName,
   });
