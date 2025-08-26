@@ -1,6 +1,5 @@
 import { workflowSelectedEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowSelectedEdgeComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { type WorkflowDiagramNodeHandles } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeHandles';
 import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/workflow-edges/types/WorkflowDiagramEdge';
 import { workflowHoveredEdgeComponentState } from '@/workflow/workflow-diagram/workflow-edges/states/workflowHoveredEdgeComponentState';
 import { useReactFlow } from '@xyflow/react';
@@ -16,43 +15,24 @@ export const useEdgeState = () => {
     workflowHoveredEdgeComponentState,
   );
 
+  const isSourceSelected = (nodeId: string) => {
+    return workflowSelectedEdge?.source === nodeId;
+  };
+
+  const isSourceHovered = (nodeId: string) => {
+    return workflowHoveredEdge?.source === nodeId;
+  };
+
   const isEdgeSelected = ({ source, target }: WorkflowDiagramEdge) => {
-    return (
-      workflowSelectedEdge?.source === source &&
-      workflowSelectedEdge?.target === target
-    );
+    return isSourceSelected(source) && workflowSelectedEdge?.target === target;
   };
 
   const isEdgeHovered = ({ source, target }: WorkflowDiagramEdge) => {
-    return (
-      workflowHoveredEdge?.source === source &&
-      workflowHoveredEdge?.target === target
-    );
-  };
-
-  const getNodeHandlesSelectedState = (
-    id: string,
-  ): WorkflowDiagramNodeHandles => {
-    return {
-      targetHandle: workflowSelectedEdge?.target === id,
-      sourceHandle: workflowSelectedEdge?.source === id,
-    };
-  };
-
-  const getNodeHandlesHoveredState = (
-    id: string,
-  ): WorkflowDiagramNodeHandles => {
-    return {
-      targetHandle: workflowHoveredEdge?.target === id,
-      sourceHandle: workflowHoveredEdge?.source === id,
-    };
+    return isSourceHovered(source) && workflowHoveredEdge?.target === target;
   };
 
   const setEdgeSelected = ({ source, target }: WorkflowDiagramEdge) => {
-    if (
-      workflowSelectedEdge?.source === source &&
-      workflowSelectedEdge?.target === target
-    ) {
+    if (isEdgeSelected({ source, target })) {
       return;
     }
 
@@ -60,26 +40,23 @@ export const useEdgeState = () => {
 
     reactflow.setEdges((edges) =>
       edges.map((edge) => {
-        if (!(edge.source === source && edge.target === target)) {
+        if (edge.source === source && edge.target === target) {
           return {
             ...edge,
-            ...EDGE_BRANCH_ARROW_MARKER.Default,
+            ...EDGE_BRANCH_ARROW_MARKER.Selected,
           };
         }
 
         return {
           ...edge,
-          ...EDGE_BRANCH_ARROW_MARKER.Selected,
+          ...EDGE_BRANCH_ARROW_MARKER.Default,
         };
       }),
     );
   };
 
   const setEdgeHovered = ({ source, target }: WorkflowDiagramEdge) => {
-    if (
-      workflowHoveredEdge?.source === source &&
-      workflowHoveredEdge?.target === target
-    ) {
+    if (isEdgeSelected({ source, target })) {
       return;
     }
 
@@ -88,19 +65,17 @@ export const useEdgeState = () => {
     reactflow.setEdges((edges) =>
       edges.map((edge) => {
         if (
-          !(
-            edge.source === source &&
-            edge.target === target &&
-            edge.markerEnd !== EDGE_BRANCH_ARROW_MARKER.Selected.markerEnd
-          )
+          edge.source === source &&
+          edge.target === target &&
+          edge.markerEnd !== EDGE_BRANCH_ARROW_MARKER.Selected.markerEnd
         ) {
-          return edge;
+          return {
+            ...edge,
+            ...EDGE_BRANCH_ARROW_MARKER.Hover,
+          };
         }
 
-        return {
-          ...edge,
-          ...EDGE_BRANCH_ARROW_MARKER.Hover,
-        };
+        return edge;
       }),
     );
   };
@@ -120,25 +95,27 @@ export const useEdgeState = () => {
     setWorkflowHoveredEdge(undefined);
 
     reactflow.setEdges((edges) =>
-      edges.map((edge) =>
-        edge.markerEnd === EDGE_BRANCH_ARROW_MARKER.Hover.markerEnd
-          ? {
-              ...edge,
-              ...EDGE_BRANCH_ARROW_MARKER.Default,
-            }
-          : edge,
-      ),
+      edges.map((edge) => {
+        if (edge.markerEnd === EDGE_BRANCH_ARROW_MARKER.Hover.markerEnd) {
+          return {
+            ...edge,
+            ...EDGE_BRANCH_ARROW_MARKER.Default,
+          };
+        }
+
+        return edge;
+      }),
     );
   };
 
   return {
     isEdgeSelected,
+    isSourceSelected,
     setEdgeSelected,
     clearEdgeSelected,
-    getNodeHandlesSelectedState,
     isEdgeHovered,
+    isSourceHovered,
     setEdgeHovered,
     clearEdgeHover,
-    getNodeHandlesHoveredState,
   };
 };

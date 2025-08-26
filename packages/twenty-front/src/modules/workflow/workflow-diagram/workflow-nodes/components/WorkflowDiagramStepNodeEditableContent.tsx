@@ -13,12 +13,12 @@ import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/wo
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import styled from '@emotion/styled';
-import { Position, useConnection } from '@xyflow/react';
+import { Position } from '@xyflow/react';
 import { useState } from 'react';
 import { capitalize } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
-import { useIsConnectable } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useIsConnectable';
+import { useConnectionState } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useConnectionState';
 import { css } from '@emotion/react';
 import { WorkflowDiagramHandleTopEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTopEditable';
 
@@ -110,21 +110,11 @@ export const WorkflowDiagramStepNodeEditableContent = ({
 
   const { isNodeCreationStarted } = useStartNodeCreation();
 
-  const { isConnectable } = useIsConnectable();
+  const { isConnectable, isSourceConnected } = useConnectionState(
+    data.nodeType,
+  );
 
-  const { getNodeHandlesSelectedState, getNodeHandlesHoveredState } =
-    useEdgeState();
-
-  const connection = useConnection();
-
-  const isSourceConnection =
-    connection.inProgress && connection.fromNode.id === id;
-
-  const handlesSelectedState = getNodeHandlesSelectedState(id);
-
-  const handlesHoveredState = getNodeHandlesHoveredState(id);
-
-  const isNodeConnectable = isConnectable(id) && data.nodeType !== 'trigger';
+  const { isSourceSelected, isSourceHovered } = useEdgeState();
 
   return (
     <>
@@ -133,9 +123,9 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         onClick={onClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        isConnectable={isNodeConnectable}
+        isConnectable={isConnectable(id)}
       >
-        <WorkflowDiagramHandleTopEditable isConnectable={isNodeConnectable} />
+        <WorkflowDiagramHandleTopEditable isConnectable={isConnectable(id)} />
         <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />
         </WorkflowNodeIconContainer>
@@ -176,11 +166,9 @@ export const WorkflowDiagramStepNodeEditableContent = ({
       <WorkflowDiagramHandleEditable
         type="source"
         position={Position.Bottom}
-        selected={
-          handlesSelectedState.sourceHandle || selected || isSourceConnection
-        }
-        hovered={handlesHoveredState.sourceHandle || isHovered}
-        isConnectable={isNodeConnectable}
+        selected={isSourceSelected(id) || selected || isSourceConnected(id)}
+        hovered={isSourceHovered(id) || isHovered}
+        isConnectable={isConnectable(id)}
       />
     </>
   );

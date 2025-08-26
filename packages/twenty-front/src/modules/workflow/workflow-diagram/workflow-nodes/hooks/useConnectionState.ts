@@ -1,11 +1,15 @@
 import { useConnection, useEdges } from '@xyflow/react';
 
-export const useIsConnectable = () => {
+export const useConnectionState = (nodeType: 'action' | 'trigger') => {
   const connection = useConnection();
 
   const edges = useEdges();
 
   const isConnectable = (nodeId: string) => {
+    if (nodeType === 'trigger') {
+      return false;
+    }
+
     if (!connection.inProgress) {
       return false;
     }
@@ -22,5 +26,9 @@ export const useIsConnectable = () => {
     );
   };
 
-  return { isConnectable };
+  const isSourceConnected = (nodeId: string) => {
+    return connection.inProgress && connection.fromNode.id === nodeId;
+  };
+
+  return { isConnectable, isSourceConnected };
 };
