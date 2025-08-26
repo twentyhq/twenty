@@ -1,6 +1,7 @@
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { DataSource, Repository } from 'typeorm';
 
 import {
@@ -19,7 +20,6 @@ import {
   VIEW_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 @Command({
   name: 'migrate:1-5:remove-favorite-view-relation',
@@ -103,21 +103,18 @@ export class RemoveFavoriteViewRelation extends ActiveOrSuspendedWorkspacesMigra
 
       if (!options.dryRun) {
         await fieldMetadataRepository.delete(viewFavoriteFieldMetadata.id);
-        await fieldMetadataRepository.update(
-          favoriteViewFieldMetadata.id,
-          {
-            name: 'viewId',
-            type: FieldMetadataType.UUID,
-            label: 'ViewId',
-            description: 'ViewId',
-            icon: 'IconView',
-            isSystem: true,
-            isNullable: true,
-            relationTargetFieldMetadataId: null,
-            relationTargetObjectMetadataId: null,
-            settings: null,
-          },
-        );
+        await fieldMetadataRepository.update(favoriteViewFieldMetadata.id, {
+          name: 'viewId',
+          type: FieldMetadataType.UUID,
+          label: 'ViewId',
+          description: 'ViewId',
+          icon: 'IconView',
+          isSystem: true,
+          isNullable: true,
+          relationTargetFieldMetadataId: null,
+          relationTargetObjectMetadataId: null,
+          settings: null,
+        });
       }
 
       const workspaceSchemaName = getWorkspaceSchemaName(workspaceId);
