@@ -3,19 +3,19 @@ import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { type FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
 export const updateFeatureFlag = async ({
   featureFlag,
   value,
   workspaceId = SEED_APPLE_WORKSPACE_ID,
-  expectTofail,
+  expectToFail,
 }: {
   featureFlag: FeatureFlagKey;
   value: boolean;
   workspaceId?: string;
-  expectTofail: boolean;
+  expectToFail: boolean;
 }) => {
   const enablePermissionsQuery = updateFeatureFlagFactory(
     workspaceId,
@@ -25,14 +25,14 @@ export const updateFeatureFlag = async ({
 
   const response = await makeGraphqlAPIRequest(enablePermissionsQuery);
 
-  if (expectTofail === false) {
+  if (expectToFail === false) {
     warnIfErrorButNotExpectedToFail({
       errorMessage: 'Update feature flag should not have failed',
       response,
     });
   }
 
-  if (expectTofail === true) {
+  if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({
       errorMessage: 'Update feature flag should have failed',
       response,

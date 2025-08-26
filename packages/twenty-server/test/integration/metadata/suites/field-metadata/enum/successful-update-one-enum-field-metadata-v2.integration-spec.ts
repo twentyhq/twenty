@@ -5,12 +5,12 @@ import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-metadata/constants/custom-object-dishes.constants';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { eachTestingContextFilter } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
@@ -48,7 +48,7 @@ describe.each(fieldMetadataEnumTypes)(
 
     beforeAll(async () => {
       await updateFeatureFlag({
-        expectTofail: false,
+        expectToFail: false,
         featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
         value: true,
       });
@@ -88,7 +88,7 @@ describe.each(fieldMetadataEnumTypes)(
         input: { idToDelete: createdObjectMetadataId },
       });
       await updateFeatureFlag({
-        expectTofail: false,
+        expectToFail: false,
         featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
         value: false,
       });

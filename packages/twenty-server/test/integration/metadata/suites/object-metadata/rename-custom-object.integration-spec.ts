@@ -79,8 +79,8 @@ describe('Custom object renaming', () => {
     fillStandardObjectRelationsMapObjectMetadataId(standardObjects);
 
     const CUSTOM_OBJECT = {
-      namePlural: 'customObjectMamePlural',
-      nameSingular: 'customObjectMameSingular',
+      namePlural: 'customObjectNamePlural',
+      nameSingular: 'customObjectNameSingular',
       labelPlural: 'customObjectLabelPlural',
       labelSingular: 'customObjectLabelSingular',
       description: 'Custom object description',
