@@ -32,6 +32,7 @@ import { MktKpiWorkspaceEntity } from 'src/mkt-core/mkt-kpi/mkt-kpi.workspace-en
 import { MktKpiTemplateWorkspaceEntity } from 'src/mkt-core/mkt-kpi-template/mkt-kpi-template.workspace-entity';
 import { MktTemporaryPermissionWorkspaceEntity } from 'src/mkt-core/mkt-temporary-permission/mkt-temporary-permission.workspace-entity';
 import { MktDataAccessPolicyWorkspaceEntity } from 'src/mkt-core/mkt-data-access-policy/mkt-data-access-policy.workspace-entity';
+import { MktPermissionAuditWorkspaceEntity } from 'src/mkt-core/mkt-permission-audit/mkt-permission-audit.workspace-entity';
 
 export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
@@ -358,4 +359,16 @@ export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   dataAccessPolicies: Relation<MktDataAccessPolicyWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.permissionAudits,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Permission Audits`,
+    description: msg`Permission audit logs for this workspace member`,
+    icon: 'IconShieldSearch',
+    inverseSideTarget: () => MktPermissionAuditWorkspaceEntity,
+    inverseSideFieldKey: 'workspaceMember',
+  })
+  @WorkspaceIsSystem()
+  permissionAudits: Relation<MktPermissionAuditWorkspaceEntity[]>;
 }

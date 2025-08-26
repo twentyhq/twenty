@@ -43,6 +43,8 @@ export const MKT_OBJECT_IDS = {
   mktTemporaryPermission: 'dde9a4ee-2920-46f1-9f07-bf10944bc897',
   // data access policy system
   mktDataAccessPolicy: 'a8b9c0d1-e2f3-4567-89ab-cdef01234567',
+  // permission audit system
+  mktPermissionAudit: 'f4a5b6c7-d8e9-0123-4567-89abcdef0123',
   // customers
   mktCustomer: '2c720af2-4412-4317-8a48-0acdaf66bc90',
 };

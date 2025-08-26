@@ -408,6 +408,8 @@ export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   revokedTemporaryPermissions: '60606060-6b7c-8d9e-0f1a-2b3c4d5e6f7a',
   // data access policies
   dataAccessPolicies: '70707070-7a8b-9c0d-1e2f-3a4b5c6d7e8f',
+  // permission audits
+  permissionAudits: '80808080-8b9c-0d1e-2f3a-4b5c6d7e8f9a',
 };
 
 export const MKT_RESELLER_TIER_FIELD_IDS = {
@@ -771,4 +773,31 @@ export const MKT_DATA_ACCESS_POLICY_FIELD_IDS = {
 
   // standard fields
   position: 'd0b0c1d2-e4f5-a6b7-c8d9-eafba0b1c2d3',
+};
+
+export const MKT_PERMISSION_AUDIT_FIELD_IDS = {
+  // who performed the action
+  workspaceMember: 'e1f2a3b4-5c6d-7e8f-a0b1-c2d3e4f5a6b7',
+  userId: 'f2a3b4c5-6d7e-8f9a-b1c2-d3e4f5a6b7c8',
+
+  // what action was performed
+  action: 'a3b4c5d6-7e8f-9a0b-c2d3-e4f5a6b7c8d9',
+  objectName: 'b4c5d6e7-8f9a-0b1c-d3e4-f5a6b7c8d9ea',
+  recordId: 'c5d6e7f8-9a0b-1c2d-e4f5-a6b7c8d9eafb',
+
+  // permission check details
+  permissionSource: 'd6e7f8a9-0b1c-2d3e-f5a6-b7c8d9eafba0',
+  checkResult: 'e7f8a9b0-1c2d-3e4f-a6b7-c8d9eafba0b1',
+  denialReason: 'f8a9b0c1-2d3e-4f5a-b7c8-d9eafba0b1c2',
+
+  // request context
+  requestContext: 'a9b0c1d2-3e4f-5a6b-c8d9-eafba0b1c2d3',
+  ipAddress: 'b0c1d2e3-4f5a-6b7c-d9ea-fba0b1c2d3e4',
+  userAgent: 'c1d2e3f4-5a6b-7c8d-eafb-a0b1c2d3e4f5',
+
+  // performance metrics
+  checkDurationMs: 'd2e3f4a5-6b7c-8d9e-fba0-b1c2d3e4f5a6',
+
+  // standard fields
+  position: 'e3f4a5b6-7c8d-9eaf-ba0b-1c2d3e4f5a6b',
 };

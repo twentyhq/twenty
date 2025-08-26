@@ -111,6 +111,10 @@ import {
   MKT_DATA_ACCESS_POLICY_DATA_SEED_COLUMNS,
   MKT_DATA_ACCESS_POLICY_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-data-access-policy-data-seeds.constants';
+import {
+  MKT_PERMISSION_AUDIT_DATA_SEED_COLUMNS,
+  MKT_PERMISSION_AUDIT_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-permission-audit-data-seeds.constants';
 
 export const MKT_RECORD_SEEDS_CONFIGS_FIRST_PHASE_TABLES = [
   // Organization configs
@@ -269,5 +273,10 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     tableName: 'mktDataAccessPolicy',
     pgColumns: MKT_DATA_ACCESS_POLICY_DATA_SEED_COLUMNS,
     recordSeeds: MKT_DATA_ACCESS_POLICY_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktPermissionAudit',
+    pgColumns: MKT_PERMISSION_AUDIT_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_PERMISSION_AUDIT_DATA_SEEDS,
   },
 ];
