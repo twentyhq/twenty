@@ -11,7 +11,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
-import { getViewFilterOperands } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/getStepFilterOperands';
+import { getStepFilterOperands } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/getStepFilterOperands';
 import { useVariableDropdown } from '@/workflow/workflow-variables/hooks/useVariableDropdown';
 import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
@@ -55,14 +55,14 @@ export const WorkflowDropdownStepOutputItems = ({
   const updateStepFilter = useRecoilCallback(
     ({ snapshot }) =>
       ({
-        variableName,
+        rawVariableName,
         isFullRecord,
       }: {
-        variableName: string;
+        rawVariableName: string;
         isFullRecord: boolean;
       }) => {
         const stepId = extractRawVariableNamePart({
-          rawVariableName: variableName,
+          rawVariableName,
           part: 'stepId',
         });
         const [currentStepOutputSchema] = snapshot
@@ -77,7 +77,7 @@ export const WorkflowDropdownStepOutputItems = ({
         const { variableType, fieldMetadataId, compositeFieldSubFieldName } =
           searchVariableThroughOutputSchema({
             stepOutputSchema: currentStepOutputSchema,
-            rawVariableName: variableName,
+            rawVariableName,
             isFullRecord: false,
           });
 
@@ -91,19 +91,22 @@ export const WorkflowDropdownStepOutputItems = ({
           ? (filterFieldMetadataItem?.type ?? 'unknown')
           : variableType;
 
+        const availableOperandsForFilter = getStepFilterOperands({
+          filterType,
+          subFieldName: compositeFieldSubFieldName,
+        });
+        const defaultOperand = availableOperandsForFilter[0];
+
         upsertStepFilterSettings({
           stepFilterToUpsert: {
             ...stepFilter,
-            stepOutputKey: variableName,
+            stepOutputKey: rawVariableName,
             isFullRecord,
             type: filterType ?? 'unknown',
             value: '',
             fieldMetadataId,
             compositeFieldSubFieldName,
-            operand: getViewFilterOperands({
-              filterType,
-              subFieldName: compositeFieldSubFieldName,
-            })?.[0],
+            operand: defaultOperand,
           },
         });
       },
@@ -117,7 +120,7 @@ export const WorkflowDropdownStepOutputItems = ({
 
   const handleStepFilterFieldSelect = (key: string) => {
     updateStepFilter({
-      variableName: key,
+      rawVariableName: key,
       isFullRecord: false,
     });
     onSelect();
@@ -154,7 +157,7 @@ export const WorkflowDropdownStepOutputItems = ({
     }
 
     updateStepFilter({
-      variableName: getVariableTemplateFromPath({
+      rawVariableName: getVariableTemplateFromPath({
         stepId: step.id,
         path: [...currentPath, currentSubStep.object.fieldIdName],
       }),
