@@ -58,9 +58,8 @@ export class AgentHandoffExecutorService {
         );
       }
 
-      const registeredModel = this.aiModelRegistryService.getModel(
-        targetAgent.modelId,
-      );
+      const registeredModel =
+        await this.aiModelRegistryService.resolveModelForAgent(targetAgent);
 
       if (!registeredModel) {
         throw new AgentException(
