@@ -140,7 +140,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
             workflowId,
             workflowVersionId,
             name: parameters.name,
-            status: [WorkflowStatus.DRAFT],
             trigger: parameters.trigger,
             steps: parameters.steps,
             message: `Workflow "${parameters.name}" created successfully with ${parameters.steps.length} steps`,
