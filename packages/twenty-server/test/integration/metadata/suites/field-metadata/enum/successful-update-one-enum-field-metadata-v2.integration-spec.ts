@@ -1,25 +1,23 @@
 import { UPDATE_ENUM_FIELD_METADATA_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/common/update-enum-field-metadata-test-cases';
 import { type CreateOneFieldFactoryInput } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata-query-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
+import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-metadata/constants/custom-object-dishes.constants';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { eachTestingContextFilter } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
-import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
-import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-metadata/constants/custom-object-dishes.constants';
-import { eachTestingContextFilter } from 'twenty-shared/testing';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
-import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 
 describe.each(fieldMetadataEnumTypes)(
   'Successful update field metadata %s tests suite v2',
@@ -49,13 +47,11 @@ describe.each(fieldMetadataEnumTypes)(
     ];
 
     beforeAll(async () => {
-      const enablePermissionsQuery = updateFeatureFlagFactory(
-        SEED_APPLE_WORKSPACE_ID,
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        true,
-      );
-
-      await makeGraphqlAPIRequest(enablePermissionsQuery);
+      await updateFeatureFlag({
+        expectTofail: false,
+        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        value: true,
+      });
 
       const {
         labelPlural,
@@ -92,13 +88,11 @@ describe.each(fieldMetadataEnumTypes)(
         expectToFail: false,
         input: { idToDelete: createdObjectMetadataId },
       });
-      const enablePermissionsQuery = updateFeatureFlagFactory(
-        SEED_APPLE_WORKSPACE_ID,
-        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-        false,
-      );
-
-      await makeGraphqlAPIRequest(enablePermissionsQuery);
+      await updateFeatureFlag({
+        expectTofail: false,
+        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        value: false,
+      });
     });
 
     beforeEach(async () => {
