@@ -1,6 +1,6 @@
 import diff from 'microdiff';
 import { FieldMetadataType, type FromTo } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 
 import { FLAT_FIELD_METADATA_JSONB_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-jsonb-properties.constant';
 import { FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-properties-to-compare.constant';
@@ -88,8 +88,8 @@ export const compareTwoFlatFieldMetadata = ({
 
         if (isJsonb) {
           return {
-            from: isDefined(oldValue) ? JSON.parse(oldValue) : oldValue,
-            to: isDefined(value) ? JSON.parse(value) : value,
+            from: parseJson(oldValue) ?? oldValue,
+            to: parseJson(value) ?? value,
             property,
           };
         }
