@@ -1,4 +1,4 @@
-import { coreViewsState } from '@/views/states/coreViewState';
+import { coreViewsByObjectMetadataIdFamilySelector } from '@/views/states/coreViewsByObjectMetadataIdFamilySelector';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useFindManyCoreViewsLazyQuery } from '~/generated/graphql';
@@ -17,15 +17,20 @@ export const useRefreshCoreViews = () => {
           fetchPolicy: 'network-only',
         });
 
-        const existingCoreViews = snapshot
-          .getLoadable(coreViewsState)
+        const coreViewsForObjectMetadataId = snapshot
+          .getLoadable(
+            coreViewsByObjectMetadataIdFamilySelector(objectMetadataId),
+          )
           .getValue();
 
         if (
           isDefined(result.data?.getCoreViews) &&
-          !isDeeplyEqual(existingCoreViews, result.data.getCoreViews)
+          !isDeeplyEqual(coreViewsForObjectMetadataId, result.data.getCoreViews)
         ) {
-          set(coreViewsState, result.data.getCoreViews);
+          set(
+            coreViewsByObjectMetadataIdFamilySelector(objectMetadataId),
+            result.data.getCoreViews,
+          );
         }
       },
     [findManyCoreViewsLazy],
