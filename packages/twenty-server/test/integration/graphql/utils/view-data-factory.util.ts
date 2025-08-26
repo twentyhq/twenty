@@ -1,8 +1,3 @@
-import {
-  TEST_FIELD_METADATA_1_ID,
-  TEST_OBJECT_METADATA_1_ID,
-} from 'test/integration/constants/test-view-ids.constants';
-
 import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { type ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import { type ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
@@ -17,7 +12,6 @@ import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 
 export const createViewData = (overrides: Partial<ViewEntity> = {}) => ({
   name: 'Test View',
-  objectMetadataId: TEST_OBJECT_METADATA_1_ID,
   icon: 'IconTable',
   type: ViewType.TABLE,
   key: null,
@@ -39,7 +33,6 @@ export const createViewFieldData = (
   overrides: Partial<ViewFieldEntity> = {},
 ) => ({
   viewId,
-  fieldMetadataId: TEST_FIELD_METADATA_1_ID,
   position: 0,
   isVisible: true,
   size: 150,
@@ -60,7 +53,6 @@ export const createViewSortData = (
   overrides: Partial<ViewSortEntity> = {},
 ) => ({
   viewId,
-  fieldMetadataId: TEST_FIELD_METADATA_1_ID,
   direction: ViewSortDirection.ASC,
   ...overrides,
 });
@@ -77,7 +69,6 @@ export const createViewFilterData = (
   overrides: Partial<ViewFilterEntity> = {},
 ) => ({
   viewId,
-  fieldMetadataId: TEST_FIELD_METADATA_1_ID,
   operand: ViewFilterOperand.IS,
   value: 'test-value',
   ...overrides,
@@ -96,7 +87,6 @@ export const createViewGroupData = (
   overrides: Partial<ViewGroupEntity> = {},
 ) => ({
   viewId,
-  fieldMetadataId: TEST_FIELD_METADATA_1_ID,
   fieldValue: 'test-group-value',
   isVisible: true,
   position: 0,
