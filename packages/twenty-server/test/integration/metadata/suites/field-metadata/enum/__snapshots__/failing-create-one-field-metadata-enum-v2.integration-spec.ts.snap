@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with an invalid default value 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with an invalid default value 1`] = `
 [
   {
     "extensions": {
@@ -38,7 +38,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with an unknown default value 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with an unknown default value 1`] = `
 [
   {
     "extensions": {
@@ -76,7 +76,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with comma in option label 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with comma in option label 1`] = `
 [
   {
     "extensions": {
@@ -113,7 +113,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with duplicated option ids 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with duplicated option ids 1`] = `
 [
   {
     "extensions": {
@@ -165,7 +165,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with duplicated option positions 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with duplicated option positions 1`] = `
 [
   {
     "extensions": {
@@ -217,7 +217,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with duplicated option values 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with duplicated option values 1`] = `
 [
   {
     "extensions": {
@@ -269,7 +269,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with duplicated trimmed option values 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with duplicated trimmed option values 1`] = `
 [
   {
     "extensions": {
@@ -321,7 +321,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with empty multi-select default values array 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with empty multi-select default values array 1`] = `
 [
   {
     "extensions": {
@@ -358,7 +358,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with empty options 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with empty options 1`] = `
 [
   {
     "extensions": {
@@ -396,7 +396,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with empty string defaultValue 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with empty string defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -434,7 +434,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with empty string id 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with empty string id 1`] = `
 [
   {
     "extensions": {
@@ -471,7 +471,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with empty string label 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with empty string label 1`] = `
 [
   {
     "extensions": {
@@ -513,7 +513,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with empty string value 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with empty string value 1`] = `
 [
   {
     "extensions": {
@@ -555,7 +555,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with invalid multi-select default value format 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with invalid multi-select default value format 1`] = `
 [
   {
     "extensions": {
@@ -607,7 +607,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with invalid option id 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with invalid option id 1`] = `
 [
   {
     "extensions": {
@@ -644,7 +644,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with invalid option value format 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with invalid option value format 1`] = `
 [
   {
     "extensions": {
@@ -681,7 +681,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with non stringified array default value 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with non stringified array default value 1`] = `
 [
   {
     "extensions": {
@@ -719,7 +719,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with not a string defaultValue 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with not a string defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -757,7 +757,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with not a string id 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with not a string id 1`] = `
 [
   {
     "extensions": {
@@ -794,20 +794,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with not a string label 1`] = `
-[
-  {
-    "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": Any<String>,
-      "userFriendlyMessage": "An error occurred.",
-    },
-    "message": "BUILDER_INTERNAL_SERVER_ERROR",
-  },
-]
-`;
-
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with not a string value 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with not a string label 1`] = `
 [
   {
     "extensions": {
@@ -818,8 +805,8 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Value must be in UPPER_CASE and follow snake_case "22222"",
-                "value": 22222,
+                "message": "Option label must be a string",
+                "userFriendlyMessage": "Option label format not supported",
               },
             ],
             "id": Any<String>,
@@ -844,7 +831,44 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with null id 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with not a string value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value must be a string",
+                "userFriendlyMessage": "Option value format not supported",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with null id 1`] = `
 [
   {
     "extensions": {
@@ -886,20 +910,44 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with null label 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with null label 1`] = `
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": Any<String>,
-      "userFriendlyMessage": "An error occurred.",
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label is required",
+                "userFriendlyMessage": "Option label is required",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
     },
-    "message": "BUILDER_INTERNAL_SERVER_ERROR",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with null options 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with null options 1`] = `
 [
   {
     "extensions": {
@@ -937,20 +985,44 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with null value 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with null value 1`] = `
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": Any<String>,
-      "userFriendlyMessage": "An error occurred.",
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value is required",
+                "userFriendlyMessage": "Option value is required",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
     },
-    "message": "BUILDER_INTERNAL_SERVER_ERROR",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with only white spaces defaultValue 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with only white spaces defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -988,7 +1060,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with only white spaces id 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with only white spaces id 1`] = `
 [
   {
     "extensions": {
@@ -1025,7 +1097,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with only white spaces label 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with only white spaces label 1`] = `
 [
   {
     "extensions": {
@@ -1067,7 +1139,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with only white spaces value 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with only white spaces value 1`] = `
 [
   {
     "extensions": {
@@ -1109,7 +1181,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with too long defaultValue 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with too long defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -1147,7 +1219,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with too long id 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with too long id 1`] = `
 [
   {
     "extensions": {
@@ -1184,7 +1256,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with too long label 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with too long label 1`] = `
 [
   {
     "extensions": {
@@ -1221,7 +1293,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with too long value 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with too long value 1`] = `
 [
   {
     "extensions": {
@@ -1263,33 +1335,81 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with undefined option label 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with undefined option label 1`] = `
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": Any<String>,
-      "userFriendlyMessage": "An error occurred.",
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label is required",
+                "userFriendlyMessage": "Option label is required",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
     },
-    "message": "BUILDER_INTERNAL_SERVER_ERROR",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with undefined option value 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with undefined option value 1`] = `
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": Any<String>,
-      "userFriendlyMessage": "An error occurred.",
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value is required",
+                "userFriendlyMessage": "Option value is required",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
     },
-    "message": "BUILDER_INTERNAL_SERVER_ERROR",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with undefined options 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with undefined options 1`] = `
 [
   {
     "extensions": {
@@ -1327,7 +1447,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail with unknown multi-select default values 1`] = `
+exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should fail with unknown multi-select default values 1`] = `
 [
   {
     "extensions": {
@@ -1364,7 +1484,7 @@ exports[`Create field metadata MULTI_SELECT tests suite v2 Create should fail wi
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with an invalid default value 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with an invalid default value 1`] = `
 [
   {
     "extensions": {
@@ -1406,7 +1526,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with an 
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with an unknown default value 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with an unknown default value 1`] = `
 [
   {
     "extensions": {
@@ -1443,7 +1563,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with an 
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with comma in option label 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with comma in option label 1`] = `
 [
   {
     "extensions": {
@@ -1480,7 +1600,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with com
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with duplicated option ids 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with duplicated option ids 1`] = `
 [
   {
     "extensions": {
@@ -1532,7 +1652,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with dup
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with duplicated option positions 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with duplicated option positions 1`] = `
 [
   {
     "extensions": {
@@ -1584,7 +1704,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with dup
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with duplicated option values 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with duplicated option values 1`] = `
 [
   {
     "extensions": {
@@ -1636,7 +1756,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with dup
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with duplicated trimmed option values 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with duplicated trimmed option values 1`] = `
 [
   {
     "extensions": {
@@ -1688,7 +1808,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with dup
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with empty options 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with empty options 1`] = `
 [
   {
     "extensions": {
@@ -1726,7 +1846,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with emp
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with empty string defaultValue 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with empty string defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -1768,7 +1888,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with emp
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with empty string id 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with empty string id 1`] = `
 [
   {
     "extensions": {
@@ -1805,7 +1925,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with emp
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with empty string label 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with empty string label 1`] = `
 [
   {
     "extensions": {
@@ -1847,7 +1967,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with emp
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with empty string value 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with empty string value 1`] = `
 [
   {
     "extensions": {
@@ -1889,7 +2009,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with emp
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with invalid option id 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with invalid option id 1`] = `
 [
   {
     "extensions": {
@@ -1926,7 +2046,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with inv
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with invalid option value format 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with invalid option value format 1`] = `
 [
   {
     "extensions": {
@@ -1963,7 +2083,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with inv
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with not a string defaultValue 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with not a string defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -2001,7 +2121,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with not
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with not a string id 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with not a string id 1`] = `
 [
   {
     "extensions": {
@@ -2038,20 +2158,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with not
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with not a string label 1`] = `
-[
-  {
-    "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": Any<String>,
-      "userFriendlyMessage": "An error occurred.",
-    },
-    "message": "BUILDER_INTERNAL_SERVER_ERROR",
-  },
-]
-`;
-
-exports[`Create field metadata SELECT tests suite v2 Create should fail with not a string value 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with not a string label 1`] = `
 [
   {
     "extensions": {
@@ -2062,8 +2169,8 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with not
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Value must be in UPPER_CASE and follow snake_case "22222"",
-                "value": 22222,
+                "message": "Option label must be a string",
+                "userFriendlyMessage": "Option label format not supported",
               },
             ],
             "id": Any<String>,
@@ -2088,7 +2195,44 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with not
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with null id 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with not a string value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value must be a string",
+                "userFriendlyMessage": "Option value format not supported",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with null id 1`] = `
 [
   {
     "extensions": {
@@ -2130,20 +2274,44 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with nul
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with null label 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with null label 1`] = `
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": Any<String>,
-      "userFriendlyMessage": "An error occurred.",
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label is required",
+                "userFriendlyMessage": "Option label is required",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
     },
-    "message": "BUILDER_INTERNAL_SERVER_ERROR",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with null options 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with null options 1`] = `
 [
   {
     "extensions": {
@@ -2181,20 +2349,44 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with nul
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with null value 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with null value 1`] = `
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": Any<String>,
-      "userFriendlyMessage": "An error occurred.",
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value is required",
+                "userFriendlyMessage": "Option value is required",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
     },
-    "message": "BUILDER_INTERNAL_SERVER_ERROR",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with only white spaces defaultValue 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with only white spaces defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -2236,7 +2428,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with onl
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with only white spaces id 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with only white spaces id 1`] = `
 [
   {
     "extensions": {
@@ -2273,7 +2465,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with onl
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with only white spaces label 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with only white spaces label 1`] = `
 [
   {
     "extensions": {
@@ -2315,7 +2507,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with onl
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with only white spaces value 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with only white spaces value 1`] = `
 [
   {
     "extensions": {
@@ -2357,7 +2549,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with onl
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with too long defaultValue 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with too long defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -2399,7 +2591,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with too
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with too long id 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with too long id 1`] = `
 [
   {
     "extensions": {
@@ -2436,7 +2628,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with too
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with too long label 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with too long label 1`] = `
 [
   {
     "extensions": {
@@ -2473,7 +2665,7 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with too
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with too long value 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with too long value 1`] = `
 [
   {
     "extensions": {
@@ -2515,33 +2707,81 @@ exports[`Create field metadata SELECT tests suite v2 Create should fail with too
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with undefined option label 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with undefined option label 1`] = `
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": Any<String>,
-      "userFriendlyMessage": "An error occurred.",
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label is required",
+                "userFriendlyMessage": "Option label is required",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
     },
-    "message": "BUILDER_INTERNAL_SERVER_ERROR",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with undefined option value 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with undefined option value 1`] = `
 [
   {
     "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": Any<String>,
-      "userFriendlyMessage": "An error occurred.",
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value is required",
+                "userFriendlyMessage": "Option value is required",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "create_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
     },
-    "message": "BUILDER_INTERNAL_SERVER_ERROR",
+    "message": "Multiple validation errors occurred while creating fields",
+    "name": "GraphQLError",
   },
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite v2 Create should fail with undefined options 1`] = `
+exports[`Failing create field metadata SELECT tests suite v2 Create should fail with undefined options 1`] = `
 [
   {
     "extensions": {
