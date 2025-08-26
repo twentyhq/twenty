@@ -132,9 +132,9 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
     "extensions": {
       "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "userFriendlyMessage": "Default value should be as quoted string",
     },
-    "message": "Default value for multi-select must be an array",
+    "message": "Default value should be as quoted string",
     "name": "UserInputError",
   },
 ]
@@ -246,7 +246,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
       "subCode": "INVALID_FIELD_INPUT",
       "userFriendlyMessage": "An error occurred.",
     },
-    "message": "Default value for multi-select must be an array",
+    "message": "Default value for multi-select must be a stringified array",
     "name": "UserInputError",
   },
 ]
@@ -341,9 +341,9 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
     "extensions": {
       "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "userFriendlyMessage": "Default value should be as quoted string",
     },
-    "message": "Default value for multi-select must be an array",
+    "message": "Default value should be as quoted string",
     "name": "UserInputError",
   },
 ]
@@ -397,9 +397,9 @@ exports[`Failing update field metadata MULTI_SELECT tests suite Update should fa
     "extensions": {
       "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "userFriendlyMessage": "Default value should be as quoted string",
     },
-    "message": "Default value for multi-select must be an array",
+    "message": "Default value should be as quoted string",
     "name": "UserInputError",
   },
 ]
