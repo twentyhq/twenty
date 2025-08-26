@@ -10,7 +10,5 @@ export const VIEW_FILTER_FRAGMENT = gql`
     positionInViewFilterGroup
     subFieldName
     viewId
-    createdAt
-    updatedAt
   }
 `;
