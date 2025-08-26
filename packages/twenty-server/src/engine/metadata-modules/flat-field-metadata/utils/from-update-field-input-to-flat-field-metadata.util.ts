@@ -3,6 +3,7 @@ import {
   extractAndSanitizeObjectStringFields,
   isDefined,
 } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-standard-overrides-properties.constant';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -12,11 +13,10 @@ import { FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-m
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-properties-to-compare.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
+import {} from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
-import { v4 } from 'uuid';
 
 const fieldMetadataEditableProperties =
   FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE.filter(
@@ -134,7 +134,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   const updatedFlatFieldMetadata = fieldMetadataEditableProperties.reduce(
     (acc, property) => {
       let newValue = updatedEditableFieldProperties[property];
-      
+
       if (property === 'options' && isDefined(newValue)) {
         newValue = updatedEditableFieldProperties[property]?.map((option) => ({
           id: v4(),
@@ -144,9 +144,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
 
       return {
         ...acc,
-        ...(newValue !== undefined
-          ? { [property]: newValue }
-          : {}),
+        ...(newValue !== undefined ? { [property]: newValue } : {}),
       };
     },
     relatedFlatFieldMetadata,

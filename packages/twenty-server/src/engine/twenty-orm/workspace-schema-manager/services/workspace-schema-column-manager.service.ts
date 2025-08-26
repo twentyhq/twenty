@@ -110,11 +110,13 @@ export class WorkspaceSchemaColumnManagerService {
               : val,
           )
           .join(',');
+
         return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ARRAY[${arrayValues}]`;
       }
 
       if (typeof defaultValue === 'string') {
         const safeDefaultValue = sanitizeDefaultValue(defaultValue);
+
         return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ${safeDefaultValue}::${safeSchemaName}."${safeTableName}_${safeColumnName}_enum"`;
       }
 
@@ -122,6 +124,7 @@ export class WorkspaceSchemaColumnManagerService {
     };
 
     const sql = computeDefaultValueSqlQuery();
+
     await queryRunner.query(sql);
   }
 }

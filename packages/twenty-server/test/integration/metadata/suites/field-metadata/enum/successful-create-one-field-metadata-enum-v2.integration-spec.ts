@@ -8,10 +8,10 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { eachTestingContextFilter } from 'twenty-shared/testing';
 import { isDefined } from 'twenty-shared/utils';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 
 describe.each(fieldMetadataEnumTypes)(
   'Successful create field metadata %s tests suite v2',
@@ -68,11 +68,11 @@ describe.each(fieldMetadataEnumTypes)(
         expectToFail: false,
         input: { idToDelete: createdObjectMetadataId },
       });
-       await updateFeatureFlag({
-         expectTofail: false,
-         featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-         value: false,
-       });
+      await updateFeatureFlag({
+        expectTofail: false,
+        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        value: false,
+      });
     });
 
     beforeEach(() => {
