@@ -9,7 +9,7 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { isDefined } from 'twenty-shared/utils';
 
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 describe.each(fieldMetadataEnumTypes)(
   'Succesful create field metadata %s tests suite',
@@ -24,7 +24,8 @@ describe.each(fieldMetadataEnumTypes)(
     const { successful: successfulTestCases } = testCases;
 
     beforeEach(async () => {
-      const { data } = await forceCreateOneObjectMetadata({
+      const { data } = await createOneObjectMetadata({
+        expectToFail: false,
         input: {
           labelSingular: LISTING_NAME_SINGULAR,
           labelPlural: LISTING_NAME_PLURAL,

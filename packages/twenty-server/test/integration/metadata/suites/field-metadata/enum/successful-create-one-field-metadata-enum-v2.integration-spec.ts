@@ -4,10 +4,6 @@ import { CREATE_ENUM_FIELD_METADATA_TEST_CASES } from 'test/integration/metadata
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
-import {
-  LISTING_NAME_PLURAL,
-  LISTING_NAME_SINGULAR,
-} from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
@@ -17,6 +13,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-metadata/constants/custom-object-dishes.constants';
 
 describe.each(fieldMetadataEnumTypes)(
   'Successful create field metadata %s tests suite v2',
@@ -40,13 +37,21 @@ describe.each(fieldMetadataEnumTypes)(
 
       await makeGraphqlAPIRequest(enablePermissionsQuery);
 
+      const {
+        labelPlural,
+        description,
+        labelSingular,
+        namePlural,
+        nameSingular,
+      } = CUSTOM_OBJECT_DISHES;
       const { data } = await createOneObjectMetadata({
         expectToFail: false,
         input: {
-          labelSingular: LISTING_NAME_SINGULAR,
-          labelPlural: LISTING_NAME_PLURAL,
-          nameSingular: LISTING_NAME_SINGULAR,
-          namePlural: LISTING_NAME_PLURAL,
+          labelPlural,
+          description,
+          labelSingular,
+          namePlural,
+          nameSingular,
           icon: 'IconBuildingSkyscraper',
           isLabelSyncedWithName: false,
         },
