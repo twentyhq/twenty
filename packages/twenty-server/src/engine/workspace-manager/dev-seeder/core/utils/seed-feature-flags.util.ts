@@ -75,6 +75,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };
