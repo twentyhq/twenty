@@ -1,10 +1,5 @@
-import { type ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { type View } from 'src/engine/core-modules/view/entities/view.entity';
-
-export type FlatViewField = Pick<
-  ViewField,
-  'fieldMetadataId' | 'position' | 'isVisible' | 'size'
->;
+import { type FlatViewField } from 'src/engine/workspace-manager/workspace-migration-v2/types/flat-view-field.type';
 
 export type FlatView = Pick<
   View,
