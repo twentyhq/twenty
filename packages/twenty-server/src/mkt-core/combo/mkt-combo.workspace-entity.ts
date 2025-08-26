@@ -26,9 +26,9 @@ import {
 import { MktComboVariantWorkspaceEntity } from 'src/mkt-core/combo-variant/mkt-combo-variant.workspace-entity';
 import { MKT_COMBO_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
+import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
 
 const TABLE_COMBO_NAME = 'mktCombo';
 const NAME_FIELD_NAME = 'name';
@@ -40,9 +40,9 @@ export const SEARCH_FIELDS_FOR_MKT_COMBO: FieldTypeAndNameMetadata[] = [
 ];
 
 export enum MKT_COMBO_STATUS {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  DELETED = 'deleted',
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  DELETED = 'DELETED',
 }
 
 export const MKT_COMBO_STATUS_OPTIONS: FieldMetadataComplexOption[] = [

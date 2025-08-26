@@ -1,50 +1,50 @@
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 export enum MKT_CUSTOMER_TYPE {
-  INDIVIDUAL = 'individual',
-  BUSINESS = 'business',
-  ORGANIZATION = 'organization',
-  OTHER = 'other',
+  INDIVIDUAL = 'INDIVIDUAL',
+  BUSINESS = 'BUSINESS',
+  ORGANIZATION = 'ORGANIZATION',
+  OTHER = 'OTHER',
 }
 
 export enum MKT_CUSTOMER_STATUS {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  BLOCKED = 'blocked',
-  PROSPECTIVE = 'prospective',
-  OTHER = 'other',
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  BLOCKED = 'BLOCKED',
+  PROSPECTIVE = 'PROSPECTIVE',
+  OTHER = 'OTHER',
 }
 
 export enum MKT_CUSTOMER_TIER {
-  INDIVIDUAL = 'individual',
-  SMALL = 'small',
-  MEDIUM = 'medium',
-  ENTERPRISE = 'enterprise',
-  OTHER = 'other',
+  INDIVIDUAL = 'INDIVIDUAL',
+  SMALL = 'SMALL',
+  MEDIUM = 'MEDIUM',
+  ENTERPRISE = 'ENTERPRISE',
+  OTHER = 'OTHER',
 }
 
 export enum MKT_CUSTOMER_LIFECYCLE_STAGE {
-  PROSPECTIVE = 'prospective',
-  TRIAL = 'trial',
-  CUSTOMER = 'customer',
-  LOYAL = 'loyal',
-  CHURNED = 'churned',
-  RETENTION = 'retention',
-  UPSELL = 'upsell',
-  CROSS_SELL = 'cross_sell',
-  REACTIVATION = 'reactivation',
-  OTHER = 'other',
+  PROSPECTIVE = 'PROSPECTIVE',
+  TRIAL = 'TRIAL',
+  CUSTOMER = 'CUSTOMER',
+  LOYAL = 'LOYAL',
+  CHURNED = 'CHURNED',
+  RETENTION = 'RETENTION',
+  UPSELL = 'UPSELL',
+  CROSS_SELL = 'CROSS_SELL',
+  REACTIVATION = 'REACTIVATION',
+  OTHER = 'OTHER',
 }
 
 export enum MKT_CUSTOMER_TAGS {
-  NEW = 'new',
-  RETURNING = 'returning',
-  LOYAL = 'loyal',
-  VIP = 'vip',
-  CHURNED = 'churned',
-  RETENTION = 'retention',
-  TECHNICAL = 'technical',
-  OTHER = 'other',
+  NEW = 'NEW',
+  RETURNING = 'RETURNING',
+  LOYAL = 'LOYAL',
+  VIP = 'VIP',
+  CHURNED = 'CHURNED',
+  RETENTION = 'RETENTION',
+  TECHNICAL = 'TECHNICAL',
+  OTHER = 'OTHER',
 }
 
 export const MKT_CUSTOMER_TYPE_OPTIONS: FieldMetadataComplexOption[] = [
