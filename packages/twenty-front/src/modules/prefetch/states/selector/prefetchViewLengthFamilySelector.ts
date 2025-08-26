@@ -1,13 +1,27 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
+import { extractFeatureFlagMapFromWorkspace } from '@/workspace/utils/extractFeatureFlagMapFromWorkspace';
 import { selector } from 'recoil';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const prefetchViewLengthSelector = selector<number>({
   key: 'prefetchViewLengthSelector',
   get: ({ get }) => {
+    const prefetchedViews = get(prefetchViewsState);
     const coreViews = get(coreViewsState);
 
-    const views = coreViews.map(convertCoreViewToView);
+    const currentWorkspace = get(currentWorkspaceState);
+    const featureFlags = extractFeatureFlagMapFromWorkspace(currentWorkspace);
+
+    const isCoreViewSyncingEnabled =
+      featureFlags[FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED];
+
+    const views = isCoreViewSyncingEnabled
+      ? coreViews.map(convertCoreViewToView)
+      : prefetchedViews;
+
     return views?.length ?? 0;
   },
 });
