@@ -16,7 +16,7 @@ export const prefetchViewLengthSelector = selector<number>({
     const featureFlags = extractFeatureFlagMapFromWorkspace(currentWorkspace);
 
     const isCoreViewSyncingEnabled =
-      featureFlags[FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED];
+      featureFlags[FeatureFlagKey.IS_CORE_VIEW_ENABLED];
 
     const views = isCoreViewSyncingEnabled
       ? coreViews.map(convertCoreViewToView)
