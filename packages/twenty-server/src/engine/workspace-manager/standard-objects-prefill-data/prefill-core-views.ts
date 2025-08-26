@@ -15,7 +15,7 @@ import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objec
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
-import { opportunitiesTableByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view';
+import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
 import { peopleAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view';
 import { tasksAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-all.view';
 import { tasksAssignedToMeView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me';
@@ -35,7 +35,7 @@ export const prefillCoreViews = async (
     companiesAllView(objectMetadataItems, true),
     peopleAllView(objectMetadataItems, true),
     opportunitiesAllView(objectMetadataItems, true),
-    opportunitiesTableByStageView(objectMetadataItems, true),
+    opportunitiesByStageView(objectMetadataItems, true),
     notesAllView(objectMetadataItems, true),
     tasksAllView(objectMetadataItems, true),
     tasksAssignedToMeView(objectMetadataItems, true),
