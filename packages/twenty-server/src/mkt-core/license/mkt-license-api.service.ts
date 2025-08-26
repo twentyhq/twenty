@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { firstValueFrom } from 'rxjs';
+import { MKT_LICENSE_STATUS } from 'src/mkt-core/license/mkt-license.workspace-entity';
 
 export interface LicenseApiResponse {
   licenseKey: string;
@@ -46,7 +47,7 @@ export class MktLicenseApiService {
       );
       const mockResponse = {
         licenseKey: 'LICENSE_KEY_MOCK',
-        status: 'INACTIVE',
+        status: MKT_LICENSE_STATUS.ERROR,
         expiresAt: '2025-08-22',
       };
 

@@ -41,11 +41,14 @@ export const SEARCH_FIELDS_FOR_MKT_LICENSE: FieldTypeAndNameMetadata[] = [
 ];
 
 export enum MKT_LICENSE_STATUS {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  EXPIRED = 'expired',
-  REVOKED = 'revoked',
-  PENDING = 'pending',
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  EXPIRED = 'EXPIRED',
+  REVOKED = 'REVOKED',
+  ERROR = 'ERROR',
+  DELETED = 'DELETED',
+  PENDING = 'PENDING',
+  OTHER = 'OTHER',
 }
 
 export const MKT_LICENSE_STATUS_OPTIONS: FieldMetadataComplexOption[] = [
@@ -78,6 +81,24 @@ export const MKT_LICENSE_STATUS_OPTIONS: FieldMetadataComplexOption[] = [
     label: 'Pending',
     position: 4,
     color: 'yellow',
+  },
+  {
+    value: MKT_LICENSE_STATUS.ERROR,
+    label: 'Error',
+    position: 5,
+    color: 'red',
+  },
+  {
+    value: MKT_LICENSE_STATUS.DELETED,
+    label: 'Deleted',
+    position: 6,
+    color: 'gray',
+  },
+  {
+    value: MKT_LICENSE_STATUS.OTHER,
+    label: 'Other',
+    position: 7,
+    color: 'turquoise',
   },
 ];
 
@@ -125,23 +146,23 @@ export class MktLicenseWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MKT_LICENSE_FIELD_IDS.activatedAt,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.DATE,
     label: msg`Activated At`,
     description: msg`License activated at`,
     icon: 'IconClock',
   })
   @WorkspaceIsNullable()
-  activatedAt?: string;
+  activatedAt?: Date;
 
   @WorkspaceField({
     standardId: MKT_LICENSE_FIELD_IDS.lastLoginAt,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.DATE,
     label: msg`Last Login At`,
     description: msg`License last login at`,
     icon: 'IconClock',
   })
   @WorkspaceIsNullable()
-  lastLoginAt?: string;
+  lastLoginAt?: Date;
 
   @WorkspaceField({
     standardId: MKT_LICENSE_FIELD_IDS.deviceInfo,
@@ -165,13 +186,13 @@ export class MktLicenseWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: MKT_LICENSE_FIELD_IDS.expiresAt,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.DATE,
     label: msg`Expires At`,
     description: msg`License expires at`,
     icon: 'IconClock',
   })
   @WorkspaceIsNullable()
-  expiresAt?: string;
+  expiresAt?: Date;
 
   @WorkspaceRelation({
     standardId: MKT_LICENSE_FIELD_IDS.mktVariant,
