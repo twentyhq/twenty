@@ -23,6 +23,7 @@ import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
+import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
 import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
 
 export const prefillCoreViews = async (
@@ -100,9 +101,9 @@ const createCoreViews = async (
       isCompact: false,
       isCustom: isCustom ?? false,
       openRecordIn:
-        openRecordIn === 'SIDE_PANEL'
-          ? ViewOpenRecordIn.SIDE_PANEL
-          : ViewOpenRecordIn.RECORD_PAGE,
+        openRecordIn === ViewOpenRecordInType.RECORD_PAGE
+          ? ViewOpenRecordIn.RECORD_PAGE
+          : ViewOpenRecordIn.SIDE_PANEL,
       kanbanAggregateOperation,
       kanbanAggregateOperationFieldMetadataId,
       workspaceId,
