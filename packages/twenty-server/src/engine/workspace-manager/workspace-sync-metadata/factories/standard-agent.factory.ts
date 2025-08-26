@@ -30,7 +30,7 @@ export class StandardAgentFactory {
         computedAgents.push({
           ...flatAgent,
           id: existingAgent.id,
-          uniqueIdentifier: agentDefinition.standardId || existingAgent.id,
+          uniqueIdentifier: agentDefinition.standardId,
         });
       } else {
         computedAgents.push({
