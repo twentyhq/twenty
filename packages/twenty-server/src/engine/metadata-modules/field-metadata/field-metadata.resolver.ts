@@ -101,7 +101,7 @@ export class FieldMetadataResolver {
         });
       }
 
-      const updatedInput = (await this.beforeUpdateOneField.run(input, {
+    const updatedInput = (await this.beforeUpdateOneField.run(input, {
         workspaceId,
         locale: context.req.locale,
       })) as UpdateOneFieldMetadataInput;

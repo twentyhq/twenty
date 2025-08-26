@@ -1,7 +1,7 @@
 import {
-    type CallHandler,
-    type ExecutionContext,
-    type NestInterceptor,
+  type CallHandler,
+  type ExecutionContext,
+  type NestInterceptor,
 } from '@nestjs/common';
 
 import { catchError, type Observable } from 'rxjs';
