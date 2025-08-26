@@ -3,11 +3,14 @@ import { type RecordField } from '@/object-record/record-field/types/RecordField
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 
-export const useUpdateRecordField = (recordTableId?: string) => {
+export const useUpdateRecordField = (
+  recordFieldComponentInstanceId?: string,
+) => {
   const currentRecordFieldsCallbackState = useRecoilComponentCallbackState(
     currentRecordFieldsComponentState,
-    recordTableId,
+    recordFieldComponentInstanceId,
   );
 
   const updateRecordField = useRecoilCallback(
@@ -23,12 +26,12 @@ export const useUpdateRecordField = (recordTableId?: string) => {
           currentRecordFieldsCallbackState,
         );
 
-        const foundRecordFieldInCurrentRecordFields = currentRecordFields.some(
+        const foundRecordFieldInCurrentRecordFields = currentRecordFields.find(
           (existingRecordField) =>
             existingRecordField.fieldMetadataItemId === fieldMetadataItemId,
         );
 
-        if (!foundRecordFieldInCurrentRecordFields) {
+        if (!isDefined(foundRecordFieldInCurrentRecordFields)) {
           throw new Error(
             `Cannot find record field to update with field metadata item id : ${fieldMetadataItemId}`,
           );
@@ -48,6 +51,11 @@ export const useUpdateRecordField = (recordTableId?: string) => {
 
             return newCurrentRecordFields;
           });
+
+          return {
+            ...foundRecordFieldInCurrentRecordFields,
+            ...partialRecordField,
+          } satisfies RecordField as RecordField;
         }
       },
     [currentRecordFieldsCallbackState],

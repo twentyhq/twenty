@@ -13,7 +13,6 @@ import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
-import { customAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesTableByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view';
@@ -24,6 +23,7 @@ import { tasksByStatusView } from 'src/engine/workspace-manager/standard-objects
 import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-runs-all.view';
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
+import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
 import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
 
 export const prefillCoreViews = async (
@@ -31,14 +31,6 @@ export const prefillCoreViews = async (
   workspaceId: string,
   objectMetadataItems: ObjectMetadataEntity[],
 ): Promise<ViewEntity[]> => {
-  const customObjectMetadataItems = objectMetadataItems.filter(
-    (item) => item.isCustom,
-  );
-
-  const customViews = customObjectMetadataItems.map((item) =>
-    customAllView(item, true),
-  );
-
   const views = [
     companiesAllView(objectMetadataItems, true),
     peopleAllView(objectMetadataItems, true),
@@ -51,7 +43,6 @@ export const prefillCoreViews = async (
     workflowsAllView(objectMetadataItems, true),
     workflowVersionsAllView(objectMetadataItems, true),
     workflowRunsAllView(objectMetadataItems, true),
-    ...customViews,
   ];
 
   const queryRunner = dataSource.createQueryRunner();
@@ -110,9 +101,9 @@ const createCoreViews = async (
       isCompact: false,
       isCustom: isCustom ?? false,
       openRecordIn:
-        openRecordIn === 'SIDE_PANEL'
-          ? ViewOpenRecordIn.SIDE_PANEL
-          : ViewOpenRecordIn.RECORD_PAGE,
+        openRecordIn === ViewOpenRecordInType.RECORD_PAGE
+          ? ViewOpenRecordIn.RECORD_PAGE
+          : ViewOpenRecordIn.SIDE_PANEL,
       kanbanAggregateOperation,
       kanbanAggregateOperationFieldMetadataId,
       workspaceId,
@@ -125,25 +116,25 @@ const createCoreViews = async (
 
   for (const viewDefinition of viewDefinitionsWithId) {
     if (viewDefinition.fields && viewDefinition.fields.length > 0) {
-      const coreViewFields: Partial<ViewFieldEntity>[] = viewDefinition.fields.map(
-        (field) => ({
+      const coreViewFields: Partial<ViewFieldEntity>[] =
+        viewDefinition.fields.map((field) => ({
           fieldMetadataId: field.fieldMetadataId,
           position: field.position,
           isVisible: field.isVisible,
           size: field.size,
           viewId: viewDefinition.id,
           workspaceId,
-        }),
-      );
+        }));
 
-      const viewFieldRepository = queryRunner.manager.getRepository(ViewFieldEntity);
+      const viewFieldRepository =
+        queryRunner.manager.getRepository(ViewFieldEntity);
 
       await viewFieldRepository.save(coreViewFields);
     }
 
     if (viewDefinition.filters && viewDefinition.filters.length > 0) {
-      const coreViewFilters: Partial<ViewFilterEntity>[] = viewDefinition.filters.map(
-        (filter) => ({
+      const coreViewFilters: Partial<ViewFilterEntity>[] =
+        viewDefinition.filters.map((filter) => ({
           fieldMetadataId: filter.fieldMetadataId,
           viewId: viewDefinition.id,
           operand: convertViewFilterOperandToCoreOperand(
@@ -151,8 +142,7 @@ const createCoreViews = async (
           ),
           value: filter.value,
           workspaceId,
-        }),
-      );
+        }));
 
       const viewFilterRepository =
         queryRunner.manager.getRepository(ViewFilterEntity);
@@ -165,18 +155,18 @@ const createCoreViews = async (
       viewDefinition.groups &&
       viewDefinition.groups.length > 0
     ) {
-      const coreViewGroups: Partial<ViewGroupEntity>[] = viewDefinition.groups.map(
-        (group) => ({
+      const coreViewGroups: Partial<ViewGroupEntity>[] =
+        viewDefinition.groups.map((group) => ({
           fieldMetadataId: group.fieldMetadataId,
           isVisible: group.isVisible,
           fieldValue: group.fieldValue,
           position: group.position,
           viewId: viewDefinition.id,
           workspaceId,
-        }),
-      );
+        }));
 
-      const viewGroupRepository = queryRunner.manager.getRepository(ViewGroupEntity);
+      const viewGroupRepository =
+        queryRunner.manager.getRepository(ViewGroupEntity);
 
       await viewGroupRepository.save(coreViewGroups);
     }
