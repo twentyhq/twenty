@@ -210,7 +210,14 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceJoinColumn('note')
   noteId: string;
 
-  @WorkspaceJoinColumn('view')
+  @WorkspaceField({
+    standardId: FAVORITE_STANDARD_FIELD_IDS.view,
+    type: FieldMetadataType.UUID,
+    label: msg`ViewId`,
+    description: msg`ViewId`,
+    icon: 'IconView',
+  })
+  @WorkspaceIsNullable()
   viewId: string;
 
   @WorkspaceDynamicRelation({
