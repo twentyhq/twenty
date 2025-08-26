@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
 import { v4 as uuidv4 } from 'uuid';
@@ -33,8 +33,6 @@ import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-t
 
 @Injectable()
 export class WorkflowToolWorkspaceService {
-  private readonly logger = new Logger(WorkflowToolWorkspaceService.name);
-
   constructor(
     private readonly workflowVersionStepService: WorkflowVersionStepWorkspaceService,
     private readonly workflowVersionEdgeService: WorkflowVersionEdgeWorkspaceService,
@@ -138,10 +136,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
             });
           }
 
-          this.logger.log(
-            `Successfully created complete workflow: ${parameters.name} with ID: ${workflowId}`,
-          );
-
           return {
             workflowId,
             workflowVersionId,
@@ -152,10 +146,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
             message: `Workflow "${parameters.name}" created successfully with ${parameters.steps.length} steps`,
           };
         } catch (error) {
-          this.logger.error(
-            `Failed to create complete workflow: ${error.message}`,
-          );
-
           return {
             success: false,
             error: error.message,
@@ -178,10 +168,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
             },
           );
         } catch (error) {
-          this.logger.error(
-            `Failed to create workflow version step: ${error.message}`,
-          );
-
           return {
             success: false,
             error: error.message,
@@ -205,10 +191,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
             },
           );
         } catch (error) {
-          this.logger.error(
-            `Failed to update workflow version step: ${error.message}`,
-          );
-
           return {
             success: false,
             error: error.message,
@@ -235,10 +217,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
             },
           );
         } catch (error) {
-          this.logger.error(
-            `Failed to delete workflow version step: ${error.message}`,
-          );
-
           return {
             success: false,
             error: error.message,
@@ -267,10 +245,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
             },
           );
         } catch (error) {
-          this.logger.error(
-            `Failed to create workflow version edge: ${error.message}`,
-          );
-
           return {
             success: false,
             error: error.message,
@@ -298,10 +272,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
             },
           );
         } catch (error) {
-          this.logger.error(
-            `Failed to delete workflow version edge: ${error.message}`,
-          );
-
           return {
             success: false,
             error: error.message,
@@ -328,10 +298,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
             },
           );
         } catch (error) {
-          this.logger.error(
-            `Failed to create draft from workflow version: ${error.message}`,
-          );
-
           return {
             success: false,
             error: error.message,
@@ -355,10 +321,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
             },
           );
         } catch (error) {
-          this.logger.error(
-            `Failed to update workflow version step positions: ${error.message}`,
-          );
-
           return {
             success: false,
             error: error.message,
@@ -378,10 +340,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
             parameters.workflowVersionId,
           );
         } catch (error) {
-          this.logger.error(
-            `Failed to activate workflow version: ${error.message}`,
-          );
-
           return {
             success: false,
             error: error.message,
@@ -401,10 +359,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
             parameters.workflowVersionId,
           );
         } catch (error) {
-          this.logger.error(
-            `Failed to deactivate workflow version: ${error.message}`,
-          );
-
           return {
             success: false,
             error: error.message,
@@ -427,10 +381,6 @@ This is the most efficient way for AI to create workflows as it handles all the 
             workspaceId,
           });
         } catch (error) {
-          this.logger.error(
-            `Failed to compute step output schema: ${error.message}`,
-          );
-
           return {
             success: false,
             error: error.message,
