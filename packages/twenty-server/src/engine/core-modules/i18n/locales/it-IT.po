@@ -2893,6 +2893,7 @@ msgstr ""
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User does not have access to this workspace"
 msgstr "L'utente non ha accesso a questo spazio di lavoro"
 
