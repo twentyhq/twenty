@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { isDefined } from 'class-validator';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
@@ -152,7 +153,7 @@ export class DevSeederMetadataService {
   private async seedCoreViews(workspaceId: string): Promise<void> {
     const mainDataSource = this.typeORMService.getMainDataSource();
 
-    if (!mainDataSource) {
+    if (!isDefined(mainDataSource)) {
       throw new Error('Could not connect to main data source');
     }
 
