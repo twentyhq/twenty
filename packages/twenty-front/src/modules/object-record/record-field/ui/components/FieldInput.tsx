@@ -93,7 +93,7 @@ export const FieldInput = () => {
       ) : isFieldRichTextV2(fieldDefinition) ? (
         <RichTextFieldInput />
       ) : (
-        <>ff</>
+        <></>
       )}
     </>
   );

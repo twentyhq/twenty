@@ -4,7 +4,7 @@ import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts
 import { useUpdateMorphRelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateMorphRelationManyToOneFieldInput';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionComponentState';
-import { MorphMultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MorphMultipleRecordPicker';
+import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
@@ -26,7 +26,7 @@ export const MorphRelationOneToManyFieldInput = () => {
   );
 
   return (
-    <MorphMultipleRecordPicker
+    <MultipleRecordPicker
       focusId={instanceId}
       componentInstanceId={instanceId}
       onSubmit={handleSubmit}

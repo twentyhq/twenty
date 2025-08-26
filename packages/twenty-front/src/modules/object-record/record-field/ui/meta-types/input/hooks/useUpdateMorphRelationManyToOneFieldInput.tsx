@@ -1,8 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
-import { useAttachRelatedRecordFromRecord } from '@/object-record/hooks/useAttachRelatedRecordFromRecord';
-import { useDetachRelatedRecordFromRecord } from '@/object-record/hooks/useDetachRelatedRecordFromRecord';
+import { useAttachMorphRelatedRecordFromRecord } from '@/object-record/hooks/useAttachMorphRelatedRecordFromRecord';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
@@ -22,38 +21,57 @@ export const useUpdateMorphRelationManyToOneFieldInput = () => {
     throw new Error('ObjectMetadataNameSingular is required');
   }
 
-  const { updateOneRecordAndDetachRelations } =
-    useDetachRelatedRecordFromRecord({
-      recordObjectNameSingular:
-        fieldDefinition.metadata.objectMetadataNameSingular,
-      fieldNameOnRecordObject: fieldDefinition.metadata.fieldName,
-    });
+  // todo @guillim
+  // const { updateOneRecordAndDetachRelations } =
+  //   useDetachRelatedRecordFromRecord({
+  //     recordObjectNameSingular:
+  //       fieldDefinition.metadata.objectMetadataNameSingular,
+  //     fieldNameOnRecordObject: fieldDefinition.metadata.fieldName,
+  //   });
 
-  const { updateOneRecordAndAttachRelations } =
-    useAttachRelatedRecordFromRecord({
-      recordObjectNameSingular:
-        fieldDefinition.metadata.objectMetadataNameSingular,
-      fieldNameOnRecordObject: fieldDefinition.metadata.fieldName,
-    });
+  const { updateOneRecordAndAttachMorphRelations } =
+    useAttachMorphRelatedRecordFromRecord();
 
   const updateRelation = useRecoilCallback(
-    () => async (morphItem: RecordPickerPickableMorphItem) => {
-      if (morphItem.isSelected) {
-        await updateOneRecordAndAttachRelations({
+    () =>
+      async (
+        morphItem: Pick<
+          RecordPickerPickableMorphItem,
+          'recordId' | 'isSelected'
+        >,
+      ) => {
+        console.log(
+          'AFTER CLICK morphItem',
+          morphItem,
+          '-',
           recordId,
-          relatedRecordId: morphItem.recordId,
-        });
-      } else {
-        await updateOneRecordAndDetachRelations({
-          recordId,
-          relatedRecordId: morphItem.recordId,
-        });
-      }
-    },
+          fieldDefinition,
+        );
+
+        if (morphItem.isSelected) {
+          const recordObjectNameSingulars =
+            fieldDefinition.metadata.morphRelations.map(
+              (morphRelation) =>
+                morphRelation.targetObjectMetadata.nameSingular,
+            );
+          const fieldNameOnRecordObject = fieldDefinition.metadata.fieldName;
+          await updateOneRecordAndAttachMorphRelations({
+            recordId,
+            relatedRecordId: morphItem.recordId,
+            objectNameSingulars: recordObjectNameSingulars,
+          });
+        } else {
+          console.log('todo');
+          // await updateOneRecordAndDetachRelations({
+          //   recordId,
+          //   relatedRecordId: morphItem.recordId,
+          // });
+        }
+      },
     [
       recordId,
-      updateOneRecordAndAttachRelations,
-      updateOneRecordAndDetachRelations,
+      updateOneRecordAndAttachMorphRelations,
+      // updateOneRecordAndDetachRelations,
     ],
   );
 
