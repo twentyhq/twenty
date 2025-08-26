@@ -9,8 +9,9 @@ import { RecordInputTransformerService } from 'src/engine/core-modules/record-tr
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
+import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent-handoff-tool.service';
 import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
-import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
+import { AgentToolGeneratorService } from 'src/engine/metadata-modules/agent/agent-tool-generator.service';
 import { type AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -27,7 +28,7 @@ import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metad
 
 export interface AgentToolTestContext {
   module: TestingModule;
-  agentToolService: AgentToolService;
+  agentToolService: AgentToolGeneratorService;
   agentService: AgentService;
   objectMetadataService: ObjectMetadataService;
   roleRepository: Repository<RoleEntity>;
@@ -49,7 +50,7 @@ export const createAgentToolTestModule =
 
     const module = await Test.createTestingModule({
       providers: [
-        AgentToolService,
+        AgentHandoffToolService,
         {
           provide: AgentService,
           useValue: {
@@ -153,7 +154,9 @@ export const createAgentToolTestModule =
       ],
     }).compile();
 
-    const agentToolService = module.get<AgentToolService>(AgentToolService);
+    const agentToolService = module.get<AgentToolGeneratorService>(
+      AgentToolGeneratorService,
+    );
     const agentService = module.get<AgentService>(AgentService);
     const objectMetadataService = module.get<ObjectMetadataService>(
       ObjectMetadataService,

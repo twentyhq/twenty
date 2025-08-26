@@ -10,7 +10,7 @@ import {
   setupRepositoryMock,
 } from './utils/agent-tool-test-utils';
 
-describe('AgentToolService Integration', () => {
+describe('AgentToolGeneratorService Integration', () => {
   let context: AgentToolTestContext;
 
   beforeEach(async () => {
