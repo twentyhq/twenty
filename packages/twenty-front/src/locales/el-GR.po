@@ -1205,7 +1205,7 @@ msgid "Click on the checkmark to apply your changes."
 msgstr "Κάντε κλικ στο σημάδι επιλογής για να εφαρμόσετε τις αλλαγές σας."
 
 #. js-lingui-id: d0rtA5
-#: src/modules/dashboards/graphs/components/GraphWidgetGaugeChart.tsx
+#: src/modules/dashboards/graphs/components/GraphWidgetTooltip.tsx
 msgid "Click to see data"
 msgstr ""
 
