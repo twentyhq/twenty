@@ -5,32 +5,24 @@ import { isDefined } from 'twenty-shared/utils';
 import { FLAT_FIELD_METADATA_JSONB_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-jsonb-properties.constant';
 import { FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-properties-to-compare.constant';
 import { FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-relation-properties-to-compare.constant';
-import { type FlatFieldMetadataEntityJsonbProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-jsonb-properties.type';
 import { type FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-properties-to-compare.type';
 import { type FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-relation-properties-to-compare.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isFlatFieldMetadataJsonbProperty } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-jsonb-property.util';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
-const shouldNotOverrideDefaultValue = (type: FieldMetadataType) => {
-  return [
-    FieldMetadataType.BOOLEAN,
-    FieldMetadataType.SELECT,
-    FieldMetadataType.MULTI_SELECT,
-    FieldMetadataType.CURRENCY,
-    FieldMetadataType.PHONES,
-    FieldMetadataType.ADDRESS,
-  ].includes(type);
-};
-
-type GetWorkspaceMigrationUpdateFieldActionArgs = FromTo<FlatFieldMetadata>;
+type GetWorkspaceMigrationUpdateFieldActionArgs = FromTo<
+  FlatFieldMetadata,
+  'FlatFieldMetadata'
+>;
 /**
  * This comparator handles update on colliding uniqueIdentifier flatFieldMetadata
  */
 export const compareTwoFlatFieldMetadata = ({
-  from,
-  to,
+  fromFlatFieldMetadata,
+  toFlatFieldMetadata,
 }: GetWorkspaceMigrationUpdateFieldActionArgs) => {
   const transformMetadataForComparisonParameters = {
     shouldIgnoreProperty: (
@@ -41,14 +33,6 @@ export const compareTwoFlatFieldMetadata = ({
         !FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE.includes(
           property as FlatFieldMetadataPropertiesToCompare,
         )
-      ) {
-        return true;
-      }
-
-      if (
-        property === 'defaultValue' &&
-        isDefined(fieldMetadata.type) &&
-        shouldNotOverrideDefaultValue(fieldMetadata.type)
       ) {
         return true;
       }
@@ -80,11 +64,11 @@ export const compareTwoFlatFieldMetadata = ({
     propertiesToStringify: FLAT_FIELD_METADATA_JSONB_PROPERTIES,
   };
   const fromCompare = transformMetadataForComparison(
-    from,
+    fromFlatFieldMetadata,
     transformMetadataForComparisonParameters,
   );
   const toCompare = transformMetadataForComparison(
-    to,
+    toFlatFieldMetadata,
     transformMetadataForComparisonParameters,
   );
 
@@ -97,9 +81,10 @@ export const compareTwoFlatFieldMetadata = ({
       case 'CHANGE': {
         const { oldValue, path, value } = difference;
         const property = path[0] as FlatFieldMetadataPropertiesToCompare;
-        const isJsonb = FLAT_FIELD_METADATA_JSONB_PROPERTIES.includes(
-          property as FlatFieldMetadataEntityJsonbProperties,
-        );
+        const isJsonb = isFlatFieldMetadataJsonbProperty({
+          flatFieldMetadata: toFlatFieldMetadata,
+          property,
+        });
 
         if (isJsonb) {
           return {

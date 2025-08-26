@@ -28,7 +28,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     const validateAndBuildResult = await this.workspaceMigrationBuilderV2Service
       .validateAndBuild(builderArgs)
       .catch((error) => {
-        this.logger.error(error);
+        this.logger.error(error);``
         throw new WorkspaceMigrationV2Exception(
           WorkspaceMigrationV2ExceptionCode.BUILDER_INTERNAL_SERVER_ERROR,
           error.message,

@@ -92,8 +92,8 @@ export class FlatFieldMetadataValidatorService {
     }
 
     const updates = compareTwoFlatFieldMetadata({
-      from: existingFlatFieldMetadataToUpdate,
-      to: updatedFlatFieldMetadata,
+      fromFlatFieldMetadata: existingFlatFieldMetadataToUpdate,
+      toFlatFieldMetadata: updatedFlatFieldMetadata,
     });
 
     if (
