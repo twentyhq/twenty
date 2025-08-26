@@ -7,7 +7,7 @@ import {
 import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
 import { fromWorkspaceMigrationBuilderExceptionToValidationResponseError } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/utils/from-workspace-migration-builder-exception-to-validation-response-error.util';
 
-export const WorkspaceMigrationBuilderExceptionV2Handler = (error: Error) => {
+export const workspaceMigrationBuilderExceptionV2Handler = (error: Error) => {
   if (!(error instanceof WorkspaceMigrationBuilderExceptionV2)) {
     throw error;
   }

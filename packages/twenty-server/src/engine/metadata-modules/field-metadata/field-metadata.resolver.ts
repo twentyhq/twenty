@@ -48,8 +48,6 @@ import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/cons
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { isMorphRelationFieldMetadataType } from 'src/engine/utils/is-morph-relation-field-metadata-type.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
-import { WorkspaceMigrationBuilderExceptionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/exceptions/workspace-migration-builder-exception-v2';
-import { WorkspaceMigrationBuilderExceptionV2Handler } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-handler';
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
@@ -78,10 +76,6 @@ export class FieldMetadataResolver {
         workspaceId,
       });
     } catch (error) {
-      if (error instanceof WorkspaceMigrationBuilderExceptionV2) {
-        WorkspaceMigrationBuilderExceptionV2Handler(error);
-      }
-
       fieldMetadataGraphqlApiExceptionHandler(error);
     }
   }
@@ -99,18 +93,14 @@ export class FieldMetadataResolver {
         workspaceId,
       );
 
-    if (isWorkspaceMigrationV2Enabled) {
-      try {
+    try {
+      if (isWorkspaceMigrationV2Enabled) {
         return await this.fieldMetadataServiceV2.updateOne({
           updateFieldInput: { ...input.update, id: input.id },
           workspaceId,
         });
-      } catch (error) {
-        WorkspaceMigrationBuilderExceptionV2Handler(error);
       }
-    }
 
-    try {
       const updatedInput = (await this.beforeUpdateOneField.run(input, {
         workspaceId,
         locale: context.req.locale,
@@ -149,7 +139,7 @@ export class FieldMetadataResolver {
         });
       }
     } catch (error) {
-      WorkspaceMigrationBuilderExceptionV2Handler(error);
+      fieldMetadataGraphqlApiExceptionHandler(error);
     }
 
     const fieldMetadata =

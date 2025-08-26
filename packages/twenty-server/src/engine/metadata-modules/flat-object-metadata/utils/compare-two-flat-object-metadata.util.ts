@@ -63,8 +63,8 @@ export const compareTwoFlatObjectMetadata = ({
 
         if (isJsonb) {
           return {
-            from: parseJson(oldValue) ?? oldValue,
-            to: parseJson(value) ?? value,
+            from: parseJson(oldValue),
+            to: parseJson(value),
             property,
           };
         }
