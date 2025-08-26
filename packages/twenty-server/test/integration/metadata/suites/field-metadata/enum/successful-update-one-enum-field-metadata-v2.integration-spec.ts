@@ -7,19 +7,19 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import {
-  type FieldMetadataComplexOption,
-  type FieldMetadataDefaultOption,
-} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-metadata/constants/custom-object-dishes.constants';
 import { eachTestingContextFilter } from 'twenty-shared/testing';
+
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import {
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
+} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 describe.each(fieldMetadataEnumTypes)(
   'Successful update field metadata %s tests suite v2',
