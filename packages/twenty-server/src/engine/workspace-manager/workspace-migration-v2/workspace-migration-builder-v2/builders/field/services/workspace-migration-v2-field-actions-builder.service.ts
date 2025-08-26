@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType, FromTo } from 'twenty-shared/types';
+import { FromTo } from 'twenty-shared/types';
 
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
-import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-flat-field-metadata.util';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
@@ -115,20 +115,14 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
     }
 
     for (const flatFieldMetadataToCreate of createdFlatFieldMetadatas) {
-      const relationTargetFlatObjectMetadataMaps =
-        isFlatFieldMetadataEntityOfType(
-          flatFieldMetadataToCreate,
-          FieldMetadataType.RELATION,
-        ) ||
-        isFlatFieldMetadataEntityOfType(
-          flatFieldMetadataToCreate,
-          FieldMetadataType.MORPH_RELATION,
-        )
-          ? computeRelationTargetFlatObjectMetadataMaps({
-              flatFieldMetadata: flatFieldMetadataToCreate,
-              flatObjectMetadataMaps: toFlatObjectMetadataMaps,
-            })
-          : undefined;
+      const relationTargetFlatObjectMetadataMaps = isRelationFlatFieldMetadata(
+        flatFieldMetadataToCreate,
+      )
+        ? computeRelationTargetFlatObjectMetadataMaps({
+            flatFieldMetadata: flatFieldMetadataToCreate,
+            flatObjectMetadataMaps: toFlatObjectMetadataMaps,
+          })
+        : undefined;
 
       const validationErrors =
         await this.flatFieldMetadataValidatorService.validateFlatFieldMetadataCreation(
