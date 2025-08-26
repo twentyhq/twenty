@@ -131,7 +131,7 @@ export class WorkspaceSyncAgentService {
 
       if (!adminRole) {
         this.logger.warn(
-          `Admin role not found for workspace ${workspaceId}, cannot assign to workflow creation agent`,
+          `Admin role not found for workspace ${workspaceId}, cannot assign to agent ${agentId}.`,
         );
 
         return;
