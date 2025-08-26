@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type UpdateViewInput } from '~/generated-metadata/graphql';
 
 export const convertUpdateViewInputToCore = (
-  view: Partial<GraphQLView>,
+  view: Partial<GraphQLView & { __typename?: string }>,
 ): UpdateViewInput => {
   const {
     key,
@@ -17,6 +17,9 @@ export const convertUpdateViewInputToCore = (
     viewFilterGroups: _viewFilterGroups,
     viewGroups: _viewGroups,
     viewSorts: _viewSorts,
+    kanbanFieldMetadataId: _kanbanFieldMetadataId,
+    id: _id,
+    __typename: _typename,
     ...rest
   } = view;
 

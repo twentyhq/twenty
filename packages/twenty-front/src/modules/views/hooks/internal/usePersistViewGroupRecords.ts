@@ -60,7 +60,7 @@ export const usePersistViewGroupRecords = () => {
         apolloCoreClient.mutate<{ updateViewGroup: ViewGroup }>({
           mutation: updateOneRecordMutation,
           variables: {
-            idToUpdate: viewGroup.id,
+            id: viewGroup.id,
             input: {
               isVisible: viewGroup.isVisible,
               position: viewGroup.position,
@@ -183,7 +183,7 @@ export const usePersistViewGroupRecords = () => {
           apolloClient.mutate({
             mutation: DESTROY_CORE_VIEW_GROUP,
             variables: {
-              idToDestroy: viewGroup.id,
+              id: viewGroup.id,
             },
           }),
         ),

@@ -100,7 +100,7 @@ export const usePersistViewSortRecords = () => {
           apolloCoreClient.mutate({
             mutation: updateOneRecordMutation,
             variables: {
-              idToUpdate: viewSort.id,
+              id: viewSort.id,
               input: {
                 direction: viewSort.direction,
               },
@@ -144,7 +144,7 @@ export const usePersistViewSortRecords = () => {
           apolloCoreClient.mutate({
             mutation: destroyOneRecordMutation,
             variables: {
-              idToDestroy: viewSortId,
+              id: viewSortId,
             },
             update: (cache, { data }) => {
               const record = data?.['destroyViewSort'];
@@ -222,7 +222,7 @@ export const usePersistViewSortRecords = () => {
           apolloClient.mutate({
             mutation: UPDATE_CORE_VIEW_SORT,
             variables: {
-              idToUpdate: viewSort.id,
+              id: viewSort.id,
               input: {
                 direction: convertViewSortDirectionToCore(viewSort.direction),
               } satisfies Partial<CoreViewSort>,
@@ -260,7 +260,7 @@ export const usePersistViewSortRecords = () => {
           apolloClient.mutate({
             mutation: DESTROY_CORE_VIEW_SORT,
             variables: {
-              idToDestroy: viewSortId,
+              id: viewSortId,
             },
             update: (cache, { data }) => {
               const record = data?.['destroyCoreViewSort'];

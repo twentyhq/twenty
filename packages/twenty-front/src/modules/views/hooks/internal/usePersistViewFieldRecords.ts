@@ -100,7 +100,7 @@ export const usePersistViewFieldRecords = () => {
           apolloCoreClient.mutate({
             mutation: updateOneRecordMutation,
             variables: {
-              idToUpdate: viewField.id,
+              id: viewField.id,
               input: {
                 isVisible: viewField.isVisible,
                 position: viewField.position,
@@ -191,7 +191,7 @@ export const usePersistViewFieldRecords = () => {
           apolloClient.mutate({
             mutation: UPDATE_CORE_VIEW_FIELD,
             variables: {
-              idToUpdate: viewField.id,
+              id: viewField.id,
               input: {
                 isVisible: viewField.isVisible,
                 position: viewField.position,

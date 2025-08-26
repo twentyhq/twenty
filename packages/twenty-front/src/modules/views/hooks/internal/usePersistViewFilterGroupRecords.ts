@@ -146,7 +146,7 @@ export const usePersistViewFilterGroupRecords = () => {
           apolloCoreClient.mutate<{ updateViewFilterGroup: ViewFilterGroup }>({
             mutation: updateOneRecordMutation,
             variables: {
-              idToUpdate: viewFilterGroup.id,
+              id: viewFilterGroup.id,
               input: {
                 parentViewFilterGroupId:
                   viewFilterGroup.parentViewFilterGroupId,
@@ -194,7 +194,7 @@ export const usePersistViewFilterGroupRecords = () => {
           apolloCoreClient.mutate<{ destroyViewFilterGroup: ViewFilterGroup }>({
             mutation: destroyOneRecordMutation,
             variables: {
-              idToDestroy: viewFilterGroupId,
+              id: viewFilterGroupId,
             },
             update: (cache, { data }) => {
               const record = data?.destroyViewFilterGroup;
@@ -315,7 +315,7 @@ export const usePersistViewFilterGroupRecords = () => {
           apolloClient.mutate<{ updateCoreViewFilterGroup: ViewFilterGroup }>({
             mutation: UPDATE_CORE_VIEW_FILTER_GROUP,
             variables: {
-              idToUpdate: viewFilterGroup.id,
+              id: viewFilterGroup.id,
               input: {
                 parentViewFilterGroupId:
                   viewFilterGroup.parentViewFilterGroupId,
@@ -357,7 +357,7 @@ export const usePersistViewFilterGroupRecords = () => {
           apolloClient.mutate<{ destroyCoreViewFilterGroup: ViewFilterGroup }>({
             mutation: DESTROY_CORE_VIEW_FILTER_GROUP,
             variables: {
-              idToDestroy: viewFilterGroupId,
+              id: viewFilterGroupId,
             },
             update: (cache, { data }) => {
               const record = data?.destroyCoreViewFilterGroup;
