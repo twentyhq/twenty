@@ -1,31 +1,30 @@
-import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2Container';
-import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/components/WorkflowDiagramEdgeV2VisibilityContainer';
-import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
-import { useOpenWorkflowViewFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowViewFilterInCommandMenu';
+import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2Container';
+import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2VisibilityContainer';
+import { WorkflowRunDiagramBaseEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowRunDiagramBaseEdge';
+import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
+import { useOpenWorkflowRunFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowRunFilterInCommandMenu';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
   type WorkflowDiagramEdge,
   type WorkflowDiagramEdgeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { type WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
+import { getNodeVariantFromStepRunStatus } from '@/workflow/workflow-diagram/utils/getNodeVariantFromStepRunStatus';
 import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
-import { css, useTheme } from '@emotion/react';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-  BaseEdge,
   EdgeLabelRenderer,
   type EdgeProps,
   getBezierPath,
 } from '@xyflow/react';
-import { useContext } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
 
-type WorkflowDiagramFilterEdgeReadonlyProps = EdgeProps<WorkflowDiagramEdge>;
+type WorkflowDiagramFilterEdgeRunProps = EdgeProps<WorkflowDiagramEdge>;
 
 const assertFilterEdgeDataOrThrow: (
   data: WorkflowDiagramEdgeData | undefined,
@@ -37,12 +36,15 @@ const assertFilterEdgeDataOrThrow: (
   }
 };
 
-const StyledIconButtonGroup = styled(IconButtonGroup)<{ selected?: boolean }>`
+const StyledIconButtonGroup = styled(IconButtonGroup)<{
+  selected?: boolean;
+  variant: WorkflowDiagramNodeVariant;
+}>`
   pointer-events: all;
 
-  ${({ selected, theme }) => {
+  ${({ selected, variant, theme }) => {
     if (!selected) return '';
-    const colors = getWorkflowDiagramNodeSelectedColors('default', theme);
+    const colors = getWorkflowDiagramNodeSelectedColors(variant, theme);
     return css`
       background-color: ${colors.background};
       border: 1px solid ${colors.borderColor};
@@ -55,20 +57,16 @@ const StyledConfiguredFilterContainer = styled.div`
   width: 26px;
 `;
 
-export const WorkflowDiagramFilterEdgeReadonly = ({
+export const WorkflowDiagramFilterEdgeRun = ({
   sourceX,
   sourceY,
   targetX,
   targetY,
+  data,
   markerStart,
   markerEnd,
-  data,
-}: WorkflowDiagramFilterEdgeReadonlyProps) => {
+}: WorkflowDiagramFilterEdgeRunProps) => {
   assertFilterEdgeDataOrThrow(data);
-
-  const { isInRightDrawer } = useContext(ActionMenuContext);
-
-  const theme = useTheme();
 
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -84,31 +82,27 @@ export const WorkflowDiagramFilterEdgeReadonly = ({
   const isFilterNodeSelected =
     isNonEmptyString(data.stepId) && workflowSelectedNode === data.stepId;
 
-  const { openWorkflowViewFilterInCommandMenu } =
-    useOpenWorkflowViewFilterInCommandMenu();
-
-  const setCommandMenuNavigationStack = useSetRecoilState(
-    commandMenuNavigationStackState,
-  );
+  const { openWorkflowRunFilterInCommandMenu } =
+    useOpenWorkflowRunFilterInCommandMenu();
 
   const handleFilterButtonClick = () => {
-    if (!isInRightDrawer) {
-      setCommandMenuNavigationStack([]);
+    if (!isDefined(data.runStatus)) {
+      throw new Error('Run status must be set on edge data for workflow runs');
     }
 
-    openWorkflowViewFilterInCommandMenu({
+    openWorkflowRunFilterInCommandMenu({
       stepId: data.stepId,
       stepName: data.name,
+      stepExecutionStatus: data.runStatus,
     });
   };
 
   return (
     <>
-      <BaseEdge
+      <WorkflowRunDiagramBaseEdge
+        path={edgePath}
         markerStart={markerStart}
         markerEnd={markerEnd}
-        path={edgePath}
-        style={{ stroke: theme.border.color.strong }}
       />
 
       <EdgeLabelRenderer>
@@ -128,6 +122,7 @@ export const WorkflowDiagramFilterEdgeReadonly = ({
                   },
                 ]}
                 selected={isFilterNodeSelected}
+                variant={getNodeVariantFromStepRunStatus(data.runStatus)}
               />
             </StyledConfiguredFilterContainer>
           </WorkflowDiagramEdgeV2VisibilityContainer>
