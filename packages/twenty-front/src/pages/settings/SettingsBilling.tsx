@@ -67,8 +67,10 @@ export const SettingsBilling = () => {
         {hasNotCanceledCurrentSubscription && (
           <SettingsBillingSubscriptionInfo />
         )}
-        {hasNotCanceledCurrentSubscription && (
-          <SettingsBillingMonthlyCreditsSection />
+        {hasNotCanceledCurrentSubscription && currentWorkspace && (
+          <SettingsBillingMonthlyCreditsSection
+            currentWorkspace={currentWorkspace}
+          />
         )}
         <Section>
           <H2Title

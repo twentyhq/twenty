@@ -261,14 +261,28 @@ export class BillingPortalWorkspaceService {
     billingPricesPerPlan?: BillingGetPricesPerPlanResult;
   }): Stripe.Checkout.SessionCreateParams.LineItem[] {
     if (billingPricesPerPlan) {
+      const defaultMeteredProductPrice =
+        billingPricesPerPlan.meteredProductsPrices.find(
+          ({ metadata }) =>
+            isDefined(metadata.isDefaultMeteredPrice) &&
+            metadata.isDefaultMeteredPrice === 'true',
+        );
+
+      if (!isDefined(defaultMeteredProductPrice)) {
+        throw new BillingException(
+          'Missing Default Metered price',
+          BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+        );
+      }
+
       return [
         {
           price: billingPricesPerPlan.baseProductPrice.stripePriceId,
           quantity,
         },
-        ...billingPricesPerPlan.meteredProductsPrices.map((price) => ({
-          price: price.stripePriceId,
-        })),
+        {
+          price: defaultMeteredProductPrice.stripePriceId,
+        },
       ];
     }
 

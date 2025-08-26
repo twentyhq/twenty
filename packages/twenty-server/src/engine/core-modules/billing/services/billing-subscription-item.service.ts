@@ -12,6 +12,7 @@ import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entitie
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 
 @Injectable()
 export class BillingSubscriptionItemService {
@@ -19,11 +20,15 @@ export class BillingSubscriptionItemService {
     @InjectRepository(BillingSubscriptionItem, 'core')
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly stripeSubscriptionService: StripeSubscriptionService,
   ) {}
 
-  async getMeteredSubscriptionItemDetails(subscriptionId: string) {
-    const meteredSubscriptionItems =
-      await this.billingSubscriptionItemRepository.find({
+  async updateMeteredSubscriptionItemPrice(
+    subscriptionId: string,
+    newPriceId: string,
+  ) {
+    const subscriptionItem =
+      await this.billingSubscriptionItemRepository.findOne({
         where: {
           billingSubscriptionId: subscriptionId,
           billingProduct: {
@@ -32,30 +37,62 @@ export class BillingSubscriptionItemService {
             }),
           },
         },
+        relations: ['billingProduct'],
+      });
+
+    if (!subscriptionItem) {
+      throw new BillingException(
+        `Cannot find subscription item for subscription ${subscriptionId}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND,
+      );
+    }
+
+    await this.stripeSubscriptionService.updateSubscriptionItems(
+      subscriptionItem.stripeSubscriptionId,
+      [
+        {
+          ...subscriptionItem,
+          stripePriceId: newPriceId,
+        },
+      ],
+    );
+  }
+
+  async getMeteredSubscriptionItemDetails(subscriptionId: string) {
+    const meteredSubscriptionItems =
+      await this.billingSubscriptionItemRepository.find({
+        where: {
+          billingSubscriptionId: subscriptionId,
+        },
         relations: ['billingProduct', 'billingProduct.billingPrices'],
       });
 
-    return meteredSubscriptionItems.map((item) => {
-      const price = this.findMatchingPrice(item);
+    return meteredSubscriptionItems.reduce(
+      (acc, item) => {
+        const price = this.findMatchingPrice(item);
 
-      const stripeMeterId = price.stripeMeterId;
+        if (!price.stripeMeterId) {
+          return acc;
+        }
 
-      if (!stripeMeterId) {
-        throw new BillingException(
-          `Stripe meter ID not found for product ${item.billingProduct.metadata.productKey}`,
-          BillingExceptionCode.BILLING_METER_NOT_FOUND,
-        );
-      }
-
-      return {
-        stripeSubscriptionItemId: item.stripeSubscriptionItemId,
-        productKey: item.billingProduct.metadata.productKey,
-        stripeMeterId,
-        freeTierQuantity: this.getFreeTierQuantity(price),
-        freeTrialQuantity: this.getFreeTrialQuantity(item),
-        unitPriceCents: this.getUnitPrice(price),
-      };
-    });
+        return acc.concat({
+          stripeSubscriptionItemId: item.stripeSubscriptionItemId,
+          productKey: item.billingProduct.metadata.productKey,
+          stripeMeterId: price.stripeMeterId,
+          freeTierQuantity: this.getFreeTierQuantity(price),
+          freeTrialQuantity: this.getFreeTrialQuantity(item),
+          unitPriceCents: this.getUnitPrice(price),
+        });
+      },
+      [] as Array<{
+        stripeSubscriptionItemId: string;
+        productKey: BillingProductKey;
+        stripeMeterId: string;
+        freeTierQuantity: number;
+        freeTrialQuantity: number;
+        unitPriceCents: number;
+      }>,
+    );
   }
 
   private findMatchingPrice(item: BillingSubscriptionItem): BillingPrice {

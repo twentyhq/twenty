@@ -289,6 +289,13 @@ export type BillingPriceMeteredDto = {
   tiersMode?: Maybe<BillingPriceTiersMode>;
 };
 
+export type BillingPriceOutput = {
+  __typename?: 'BillingPriceOutput';
+  amount: Scalars['Float'];
+  nickname: Scalars['String'];
+  stripePriceId: Scalars['String'];
+};
+
 export type BillingPriceTierDto = {
   __typename?: 'BillingPriceTierDTO';
   flatAmount?: Maybe<Scalars['Float']>;
@@ -346,6 +353,7 @@ export type BillingSubscriptionItem = {
   hasReachedCurrentPeriodCap: Scalars['Boolean'];
   id: Scalars['UUID'];
   quantity?: Maybe<Scalars['Float']>;
+  stripePriceId?: Maybe<Scalars['String']>;
 };
 
 export type BillingTrialPeriodDto = {
@@ -1393,6 +1401,7 @@ export type Mutation = {
   updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
+  updateSubscriptionItemPrice: BillingUpdateOutput;
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
@@ -1967,6 +1976,11 @@ export type MutationUpdatePasswordViaResetTokenArgs = {
 };
 
 
+export type MutationUpdateSubscriptionItemPriceArgs = {
+  priceId: Scalars['String'];
+};
+
+
 export type MutationUpdateWebhookArgs = {
   input: UpdateWebhookDto;
 };
@@ -2352,6 +2366,7 @@ export type Query = {
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   index: Index;
   indexMetadatas: IndexConnection;
+  listAvailableMeteredBillingPrices: Array<BillingPriceOutput>;
   object: Object;
   objects: ObjectConnection;
   plans: Array<BillingPlanOutput>;

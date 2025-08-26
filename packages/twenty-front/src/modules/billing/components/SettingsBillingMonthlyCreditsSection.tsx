@@ -11,6 +11,9 @@ import { SubscriptionStatus } from '~/generated/graphql';
 import { formatAmount } from '~/utils/format/formatAmount';
 import { formatNumber } from '~/utils/format/number';
 import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
+import { useListAvailableMeteredBillingPricesQuery } from '~/generated-metadata/graphql';
+import { MeteredPriceSelector } from '@/billing/components/internal/MeteredPriceSelector';
+import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 
 const StyledLineSeparator = styled.div`
   width: 100%;
@@ -18,7 +21,11 @@ const StyledLineSeparator = styled.div`
   background-color: ${({ theme }) => theme.background.tertiary};
 `;
 
-export const SettingsBillingMonthlyCreditsSection = () => {
+export const SettingsBillingMonthlyCreditsSection = ({
+  currentWorkspace,
+}: {
+  currentWorkspace: CurrentWorkspace;
+}) => {
   const subscriptionStatus = useSubscriptionStatus();
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
@@ -31,6 +38,9 @@ export const SettingsBillingMonthlyCreditsSection = () => {
     totalCostCents,
   } = useGetWorkflowNodeExecutionUsage();
 
+  const { data: meteredBillingPrices } =
+    useListAvailableMeteredBillingPricesQuery();
+
   const isFreeCreditProgressBarCompleted =
     freeUsageQuantity === includedFreeQuantity;
 
@@ -41,46 +51,61 @@ export const SettingsBillingMonthlyCreditsSection = () => {
     : formatNumber(freeUsageQuantity);
 
   return (
-    <Section>
-      <H2Title
-        title={t`Monthly Credits`}
-        description={t`Track your monthly workflow credit consumption.`}
-      />
-      <SubscriptionInfoContainer>
-        <SettingsBillingLabelValueItem
-          label={t`Free Credits Used`}
-          value={`${formattedFreeUsageQuantity}/${formatAmount(includedFreeQuantity)}`}
+    <>
+      <Section>
+        <H2Title
+          title={t`Monthly Credits`}
+          description={t`Track your monthly workflow credit consumption.`}
         />
-        <ProgressBar
-          value={progressBarValue}
-          barColor={
-            isFreeCreditProgressBarCompleted
-              ? BACKGROUND_LIGHT.quaternary
-              : COLOR.blue
-          }
-          backgroundColor={BACKGROUND_LIGHT.tertiary}
-          withBorderRadius={true}
-        />
+        <SubscriptionInfoContainer>
+          <SettingsBillingLabelValueItem
+            label={t`Free Credits Used`}
+            value={`${formattedFreeUsageQuantity}/${formatAmount(includedFreeQuantity)}`}
+          />
+          <ProgressBar
+            value={progressBarValue}
+            barColor={
+              isFreeCreditProgressBarCompleted
+                ? BACKGROUND_LIGHT.quaternary
+                : COLOR.blue
+            }
+            backgroundColor={BACKGROUND_LIGHT.tertiary}
+            withBorderRadius={true}
+          />
 
-        <StyledLineSeparator />
-        {!isTrialing && (
+          <StyledLineSeparator />
+          {!isTrialing && (
+            <SettingsBillingLabelValueItem
+              label={t`Extra Credits Used`}
+              value={`${formatNumber(paidUsageQuantity)}`}
+            />
+          )}
           <SettingsBillingLabelValueItem
-            label={t`Extra Credits Used`}
-            value={`${formatNumber(paidUsageQuantity)}`}
+            label={t`Cost per 1k Extra Credits`}
+            value={`$${formatNumber((unitPriceCents / 100) * 1000, 2)}`}
+          />
+          {!isTrialing && (
+            <SettingsBillingLabelValueItem
+              label={t`Cost`}
+              isValueInPrimaryColor={true}
+              value={`$${formatNumber(totalCostCents / 100, 2)}`}
+            />
+          )}
+        </SubscriptionInfoContainer>
+      </Section>
+      <Section>
+        {meteredBillingPrices?.listAvailableMeteredBillingPrices && (
+          <MeteredPriceSelector
+            billingSubscriptionItems={
+              currentWorkspace.currentBillingSubscription
+                ?.billingSubscriptionItems ?? []
+            }
+            meteredBillingPrices={
+              meteredBillingPrices.listAvailableMeteredBillingPrices
+            }
           />
         )}
-        <SettingsBillingLabelValueItem
-          label={t`Cost per 1k Extra Credits`}
-          value={`$${formatNumber((unitPriceCents / 100) * 1000, 2)}`}
-        />
-        {!isTrialing && (
-          <SettingsBillingLabelValueItem
-            label={t`Cost`}
-            isValueInPrimaryColor={true}
-            value={`$${formatNumber(totalCostCents / 100, 2)}`}
-          />
-        )}
-      </SubscriptionInfoContainer>
-    </Section>
+      </Section>
+    </>
   );
 };

@@ -73,6 +73,27 @@ export class BillingSubscriptionService {
     return notCanceledSubscriptions?.[0];
   }
 
+  async getCurrentActiveBillingSubscriptionOrThrow(criteria: {
+    workspaceId?: string;
+    stripeCustomerId?: string;
+  }) {
+    const subscription =
+      await this.getCurrentBillingSubscriptionOrThrow(criteria);
+
+    if (
+      ![SubscriptionStatus.Active, SubscriptionStatus.Trialing].includes(
+        subscription.status,
+      )
+    ) {
+      throw new BillingException(
+        'No active billing subscription found',
+        BillingExceptionCode.BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND,
+      );
+    }
+
+    return subscription;
+  }
+
   async getBaseProductCurrentBillingSubscriptionItemOrThrow(
     workspaceId: string,
   ) {
