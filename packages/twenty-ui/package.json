@@ -166,5 +166,113 @@
         "port": 6007
       }
     }
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./style.css": "./dist/style.css",
+    "./accessibility": {
+      "types": "./dist/accessibility/index.d.ts",
+      "import": "./dist/accessibility.mjs",
+      "require": "./dist/accessibility.cjs"
+    },
+    "./assets": {
+      "types": "./dist/assets/index.d.ts",
+      "import": "./dist/assets.mjs",
+      "require": "./dist/assets.cjs"
+    },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components.mjs",
+      "require": "./dist/components.cjs"
+    },
+    "./display": {
+      "types": "./dist/display/index.d.ts",
+      "import": "./dist/display.mjs",
+      "require": "./dist/display.cjs"
+    },
+    "./feedback": {
+      "types": "./dist/feedback/index.d.ts",
+      "import": "./dist/feedback.mjs",
+      "require": "./dist/feedback.cjs"
+    },
+    "./input": {
+      "types": "./dist/input/index.d.ts",
+      "import": "./dist/input.mjs",
+      "require": "./dist/input.cjs"
+    },
+    "./json-visualizer": {
+      "types": "./dist/json-visualizer/index.d.ts",
+      "import": "./dist/json-visualizer.mjs",
+      "require": "./dist/json-visualizer.cjs"
+    },
+    "./layout": {
+      "types": "./dist/layout/index.d.ts",
+      "import": "./dist/layout.mjs",
+      "require": "./dist/layout.cjs"
+    },
+    "./navigation": {
+      "types": "./dist/navigation/index.d.ts",
+      "import": "./dist/navigation.mjs",
+      "require": "./dist/navigation.cjs"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "import": "./dist/testing.mjs",
+      "require": "./dist/testing.cjs"
+    },
+    "./theme": {
+      "types": "./dist/theme/index.d.ts",
+      "import": "./dist/theme.mjs",
+      "require": "./dist/theme.cjs"
+    },
+    "./utilities": {
+      "types": "./dist/utilities/index.d.ts",
+      "import": "./dist/utilities.mjs",
+      "require": "./dist/utilities.cjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "accessibility": [
+        "dist/accessibility/index.d.ts"
+      ],
+      "assets": [
+        "dist/assets/index.d.ts"
+      ],
+      "components": [
+        "dist/components/index.d.ts"
+      ],
+      "display": [
+        "dist/display/index.d.ts"
+      ],
+      "feedback": [
+        "dist/feedback/index.d.ts"
+      ],
+      "input": [
+        "dist/input/index.d.ts"
+      ],
+      "json-visualizer": [
+        "dist/json-visualizer/index.d.ts"
+      ],
+      "layout": [
+        "dist/layout/index.d.ts"
+      ],
+      "navigation": [
+        "dist/navigation/index.d.ts"
+      ],
+      "testing": [
+        "dist/testing/index.d.ts"
+      ],
+      "theme": [
+        "dist/theme/index.d.ts"
+      ],
+      "utilities": [
+        "dist/utilities/index.d.ts"
+      ]
+    }
   }
 }
