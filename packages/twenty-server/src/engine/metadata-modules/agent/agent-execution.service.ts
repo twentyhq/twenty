@@ -25,7 +25,7 @@ import {
   type AgentChatMessageEntity,
   AgentChatMessageRole,
 } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
-import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
+import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent-handoff-tool.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
@@ -35,6 +35,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
+import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
@@ -52,12 +53,13 @@ export class AgentExecutionService {
   private readonly logger = new Logger(AgentExecutionService.name);
 
   constructor(
-    private readonly agentToolService: AgentToolService,
+    private readonly agentHandoffToolService: AgentHandoffToolService,
     private readonly fileService: FileService,
     private readonly domainManagerService: DomainManagerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly agentToolGeneratorService: AgentToolGeneratorService,
 
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
@@ -86,12 +88,22 @@ export class AgentExecutionService {
       const registeredModel =
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 
-      const tools = agent
-        ? await this.agentToolService.generateToolsForAgent(
+      let tools = {};
+
+      if (agent) {
+        const baseTools =
+          await this.agentToolGeneratorService.generateToolsForAgent(
             agent.id,
             agent.workspaceId,
-          )
-        : {};
+          );
+
+        const handoffTools = this.agentHandoffToolService.generateHandoffTools(
+          agent.id,
+          agent.workspaceId,
+        );
+
+        tools = { ...baseTools, ...handoffTools };
+      }
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 

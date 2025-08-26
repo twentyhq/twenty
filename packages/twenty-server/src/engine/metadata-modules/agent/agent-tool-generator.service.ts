@@ -21,7 +21,6 @@ export class AgentToolGeneratorService {
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(RoleTargetsEntity, 'core')
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly toolAdapterService: ToolAdapterService,
     private readonly toolService: ToolService,
     private readonly workflowToolService: WorkflowToolService,
