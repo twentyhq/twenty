@@ -16,7 +16,7 @@ import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePers
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
-import { coreViewsState } from '@/views/states/coreViewState';
+import { useRefreshCoreViews } from '@/views/hooks/useRefreshCoreViews';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type View } from '@/views/types/View';
@@ -33,12 +33,7 @@ import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import {
-  FeatureFlagKey,
-  useCreateCoreViewMutation,
-  useFindManyCoreViewsLazyQuery,
-} from '~/generated/graphql';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { FeatureFlagKey, useCreateCoreViewMutation } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
@@ -70,7 +65,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const [findManyCoreViewsLazy] = useFindManyCoreViewsLazyQuery();
+  const { refreshCoreViews } = useRefreshCoreViews();
 
   const { findManyRecordsLazy } = useLazyFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.View,
@@ -258,23 +253,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         }
 
         if (isCoreViewEnabled) {
-          const result = await findManyCoreViewsLazy({
-            variables: {
-              objectMetadataId: objectMetadataItem.id,
-            },
-            fetchPolicy: 'network-only',
-          });
-
-          const existingCoreViews = snapshot
-            .getLoadable(coreViewsState)
-            .getValue();
-
-          if (
-            isDefined(result.data?.getCoreViews) &&
-            !isDeeplyEqual(existingCoreViews, result.data.getCoreViews)
-          ) {
-            set(coreViewsState, result.data.getCoreViews);
-          }
+          await refreshCoreViews(objectMetadataItem.id);
         } else {
           await findManyRecordsLazy();
         }
@@ -283,23 +262,23 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         return newViewId;
       },
     [
-      anyFieldFilterValue,
       currentViewIdCallbackState,
-      createOneRecord,
+      isCoreViewEnabled,
       createViewFieldRecords,
-      findManyRecordsLazy,
+      createCoreViewMutation,
+      anyFieldFilterValue,
+      createOneRecord,
       objectMetadataItem.fields,
+      objectMetadataItem.id,
       createViewGroupRecords,
-      createViewSortRecords,
-      createViewFilterRecords,
-      createViewFilterGroupRecords,
+      currentRecordFilterGroups,
       currentRecordFilters,
       currentRecordSorts,
-      currentRecordFilterGroups,
-      isCoreViewEnabled,
-      createCoreViewMutation,
-      findManyCoreViewsLazy,
-      objectMetadataItem.id,
+      createViewFilterGroupRecords,
+      createViewFilterRecords,
+      createViewSortRecords,
+      refreshCoreViews,
+      findManyRecordsLazy,
     ],
   );
 

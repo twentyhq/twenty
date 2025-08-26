@@ -1,21 +1,32 @@
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useRefreshCoreViews } from '@/views/hooks/useRefreshCoreViews';
 import { getViewSortsToCreate } from '@/views/utils/getViewSortsToCreate';
 import { getViewSortsToDelete } from '@/views/utils/getViewSortsToDelete';
 import { getViewSortsToUpdate } from '@/views/utils/getViewSortsToUpdate';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useSaveRecordSortsToViewSorts = () => {
+  const featureFlags = useFeatureFlagsMap();
+  const isCoreViewEnabled = featureFlags[FeatureFlagKey.IS_CORE_VIEW_ENABLED];
+
   const {
     createViewSortRecords,
     updateViewSortRecords,
     deleteViewSortRecords,
   } = usePersistViewSortRecords();
+
+  const { refreshCoreViews } = useRefreshCoreViews();
+
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -61,13 +72,19 @@ export const useSaveRecordSortsToViewSorts = () => {
         await createViewSortRecords(viewSortsToCreate, currentView);
         await updateViewSortRecords(viewSortsToUpdate);
         await deleteViewSortRecords(viewSortIdsToDelete);
+
+        if (isCoreViewEnabled) {
+          await refreshCoreViews(objectMetadataItem.id);
+        }
       },
     [
-      createViewSortRecords,
-      deleteViewSortRecords,
-      updateViewSortRecords,
-      currentRecordSortsCallbackState,
       currentView,
+      currentRecordSortsCallbackState,
+      createViewSortRecords,
+      updateViewSortRecords,
+      deleteViewSortRecords,
+      refreshCoreViews,
+      objectMetadataItem.id,
     ],
   );
 
