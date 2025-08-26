@@ -11,12 +11,12 @@ import {
   FieldMetadataType,
 } from 'twenty-shared/types';
 import { isDefined, parseJson } from 'twenty-shared/utils';
-import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;
 
@@ -72,7 +72,7 @@ describe('update-one-field-metadata-related-record', () => {
     const plural = singular + faker.lorem.word();
     const {
       data: { createOneObject },
-    } = await forceCreateOneObjectMetadata({
+    } = await createOneObjectMetadata({
       input: getMockCreateObjectInput({
         labelSingular: singular,
         labelPlural: plural,
