@@ -1,4 +1,4 @@
-import { useEdgeState } from '@/workflow/workflow-diagram/hooks/useEdgeState';
+import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   type OnSelectionChangeParams,

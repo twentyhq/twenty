@@ -30,8 +30,6 @@ const generateFakeObjectRecordEventWithPrefix = ({
         objectMetadataInfo.objectMetadataItemWithFieldsMaps.icon ?? undefined,
       label: objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelSingular,
       value: objectMetadataInfo.objectMetadataItemWithFieldsMaps.description,
-      nameSingular:
-        objectMetadataInfo.objectMetadataItemWithFieldsMaps.nameSingular,
       fieldIdName: `${prefix}.id`,
       objectMetadataId: objectMetadataInfo.objectMetadataItemWithFieldsMaps.id,
     },

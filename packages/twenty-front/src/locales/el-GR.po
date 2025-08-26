@@ -395,7 +395,7 @@ msgid "Add node"
 msgstr ""
 
 #. js-lingui-id: 1Ltnvs
-#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Add Node"
 msgstr ""
 
@@ -1956,7 +1956,7 @@ msgid "Delete API key"
 msgstr "Διαγραφή κλειδιού API"
 
 #. js-lingui-id: YLfVFw
-#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Delete branch"
 msgstr ""
 
@@ -4604,6 +4604,7 @@ msgstr "Ο αριθμός τηλεφώνου αντιγράφηκε στο πρ�
 
 #. js-lingui-id: FdlpPK
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownAllItems.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowDropdownStepOutputItems.tsx
 msgid "Pick a {nameSingular} record"
 msgstr "Επιλέξτε μια καταγραφή {nameSingular}"
 
@@ -4852,7 +4853,7 @@ msgid "Remove as default"
 msgstr "Αφαίρεση ως προεπιλεγμένο"
 
 #. js-lingui-id: rn2/2V
-#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Remove filter"
 msgstr ""
 

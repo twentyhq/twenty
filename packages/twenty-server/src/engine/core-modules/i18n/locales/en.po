@@ -1048,11 +1048,6 @@ msgstr "Favorite position"
 msgid "Favorite task"
 msgstr "Favorite task"
 
-#. js-lingui-id: VkWV1s
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite view"
-msgstr "Favorite view"
-
 #. js-lingui-id: l+lx2f
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workflow"
@@ -1078,7 +1073,6 @@ msgstr "Favorite workspace member"
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -1119,11 +1113,6 @@ msgstr "Favorites linked to the opportunity"
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 msgid "Favorites linked to the task"
 msgstr "Favorites linked to the task"
-
-#. js-lingui-id: R+1ib/
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Favorites linked to the view"
-msgstr "Favorites linked to the view"
 
 #. js-lingui-id: ee0tmj
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -2977,7 +2966,6 @@ msgstr "Versions"
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "View"
 msgstr "View"
 
@@ -3162,6 +3150,12 @@ msgstr "View target object"
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "View type"
 msgstr "View type"
+
+#. js-lingui-id: aeqysn
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+msgid "ViewId"
+msgstr "ViewId"
 
 #. js-lingui-id: l88nXn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts

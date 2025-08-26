@@ -9,7 +9,6 @@ import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/wor
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowRunDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
-import { WorkflowDiagramHandleReadonly } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleReadonly';
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeIcon';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeIconContainer';
@@ -19,13 +18,14 @@ import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-node
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Position } from '@xyflow/react';
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { IconCheck, IconX, useIcons } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
+import { WorkflowDiagramHandleTarget } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTarget';
+import { WorkflowDiagramHandleSource } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleSource';
 
 const StyledNodeContainer = styled(WorkflowNodeContainer)`
   border-color: ${({ theme }) => theme.border.color.strong};
@@ -177,19 +177,12 @@ export const WorkflowRunDiagramStepNode = ({
 
   return (
     <>
-      {data.nodeType !== 'trigger' && (
-        <WorkflowDiagramHandleReadonly
-          type="target"
-          position={Position.Top}
-          selected={false}
-        />
-      )}
-
       <StyledNodeContainer
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
         data-status={data.runStatus}
         onClick={handleClick}
       >
+        <WorkflowDiagramHandleTarget />
         <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />
         </WorkflowNodeIconContainer>
@@ -230,11 +223,7 @@ export const WorkflowRunDiagramStepNode = ({
         </WorkflowNodeRightPart>
       </StyledNodeContainer>
 
-      <WorkflowDiagramHandleReadonly
-        type="source"
-        position={Position.Bottom}
-        selected={selected}
-      />
+      <WorkflowDiagramHandleSource selected={selected} readOnly />
     </>
   );
 };
