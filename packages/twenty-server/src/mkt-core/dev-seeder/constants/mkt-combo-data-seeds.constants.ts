@@ -13,9 +13,9 @@ type MktComboDataSeed = {
 
 // prettier-ignore
 export enum MKT_COMBO_STATUS {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  DELETED = 'deleted',
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  DELETED = 'DELETED',
 }
 
 // prettier-ignore

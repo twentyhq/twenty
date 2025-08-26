@@ -4,7 +4,7 @@ import {
   MKT_CUSTOMER_TAGS,
   MKT_CUSTOMER_TIER,
   MKT_CUSTOMER_TYPE,
-} from 'src/mkt-core/constants/mkt-customer.constant';
+} from 'src/mkt-core/customer/constants/mkt-customer.constant';
 
 // prettier-ignore
 export type MKT_CUSTOMER_DATA_SEED = {
