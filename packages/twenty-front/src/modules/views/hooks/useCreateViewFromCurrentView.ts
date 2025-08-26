@@ -130,6 +130,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           const result = await createCoreViewMutation({
             variables: {
               input: {
+                id: id ?? v4(),
                 name: name ?? sourceView.name,
                 icon: icon ?? sourceView.icon,
                 key: null,
