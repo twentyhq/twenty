@@ -10,7 +10,7 @@ import {
   type WorkflowDiagramEdge,
   type WorkflowDiagramEdgeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
+import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -42,10 +42,10 @@ const StyledIconButtonGroup = styled(IconButtonGroup)<{ selected?: boolean }>`
 
   ${({ selected, theme }) => {
     if (!selected) return '';
-    const colors = getWorkflowDiagramNodeSelectedColors('default', theme);
+    const colors = getWorkflowDiagramColors({ theme });
     return css`
-      background-color: ${colors.background};
-      border: 1px solid ${colors.borderColor};
+      background-color: ${colors.selected.background};
+      border: 1px solid ${colors.selected.borderColor};
     `;
   }}
 `;

@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { Handle, Position, type HandleProps } from '@xyflow/react';
 import { FeatureFlagKey } from '~/generated/graphql';
 import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
+import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
 
 type WorkflowDiagramHandleSourceProps = {
   selected: boolean;
@@ -44,29 +45,12 @@ const StyledHandle = styled(Handle, {
         `;
       }
 
-      switch (runStatus) {
-        case 'PENDING':
-        case 'RUNNING':
-          return css`
-            background: ${theme.adaptiveColors.yellow1};
-            border-color: ${theme.color.yellow};
-          `;
-        case 'FAILED':
-          return css`
-            background: ${theme.adaptiveColors.red1};
-            border-color: ${theme.color.red};
-          `;
-        case 'SUCCESS':
-          return css`
-            background: ${theme.adaptiveColors.turquoise1};
-            border-color: ${theme.color.turquoise};
-          `;
-        default:
-          return css`
-            background: ${theme.adaptiveColors.blue1};
-            border-color: ${theme.color.blue};
-          `;
-      }
+      const colors = getWorkflowDiagramColors({ theme, runStatus });
+
+      return css`
+        background: ${colors.selected.background};
+        border-color: ${colors.selected.borderColor};
+      `;
     }}
     transition:
       transform 0.1s ease-out,
@@ -86,10 +70,12 @@ const StyledHandle = styled(Handle, {
         return undefined;
       }
 
+      const colors = getWorkflowDiagramColors({ theme });
+
       return css`
         &:hover {
-          background: ${theme.adaptiveColors.blue1} !important;
-          border-color: ${theme.color.blue} !important;
+          background: ${colors.selected.background} !important;
+          border-color: ${colors.selected.borderColor} !important;
           transform: scale(${HANDLE_SCALE_ON_HOVER}) translate(-50%, 50%);
         }
       `;

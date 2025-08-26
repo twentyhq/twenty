@@ -16,7 +16,7 @@ import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/co
 import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabelWithCounterPart';
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
-import { useTheme } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -26,11 +26,12 @@ import { IconCheck, IconX, useIcons } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { WorkflowDiagramHandleTarget } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTarget';
 import { WorkflowDiagramHandleSource } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleSource';
+import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
+import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
 
-const StyledNodeContainer = styled(WorkflowNodeContainer)`
-  border-color: ${({ theme }) => theme.border.color.strong};
-  background: ${({ theme }) => theme.background.secondary};
-
+const StyledNodeContainer = styled(WorkflowNodeContainer)<{
+  runStatus?: WorkflowRunStepStatus;
+}>`
   &:hover {
     background: linear-gradient(
         0deg,
@@ -40,63 +41,55 @@ const StyledNodeContainer = styled(WorkflowNodeContainer)`
       ${({ theme }) => theme.background.secondary};
   }
 
-  .selected & {
-    border-color: ${({ theme }) => theme.color.blue};
-    background: ${({ theme }) => theme.adaptiveColors.blue1};
-  }
+  ${({ theme, runStatus }) => {
+    const colors = getWorkflowDiagramColors({ theme, runStatus });
 
-  .selected &[data-status='RUNNING'],
-  .selected &[data-status='PENDING'] {
-    border-color: ${({ theme }) => theme.color.yellow};
-    background: ${({ theme }) => theme.adaptiveColors.yellow1};
-  }
+    return css`
+      border-color: ${colors.unselected.borderColor};
+      background: ${colors.unselected.background};
 
-  .selected &[data-status='FAILED'] {
-    border-color: ${({ theme }) => theme.color.red};
-    background: ${({ theme }) => theme.adaptiveColors.red1};
-  }
-
-  .selected &[data-status='SUCCESS'] {
-    border-color: ${({ theme }) => theme.color.turquoise};
-    background: ${({ theme }) => theme.adaptiveColors.turquoise1};
-  }
+      .selected & {
+        background-color: ${colors.selected.background};
+        border: 1px solid ${colors.selected.borderColor};
+      }
+    `;
+  }}
 `;
 
 const StyledNodeLabelWithCounterPart = styled(WorkflowNodeLabelWithCounterPart)`
   column-gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledNodeLabel = styled(WorkflowNodeLabel)`
-  color: ${({ theme }) => theme.font.color.tertiary};
+const StyledNodeLabel = styled(WorkflowNodeLabel)<{
+  runStatus?: WorkflowRunStepStatus;
+}>`
+  ${({ theme, runStatus }) => {
+    const colors = getWorkflowDiagramColors({ theme, runStatus });
 
-  .selected & {
-    color: ${({ theme }) => theme.tag.text.blue};
-  }
+    return css`
+      color: ${colors.unselected.color};
 
-  &[data-status='RUNNING'],
-  &[data-status='PENDING'] {
-    color: ${({ theme }) => theme.tag.text.yellow};
-  }
-
-  &[data-status='FAILED'] {
-    color: ${({ theme }) => theme.tag.text.red};
-  }
-
-  &[data-status='SUCCESS'] {
-    color: ${({ theme }) => theme.tag.text.green};
-  }
+      .selected & {
+        color: ${colors.selected.color};
+      }
+    `;
+  }}
 `;
 
-const StyledNodeTitle = styled(WorkflowNodeTitle)`
-  color: ${({ theme }) => theme.font.color.light};
+const StyledNodeTitle = styled(WorkflowNodeTitle)<{
+  runStatus?: WorkflowRunStepStatus;
+}>`
+  ${({ theme, runStatus }) => {
+    const colors = getWorkflowDiagramColors({ theme, runStatus });
 
-  &[data-status='RUNNING'],
-  &[data-status='PENDING'],
-  &[data-status='FAILED'],
-  &[data-status='SUCCESS'],
-  .selected & {
-    color: ${({ theme }) => theme.font.color.primary};
-  }
+    return css`
+      color: ${colors.unselected.titleColor};
+
+      .selected & {
+        color: ${colors.selected.titleColor};
+      }
+    `;
+  }}
 `;
 
 const StyledNodeCounter = styled.div`
@@ -107,22 +100,17 @@ const StyledNodeCounter = styled.div`
   box-sizing: border-box;
 `;
 
-const StyledColorIcon = styled.div`
+const StyledColorIcon = styled.div<{
+  color: string;
+}>`
+  align-items: center;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  box-sizing: border-box;
   display: flex;
-  width: 14px;
   height: 14px;
   justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-
-  &[data-status='FAILED'] {
-    background: ${({ theme }) => theme.tag.background.red};
-  }
-
-  &[data-status='SUCCESS'] {
-    background: ${({ theme }) => theme.tag.background.turquoise};
-  }
+  width: 14px;
+  background: ${({ color }) => color};
 `;
 
 export const WorkflowRunDiagramStepNode = ({
@@ -179,7 +167,7 @@ export const WorkflowRunDiagramStepNode = ({
     <>
       <StyledNodeContainer
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
-        data-status={data.runStatus}
+        runStatus={data.runStatus}
         onClick={handleClick}
       >
         <WorkflowDiagramHandleTarget />
@@ -189,13 +177,13 @@ export const WorkflowRunDiagramStepNode = ({
 
         <WorkflowNodeRightPart>
           <StyledNodeLabelWithCounterPart>
-            <StyledNodeLabel data-status={data.runStatus}>
+            <StyledNodeLabel runStatus={data.runStatus}>
               {capitalize(data.nodeType)}
             </StyledNodeLabel>
 
             {data.runStatus === StepStatus.SUCCESS && (
               <StyledNodeCounter>
-                <StyledColorIcon data-status={StepStatus.SUCCESS}>
+                <StyledColorIcon color={theme.tag.background.turquoise}>
                   <IconCheck color={theme.tag.text.turquoise} size={14} />
                 </StyledColorIcon>
               </StyledNodeCounter>
@@ -203,7 +191,7 @@ export const WorkflowRunDiagramStepNode = ({
 
             {data.runStatus === StepStatus.FAILED && (
               <StyledNodeCounter>
-                <StyledColorIcon data-status={StepStatus.FAILED}>
+                <StyledColorIcon color={theme.tag.background.red}>
                   <IconX color={theme.tag.text.red} size={14} />
                 </StyledColorIcon>
               </StyledNodeCounter>
@@ -217,7 +205,7 @@ export const WorkflowRunDiagramStepNode = ({
             )}
           </StyledNodeLabelWithCounterPart>
 
-          <StyledNodeTitle data-status={data.runStatus}>
+          <StyledNodeTitle runStatus={data.runStatus}>
             {data.name}
           </StyledNodeTitle>
         </WorkflowNodeRightPart>
