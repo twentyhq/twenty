@@ -92,20 +92,36 @@ export class WorkspaceSchemaColumnManagerService {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeColumnName = removeSqlDDLInjection(columnName);
-    let sql: string;
 
-    if (defaultValue !== undefined) {
+    const computeDefaultValueSqlQuery = () => {
+      if (defaultValue === undefined) {
+        return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" DROP DEFAULT`;
+      }
+
+      if (defaultValue === null) {
+        return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT NULL`;
+      }
+
+      if (Array.isArray(defaultValue)) {
+        const arrayValues = defaultValue
+          .map((val) =>
+            typeof val === 'string'
+              ? `'${removeSqlDDLInjection(val)}'::${safeSchemaName}."${safeTableName}_${safeColumnName}_enum"`
+              : val,
+          )
+          .join(',');
+        return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ARRAY[${arrayValues}]`;
+      }
+
       if (typeof defaultValue === 'string') {
         const safeDefaultValue = sanitizeDefaultValue(defaultValue);
-
-        sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ${safeDefaultValue}`;
-      } else {
-        sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ${defaultValue}`;
+        return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ${safeDefaultValue}::${safeSchemaName}."${safeTableName}_${safeColumnName}_enum"`;
       }
-    } else {
-      sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" DROP DEFAULT`;
-    }
 
+      return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT '${defaultValue}'`;
+    };
+
+    const sql = computeDefaultValueSqlQuery();
     await queryRunner.query(sql);
   }
 }
