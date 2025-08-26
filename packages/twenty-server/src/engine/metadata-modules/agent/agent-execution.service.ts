@@ -20,7 +20,6 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   type AgentChatMessageEntity,
@@ -53,7 +52,6 @@ export class AgentExecutionService {
   private readonly logger = new Logger(AgentExecutionService.name);
 
   constructor(
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly agentToolService: AgentToolService,
     private readonly fileService: FileService,
     private readonly domainManagerService: DomainManagerService,

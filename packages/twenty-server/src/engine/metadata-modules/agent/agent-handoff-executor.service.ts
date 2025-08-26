@@ -1,18 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { CoreMessage, generateText, type ToolSet } from 'ai';
+import { CoreMessage, generateText } from 'ai';
 import { Repository } from 'typeorm';
 
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
-import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
-import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
-import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
-import { WorkflowToolWorkspaceService as WorkflowToolService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 
 import { AgentHandoffService } from './agent-handoff.service';
+import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
@@ -30,14 +25,9 @@ export class AgentHandoffExecutorService {
   constructor(
     @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
-    @InjectRepository(RoleTargetsEntity, 'core')
-    private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly agentHandoffService: AgentHandoffService,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly toolAdapterService: ToolAdapterService,
-    private readonly toolService: ToolService,
-    private readonly workflowToolService: WorkflowToolService,
-    private readonly permissionsService: PermissionsService,
+    private readonly agentToolGeneratorService: AgentToolGeneratorService,
   ) {}
 
   async executeHandoff(handoffRequest: HandoffRequest) {
@@ -79,7 +69,10 @@ export class AgentHandoffExecutorService {
         );
       }
 
-      const tools = await this.generateToolsForAgent(toAgentId, workspaceId);
+      const tools = await this.agentToolGeneratorService.generateToolsForAgent(
+        toAgentId,
+        workspaceId,
+      );
 
       const aiRequestConfig = {
         system: targetAgent.prompt,
@@ -108,61 +101,5 @@ export class AgentHandoffExecutorService {
         error: error.message,
       };
     }
-  }
-
-  private async generateToolsForAgent(
-    agentId: string,
-    workspaceId: string,
-  ): Promise<ToolSet> {
-    let tools = {};
-
-    try {
-      const actionTools = await this.toolAdapterService.getTools();
-
-      tools = { ...actionTools };
-
-      const roleTarget = await this.roleTargetsRepository.findOne({
-        where: {
-          agentId,
-          workspaceId,
-        },
-        relations: ['role'],
-      });
-
-      if (!roleTarget?.roleId) {
-        return tools;
-      }
-
-      const roleId = roleTarget.roleId;
-
-      const hasWorkflowPermission =
-        this.permissionsService.checkRolePermissions(
-          roleTarget.role,
-          PermissionFlagType.WORKFLOWS,
-        );
-
-      if (hasWorkflowPermission) {
-        const workflowTools =
-          await this.workflowToolService.generateWorkflowTools(
-            workspaceId,
-            roleId,
-          );
-
-        tools = { ...tools, ...workflowTools };
-      }
-
-      const databaseTools = await this.toolService.listTools(
-        roleId,
-        workspaceId,
-      );
-
-      tools = { ...tools, ...databaseTools };
-    } catch (toolError) {
-      this.logger.warn(
-        `Failed to generate tools for agent ${agentId}: ${toolError.message}. Proceeding without tools.`,
-      );
-    }
-
-    return tools;
   }
 }

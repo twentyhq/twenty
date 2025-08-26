@@ -31,6 +31,7 @@ import { AgentHandoffEntity } from './agent-handoff.entity';
 import { AgentHandoffService } from './agent-handoff.service';
 import { AgentStreamingService } from './agent-streaming.service';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
+import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentToolService } from './agent-tool.service';
 import { AgentEntity } from './agent.entity';
 import { AgentResolver } from './agent.resolver';
@@ -72,6 +73,7 @@ import { AgentService } from './agent.service';
     AgentChatResolver,
     AgentService,
     AgentExecutionService,
+    AgentToolGeneratorService,
     AgentToolService,
     AgentChatService,
     AgentStreamingService,
@@ -82,6 +84,7 @@ import { AgentService } from './agent.service';
   exports: [
     AgentService,
     AgentExecutionService,
+    AgentToolGeneratorService,
     AgentToolService,
     AgentChatService,
     AgentStreamingService,
