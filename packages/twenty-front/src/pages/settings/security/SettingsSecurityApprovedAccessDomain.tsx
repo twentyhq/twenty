@@ -68,9 +68,8 @@ export const SettingsSecurityApprovedAccessDomain = () => {
           navigate(SettingsPath.Security);
         },
         onError: (error) => {
-          console.log(error.message)
           enqueueErrorSnackBar({
-            message :error ? error.message :"an error occurred",
+            message: error ? error.message : "An unexpected error occurred",
           });
         },
       });
