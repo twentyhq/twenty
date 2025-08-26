@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with an invalid default value 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with an invalid default value 1`] = `
 [
   {
     "extensions": {
@@ -14,7 +14,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with an unknown default value 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with an unknown default value 1`] = `
 [
   {
     "extensions": {
@@ -28,7 +28,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with comma in option label 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with comma in option label 1`] = `
 [
   {
     "extensions": {
@@ -42,7 +42,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with duplicated option ids 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with duplicated option ids 1`] = `
 [
   {
     "extensions": {
@@ -56,7 +56,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with duplicated option positions 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with duplicated option positions 1`] = `
 [
   {
     "extensions": {
@@ -70,7 +70,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with duplicated option values 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with duplicated option values 1`] = `
 [
   {
     "extensions": {
@@ -84,7 +84,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with duplicated trimmed option values 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with duplicated trimmed option values 1`] = `
 [
   {
     "extensions": {
@@ -98,7 +98,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with empty multi-select default values array 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with empty multi-select default values array 1`] = `
 [
   {
     "extensions": {
@@ -112,7 +112,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with empty options 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with empty options 1`] = `
 [
   {
     "extensions": {
@@ -126,7 +126,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with empty string defaultValue 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with empty string defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -140,7 +140,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with empty string id 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with empty string id 1`] = `
 [
   {
     "extensions": {
@@ -154,7 +154,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with empty string label 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with empty string label 1`] = `
 [
   {
     "extensions": {
@@ -168,7 +168,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with empty string value 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with empty string value 1`] = `
 [
   {
     "extensions": {
@@ -182,7 +182,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with invalid multi-select default value format 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with invalid multi-select default value format 1`] = `
 [
   {
     "extensions": {
@@ -196,7 +196,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with invalid option id 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with invalid option id 1`] = `
 [
   {
     "extensions": {
@@ -210,7 +210,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with invalid option value format 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with invalid option value format 1`] = `
 [
   {
     "extensions": {
@@ -224,7 +224,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with non stringified array default value 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with non stringified array default value 1`] = `
 [
   {
     "extensions": {
@@ -238,7 +238,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with not a string defaultValue 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with not a string defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -252,7 +252,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with not a string id 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with not a string id 1`] = `
 [
   {
     "extensions": {
@@ -266,7 +266,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with not a string label 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with not a string label 1`] = `
 [
   {
     "extensions": {
@@ -279,7 +279,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with not a string value 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with not a string value 1`] = `
 [
   {
     "extensions": {
@@ -293,7 +293,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with null id 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with null id 1`] = `
 [
   {
     "extensions": {
@@ -307,7 +307,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with null label 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with null label 1`] = `
 [
   {
     "extensions": {
@@ -321,21 +321,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with null options 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "An error occurred.",
-    },
-    "message": "Options are required for enum fields",
-    "name": "UserInputError",
-  },
-]
-`;
-
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with null value 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with null value 1`] = `
 [
   {
     "extensions": {
@@ -349,7 +335,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with only white spaces defaultValue 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with only white spaces defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -363,7 +349,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with only white spaces id 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with only white spaces id 1`] = `
 [
   {
     "extensions": {
@@ -377,7 +363,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with only white spaces label 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with only white spaces label 1`] = `
 [
   {
     "extensions": {
@@ -391,7 +377,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with only white spaces value 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with only white spaces value 1`] = `
 [
   {
     "extensions": {
@@ -405,7 +391,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with too long defaultValue 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with too long defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -419,7 +405,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with too long id 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with too long id 1`] = `
 [
   {
     "extensions": {
@@ -433,7 +419,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with too long label 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with too long label 1`] = `
 [
   {
     "extensions": {
@@ -447,7 +433,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with too long value 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with too long value 1`] = `
 [
   {
     "extensions": {
@@ -461,7 +447,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with undefined option label 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with undefined option label 1`] = `
 [
   {
     "extensions": {
@@ -475,7 +461,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with undefined option value 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with undefined option value 1`] = `
 [
   {
     "extensions": {
@@ -489,21 +475,21 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with undefined options 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with unknown default value and no options 1`] = `
 [
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "userFriendlyMessage": "Default value "'OPTION_42'" must be one of the option values",
     },
-    "message": "Options are required for enum fields",
+    "message": "Default value "'OPTION_42'" must be one of the option values",
     "name": "UserInputError",
   },
 ]
 `;
 
-exports[`Create field metadata MULTI_SELECT tests suite Create should fail with unknown multi-select default values 1`] = `
+exports[`Failing update field metadata MULTI_SELECT tests suite Update should fail with unknown multi-select default values 1`] = `
 [
   {
     "extensions": {
@@ -517,7 +503,7 @@ exports[`Create field metadata MULTI_SELECT tests suite Create should fail with 
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with an invalid default value 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with an invalid default value 1`] = `
 [
   {
     "extensions": {
@@ -531,7 +517,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with an inv
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with an unknown default value 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with an unknown default value 1`] = `
 [
   {
     "extensions": {
@@ -545,7 +531,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with an unk
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with comma in option label 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with comma in option label 1`] = `
 [
   {
     "extensions": {
@@ -559,7 +545,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with comma 
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with duplicated option ids 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with duplicated option ids 1`] = `
 [
   {
     "extensions": {
@@ -573,7 +559,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with duplic
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with duplicated option positions 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with duplicated option positions 1`] = `
 [
   {
     "extensions": {
@@ -587,7 +573,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with duplic
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with duplicated option values 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with duplicated option values 1`] = `
 [
   {
     "extensions": {
@@ -601,7 +587,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with duplic
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with duplicated trimmed option values 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with duplicated trimmed option values 1`] = `
 [
   {
     "extensions": {
@@ -615,7 +601,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with duplic
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with empty options 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with empty options 1`] = `
 [
   {
     "extensions": {
@@ -629,7 +615,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with empty 
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with empty string defaultValue 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with empty string defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -643,7 +629,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with empty 
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with empty string id 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with empty string id 1`] = `
 [
   {
     "extensions": {
@@ -657,7 +643,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with empty 
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with empty string label 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with empty string label 1`] = `
 [
   {
     "extensions": {
@@ -671,7 +657,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with empty 
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with empty string value 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with empty string value 1`] = `
 [
   {
     "extensions": {
@@ -685,7 +671,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with empty 
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with invalid option id 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with invalid option id 1`] = `
 [
   {
     "extensions": {
@@ -699,7 +685,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with invali
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with invalid option value format 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with invalid option value format 1`] = `
 [
   {
     "extensions": {
@@ -713,7 +699,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with invali
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with not a string defaultValue 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with not a string defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -727,7 +713,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with not a 
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with not a string id 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with not a string id 1`] = `
 [
   {
     "extensions": {
@@ -741,7 +727,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with not a 
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with not a string label 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with not a string label 1`] = `
 [
   {
     "extensions": {
@@ -754,7 +740,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with not a 
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with not a string value 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with not a string value 1`] = `
 [
   {
     "extensions": {
@@ -768,7 +754,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with not a 
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with null id 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with null id 1`] = `
 [
   {
     "extensions": {
@@ -782,7 +768,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with null i
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with null label 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with null label 1`] = `
 [
   {
     "extensions": {
@@ -796,21 +782,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with null l
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with null options 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-      "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "An error occurred.",
-    },
-    "message": "Options are required for enum fields",
-    "name": "UserInputError",
-  },
-]
-`;
-
-exports[`Create field metadata SELECT tests suite Create should fail with null value 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with null value 1`] = `
 [
   {
     "extensions": {
@@ -824,7 +796,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with null v
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with only white spaces defaultValue 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with only white spaces defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -838,7 +810,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with only w
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with only white spaces id 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with only white spaces id 1`] = `
 [
   {
     "extensions": {
@@ -852,7 +824,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with only w
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with only white spaces label 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with only white spaces label 1`] = `
 [
   {
     "extensions": {
@@ -866,7 +838,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with only w
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with only white spaces value 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with only white spaces value 1`] = `
 [
   {
     "extensions": {
@@ -880,7 +852,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with only w
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with too long defaultValue 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with too long defaultValue 1`] = `
 [
   {
     "extensions": {
@@ -894,7 +866,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with too lo
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with too long id 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with too long id 1`] = `
 [
   {
     "extensions": {
@@ -908,7 +880,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with too lo
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with too long label 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with too long label 1`] = `
 [
   {
     "extensions": {
@@ -922,7 +894,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with too lo
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with too long value 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with too long value 1`] = `
 [
   {
     "extensions": {
@@ -936,7 +908,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with too lo
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with undefined option label 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with undefined option label 1`] = `
 [
   {
     "extensions": {
@@ -950,7 +922,7 @@ exports[`Create field metadata SELECT tests suite Create should fail with undefi
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with undefined option value 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with undefined option value 1`] = `
 [
   {
     "extensions": {
@@ -964,15 +936,15 @@ exports[`Create field metadata SELECT tests suite Create should fail with undefi
 ]
 `;
 
-exports[`Create field metadata SELECT tests suite Create should fail with undefined options 1`] = `
+exports[`Failing update field metadata SELECT tests suite Update should fail with unknown default value and no options 1`] = `
 [
   {
     "extensions": {
       "code": "BAD_USER_INPUT",
       "subCode": "INVALID_FIELD_INPUT",
-      "userFriendlyMessage": "An error occurred.",
+      "userFriendlyMessage": "Default value "'OPTION_42'" must be one of the option values",
     },
-    "message": "Options are required for enum fields",
+    "message": "Default value "'OPTION_42'" must be one of the option values",
     "name": "UserInputError",
   },
 ]

@@ -100,6 +100,7 @@ describe.each(fieldMetadataEnumTypes)(
         const { ...updatePayload } = input;
 
         const { data, errors } = await updateOneFieldMetadata({
+          expectToFail: true,
           input: {
             idToUpdate: createdFieldMetadataId,
             updatePayload,

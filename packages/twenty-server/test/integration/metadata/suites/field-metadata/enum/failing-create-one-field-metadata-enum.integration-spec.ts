@@ -1,11 +1,10 @@
 import { CREATE_ENUM_FIELD_METADATA_TEST_CASES } from 'test/integration/metadata/suites/field-metadata/enum/common/create-enum-field-metadata-test-cases';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import {
-    LISTING_NAME_PLURAL,
-    LISTING_NAME_SINGULAR,
+  LISTING_NAME_PLURAL,
+  LISTING_NAME_SINGULAR,
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
@@ -23,7 +22,7 @@ describe.each(fieldMetadataEnumTypes)(
     }
     const { failing: failingTestCases } = testCases;
 
-    beforeEach(async () => {
+    beforeAll(async () => {
       const { data } = await createOneObjectMetadata({
         expectToFail: false,
         input: {
@@ -39,16 +38,7 @@ describe.each(fieldMetadataEnumTypes)(
       createdObjectMetadataId = data.createOneObject.id;
     });
 
-    afterEach(async () => {
-      await updateOneObjectMetadata({
-        input: {
-          idToUpdate: createdObjectMetadataId,
-          updatePayload: {
-            isActive: false,
-          },
-        },
-        expectToFail: false,
-      });
+    afterAll(async () => {
       await deleteOneObjectMetadata({
         expectToFail: false,
         input: { idToDelete: createdObjectMetadataId },
@@ -59,6 +49,7 @@ describe.each(fieldMetadataEnumTypes)(
       'Create $title',
       async ({ context: { input } }) => {
         const { data, errors } = await createOneFieldMetadata({
+          expectToFail: true,
           input: {
             objectMetadataId: createdObjectMetadataId,
             type: testedFieldMetadataType,
