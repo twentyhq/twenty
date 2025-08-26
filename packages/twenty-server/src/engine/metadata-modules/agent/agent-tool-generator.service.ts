@@ -9,7 +9,6 @@ import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkflowToolWorkspaceService as WorkflowToolService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 
@@ -20,7 +19,6 @@ export class AgentToolGeneratorService {
   constructor(
     @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetsEntity, 'core')
     private readonly toolAdapterService: ToolAdapterService,
     private readonly toolService: ToolService,
     private readonly workflowToolService: WorkflowToolService,
