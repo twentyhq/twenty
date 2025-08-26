@@ -80,7 +80,6 @@ export class AiAgentExecutorService {
     userPrompt,
   }: {
     agent: AgentEntity | null;
-    context: Record<string, unknown>;
     schema: OutputSchema;
     userPrompt: string;
   }): Promise<AgentExecutionResult> {
