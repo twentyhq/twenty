@@ -46,10 +46,10 @@ jobs:
         run: npx nx reset:env twenty-front
       - name: Front / Build storybook
         run: npx nx storybook:build twenty-front
-      - name: Save storybook build cache
-        uses: ./.github/workflows/actions/save-cache
-        with:
-          key: ${{ steps.restore-storybook-build-cache.outputs.cache-primary-key }}
+      # - name: Save storybook build cache
+      #   uses: ./.github/workflows/actions/save-cache
+      #   with:
+      #     key: ${{ steps.restore-storybook-build-cache.outputs.cache-primary-key }}
   front-sb-test:
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
@@ -71,10 +71,10 @@ jobs:
         uses: ./.github/workflows/actions/yarn-install
       - name: Install Playwright
         run: cd packages/twenty-front && npx playwright install
-      - name: Restore storybook build cache
-        uses: ./.github/workflows/actions/restore-cache
-        with:
-          key: ${{ steps.restore-storybook-build-cache.outputs.cache-primary-key  }}
+      # - name: Restore storybook build cache
+      #   uses: ./.github/workflows/actions/restore-cache
+      #   with:
+      #     key: ${{ steps.restore-storybook-build-cache.outputs.cache-primary-key  }}
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
