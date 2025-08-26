@@ -58,7 +58,7 @@ const validateMetadataOptionLabel = (
     ];
   }
 
-  if (typeof sanitizedLabel !== 'string') {
+  if (!isNonEmptyString(sanitizedLabel)) {
     return [
       {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
