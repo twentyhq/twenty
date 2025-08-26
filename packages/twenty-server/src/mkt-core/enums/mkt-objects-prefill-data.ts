@@ -25,6 +25,7 @@ import { prefillMktValues } from 'src/mkt-core/dev-seeder/prefill-data/prefill-m
 import { prefillMktVariantAttributes } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-variant-attribute';
 import { prefillMktVariants } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-variants';
 import { prefillMktDepartmentHierarchies } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-department-hierarchies';
+import { prefillMktDataAccessPolicies } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-data-access-policies';
 
 export const MKT_PREFILLS = [
   // customer prefills
@@ -66,4 +67,5 @@ export const MKT_PREFILLS = [
   // temporary permission prefills (should be last to ensure all dependencies exist)
   prefillMktTemporaryPermissions,
   prefillMktDepartmentHierarchies,
+  prefillMktDataAccessPolicies,
 ];

@@ -41,6 +41,8 @@ export const MKT_OBJECT_IDS = {
   mktKpiTemplateHistory: 'e1f2a3b4-5c6d-7e8f-9a0b-1c2d3e4f5a6b',
   // temporary permission system
   mktTemporaryPermission: 'dde9a4ee-2920-46f1-9f07-bf10944bc897',
+  // data access policy system
+  mktDataAccessPolicy: 'a8b9c0d1-e2f3-4567-89ab-cdef01234567',
   // customers
   mktCustomer: '2c720af2-4412-4317-8a48-0acdaf66bc90',
 };

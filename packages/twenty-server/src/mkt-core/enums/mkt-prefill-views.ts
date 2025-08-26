@@ -24,6 +24,7 @@ import { mktStaffStatusHistoryAllView } from 'src/mkt-core/dev-seeder/prefill-vi
 import { mktTemplatesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-template-all.view';
 import { mktTemporaryPermissionsAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-temporary-permission-all.view';
 import { mktDepartmentHierarchiesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-department-hierarchy-all.view';
+import { mktDataAccessPoliciesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-data-access-policy-all.view';
 
 export const MKT_ALL_VIEWS = [
   // customer views
@@ -65,4 +66,5 @@ export const MKT_ALL_VIEWS = [
   // temporary permission views
   mktTemporaryPermissionsAllView,
   mktDepartmentHierarchiesAllView,
+  mktDataAccessPoliciesAllView,
 ];

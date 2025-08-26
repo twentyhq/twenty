@@ -24,6 +24,7 @@ import { SeedValueModuleCommand } from 'src/mkt-core/dev-seeder/commands/mkt-val
 import { SeedVariantAttributeModuleCommand } from 'src/mkt-core/dev-seeder/commands/mkt-variant-attribute-data-seed-dev-workspace.command';
 import { SeedVariantModuleCommand } from 'src/mkt-core/dev-seeder/commands/mkt-variant-data-seed-dev-workspace.command';
 import { SeedMktDepartmentHierarchyCommand } from 'src/mkt-core/dev-seeder/commands/mkt-department-hierarchy-data-seed-dev-workspace.command';
+import { SeedMktDataAccessPolicyCommand } from 'src/mkt-core/dev-seeder/commands/mkt-data-access-policy-data-seed-dev-workspace.command';
 
 export const MKT_DATABASE_COMMAND_MODULES = [
   // customer commands
@@ -63,4 +64,5 @@ export const MKT_DATABASE_COMMAND_MODULES = [
   // temporary permission commands
   SeedMktTemporaryPermissionCommand,
   SeedMktDepartmentHierarchyCommand,
+  SeedMktDataAccessPolicyCommand,
 ];

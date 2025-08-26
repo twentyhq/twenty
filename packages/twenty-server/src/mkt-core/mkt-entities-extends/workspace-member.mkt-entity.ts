@@ -31,6 +31,7 @@ import { MktEmploymentStatusWorkspaceEntity } from 'src/mkt-core/mkt-employment-
 import { MktKpiWorkspaceEntity } from 'src/mkt-core/mkt-kpi/mkt-kpi.workspace-entity';
 import { MktKpiTemplateWorkspaceEntity } from 'src/mkt-core/mkt-kpi-template/mkt-kpi-template.workspace-entity';
 import { MktTemporaryPermissionWorkspaceEntity } from 'src/mkt-core/mkt-temporary-permission/mkt-temporary-permission.workspace-entity';
+import { MktDataAccessPolicyWorkspaceEntity } from 'src/mkt-core/mkt-data-access-policy/mkt-data-access-policy.workspace-entity';
 
 export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
@@ -345,4 +346,16 @@ export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
   revokedTemporaryPermissions: Relation<
     MktTemporaryPermissionWorkspaceEntity[]
   >;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.dataAccessPolicies,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Data Access Policies`,
+    description: msg`Data access policies specifically assigned to this member`,
+    icon: 'IconShield',
+    inverseSideTarget: () => MktDataAccessPolicyWorkspaceEntity,
+    inverseSideFieldKey: 'specificMember',
+  })
+  @WorkspaceIsSystem()
+  dataAccessPolicies: Relation<MktDataAccessPolicyWorkspaceEntity[]>;
 }

@@ -107,6 +107,10 @@ import {
   MKT_DEPARTMENT_HIERARCHY_DATA_SEED_COLUMNS,
   MKT_DEPARTMENT_HIERARCHY_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-department-hierarchy-data-seeds.constants';
+import {
+  MKT_DATA_ACCESS_POLICY_DATA_SEED_COLUMNS,
+  MKT_DATA_ACCESS_POLICY_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-data-access-policy-data-seeds.constants';
 
 export const MKT_RECORD_SEEDS_CONFIGS_FIRST_PHASE_TABLES = [
   // Organization configs
@@ -260,5 +264,10 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     tableName: 'mktDepartmentHierarchy',
     pgColumns: MKT_DEPARTMENT_HIERARCHY_DATA_SEED_COLUMNS,
     recordSeeds: MKT_DEPARTMENT_HIERARCHY_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktDataAccessPolicy',
+    pgColumns: MKT_DATA_ACCESS_POLICY_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_DATA_ACCESS_POLICY_DATA_SEEDS,
   },
 ];
