@@ -65,10 +65,6 @@ export const MainContextStoreProvider = () => {
     }),
   );
 
-  console.log('indexViewId', indexViewId);
-  console.log('lastVisitedViewId', lastVisitedViewId);
-  console.log('viewIdQueryParam', viewIdQueryParam);
-
   const viewId = getViewId(viewIdQueryParam, indexViewId, lastVisitedViewId);
   const showAuthModal = useShowAuthModal();
 

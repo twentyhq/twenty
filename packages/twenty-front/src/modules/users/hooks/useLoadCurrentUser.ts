@@ -143,6 +143,7 @@ export const useLoadCurrentUser = () => {
     getCurrentUser,
     isOnAWorkspace,
     setAvailableWorkspaces,
+    setCoreViews,
     setCurrentUser,
     setCurrentUserWorkspace,
     setCurrentWorkspace,
