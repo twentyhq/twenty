@@ -9,7 +9,6 @@ import { RecordInputTransformerService } from 'src/engine/core-modules/record-tr
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
-import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent-handoff-tool.service';
 import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
 import { AgentToolGeneratorService } from 'src/engine/metadata-modules/agent/agent-tool-generator.service';
 import { type AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
@@ -50,7 +49,7 @@ export const createAgentToolTestModule =
 
     const module = await Test.createTestingModule({
       providers: [
-        AgentHandoffToolService,
+        AgentToolGeneratorService,
         {
           provide: AgentService,
           useValue: {
