@@ -8,8 +8,8 @@ import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 
 @InputType()
 export class CreateViewInput {
-  @Field(() => UUIDScalarType, { nullable: false })
-  id: string;
+  @Field(() => UUIDScalarType, { nullable: true })
+  id?: string;
 
   @Field({ nullable: false })
   name: string;

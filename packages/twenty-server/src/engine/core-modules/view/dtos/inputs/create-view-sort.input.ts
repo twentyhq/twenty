@@ -5,8 +5,8 @@ import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-
 
 @InputType()
 export class CreateViewSortInput {
-  @Field(() => UUIDScalarType, { nullable: false })
-  id: string;
+  @Field(() => UUIDScalarType, { nullable: true })
+  id?: string;
 
   @Field(() => UUIDScalarType, { nullable: false })
   fieldMetadataId: string;

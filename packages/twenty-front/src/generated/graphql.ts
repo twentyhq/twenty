@@ -680,7 +680,7 @@ export type CreateServerlessFunctionInput = {
 export type CreateViewFieldInput = {
   aggregateOperation?: InputMaybe<AggregateOperations>;
   fieldMetadataId: Scalars['UUID'];
-  id: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
   isVisible?: InputMaybe<Scalars['Boolean']>;
   position?: InputMaybe<Scalars['Float']>;
   size?: InputMaybe<Scalars['Float']>;
@@ -688,7 +688,7 @@ export type CreateViewFieldInput = {
 };
 
 export type CreateViewFilterGroupInput = {
-  id: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
   logicalOperator?: InputMaybe<ViewFilterGroupLogicalOperator>;
   parentViewFilterGroupId?: InputMaybe<Scalars['UUID']>;
   positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
@@ -697,7 +697,7 @@ export type CreateViewFilterGroupInput = {
 
 export type CreateViewFilterInput = {
   fieldMetadataId: Scalars['UUID'];
-  id: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
   operand?: InputMaybe<ViewFilterOperand>;
   positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
   subFieldName?: InputMaybe<Scalars['String']>;
@@ -709,7 +709,7 @@ export type CreateViewFilterInput = {
 export type CreateViewGroupInput = {
   fieldMetadataId: Scalars['UUID'];
   fieldValue: Scalars['String'];
-  id: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
   isVisible?: InputMaybe<Scalars['Boolean']>;
   position?: InputMaybe<Scalars['Float']>;
   viewId: Scalars['UUID'];
@@ -718,7 +718,7 @@ export type CreateViewGroupInput = {
 export type CreateViewInput = {
   anyFieldFilterValue?: InputMaybe<Scalars['String']>;
   icon: Scalars['String'];
-  id: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
   isCompact?: InputMaybe<Scalars['Boolean']>;
   kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']>;
@@ -733,7 +733,7 @@ export type CreateViewInput = {
 export type CreateViewSortInput = {
   direction?: InputMaybe<ViewSortDirection>;
   fieldMetadataId: Scalars['UUID'];
-  id: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
   viewId: Scalars['UUID'];
 };
 

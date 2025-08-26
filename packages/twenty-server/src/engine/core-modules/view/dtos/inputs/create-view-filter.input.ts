@@ -8,8 +8,8 @@ import { ViewFilterValue } from 'src/engine/core-modules/view/types/view-filter-
 
 @InputType()
 export class CreateViewFilterInput {
-  @Field(() => UUIDScalarType, { nullable: false })
-  id: string;
+  @Field(() => UUIDScalarType, { nullable: true })
+  id?: string;
 
   @Field(() => UUIDScalarType, { nullable: false })
   fieldMetadataId: string;
