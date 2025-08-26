@@ -3,42 +3,32 @@ import { NODE_HANDLE_WIDTH_PX } from '@/workflow/workflow-diagram/constants/Node
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Handle, type HandleProps } from '@xyflow/react';
+import { Handle, Position, type HandleProps } from '@xyflow/react';
 import { FeatureFlagKey } from '~/generated/graphql';
 
-type WorkflowDiagramHandleEditableProps = HandleProps & {
+type WorkflowDiagramHandleSourceProps = {
   selected: boolean;
   hovered?: boolean;
-  isConnectable?: boolean;
+  readOnly?: boolean;
 };
 
 const HANDLE_SCALE_ON_HOVER = 1.5;
 
 const StyledHandle = styled(Handle, {
   shouldForwardProp: (prop) =>
-    prop !== 'disableHoverEffect' &&
-    prop !== 'selected' &&
-    prop !== 'hovered' &&
-    prop !== 'isConnectable',
+    prop !== 'disableHoverEffect' && prop !== 'selected' && prop !== 'hovered',
 })<{
   type: HandleProps['type'];
   disableHoverEffect: boolean;
   selected: boolean;
   hovered?: boolean;
-  isConnectable?: boolean;
 }>`
   &.react-flow__handle {
     opacity: ${({ type }) => (type === 'target' ? 0 : 1)};
     height: ${NODE_HANDLE_HEIGHT_PX}px;
     width: ${NODE_HANDLE_WIDTH_PX}px;
-    border-color: ${({
-      theme,
-      selected,
-      hovered,
-      isConnectable,
-      disableHoverEffect,
-    }) =>
-      selected || (hovered && isConnectable)
+    border-color: ${({ theme, selected, hovered, disableHoverEffect }) =>
+      selected
         ? theme.color.blue
         : hovered && !disableHoverEffect
           ? theme.font.color.light
@@ -51,25 +41,14 @@ const StyledHandle = styled(Handle, {
       border-color 0.1s;
     z-index: 1;
 
-    ${({ position }) => {
-      if (position === 'top') {
-        return css`
-          transform: translate(-50%, -50%);
-          transform-origin: top left;
-        `;
-      } else if (position === 'bottom') {
-        return css`
-          transform: translate(-50%, 50%);
-          transform-origin: bottom left;
-        `;
-      }
-    }}
+    transform: translate(-50%, 50%);
+    transform-origin: bottom left;
 
     &.connectionindicator {
       cursor: pointer;
     }
 
-    ${({ disableHoverEffect, theme, position }) => {
+    ${({ disableHoverEffect, theme }) => {
       if (disableHoverEffect) {
         return undefined;
       }
@@ -78,41 +57,29 @@ const StyledHandle = styled(Handle, {
         &:hover {
           background: ${theme.adaptiveColors.blue1} !important;
           border-color: ${theme.color.blue} !important;
-
-          ${position === 'top' &&
-          css`
-            transform: scale(${HANDLE_SCALE_ON_HOVER}) translate(-50%, -50%);
-          `}
-
-          ${position === 'bottom' &&
-          css`
-            transform: scale(${HANDLE_SCALE_ON_HOVER}) translate(-50%, 50%);
-          `}
+          transform: scale(${HANDLE_SCALE_ON_HOVER}) translate(-50%, 50%);
         }
       `;
     }}
   }
 `;
 
-export const WorkflowDiagramHandleEditable = ({
-  type,
-  position,
+export const WorkflowDiagramHandleSource = ({
   selected,
   hovered = false,
-  isConnectable = false,
-}: WorkflowDiagramHandleEditableProps) => {
+  readOnly = false,
+}: WorkflowDiagramHandleSourceProps) => {
   const isWorkflowBranchEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
   );
 
   return (
     <StyledHandle
-      type={type}
-      position={position}
-      disableHoverEffect={!isWorkflowBranchEnabled}
+      type={'source'}
+      position={Position.Bottom}
+      disableHoverEffect={!isWorkflowBranchEnabled || readOnly}
       selected={selected}
       hovered={hovered}
-      isConnectable={isConnectable}
     />
   );
 };

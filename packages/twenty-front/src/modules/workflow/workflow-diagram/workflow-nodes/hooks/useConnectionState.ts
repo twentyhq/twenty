@@ -5,12 +5,14 @@ export const useConnectionState = (nodeType: 'action' | 'trigger') => {
 
   const edges = useEdges();
 
+  const isInProgressConnection = connection.inProgress;
+
   const isConnectable = (nodeId: string) => {
     if (nodeType === 'trigger') {
       return false;
     }
 
-    if (!connection.inProgress) {
+    if (!isInProgressConnection) {
       return false;
     }
 
@@ -30,5 +32,5 @@ export const useConnectionState = (nodeType: 'action' | 'trigger') => {
     return connection.inProgress && connection.fromNode.id === nodeId;
   };
 
-  return { isConnectable, isSourceConnected };
+  return { isConnectable, isSourceConnected, isInProgressConnection };
 };

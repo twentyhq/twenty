@@ -4,7 +4,6 @@ import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/u
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { type WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
-import { WorkflowDiagramHandleEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleEditable';
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeIcon';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeIconContainer';
@@ -13,14 +12,14 @@ import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/wo
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import styled from '@emotion/styled';
-import { Position } from '@xyflow/react';
 import { useState } from 'react';
 import { capitalize } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
 import { useConnectionState } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useConnectionState';
 import { css } from '@emotion/react';
-import { WorkflowDiagramHandleTopEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTopEditable';
+import { WorkflowDiagramHandleTarget } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTarget';
+import { WorkflowDiagramHandleSource } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleSource';
 
 const StyledAddStepButtonContainer = styled.div<{
   shouldDisplay: boolean;
@@ -110,9 +109,8 @@ export const WorkflowDiagramStepNodeEditableContent = ({
 
   const { isNodeCreationStarted } = useStartNodeCreation();
 
-  const { isConnectable, isSourceConnected } = useConnectionState(
-    data.nodeType,
-  );
+  const { isConnectable, isSourceConnected, isInProgressConnection } =
+    useConnectionState(data.nodeType);
 
   const { isSourceSelected, isSourceHovered } = useEdgeState();
 
@@ -125,7 +123,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         onMouseLeave={handleMouseLeave}
         isConnectable={isConnectable(id)}
       >
-        <WorkflowDiagramHandleTopEditable isConnectable={isConnectable(id)} />
+        <WorkflowDiagramHandleTarget isConnectable={isConnectable(id)} />
         <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />
         </WorkflowNodeIconContainer>
@@ -149,7 +147,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         )}
       </StyledNodeContainer>
 
-      {!data.hasNextStepIds && (
+      {!data.hasNextStepIds && !isInProgressConnection && (
         <StyledAddStepButtonContainer
           shouldDisplay={
             isHovered ||
@@ -163,12 +161,14 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         </StyledAddStepButtonContainer>
       )}
 
-      <WorkflowDiagramHandleEditable
-        type="source"
-        position={Position.Bottom}
-        selected={isSourceSelected(id) || selected || isSourceConnected(id)}
+      <WorkflowDiagramHandleSource
+        selected={
+          isSourceSelected(id) ||
+          selected ||
+          isSourceConnected(id) ||
+          (isConnectable(id) && isHovered)
+        }
         hovered={isSourceHovered(id) || isHovered}
-        isConnectable={isConnectable(id)}
       />
     </>
   );
