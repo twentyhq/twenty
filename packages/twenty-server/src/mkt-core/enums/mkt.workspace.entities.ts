@@ -25,6 +25,7 @@ import { MktValueWorkspaceEntity } from 'src/mkt-core/value/mkt-value.workspace-
 import { MktVariantWorkspaceEntity } from 'src/mkt-core/variant/mkt-variant.workspace-entity';
 import { MktVariantAttributeWorkspaceEntity } from 'src/mkt-core/variant_attribute/mkt-variant-attribute.workspace-entity';
 import { MktTemporaryPermissionWorkspaceEntity } from 'src/mkt-core/mkt-temporary-permission/mkt-temporary-permission.workspace-entity';
+import { MktDepartmentHierarchyWorkspaceEntity } from 'src/mkt-core/mkt-department-hierarchy/mkt-department-hierarchy.workspace-entity';
 
 export const MKT_WORKSPACE_ENTITIES = [
   // Customer
@@ -70,4 +71,5 @@ export const MKT_FINAL_WORKSPACE_ENTITIES = [
   MktKpiHistoryWorkspaceEntity,
   // Temporary Permission
   MktTemporaryPermissionWorkspaceEntity,
+  MktDepartmentHierarchyWorkspaceEntity,
 ];

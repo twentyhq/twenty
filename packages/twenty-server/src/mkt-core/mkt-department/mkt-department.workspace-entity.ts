@@ -14,6 +14,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { MKT_DEPARTMENT_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { MktDepartmentHierarchyWorkspaceEntity } from 'src/mkt-core/mkt-department-hierarchy/mkt-department-hierarchy.workspace-entity';
 
 @WorkspaceEntity({
   standardId: MKT_OBJECT_IDS.mktDepartment,
@@ -183,4 +184,26 @@ export class MktDepartmentWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideFieldKey: 'department',
   })
   people: Relation<WorkspaceMemberWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: MKT_DEPARTMENT_FIELD_IDS.childHierarchies,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Child Hierarchies`,
+    description: msg`Hierarchy entries where this department is the parent`,
+    icon: 'IconHierarchy',
+    inverseSideTarget: () => MktDepartmentHierarchyWorkspaceEntity,
+    inverseSideFieldKey: 'parentDepartment',
+  })
+  childHierarchies: Relation<MktDepartmentHierarchyWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: MKT_DEPARTMENT_FIELD_IDS.parentHierarchies,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Parent Hierarchies`,
+    description: msg`Hierarchy entries where this department is the child`,
+    icon: 'IconHierarchy2',
+    inverseSideTarget: () => MktDepartmentHierarchyWorkspaceEntity,
+    inverseSideFieldKey: 'childDepartment',
+  })
+  parentHierarchies: Relation<MktDepartmentHierarchyWorkspaceEntity[]>;
 }

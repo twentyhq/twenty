@@ -273,6 +273,7 @@ export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('employmentStatus')
   employmentStatusId: string | null;
+
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.createdKpis,
     type: RelationType.ONE_TO_MANY,

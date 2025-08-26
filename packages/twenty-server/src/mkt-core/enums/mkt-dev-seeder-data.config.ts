@@ -103,6 +103,10 @@ import {
   MKT_TEMPORARY_PERMISSION_DATA_SEED_COLUMNS,
   MKT_TEMPORARY_PERMISSION_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-temporary-permission-data-seeds.constants';
+import {
+  MKT_DEPARTMENT_HIERARCHY_DATA_SEED_COLUMNS,
+  MKT_DEPARTMENT_HIERARCHY_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-department-hierarchy-data-seeds.constants';
 
 export const MKT_RECORD_SEEDS_CONFIGS_FIRST_PHASE_TABLES = [
   // Organization configs
@@ -251,5 +255,10 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     tableName: 'mktTemporaryPermission',
     pgColumns: MKT_TEMPORARY_PERMISSION_DATA_SEED_COLUMNS,
     recordSeeds: MKT_TEMPORARY_PERMISSION_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktDepartmentHierarchy',
+    pgColumns: MKT_DEPARTMENT_HIERARCHY_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_DEPARTMENT_HIERARCHY_DATA_SEEDS,
   },
 ];
