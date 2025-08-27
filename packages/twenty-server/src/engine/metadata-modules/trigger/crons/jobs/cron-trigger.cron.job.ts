@@ -48,7 +48,8 @@ export class CronTriggerCronJob {
         where: {
           workspaceId: activeWorkspace.id,
         },
-        select: ['settings', 'serverlessFunction'],
+        select: ['settings'],
+        relations: ['serverlessFunction.id'],
       });
 
       for (const cronTrigger of cronTriggers) {
@@ -67,6 +68,7 @@ export class CronTriggerCronJob {
           {
             serverlessFunctionId: cronTrigger.serverlessFunction.id,
             workspaceId: activeWorkspace.id,
+            payload: {},
           },
           { retryLimit: 3 },
         );

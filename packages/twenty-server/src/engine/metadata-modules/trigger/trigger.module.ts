@@ -1,4 +1,9 @@
 import { Module } from '@nestjs/common';
 
-@Module({})
+import { CronTriggerCronCommand } from 'src/engine/metadata-modules/trigger/crons/commands/cron-trigger.cron.command';
+
+@Module({
+  providers: [CronTriggerCronCommand],
+  exports: [CronTriggerCronCommand],
+})
 export class TriggerModule {}

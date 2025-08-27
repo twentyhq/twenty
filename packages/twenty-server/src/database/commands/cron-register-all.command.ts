@@ -94,7 +94,7 @@ export class CronRegisterAllCommand extends CommandRunner {
         command: this.workflowCleanWorkflowRunsCronCommand,
       },
       {
-        name: 'cronTriggerCronCommand',
+        name: 'cronTrigger',
         command: this.cronTriggerCronCommand,
       },
     ];

@@ -8,6 +8,7 @@ import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverles
 export type ServerlessFunctionTriggerJobData = {
   serverlessFunctionId: string;
   workspaceId: string;
+  payload?: object;
 };
 
 @Processor({
@@ -24,7 +25,7 @@ export class ServerlessFunctionTriggerJob {
     await this.serverlessFunctionService.executeOneServerlessFunction(
       data.serverlessFunctionId,
       data.workspaceId,
-      {},
+      data.payload || {},
     );
   }
 }
