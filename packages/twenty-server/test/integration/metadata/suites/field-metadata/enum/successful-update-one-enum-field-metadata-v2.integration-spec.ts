@@ -5,7 +5,6 @@ import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { CUSTOM_OBJECT_DISHES } from 'test/integration/metadata/suites/object-metadata/constants/custom-object-dishes.constants';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { eachTestingContextFilter } from 'twenty-shared/testing';
@@ -18,6 +17,7 @@ import {
   type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 describe.each(fieldMetadataEnumTypes)(
   'Successful update field metadata %s tests suite v2',
@@ -60,7 +60,7 @@ describe.each(fieldMetadataEnumTypes)(
         namePlural,
         nameSingular,
       } = CUSTOM_OBJECT_DISHES;
-      const { data } = await forceCreateOneObjectMetadata({
+      const { data } = await createOneObjectMetadata({
         input: {
           labelPlural,
           description,

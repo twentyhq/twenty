@@ -97,7 +97,7 @@ export class WorkspaceSchemaColumnManagerService {
     const safeColumnName = removeSqlDDLInjection(columnName);
     const relatedEnum =
       fieldMetadataColumnType === 'enum'
-        ? `::${safeSchemaName}."${safeTableName}_${safeColumnName}_enum`
+        ? `::${safeSchemaName}."${safeTableName}_${safeColumnName}_enum"`
         : '';
 
     const computeDefaultValueSqlQuery = () => {
@@ -120,7 +120,7 @@ export class WorkspaceSchemaColumnManagerService {
       if (typeof defaultValue === 'string') {
         const safeDefaultValue = sanitizeDefaultValue(defaultValue);
 
-        return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ${safeDefaultValue}${relatedEnum}"`;
+        return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ${safeDefaultValue}${relatedEnum}`;
       }
 
       return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT '${defaultValue}'`;
