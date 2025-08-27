@@ -17,8 +17,6 @@ export const useSingleRecordPickerRecords = ({
   const selectedRecordId = useRecoilComponentValue(
     singleRecordPickerSelectedIdComponentState,
   );
-  // todo @guillim: understand why selectoed record are not setup initially
-  console.log('selectedRecordId', selectedRecordId);
   const records = useFilteredSearchRecordQuery({
     searchFilter: recordPickerSearchFilter,
     selectedIds: selectedRecordId ? [selectedRecordId] : [],

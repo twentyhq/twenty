@@ -28,7 +28,7 @@ export const useUpdateMorphRelationManyToOneFieldInput = () => {
   const { updateOneRecordAndAttachMorphRelations } =
     useAttachMorphRelatedRecordFromRecord();
 
-  const updateRelation = useRecoilCallback(
+  const updateMorphRelationManyToOne = useRecoilCallback(
     () =>
       async (
         morphItem: Pick<
@@ -62,5 +62,5 @@ export const useUpdateMorphRelationManyToOneFieldInput = () => {
     ],
   );
 
-  return { updateRelation };
+  return { updateMorphRelationManyToOne };
 };

@@ -13,6 +13,8 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { generateUpdateOneRecordMutation } from '@/object-record/multiple-objects/utils/generateUpdateOneRecordMutation';
 import { getTargetFieldMetadataName } from '@/object-record/multiple-objects/utils/getTargetFieldMetadataName';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getAggregateQueryName } from '@/object-record/utils/getAggregateQueryName';
@@ -87,6 +89,16 @@ export const useUpdateManyRecordsFromManyObjects = () => {
       const { objectMetadataItem, cachedRecord } =
         objectMetadataItemWithCachedRecord;
 
+      if (
+        !isFieldRelation(fieldDefinition) &&
+        !isFieldMorphRelation(fieldDefinition)
+      ) {
+        throw new CustomError(
+          `Should never happen`,
+          'TARGET_FIELD_NAME_NOT_FOUND',
+        );
+      }
+
       const targetFieldName = getTargetFieldMetadataName({
         fieldDefinition,
         objectNameSingular: objectMetadataItem.nameSingular,
@@ -94,7 +106,7 @@ export const useUpdateManyRecordsFromManyObjects = () => {
 
       if (!isDefined(targetFieldName)) {
         throw new CustomError(
-          `Cannot find Target field name for not a relation/morph relation field ${targetFieldName}`,
+          `Cannot find Target field name for the (morph) relation field ${fieldDefinition.metadata.fieldName} on ${objectMetadataItem.nameSingular}`,
           'TARGET_FIELD_NAME_NOT_FOUND',
         );
       }

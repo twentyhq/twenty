@@ -101,7 +101,6 @@ export const useOpenFieldInputEditMode = () => {
           return;
         }
 
-        // todo @guillim take an array of objects
         if (isFieldMorphRelationOneToMany(fieldDefinition)) {
           if (!isFieldMorphRelation(fieldDefinition)) {
             throw new Error('Field is not a morph relation one to many');
@@ -112,6 +111,7 @@ export const useOpenFieldInputEditMode = () => {
             prefix,
             fieldDefinition,
           });
+          return;
         }
 
         if (isFieldRelationFromManyObjects(fieldDefinition)) {
@@ -152,6 +152,7 @@ export const useOpenFieldInputEditMode = () => {
       },
     [
       openActivityTargetCellEditMode,
+      openMorphRelationFromManyFieldInput,
       openRelationFromManyFieldInput,
       openRelationToOneFieldInput,
       pushFocusItemToFocusStack,

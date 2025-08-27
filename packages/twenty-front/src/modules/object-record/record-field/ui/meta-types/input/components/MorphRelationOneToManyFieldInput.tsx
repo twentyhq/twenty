@@ -15,7 +15,8 @@ export const MorphRelationOneToManyFieldInput = () => {
 
   const { onSubmit } = useContext(FieldInputEventContext);
 
-  const { updateRelation } = useUpdateMorphRelationManyToOneFieldInput();
+  const { updateMorphRelationManyToOne } =
+    useUpdateMorphRelationManyToOneFieldInput();
 
   const handleSubmit = () => {
     onSubmit?.({ skipPersist: true });
@@ -31,7 +32,7 @@ export const MorphRelationOneToManyFieldInput = () => {
       componentInstanceId={instanceId}
       onSubmit={handleSubmit}
       onChange={(morphItem) => {
-        updateRelation(morphItem);
+        updateMorphRelationManyToOne(morphItem);
       }}
       onClickOutside={handleSubmit}
       layoutDirection={

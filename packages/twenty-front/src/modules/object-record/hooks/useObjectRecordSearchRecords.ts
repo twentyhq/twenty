@@ -45,7 +45,7 @@ export const useObjectRecordSearchRecords = ({
       searchInput: searchInput ?? '',
       limit: limit ?? MAX_SEARCH_RESULTS,
       filter: filter ?? {},
-      includedObjectNameSingulars: [...objectNameSingulars],
+      includedObjectNameSingulars: objectNameSingulars,
     },
     fetchPolicy: fetchPolicy,
     client: apolloCoreClient,

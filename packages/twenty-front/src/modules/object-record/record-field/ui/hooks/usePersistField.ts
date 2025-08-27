@@ -220,7 +220,6 @@ export const usePersistField = ({
 
           if (fieldIsMorphRelationManyToOne) {
             // todo @guillim: implement the persist for morph relation many to one (optimistic issue)
-            console.log(fieldName, valueToPersist);
             return;
           }
 

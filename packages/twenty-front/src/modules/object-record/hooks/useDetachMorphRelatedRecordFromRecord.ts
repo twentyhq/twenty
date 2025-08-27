@@ -72,10 +72,8 @@ export const useDetachMorphRelatedRecordFromRecord = () => {
       throw new Error('Could not find cached related record');
     }
 
-    const {
-      objectMetadataItem: relatedObjectMetadataItem,
-      cachedRelatedRecord,
-    } = relatedObjectMetadataItemsWithCachedRecord;
+    const { objectMetadataItem: relatedObjectMetadataItem } =
+      relatedObjectMetadataItemsWithCachedRecord;
 
     modifyRecordFromCache({
       objectMetadataItem,

@@ -1,25 +1,25 @@
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import {
+  type FieldMorphRelationMetadata,
+  type FieldRelationMetadata,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 
 export const getTargetFieldMetadataName = ({
   fieldDefinition,
   objectNameSingular,
 }: {
-  fieldDefinition: FieldDefinition<FieldMetadata>;
+  fieldDefinition:
+    | FieldDefinition<FieldMorphRelationMetadata>
+    | FieldDefinition<FieldRelationMetadata>;
   objectNameSingular: string;
 }) => {
-  let targetFieldName = undefined;
   if (isFieldRelation(fieldDefinition)) {
-    targetFieldName = fieldDefinition.metadata.targetFieldMetadataName;
-  }
-  if (isFieldMorphRelation(fieldDefinition)) {
-    targetFieldName = fieldDefinition.metadata.morphRelations.find(
+    return fieldDefinition.metadata.targetFieldMetadataName;
+  } else {
+    return fieldDefinition.metadata.morphRelations.find(
       (morphRelation) =>
         morphRelation.targetObjectMetadata.nameSingular === objectNameSingular,
     )?.targetFieldMetadata.name;
   }
-
-  return targetFieldName;
 };
