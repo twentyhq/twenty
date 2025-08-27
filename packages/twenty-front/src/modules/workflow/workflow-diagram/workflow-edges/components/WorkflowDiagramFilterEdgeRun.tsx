@@ -123,7 +123,7 @@ export const WorkflowDiagramFilterEdgeRun = ({
           <WorkflowDiagramEdgeV2VisibilityContainer shouldDisplay>
             <StyledConfiguredFilterContainer>
               <WorkflowStepFilterCounter
-                backgroundColor={selected.background}
+                backgroundColor={selected.tagBackground}
                 textColor={selected.color}
                 counter={filterCounter}
               />

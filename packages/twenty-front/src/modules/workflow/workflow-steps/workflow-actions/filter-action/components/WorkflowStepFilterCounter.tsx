@@ -20,15 +20,17 @@ const StyledFilterCounter = styled.div<{
   z-index: 1;
 `;
 
+type WorkflowStepFilterCounterProps = {
+  backgroundColor: string;
+  textColor: string;
+  counter: number;
+};
+
 export const WorkflowStepFilterCounter = ({
   backgroundColor,
   textColor,
   counter,
-}: {
-  backgroundColor: string;
-  textColor: string;
-  counter: number;
-}) => (
+}: WorkflowStepFilterCounterProps) => (
   <StyledFilterCounter backgroundColor={backgroundColor} textColor={textColor}>
     {counter}
   </StyledFilterCounter>

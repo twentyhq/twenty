@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const createStepSelector = (stepId: string) =>
   createComponentSelector<WorkflowAction | null>({
-    key: `stepSelector`,
+    key: `stepSelector-${stepId}`,
     get:
       ({ instanceId }) =>
       ({ get }) => {
