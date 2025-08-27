@@ -5,7 +5,6 @@ import { type DataSource, type Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { type ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
@@ -33,7 +32,6 @@ describe('UserWorkspaceService', () => {
   let service: UserWorkspaceService;
   let userWorkspaceRepository: Repository<UserWorkspace>;
   let userRepository: Repository<User>;
-  let typeORMService: TypeORMService;
   let workspaceInvitationService: WorkspaceInvitationService;
   let approvedAccessDomainService: ApprovedAccessDomainService;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
@@ -73,12 +71,6 @@ describe('UserWorkspaceService', () => {
           provide: DataSourceService,
           useValue: {
             getLastDataSourceMetadataFromWorkspaceIdOrFail: jest.fn(),
-          },
-        },
-        {
-          provide: TypeORMService,
-          useValue: {
-            getMainDataSource: jest.fn(),
           },
         },
         {
@@ -142,7 +134,6 @@ describe('UserWorkspaceService', () => {
     fileService = module.get<FileService>(FileService);
     userWorkspaceRepository = module.get(getRepositoryToken(UserWorkspace));
     userRepository = module.get(getRepositoryToken(User));
-    typeORMService = module.get<TypeORMService>(TypeORMService);
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
       WorkspaceInvitationService,
     );
@@ -346,9 +337,6 @@ describe('UserWorkspaceService', () => {
         find: jest.fn().mockResolvedValue(workspaceMember),
       };
 
-      jest
-        .spyOn(typeORMService, 'getMainDataSource')
-        .mockReturnValue(mainDataSource);
       jest
         .spyOn(mainDataSource, 'query')
         .mockResolvedValueOnce(undefined)

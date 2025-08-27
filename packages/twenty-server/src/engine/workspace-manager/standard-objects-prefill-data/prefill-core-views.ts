@@ -29,7 +29,7 @@ import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.wor
 import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
 
 export const prefillCoreViews = async (
-  dataSource: DataSource,
+  coreDataSource: DataSource,
   workspaceId: string,
   objectMetadataItems: ObjectMetadataEntity[],
   featureFlags?: Record<string, boolean>,
@@ -52,7 +52,7 @@ export const prefillCoreViews = async (
     views.push(dashboardsAllView(objectMetadataItems, true));
   }
 
-  const queryRunner = dataSource.createQueryRunner();
+  const queryRunner = coreDataSource.createQueryRunner();
 
   await queryRunner.connect();
 
