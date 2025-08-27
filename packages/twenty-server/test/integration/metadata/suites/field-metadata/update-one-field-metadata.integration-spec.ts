@@ -6,7 +6,6 @@ import {
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 describe('updateOne', () => {
@@ -99,6 +98,7 @@ describe('updateOne', () => {
   describe('failing update', () => {
     let listingObjectId = '';
     let testFieldId = '';
+
     beforeAll(async () => {
       const { data } = await createOneObjectMetadata({
         expectToFail: false,
