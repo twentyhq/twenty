@@ -9,11 +9,7 @@ import { TypeORMService } from './typeorm.service';
 @Module({
   imports: [
     TwentyConfigModule,
-    TypeOrmModule.forRootAsync({
-      useFactory: () => ({
-        ...typeORMCoreModuleOptions,
-      }),
-    }),
+    TypeOrmModule.forRoot(typeORMCoreModuleOptions),
   ],
   providers: [TypeORMService],
   exports: [TypeORMService],
