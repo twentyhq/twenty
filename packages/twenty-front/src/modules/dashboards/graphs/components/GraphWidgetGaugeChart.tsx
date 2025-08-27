@@ -7,7 +7,6 @@ import {
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
-
 import { type GraphColor } from '../types/GraphColor';
 import { createGradientDef } from '../utils/createGradientDef';
 import { createGraphColorRegistry } from '../utils/createGraphColorRegistry';

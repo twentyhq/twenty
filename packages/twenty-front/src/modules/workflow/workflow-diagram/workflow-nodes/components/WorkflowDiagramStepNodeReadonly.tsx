@@ -9,7 +9,6 @@ import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/wor
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWorkflowNodeIconKey';
-import { WorkflowDiagramHandleReadonly } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleReadonly';
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeIcon';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeIconContainer';
@@ -17,43 +16,12 @@ import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/co
 import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabelWithCounterPart';
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
-import styled from '@emotion/styled';
-import { Position } from '@xyflow/react';
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-
-const StyledNodeContainer = styled(WorkflowNodeContainer)`
-  border-color: ${({ theme }) => theme.border.color.strong};
-  background: ${({ theme }) => theme.background.secondary};
-
-  &:hover {
-    background: linear-gradient(
-        0deg,
-        ${({ theme }) => theme.background.transparent.lighter} 0%,
-        ${({ theme }) => theme.background.transparent.lighter} 100%
-      ),
-      ${({ theme }) => theme.background.secondary};
-  }
-
-  .selected & {
-    border-color: ${({ theme }) => theme.color.blue};
-    background: ${({ theme }) => theme.adaptiveColors.blue1};
-  }
-`;
-
-const StyledNodeLabel = styled(WorkflowNodeLabel)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-
-  .selected & {
-    color: ${({ theme }) => theme.tag.text.blue};
-  }
-`;
-
-const StyledNodeTitle = styled(WorkflowNodeTitle)`
-  color: ${({ theme }) => theme.font.color.primary};
-`;
+import { WorkflowDiagramHandleTarget } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTarget';
+import { WorkflowDiagramHandleSource } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleSource';
 
 export const WorkflowDiagramStepNodeReadonly = ({
   id,
@@ -109,36 +77,25 @@ export const WorkflowDiagramStepNodeReadonly = ({
 
   return (
     <>
-      {data.nodeType !== 'trigger' && (
-        <WorkflowDiagramHandleReadonly
-          type="target"
-          position={Position.Top}
-          selected={false}
-        />
-      )}
-
-      <StyledNodeContainer
+      <WorkflowNodeContainer
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
         onClick={handleClick}
       >
+        <WorkflowDiagramHandleTarget />
         <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />
         </WorkflowNodeIconContainer>
 
         <WorkflowNodeRightPart>
           <WorkflowNodeLabelWithCounterPart>
-            <StyledNodeLabel>{capitalize(data.nodeType)}</StyledNodeLabel>
+            <WorkflowNodeLabel>{capitalize(data.nodeType)}</WorkflowNodeLabel>
           </WorkflowNodeLabelWithCounterPart>
 
-          <StyledNodeTitle>{data.name}</StyledNodeTitle>
+          <WorkflowNodeTitle highlight>{data.name}</WorkflowNodeTitle>
         </WorkflowNodeRightPart>
-      </StyledNodeContainer>
+      </WorkflowNodeContainer>
 
-      <WorkflowDiagramHandleReadonly
-        type="source"
-        position={Position.Bottom}
-        selected={selected}
-      />
+      <WorkflowDiagramHandleSource selected={selected} readOnly />
     </>
   );
 };

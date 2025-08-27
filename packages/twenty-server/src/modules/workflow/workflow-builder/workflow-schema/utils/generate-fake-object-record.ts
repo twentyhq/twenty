@@ -5,11 +5,11 @@ import { generateObjectRecordFields } from 'src/modules/workflow/workflow-builde
 export const generateFakeObjectRecord = ({
   objectMetadataInfo,
   depth = 0,
-  isRelationField,
+  maxDepth = 1,
 }: {
   objectMetadataInfo: ObjectMetadataInfo;
   depth?: number;
-  isRelationField?: boolean;
+  maxDepth?: number;
 }): RecordOutputSchema => {
   return {
     object: {
@@ -18,15 +18,13 @@ export const generateFakeObjectRecord = ({
         objectMetadataInfo.objectMetadataItemWithFieldsMaps.icon ?? undefined,
       label: objectMetadataInfo.objectMetadataItemWithFieldsMaps.labelSingular,
       value: objectMetadataInfo.objectMetadataItemWithFieldsMaps.description,
-      nameSingular:
-        objectMetadataInfo.objectMetadataItemWithFieldsMaps.nameSingular,
       fieldIdName: 'id',
       objectMetadataId: objectMetadataInfo.objectMetadataItemWithFieldsMaps.id,
-      isRelationField,
     },
     fields: generateObjectRecordFields({
       objectMetadataInfo,
       depth,
+      maxDepth,
     }),
     _outputSchemaType: 'RECORD',
   };

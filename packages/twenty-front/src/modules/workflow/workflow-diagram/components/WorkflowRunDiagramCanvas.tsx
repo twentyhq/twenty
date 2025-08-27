@@ -1,7 +1,7 @@
 import { type WorkflowRunStatus } from '@/workflow/types/Workflow';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
-import { WorkflowDiagramDefaultEdgeRun } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdgeRun';
-import { WorkflowDiagramFilterEdgeRun } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeRun';
+import { WorkflowDiagramDefaultEdgeRun } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeRun';
+import { WorkflowDiagramFilterEdgeRun } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeRun';
 
 import { getWorkflowRunStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps';
 import { WorkflowRunDiagramStepNode } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowRunDiagramStepNode';

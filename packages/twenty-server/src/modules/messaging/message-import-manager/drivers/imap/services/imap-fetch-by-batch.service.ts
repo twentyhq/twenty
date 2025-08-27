@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
-import { ImapMessageLocatorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-locator.service';
 import {
   ImapMessageProcessorService,
   type MessageFetchResult,
@@ -14,7 +13,7 @@ type ConnectedAccount = Pick<
 >;
 
 type FetchAllResult = {
-  messageIdsByBatch: string[][];
+  uidsByBatch: number[][];
   batchResults: MessageFetchResult[][];
 };
 
@@ -24,48 +23,42 @@ export class ImapFetchByBatchService {
 
   constructor(
     private readonly imapClientProvider: ImapClientProvider,
-    private readonly imapMessageLocatorService: ImapMessageLocatorService,
     private readonly imapMessageProcessorService: ImapMessageProcessorService,
   ) {}
 
   async fetchAllByBatches(
-    messageIds: string[],
+    uids: number[],
     connectedAccount: ConnectedAccount,
+    folder: string,
   ): Promise<FetchAllResult> {
     const batchLimit = 20;
     const batchResults: MessageFetchResult[][] = [];
-    const messageIdsByBatch: string[][] = [];
+    const uidsByBatch: number[][] = [];
 
     this.logger.log(
-      `Starting optimized batch fetch for ${messageIds.length} messages`,
+      `Starting optimized batch fetch for ${uids.length} messages from folder ${folder}`,
     );
 
     const client = await this.imapClientProvider.getClient(connectedAccount);
 
     try {
-      const messageLocations =
-        await this.imapMessageLocatorService.locateAllMessages(
-          messageIds,
-          client,
-        );
+      for (let i = 0; i < uids.length; i += batchLimit) {
+        const batchUids = uids.slice(i, i + batchLimit);
 
-      for (let i = 0; i < messageIds.length; i += batchLimit) {
-        const batchMessageIds = messageIds.slice(i, i + batchLimit);
-
-        messageIdsByBatch.push(batchMessageIds);
+        uidsByBatch.push(batchUids);
 
         try {
           const batchResult =
-            await this.imapMessageProcessorService.processMessagesByIds(
-              batchMessageIds,
-              messageLocations,
+            await this.imapMessageProcessorService.processMessagesByUidsInFolder(
+              batchUids,
+              folder,
               client,
             );
 
           batchResults.push(batchResult);
 
           this.logger.log(
-            `Fetched batch ${Math.floor(i / batchLimit) + 1}/${Math.ceil(messageIds.length / batchLimit)} (${batchMessageIds.length} messages)`,
+            `Fetched batch ${Math.floor(i / batchLimit) + 1}/${Math.ceil(uids.length / batchLimit)} (${batchUids.length} messages)`,
           );
         } catch (error) {
           this.logger.error(
@@ -74,7 +67,8 @@ export class ImapFetchByBatchService {
 
           const errorResults =
             this.imapMessageProcessorService.createErrorResults(
-              batchMessageIds,
+              batchUids,
+              folder,
               error as Error,
             );
 
@@ -83,7 +77,7 @@ export class ImapFetchByBatchService {
       }
 
       return {
-        messageIdsByBatch,
+        uidsByBatch,
         batchResults,
       };
     } finally {

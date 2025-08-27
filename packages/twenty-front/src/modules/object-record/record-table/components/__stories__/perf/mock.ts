@@ -1,4 +1,4 @@
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export const mockPerformance = {
   objectMetadataItem: {
@@ -708,26 +708,26 @@ export const mockPerformance = {
     },
   },
   fieldDefinition: {
-    fieldMetadataId: '4e79f0b7-d100-4e89-a07b-315a710b8059',
+    fieldMetadataId: '9058056e-36b3-4a3f-9037-f0bca9744296',
     primaryLinkLabel: 'Company',
-    label: 'Company',
     metadata: {
       fieldName: 'company',
       placeHolder: 'Company',
       relationType: 'TO_ONE_OBJECT',
-      relationFieldMetadataId: '01fa2247-7937-4493-b7e2-3d72f05d6d25',
+      relationFieldMetadataId: '7b281010-5f47-4771-b3f5-f4bcd24ed1b5',
       relationObjectMetadataNameSingular: 'company',
       relationObjectMetadataNamePlural: 'companies',
       objectMetadataNameSingular: 'person',
       options: null,
     },
+    label: 'Company',
     iconName: 'IconBuildingSkyscraper',
     type: FieldMetadataType.RELATION,
     position: 2,
     size: 150,
     isLabelIdentifier: false,
     isVisible: true,
-    viewFieldId: '924f4c94-cbcd-4de5-b7a2-ebae2f0b2c3b',
+    viewFieldId: '9a479a97-deaa-4ddb-9d59-96f05875ac09',
     isSortable: false,
     isFilterable: true,
     defaultValue: null,

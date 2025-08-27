@@ -2,7 +2,6 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { validateCustomDateFormat } from '@/localization/utils/validateCustomDateFormat';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldDateDisplayFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isDateFieldCustomDisplayFormat } from '@/object-record/record-field/ui/types/guards/isDateFIeldCustomDisplayFormat';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
@@ -45,12 +44,12 @@ export type SettingsDataModelFieldDateFormValues = z.infer<
 
 type SettingsDataModelFieldDateFormProps = {
   disabled?: boolean;
-  fieldMetadataItem: Pick<FieldMetadataItem, 'settings'>;
+  existingFieldMetadataId: string;
 };
 
 export const SettingsDataModelFieldDateForm = ({
   disabled,
-  fieldMetadataItem,
+  existingFieldMetadataId,
 }: SettingsDataModelFieldDateFormProps) => {
   const { t } = useLingui();
 
@@ -59,7 +58,7 @@ export const SettingsDataModelFieldDateForm = ({
 
   const { initialDisplayFormat, initialCustomUnicodeDateFormat } =
     useDateSettingsFormInitialValues({
-      fieldMetadataItem,
+      fieldMetadataId: existingFieldMetadataId,
     });
 
   const displayFormatFromForm = watch('settings.displayFormat');
