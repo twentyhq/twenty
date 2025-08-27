@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import {
   ViewSortException,
   ViewSortExceptionCode,
@@ -16,11 +16,11 @@ import {
 @Injectable()
 export class ViewSortService {
   constructor(
-    @InjectRepository(ViewSort, 'core')
-    private readonly viewSortRepository: Repository<ViewSort>,
+    @InjectRepository(ViewSortEntity, 'core')
+    private readonly viewSortRepository: Repository<ViewSortEntity>,
   ) {}
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewSort[]> {
+  async findByWorkspaceId(workspaceId: string): Promise<ViewSortEntity[]> {
     return this.viewSortRepository.find({
       where: {
         workspaceId,
@@ -30,7 +30,10 @@ export class ViewSortService {
     });
   }
 
-  async findByViewId(workspaceId: string, viewId: string): Promise<ViewSort[]> {
+  async findByViewId(
+    workspaceId: string,
+    viewId: string,
+  ): Promise<ViewSortEntity[]> {
     return this.viewSortRepository.find({
       where: {
         workspaceId,
@@ -41,7 +44,10 @@ export class ViewSortService {
     });
   }
 
-  async findById(id: string, workspaceId: string): Promise<ViewSort | null> {
+  async findById(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewSortEntity | null> {
     const viewSort = await this.viewSortRepository.findOne({
       where: {
         id,
@@ -54,7 +60,7 @@ export class ViewSortService {
     return viewSort || null;
   }
 
-  async create(viewSortData: Partial<ViewSort>): Promise<ViewSort> {
+  async create(viewSortData: Partial<ViewSortEntity>): Promise<ViewSortEntity> {
     if (!isDefined(viewSortData.workspaceId)) {
       throw new ViewSortException(
         generateViewSortExceptionMessage(
@@ -105,8 +111,8 @@ export class ViewSortService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: Partial<ViewSort>,
-  ): Promise<ViewSort> {
+    updateData: Partial<ViewSortEntity>,
+  ): Promise<ViewSortEntity> {
     const existingViewSort = await this.findById(id, workspaceId);
 
     if (!isDefined(existingViewSort)) {
@@ -127,7 +133,7 @@ export class ViewSortService {
     return { ...existingViewSort, ...updatedViewSort };
   }
 
-  async delete(id: string, workspaceId: string): Promise<ViewSort> {
+  async delete(id: string, workspaceId: string): Promise<ViewSortEntity> {
     const viewSort = await this.findById(id, workspaceId);
 
     if (!isDefined(viewSort)) {

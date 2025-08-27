@@ -21,6 +21,8 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
+import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 export interface AgentToolTestContext {
   module: TestingModule;
@@ -81,6 +83,18 @@ export const createAgentToolTestModule =
         {
           provide: ToolService,
           useClass: ToolService,
+        },
+        {
+          provide: RecordInputTransformerService,
+          useValue: {
+            process: jest.fn(async ({ recordInput }) => recordInput),
+          },
+        },
+        {
+          provide: WorkspaceCacheStorageService,
+          useValue: {
+            getObjectMetadataMapsOrThrow: jest.fn(),
+          },
         },
         {
           provide: ToolAdapterService,
@@ -210,6 +224,29 @@ export const createAgentToolTestModule =
       dataSource: {} as any,
       objectPermissions: [],
       fieldPermissions: [],
+    });
+
+    // Ensure ToolService input transformation has access to minimal metadata maps
+    const workspaceCacheStorageService =
+      module.get<WorkspaceCacheStorageService>(WorkspaceCacheStorageService);
+
+    // Return a barebones object metadata map where fields are unknown (so transformer is a no-op)
+    const getMapsMock =
+      workspaceCacheStorageService.getObjectMetadataMapsOrThrow as jest.Mock;
+
+    getMapsMock.mockResolvedValue({
+      byId: {
+        [testObjectMetadata.id]: {
+          ...testObjectMetadata,
+          fieldsById: {},
+          fieldIdByJoinColumnName: {},
+          fieldIdByName: {},
+          indexMetadatas: [],
+        },
+      },
+      idByNameSingular: {
+        [testObjectMetadata.nameSingular]: testObjectMetadata.id,
+      },
     });
 
     return {

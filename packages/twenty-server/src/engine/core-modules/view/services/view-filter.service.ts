@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import {
   ViewFilterException,
   ViewFilterExceptionCode,
@@ -16,11 +16,11 @@ import {
 @Injectable()
 export class ViewFilterService {
   constructor(
-    @InjectRepository(ViewFilter, 'core')
-    private readonly viewFilterRepository: Repository<ViewFilter>,
+    @InjectRepository(ViewFilterEntity, 'core')
+    private readonly viewFilterRepository: Repository<ViewFilterEntity>,
   ) {}
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewFilter[]> {
+  async findByWorkspaceId(workspaceId: string): Promise<ViewFilterEntity[]> {
     return this.viewFilterRepository.find({
       where: {
         workspaceId,
@@ -34,7 +34,7 @@ export class ViewFilterService {
   async findByViewId(
     workspaceId: string,
     viewId: string,
-  ): Promise<ViewFilter[]> {
+  ): Promise<ViewFilterEntity[]> {
     return this.viewFilterRepository.find({
       where: {
         workspaceId,
@@ -46,7 +46,10 @@ export class ViewFilterService {
     });
   }
 
-  async findById(id: string, workspaceId: string): Promise<ViewFilter | null> {
+  async findById(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewFilterEntity | null> {
     const viewFilter = await this.viewFilterRepository.findOne({
       where: {
         id,
@@ -59,7 +62,9 @@ export class ViewFilterService {
     return viewFilter || null;
   }
 
-  async create(viewFilterData: Partial<ViewFilter>): Promise<ViewFilter> {
+  async create(
+    viewFilterData: Partial<ViewFilterEntity>,
+  ): Promise<ViewFilterEntity> {
     if (!isDefined(viewFilterData.workspaceId)) {
       throw new ViewFilterException(
         generateViewFilterExceptionMessage(
@@ -110,8 +115,8 @@ export class ViewFilterService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: Partial<ViewFilter>,
-  ): Promise<ViewFilter> {
+    updateData: Partial<ViewFilterEntity>,
+  ): Promise<ViewFilterEntity> {
     const existingViewFilter = await this.findById(id, workspaceId);
 
     if (!isDefined(existingViewFilter)) {
@@ -132,7 +137,7 @@ export class ViewFilterService {
     return { ...existingViewFilter, ...updatedViewFilter };
   }
 
-  async delete(id: string, workspaceId: string): Promise<ViewFilter> {
+  async delete(id: string, workspaceId: string): Promise<ViewFilterEntity> {
     const viewFilter = await this.findById(id, workspaceId);
 
     if (!isDefined(viewFilter)) {

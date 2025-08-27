@@ -1,11 +1,10 @@
 import styled from '@emotion/styled';
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnFooterWithDropdown } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterWithDropdown';
-import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
+import { findById, isDefined } from 'twenty-shared/utils';
 
 const COLUMN_MIN_WIDTH = 104;
 
@@ -59,22 +58,21 @@ export const RecordTableAggregateFooterCell = ({
   isFirstCell?: boolean;
   currentRecordGroupId?: string;
 }) => {
-  const tableColumns = useRecoilComponentValue(tableColumnsComponentState);
-  const tableColumnsByKey = useMemo(
-    () =>
-      mapArrayToObject(tableColumns, ({ fieldMetadataId }) => fieldMetadataId),
-    [tableColumns],
-  );
+  const { visibleRecordFields } = useRecordTableContextOrThrow();
+
   const { fieldMetadataId } = useContext(
     RecordTableColumnAggregateFooterCellContext,
   );
 
+  const recordField = visibleRecordFields.find(findById(fieldMetadataId));
+
+  if (!isDefined(recordField)) {
+    return null;
+  }
+
   return (
     <StyledColumnFooterCell
-      columnWidth={Math.max(
-        tableColumnsByKey[fieldMetadataId].size + 24,
-        COLUMN_MIN_WIDTH,
-      )}
+      columnWidth={Math.max(recordField.size + 24, COLUMN_MIN_WIDTH)}
       colSpan={isFirstCell ? 2 : undefined}
       isFirstCell={isFirstCell}
     >

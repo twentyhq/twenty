@@ -31,6 +31,7 @@ import { RemoveWorkflowRunsWithoutState } from 'src/database/commands/upgrade-ve
 import { AddNextStepIdsToWorkflowRunsTrigger } from 'src/database/commands/upgrade-version-command/1-3/1-3-add-next-step-ids-to-workflow-runs-trigger.command';
 import { AssignRolesToExistingApiKeysCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-assign-roles-to-existing-api-keys.command';
 import { UpdateTimestampColumnTypeInWorkspaceSchemaCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-update-timestamp-column-type-in-workspace-schema.command';
+import { RemoveFavoriteViewRelation } from 'src/database/commands/upgrade-version-command/1-5/1-5-remove-favorite-view-relation.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -161,6 +162,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly assignRolesToExistingApiKeysCommand: AssignRolesToExistingApiKeysCommand,
     protected readonly addNextStepIdsToWorkflowRunsTrigger: AddNextStepIdsToWorkflowRunsTrigger,
     protected readonly updateTimestampColumnTypeInWorkspaceSchemaCommand: UpdateTimestampColumnTypeInWorkspaceSchemaCommand,
+
+    // 1.5 Commands
+    protected readonly removeFavoriteViewRelation: RemoveFavoriteViewRelation,
   ) {
     super(
       workspaceRepository,
@@ -229,6 +233,16 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       afterSyncMetadata: [],
     };
 
+    const commands_140: VersionCommands = {
+      beforeSyncMetadata: [],
+      afterSyncMetadata: [],
+    };
+
+    const commands_150: VersionCommands = {
+      beforeSyncMetadata: [this.removeFavoriteViewRelation],
+      afterSyncMetadata: [],
+    };
+
     this.allCommands = {
       '0.53.0': commands_053,
       '0.54.0': commands_054,
@@ -238,6 +252,8 @@ export class UpgradeCommand extends UpgradeCommandRunner {
       '1.1.0': commands_110,
       '1.2.0': commands_120,
       '1.3.0': commands_130,
+      '1.4.0': commands_140,
+      '1.5.0': commands_150,
     };
   }
 

@@ -1,18 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
-import {
-  ILike,
-  In,
-  IsNull,
-  LessThan,
-  LessThanOrEqual,
-  Like,
-  MoreThan,
-  MoreThanOrEqual,
-  Not,
-} from 'typeorm';
 
+import { buildWhereConditions } from 'src/engine/core-modules/ai/utils/find-records-filters.utils';
+import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import {
   generateBulkDeleteToolSchema,
   generateFindOneToolSchema,
@@ -22,8 +13,10 @@ import {
 } from 'src/engine/metadata-modules/agent/utils/agent-tool-schema.utils';
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-related-object.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class ToolService {
@@ -31,6 +24,8 @@ export class ToolService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly objectMetadataService: ObjectMetadataService,
     protected readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
+    private readonly recordInputTransformerService: RecordInputTransformerService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {}
 
   async listTools(roleId: string, workspaceId: string): Promise<ToolSet> {
@@ -167,7 +162,7 @@ export class ToolService {
 
       const { limit = 100, offset = 0, ...searchCriteria } = parameters;
 
-      const whereConditions = this.buildWhereConditions(searchCriteria);
+      const whereConditions = buildWhereConditions(searchCriteria);
 
       const records = await repository.find({
         where: whereConditions,
@@ -189,124 +184,6 @@ export class ToolService {
         message: `Failed to find ${objectName} records`,
       };
     }
-  }
-
-  private buildWhereConditions(
-    searchCriteria: Record<string, unknown>,
-  ): Record<string, unknown> {
-    const whereConditions: Record<string, unknown> = {};
-
-    Object.entries(searchCriteria).forEach(([key, value]) => {
-      if (value === undefined || value === null || value === '') {
-        return;
-      }
-
-      if (typeof value === 'object' && !Array.isArray(value)) {
-        const nestedConditions = this.buildNestedWhereConditions(
-          value as Record<string, unknown>,
-        );
-
-        if (Object.keys(nestedConditions).length > 0) {
-          whereConditions[key] = nestedConditions;
-        } else {
-          const filterCondition = this.parseFilterCondition(
-            value as Record<string, unknown>,
-          );
-
-          if (filterCondition !== null) {
-            whereConditions[key] = filterCondition;
-          }
-        }
-
-        return;
-      }
-
-      whereConditions[key] = value;
-    });
-
-    return whereConditions;
-  }
-
-  private buildNestedWhereConditions(
-    nestedValue: Record<string, unknown>,
-  ): Record<string, unknown> {
-    const nestedConditions: Record<string, unknown> = {};
-
-    Object.entries(nestedValue).forEach(([nestedKey, nestedFieldValue]) => {
-      if (
-        nestedFieldValue === undefined ||
-        nestedFieldValue === null ||
-        nestedFieldValue === ''
-      ) {
-        return;
-      }
-
-      if (
-        typeof nestedFieldValue === 'object' &&
-        !Array.isArray(nestedFieldValue)
-      ) {
-        const filterCondition = this.parseFilterCondition(
-          nestedFieldValue as Record<string, unknown>,
-        );
-
-        if (filterCondition !== null) {
-          nestedConditions[nestedKey] = filterCondition;
-        }
-      } else {
-        nestedConditions[nestedKey] = nestedFieldValue;
-      }
-    });
-
-    return nestedConditions;
-  }
-
-  private parseFilterCondition(filterValue: Record<string, unknown>): unknown {
-    if ('eq' in filterValue) {
-      return filterValue.eq;
-    }
-    if ('neq' in filterValue) {
-      return Not(filterValue.neq);
-    }
-    if ('gt' in filterValue) {
-      return MoreThan(filterValue.gt);
-    }
-    if ('gte' in filterValue) {
-      return MoreThanOrEqual(filterValue.gte);
-    }
-    if ('lt' in filterValue) {
-      return LessThan(filterValue.lt);
-    }
-    if ('lte' in filterValue) {
-      return LessThanOrEqual(filterValue.lte);
-    }
-    if ('in' in filterValue) {
-      return In(filterValue.in as string[]);
-    }
-    if ('like' in filterValue) {
-      return Like(filterValue.like as string);
-    }
-    if ('ilike' in filterValue) {
-      return ILike(filterValue.ilike as string);
-    }
-    if ('startsWith' in filterValue) {
-      return Like(`${filterValue.startsWith}%`);
-    }
-    if ('is' in filterValue) {
-      if (filterValue.is === 'NULL') {
-        return IsNull();
-      }
-      if (filterValue.is === 'NOT_NULL') {
-        return Not(IsNull());
-      }
-    }
-    if ('isEmptyArray' in filterValue) {
-      return [];
-    }
-    if ('containsIlike' in filterValue) {
-      return Like(`%${filterValue.containsIlike}%`);
-    }
-
-    return null;
   }
 
   private async findOneRecord(
@@ -373,7 +250,29 @@ export class ToolService {
           { roleId },
         );
 
-      const createdRecord = await repository.save(parameters);
+      const objectMetadataMaps =
+        await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
+          workspaceId,
+        );
+
+      const objectMetadataItemWithFieldsMaps =
+        getObjectMetadataMapItemByNameSingular(objectMetadataMaps, objectName);
+
+      if (!objectMetadataItemWithFieldsMaps) {
+        return {
+          success: false,
+          error: 'Object metadata not found',
+          message: `Failed to create ${objectName}: Object metadata not found`,
+        };
+      }
+
+      const transformedCreateData =
+        await this.recordInputTransformerService.process({
+          recordInput: parameters,
+          objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
+        });
+
+      const createdRecord = await repository.save(transformedCreateData);
 
       return {
         success: true,
@@ -425,7 +324,29 @@ export class ToolService {
         };
       }
 
-      await repository.update(id as string, updateData);
+      const objectMetadataMaps =
+        await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
+          workspaceId,
+        );
+
+      const objectMetadataItemWithFieldsMaps =
+        getObjectMetadataMapItemByNameSingular(objectMetadataMaps, objectName);
+
+      if (!objectMetadataItemWithFieldsMaps) {
+        return {
+          success: false,
+          error: 'Object metadata not found',
+          message: `Failed to update ${objectName}: Object metadata not found`,
+        };
+      }
+
+      const transformedUpdateData =
+        await this.recordInputTransformerService.process({
+          recordInput: updateData,
+          objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
+        });
+
+      await repository.update(id as string, transformedUpdateData);
 
       const updatedRecord = await repository.findOne({
         where: { id: id as string },

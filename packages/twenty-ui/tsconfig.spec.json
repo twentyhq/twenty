@@ -1,13 +1,5 @@
 {
   "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "module": "commonjs",
-    "types": ["jest", "node"],
-    "baseUrl": "../..",
-    "paths": {
-      "@ui/*": ["./packages/twenty-ui/src/*"]
-    }
-  },
   "include": [
     "jest.config.mjs",
     "setupTests.ts",

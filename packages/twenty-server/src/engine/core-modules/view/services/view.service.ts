@@ -4,9 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { View } from 'src/engine/core-modules/view/entities/view.entity';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import {
   ViewException,
   ViewExceptionCode,
@@ -18,12 +16,11 @@ import {
 @Injectable()
 export class ViewService {
   constructor(
-    @InjectRepository(View, 'core')
-    private readonly viewRepository: Repository<View>,
-    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+    @InjectRepository(ViewEntity, 'core')
+    private readonly viewRepository: Repository<ViewEntity>,
   ) {}
 
-  async findByWorkspaceId(workspaceId: string): Promise<View[]> {
+  async findByWorkspaceId(workspaceId: string): Promise<ViewEntity[]> {
     return this.viewRepository.find({
       where: {
         workspaceId,
@@ -44,7 +41,7 @@ export class ViewService {
   async findByObjectMetadataId(
     workspaceId: string,
     objectMetadataId: string,
-  ): Promise<View[]> {
+  ): Promise<ViewEntity[]> {
     return this.viewRepository.find({
       where: {
         workspaceId,
@@ -63,7 +60,7 @@ export class ViewService {
     });
   }
 
-  async findById(id: string, workspaceId: string): Promise<View | null> {
+  async findById(id: string, workspaceId: string): Promise<ViewEntity | null> {
     const view = await this.viewRepository.findOne({
       where: {
         id,
@@ -83,7 +80,7 @@ export class ViewService {
     return view || null;
   }
 
-  async create(viewData: Partial<View>): Promise<View> {
+  async create(viewData: Partial<ViewEntity>): Promise<ViewEntity> {
     if (!isDefined(viewData.workspaceId)) {
       throw new ViewException(
         generateViewExceptionMessage(
@@ -123,8 +120,8 @@ export class ViewService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: Partial<View>,
-  ): Promise<View> {
+    updateData: Partial<ViewEntity>,
+  ): Promise<ViewEntity> {
     const existingView = await this.findById(id, workspaceId);
 
     if (!isDefined(existingView)) {
@@ -145,7 +142,7 @@ export class ViewService {
     return { ...existingView, ...updatedView };
   }
 
-  async delete(id: string, workspaceId: string): Promise<View> {
+  async delete(id: string, workspaceId: string): Promise<ViewEntity> {
     const view = await this.findById(id, workspaceId);
 
     if (!isDefined(view)) {
@@ -179,26 +176,5 @@ export class ViewService {
     await this.viewRepository.delete(id);
 
     return true;
-  }
-
-  async getObjectMetadataByViewId(
-    viewId: string,
-    workspaceId: string,
-  ): Promise<ObjectMetadataItemWithFieldMaps | null> {
-    const view = await this.viewRepository.findOne({
-      where: { id: viewId },
-      select: ['objectMetadataId'],
-    });
-
-    if (!view) {
-      return null;
-    }
-
-    const { objectMetadataMaps } =
-      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
-        { workspaceId },
-      );
-
-    return objectMetadataMaps.byId[view.objectMetadataId] || null;
   }
 }

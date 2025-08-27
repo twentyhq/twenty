@@ -1,4 +1,4 @@
-import { useEdgeSelected } from '@/workflow/workflow-diagram/hooks/useEdgeSelected';
+import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   type OnSelectionChangeParams,
@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from '~/generated/graphql';
 
 export const WorkflowDiagramCanvasEditableEffect = () => {
-  const { setEdgeSelected, clearEdgeSelection } = useEdgeSelected();
+  const { setEdgeSelected, clearEdgeSelected } = useEdgeState();
 
   const isWorkflowBranchEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
@@ -24,7 +24,8 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
       const selectedEdge = edges?.[0];
 
       if (!isDefined(selectedEdge)) {
-        clearEdgeSelection();
+        clearEdgeSelected();
+
         return;
       }
 
@@ -33,7 +34,7 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
         target: selectedEdge.target,
       });
     },
-    [isWorkflowBranchEnabled, setEdgeSelected, clearEdgeSelection],
+    [isWorkflowBranchEnabled, setEdgeSelected, clearEdgeSelected],
   );
 
   useOnSelectionChange({

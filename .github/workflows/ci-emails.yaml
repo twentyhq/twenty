@@ -22,8 +22,6 @@ jobs:
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 10
     runs-on: depot-ubuntu-24.04-8
-    env:
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
