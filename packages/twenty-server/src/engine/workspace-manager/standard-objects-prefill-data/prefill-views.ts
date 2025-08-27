@@ -47,7 +47,6 @@ export const prefillViews = async (
     ...customViews,
   ];
 
-  // Only include dashboards view if page layout feature flag is enabled
   if (featureFlags?.[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED]) {
     views.push(dashboardsAllView(objectMetadataItems));
   }
