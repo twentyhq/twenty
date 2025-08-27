@@ -250,7 +250,9 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         );
       }
     } else {
-      const  fieldMetadataColumnType = fieldMetadataTypeToColumnType(flatFieldMetadata.type) 
+      const fieldMetadataColumnType = fieldMetadataTypeToColumnType(
+        flatFieldMetadata.type,
+      );
       const serializedNewDefaultValue = unserializeDefaultValue(update.to);
 
       await this.workspaceSchemaManagerService.columnManager.alterColumnDefault(
