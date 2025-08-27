@@ -5,6 +5,7 @@ import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manage
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { customAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view';
+import { dashboardsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
@@ -31,6 +32,7 @@ export const prefillViews = async (
 
   const views = [
     companiesAllView(objectMetadataItems),
+    dashboardsAllView(objectMetadataItems),
     peopleAllView(objectMetadataItems),
     opportunitiesAllView(objectMetadataItems),
     opportunitiesByStageView(objectMetadataItems),
