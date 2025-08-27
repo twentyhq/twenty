@@ -10,6 +10,7 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 import { eachTestingContextFilter } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import {
@@ -17,7 +18,6 @@ import {
   type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { fieldMetadataEnumTypes } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 describe.each(fieldMetadataEnumTypes)(
   'Successful update field metadata %s tests suite v2',
