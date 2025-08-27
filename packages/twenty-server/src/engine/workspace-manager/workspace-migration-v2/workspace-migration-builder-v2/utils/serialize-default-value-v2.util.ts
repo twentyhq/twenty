@@ -1,3 +1,5 @@
+import { type ColumnType } from 'typeorm';
+
 import { type FieldMetadataDefaultSerializableValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import {
@@ -7,7 +9,6 @@ import {
 import { isFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/is-function-default-value.util';
 import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-function-default-value.util';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
-import { ColumnType } from 'typeorm';
 
 type SerializeDefaultValueV2Args = {
   defaultValue?: FieldMetadataDefaultSerializableValue;
@@ -26,6 +27,7 @@ export const serializeDefaultValueV2 = ({
   const safeSchemaName = removeSqlDDLInjection(schemaName);
   const safeTableName = removeSqlDDLInjection(tableName);
   const safeColumnName = removeSqlDDLInjection(columnName);
+
   if (defaultValue === undefined || defaultValue === null) {
     return 'NULL';
   }

@@ -1,4 +1,4 @@
-import { ColumnType, type QueryRunner } from 'typeorm';
+import { type ColumnType, type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { buildSqlColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util';
