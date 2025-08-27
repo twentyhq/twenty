@@ -103,6 +103,7 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
       {
         idToUpdate: relatedRecordId,
         objectNameSingulars,
+        relatedRecordId: recordId,
         // recordGqlFields: gqlFields,
       },
     ];

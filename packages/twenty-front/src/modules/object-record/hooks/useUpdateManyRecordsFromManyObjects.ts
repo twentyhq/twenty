@@ -26,6 +26,7 @@ import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromK
 
 type UpdateManyRecordArgs = {
   idToUpdate: string;
+  relatedRecordId: string;
   objectNameSingulars: string[];
   recordGqlFields?: Record<string, any>;
 };
@@ -45,7 +46,7 @@ export const useUpdateManyRecordsFromManyObjects = () => {
     for (const {
       idToUpdate,
       objectNameSingulars,
-
+      relatedRecordId,
       recordGqlFields,
     } of updatedManyRecordsArgs) {
       const objectMetadataItemArray = objectMetadataItems.filter(
@@ -99,7 +100,7 @@ export const useUpdateManyRecordsFromManyObjects = () => {
       }
 
       const updateOneRecordInput = {
-        [`${targetFieldName}Id`]: idToUpdate,
+        [`${targetFieldName}Id`]: relatedRecordId,
       };
 
       const optimisticRecordInput = computeOptimisticRecordFromInput({
