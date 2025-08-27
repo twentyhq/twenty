@@ -1,5 +1,5 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
 import { GRAY_SCALE } from './GrayScale';
 
 export const MAIN_COLORS = {

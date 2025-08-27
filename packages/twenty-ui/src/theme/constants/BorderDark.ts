@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
 import { BORDER_COMMON, BORDER_COMMON_CSS } from './BorderCommon';
 import { COLOR } from './Colors';
 import { GRAY_SCALE } from './GrayScale';

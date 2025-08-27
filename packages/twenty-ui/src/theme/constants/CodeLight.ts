@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
 import { COLOR } from './Colors';
 
 export const CODE_LIGHT = {

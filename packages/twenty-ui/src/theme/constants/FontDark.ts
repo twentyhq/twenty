@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
 import { COLOR } from './Colors';
 import { FONT_COMMON, FONT_COMMON_CSS } from './FontCommon';
 import { GRAY_SCALE } from './GrayScale';

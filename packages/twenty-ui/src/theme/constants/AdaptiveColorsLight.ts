@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 
 export const ADAPTIVE_COLORS_LIGHT = {

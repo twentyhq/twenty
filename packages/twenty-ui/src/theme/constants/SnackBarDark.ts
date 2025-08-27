@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
 import { BACKGROUND_DARK } from '@ui/theme/constants/BackgroundDark';
 import { FONT_DARK } from '@ui/theme/constants/FontDark';
 import {

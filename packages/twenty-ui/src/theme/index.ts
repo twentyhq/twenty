@@ -81,8 +81,10 @@ export { TAG_LIGHT, TAG_LIGHT_CSS } from './constants/TagLight';
 export { TEXT, TEXT_CSS } from './constants/Text';
 export { TEXT_INPUT_STYLE } from './constants/TextInputStyle';
 export { THEME_COMMON, THEME_COMMON_CSS } from './constants/ThemeCommon';
-export { THEME_DARK, THEME_DARK_CSS } from './constants/ThemeDark';
-export { THEME_LIGHT, THEME_LIGHT_CSS } from './constants/ThemeLight';
+export { THEME_DARK } from './constants/ThemeDark';
+export { THEME_DARK_CSS } from './constants/ThemeDarkCss';
+export { THEME_LIGHT } from './constants/ThemeLight';
+export { THEME_LIGHT_CSS } from './constants/ThemeLightCss';
 export type { ThemeContextType } from './provider/ThemeContextProvider';
 export {
   ThemeContext,

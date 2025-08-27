@@ -1,7 +1,7 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
 import LightNoise from '@assets/themes/light-noise.png';
 
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
 import { COLOR } from './Colors';
 import { GRAY_SCALE } from './GrayScale';
 import { RGBA } from './Rgba';

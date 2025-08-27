@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
 import { MAIN_COLORS } from '@ui/theme/constants/MainColors';
 import { RGBA } from '@ui/theme/constants/Rgba';
 

@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
 
 export const HOVER_BACKGROUND = (props: any) => css`
   transition: background 0.1s ease;

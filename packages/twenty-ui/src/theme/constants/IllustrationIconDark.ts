@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
 import { GRAY_SCALE } from '@ui/theme/constants/GrayScale';
 import { COLOR } from './Colors';
 

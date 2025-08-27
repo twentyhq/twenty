@@ -1,7 +1,7 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
 import DarkNoise from '@assets/themes/dark-noise.jpg';
 
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
 import { COLOR } from './Colors';
 import { GRAY_SCALE } from './GrayScale';
 import { RGBA } from './Rgba';

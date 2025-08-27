@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
 
 export const BLUR_LIGHT = {
   light: 'blur(6px) saturate(200%) contrast(50%) brightness(130%)',

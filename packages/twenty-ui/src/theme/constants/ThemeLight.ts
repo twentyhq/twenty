@@ -1,25 +1,15 @@
-import { css } from '@emotion/react';
-import {
-  ADAPTIVE_COLORS_LIGHT,
-  ADAPTIVE_COLORS_LIGHT_CSS,
-} from '@ui/theme/constants/AdaptiveColorsLight';
-import { BLUR_LIGHT, BLUR_LIGHT_CSS } from '@ui/theme/constants/BlurLight';
-import {
-  ILLUSTRATION_ICON_LIGHT,
-  ILLUSTRATION_ICON_LIGHT_CSS,
-} from '@ui/theme/constants/IllustrationIconLight';
-import {
-  SNACK_BAR_LIGHT,
-  SNACK_BAR_LIGHT_CSS,
-} from '@ui/theme/constants/SnackBarLight';
-import { ACCENT_LIGHT, ACCENT_LIGHT_CSS } from './AccentLight';
-import { BACKGROUND_LIGHT, BACKGROUND_LIGHT_CSS } from './BackgroundLight';
-import { BORDER_LIGHT, BORDER_LIGHT_CSS } from './BorderLight';
-import { BOX_SHADOW_LIGHT, BOX_SHADOW_LIGHT_CSS } from './BoxShadowLight';
-import { CODE_LIGHT, CODE_LIGHT_CSS } from './CodeLight';
-import { FONT_LIGHT, FONT_LIGHT_CSS } from './FontLight';
-import { TAG_LIGHT, TAG_LIGHT_CSS } from './TagLight';
-import { THEME_COMMON, THEME_COMMON_CSS } from './ThemeCommon';
+import { ADAPTIVE_COLORS_LIGHT } from '@ui/theme/constants/AdaptiveColorsLight';
+import { BLUR_LIGHT } from '@ui/theme/constants/BlurLight';
+import { ILLUSTRATION_ICON_LIGHT } from '@ui/theme/constants/IllustrationIconLight';
+import { SNACK_BAR_LIGHT } from '@ui/theme/constants/SnackBarLight';
+import { ACCENT_LIGHT } from './AccentLight';
+import { BACKGROUND_LIGHT } from './BackgroundLight';
+import { BORDER_LIGHT } from './BorderLight';
+import { BOX_SHADOW_LIGHT } from './BoxShadowLight';
+import { CODE_LIGHT } from './CodeLight';
+import { FONT_LIGHT } from './FontLight';
+import { TAG_LIGHT } from './TagLight';
+import { THEME_COMMON } from './ThemeCommon';
 
 export const THEME_LIGHT = {
   ...THEME_COMMON,
@@ -38,19 +28,3 @@ export const THEME_LIGHT = {
     adaptiveColors: ADAPTIVE_COLORS_LIGHT,
   },
 };
-
-// eslint-disable-next-line @nx/workspace-max-consts-per-file
-export const THEME_LIGHT_CSS = css`
-  ${THEME_COMMON_CSS}
-  ${ACCENT_LIGHT_CSS}
-  ${BACKGROUND_LIGHT_CSS}
-  ${BLUR_LIGHT_CSS}
-  ${BORDER_LIGHT_CSS}
-  ${BOX_SHADOW_LIGHT_CSS}
-  ${CODE_LIGHT_CSS}
-  ${FONT_LIGHT_CSS}
-  ${TAG_LIGHT_CSS}
-  ${ILLUSTRATION_ICON_LIGHT_CSS}
-  ${ADAPTIVE_COLORS_LIGHT_CSS}
-  ${SNACK_BAR_LIGHT_CSS}
-`;
