@@ -538,7 +538,7 @@ export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
 
 export const DASHBOARD_STANDARD_FIELD_IDS = {
   title: '20202020-20ee-4091-95dc-44b57eda3a89',
-  pageLayoutId: '20202020-c34c-13d5-ef5f-41de-af42-2ab681765640',
+  pageLayoutId: '20202020-bb53-4648-aa36-1d9d54e6f7f2',
 } as const;
 
 export const STANDARD_OBJECT_FIELD_IDS = {
