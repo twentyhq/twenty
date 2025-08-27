@@ -26,7 +26,7 @@ import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromK
 
 type UpdateManyRecordArgs = {
   idToUpdate: string;
-  relatedRecordId: string;
+  relatedRecordId: string | null;
   objectNameSingulars: string[];
   recordGqlFields?: Record<string, any>;
 };
