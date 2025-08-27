@@ -12,4 +12,7 @@ export const ADMIN_ROLE: StandardRoleDefinition = {
   canUpdateAllObjectRecords: true,
   canSoftDeleteAllObjectRecords: true,
   canDestroyAllObjectRecords: true,
+  canBeAssignedToUsers: true,
+  canBeAssignedToAgents: true,
+  canBeAssignedToApiKeys: true,
 };
