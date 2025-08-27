@@ -99,9 +99,7 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
           update: { disabled: true },
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],
-          interceptors: [
-            ObjectMetadataGraphqlApiExceptionInterceptor,
-          ],
+          interceptors: [ObjectMetadataGraphqlApiExceptionInterceptor],
           filters: [PermissionsGraphqlApiExceptionFilter],
         },
       ],

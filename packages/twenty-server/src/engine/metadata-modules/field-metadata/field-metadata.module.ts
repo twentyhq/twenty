@@ -100,9 +100,7 @@ import { FieldMetadataService } from './services/field-metadata.service';
           },
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],
-          interceptors: [
-            FieldMetadataGraphqlApiExceptionInterceptor,
-          ],
+          interceptors: [FieldMetadataGraphqlApiExceptionInterceptor],
         },
       ],
     }),
