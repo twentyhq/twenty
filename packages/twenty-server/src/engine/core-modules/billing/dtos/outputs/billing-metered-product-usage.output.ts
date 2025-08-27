@@ -17,7 +17,7 @@ export class BillingMeteredProductUsageOutput {
   usageQuantity: number;
 
   @Field(() => Number)
-  freeTierQuantity: number;
+  tierQuantity: number;
 
   @Field(() => Number)
   freeTrialQuantity: number;

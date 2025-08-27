@@ -116,7 +116,7 @@ export class BillingSubscriptionItemService {
           stripeSubscriptionItemId: item.stripeSubscriptionItemId,
           productKey: item.billingProduct.metadata.productKey,
           stripeMeterId: price.stripeMeterId,
-          freeTierQuantity: this.getFreeTierQuantity(price),
+          tierQuantity: this.getTierQuantity(price),
           freeTrialQuantity: this.getFreeTrialQuantity(item),
           unitPriceCents: this.getUnitPrice(price),
         });
@@ -125,7 +125,7 @@ export class BillingSubscriptionItemService {
         stripeSubscriptionItemId: string;
         productKey: BillingProductKey;
         stripeMeterId: string;
-        freeTierQuantity: number;
+        tierQuantity: number;
         freeTrialQuantity: number;
         unitPriceCents: number;
       }>,
@@ -157,8 +157,10 @@ export class BillingSubscriptionItemService {
     return matchingPrice;
   }
 
-  private getFreeTierQuantity(price: BillingPrice): number {
-    return price.tiers?.find((tier) => tier.unit_amount === 0)?.up_to || 0;
+  private getTierQuantity(price: BillingPrice): number {
+    billingValidator.assertIsMeteredTiersSchemaOrThrow(price.tiers);
+
+    return price.tiers[0].up_to;
   }
 
   private getFreeTrialQuantity(item: BillingSubscriptionItem): number {
@@ -176,9 +178,8 @@ export class BillingSubscriptionItemService {
   }
 
   private getUnitPrice(price: BillingPrice): number {
-    return Number(
-      price.tiers?.find((tier) => tier.up_to === null)?.unit_amount_decimal ||
-        0,
-    );
+    billingValidator.assertIsMeteredTiersSchemaOrThrow(price.tiers);
+
+    return Number(price.tiers[1].unit_amount_decimal);
   }
 }

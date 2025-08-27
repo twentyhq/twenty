@@ -12,6 +12,7 @@ import {
   type BillingPriceOutput,
   type BillingSubscriptionItem,
 } from '~/generated/graphql';
+import { findOrThrow } from '~/utils/array/findOrThrow';
 
 export const MeteredPriceSelector = ({
   meteredBillingPrices,
@@ -47,7 +48,8 @@ export const MeteredPriceSelector = ({
       });
       enqueueSuccessSnackBar({ message: t`Price updated.` });
       setCurrentMeteredBillingPrice(
-        meteredBillingPrices.find(
+        findOrThrow(
+          meteredBillingPrices,
           ({ stripePriceId }) => stripePriceId === priceId,
         ),
       );
@@ -62,7 +64,7 @@ export const MeteredPriceSelector = ({
     <>
       <H2Title title={t`Credit Plan`} />
       <Select
-        label={t`Number of new credits allocated every month`}
+        label={t`Number of new credits allocated every ${currentMeteredBillingPrice.interval.toLowerCase()}`}
         dropdownId={'settings-billing-metered-price'}
         options={options}
         value={currentMeteredBillingPrice?.stripePriceId}

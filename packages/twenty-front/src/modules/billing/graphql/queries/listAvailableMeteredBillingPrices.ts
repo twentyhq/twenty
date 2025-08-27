@@ -6,6 +6,7 @@ export const LIST_AVAILABLE_METERED_BILLING_PRICES = gql`
       nickname
       amount
       stripePriceId
+      interval
     }
   }
 `;

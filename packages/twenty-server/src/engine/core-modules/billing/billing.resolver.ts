@@ -222,11 +222,13 @@ export class BillingResolver {
     ).reduce(
       (acc, billingPrice) =>
         isDefined(billingPrice.tiers?.[0].flat_amount) &&
-        isDefined(billingPrice.nickname)
+        isDefined(billingPrice.nickname) &&
+        isDefined(billingPrice.interval)
           ? acc.concat({
               amount: billingPrice.tiers[0].flat_amount,
               nickname: billingPrice.nickname,
               stripePriceId: billingPrice.stripePriceId,
+              interval: billingPrice.interval,
             })
           : acc,
       [] as BillingPriceOutput[],

@@ -14,6 +14,10 @@ import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfo
 import { useListAvailableMeteredBillingPricesQuery } from '~/generated-metadata/graphql';
 import { MeteredPriceSelector } from '@/billing/components/internal/MeteredPriceSelector';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
+import {
+  getIntervalLabel,
+  isMonthlyPlan,
+} from '@/billing/utils/subscriptionFlags';
 
 const StyledLineSeparator = styled.div`
   width: 100%;
@@ -50,12 +54,14 @@ export const SettingsBillingMonthlyCreditsSection = ({
     ? formatAmount(freeUsageQuantity)
     : formatNumber(freeUsageQuantity);
 
+  const intervalLabel = getIntervalLabel(isMonthlyPlan(currentWorkspace));
+
   return (
     <>
       <Section>
         <H2Title
           title={t`Credit Usage`}
-          description={t`Track your monthly workflow credit consumption.`}
+          description={t`Track your ${intervalLabel} workflow credit consumption.`}
         />
         <SubscriptionInfoContainer>
           <SettingsBillingLabelValueItem

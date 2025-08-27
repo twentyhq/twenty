@@ -132,8 +132,8 @@ export class BillingUsageService {
           );
 
         const totalCostCents =
-          meterEventsSum - item.freeTierQuantity > 0
-            ? (meterEventsSum - item.freeTierQuantity) * item.unitPriceCents
+          meterEventsSum - item.tierQuantity > 0
+            ? (meterEventsSum - item.tierQuantity) * item.unitPriceCents
             : 0;
 
         return {
@@ -141,7 +141,7 @@ export class BillingUsageService {
           periodStart,
           periodEnd,
           usageQuantity: meterEventsSum,
-          freeTierQuantity: item.freeTierQuantity,
+          tierQuantity: item.tierQuantity,
           freeTrialQuantity: item.freeTrialQuantity,
           unitPriceCents: item.unitPriceCents,
           totalCostCents,

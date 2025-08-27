@@ -248,11 +248,11 @@ export type BillingEndTrialPeriodOutput = {
 
 export type BillingMeteredProductUsageOutput = {
   __typename?: 'BillingMeteredProductUsageOutput';
-  freeTierQuantity: Scalars['Float'];
   freeTrialQuantity: Scalars['Float'];
   periodEnd: Scalars['DateTime'];
   periodStart: Scalars['DateTime'];
   productKey: BillingProductKey;
+  tierQuantity: Scalars['Float'];
   totalCostCents: Scalars['Float'];
   unitPriceCents: Scalars['Float'];
   usageQuantity: Scalars['Float'];
@@ -292,6 +292,7 @@ export type BillingPriceMeteredDto = {
 export type BillingPriceOutput = {
   __typename?: 'BillingPriceOutput';
   amount: Scalars['Float'];
+  interval: SubscriptionInterval;
   nickname: Scalars['String'];
   stripePriceId: Scalars['String'];
 };

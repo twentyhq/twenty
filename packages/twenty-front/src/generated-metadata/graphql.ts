@@ -248,11 +248,11 @@ export type BillingEndTrialPeriodOutput = {
 
 export type BillingMeteredProductUsageOutput = {
   __typename?: 'BillingMeteredProductUsageOutput';
-  freeTierQuantity: Scalars['Float'];
   freeTrialQuantity: Scalars['Float'];
   periodEnd: Scalars['DateTime'];
   periodStart: Scalars['DateTime'];
   productKey: BillingProductKey;
+  tierQuantity: Scalars['Float'];
   totalCostCents: Scalars['Float'];
   unitPriceCents: Scalars['Float'];
   usageQuantity: Scalars['Float'];
@@ -292,6 +292,7 @@ export type BillingPriceMeteredDto = {
 export type BillingPriceOutput = {
   __typename?: 'BillingPriceOutput';
   amount: Scalars['Float'];
+  interval: SubscriptionInterval;
   nickname: Scalars['String'];
   stripePriceId: Scalars['String'];
 };
@@ -4137,12 +4138,12 @@ export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSes
 export type GetMeteredProductsUsageQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsageOutput', productKey: BillingProductKey, usageQuantity: number, freeTierQuantity: number, freeTrialQuantity: number, unitPriceCents: number, totalCostCents: number }> };
+export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsageOutput', productKey: BillingProductKey, usageQuantity: number, tierQuantity: number, freeTrialQuantity: number, unitPriceCents: number, totalCostCents: number }> };
 
 export type ListAvailableMeteredBillingPricesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListAvailableMeteredBillingPricesQuery = { __typename?: 'Query', listAvailableMeteredBillingPrices: Array<{ __typename?: 'BillingPriceOutput', nickname: string, amount: number, stripePriceId: string }> };
+export type ListAvailableMeteredBillingPricesQuery = { __typename?: 'Query', listAvailableMeteredBillingPrices: Array<{ __typename?: 'BillingPriceOutput', nickname: string, amount: number, stripePriceId: string, interval: SubscriptionInterval }> };
 
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: string, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: string, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };
 
@@ -7341,7 +7342,7 @@ export const GetMeteredProductsUsageDocument = gql`
   getMeteredProductsUsage {
     productKey
     usageQuantity
-    freeTierQuantity
+    tierQuantity
     freeTrialQuantity
     unitPriceCents
     totalCostCents
@@ -7381,6 +7382,7 @@ export const ListAvailableMeteredBillingPricesDocument = gql`
     nickname
     amount
     stripePriceId
+    interval
   }
 }
     `;

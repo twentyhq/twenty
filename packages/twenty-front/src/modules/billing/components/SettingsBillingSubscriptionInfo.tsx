@@ -3,6 +3,13 @@ import { SubscriptionInfoRowContainer } from '@/billing/components/SubscriptionI
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { formatMonthlyPrices } from '@/billing/utils/formatMonthlyPrices';
+import {
+  isMonthlyPlan as isMonthlyPlanFn,
+  isYearlyPlan as isYearlyPlanFn,
+  isProPlan as isProPlanFn,
+  isEnterprisePlan as isEnterprisePlanFn,
+  getIntervalLabel,
+} from '@/billing/utils/subscriptionFlags';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -10,7 +17,7 @@ import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
 import {
   H2Title,
@@ -64,21 +71,13 @@ export const SettingsBillingSubscriptionInfo = () => {
     currentWorkspaceState,
   );
 
-  const isMonthlyPlan =
-    currentWorkspace?.currentBillingSubscription?.interval ===
-    SubscriptionInterval.Month;
+  const isMonthlyPlan = isMonthlyPlanFn(currentWorkspace);
 
-  const isYearlyPlan =
-    currentWorkspace?.currentBillingSubscription?.interval ===
-    SubscriptionInterval.Year;
+  const isYearlyPlan = isYearlyPlanFn(currentWorkspace);
 
-  const isProPlan =
-    currentWorkspace?.currentBillingSubscription?.metadata['plan'] ===
-    BillingPlanKey.PRO;
+  const isProPlan = isProPlanFn(currentWorkspace);
 
-  const isEnterprisePlan =
-    currentWorkspace?.currentBillingSubscription?.metadata['plan'] ===
-    BillingPlanKey.ENTERPRISE;
+  const isEnterprisePlan = isEnterprisePlanFn(currentWorkspace);
 
   const canSwitchSubscription =
     subscriptionStatus !== SubscriptionStatus.PastDue;
@@ -89,11 +88,7 @@ export const SettingsBillingSubscriptionInfo = () => {
     <Tag color={'purple'} text={t`Organization`} />
   ) : undefined;
 
-  const intervalLabel = isMonthlyPlan
-    ? t`Monthly`
-    : isYearlyPlan
-      ? t`Yearly`
-      : undefined;
+  const intervalLabel = capitalize(getIntervalLabel(isMonthlyPlan));
 
   const seats =
     currentWorkspace?.currentBillingSubscription?.billingSubscriptionItems?.find(

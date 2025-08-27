@@ -29,8 +29,7 @@ export const useGetWorkflowNodeExecutionUsage = () => {
   const includedFreeQuantity =
     subscriptionStatus === SubscriptionStatus.Trialing
       ? workflowUsage.freeTrialQuantity
-      : workflowUsage.freeTierQuantity;
-
+      : workflowUsage.tierQuantity;
   return {
     usageQuantity: workflowUsage.usageQuantity,
     freeUsageQuantity:
