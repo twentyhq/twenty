@@ -21,6 +21,7 @@ type Story = StoryObj<typeof SettingsAccountsCalendarChannelsGeneral>;
 
 export const Default: Story = {
   play: async () => {
+    // eslint-disable-next-line no-console
     console.log('CI TEST 1');
   },
 };
