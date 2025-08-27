@@ -1,4 +1,3 @@
-import { type PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
@@ -14,5 +13,4 @@ export type MetadataEntitiesRelationTarget =
   | FieldPermissionEntity
   | DataSourceEntity
   | IndexMetadataEntity
-  | ObjectPermissionEntity
-  | PageLayoutEntity;
+  | ObjectPermissionEntity;
