@@ -10,8 +10,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# env:
-  # STORYBOOK_BUILD_CACHE_KEY: storybook-build-depot-ubuntu-24.04-8-runner
+env:
+  STORYBOOK_BUILD_CACHE_KEY: storybook-build-depot-ubuntu-24.04-8-runner
 
 jobs:
   changed-files-check:
@@ -79,7 +79,7 @@ jobs:
       - name: Restore storybook build cache
         uses: ./.github/workflows/actions/restore-cache
         with:
-          key: storybook-build-${{ github.ref_name }}
+          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY }}
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       # - name: Front / Build storybook
