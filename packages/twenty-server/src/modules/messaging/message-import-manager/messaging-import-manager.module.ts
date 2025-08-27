@@ -10,6 +10,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
 import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
+import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/folder-sync-manager/messaging-folder-sync-manager.module';
 import { MessagingMessageCleanerModule } from 'src/modules/messaging/message-cleaner/messaging-message-cleaner.module';
 import { MessagingSingleMessageImportCommand } from 'src/modules/messaging/message-import-manager/commands/messaging-single-message-import.command';
 import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
@@ -58,6 +59,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessageParticipantManagerModule,
     MessagingMonitoringModule,
     MessagingMessageCleanerModule,
+    MessagingFolderSyncManagerModule,
     WorkspaceEventEmitterModule,
   ],
   providers: [
@@ -90,6 +92,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingMessageListFetchCronCommand,
     MessagingMessagesImportCronCommand,
     MessagingOngoingStaleCronCommand,
+    MessagingFolderSyncManagerModule,
   ],
 })
 export class MessagingImportManagerModule {}

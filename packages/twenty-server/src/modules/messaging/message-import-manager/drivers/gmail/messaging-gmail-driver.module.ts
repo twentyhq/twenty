@@ -13,6 +13,7 @@ import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { GmailFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-fetch-by-batch.service';
+import { GmailGetAllFoldersService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-all-folders.service';
 import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
 import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
 import { GmailGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-messages.service';
@@ -42,11 +43,13 @@ import { OAuth2ClientProvider } from 'src/modules/messaging/message-import-manag
     GmailFetchByBatchService,
     GmailGetMessagesService,
     GmailGetMessageListService,
+    GmailGetAllFoldersService,
     GmailHandleErrorService,
   ],
   exports: [
     GmailGetMessagesService,
     GmailGetMessageListService,
+    GmailGetAllFoldersService,
     GmailClientProvider,
     OAuth2ClientProvider,
   ],

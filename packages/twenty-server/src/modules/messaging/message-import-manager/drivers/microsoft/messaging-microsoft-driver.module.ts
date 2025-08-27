@@ -9,6 +9,7 @@ import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 import { MicrosoftFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-fetch-by-batch.service';
+import { MicrosoftGetAllFoldersService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-all-folders.service';
 import { MicrosoftGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service';
 import { MicrosoftHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-handle-error.service';
 
@@ -27,12 +28,14 @@ import { MicrosoftGetMessageListService } from './services/microsoft-get-message
     MicrosoftClientProvider,
     MicrosoftGetMessageListService,
     MicrosoftGetMessagesService,
+    MicrosoftGetAllFoldersService,
     MicrosoftFetchByBatchService,
     MicrosoftHandleErrorService,
     MicrosoftOAuth2ClientManagerService,
   ],
   exports: [
     MicrosoftGetMessageListService,
+    MicrosoftGetAllFoldersService,
     MicrosoftClientProvider,
     MicrosoftGetMessagesService,
   ],

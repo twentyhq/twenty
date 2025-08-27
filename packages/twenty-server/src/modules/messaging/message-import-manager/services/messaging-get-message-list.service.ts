@@ -23,24 +23,33 @@ export class MessagingGetMessageListService {
   public async getMessageLists(
     messageChannel: MessageChannelWorkspaceEntity,
   ): Promise<GetMessageListsResponse> {
+    // Considering keeping this here or move to driver level?
+    const messageFoldersToSync = messageChannel.messageFolders.filter(
+      (folder) => folder.isSynced,
+    );
+
+    if (messageFoldersToSync.length === 0) {
+      return [];
+    }
+
     switch (messageChannel.connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
         return await this.gmailGetMessageListService.getMessageLists({
           messageChannel,
           connectedAccount: messageChannel.connectedAccount,
-          messageFolders: messageChannel.messageFolders,
+          messageFolders: messageFoldersToSync,
         });
       case ConnectedAccountProvider.MICROSOFT:
         return this.microsoftGetMessageListService.getMessageLists({
           messageChannel,
           connectedAccount: messageChannel.connectedAccount,
-          messageFolders: messageChannel.messageFolders,
+          messageFolders: messageFoldersToSync,
         });
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV: {
         return await this.imapGetMessageListService.getMessageLists({
           messageChannel,
           connectedAccount: messageChannel.connectedAccount,
-          messageFolders: messageChannel.messageFolders,
+          messageFolders: messageFoldersToSync,
         });
       }
       default:

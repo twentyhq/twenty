@@ -36,7 +36,10 @@ export class GmailGetMessageListService {
       ConnectedAccountWorkspaceEntity,
       'provider' | 'refreshToken' | 'id' | 'handle'
     >,
-    messageFolders: Pick<MessageFolderWorkspaceEntity, 'name'>[],
+    messageFolders: Pick<
+      MessageFolderWorkspaceEntity,
+      'name' | 'externalId' | 'isSynced'
+    >[],
   ): Promise<GetMessageListsResponse> {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(connectedAccount);
@@ -54,6 +57,7 @@ export class GmailGetMessageListService {
           maxResults: MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
           pageToken,
           q: computeGmailCategoryExcludeSearchFilter(excludedCategories),
+          labelIds: this.getCustomLabelIds(messageFolders),
         })
         .catch((error) => {
           this.logger.error(
@@ -182,7 +186,7 @@ export class GmailGetMessageListService {
   }
 
   private comptuteExcludedCategories(
-    messageFolders: Pick<MessageFolderWorkspaceEntity, 'name'>[],
+    messageFolders: Pick<MessageFolderWorkspaceEntity, 'name' | 'externalId'>[],
   ) {
     const includedDefaultCategories = messageFolders
       .map((messageFolder) =>
@@ -199,7 +203,7 @@ export class GmailGetMessageListService {
   private async getEmailIdsFromExcludedCategories(
     gmailClient: gmailV1.Gmail,
     lastSyncHistoryId: string,
-    messageFolders: Pick<MessageFolderWorkspaceEntity, 'name'>[],
+    messageFolders: Pick<MessageFolderWorkspaceEntity, 'name' | 'externalId'>[],
   ): Promise<string[]> {
     const emailIds: string[] = [];
 
@@ -224,5 +228,24 @@ export class GmailGetMessageListService {
     }
 
     return emailIds;
+  }
+
+  private getCustomLabelIds(
+    messageFolders: Pick<
+      MessageFolderWorkspaceEntity,
+      'name' | 'externalId' | 'isSynced'
+    >[],
+  ): string[] | undefined {
+    const customLabelIds = messageFolders
+      .filter(
+        (folder) =>
+          folder.externalId &&
+          folder.isSynced &&
+          !mapGmailDefaultFolderToCategoryOrUndefined(folder.name),
+      )
+      .map((folder) => folder.externalId)
+      .filter((id): id is string => !!id);
+
+    return customLabelIds.length > 0 ? customLabelIds : undefined;
   }
 }

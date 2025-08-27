@@ -130,6 +130,7 @@ describe('WorkspaceEntityManager', () => {
         IS_AI_ENABLED: false,
         IS_IMAP_SMTP_CALDAV_ENABLED: false,
         IS_MORPH_RELATION_ENABLED: false,
+        IS_MESSAGE_FOLDER_CONTROL_ENABLED: false,
 
         IS_WORKFLOW_BRANCH_ENABLED: false,
         IS_RELATION_CONNECT_ENABLED: false,

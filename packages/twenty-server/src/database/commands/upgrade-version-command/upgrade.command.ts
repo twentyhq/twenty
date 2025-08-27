@@ -31,6 +31,7 @@ import { RemoveWorkflowRunsWithoutState } from 'src/database/commands/upgrade-ve
 import { AddNextStepIdsToWorkflowRunsTrigger } from 'src/database/commands/upgrade-version-command/1-3/1-3-add-next-step-ids-to-workflow-runs-trigger.command';
 import { AssignRolesToExistingApiKeysCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-assign-roles-to-existing-api-keys.command';
 import { UpdateTimestampColumnTypeInWorkspaceSchemaCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-update-timestamp-column-type-in-workspace-schema.command';
+import { PopulateMessageFolderFieldsCommand } from 'src/database/commands/upgrade-version-command/1-4/1-4-populate-message-folder-fields.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -161,6 +162,9 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly assignRolesToExistingApiKeysCommand: AssignRolesToExistingApiKeysCommand,
     protected readonly addNextStepIdsToWorkflowRunsTrigger: AddNextStepIdsToWorkflowRunsTrigger,
     protected readonly updateTimestampColumnTypeInWorkspaceSchemaCommand: UpdateTimestampColumnTypeInWorkspaceSchemaCommand,
+
+    // 1.4 Commands
+    protected readonly populateMessageFolderFieldsCommand: PopulateMessageFolderFieldsCommand,
   ) {
     super(
       workspaceRepository,
@@ -231,7 +235,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     const commands_140: VersionCommands = {
       beforeSyncMetadata: [],
-      afterSyncMetadata: [],
+      afterSyncMetadata: [this.populateMessageFolderFieldsCommand],
     };
 
     this.allCommands = {

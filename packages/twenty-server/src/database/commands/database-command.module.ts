@@ -18,6 +18,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-event-import-manager/calendar-event-import-manager.module';
+import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/folder-sync-manager/messaging-folder-sync-manager.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
@@ -28,8 +29,8 @@ import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
   imports: [
     UpgradeVersionCommandModule,
     TypeOrmModule.forFeature([Workspace], 'core'),
-    // Cron command dependencies
     MessagingImportManagerModule,
+    MessagingFolderSyncManagerModule,
     CalendarEventImportManagerModule,
     AutomatedTriggerModule,
     FileModule,
