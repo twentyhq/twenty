@@ -38,7 +38,7 @@ export class GoogleAPIsAuthController {
     private readonly onboardingService: OnboardingService,
     private readonly domainManagerService: DomainManagerService,
     private readonly guardRedirectService: GuardRedirectService,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 

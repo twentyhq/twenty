@@ -20,7 +20,7 @@ export const WORKFLOW_RUN_ENQUEUE_CRON_PATTERN = '* * * * *';
 @Processor(MessageQueue.cronQueue)
 export class WorkflowRunEnqueueJob {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,

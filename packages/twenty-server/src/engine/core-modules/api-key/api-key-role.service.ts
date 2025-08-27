@@ -17,15 +17,15 @@ import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/wo
 @Injectable()
 export class ApiKeyRoleService {
   constructor(
-    @InjectRepository(RoleTargetsEntity, 'core')
+    @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
 
-    @InjectRepository(ApiKey, 'core')
+    @InjectRepository(ApiKey)
     private readonly apiKeyRepository: Repository<ApiKey>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
-    @InjectDataSource('core')
+    @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
 

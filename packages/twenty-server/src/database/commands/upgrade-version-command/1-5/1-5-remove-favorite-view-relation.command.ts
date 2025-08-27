@@ -27,11 +27,11 @@ import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync
 })
 export class RemoveFavoriteViewRelation extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     protected readonly workspaceSchemaManager: WorkspaceSchemaManagerService,
-    @InjectDataSource('core')
+    @InjectDataSource()
     protected readonly coreDataSource: DataSource,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {

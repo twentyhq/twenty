@@ -21,7 +21,7 @@ import { SyncWorkspaceLoggerService } from './services/sync-workspace-logger.ser
 })
 export class SyncWorkspaceMetadataCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
     private readonly dataSourceService: DataSourceService,

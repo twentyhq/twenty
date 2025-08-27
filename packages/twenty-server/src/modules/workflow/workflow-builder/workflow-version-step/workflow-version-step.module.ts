@@ -18,10 +18,7 @@ import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workf
     WorkflowRunnerModule,
     WorkflowRunModule,
     WorkflowCommonModule,
-    NestjsQueryTypeOrmModule.forFeature(
-      [ObjectMetadataEntity, AgentEntity],
-      'core',
-    ),
+    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity, AgentEntity]),
   ],
   providers: [WorkflowVersionStepWorkspaceService],
   exports: [WorkflowVersionStepWorkspaceService],

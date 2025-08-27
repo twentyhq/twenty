@@ -31,20 +31,20 @@ describe('ObjectPermissionService', () => {
       providers: [
         ObjectPermissionService,
         {
-          provide: getRepositoryToken(ObjectPermissionEntity, 'core'),
+          provide: getRepositoryToken(ObjectPermissionEntity),
           useValue: {
             upsert: jest.fn(),
             find: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(RoleEntity, 'core'),
+          provide: getRepositoryToken(RoleEntity),
           useValue: {
             findOne: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(ObjectMetadataEntity, 'core'),
+          provide: getRepositoryToken(ObjectMetadataEntity),
           useValue: {
             find: jest.fn(),
           },
@@ -66,9 +66,9 @@ describe('ObjectPermissionService', () => {
 
     service = module.get<ObjectPermissionService>(ObjectPermissionService);
     objectPermissionRepository = module.get(
-      getRepositoryToken(ObjectPermissionEntity, 'core'),
+      getRepositoryToken(ObjectPermissionEntity),
     );
-    roleRepository = module.get(getRepositoryToken(RoleEntity, 'core'));
+    roleRepository = module.get(getRepositoryToken(RoleEntity));
     workspacePermissionsCacheService = module.get(
       WorkspacePermissionsCacheService,
     );

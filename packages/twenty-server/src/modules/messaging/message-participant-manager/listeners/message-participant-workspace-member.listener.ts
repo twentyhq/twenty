@@ -25,7 +25,7 @@ export class MessageParticipantWorkspaceMemberListener {
   constructor(
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 

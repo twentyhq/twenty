@@ -36,9 +36,9 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 @Injectable()
 export class WorkspaceInvitationService {
   constructor(
-    @InjectRepository(AppToken, 'core')
+    @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
-    @InjectRepository(UserWorkspace, 'core')
+    @InjectRepository(UserWorkspace)
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailService: EmailService,

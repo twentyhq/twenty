@@ -92,9 +92,9 @@ import { AuthService } from './services/auth.service';
 )
 export class AuthResolver {
   constructor(
-    @InjectRepository(User, 'core')
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(AppToken, 'core')
+    @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     private authService: AuthService,

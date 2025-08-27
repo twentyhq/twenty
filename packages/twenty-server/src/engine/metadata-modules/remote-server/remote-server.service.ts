@@ -33,17 +33,17 @@ import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-contex
 @Injectable()
 export class RemoteServerService<T extends RemoteServerType> {
   constructor(
-    @InjectRepository(RemoteServerEntity, 'core')
+    @InjectRepository(RemoteServerEntity)
     private readonly remoteServerRepository: Repository<
       RemoteServerEntity<RemoteServerType>
     >,
-    @InjectDataSource('core')
+    @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly foreignDataWrapperServerQueryFactory: ForeignDataWrapperServerQueryFactory,
     private readonly remoteTableService: RemoteTableService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    @InjectRepository(FeatureFlag, 'core')
+    @InjectRepository(FeatureFlag)
     private readonly featureFlagRepository: Repository<FeatureFlag>,
   ) {}
 

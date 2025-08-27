@@ -12,7 +12,7 @@ import { type ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-o
 @Injectable()
 export class ViewFilterGroupSyncService {
   constructor(
-    @InjectRepository(ViewFilterGroupEntity, 'core')
+    @InjectRepository(ViewFilterGroupEntity)
     private readonly coreViewFilterGroupRepository: Repository<ViewFilterGroupEntity>,
   ) {}
 

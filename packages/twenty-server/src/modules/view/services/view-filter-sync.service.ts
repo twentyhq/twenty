@@ -14,7 +14,7 @@ import { convertViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/uti
 @Injectable()
 export class ViewFilterSyncService {
   constructor(
-    @InjectRepository(ViewFilterEntity, 'core')
+    @InjectRepository(ViewFilterEntity)
     private readonly coreViewFilterRepository: Repository<ViewFilterEntity>,
   ) {}
 

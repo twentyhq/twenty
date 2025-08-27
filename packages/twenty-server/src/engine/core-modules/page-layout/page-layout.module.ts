@@ -7,10 +7,11 @@ import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/p
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [PageLayoutEntity, PageLayoutTabEntity, PageLayoutWidgetEntity],
-      'core',
-    ),
+    TypeOrmModule.forFeature([
+      PageLayoutEntity,
+      PageLayoutTabEntity,
+      PageLayoutWidgetEntity,
+    ]),
   ],
   exports: [],
 })

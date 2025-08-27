@@ -17,7 +17,7 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 export class GoogleOauthGuard extends AuthGuard('google') {
   constructor(
     private readonly guardRedirectService: GuardRedirectService,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly domainManagerService: DomainManagerService,
   ) {

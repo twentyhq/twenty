@@ -13,10 +13,7 @@ import { AiAgentWorkflowAction } from './ai-agent.workflow-action';
 @Module({
   imports: [
     AiModule,
-    TypeOrmModule.forFeature(
-      [AgentEntity, RoleTargetsEntity, RoleEntity],
-      'core',
-    ),
+    TypeOrmModule.forFeature([AgentEntity, RoleTargetsEntity, RoleEntity]),
   ],
   providers: [
     ScopedWorkspaceContextFactory,

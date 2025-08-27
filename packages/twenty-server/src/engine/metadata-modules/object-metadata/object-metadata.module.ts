@@ -52,11 +52,11 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         TypeORMModule,
-        NestjsQueryTypeOrmModule.forFeature(
-          [ObjectMetadataEntity, FieldMetadataEntity],
-          'core',
-        ),
-        TypeOrmModule.forFeature([FeatureFlag, ViewEntity], 'core'),
+        NestjsQueryTypeOrmModule.forFeature([
+          ObjectMetadataEntity,
+          FieldMetadataEntity,
+        ]),
+        TypeOrmModule.forFeature([FeatureFlag, ViewEntity]),
         DataSourceModule,
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,

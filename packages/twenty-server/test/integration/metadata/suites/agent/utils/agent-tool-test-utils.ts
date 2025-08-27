@@ -57,7 +57,7 @@ export const createAgentToolTestModule =
           },
         },
         {
-          provide: getRepositoryToken(RoleEntity, 'core'),
+          provide: getRepositoryToken(RoleEntity),
           useValue: {
             findOne: jest.fn(),
           },
@@ -161,7 +161,7 @@ export const createAgentToolTestModule =
       ObjectMetadataService,
     );
     const roleRepository = module.get<Repository<RoleEntity>>(
-      getRepositoryToken(RoleEntity, 'core'),
+      getRepositoryToken(RoleEntity),
     );
     const workspacePermissionsCacheService =
       module.get<WorkspacePermissionsCacheService>(

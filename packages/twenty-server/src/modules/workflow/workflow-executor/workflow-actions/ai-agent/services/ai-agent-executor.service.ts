@@ -26,9 +26,9 @@ export class AiAgentExecutorService {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly toolAdapterService: ToolAdapterService,
-    @InjectRepository(RoleTargetsEntity, 'core')
+    @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly toolService: ToolService,
   ) {}

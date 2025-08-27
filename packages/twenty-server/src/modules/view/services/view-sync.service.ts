@@ -14,7 +14,7 @@ import { type ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view
 @Injectable()
 export class ViewSyncService {
   constructor(
-    @InjectRepository(ViewEntity, 'core')
+    @InjectRepository(ViewEntity)
     private readonly coreViewRepository: Repository<ViewEntity>,
   ) {}
 

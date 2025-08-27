@@ -40,7 +40,7 @@ describe('WebhookService', () => {
       providers: [
         WebhookService,
         {
-          provide: getRepositoryToken(Webhook, 'core'),
+          provide: getRepositoryToken(Webhook),
           useValue: mockWebhookRepository,
         },
       ],

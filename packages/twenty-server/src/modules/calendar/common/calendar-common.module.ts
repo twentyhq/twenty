@@ -10,7 +10,7 @@ import { ConnectedAccountModule } from 'src/modules/connected-account/connected-
 @Module({
   imports: [
     WorkspaceDataSourceModule,
-    TypeOrmModule.forFeature([FeatureFlag], 'core'),
+    TypeOrmModule.forFeature([FeatureFlag]),
     ConnectedAccountModule,
     MetricsModule,
   ],

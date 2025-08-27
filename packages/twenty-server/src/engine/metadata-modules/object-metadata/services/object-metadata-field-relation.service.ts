@@ -39,9 +39,9 @@ export const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
 @Injectable()
 export class ObjectMetadataFieldRelationService {
   constructor(
-    @InjectRepository(ObjectMetadataEntity, 'core')
+    @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity, 'core')
+    @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {}
 
