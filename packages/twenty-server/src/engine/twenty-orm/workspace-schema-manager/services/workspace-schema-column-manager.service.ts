@@ -102,7 +102,7 @@ export class WorkspaceSchemaColumnManagerService {
         return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT NULL`;
       }
 
-      return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT '${defaultValue}'`;
+      return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ${defaultValue}`;
     };
 
     const sql = computeDefaultValueSqlQuery();

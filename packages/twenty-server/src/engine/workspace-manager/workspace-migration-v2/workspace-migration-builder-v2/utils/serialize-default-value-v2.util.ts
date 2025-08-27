@@ -45,7 +45,7 @@ export const serializeDefaultValueV2 = ({
     return serializedTypeDefaultValue;
   }
 
-  const sanitizeAndAddPrefix = (defaultValue: string) =>
+  const sanitizeAndAddCastPrefix = (defaultValue: string) =>
     `'${removeSqlDDLInjection(defaultValue)}'` + castPrefix;
 
   const castPrefix =
@@ -62,26 +62,26 @@ export const serializeDefaultValueV2 = ({
         );
       }
 
-      return sanitizeAndAddPrefix(defaultValue);
+      return sanitizeAndAddCastPrefix(defaultValue);
     }
     case 'boolean':
     case 'number': {
-      return sanitizeAndAddPrefix(`${defaultValue}`);
+      return sanitizeAndAddCastPrefix(`${defaultValue}`);
     }
     case 'object': {
       if (defaultValue instanceof Date) {
-        return sanitizeAndAddPrefix(`'${defaultValue.toISOString()}'`);
+        return sanitizeAndAddCastPrefix(`'${defaultValue.toISOString()}'`);
       }
 
       if (Array.isArray(defaultValue)) {
         const arrayValues = defaultValue
-          .map((val) => sanitizeAndAddPrefix(val))
+          .map((val) => `'${removeSqlDDLInjection(val)}'`)
           .join(',');
 
-        return `ARRAY[${arrayValues}]`;
+        return `ARRAY[${arrayValues}]${castPrefix}[]`;
       }
 
-      return sanitizeAndAddPrefix(`'${JSON.stringify(defaultValue)}'`); // Won't work :thinking: at all will remove every brackets and so on
+      return sanitizeAndAddCastPrefix(`'${JSON.stringify(defaultValue)}'`); // Won't work :thinking: at all will remove every brackets and so on
     }
     default: {
       throw new FieldMetadataException(

@@ -40,6 +40,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   async executeForWorkspaceSchema(
+    // here
     context: WorkspaceMigrationActionRunnerArgs<CreateFieldAction>,
   ): Promise<void> {
     const { action, queryRunner, flatObjectMetadataMaps, workspaceId } =
@@ -63,16 +64,16 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       operation: EnumOperation.CREATE,
     });
 
+    const columnDefinitions = generateColumnDefinitions({
+      flatFieldMetadata: flatFieldMetadata,
+      flatObjectMetadataWithoutFields: flatObjectMetadataWithFlatFieldMaps,
+    });
+
     await executeBatchEnumOperations({
       enumOperations,
       queryRunner,
       schemaName,
       workspaceSchemaManagerService: this.workspaceSchemaManagerService,
-    });
-
-    const columnDefinitions = generateColumnDefinitions({
-      flatFieldMetadata: flatFieldMetadata,
-      flatObjectMetadataWithoutFields: flatObjectMetadataWithFlatFieldMaps,
     });
 
     await this.workspaceSchemaManagerService.columnManager.addColumns({
