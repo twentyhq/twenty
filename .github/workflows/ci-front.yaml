@@ -80,7 +80,7 @@ jobs:
       - name: Front / Build storybook
         run: npx nx storybook:build twenty-front
       - name: Run storybook tests
-        run: npx nx storybook:serve-and-test:static twenty-front --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }} --checkCoverage=false **/SettingsAccountsCalendarChannelsGeneral.stories.tsx
+        run: npx nx storybook:serve-and-test:static twenty-front --checkCoverage=false
       - name: Rename coverage file
         run: mv packages/twenty-front/coverage/storybook/coverage-storybook.json packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
       - name: Upload coverage artifact
