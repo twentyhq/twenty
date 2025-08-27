@@ -208,11 +208,9 @@ export const workflowFilterActionSettingsSchema =
       stepFilters: z.array(z.object({
         id: z.string(),
         type: z.string(),
-        label: z.string(),
         stepOutputKey: z.string(),
         operand: z.nativeEnum(ViewFilterOperand),
         value: z.string(),
-        displayValue: z.string(),
         stepFilterGroupId: z.string(),
         positionInStepFilterGroup: z.number().optional(),
         fieldMetadataId: z.string().optional(),
