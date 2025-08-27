@@ -163,6 +163,7 @@ describe('getWorkflowVersionDiagram', () => {
       "source": "trigger",
       "target": "step-1",
       "type": "empty-filter--editable",
+      "zIndex": -2,
     },
   ],
   "nodes": [

@@ -11,9 +11,7 @@ import { RecordTableTd } from '@/object-record/record-table/record-table-cell/co
 import { RecordTableRecordGroupStickyEffect } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupStickyEffect';
 import { useAggregateRecordsForRecordTableSection } from '@/object-record/record-table/record-table-section/hooks/useAggregateRecordsForRecordTableSection';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
-import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyState';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
@@ -57,11 +55,8 @@ export const RecordTableRecordGroupSection = () => {
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 
-  const visibleColumns = useRecoilComponentValue(
-    visibleTableColumnsComponentSelector,
-  );
-
-  const { objectMetadataItem } = useRecordTableContextOrThrow();
+  const { visibleRecordFields, objectMetadataItem } =
+    useRecordTableContextOrThrow();
 
   const { aggregateValue, aggregateLabel } =
     useAggregateRecordsForRecordTableSection();
@@ -121,7 +116,7 @@ export const RecordTableRecordGroupSection = () => {
         />
         <RecordTableRecordGroupStickyEffect />
       </StyledRecordGroupSection>
-      <StyledEmptyTd colSpan={visibleColumns.length - 1} />
+      <StyledEmptyTd colSpan={visibleRecordFields.length - 1} />
       <StyledEmptyTd />
       <StyledEmptyTd />
     </StyledTrContainer>

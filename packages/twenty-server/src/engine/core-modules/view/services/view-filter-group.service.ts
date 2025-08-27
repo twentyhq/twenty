@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import {
   ViewFilterGroupException,
   ViewFilterGroupExceptionCode,
@@ -16,11 +16,13 @@ import {
 @Injectable()
 export class ViewFilterGroupService {
   constructor(
-    @InjectRepository(ViewFilterGroup, 'core')
-    private readonly viewFilterGroupRepository: Repository<ViewFilterGroup>,
+    @InjectRepository(ViewFilterGroupEntity, 'core')
+    private readonly viewFilterGroupRepository: Repository<ViewFilterGroupEntity>,
   ) {}
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewFilterGroup[]> {
+  async findByWorkspaceId(
+    workspaceId: string,
+  ): Promise<ViewFilterGroupEntity[]> {
     return this.viewFilterGroupRepository.find({
       where: {
         workspaceId,
@@ -40,7 +42,7 @@ export class ViewFilterGroupService {
   async findByViewId(
     workspaceId: string,
     viewId: string,
-  ): Promise<ViewFilterGroup[]> {
+  ): Promise<ViewFilterGroupEntity[]> {
     return this.viewFilterGroupRepository.find({
       where: {
         workspaceId,
@@ -61,7 +63,7 @@ export class ViewFilterGroupService {
   async findById(
     id: string,
     workspaceId: string,
-  ): Promise<ViewFilterGroup | null> {
+  ): Promise<ViewFilterGroupEntity | null> {
     const viewFilterGroup = await this.viewFilterGroupRepository.findOne({
       where: {
         id,
@@ -81,8 +83,8 @@ export class ViewFilterGroupService {
   }
 
   async create(
-    viewFilterGroupData: Partial<ViewFilterGroup>,
-  ): Promise<ViewFilterGroup> {
+    viewFilterGroupData: Partial<ViewFilterGroupEntity>,
+  ): Promise<ViewFilterGroupEntity> {
     if (!isDefined(viewFilterGroupData.workspaceId)) {
       throw new ViewFilterGroupException(
         generateViewFilterGroupExceptionMessage(
@@ -122,8 +124,8 @@ export class ViewFilterGroupService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: Partial<ViewFilterGroup>,
-  ): Promise<ViewFilterGroup> {
+    updateData: Partial<ViewFilterGroupEntity>,
+  ): Promise<ViewFilterGroupEntity> {
     const existingViewFilterGroup = await this.findById(id, workspaceId);
 
     if (!isDefined(existingViewFilterGroup)) {
@@ -144,7 +146,10 @@ export class ViewFilterGroupService {
     return { ...existingViewFilterGroup, ...updatedViewFilterGroup };
   }
 
-  async delete(id: string, workspaceId: string): Promise<ViewFilterGroup> {
+  async delete(
+    id: string,
+    workspaceId: string,
+  ): Promise<ViewFilterGroupEntity> {
     const viewFilterGroup = await this.findById(id, workspaceId);
 
     if (!isDefined(viewFilterGroup)) {

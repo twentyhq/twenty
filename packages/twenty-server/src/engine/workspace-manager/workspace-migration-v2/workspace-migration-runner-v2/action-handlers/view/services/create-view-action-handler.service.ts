@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
-import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { CreateViewAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-view-action-v2.type';
 import { WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
 
@@ -23,9 +23,10 @@ export class CreateViewActionHandlerService extends WorkspaceMigrationRunnerActi
 
     const { viewFields } = view;
 
-    const viewRepository = queryRunner.manager.getRepository<View>(View);
+    const viewRepository =
+      queryRunner.manager.getRepository<ViewEntity>(ViewEntity);
     const viewFieldRepository =
-      queryRunner.manager.getRepository<ViewField>(ViewField);
+      queryRunner.manager.getRepository<ViewFieldEntity>(ViewFieldEntity);
 
     const createdView = await viewRepository.save({
       ...view,

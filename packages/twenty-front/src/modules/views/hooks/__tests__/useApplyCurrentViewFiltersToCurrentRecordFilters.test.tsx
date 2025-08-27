@@ -52,6 +52,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
     displayValue: 'test',
     viewFilterGroupId: 'group-1',
     positionInViewFilterGroup: 0,
+    subFieldName: null,
   };
 
   const mockCoreViewFilter: Omit<CoreViewFilter, 'workspaceId'> = {
@@ -65,6 +66,7 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
     viewId: allCompaniesCoreView.id,
     positionInViewFilterGroup: 0,
     viewFilterGroupId: 'group-1',
+    subFieldName: null,
   };
 
   const mockView = {

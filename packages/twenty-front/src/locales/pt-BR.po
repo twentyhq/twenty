@@ -395,7 +395,7 @@ msgid "Add node"
 msgstr ""
 
 #. js-lingui-id: 1Ltnvs
-#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Add Node"
 msgstr ""
 
@@ -1205,7 +1205,7 @@ msgid "Click on the checkmark to apply your changes."
 msgstr "Clique na marca de seleção para aplicar suas alterações."
 
 #. js-lingui-id: d0rtA5
-#: src/modules/dashboards/graphs/components/GraphWidgetGaugeChart.tsx
+#: src/modules/dashboards/graphs/components/GraphWidgetTooltip.tsx
 msgid "Click to see data"
 msgstr ""
 
@@ -1956,7 +1956,7 @@ msgid "Delete API key"
 msgstr "Excluir Chave API"
 
 #. js-lingui-id: YLfVFw
-#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Delete branch"
 msgstr ""
 
@@ -4604,6 +4604,7 @@ msgstr "Número de telefone copiado para a área de transferência"
 
 #. js-lingui-id: FdlpPK
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownAllItems.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowDropdownStepOutputItems.tsx
 msgid "Pick a {nameSingular} record"
 msgstr "Escolha um registro {nameSingular}"
 
@@ -4852,7 +4853,7 @@ msgid "Remove as default"
 msgstr "Remover como padrão"
 
 #. js-lingui-id: rn2/2V
-#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Remove filter"
 msgstr ""
 

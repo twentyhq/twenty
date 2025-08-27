@@ -1,4 +1,9 @@
-export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
+import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
+import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { type RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const baseMock = [
   {
     __typename: 'Company',
     id: '04b2e9f5-0713-40a5-8216-82802401d33e',
@@ -1360,3 +1365,22 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     },
   },
 ];
+
+// eslint-disable-next-line @nx/workspace-max-consts-per-file, @typescript-eslint/naming-convention
+const baseMockToRecordConnection = {
+  edges: baseMock.map(
+    (mockCompany) =>
+      ({
+        node: mockCompany,
+        cursor: mockCompany.id,
+        __typename: 'CompanyEdge',
+      }) as RecordGqlEdge,
+  ) as any,
+  pageInfo: {},
+  __typename: 'CompanyConnection',
+} as RecordGqlConnection;
+
+// eslint-disable-next-line @nx/workspace-max-consts-per-file
+export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = getRecordsFromRecordConnection(
+  { recordConnection: baseMockToRecordConnection },
+);
