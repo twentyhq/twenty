@@ -155,4 +155,9 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IsDateString()
   @Field()
   updatedAt: Date;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  throughRelationFieldMetadataId?: string;
 }

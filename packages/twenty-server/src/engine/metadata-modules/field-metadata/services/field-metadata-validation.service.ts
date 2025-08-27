@@ -228,5 +228,19 @@ export class FieldMetadataValidationService {
         FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       );
     }
+
+    // Validation for HAS_MANY_THROUGH fields
+    if (fieldMetadataType === FieldMetadataType.HAS_MANY_THROUGH) {
+      if (!('throughRelationFieldMetadataId' in fieldMetadataInput) || 
+          !fieldMetadataInput.throughRelationFieldMetadataId) {
+        throw new FieldMetadataException(
+          'throughRelationFieldMetadataId is required for HAS_MANY_THROUGH fields',
+          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        );
+      }
+
+      // TODO: Add validation to ensure target field exists and is a valid relationship field
+      // TODO: Add validation to prevent circular references
+    }
   }
 }

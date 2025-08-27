@@ -157,6 +157,13 @@ export class FieldMetadataEntity<
     T
   >;
 
+  @Column({ nullable: true, type: 'uuid' })
+  throughRelationFieldMetadataId: string | null;
+
+  @ManyToOne(() => FieldMetadataEntity, { nullable: true })
+  @JoinColumn({ name: 'throughRelationFieldMetadataId' })
+  throughRelationFieldMetadata: Relation<FieldMetadataEntity> | null;
+
   @OneToMany(
     () => IndexFieldMetadataEntity,
     (indexFieldMetadata: IndexFieldMetadataEntity) =>

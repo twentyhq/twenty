@@ -24,4 +24,5 @@ export enum FieldMetadataType {
   ACTOR = 'ACTOR',
   ARRAY = 'ARRAY',
   TS_VECTOR = 'TS_VECTOR',
+  HAS_MANY_THROUGH = 'HAS_MANY_THROUGH',
 }

@@ -11,6 +11,7 @@ import { CompositeColumnActionFactory } from 'src/engine/metadata-modules/worksp
 import { EnumColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
 import { MorphRelationColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/morph-relation-column-action.factory';
 import { RelationColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/relation-column-action.factory';
+import { VirtualColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/virtual-column-action.factory';
 import {
   TsVectorColumnActionFactory,
   type TsVectorFieldMetadata,
@@ -43,6 +44,7 @@ export class WorkspaceMigrationFactory {
     private readonly compositeColumnActionFactory: CompositeColumnActionFactory,
     private readonly relationColumnActionFactory: RelationColumnActionFactory,
     private readonly morphRelationColumnActionFactory: MorphRelationColumnActionFactory,
+    private readonly virtualColumnActionFactory: VirtualColumnActionFactory,
   ) {
     this.factoriesMap = new Map<
       FieldMetadataType,
@@ -114,6 +116,10 @@ export class WorkspaceMigrationFactory {
       [
         FieldMetadataType.MORPH_RELATION,
         { factory: this.morphRelationColumnActionFactory },
+      ],
+      [
+        FieldMetadataType.HAS_MANY_THROUGH,
+        { factory: this.virtualColumnActionFactory },
       ],
     ]);
   }

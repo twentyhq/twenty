@@ -4,6 +4,7 @@ import { EnumColumnActionFactory } from 'src/engine/metadata-modules/workspace-m
 import { MorphRelationColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/morph-relation-column-action.factory';
 import { RelationColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/relation-column-action.factory';
 import { TsVectorColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/ts-vector-column-action.factory';
+import { VirtualColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/virtual-column-action.factory';
 
 export const workspaceColumnActionFactories = [
   TsVectorColumnActionFactory,
@@ -12,4 +13,5 @@ export const workspaceColumnActionFactories = [
   CompositeColumnActionFactory,
   RelationColumnActionFactory,
   MorphRelationColumnActionFactory,
+  VirtualColumnActionFactory,
 ];
