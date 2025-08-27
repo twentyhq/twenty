@@ -42,6 +42,14 @@ export const useSearchVariable = ({
       stepIds: [stepId],
     }),
   );
+
+  if (!isDefined(stepOutputSchema)) {
+    return {
+      variableLabel: undefined,
+      variablePathLabel: undefined,
+    };
+  }
+
   const stepType =
     stepId === TRIGGER_STEP_ID
       ? flow.trigger?.type

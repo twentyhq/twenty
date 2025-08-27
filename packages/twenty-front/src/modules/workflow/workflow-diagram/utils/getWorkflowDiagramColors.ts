@@ -1,11 +1,12 @@
-import { type Theme } from '@emotion/react';
 import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
+import { type Theme } from '@emotion/react';
 
 type WorkflowDiagramColors = {
   background: string;
   borderColor: string;
   color: string;
   titleColor: string;
+  tagBackground: string;
 };
 
 export type WorkflowDiagramNodeColors = {
@@ -29,28 +30,33 @@ export const getWorkflowDiagramColors = ({
           borderColor: theme.color.yellow,
           color: theme.tag.text.yellow,
           titleColor: theme.font.color.primary,
+          tagBackground: theme.tag.background.yellow,
         },
         unselected: {
           background: theme.background.secondary,
           borderColor: theme.border.color.strong,
           color: theme.tag.text.yellow,
           titleColor: theme.font.color.primary,
+          tagBackground: theme.tag.background.yellow,
         },
       };
     }
-    case 'FAILED': {
+    case 'FAILED':
+    case 'STOPPED': {
       return {
         selected: {
           background: theme.adaptiveColors.red1,
           borderColor: theme.color.red,
           color: theme.tag.text.red,
           titleColor: theme.font.color.primary,
+          tagBackground: theme.tag.background.red,
         },
         unselected: {
           background: theme.background.secondary,
           borderColor: theme.border.color.strong,
           color: theme.tag.text.red,
           titleColor: theme.font.color.primary,
+          tagBackground: theme.tag.background.red,
         },
       };
     }
@@ -61,12 +67,14 @@ export const getWorkflowDiagramColors = ({
           borderColor: theme.color.turquoise,
           color: theme.tag.text.green,
           titleColor: theme.font.color.primary,
+          tagBackground: theme.tag.background.turquoise,
         },
         unselected: {
           background: theme.background.secondary,
           borderColor: theme.border.color.strong,
           color: theme.tag.text.green,
           titleColor: theme.font.color.primary,
+          tagBackground: theme.tag.background.turquoise,
         },
       };
     }
@@ -77,12 +85,14 @@ export const getWorkflowDiagramColors = ({
           borderColor: theme.color.blue,
           color: theme.tag.text.blue,
           titleColor: theme.font.color.primary,
+          tagBackground: theme.border.color.strong,
         },
         unselected: {
           background: theme.background.secondary,
           borderColor: theme.border.color.strong,
           color: theme.font.color.tertiary,
           titleColor: theme.font.color.light,
+          tagBackground: theme.border.color.strong,
         },
       };
     }

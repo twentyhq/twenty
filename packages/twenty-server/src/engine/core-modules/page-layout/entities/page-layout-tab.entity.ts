@@ -6,11 +6,13 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
+import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
 
 @Entity({ name: 'pageLayoutTab', schema: 'core' })
@@ -33,6 +35,11 @@ export class PageLayoutTabEntity implements Required<PageLayoutTabEntity> {
   })
   @JoinColumn({ name: 'pageLayoutId' })
   pageLayout: Relation<PageLayoutEntity>;
+
+  @OneToMany(() => PageLayoutWidgetEntity, (widget) => widget.pageLayoutTab, {
+    cascade: true,
+  })
+  widgets: Relation<PageLayoutWidgetEntity[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
