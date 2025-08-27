@@ -12,7 +12,7 @@ import { BASE_TYPESCRIPT_PROJECT_INPUT_SCHEMA } from 'src/engine/core-modules/se
 import { type CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position-input.dto';
 import { type WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -54,7 +54,8 @@ export class WorkflowVersionStepWorkspaceService {
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    private readonly agentService: AgentService,
+    @InjectRepository(AgentEntity, 'core')
+    private readonly agentRepository: Repository<AgentEntity>,
     @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
@@ -433,13 +434,12 @@ export class WorkflowVersionStepWorkspaceService {
           break;
         }
 
-        const agent = await this.agentService.findOneAgent(
-          step.settings.input.agentId,
-          workspaceId,
-        );
+        const agent = await this.agentRepository.findOne({
+          where: { id: step.settings.input.agentId, workspaceId },
+        });
 
         if (isDefined(agent)) {
-          await this.agentService.deleteOneAgent(agent.id, workspaceId);
+          await this.agentRepository.delete({ id: agent.id, workspaceId });
         }
         break;
       }
