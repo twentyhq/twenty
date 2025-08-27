@@ -108,12 +108,9 @@ export const useOpenFieldInputEditMode = () => {
           }
 
           openMorphRelationFromManyFieldInput({
-            fieldName: fieldDefinition.metadata.fieldName,
-            objectNameSingulars: fieldDefinition.metadata.morphRelations.map(
-              ({ targetObjectMetadata }) => targetObjectMetadata.nameSingular,
-            ),
             recordId,
             prefix,
+            fieldDefinition,
           });
         }
 
