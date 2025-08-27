@@ -1,9 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { SettingsAccountsCalendarChannelsGeneral } from '@/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof SettingsAccountsCalendarChannelsGeneral> = {
   title:
@@ -20,5 +20,7 @@ export default meta;
 type Story = StoryObj<typeof SettingsAccountsCalendarChannelsGeneral>;
 
 export const Default: Story = {
-  play: async () => {},
+  play: async () => {
+    console.log('CI TEST 1');
+  },
 };
