@@ -1,5 +1,5 @@
-import { type Theme } from '@emotion/react';
 import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
+import { type Theme } from '@emotion/react';
 
 type WorkflowDiagramColors = {
   background: string;
@@ -38,7 +38,8 @@ export const getWorkflowDiagramColors = ({
         },
       };
     }
-    case 'FAILED': {
+    case 'FAILED':
+    case 'STOPPED': {
       return {
         selected: {
           background: theme.adaptiveColors.red1,
