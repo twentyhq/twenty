@@ -9,9 +9,7 @@ import {
   type WorkflowDiagramEdge,
   type WorkflowDiagramEdgeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { type WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
-import { getNodeVariantFromStepRunStatus } from '@/workflow/workflow-diagram/utils/getNodeVariantFromStepRunStatus';
-import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
+import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -23,6 +21,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/display';
 import { IconButtonGroup } from 'twenty-ui/input';
+import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 
 type WorkflowDiagramFilterEdgeRunProps = EdgeProps<WorkflowDiagramEdge>;
 
@@ -38,16 +37,16 @@ const assertFilterEdgeDataOrThrow: (
 
 const StyledIconButtonGroup = styled(IconButtonGroup)<{
   selected?: boolean;
-  variant: WorkflowDiagramNodeVariant;
+  runStatus?: WorkflowRunStepStatus;
 }>`
   pointer-events: all;
 
-  ${({ selected, variant, theme }) => {
+  ${({ selected, runStatus, theme }) => {
     if (!selected) return '';
-    const colors = getWorkflowDiagramNodeSelectedColors(variant, theme);
+    const colors = getWorkflowDiagramColors({ runStatus, theme });
     return css`
-      background-color: ${colors.background};
-      border: 1px solid ${colors.borderColor};
+      background-color: ${colors.selected.background};
+      border: 1px solid ${colors.selected.borderColor};
     `;
   }}
 `;
@@ -122,7 +121,7 @@ export const WorkflowDiagramFilterEdgeRun = ({
                   },
                 ]}
                 selected={isFilterNodeSelected}
-                variant={getNodeVariantFromStepRunStatus(data.runStatus)}
+                runStatus={data.runStatus}
               />
             </StyledConfiguredFilterContainer>
           </WorkflowDiagramEdgeV2VisibilityContainer>

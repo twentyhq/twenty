@@ -13,48 +13,12 @@ import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/co
 import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabelWithCounterPart';
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
-import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
-
-const StyledNodeContainer = styled(WorkflowNodeContainer)`
-  border-color: ${({ theme }) => theme.border.color.strong};
-  background: ${({ theme }) => theme.background.secondary};
-
-  &:hover {
-    background: linear-gradient(
-        0deg,
-        ${({ theme }) => theme.background.transparent.lighter} 0%,
-        ${({ theme }) => theme.background.transparent.lighter} 100%
-      ),
-      ${({ theme }) => theme.background.secondary};
-  }
-
-  .selected & {
-    border-color: ${({ theme }) => theme.color.blue};
-    background: ${({ theme }) => theme.adaptiveColors.blue1};
-  }
-`;
-
-const StyledNodeLabel = styled(WorkflowNodeLabel)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-
-  .selected & {
-    color: ${({ theme }) => theme.tag.text.blue};
-  }
-`;
-
-const StyledNodeTitle = styled(WorkflowNodeTitle)`
-  color: ${({ theme }) => theme.font.color.light};
-
-  .selected & {
-    color: ${({ theme }) => theme.font.color.primary};
-  }
-`;
 
 export const WorkflowDiagramEmptyTriggerReadonly = () => {
   const { getIcon } = useIcons();
@@ -104,7 +68,7 @@ export const WorkflowDiagramEmptyTriggerReadonly = () => {
   };
 
   return (
-    <StyledNodeContainer
+    <WorkflowNodeContainer
       data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
       onClick={handleClick}
     >
@@ -112,11 +76,11 @@ export const WorkflowDiagramEmptyTriggerReadonly = () => {
 
       <WorkflowNodeRightPart>
         <WorkflowNodeLabelWithCounterPart>
-          <StyledNodeLabel>{t`Trigger`}</StyledNodeLabel>
+          <WorkflowNodeLabel>{t`Trigger`}</WorkflowNodeLabel>
         </WorkflowNodeLabelWithCounterPart>
 
-        <StyledNodeTitle>{t`Add a Trigger`}</StyledNodeTitle>
+        <WorkflowNodeTitle>{t`Add a Trigger`}</WorkflowNodeTitle>
       </WorkflowNodeRightPart>
-    </StyledNodeContainer>
+    </WorkflowNodeContainer>
   );
 };

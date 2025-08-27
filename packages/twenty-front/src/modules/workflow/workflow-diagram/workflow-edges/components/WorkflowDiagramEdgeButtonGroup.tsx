@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { IconButtonGroup, type IconButtonGroupProps } from 'twenty-ui/input';
-import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
+import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
 import { css } from '@emotion/react';
 
 const StyledIconButtonGroup = styled(IconButtonGroup)<{ selected?: boolean }>`
@@ -8,10 +8,10 @@ const StyledIconButtonGroup = styled(IconButtonGroup)<{ selected?: boolean }>`
 
   ${({ selected, theme }) => {
     if (!selected) return '';
-    const colors = getWorkflowDiagramNodeSelectedColors('default', theme);
+    const colors = getWorkflowDiagramColors({ theme });
     return css`
-      background-color: ${colors.background};
-      border: 1px solid ${colors.borderColor};
+      background-color: ${colors.selected.background};
+      border: 1px solid ${colors.selected.borderColor};
     `;
   }}
 `;
