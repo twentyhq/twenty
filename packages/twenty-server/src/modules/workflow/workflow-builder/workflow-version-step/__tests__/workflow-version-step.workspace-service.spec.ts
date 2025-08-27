@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
-import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
+import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
@@ -115,7 +115,12 @@ describe('WorkflowVersionStepWorkspaceService', () => {
           },
         },
         { provide: ServerlessFunctionService, useValue: {} },
-        { provide: AgentService, useValue: {} },
+        {
+          provide: getRepositoryToken(AgentEntity, 'core'),
+          useValue: {
+            findOne: jest.fn(),
+          },
+        },
         {
           provide: getRepositoryToken(ObjectMetadataEntity),
           useValue: {

@@ -34,6 +34,14 @@ const getCompositeSubFieldName = (
       : undefined;
 };
 
+const isIdFieldName = (fieldName: string) => {
+  return (
+    fieldName === 'id' ||
+    // For database events, id field will have a prefix such as properties.after.id
+    fieldName.endsWith('.id')
+  );
+};
+
 const navigateToTargetField = (
   startingSchema: RecordOutputSchemaV2,
   pathSegments: string[],
@@ -73,7 +81,9 @@ const buildVariableResult = (
   const targetField = getFieldFromSchema(targetFieldName, targetSchema);
   // Determine the variable label based on whether we want the full record or a specific field
   const variableLabel =
-    isFullRecord && isRecordOutputSchemaV2(targetSchema)
+    isFullRecord &&
+    isRecordOutputSchemaV2(targetSchema) &&
+    isIdFieldName(targetFieldName)
       ? getRecordObjectLabel(targetSchema)
       : targetField?.label;
 

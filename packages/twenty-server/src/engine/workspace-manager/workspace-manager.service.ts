@@ -137,6 +137,7 @@ export class WorkspaceManagerService {
       mainDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
+      featureFlags,
     );
 
     if (featureFlags[FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED]) {
@@ -146,6 +147,7 @@ export class WorkspaceManagerService {
         mainDataSource,
         workspaceId,
         createdObjectMetadata,
+        featureFlags,
       );
     }
   }

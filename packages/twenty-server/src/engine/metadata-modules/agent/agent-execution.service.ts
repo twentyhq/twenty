@@ -11,23 +11,22 @@ import {
   generateText,
   type ImagePart,
   streamText,
+  ToolSet,
   type UserContent,
 } from 'ai';
 import { In, Repository } from 'typeorm';
 
-import { ModelProvider } from 'src/engine/core-modules/ai/constants/ai-models.const';
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { extractFolderPathAndFilename } from 'src/engine/core-modules/file/utils/extract-folderpath-and-filename.utils';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   type AgentChatMessageEntity,
   AgentChatMessageRole,
 } from 'src/engine/metadata-modules/agent/agent-chat-message.entity';
-import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
+import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent-handoff-tool.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
@@ -37,6 +36,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
+import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
@@ -54,39 +54,18 @@ export class AgentExecutionService {
   private readonly logger = new Logger(AgentExecutionService.name);
 
   constructor(
-    private readonly twentyConfigService: TwentyConfigService,
-    private readonly agentToolService: AgentToolService,
+    private readonly agentHandoffToolService: AgentHandoffToolService,
     private readonly fileService: FileService,
     private readonly domainManagerService: DomainManagerService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly agentToolGeneratorService: AgentToolGeneratorService,
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
   ) {}
-
-  private async validateApiKey(provider: ModelProvider): Promise<void> {
-    let apiKey: string | undefined;
-
-    switch (provider) {
-      case ModelProvider.OPENAI:
-        apiKey = this.twentyConfigService.get('OPENAI_API_KEY');
-        break;
-      case ModelProvider.ANTHROPIC:
-        apiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
-        break;
-      default:
-        return;
-    }
-    if (!apiKey) {
-      throw new AgentException(
-        `${provider.toUpperCase()} API key not configured`,
-        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
-      );
-    }
-  }
 
   async prepareAIRequestConfig({
     messages,
@@ -106,47 +85,28 @@ export class AgentExecutionService {
         );
       }
 
-      const aiModel = this.aiModelRegistryService.getEffectiveModelConfig(
-        agent?.modelId ?? 'auto',
-      );
+      const registeredModel =
+        await this.aiModelRegistryService.resolveModelForAgent(agent);
 
-      if (agent && !aiModel) {
-        const error = `AI model with id ${agent.modelId} not found`;
+      let tools: ToolSet = {};
 
-        this.logger.error(error);
-        throw new AgentException(
-          error,
-          AgentExceptionCode.AGENT_EXECUTION_FAILED,
-        );
-      }
-
-      this.logger.log(
-        `Resolved model: ${aiModel.modelId} (provider: ${aiModel.provider})`,
-      );
-
-      const provider = aiModel.provider;
-
-      await this.validateApiKey(provider);
-
-      const tools = agent
-        ? await this.agentToolService.generateToolsForAgent(
+      if (agent) {
+        const baseTools =
+          await this.agentToolGeneratorService.generateToolsForAgent(
             agent.id,
             agent.workspaceId,
-          )
-        : {};
+          );
+
+        const handoffTools =
+          await this.agentHandoffToolService.generateHandoffTools(
+            agent.id,
+            agent.workspaceId,
+          );
+
+        tools = { ...baseTools, ...handoffTools };
+      }
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
-
-      const registeredModel = this.aiModelRegistryService.getModel(
-        aiModel.modelId,
-      );
-
-      if (!registeredModel) {
-        throw new AgentException(
-          `Model ${aiModel.modelId} not found in registry`,
-          AgentExceptionCode.AGENT_EXECUTION_FAILED,
-        );
-      }
 
       return {
         system,

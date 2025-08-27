@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { generateText } from 'ai';
+import { CoreMessage, generateText } from 'ai';
 import { Repository } from 'typeorm';
 
 import { AiModelRegistryService } from 'src/engine/core-modules/ai/services/ai-model-registry.service';
-import { AGENT_HANDOFF_PROMPT_TEMPLATE } from 'src/engine/metadata-modules/agent/constants/agent-handoff-prompt.const';
 
 import { AgentHandoffService } from './agent-handoff.service';
+import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
 
@@ -15,8 +15,7 @@ export type HandoffRequest = {
   fromAgentId: string;
   toAgentId: string;
   workspaceId: string;
-  reason: string;
-  context?: string;
+  messages?: CoreMessage[];
 };
 
 @Injectable()
@@ -28,11 +27,12 @@ export class AgentHandoffExecutorService {
     private readonly agentRepository: Repository<AgentEntity>,
     private readonly agentHandoffService: AgentHandoffService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly agentToolGeneratorService: AgentToolGeneratorService,
   ) {}
 
   async executeHandoff(handoffRequest: HandoffRequest) {
     try {
-      const { fromAgentId, toAgentId, workspaceId } = handoffRequest;
+      const { fromAgentId, toAgentId, workspaceId, messages } = handoffRequest;
 
       const canHandoff = await this.agentHandoffService.canHandoffTo({
         fromAgentId,
@@ -58,9 +58,8 @@ export class AgentHandoffExecutorService {
         );
       }
 
-      const registeredModel = this.aiModelRegistryService.getModel(
-        targetAgent.modelId,
-      );
+      const registeredModel =
+        await this.aiModelRegistryService.resolveModelForAgent(targetAgent);
 
       if (!registeredModel) {
         throw new AgentException(
@@ -69,13 +68,23 @@ export class AgentHandoffExecutorService {
         );
       }
 
+      const tools = await this.agentToolGeneratorService.generateToolsForAgent(
+        toAgentId,
+        workspaceId,
+      );
+
       const aiRequestConfig = {
         system: targetAgent.prompt,
-        prompt: this.createHandoffPrompt(handoffRequest),
+        messages,
+        tools,
         model: registeredModel.model,
       };
 
       const textResponse = await generateText(aiRequestConfig);
+
+      this.logger.log(
+        `Successfully executed handoff to agent ${toAgentId} with response length: ${textResponse.text.length}`,
+      );
 
       return textResponse.text;
     } catch (error) {
@@ -91,14 +100,5 @@ export class AgentHandoffExecutorService {
         error: error.message,
       };
     }
-  }
-
-  private createHandoffPrompt(handoffRequest: HandoffRequest): string {
-    const { reason, context } = handoffRequest;
-
-    return AGENT_HANDOFF_PROMPT_TEMPLATE.replace('{reason}', reason).replace(
-      '{context}',
-      context || 'No additional context provided',
-    );
   }
 }
