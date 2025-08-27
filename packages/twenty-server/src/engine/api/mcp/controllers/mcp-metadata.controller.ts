@@ -14,11 +14,11 @@ export class McpMetadataController {
   constructor(private readonly mCPMetadataService: MCPMetadataService) {}
 
   @Post()
-  async getMcpMetadata(
+  async handleMcpMetadata(
     @AuthWorkspace() workspace: Workspace,
     @Req() request: Request,
   ) {
-    return await this.mCPMetadataService.handleMCPQuery(request, {
+    return await this.mCPMetadataService.handleMCPMetadataQuery(request, {
       workspace,
     });
   }

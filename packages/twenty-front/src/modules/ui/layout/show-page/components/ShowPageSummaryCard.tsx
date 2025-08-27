@@ -2,7 +2,7 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
-import { ChangeEvent, ReactNode, useRef } from 'react';
+import { type ChangeEvent, type ReactNode, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidV4 } from 'uuid';
@@ -13,8 +13,8 @@ import {
 import {
   AppTooltip,
   Avatar,
-  AvatarType,
-  IconComponent,
+  type AvatarType,
+  type IconComponent,
 } from 'twenty-ui/display';
 
 type ShowPageSummaryCardProps = {

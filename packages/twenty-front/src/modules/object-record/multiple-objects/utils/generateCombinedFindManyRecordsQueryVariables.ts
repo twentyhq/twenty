@@ -1,4 +1,4 @@
-import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
+import { type RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 import { capitalize, isDefined } from 'twenty-shared/utils';

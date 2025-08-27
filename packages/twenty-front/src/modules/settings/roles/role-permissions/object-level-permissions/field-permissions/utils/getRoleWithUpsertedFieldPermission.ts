@@ -1,6 +1,6 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 import { produce } from 'immer';
-import { FieldPermission, Role } from '~/generated/graphql';
+import { type FieldPermission, type Role } from '~/generated/graphql';
 
 export const getRoleWithUpsertedFieldPermission = (
   role: Role,

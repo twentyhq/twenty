@@ -1,7 +1,7 @@
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
-import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
-import { SearchRecord } from '~/generated/graphql';
+import { type SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
+import { type SearchRecord } from '~/generated/graphql';
 
 export const formatSearchRecordAsSingleRecordPickerRecord = (
   searchRecord: SearchRecord,

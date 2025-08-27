@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react';
 
 const StyledWrapper = styled.div`
   display: flex;

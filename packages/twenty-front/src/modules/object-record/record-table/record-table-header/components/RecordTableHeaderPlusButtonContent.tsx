@@ -2,11 +2,11 @@ import { useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -21,7 +21,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { t } = useLingui();
-  const { objectMetadataItem } = useRecordTableContextOrThrow();
+  const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -31,13 +31,13 @@ export const RecordTableHeaderPlusButtonContent = () => {
 
   const { getIcon } = useIcons();
   const { handleColumnVisibilityChange } = useTableColumns({
-    objectMetadataId: objectMetadataItem.id,
+    recordTableId,
   });
 
   const handleAddColumn = useCallback(
     (column: ColumnDefinition<FieldMetadata>) => {
       closeDropdown();
-      handleColumnVisibilityChange(column);
+      handleColumnVisibilityChange({ ...column, isVisible: true });
     },
     [handleColumnVisibilityChange, closeDropdown],
   );

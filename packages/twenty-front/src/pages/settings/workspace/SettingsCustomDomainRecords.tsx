@@ -7,14 +7,14 @@ import styled from '@emotion/styled';
 import { Button } from 'twenty-ui/input';
 import { useDebouncedCallback } from 'use-debounce';
 import {
-  CustomDomainRecord,
-  CustomDomainValidRecords,
+  type CustomDomainRecord,
+  type CustomDomainValidRecords,
 } from '~/generated/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { capitalize } from 'twenty-shared/utils';
 import { useRecoilValue } from 'recoil';
 import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
-import { ThemeColor } from 'twenty-ui/theme';
+import { type ThemeColor } from 'twenty-ui/theme';
 import { Status } from 'twenty-ui/display';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 

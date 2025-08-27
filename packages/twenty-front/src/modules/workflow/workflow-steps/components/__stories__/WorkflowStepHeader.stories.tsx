@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { IconPlus } from 'twenty-ui/display';
 import { ComponentDecorator } from 'twenty-ui/testing';

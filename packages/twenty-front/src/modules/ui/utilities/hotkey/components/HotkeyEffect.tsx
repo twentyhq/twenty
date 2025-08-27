@@ -1,4 +1,4 @@
-import { Keys } from 'react-hotkeys-hook';
+import { type Keys } from 'react-hotkeys-hook';
 
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 

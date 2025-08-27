@@ -1,10 +1,10 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import {
-  CountryCode,
   getCountries,
   getCountryCallingCode,
+  type CountryCode,
 } from 'libphonenumber-js';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';

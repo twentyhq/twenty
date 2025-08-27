@@ -1,12 +1,12 @@
 import {
-  ApiConfig,
-  AuthProviders,
-  Billing,
-  Captcha,
-  ClientAiModelConfig,
-  PublicFeatureFlag,
-  Sentry,
-  Support,
+  type ApiConfig,
+  type AuthProviders,
+  type Billing,
+  type Captcha,
+  type ClientAiModelConfig,
+  type PublicFeatureFlag,
+  type Sentry,
+  type Support,
 } from '~/generated-metadata/graphql';
 
 export type ClientConfig = {

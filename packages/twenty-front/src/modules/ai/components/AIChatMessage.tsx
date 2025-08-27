@@ -2,12 +2,12 @@ import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 
-import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
-import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
-import { AgentChatMessageRole } from '@/ai/constants/agent-chat-message-role';
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
+import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
+import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
+import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 
-import { AgentChatMessage } from '~/generated/graphql';
+import { type AgentChatMessage } from '~/generated/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`

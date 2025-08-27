@@ -1,4 +1,4 @@
-import { IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
+import { type IndexMetadataItem } from '@/object-metadata/types/IndexMetadataItem';
 import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 
 export type SortedIndexByTableFamilyStateKey = {

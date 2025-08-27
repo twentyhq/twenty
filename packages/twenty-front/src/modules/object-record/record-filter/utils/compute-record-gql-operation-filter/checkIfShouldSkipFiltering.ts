@@ -1,4 +1,4 @@
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { isEmptinessOperand } from '@/object-record/record-filter/utils/isEmptinessOperand';
 import { isDefined } from 'twenty-shared/utils';

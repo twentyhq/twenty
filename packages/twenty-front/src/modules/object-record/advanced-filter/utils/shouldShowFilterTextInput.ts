@@ -2,9 +2,9 @@ import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/cons
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
 import { isExpectedSubFieldName } from '@/object-record/object-filter-dropdown/utils/isExpectedSubFieldName';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { RecordFilter } from '../../record-filter/types/RecordFilter';
+import { type RecordFilter } from '../../record-filter/types/RecordFilter';
 
-import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
+import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 
 export const shouldShowFilterTextInput = ({
   recordFilter,

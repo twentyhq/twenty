@@ -42,6 +42,11 @@ export function WorkspaceEntity(
         'workspace:is-searchable-metadata-args',
         target,
       ) ?? false;
+    const isUIReadOnly =
+      TypedReflect.getMetadata(
+        'workspace:is-object-ui-readonly-metadata-args',
+        target,
+      ) ?? false;
 
     const objectName = convertClassNameToObjectMetadataName(target.name);
 
@@ -60,6 +65,7 @@ export function WorkspaceEntity(
       shortcut: options.shortcut,
       isAuditLogged,
       isSystem,
+      isUIReadOnly,
       gate,
       duplicateCriteria,
       isSearchable,

@@ -5,7 +5,7 @@ import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { TimelineActivities } from '@/activities/timeline-activities/components/TimelineActivities';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { ListenRecordUpdatesEffect } from '@/subscription/components/ListenRecordUpdatesEffect';
@@ -158,7 +158,7 @@ export const CardComponents: Record<CardType, CardComponentType> = {
       >
         <WorkflowVisualizerEffect workflowId={targetableObject.id} />
         <Suspense fallback={<LoadingSkeleton />}>
-          <WorkflowVisualizer workflowId={targetableObject.id} />
+          <WorkflowVisualizer />
         </Suspense>
       </WorkflowVisualizerComponentInstanceContext.Provider>
     );

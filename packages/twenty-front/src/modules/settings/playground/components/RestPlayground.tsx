@@ -1,5 +1,5 @@
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
-import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
+import { type PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';

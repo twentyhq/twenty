@@ -4,8 +4,6 @@ import { useSetRecoilState } from 'recoil';
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
-import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
-import { useObjectOptionsForTable } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForTable';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -13,8 +11,7 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
-import { ViewType } from '@/views/types/ViewType';
+import { ViewFieldsHiddenDropdownSection } from '@/views/components/ViewFieldsHiddenDropdownSection';
 import { useLingui } from '@lingui/react/macro';
 import { IconChevronLeft, IconSettings } from 'twenty-ui/display';
 import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
@@ -22,13 +19,8 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   const { t } = useLingui();
-  const {
-    viewType,
-    recordIndexId,
-    objectMetadataItem,
-    onContentChange,
-    closeDropdown,
-  } = useObjectOptionsDropdown();
+  const { objectMetadataItem, onContentChange, closeDropdown } =
+    useObjectOptionsDropdown();
 
   const { objectNamePlural } = useObjectNamePluralFromSingular({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -37,24 +29,6 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   const settingsUrl = getSettingsPath(SettingsPath.ObjectDetail, {
     objectNamePlural,
   });
-
-  const { handleColumnVisibilityChange, hiddenTableColumns } =
-    useObjectOptionsForTable(recordIndexId, objectMetadataItem.id);
-
-  const { hiddenBoardFields, handleBoardFieldVisibilityChange } =
-    useObjectOptionsForBoard({
-      objectNameSingular: objectMetadataItem.nameSingular,
-      recordBoardId: recordIndexId,
-      viewBarId: recordIndexId,
-    });
-
-  const hiddenRecordFields =
-    viewType === ViewType.Kanban ? hiddenBoardFields : hiddenTableColumns;
-
-  const handleChangeFieldVisibility =
-    viewType === ViewType.Kanban
-      ? handleBoardFieldVisibilityChange
-      : handleColumnVisibilityChange;
 
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
@@ -73,16 +47,7 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
       >
         {t`Hidden Fields`}
       </DropdownMenuHeader>
-      {hiddenRecordFields.length > 0 && (
-        <ViewFieldsVisibilityDropdownSection
-          title={t`Hidden`}
-          fields={hiddenRecordFields}
-          isDraggable={false}
-          onVisibilityChange={handleChangeFieldVisibility}
-          showSubheader={false}
-          showDragGrip={false}
-        />
-      )}
+      <ViewFieldsHiddenDropdownSection />
       <DropdownMenuSeparator />
       <UndecoratedLink
         to={settingsUrl}

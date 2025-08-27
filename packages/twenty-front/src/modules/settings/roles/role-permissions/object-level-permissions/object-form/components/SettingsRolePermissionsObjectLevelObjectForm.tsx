@@ -5,11 +5,9 @@ import { SettingsRolePermissionsObjectLevelObjectFormObjectLevel } from '@/setti
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import { Button } from 'twenty-ui/input';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsRolePermissionsObjectLevelObjectFormProps = {
@@ -24,10 +22,6 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   const settingsDraftRole = useRecoilValue(
     settingsDraftRoleFamilyState(roleId),
   );
-
-  const featureFlags = useFeatureFlagsMap();
-  const isFieldsPermissionsEnabled =
-    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
 
   const objectMetadata = useObjectMetadataItemById({
     objectId: objectMetadataId,
@@ -77,12 +71,10 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           objectMetadataItem={objectMetadataItem}
           roleId={roleId}
         />
-        {isFieldsPermissionsEnabled && (
-          <SettingsRolePermissionsObjectLevelObjectFieldPermissionTable
-            objectMetadataItem={objectMetadataItem}
-            roleId={roleId}
-          />
-        )}
+        <SettingsRolePermissionsObjectLevelObjectFieldPermissionTable
+          objectMetadataItem={objectMetadataItem}
+          roleId={roleId}
+        />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

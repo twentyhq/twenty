@@ -1,4 +1,4 @@
-import { WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
+import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
 
 export type UserLookup = {
   user: {

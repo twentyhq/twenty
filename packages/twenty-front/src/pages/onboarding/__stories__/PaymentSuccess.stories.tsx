@@ -1,6 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/testing-library';
+import { type Meta, type StoryObj } from '@storybook/react';
+import { within } from '@storybook/test';
 import { HttpResponse, graphql } from 'msw';
 
 import { AppPath } from '@/types/AppPath';
@@ -9,7 +9,7 @@ import { OnboardingStatus } from '~/generated/graphql';
 import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import {
   PageDecorator,
-  PageDecoratorArgs,
+  type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUserData } from '~/testing/mock-data/users';

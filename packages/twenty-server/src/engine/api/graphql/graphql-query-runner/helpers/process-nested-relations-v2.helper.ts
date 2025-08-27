@@ -12,6 +12,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { getFieldMetadataFromGraphQLField } from 'src/engine/api/graphql/graphql-query-runner/utils/get-field-metadata-from-graphql-field.util';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -110,15 +111,20 @@ export class ProcessNestedRelationsV2Helper {
     roleId?: string;
     selectedFields: Record<string, unknown>;
   }): Promise<void> {
-    const sourceFieldMetadataId =
-      parentObjectMetadataItem.fieldIdByName[sourceFieldName];
-    const sourceFieldMetadata =
-      parentObjectMetadataItem.fieldsById[sourceFieldMetadataId];
+    const sourceFieldMetadata = getFieldMetadataFromGraphQLField({
+      objectMetadataItem: parentObjectMetadataItem,
+      graphQLField: sourceFieldName,
+      objectMetadataMaps,
+    });
 
     if (
       !isFieldMetadataEntityOfType(
         sourceFieldMetadata,
         FieldMetadataType.RELATION,
+      ) &&
+      !isFieldMetadataEntityOfType(
+        sourceFieldMetadata,
+        FieldMetadataType.MORPH_RELATION,
       )
     ) {
       // TODO: Maybe we should throw an error here ?
@@ -154,6 +160,7 @@ export class ProcessNestedRelationsV2Helper {
       select: selectedFields,
       relations: nestedRelations,
       objectMetadataItemWithFieldMaps: targetObjectMetadata,
+      objectMetadataMaps,
     });
 
     targetObjectQueryBuilder = targetObjectQueryBuilder.setFindOptions({
@@ -165,7 +172,8 @@ export class ProcessNestedRelationsV2Helper {
       idField:
         relationType === RelationType.ONE_TO_MANY
           ? 'id'
-          : `${sourceFieldName}Id`,
+          : (sourceFieldMetadata.settings.joinColumnName ??
+            `${sourceFieldName}Id`),
     });
 
     const fieldMetadataTargetRelationColumnName =
@@ -246,10 +254,11 @@ export class ProcessNestedRelationsV2Helper {
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
     sourceFieldName: string;
   }) {
-    const targetFieldMetadataId =
-      parentObjectMetadataItem.fieldIdByName[sourceFieldName];
-    const targetFieldMetadata =
-      parentObjectMetadataItem.fieldsById[targetFieldMetadataId];
+    const targetFieldMetadata = getFieldMetadataFromGraphQLField({
+      objectMetadataItem: parentObjectMetadataItem,
+      graphQLField: sourceFieldName,
+      objectMetadataMaps,
+    });
 
     const targetObjectMetadata = getTargetObjectMetadataOrThrow(
       targetFieldMetadata,
@@ -307,7 +316,7 @@ export class ProcessNestedRelationsV2Helper {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     aggregate: Record<string, any>;
     sourceFieldName: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   }): Promise<{ relationResults: any[]; relationAggregatedFieldsResult: any }> {
     if (ids.length === 0) {

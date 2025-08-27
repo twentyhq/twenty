@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 
-import { DateFilter } from '@/object-record//graphql/types/RecordGqlOperationFilter';
+import { type DateFilter } from '@/object-record//graphql/types/RecordGqlOperationFilter';
 
 export const isMatchingDateFilter = ({
   dateFilter,

@@ -4,17 +4,26 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { GraphQLView } from '@/views/types/GraphQLView';
+import { type GraphQLView } from '@/views/types/GraphQLView';
+import { convertUpdateViewInputToCore } from '@/views/utils/convertUpdateViewInputToCore';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { isDefined } from 'twenty-shared/utils';
+import { useUpdateCoreViewMutation } from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useUpdateCurrentView = () => {
   const currentViewIdCallbackState = useRecoilComponentCallbackState(
     contextStoreCurrentViewIdComponentState,
   );
 
+  const featureFlagMap = useFeatureFlagsMap();
+  const isCoreViewEnabled = featureFlagMap[FeatureFlagKey.IS_CORE_VIEW_ENABLED];
+
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.View,
   });
+
+  const [updateOneCoreView] = useUpdateCoreViewMutation();
 
   const updateCurrentView = useRecoilCallback(
     ({ snapshot }) =>
@@ -24,13 +33,29 @@ export const useUpdateCurrentView = () => {
           .getValue();
 
         if (isDefined(currentViewId)) {
-          await updateOneRecord({
-            idToUpdate: currentViewId,
-            updateOneRecordInput: view,
-          });
+          if (isCoreViewEnabled) {
+            const input = convertUpdateViewInputToCore(view);
+
+            await updateOneCoreView({
+              variables: {
+                id: currentViewId,
+                input,
+              },
+            });
+          } else {
+            await updateOneRecord({
+              idToUpdate: currentViewId,
+              updateOneRecordInput: view,
+            });
+          }
         }
       },
-    [currentViewIdCallbackState, updateOneRecord],
+    [
+      currentViewIdCallbackState,
+      isCoreViewEnabled,
+      updateOneCoreView,
+      updateOneRecord,
+    ],
   );
 
   return {

@@ -5,7 +5,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconSparkles } from 'twenty-ui/display';
-import { AgentChatThread } from '~/generated-metadata/graphql';
+import { type AgentChatThread } from '~/generated-metadata/graphql';
 
 const StyledThreadsList = styled.div`
   display: flex;

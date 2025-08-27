@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Draggable, DroppableProvided } from '@hello-pangea/dnd';
+import { Draggable, type DroppableProvided } from '@hello-pangea/dnd';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 

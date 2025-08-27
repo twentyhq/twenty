@@ -1,4 +1,4 @@
-import { ViewFilter } from '@/views/types/ViewFilter';
+import { type ViewFilter } from '@/views/types/ViewFilter';
 import {
   addDays,
   addMonths,
@@ -18,8 +18,7 @@ import {
   subWeeks,
   subYears,
 } from 'date-fns';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
-
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { z } from 'zod';
 
 const variableDateViewFilterValueDirectionSchema = z.enum([

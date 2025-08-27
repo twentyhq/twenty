@@ -1,5 +1,5 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { HttpResponse, graphql } from 'msw';
 
@@ -9,7 +9,7 @@ import { OnboardingStatus } from '~/generated/graphql';
 import { CreateProfile } from '~/pages/onboarding/CreateProfile';
 import {
   PageDecorator,
-  PageDecoratorArgs,
+  type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUserData } from '~/testing/mock-data/users';

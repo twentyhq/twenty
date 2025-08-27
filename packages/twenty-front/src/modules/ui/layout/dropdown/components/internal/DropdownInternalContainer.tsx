@@ -16,11 +16,11 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import styled from '@emotion/styled';
 import {
   FloatingPortal,
-  Placement,
-  UseFloatingReturn,
+  type Placement,
+  type UseFloatingReturn,
 } from '@floating-ui/react';
 import { useContext, useEffect } from 'react';
-import { Keys } from 'react-hotkeys-hook';
+import { type Keys } from 'react-hotkeys-hook';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 

@@ -18,9 +18,9 @@ import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { AppPath } from '@/types/AppPath';
 import {
-  WorkflowStep,
-  WorkflowTrigger,
-  WorkflowWithCurrentVersion,
+  type WorkflowStep,
+  type WorkflowTrigger,
+  type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';

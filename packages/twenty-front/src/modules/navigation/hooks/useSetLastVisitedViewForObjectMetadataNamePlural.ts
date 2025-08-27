@@ -1,7 +1,7 @@
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
-import { View } from '@/views/types/View';
+import { type View } from '@/views/types/View';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 

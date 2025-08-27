@@ -14,9 +14,7 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const resetTableRowSelection = useResetTableRowSelection(
-    recordTableIdFromContext,
-  );
+  const { resetTableRowSelection } = useResetTableRowSelection();
 
   const setRecordTableHoverPosition = useSetRecoilComponentState(
     recordTableHoverPositionComponentState,

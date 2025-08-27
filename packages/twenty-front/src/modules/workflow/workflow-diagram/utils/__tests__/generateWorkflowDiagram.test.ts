@@ -1,4 +1,7 @@
-import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
+import {
+  type WorkflowStep,
+  type WorkflowTrigger,
+} from '@/workflow/types/Workflow';
 import { generateWorkflowDiagram } from '../generateWorkflowDiagram';
 
 describe('generateWorkflowDiagram', () => {

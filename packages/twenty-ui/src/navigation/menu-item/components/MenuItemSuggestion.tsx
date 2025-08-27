@@ -40,6 +40,7 @@ const StyledSuggestionMenuItem = styled.li<{
 
   background: ${({ selected, theme }) =>
     selected ? theme.background.transparent.medium : ''};
+  color: ${({ theme }) => theme.font.color.secondary};
 
   ${HOVER_BACKGROUND};
 

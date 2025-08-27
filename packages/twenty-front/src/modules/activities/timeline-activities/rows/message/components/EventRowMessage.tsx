@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { EventCard } from '@/activities/timeline-activities/rows/components/EventCard';
 import { EventCardToggleButton } from '@/activities/timeline-activities/rows/components/EventCardToggleButton';
 import {
-  EventRowDynamicComponentProps,
+  type EventRowDynamicComponentProps,
   StyledEventRowItemAction,
   StyledEventRowItemColumn,
 } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';

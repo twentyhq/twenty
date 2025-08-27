@@ -1,6 +1,9 @@
-import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
+import {
+  type WorkflowStep,
+  type WorkflowTrigger,
+} from '@/workflow/types/Workflow';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { StepStatus, WorkflowRunStepInfos } from 'twenty-shared/workflow';
+import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
 import { generateWorkflowRunDiagram } from '../generateWorkflowRunDiagram';
 
@@ -101,7 +104,8 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-      isWorkflowFilteringEnabled: true,
+
+      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -115,8 +119,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-0",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "trigger",
         "target": "step1",
@@ -129,8 +133,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-1",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step1",
         "target": "step2",
@@ -143,8 +147,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-2",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step2",
         "target": "step3",
@@ -330,7 +334,8 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-      isWorkflowFilteringEnabled: true,
+
+      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -344,8 +349,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-3",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "trigger",
         "target": "step1",
@@ -358,8 +363,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-4",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step1",
         "target": "step2",
@@ -372,8 +377,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-5",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step2",
         "target": "step3",
@@ -559,7 +564,8 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-      isWorkflowFilteringEnabled: true,
+
+      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -573,8 +579,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-6",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "trigger",
         "target": "step1",
@@ -587,8 +593,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-7",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step1",
         "target": "step2",
@@ -601,8 +607,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-8",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step2",
         "target": "step3",
@@ -807,7 +813,8 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-      isWorkflowFilteringEnabled: true,
+
+      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -821,8 +828,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-9",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "trigger",
         "target": "step1",
@@ -835,8 +842,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-10",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step1",
         "target": "step2",
@@ -849,8 +856,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-11",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step2",
         "target": "step3",
@@ -863,8 +870,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-12",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "step3",
         "target": "step4",
@@ -1035,7 +1042,8 @@ describe('generateWorkflowRunDiagram', () => {
       trigger,
       steps,
       stepInfos,
-      isWorkflowFilteringEnabled: true,
+
+      isWorkflowBranchEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -1049,8 +1057,8 @@ describe('generateWorkflowRunDiagram', () => {
         },
         "deletable": false,
         "id": "8f3b2121-f194-4ba4-9fbf-13",
-        "markerEnd": "workflow-edge-arrow-rounded",
-        "markerStart": "workflow-edge-gray-circle",
+        "markerEnd": "workflow-edge-branch-arrow",
+        "markerStart": undefined,
         "selectable": false,
         "source": "trigger",
         "target": "step1",

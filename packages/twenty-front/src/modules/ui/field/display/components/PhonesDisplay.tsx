@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
 import { styled } from '@linaria/react';

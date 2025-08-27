@@ -1,17 +1,17 @@
 import { isNull, isUndefined } from '@sniptt/guards';
 
-import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   getRecordFromCache,
-  GetRecordFromCacheArgs,
+  type GetRecordFromCacheArgs,
 } from '@/object-record/cache/utils/getRecordFromCache';
 import { GRAPHQL_TYPENAME_KEY } from '@/object-record/constants/GraphqlTypenameKey';
-import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
-import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldActor';
-import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
-import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isFieldActor } from '@/object-record/record-field/ui/types/guards/isFieldActor';
+import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFieldUuid';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildOptimisticActorFieldValueFromCurrentWorkspaceMember } from '@/object-record/utils/buildOptimisticActorFieldValueFromCurrentWorkspaceMember';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { isDefined } from 'twenty-shared/utils';

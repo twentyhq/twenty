@@ -1,6 +1,6 @@
-import { RecordBoardFieldDefinition } from '@/object-record/record-board/types/RecordBoardFieldDefinition';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { ViewField } from '@/views/types/ViewField';
+import { type RecordBoardFieldDefinition } from '@/object-record/record-board/types/RecordBoardFieldDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type ViewField } from '@/views/types/ViewField';
 
 export const mapBoardFieldDefinitionsToViewFields = (
   fieldsDefinitions: RecordBoardFieldDefinition<FieldMetadata>[],

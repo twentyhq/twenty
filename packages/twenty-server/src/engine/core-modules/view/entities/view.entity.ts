@@ -20,6 +20,7 @@ import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filt
 import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -42,15 +43,19 @@ export class View {
 
   @Column({
     type: 'enum',
-    enum: ViewType,
-    enumName: 'ViewType',
+    enum: Object.values(ViewType),
     nullable: false,
     default: ViewType.TABLE,
   })
   type: ViewType;
 
-  @Column({ nullable: true, type: 'text', default: 'INDEX' })
-  key: string;
+  @Column({
+    type: 'enum',
+    enum: Object.values(ViewKey),
+    nullable: true,
+    default: null,
+  })
+  key: ViewKey | null;
 
   @Column({ nullable: false, type: 'text' })
   icon: string;
@@ -61,10 +66,12 @@ export class View {
   @Column({ nullable: false, default: false, type: 'boolean' })
   isCompact: boolean;
 
+  @Column({ nullable: false, default: false, type: 'boolean' })
+  isCustom: boolean;
+
   @Column({
     type: 'enum',
-    enumName: 'ViewOpenRecordIn',
-    enum: ViewOpenRecordIn,
+    enum: Object.values(ViewOpenRecordIn),
     nullable: false,
     default: ViewOpenRecordIn.SIDE_PANEL,
   })
@@ -72,8 +79,7 @@ export class View {
 
   @Column({
     type: 'enum',
-    enumName: 'KanbanAggregateOperations',
-    enum: AggregateOperations,
+    enum: Object.values(AggregateOperations),
     nullable: true,
     default: null,
   })

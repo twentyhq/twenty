@@ -1,6 +1,6 @@
-import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { createContext } from 'react';
-import { DeletedWorkspaceMember } from '~/generated-metadata/graphql';
+import { type DeletedWorkspaceMember } from '~/generated-metadata/graphql';
 
 export type AuthContextType = {
   currentWorkspaceMembers: CurrentWorkspaceMember[];

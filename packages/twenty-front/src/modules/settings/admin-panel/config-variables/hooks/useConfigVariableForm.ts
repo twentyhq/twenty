@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { ConfigVariableValue } from 'twenty-shared/types';
+import { type ConfigVariableValue } from 'twenty-shared/types';
 import { z } from 'zod';
 
-import { ConfigVariable } from '~/generated-metadata/graphql';
+import { type ConfigVariable } from '~/generated-metadata/graphql';
 
 type FormValues = {
   value: ConfigVariableValue;

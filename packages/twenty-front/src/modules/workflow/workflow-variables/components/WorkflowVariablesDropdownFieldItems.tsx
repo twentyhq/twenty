@@ -2,7 +2,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
@@ -62,17 +62,17 @@ export const WorkflowVariablesDropdownFieldItems = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        {filteredOptions.map(([key, subStep]) => (
+        {filteredOptions.map(([key, option]) => (
           <MenuItemSelect
             key={key}
             selected={false}
             focused={false}
             onClick={() => handleSelectField(key)}
-            text={subStep.label || key}
-            hasSubMenu={!subStep.isLeaf}
-            LeftIcon={subStep.icon ? getIcon(subStep.icon) : undefined}
+            text={option.label || key}
+            hasSubMenu={!option.isLeaf}
+            LeftIcon={option.icon ? getIcon(option.icon) : undefined}
             contextualText={
-              subStep.isLeaf ? subStep?.value?.toString() : undefined
+              option.isLeaf ? option?.value?.toString() : undefined
             }
           />
         ))}

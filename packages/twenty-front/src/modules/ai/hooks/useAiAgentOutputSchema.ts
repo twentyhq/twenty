@@ -1,6 +1,6 @@
-import { WorkflowAiAgentAction } from '@/workflow/types/Workflow';
-import { OutputSchemaField } from '@/ai/constants/output-field-type-options';
-import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
+import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
+import { type BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';

@@ -1,6 +1,6 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
+import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
@@ -13,7 +13,7 @@ import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/use
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { ReactNode, useContext } from 'react';
+import { useContext, type ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -70,13 +70,12 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
         isLabelIdentifierCompact,
         displayedMaxRows: 1,
         isRecordFieldReadOnly: isRecordFieldReadOnly({
-          objectPermissions,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          fieldName: columnDefinition.metadata.fieldName,
-          fieldType: columnDefinition.type,
-          isCustom: objectMetadataItem.isCustom,
-          fieldMetadataId: columnDefinition.fieldMetadataId,
           isRecordReadOnly: isRecordReadOnly ?? false,
+          objectPermissions,
+          fieldMetadataItem: {
+            id: columnDefinition.fieldMetadataId,
+            isUIReadOnly: columnDefinition.metadata.isUIReadOnly ?? false,
+          },
         }),
         maxWidth: columnDefinition.size,
         onRecordChipClick: () => {

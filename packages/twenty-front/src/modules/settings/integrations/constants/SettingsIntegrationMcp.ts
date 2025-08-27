@@ -1,4 +1,4 @@
-import { SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
+import { type SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
 
 export const SETTINGS_INTEGRATION_AI_CATEGORY: SettingsIntegrationCategory = {
   key: 'ai',

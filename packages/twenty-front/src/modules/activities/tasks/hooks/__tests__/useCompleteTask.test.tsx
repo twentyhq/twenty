@@ -1,9 +1,9 @@
-import { MockedResponse } from '@apollo/client/testing';
+import { type MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import gql from 'graphql-tag';
 
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
-import { Task } from '@/activities/types/Task';
+import { type Task } from '@/activities/types/Task';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const task: Task = {

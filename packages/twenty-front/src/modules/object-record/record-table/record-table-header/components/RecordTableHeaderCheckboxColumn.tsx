@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
@@ -37,8 +38,11 @@ export const RecordTableHeaderCheckboxColumn = () => {
   const allRowsSelectedStatus = useRecoilComponentValue(
     allRowsSelectedStatusComponentSelector,
   );
-  const { selectAllRows, resetTableRowSelection, setHasUserSelectedAllRows } =
-    useRecordTable();
+
+  const { selectAllRows } = useSelectAllRows();
+
+  const { resetTableRowSelection } = useResetTableRowSelection();
+
   const checked =
     allRowsSelectedStatus === 'all' || allRowsSelectedStatus === 'some';
   const indeterminate = allRowsSelectedStatus === 'some';
@@ -60,10 +64,8 @@ export const RecordTableHeaderCheckboxColumn = () => {
 
   const onChange = () => {
     if (checked) {
-      setHasUserSelectedAllRows(false);
       resetTableRowSelection();
     } else {
-      setHasUserSelectedAllRows(true);
       selectAllRows();
     }
   };

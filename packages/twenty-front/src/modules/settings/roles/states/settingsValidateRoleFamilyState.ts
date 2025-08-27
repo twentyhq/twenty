@@ -1,5 +1,5 @@
 import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
-import { Role } from '~/generated-metadata/graphql';
+import { type Role } from '~/generated-metadata/graphql';
 
 export const settingsValidateRoleFamilyState = createFamilyState<
   Record<keyof Pick<Role, 'label'>, boolean>,

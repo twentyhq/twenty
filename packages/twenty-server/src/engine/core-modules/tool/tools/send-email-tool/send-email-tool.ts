@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import DOMPurify from 'dompurify';
-import { JSDOM } from 'jsdom';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -116,6 +115,7 @@ export class SendEmailTool implements Tool {
         workspaceId,
       );
 
+      const { JSDOM } = await import('jsdom');
       const window = new JSDOM('').window;
       const purify = DOMPurify(window);
       const safeBody = purify.sanitize(body || '');

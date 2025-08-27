@@ -1,4 +1,4 @@
-import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { isDefined } from 'twenty-shared/utils';
 
 export type EventGroup = {

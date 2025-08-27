@@ -1,5 +1,5 @@
-import { ViewFilter } from '@/views/types/ViewFilter';
-import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
+import { type ViewFilter } from '@/views/types/ViewFilter';
+import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
 

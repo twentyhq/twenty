@@ -1,6 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { convertCurrencyMicrosToCurrencyAmount } from '~/utils/convertCurrencyToCurrencyMicros';

@@ -1,4 +1,4 @@
-import { Attachment } from '@/activities/files/types/Attachment';
+import { type Attachment } from '@/activities/files/types/Attachment';
 import { compareUrls } from '@/activities/utils/compareUrls';
 
 export const filterAttachmentsToRestore = (

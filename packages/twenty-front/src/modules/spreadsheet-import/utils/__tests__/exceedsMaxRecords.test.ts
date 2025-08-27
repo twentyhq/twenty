@@ -1,4 +1,4 @@
-import { WorkSheet } from 'xlsx-ugnis';
+import { type WorkSheet } from 'xlsx-ugnis';
 
 import { exceedsMaxRecords } from '@/spreadsheet-import/utils/exceedsMaxRecords';
 

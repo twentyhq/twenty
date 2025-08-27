@@ -1,8 +1,8 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { SpreadsheetImportFieldType } from '@/spreadsheet-import/types/SpreadsheetImportFieldType';
-import { SpreadsheetImportFieldValidationDefinition } from '@/spreadsheet-import/types/SpreadsheetImportFieldValidationDefinition';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { IconComponent } from 'twenty-ui/display';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type SpreadsheetImportFieldType } from '@/spreadsheet-import/types/SpreadsheetImportFieldType';
+import { type SpreadsheetImportFieldValidationDefinition } from '@/spreadsheet-import/types/SpreadsheetImportFieldValidationDefinition';
+import { type FieldMetadataType } from 'twenty-shared/types';
+import { type IconComponent } from 'twenty-ui/display';
 
 export type SpreadsheetImportField = {
   // Icon

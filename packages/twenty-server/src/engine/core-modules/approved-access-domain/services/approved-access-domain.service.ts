@@ -22,7 +22,6 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 import { isWorkDomain } from 'src/utils/is-work-email';
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class ApprovedAccessDomainService {
   constructor(
     @InjectRepository(ApprovedAccessDomainEntity, 'core')

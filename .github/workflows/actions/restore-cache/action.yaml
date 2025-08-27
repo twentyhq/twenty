@@ -29,7 +29,7 @@ runs:
         restore-keys: ${{ steps.cache-primary-key-builder.outputs.CACHE_PRIMARY_KEY_PREFIX }}-
         path: |
           .cache
-          .nx/cache
+          .nx
           node_modules/.cache
           packages/*/node_modules/.cache
           ${{ inputs.additional-paths }}

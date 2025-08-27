@@ -1,4 +1,4 @@
-import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 
 export const getWorkflowMock = () => {
   return workflowQueryResult.workflows.edges[0].node;
@@ -1499,10 +1499,6 @@ export const workflowQueryResult = {
                             },
                             workspaceId: {
                               value: '3b8e6458-5fc1-4e63-8563-008ccddaa6db',
-                              isLeaf: true,
-                            },
-                            dataSourceId: {
-                              value: '82de2d45-4c55-46d6-83ce-8c82ad5e2ecf',
                               isLeaf: true,
                             },
                             nameSingular: {

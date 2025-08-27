@@ -6,7 +6,7 @@
   "targets": {
     "lint": {
       "options": {
-        "eslintConfig": "{workspaceRoot}/.eslintrc.cjs",
+        "eslintConfig": "{workspaceRoot}/eslint.config.mjs",
         "lintFilePatterns": ["{projectRoot}/**/*.ts"]
       },
       "configurations": {

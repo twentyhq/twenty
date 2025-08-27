@@ -1,6 +1,6 @@
 import { ActionComponent } from '@/action-menu/actions/display/components/ActionComponent';
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
-import { ActionGroupConfig } from '@/command-menu/components/CommandMenu';
+import { type ActionGroupConfig } from '@/command-menu/components/CommandMenu';
 import { CommandMenuDefaultSelectionEffect } from '@/command-menu/components/CommandMenuDefaultSelectionEffect';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';

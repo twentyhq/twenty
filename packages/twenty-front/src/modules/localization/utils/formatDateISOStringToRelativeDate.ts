@@ -5,7 +5,7 @@ import {
   isToday,
   isTomorrow,
   isYesterday,
-  Locale,
+  type Locale,
   startOfDay,
 } from 'date-fns';
 

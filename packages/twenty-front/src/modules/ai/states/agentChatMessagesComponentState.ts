@@ -1,6 +1,6 @@
 import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
-import { AgentChatMessage } from '~/generated-metadata/graphql';
+import { type AgentChatMessage } from '~/generated-metadata/graphql';
 
 export const AgentChatMessagesComponentInstanceContext =
   createComponentInstanceContext();

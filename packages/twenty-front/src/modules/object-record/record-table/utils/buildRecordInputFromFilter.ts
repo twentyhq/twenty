@@ -1,13 +1,13 @@
-import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 
 import {
-  RecordFilter,
-  RecordFilterToRecordInputOperand,
+  type RecordFilter,
+  type RecordFilterToRecordInputOperand,
 } from '@/object-record/record-filter/types/RecordFilter';
 import { FILTER_OPERANDS_MAP } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/types';
 import { assertUnreachable, parseJson } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 

@@ -1,5 +1,5 @@
-import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
-import { Theme } from '@emotion/react';
+import { type WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
+import { type Theme } from '@emotion/react';
 
 export type WorkflowDiagramNodeSelectedColors = {
   background: string;

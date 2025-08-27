@@ -1,11 +1,11 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
@@ -75,10 +75,7 @@ const meta: Meta = {
               },
             }}
           >
-            <RecordTableComponentInstance
-              recordTableId="asd"
-              onColumnsChange={() => {}}
-            >
+            <RecordTableComponentInstance recordTableId="asd">
               <RecordTableBodyContextProvider
                 value={{
                   onOpenTableCell: () => {},

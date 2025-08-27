@@ -8,7 +8,7 @@ import {
   settingsIntegrationPostgreSQLConnectionFormSchema,
   settingsIntegrationStripeConnectionFormSchema,
 } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
-import { RemoteServer } from '~/generated-metadata/graphql';
+import { type RemoteServer } from '~/generated-metadata/graphql';
 
 export const getEditionSchemaForForm = (databaseKey: string) => {
   switch (databaseKey) {

@@ -34,9 +34,9 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
-import { WorkspaceMigrationBuilderV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.module';
-import { WorkspaceMigrationRunnerV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.module';
+import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 import { ViewModule } from 'src/modules/view/view.module';
+import { WorkspaceMigrationBuilderExceptionV2Interceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2.interceptor';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
@@ -64,8 +64,7 @@ import { FieldMetadataService } from './services/field-metadata.service';
         ViewModule,
         PermissionsModule,
         WorkspaceMetadataCacheModule,
-        WorkspaceMigrationBuilderV2Module,
-        WorkspaceMigrationRunnerV2Module,
+        WorkspaceMigrationV2Module,
         FlatFieldMetadataModule,
         IndexMetadataModule,
       ],
@@ -102,7 +101,10 @@ import { FieldMetadataService } from './services/field-metadata.service';
           },
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],
-          interceptors: [FieldMetadataGraphqlApiExceptionInterceptor],
+          interceptors: [
+            WorkspaceMigrationBuilderExceptionV2Interceptor,
+            FieldMetadataGraphqlApiExceptionInterceptor,
+          ],
         },
       ],
     }),

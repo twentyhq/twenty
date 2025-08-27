@@ -1,8 +1,8 @@
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { ComponentFamilySelector } from '@/ui/utilities/state/component-state/types/ComponentFamilySelector';
-import { ComponentFamilyState } from '@/ui/utilities/state/component-state/types/ComponentFamilyState';
+import { type ComponentFamilySelector } from '@/ui/utilities/state/component-state/types/ComponentFamilySelector';
+import { type ComponentFamilyState } from '@/ui/utilities/state/component-state/types/ComponentFamilyState';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
-import { SerializableParam, useRecoilState } from 'recoil';
+import { type SerializableParam, useRecoilState } from 'recoil';
 
 export const useRecoilComponentFamilyState = <
   StateType,

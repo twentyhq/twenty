@@ -1,4 +1,4 @@
-import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
+import { type WorkflowVersionStatus } from '@/workflow/types/Workflow';
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
 
 describe('getWorkflowVersionStatusTagProps', () => {

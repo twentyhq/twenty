@@ -1,4 +1,4 @@
-import { ApprovedAccessDomain } from '~/generated/graphql';
+import { type ApprovedAccessDomain } from '~/generated/graphql';
 import { createState } from 'twenty-ui/utilities';
 
 export const approvedAccessDomainsState = createState<

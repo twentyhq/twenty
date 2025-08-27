@@ -1,9 +1,6 @@
-import { act, renderHook } from '@testing-library/react';
+import { type WorkflowTrigger } from '@/workflow/types/Workflow';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
-import {
-  WorkflowTrigger,
-  WorkflowWithCurrentVersion,
-} from '@/workflow/types/Workflow';
+import { act, renderHook } from '@testing-library/react';
 
 const mockUpdateOneRecord = jest.fn();
 const mockGetUpdatableWorkflowVersion = jest.fn();
@@ -15,8 +12,8 @@ jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
   })),
 }));
 
-jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersion', () => ({
-  useGetUpdatableWorkflowVersion: jest.fn(() => ({
+jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
+  useGetUpdatableWorkflowVersionOrThrow: jest.fn(() => ({
     getUpdatableWorkflowVersion: mockGetUpdatableWorkflowVersion,
   })),
 }));
@@ -28,11 +25,6 @@ jest.mock('@/workflow/hooks/useComputeStepOutputSchema', () => ({
 }));
 
 describe('useUpdateWorkflowVersionTrigger', () => {
-  const mockWorkflow = {
-    id: 'workflow-id',
-    currentVersion: { id: 'version-id' },
-  } as WorkflowWithCurrentVersion;
-
   const trigger: WorkflowTrigger = {
     name: 'Company created',
     type: 'DATABASE_EVENT',
@@ -53,15 +45,13 @@ describe('useUpdateWorkflowVersionTrigger', () => {
       data: { computeStepOutputSchema: { field1: 'string' } },
     });
 
-    const { result } = renderHook(() =>
-      useUpdateWorkflowVersionTrigger({ workflow: mockWorkflow }),
-    );
+    const { result } = renderHook(() => useUpdateWorkflowVersionTrigger());
 
     await act(async () => {
       await result.current.updateTrigger(trigger);
     });
 
-    expect(mockGetUpdatableWorkflowVersion).toHaveBeenCalledWith(mockWorkflow);
+    expect(mockGetUpdatableWorkflowVersion).toHaveBeenCalled();
     expect(mockComputeStepOutputSchema).toHaveBeenCalledWith({ step: trigger });
     expect(mockUpdateOneRecord).toHaveBeenCalledWith({
       idToUpdate: 'version-id',
@@ -77,9 +67,7 @@ describe('useUpdateWorkflowVersionTrigger', () => {
   it('skips output schema computation when disabled', async () => {
     mockGetUpdatableWorkflowVersion.mockResolvedValue('version-id');
 
-    const { result } = renderHook(() =>
-      useUpdateWorkflowVersionTrigger({ workflow: mockWorkflow }),
-    );
+    const { result } = renderHook(() => useUpdateWorkflowVersionTrigger());
 
     await act(async () => {
       await result.current.updateTrigger(trigger, {

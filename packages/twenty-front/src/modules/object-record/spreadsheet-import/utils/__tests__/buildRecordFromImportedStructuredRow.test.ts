@@ -1,9 +1,9 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { buildRecordFromImportedStructuredRow } from '@/object-record/spreadsheet-import/utils/buildRecordFromImportedStructuredRow';
 import {
-  ImportedStructuredRow,
-  SpreadsheetImportField,
+  type ImportedStructuredRow,
+  type SpreadsheetImportField,
 } from '@/spreadsheet-import/types';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { RelationType } from '~/generated/graphql';

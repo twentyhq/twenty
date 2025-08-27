@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
-import { RefObject, useCallback, useState } from 'react';
+import { type RefObject, useCallback, useState } from 'react';
 
 import { useDragSelectWithAutoScroll } from '@/ui/utilities/drag-select/hooks/useDragSelectWithAutoScroll';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { useDragSelect } from '../hooks/useDragSelect';
-import { SelectionBox } from '../types/SelectionBox';
+import { type SelectionBox } from '../types/SelectionBox';
 import { isValidSelectionStart } from '../utils/selectionBoxValidation';
 
 type DragSelectProps = {

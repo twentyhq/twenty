@@ -1,5 +1,5 @@
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
-import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import {
   SignInUpStep,
   signInUpStepState,

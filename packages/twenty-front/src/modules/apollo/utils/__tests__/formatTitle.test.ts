@@ -1,5 +1,3 @@
-import { expect } from '@storybook/test';
-
 import { OperationType } from '@/apollo/types/operation-type';
 
 import formatTitle from '../formatTitle';

@@ -3,6 +3,7 @@ import {
   type HttpException,
   Inject,
   Injectable,
+  InternalServerErrorException,
   Scope,
 } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
@@ -13,7 +14,12 @@ import { QueryFailedError } from 'typeorm';
 import { type ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 import { type ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
 
+import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import {
+  TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { handleException } from 'src/engine/utils/global-exception-handler.util';
 
 interface RequestAndParams {
@@ -82,6 +88,25 @@ export class HttpExceptionHandlerService {
     if (exception instanceof QueryFailedError) {
       exception = new BadRequestException(exception.message);
       statusCode = 400;
+    }
+
+    if (
+      exception instanceof TwentyORMException &&
+      [
+        TwentyORMExceptionCode.INVALID_INPUT,
+        TwentyORMExceptionCode.DUPLICATE_ENTRY_DETECTED,
+        TwentyORMExceptionCode.CONNECT_UNIQUE_CONSTRAINT_ERROR,
+        TwentyORMExceptionCode.CONNECT_NOT_ALLOWED,
+        TwentyORMExceptionCode.CONNECT_RECORD_NOT_FOUND,
+      ].includes(exception.code)
+    ) {
+      exception = new BadRequestException(exception.message);
+      statusCode = 400;
+    }
+
+    if (exception instanceof PostgresException) {
+      exception = new InternalServerErrorException(exception.message);
+      statusCode = 500;
     }
 
     handleException({

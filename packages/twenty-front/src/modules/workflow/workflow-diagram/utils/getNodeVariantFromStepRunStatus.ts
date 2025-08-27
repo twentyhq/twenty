@@ -1,5 +1,5 @@
-import { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
-import { WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
+import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
+import { type WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
 
 export const getNodeVariantFromStepRunStatus = (
   runStatus: WorkflowRunStepStatus | undefined,

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
 import { useRef, useState } from 'react';
 

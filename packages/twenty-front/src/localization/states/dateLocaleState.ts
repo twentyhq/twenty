@@ -1,6 +1,6 @@
-import { Locale } from 'date-fns';
+import { type Locale } from 'date-fns';
 import { enUS } from 'date-fns/locale';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { createState } from 'twenty-ui/utilities';
 
 type DateLocaleState = {

@@ -5,7 +5,7 @@ import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { validateAndExtractFolderId } from '@/favorites/utils/validateAndExtractFolderId';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { OnDragEndResponder } from '@hello-pangea/dnd';
+import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useSetRecoilState } from 'recoil';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 

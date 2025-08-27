@@ -6,7 +6,7 @@ import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlag
 import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
 import { useImpersonationRedirect } from '@/settings/admin-panel/hooks/useImpersonationRedirect';
 import { userLookupResultState } from '@/settings/admin-panel/states/userLookupResultState';
-import { WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
+import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -32,7 +32,7 @@ import { Button, Toggle } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  FeatureFlagKey,
+  type FeatureFlagKey,
   useImpersonateMutation,
   useUpdateWorkspaceFeatureFlagMutation,
 } from '~/generated-metadata/graphql';

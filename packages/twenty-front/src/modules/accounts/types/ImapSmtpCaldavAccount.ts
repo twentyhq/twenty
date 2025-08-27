@@ -1,4 +1,4 @@
-import { ConnectionParameters } from '~/generated/graphql';
+import { type ConnectionParameters } from '~/generated/graphql';
 
 export type ImapSmtpCaldavAccount = {
   IMAP?: ConnectionParameters;

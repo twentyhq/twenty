@@ -1,5 +1,5 @@
-import { SpreadsheetImportFields } from '@/spreadsheet-import/types';
-import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { type SpreadsheetImportFields } from '@/spreadsheet-import/types';
+import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 
 export const findUnmatchedRequiredFields = (
   fields: SpreadsheetImportFields,

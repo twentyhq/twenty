@@ -6,10 +6,10 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { ConfigVariableValue } from 'twenty-shared/types';
+import { type ConfigVariableValue } from 'twenty-shared/types';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
 import { ConfigVariableType } from '~/generated/graphql';
-import { ConfigVariableOptions } from '../types/ConfigVariableOptions';
+import { type ConfigVariableOptions } from '../types/ConfigVariableOptions';
 
 type ConfigVariableDatabaseInputProps = {
   label: string;

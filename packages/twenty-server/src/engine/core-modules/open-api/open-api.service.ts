@@ -84,7 +84,12 @@ export class OpenApiService {
       `${request.protocol}://${request.get('host')}`,
     );
 
-    const schema = baseSchema('core', baseUrl);
+    const tokenFromQuery = request.query.token;
+    const schema = baseSchema(
+      'core',
+      baseUrl,
+      typeof tokenFromQuery === 'string' ? tokenFromQuery : undefined,
+    );
 
     const workspace = await this.getWorkspaceFromRequest(request);
 
@@ -171,7 +176,12 @@ export class OpenApiService {
       `${request.protocol}://${request.get('host')}`,
     );
 
-    const schema = baseSchema('metadata', baseUrl);
+    const tokenFromQuery = request.query.token;
+    const schema = baseSchema(
+      'metadata',
+      baseUrl,
+      typeof tokenFromQuery === 'string' ? tokenFromQuery : undefined,
+    );
 
     const workspace = await this.getWorkspaceFromRequest(request);
 

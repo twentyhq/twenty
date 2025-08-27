@@ -1,14 +1,14 @@
-import { SelectSizeVariant } from '@/ui/input/components/Select';
+import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';
 
 // TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
-const StyledControlContainer = styled.div<{
+export const StyledControlContainer = styled.div<{
   disabled?: boolean;
   hasIcon: boolean;
   selectSizeVariant?: SelectSizeVariant;
@@ -53,14 +53,14 @@ const StyledControlContainer = styled.div<{
   text-align: left;
 `;
 
-const StyledIconChevronDown = styled(IconChevronDown)<{
+export const StyledSelectControlIconChevronDown = styled(IconChevronDown)<{
   disabled?: boolean;
 }>`
   color: ${({ disabled, theme }) =>
     disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
 `;
 
-type SelectControlProps = {
+export type SelectControlProps = {
   selectedOption: SelectOption<string | number | boolean | null>;
   isDisabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
@@ -93,7 +93,10 @@ export const SelectControl = ({
         />
       ) : null}
       <OverflowingTextWithTooltip text={selectedOption.label} />
-      <StyledIconChevronDown disabled={isDisabled} size={theme.icon.size.md} />
+      <StyledSelectControlIconChevronDown
+        disabled={isDisabled}
+        size={theme.icon.size.md}
+      />
     </StyledControlContainer>
   );
 };

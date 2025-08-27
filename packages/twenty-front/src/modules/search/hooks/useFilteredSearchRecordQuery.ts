@@ -1,7 +1,7 @@
 import { formatSearchRecordAsSingleRecordPickerRecord } from '@/object-metadata/utils/formatSearchRecordAsSingleRecordPickerRecord';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
-import { SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
+import { type SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useFilteredSearchRecordQuery = ({

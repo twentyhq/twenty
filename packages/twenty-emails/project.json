@@ -24,8 +24,7 @@
         "lintFilePatterns": [
           "{projectRoot}/src/**/*.{ts,tsx,json}",
           "{projectRoot}/package.json"
-        ],
-        "reportUnusedDisableDirectives": "error"
+        ]
       },
       "configurations": {
         "fix": {}

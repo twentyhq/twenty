@@ -12,9 +12,9 @@ import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import {
-  BaseOutputSchema,
-  LinkOutputSchema,
-  StepOutputSchema,
+  type BaseOutputSchema,
+  type LinkOutputSchema,
+  type StepOutputSchema,
 } from '../types/StepOutputSchema';
 import { getCurrentSubStepFromPath } from '../utils/getCurrentSubStepFromPath';
 import { isBaseOutputSchema } from '../utils/isBaseOutputSchema';
@@ -33,6 +33,7 @@ type UseVariableDropdownReturn = {
   setSearchInputValue: (value: string) => void;
   handleSelectField: (key: string) => void;
   goBack: () => void;
+  // TODO: fix typing here
   filteredOptions: [string, any][];
 };
 

@@ -1,7 +1,7 @@
 import { type FromTo } from 'twenty-shared/types';
 
+import { type FlatObjectMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-properties-to-compare.type';
 import { type FlatObjectMetadataWithoutFields } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type FlatObjectMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-object-metadata/utils/compare-two-flat-object-metadata.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type CreateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 
@@ -35,3 +35,9 @@ export type WorkspaceMigrationObjectActionV2 =
 
 export type WorkspaceMigrationObjectActionTypeV2 =
   WorkspaceMigrationObjectActionV2['type'];
+
+export const WORKSPACE_MIGRATION_OBJECT_ACTION_TYPES = [
+  'create_object',
+  'delete_object',
+  'update_object',
+] as const satisfies WorkspaceMigrationObjectActionTypeV2[];

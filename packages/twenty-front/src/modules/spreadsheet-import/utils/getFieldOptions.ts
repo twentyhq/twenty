@@ -1,4 +1,4 @@
-import { SpreadsheetImportFields } from '@/spreadsheet-import/types';
+import { type SpreadsheetImportFields } from '@/spreadsheet-import/types';
 
 export const getFieldOptions = (
   fields: SpreadsheetImportFields,

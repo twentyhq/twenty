@@ -14,7 +14,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import {
-  GetJsonNodeHighlighting,
+  type GetJsonNodeHighlighting,
   isTwoFirstDepths,
   JsonTree,
 } from 'twenty-ui/json-visualizer';
@@ -56,7 +56,10 @@ export const WorkflowRunStepOutputDetail = ({ stepId }: { stepId: string }) => {
       : getActionIcon(stepDefinition.definition.type);
   const headerIconColor =
     stepDefinition.type === 'trigger'
-      ? getTriggerIconColor({ theme })
+      ? getTriggerIconColor({
+          theme,
+          triggerType: stepDefinition.definition.type,
+        })
       : getActionIconColorOrThrow({
           theme,
           actionType: stepDefinition.definition.type,

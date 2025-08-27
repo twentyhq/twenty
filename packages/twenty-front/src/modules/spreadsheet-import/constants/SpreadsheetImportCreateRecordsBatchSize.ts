@@ -1,1 +1,1 @@
-export const SpreadsheetImportCreateRecordsBatchSize = 200;
+export const SPREADSHEET_IMPORT_CREATE_RECORDS_BATCH_SIZE = 200;

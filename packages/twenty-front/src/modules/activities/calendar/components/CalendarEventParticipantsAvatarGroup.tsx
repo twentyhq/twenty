@@ -1,8 +1,8 @@
-import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
+import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { isTimelineCalendarEventParticipant } from '@/activities/calendar/types/guards/IsTimelineCalendarEventParticipant';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar, AvatarGroup } from 'twenty-ui/display';
-import { TimelineCalendarEventParticipant } from '~/generated-metadata/graphql';
+import { type TimelineCalendarEventParticipant } from '~/generated-metadata/graphql';
 
 type CalendarEventParticipantsAvatarGroupProps = {
   participants: CalendarEventParticipant[] | TimelineCalendarEventParticipant[];

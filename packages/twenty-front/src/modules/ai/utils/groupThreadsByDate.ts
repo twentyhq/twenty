@@ -1,4 +1,4 @@
-import { AgentChatThread } from '~/generated-metadata/graphql';
+import { type AgentChatThread } from '~/generated-metadata/graphql';
 
 export const groupThreadsByDate = (threads: AgentChatThread[]) => {
   const today = new Date();

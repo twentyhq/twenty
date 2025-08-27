@@ -1,4 +1,4 @@
-import { WorkflowAction } from '@/workflow/types/Workflow';
+import { type WorkflowAction } from '@/workflow/types/Workflow';
 
 export const getRootStepIds = (steps: WorkflowAction[]): string[] => {
   const childIds = new Set<string>();

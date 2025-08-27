@@ -15,10 +15,19 @@ import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FlatFieldMetadataTypeValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service';
+import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
+import { FlatObjectMetadataValidatorService } from 'src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service';
 import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/index-metadata.module';
+import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
 import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/object-metadata/interceptors/object-metadata-graphql-api-exception.interceptor';
+import { ObjectMetadataServiceV2 } from 'src/engine/metadata-modules/object-metadata/object-metadata-v2.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ObjectMetadataFieldRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-field-relation.service';
 import { ObjectMetadataMigrationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-migration.service';
 import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
@@ -34,15 +43,8 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
-import { WorkspaceMigrationBuilderV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/workspace-migration-builder-v2.module';
-import { WorkspaceMigrationRunnerV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/workspace-migration-runner-v2.module';
-
-import { ObjectMetadataEntity } from './object-metadata.entity';
-import { ObjectMetadataService } from './object-metadata.service';
-
-import { CreateObjectInput } from './dtos/create-object.input';
-import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
-import { UpdateObjectPayload } from './dtos/update-object.input';
+import { WorkspaceMigrationBuilderExceptionV2Interceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2.interceptor';
+import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
 @Module({
   imports: [
@@ -67,11 +69,14 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
         WorkspaceMetadataCacheModule,
         WorkspaceDataSourceModule,
         FeatureFlagModule,
-        WorkspaceMigrationBuilderV2Module,
-        WorkspaceMigrationRunnerV2Module,
+        WorkspaceMigrationV2Module,
       ],
       services: [
         ObjectMetadataService,
+        ObjectMetadataServiceV2,
+        FlatObjectMetadataValidatorService,
+        FlatFieldMetadataValidatorService,
+        FlatFieldMetadataTypeValidatorService,
         ObjectMetadataMigrationService,
         ObjectMetadataFieldRelationService,
         ObjectMetadataRelatedRecordsService,
@@ -94,7 +99,10 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
           update: { disabled: true },
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],
-          interceptors: [ObjectMetadataGraphqlApiExceptionInterceptor],
+          interceptors: [
+            WorkspaceMigrationBuilderExceptionV2Interceptor,
+            ObjectMetadataGraphqlApiExceptionInterceptor,
+          ],
           filters: [PermissionsGraphqlApiExceptionFilter],
         },
       ],
@@ -102,6 +110,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
   ],
   providers: [
     ObjectMetadataService,
+    ObjectMetadataServiceV2,
     ObjectMetadataResolver,
     BeforeUpdateOneObject,
   ],

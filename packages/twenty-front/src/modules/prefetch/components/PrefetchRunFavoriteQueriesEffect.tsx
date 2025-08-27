@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { Favorite } from '@/favorites/types/Favorite';
-import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
+import { type Favorite } from '@/favorites/types/Favorite';
+import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';

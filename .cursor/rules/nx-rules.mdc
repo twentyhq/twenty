@@ -1,12 +1,7 @@
 ---
 description: Guidelines and best practices for working with Nx in the Twenty workspace, including workspace architecture understanding, configuration management, and generator usage.
-globs: 
-alwaysApply: false
----
----
-description: Guidelines and best practices for working with Nx in the Twenty workspace, including workspace architecture understanding, configuration management, and generator usage.
 globs: ["**/nx.json", "**/project.json", "**/workspace.json"]
-alwaysApply: false
+alwaysApply: true
 ---
 
 # Nx Guidelines
@@ -42,7 +37,7 @@ npx nx g @nx/react:component my-component
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "options": { "jestConfig": "packages/twenty-front/jest.config.ts" }
+      "options": { "jestConfig": "packages/twenty-front/jest.config.mjs" }
     }
   }
 }

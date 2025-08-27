@@ -1,6 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
@@ -135,7 +137,7 @@ describe('WorkflowVersionStepWorkspaceService', () => {
       const result = await service.createWorkflowVersionStep({
         input: {
           stepType: WorkflowActionType.FORM,
-          parentStepId: 'trigger',
+          parentStepId: TRIGGER_STEP_ID,
           nextStepId: undefined,
           workflowVersionId: mockWorkflowVersionId,
         },
@@ -160,7 +162,7 @@ describe('WorkflowVersionStepWorkspaceService', () => {
       const result = await service.createWorkflowVersionStep({
         input: {
           stepType: WorkflowActionType.FORM,
-          parentStepId: 'trigger',
+          parentStepId: TRIGGER_STEP_ID,
           nextStepId: 'step-1',
           workflowVersionId: mockWorkflowVersionId,
         },
@@ -259,7 +261,7 @@ describe('WorkflowVersionStepWorkspaceService', () => {
 
     it('should delete trigger', async () => {
       const result = await service.deleteWorkflowVersionStep({
-        stepIdToDelete: 'trigger',
+        stepIdToDelete: TRIGGER_STEP_ID,
         workflowVersionId: mockWorkflowVersionId,
         workspaceId: mockWorkspaceId,
       });
@@ -277,7 +279,7 @@ describe('WorkflowVersionStepWorkspaceService', () => {
           'step-2': [],
           'step-3': [],
         },
-        deletedStepIds: ['trigger'],
+        deletedStepIds: [TRIGGER_STEP_ID],
       });
     });
   });

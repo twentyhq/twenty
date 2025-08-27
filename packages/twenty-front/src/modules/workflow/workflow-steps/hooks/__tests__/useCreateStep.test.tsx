@@ -1,10 +1,10 @@
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import { WorkflowVisualizerComponentInstanceContext } from '../../../workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { useCreateStep } from '../useCreateStep';
 
-const mockCreateDraftFromWorkflowVersion = jest.fn().mockResolvedValue('457');
+const mockGetUpdatableWorkflowVersion = jest.fn();
 const mockCreateWorkflowVersionStep = jest.fn().mockResolvedValue({
   data: {
     createWorkflowVersionStep: { createdStep: { id: '1', type: 'CODE' } },
@@ -20,9 +20,9 @@ jest.mock(
   }),
 );
 
-jest.mock('@/workflow/hooks/useCreateDraftFromWorkflowVersion', () => ({
-  useCreateDraftFromWorkflowVersion: () => ({
-    createDraftFromWorkflowVersion: mockCreateDraftFromWorkflowVersion,
+jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
+  useGetUpdatableWorkflowVersionOrThrow: () => ({
+    getUpdatableWorkflowVersion: mockGetUpdatableWorkflowVersion,
   }),
 }));
 
@@ -55,7 +55,14 @@ describe('useCreateStep', () => {
     versions: [],
   };
 
-  it('should create step in draft version', async () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should create step in workflow version', async () => {
+    const mockWorkflowVersionId = 'version-123';
+    mockGetUpdatableWorkflowVersion.mockResolvedValue(mockWorkflowVersionId);
+
     const { result } = renderHook(
       () =>
         useCreateStep({
@@ -74,6 +81,13 @@ describe('useCreateStep', () => {
       });
     });
 
-    expect(mockCreateWorkflowVersionStep).toHaveBeenCalled();
+    expect(mockGetUpdatableWorkflowVersion).toHaveBeenCalled();
+    expect(mockCreateWorkflowVersionStep).toHaveBeenCalledWith({
+      workflowVersionId: mockWorkflowVersionId,
+      stepType: 'CODE',
+      parentStepId: 'parent-step-id',
+      nextStepId: undefined,
+      position: undefined,
+    });
   });
 });

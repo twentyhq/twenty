@@ -1,4 +1,4 @@
-import { BlockNoteEditor } from '@blocknote/core';
+import { type BlockNoteEditor } from '@blocknote/core';
 
 import {
   docxDefaultSchemaMappings,

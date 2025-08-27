@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 
 type RecordBoardColumnContextProps = {
   columnDefinition: RecordGroupDefinition;

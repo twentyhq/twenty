@@ -16,7 +16,7 @@ import { useRecoilComponentFamilyState } from '@/ui/utilities/state/component-st
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
 import styled from '@emotion/styled';
-import { Dispatch, SetStateAction, useContext } from 'react';
+import { type Dispatch, type SetStateAction, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/components';

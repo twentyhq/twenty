@@ -1,6 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateRecordsQuery';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
@@ -53,6 +53,7 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   isLabelSyncedWithName: true,
   isRemote: false,
   isSystem: false,
+  isUIReadOnly: false,
 };
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({

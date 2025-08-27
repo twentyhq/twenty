@@ -16,7 +16,7 @@ export interface WorkspaceFieldMetadataArgs {
   /**
    * Class to which field is applied.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+
   readonly target: Function;
 
   /**
@@ -70,6 +70,11 @@ export interface WorkspaceFieldMetadataArgs {
    * Is system field.
    */
   readonly isSystem: boolean;
+
+  /**
+   * Is UI read-only field.
+   */
+  readonly isUIReadOnly: boolean;
 
   /**
    * Is nullable field.

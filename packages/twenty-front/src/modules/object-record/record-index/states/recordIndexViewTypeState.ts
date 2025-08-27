@@ -1,4 +1,4 @@
-import { ViewType } from '@/views/types/ViewType';
+import { type ViewType } from '@/views/types/ViewType';
 import { createState } from 'twenty-ui/utilities';
 
 export const recordIndexViewTypeState = createState<ViewType | undefined>({

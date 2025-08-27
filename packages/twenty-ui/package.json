@@ -8,7 +8,7 @@
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.26.3",
     "@prettier/sync": "^0.5.2",
-    "@swc/plugin-emotion": "4.0.2",
+    "@swc/plugin-emotion": "10.0.4",
     "@types/babel__preset-env": "^7",
     "@types/react": "^18.2.39",
     "@types/react-dom": "^18.2.15",
@@ -63,11 +63,21 @@
     "**/*.css"
   ],
   "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
     "./style.css": "./dist/style.css",
     "./accessibility": {
       "types": "./dist/accessibility/index.d.ts",
       "import": "./dist/accessibility.mjs",
       "require": "./dist/accessibility.cjs"
+    },
+    "./assets": {
+      "types": "./dist/assets/index.d.ts",
+      "import": "./dist/assets.mjs",
+      "require": "./dist/assets.cjs"
     },
     "./components": {
       "types": "./dist/components/index.d.ts",
@@ -118,6 +128,46 @@
       "types": "./dist/utilities/index.d.ts",
       "import": "./dist/utilities.mjs",
       "require": "./dist/utilities.cjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "accessibility": [
+        "dist/accessibility/index.d.ts"
+      ],
+      "assets": [
+        "dist/assets/index.d.ts"
+      ],
+      "components": [
+        "dist/components/index.d.ts"
+      ],
+      "display": [
+        "dist/display/index.d.ts"
+      ],
+      "feedback": [
+        "dist/feedback/index.d.ts"
+      ],
+      "input": [
+        "dist/input/index.d.ts"
+      ],
+      "json-visualizer": [
+        "dist/json-visualizer/index.d.ts"
+      ],
+      "layout": [
+        "dist/layout/index.d.ts"
+      ],
+      "navigation": [
+        "dist/navigation/index.d.ts"
+      ],
+      "testing": [
+        "dist/testing/index.d.ts"
+      ],
+      "theme": [
+        "dist/theme/index.d.ts"
+      ],
+      "utilities": [
+        "dist/utilities/index.d.ts"
+      ]
     }
   }
 }

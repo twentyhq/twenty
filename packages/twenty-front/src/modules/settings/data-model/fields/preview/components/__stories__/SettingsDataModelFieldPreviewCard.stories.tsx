@@ -1,27 +1,24 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { SettingsDataModelFieldPreviewCard } from '../SettingsDataModelFieldPreviewCard';
 
-const mockedCompanyObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'company',
-);
+const mockedCompanyObjectMetadataItem =
+  getMockObjectMetadataItemOrThrow('company');
 
 const mockedOpportunityObjectMetadataItem =
-  generatedMockObjectMetadataItems.find(
-    (item) => item.nameSingular === 'opportunity',
-  );
+  getMockObjectMetadataItemOrThrow('opportunity');
 
-const mockedPersonObjectMetadataItem = generatedMockObjectMetadataItems.find(
-  (item) => item.nameSingular === 'person',
-);
+const mockedPersonObjectMetadataItem =
+  getMockObjectMetadataItemOrThrow('person');
 
 const meta: Meta<typeof SettingsDataModelFieldPreviewCard> = {
   title:
@@ -47,7 +44,7 @@ type Story = StoryObj<typeof SettingsDataModelFieldPreviewCard>;
 
 export const LabelIdentifier: Story = {
   args: {
-    fieldMetadataItem: mockedPersonObjectMetadataItem?.fields.find(
+    fieldMetadataItem: mockedPersonObjectMetadataItem.fields.find(
       ({ name, type }) =>
         name === 'name' && type === FieldMetadataType.FULL_NAME,
     ),
@@ -56,7 +53,7 @@ export const LabelIdentifier: Story = {
 
 export const Text: Story = {
   args: {
-    fieldMetadataItem: mockedPersonObjectMetadataItem?.fields.find(
+    fieldMetadataItem: mockedPersonObjectMetadataItem.fields.find(
       ({ name, type }) => name === 'city' && type === FieldMetadataType.TEXT,
     ),
   },
@@ -64,7 +61,7 @@ export const Text: Story = {
 
 export const Boolean: Story = {
   args: {
-    fieldMetadataItem: mockedCompanyObjectMetadataItem?.fields.find(
+    fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
       ({ name, type }) =>
         name === 'idealCustomerProfile' && type === FieldMetadataType.BOOLEAN,
     ),
@@ -74,7 +71,7 @@ export const Boolean: Story = {
 
 export const Currency: Story = {
   args: {
-    fieldMetadataItem: mockedCompanyObjectMetadataItem?.fields.find(
+    fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
       ({ name, type }) =>
         name === 'annualRecurringRevenue' &&
         type === FieldMetadataType.CURRENCY,
@@ -85,7 +82,7 @@ export const Currency: Story = {
 
 export const Date: Story = {
   args: {
-    fieldMetadataItem: mockedCompanyObjectMetadataItem?.fields.find(
+    fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
       ({ type }) => type === FieldMetadataType.DATE_TIME,
     ),
     objectMetadataItem: mockedCompanyObjectMetadataItem,
@@ -94,7 +91,7 @@ export const Date: Story = {
 
 export const Links: Story = {
   args: {
-    fieldMetadataItem: mockedCompanyObjectMetadataItem?.fields.find(
+    fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
       ({ name, type }) =>
         name === 'linkedinLink' && type === FieldMetadataType.LINKS,
     ),
@@ -130,22 +127,23 @@ export const Relation: Story = {
   },
 };
 
+const selectFieldMetadataItem = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: mockedOpportunityObjectMetadataItem,
+  fieldName: 'stage',
+});
+
 export const Select: Story = {
   args: {
-    fieldMetadataItem: mockedOpportunityObjectMetadataItem?.fields.find(
-      ({ name, type }) => name === 'stage' && type === FieldMetadataType.SELECT,
-    ),
+    fieldMetadataItem: selectFieldMetadataItem,
     objectMetadataItem: mockedOpportunityObjectMetadataItem,
   },
 };
 
 export const MultiSelect: Story = {
   args: {
-    ...Select.args,
+    objectMetadataItem: mockedOpportunityObjectMetadataItem,
     fieldMetadataItem: {
-      ...Select.args!.fieldMetadataItem!,
-      defaultValue: null,
-      label: 'Stages',
+      ...structuredClone(selectFieldMetadataItem),
       type: FieldMetadataType.MULTI_SELECT,
     },
   },

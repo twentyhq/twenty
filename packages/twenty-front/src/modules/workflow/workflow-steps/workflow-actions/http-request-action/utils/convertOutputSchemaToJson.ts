@@ -1,4 +1,4 @@
-import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 
 export const convertOutputSchemaToJson = (
   schema: BaseOutputSchema,

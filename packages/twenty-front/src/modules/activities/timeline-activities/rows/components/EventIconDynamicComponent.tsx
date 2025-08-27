@@ -1,5 +1,5 @@
-import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   IconCirclePlus,
   IconEditCircle,

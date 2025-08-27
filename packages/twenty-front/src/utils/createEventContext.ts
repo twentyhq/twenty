@@ -1,4 +1,4 @@
-import { Context, createContext } from 'react';
+import { type Context, createContext } from 'react';
 
 type ObjectOfFunctions = {
   [key: string]: (...args: any[]) => void;

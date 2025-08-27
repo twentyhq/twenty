@@ -1,5 +1,5 @@
-import { SelectValue } from '@/ui/input/components/internal/select/types';
-import { SelectSizeVariant } from '@/ui/input/components/Select';
+import { type SelectValue } from '@/ui/input/components/internal/select/types';
+import { type SelectSizeVariant } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -9,9 +9,9 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { MouseEvent, useMemo, useState } from 'react';
-import { IconComponent } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
+import { type MouseEvent, useMemo, useState } from 'react';
+import { type IconComponent } from 'twenty-ui/display';
+import { type SelectOption } from 'twenty-ui/input';
 import { MenuItem, MenuItemMultiSelectTag } from 'twenty-ui/navigation';
 
 type CallToActionButton = {

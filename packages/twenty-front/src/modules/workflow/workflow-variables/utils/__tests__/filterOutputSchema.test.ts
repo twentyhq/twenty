@@ -1,4 +1,4 @@
-import { OutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type OutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { filterOutputSchema } from '../filterOutputSchema';
 

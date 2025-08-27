@@ -11,9 +11,9 @@ import { wrapJsonRpcResponse } from 'src/engine/core-modules/ai/utils/wrap-jsonr
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ADMIN_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/admin-role-label.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/roles/admin-role';
 
 @Injectable()
 export class McpService {
@@ -39,7 +39,7 @@ export class McpService {
     }
   }
 
-  handleInitialize(requestId: string | number | null) {
+  handleInitialize(requestId: string | number) {
     return wrapJsonRpcResponse(requestId, {
       result: {
         capabilities: {
@@ -47,6 +47,9 @@ export class McpService {
           resources: { listChanged: false },
           prompts: { listChanged: false },
         },
+        tools: [],
+        resources: [],
+        prompts: [],
       },
     });
   }
@@ -60,7 +63,7 @@ export class McpService {
       const roles = await this.roleRepository.find({
         where: {
           workspaceId,
-          label: ADMIN_ROLE_LABEL,
+          standardId: ADMIN_ROLE.standardId,
         },
       });
 
@@ -90,7 +93,7 @@ export class McpService {
     return roleId;
   }
 
-  async executeTool(
+  async handleMCPCoreQuery(
     { id, method, params }: JsonRpc,
     {
       workspace,
@@ -105,6 +108,16 @@ export class McpService {
         return this.handleInitialize(id);
       }
 
+      if (method === 'ping') {
+        return wrapJsonRpcResponse(
+          id,
+          {
+            result: {},
+          },
+          true,
+        );
+      }
+
       const roleId = await this.getRoleId(
         workspace.id,
         userWorkspaceId,
@@ -117,7 +130,35 @@ export class McpService {
         return await this.handleToolCall(id, toolSet, params);
       }
 
-      return await this.handleToolsListing(id, toolSet);
+      if (method === 'tools/list') {
+        return await this.handleToolsListing(id, toolSet);
+      }
+
+      if (method === 'prompts/list') {
+        return wrapJsonRpcResponse(id, {
+          result: {
+            capabilities: {
+              prompts: { listChanged: false },
+            },
+            prompts: [],
+          },
+        });
+      }
+
+      if (method === 'resources/list') {
+        return wrapJsonRpcResponse(id, {
+          result: {
+            capabilities: {
+              resources: { listChanged: false },
+            },
+            resources: [],
+          },
+        });
+      }
+
+      return wrapJsonRpcResponse(id, {
+        result: {},
+      });
     } catch (error) {
       return wrapJsonRpcResponse(id, {
         error: {
@@ -129,7 +170,7 @@ export class McpService {
   }
 
   private async handleToolCall(
-    id: string | number | null,
+    id: string | number,
     toolSet: ToolSet,
     params: Record<string, unknown>,
   ) {
@@ -161,7 +202,7 @@ export class McpService {
     );
   }
 
-  private handleToolsListing(id: string | number | null, toolSet: ToolSet) {
+  private handleToolsListing(id: string | number, toolSet: ToolSet) {
     const toolsArray = Object.entries(toolSet)
       .filter(([, def]) => !!def.parameters.jsonSchema)
       .map(([name, def]) => ({
@@ -176,6 +217,8 @@ export class McpService {
           tools: { listChanged: false },
         },
         tools: toolsArray,
+        resources: [],
+        prompts: [],
       },
     });
   }

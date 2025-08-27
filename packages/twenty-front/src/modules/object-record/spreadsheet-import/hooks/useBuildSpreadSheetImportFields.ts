@@ -1,6 +1,6 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 
 import { getSpreadSheetFieldValidationDefinitions } from '@/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions';
@@ -9,10 +9,10 @@ import { getCompositeSubFieldKey } from '@/object-record/spreadsheet-import/util
 import { getCompositeSubFieldLabelWithFieldLabel } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetCompositeSubFieldLabelWithFieldLabel';
 import { getRelationConnectSubFieldLabel } from '@/object-record/spreadsheet-import/utils/spreadsheetImportGetRelationConnectSubFieldLabel';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
-import { CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
+import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import {
-  SpreadsheetImportField,
-  SpreadsheetImportFields,
+  type SpreadsheetImportField,
+  type SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
 import { useRecoilValue } from 'recoil';
 import {

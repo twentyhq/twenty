@@ -1,5 +1,5 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { CSSWidth } from '@/ui/types/CSSWidth';
+import { type CSSWidth } from '@/ui/types/CSSWidth';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';

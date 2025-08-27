@@ -1,11 +1,11 @@
-import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
-import { Note } from '@/activities/types/Note';
-import { NoteTarget } from '@/activities/types/NoteTarget';
-import { Task } from '@/activities/types/Task';
-import { TaskTarget } from '@/activities/types/TaskTarget';
+import { type ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
+import { type Note } from '@/activities/types/Note';
+import { type NoteTarget } from '@/activities/types/NoteTarget';
+import { type Task } from '@/activities/types/Task';
+import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 
 type GetActivityTargetObjectRecordsProps = {

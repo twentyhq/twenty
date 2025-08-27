@@ -1,7 +1,7 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { t } from '@lingui/core/macro';
-import { ZodType, z } from 'zod';
-import { ReadonlyKeysArray } from '~/types/ReadonlyKeysArray';
+import { type ZodType, z } from 'zod';
+import { type ReadonlyKeysArray } from '~/types/ReadonlyKeysArray';
 import { zodNonEmptyString } from '~/types/ZodNonEmptyString';
 import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
 

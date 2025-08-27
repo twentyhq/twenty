@@ -1,30 +1,18 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useDeleteWorkflowVersionStep } from '@/workflow/hooks/useDeleteWorkflowVersionStep';
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { assertWorkflowWithCurrentVersionIsDefined } from '@/workflow/utils/assertWorkflowWithCurrentVersionIsDefined';
-import { isDefined } from 'twenty-shared/utils';
 
-export const useDeleteStep = ({
-  workflow,
-}: {
-  workflow: WorkflowWithCurrentVersion | undefined;
-}) => {
+export const useDeleteStep = () => {
   const { deleteWorkflowVersionStep } = useDeleteWorkflowVersionStep();
   const { deleteStepsOutputSchema } = useStepsOutputSchema();
 
-  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
+  const { getUpdatableWorkflowVersion } =
+    useGetUpdatableWorkflowVersionOrThrow();
   const { closeCommandMenu } = useCommandMenu();
 
   const deleteStep = async (stepId: string) => {
-    assertWorkflowWithCurrentVersionIsDefined(workflow);
-
-    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
-
-    if (!isDefined(workflowVersionId)) {
-      throw new Error('Could not find workflow version');
-    }
+    const workflowVersionId = await getUpdatableWorkflowVersion();
 
     const workflowVersionStepChanges = await deleteWorkflowVersionStep({
       workflowVersionId,

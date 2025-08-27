@@ -7,6 +7,7 @@ import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-versi
 import { MigrateViewsToCoreCommand } from 'src/database/commands/views-migration/migrate-views-to-core.command';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
+import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -18,24 +19,22 @@ import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-see
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { CalendarEventImportManagerModule } from 'src/modules/calendar/calendar-event-import-manager/calendar-event-import-manager.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
+import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
-import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 
 import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
 
 @Module({
   imports: [
     UpgradeVersionCommandModule,
-
     TypeOrmModule.forFeature([Workspace], 'core'),
-
     // Cron command dependencies
     MessagingImportManagerModule,
     CalendarEventImportManagerModule,
     AutomatedTriggerModule,
     FileModule,
     DomainManagerModule,
-
+    WorkflowRunQueueModule,
     // Data seeding dependencies
     TypeORMModule,
     FieldMetadataModule,

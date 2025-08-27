@@ -1,15 +1,15 @@
 import styled from '@emotion/styled';
 
 import {
-  MessageChannel,
-  MessageChannelContactAutoCreationPolicy,
+  type MessageChannel,
+  type MessageChannelContactAutoCreationPolicy,
 } from '@/accounts/types/MessageChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { MessageChannelVisibility } from '~/generated-metadata/graphql';
+import { type MessageChannelVisibility } from '~/generated-metadata/graphql';
 import { t } from '@lingui/core/macro';
 import { Card, Section } from 'twenty-ui/layout';
 import { H2Title, IconBriefcase, IconUsers } from 'twenty-ui/display';

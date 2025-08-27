@@ -1,12 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Tag } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
-import { Agent } from '~/generated-metadata/graphql';
+import { type Agent } from '~/generated-metadata/graphql';
 
 export type SettingsAIAgentTableRowProps = {
   action: ReactNode;

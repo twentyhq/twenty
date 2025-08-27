@@ -1,5 +1,5 @@
 import { FavoriteFolderPickerInstanceContext } from '@/favorites/favorite-folder-picker/states/context/FavoriteFolderPickerInstanceContext';
-import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
+import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
 
 export const favoriteFolderPickerComponentFamilyState =

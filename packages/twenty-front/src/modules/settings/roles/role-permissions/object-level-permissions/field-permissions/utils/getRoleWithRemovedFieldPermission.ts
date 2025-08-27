@@ -1,6 +1,6 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 import { produce } from 'immer';
-import { Role } from '~/generated/graphql';
+import { type Role } from '~/generated/graphql';
 
 export const getRoleWithRemovedFieldPermission = (
   role: Role,

@@ -1,10 +1,10 @@
-import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
+import { useQuery, type WatchQueryFetchPolicy } from '@apollo/client';
 
 import { GET_MANY_REMOTE_TABLES } from '@/databases/graphql/queries/findManyRemoteTables';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import {
-  GetManyRemoteTablesQuery,
-  GetManyRemoteTablesQueryVariables,
+  type GetManyRemoteTablesQuery,
+  type GetManyRemoteTablesQueryVariables,
 } from '~/generated-metadata/graphql';
 
 type UseGetDatabaseConnectionTablesParams = {

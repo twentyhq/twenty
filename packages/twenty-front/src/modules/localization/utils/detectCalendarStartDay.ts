@@ -1,4 +1,4 @@
-import { CalendarStartDay } from '@/localization/constants/CalendarStartDay';
+import { type CalendarStartDay } from '@/localization/constants/CalendarStartDay';
 
 const MONDAY_KEY: keyof typeof CalendarStartDay = 'MONDAY';
 const SATURDAY_KEY: keyof typeof CalendarStartDay = 'SATURDAY';

@@ -1,4 +1,4 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { renderHook } from '@testing-library/react';
 import { useFormContext } from 'react-hook-form';
 import { useAddressSettingsFormInitialValues } from '../useAddressSettingsFormInitialValues';

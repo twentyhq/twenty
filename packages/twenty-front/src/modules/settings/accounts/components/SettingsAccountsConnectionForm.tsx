@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { Control, Controller } from 'react-hook-form';
+import { type Control, Controller } from 'react-hook-form';
 
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
-import { ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
+import { type ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
@@ -68,13 +68,9 @@ export const SettingsAccountsConnectionForm = ({
 }: SettingsAccountsConnectionFormProps) => {
   const { t } = useLingui();
 
-  const getTitle = () => {
-    return isEditing ? t`Edit Email Account` : t`New Email Account`;
-  };
-
   const getDescription = () => {
     if (isEditing) {
-      return t`Update your email account configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed.`;
+      return t`Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed.`;
     }
     return t`You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync).`;
   };
@@ -83,7 +79,7 @@ export const SettingsAccountsConnectionForm = ({
 
   return (
     <Section>
-      <H2Title title={getTitle()} description={getDescription()} />
+      <H2Title title={t`Mail Account`} description={getDescription()} />
       <StyledFormContainer>
         <Controller
           name="handle"

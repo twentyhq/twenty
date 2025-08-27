@@ -1,7 +1,7 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
-import { currencyFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/currencyFieldDefaultValueSchema';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type CurrencyCode } from '@/object-record/record-field/ui/types/CurrencyCode';
+import { type FieldCurrencyValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { currencyFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/currencyFieldDefaultValueSchema';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';

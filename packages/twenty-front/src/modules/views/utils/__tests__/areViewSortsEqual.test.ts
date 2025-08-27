@@ -1,5 +1,5 @@
-import { RecordSortDirection } from '@/object-record/record-sort/types/RecordSortDirection';
-import { ViewSort } from '@/views/types/ViewSort';
+import { type RecordSortDirection } from '@/object-record/record-sort/types/RecordSortDirection';
+import { type ViewSort } from '@/views/types/ViewSort';
 import { areViewSortsEqual } from '@/views/utils/areViewSortsEqual';
 
 describe('areViewSortsEqual', () => {

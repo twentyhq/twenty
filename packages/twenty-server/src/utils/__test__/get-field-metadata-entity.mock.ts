@@ -25,6 +25,7 @@ export const getMockFieldMetadataEntity = <
     isCustom: true,
     isLabelSyncedWithName: false,
     isNullable: null,
+    isUIReadOnly: false,
     isSystem: false,
     isUnique: null,
     object: {} as ObjectMetadataEntity,

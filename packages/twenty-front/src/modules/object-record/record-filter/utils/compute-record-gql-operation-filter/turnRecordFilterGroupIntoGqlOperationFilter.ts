@@ -1,10 +1,10 @@
-import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { Field } from '~/generated/graphql';
+import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { type Field } from '~/generated/graphql';
 
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 
-import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFilterGroupLogicalOperator } from '@/object-record/record-filter-group/types/RecordFilterGroupLogicalOperator';
 import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/object-record/record-filter/utils/compute-record-gql-operation-filter/turnRecordFilterIntoGqlOperationFilter';
 import { isDefined } from 'twenty-shared/utils';

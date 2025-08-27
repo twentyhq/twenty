@@ -1,15 +1,14 @@
 import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useClearField } from '@/object-record/record-field/hooks/useClearField';
-import { useIsFieldClearable } from '@/object-record/record-field/hooks/useIsFieldClearable';
-import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
-import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { useClearField } from '@/object-record/record-field/ui/hooks/useClearField';
+import { useIsFieldClearable } from '@/object-record/record-field/ui/hooks/useIsFieldClearable';
+import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
+import { useToggleEditOnlyInput } from '@/object-record/record-field/ui/hooks/useToggleEditOnlyInput';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useCurrentlyFocusedRecordTableCellFocusId } from '@/object-record/record-table/record-table-cell/hooks/useCurrentlyFocusedRecordTableCellFocusId';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { useListenToSidePanelOpening } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelOpening';
@@ -68,10 +67,8 @@ export const RecordTableCellHotkeysEffect = () => {
     }
   };
 
-  const { recordTableId } = useRecordTableContextOrThrow();
-
   const { restoreRecordTableRowFocusFromCellPosition } =
-    useFocusedRecordTableRow(recordTableId);
+    useFocusedRecordTableRow();
 
   const handleEscape = () => {
     restoreRecordTableRowFocusFromCellPosition();
@@ -110,12 +107,9 @@ export const RecordTableCellHotkeysEffect = () => {
     },
   });
 
-  const { selectAllRows, setHasUserSelectedAllRows } = useRecordTable({
-    recordTableId,
-  });
+  const { selectAllRows } = useSelectAllRows();
 
   const handleSelectAllRows = () => {
-    setHasUserSelectedAllRows(true);
     selectAllRows();
   };
 

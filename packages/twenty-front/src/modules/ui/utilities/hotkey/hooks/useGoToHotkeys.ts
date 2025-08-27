@@ -1,4 +1,4 @@
-import { Keys } from 'react-hotkeys-hook/dist/types';
+import { type Keys } from 'react-hotkeys-hook/dist/types';
 import { useNavigate } from 'react-router-dom';
 
 import { useGlobalHotkeysSequence } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeysSequence';

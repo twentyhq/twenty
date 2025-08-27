@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
-  ObjectMetadataItemsQuery,
-  ObjectMetadataItemsQueryVariables,
+  type ObjectMetadataItemsQuery,
+  type ObjectMetadataItemsQueryVariables,
 } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 

@@ -1,4 +1,4 @@
-import { EachTestingContext } from 'twenty-shared/testing';
+import { type EachTestingContext } from 'twenty-shared/testing';
 import { getIndexNeighboursElementsFromArray } from '../getIndexNeighboursElementsFromArray';
 
 type TestCase = {

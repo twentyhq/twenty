@@ -1,5 +1,5 @@
-import { ImportedRow } from '@/spreadsheet-import/types';
-import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { type ImportedRow } from '@/spreadsheet-import/types';
+import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { atom, selectorFamily } from 'recoil';
 

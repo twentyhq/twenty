@@ -3,7 +3,7 @@ import {
   StyledShortcutKey,
   StyledShortcutKeyContainer,
 } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenuStyles';
-import { Shortcut } from '@/keyboard-shortcut-menu/types/Shortcut';
+import { type Shortcut } from '@/keyboard-shortcut-menu/types/Shortcut';
 
 type KeyboardMenuItemProps = {
   shortcut: Shortcut;

@@ -1,8 +1,8 @@
-import { FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { type FilterableFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import { FieldType } from '@/settings/data-model/types/FieldType';
+import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
+import { type FieldType } from '@/settings/data-model/types/FieldType';
 
 describe('getOperandsForFilterType', () => {
   const emptyOperands = [

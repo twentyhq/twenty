@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isUndefined } from '@sniptt/guards';
-import { ComponentPropsWithoutRef, ReactNode, useMemo } from 'react';
+import { type ComponentPropsWithoutRef, type ReactNode, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {

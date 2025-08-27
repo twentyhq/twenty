@@ -78,7 +78,7 @@ export const PageChangeEffect = () => {
     contextStoreCurrentViewId || '',
   );
 
-  const resetTableSelections = useResetTableRowSelection(recordIndexId);
+  const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordIndexId);
   const { deactivateRecordTableRow } = useActiveRecordTableRow(recordIndexId);
 
@@ -124,7 +124,7 @@ export const PageChangeEffect = () => {
 
     if (isLeavingRecordIndexPage) {
       if (contextStoreCurrentViewType === ContextStoreViewType.Table) {
-        resetTableSelections();
+        resetTableRowSelection();
         unfocusRecordTableRow();
         deactivateRecordTableRow();
       }
@@ -289,7 +289,7 @@ export const PageChangeEffect = () => {
     location,
     previousLocation,
     contextStoreCurrentViewType,
-    resetTableSelections,
+    resetTableRowSelection,
     unfocusRecordTableRow,
     deactivateRecordTableRow,
     resetRecordSelection,

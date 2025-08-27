@@ -1,13 +1,13 @@
-import { CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   FeatureFlagKey,
   OnboardingStatus,
   PermissionFlagType,
   SubscriptionInterval,
   SubscriptionStatus,
-  User,
-  Workspace,
+  type User,
+  type Workspace,
   WorkspaceActivationStatus,
   WorkspaceMemberDateFormatEnum,
   WorkspaceMemberTimeFormatEnum,

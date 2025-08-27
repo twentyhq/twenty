@@ -1,6 +1,6 @@
-import { Theme, withTheme } from '@emotion/react';
+import { type Theme, withTheme } from '@emotion/react';
 import { styled } from '@linaria/react';
-import { Ref } from 'react';
+import { type Ref } from 'react';
 
 const StyledOuterContainer = styled.div`
   align-items: center;

@@ -2,8 +2,8 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { FIND_MANY_SERVERLESS_FUNCTIONS } from '@/settings/serverless-functions/graphql/queries/findManyServerlessFunctions';
 import { useQuery } from '@apollo/client';
 import {
-  GetManyServerlessFunctionsQuery,
-  GetManyServerlessFunctionsQueryVariables,
+  type GetManyServerlessFunctionsQuery,
+  type GetManyServerlessFunctionsQueryVariables,
 } from '~/generated-metadata/graphql';
 
 export const useGetManyServerlessFunctions = () => {

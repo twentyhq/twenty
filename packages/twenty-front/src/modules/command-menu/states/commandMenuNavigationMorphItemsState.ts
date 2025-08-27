@@ -1,4 +1,4 @@
-import { MorphItem } from '@/object-record/multiple-objects/types/MorphItem';
+import { type MorphItem } from '@/object-record/multiple-objects/types/MorphItem';
 import { createState } from 'twenty-ui/utilities';
 
 export const commandMenuNavigationMorphItemByPageState = createState<

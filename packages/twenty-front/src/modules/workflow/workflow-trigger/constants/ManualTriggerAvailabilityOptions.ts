@@ -1,5 +1,9 @@
-import { WorkflowManualTriggerAvailability } from '@/workflow/types/Workflow';
-import { IconCheckbox, IconComponent, IconSquare } from 'twenty-ui/display';
+import { type WorkflowManualTriggerAvailability } from '@/workflow/types/Workflow';
+import {
+  IconCheckbox,
+  type IconComponent,
+  IconSquare,
+} from 'twenty-ui/display';
 
 export const MANUAL_TRIGGER_AVAILABILITY_OPTIONS: Array<{
   label: string;
@@ -7,12 +11,12 @@ export const MANUAL_TRIGGER_AVAILABILITY_OPTIONS: Array<{
   Icon: IconComponent;
 }> = [
   {
-    label: 'When record is selected',
+    label: 'When records are selected',
     value: 'WHEN_RECORD_SELECTED',
     Icon: IconCheckbox,
   },
   {
-    label: 'When no record is selected',
+    label: 'When no records are selected',
     value: 'EVERYWHERE',
     Icon: IconSquare,
   },

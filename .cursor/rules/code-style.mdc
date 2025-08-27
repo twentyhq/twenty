@@ -1,7 +1,7 @@
 ---
-description: 
-globs: 
-alwaysApply: false
+description: Code style guidelines for Twenty CRM
+globs: []
+alwaysApply: true
 ---
 # Code Style Guidelines
 

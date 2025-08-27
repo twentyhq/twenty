@@ -1,4 +1,4 @@
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { getFieldPreviewValueFromRecord } from '../getFieldPreviewValueFromRecord';

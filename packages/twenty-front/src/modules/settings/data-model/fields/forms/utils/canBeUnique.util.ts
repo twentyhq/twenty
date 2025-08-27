@@ -1,4 +1,4 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { FieldMetadataType } from 'twenty-shared/types';
@@ -6,10 +6,6 @@ import { FieldMetadataType } from 'twenty-shared/types';
 export const canBeUnique = (
   field: Pick<FieldMetadataItem, 'type' | 'isCustom'>,
 ) => {
-  if (field.isCustom === false) {
-    return false;
-  }
-
   if (
     [FieldMetadataType.MORPH_RELATION, FieldMetadataType.RELATION].includes(
       field.type,

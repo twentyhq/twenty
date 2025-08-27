@@ -5,6 +5,12 @@ import {
 import { OBJECT_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/objectPermissionFragment';
 import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
 import { WORKSPACE_URLS_FRAGMENT } from '@/users/graphql/fragments/workspaceUrlsFragment';
+import { VIEW_FIELD_FRAGMENT } from '@/views/graphql/fragments/viewFieldFragment';
+import { VIEW_FILTER_FRAGMENT } from '@/views/graphql/fragments/viewFilterFragment';
+import { VIEW_FILTER_GROUP_FRAGMENT } from '@/views/graphql/fragments/viewFilterGroupFragment';
+import { VIEW_FRAGMENT } from '@/views/graphql/fragments/viewFragment';
+import { VIEW_GROUP_FRAGMENT } from '@/views/graphql/fragments/viewGroupFragment';
+import { VIEW_SORT_FRAGMENT } from '@/views/graphql/fragments/viewSortFragment';
 import { DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/deletedWorkspaceMemberQueryFragment';
 import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
 import { gql } from '@apollo/client';
@@ -96,6 +102,24 @@ export const USER_QUERY_FRAGMENT = gql`
         id
       }
       isTwoFactorAuthenticationEnforced
+      views {
+        ...ViewFragment
+        viewFields {
+          ...ViewFieldFragment
+        }
+        viewFilters {
+          ...ViewFilterFragment
+        }
+        viewFilterGroups {
+          ...ViewFilterGroupFragment
+        }
+        viewSorts {
+          ...ViewSortFragment
+        }
+        viewGroups {
+          ...ViewGroupFragment
+        }
+      }
     }
     availableWorkspaces {
       ...AvailableWorkspacesFragment
@@ -108,6 +132,12 @@ export const USER_QUERY_FRAGMENT = gql`
   ${OBJECT_PERMISSION_FRAGMENT}
   ${WORKSPACE_URLS_FRAGMENT}
   ${ROLE_FRAGMENT}
+  ${VIEW_FRAGMENT}
+  ${VIEW_FIELD_FRAGMENT}
+  ${VIEW_FILTER_FRAGMENT}
+  ${VIEW_FILTER_GROUP_FRAGMENT}
+  ${VIEW_SORT_FRAGMENT}
+  ${VIEW_GROUP_FRAGMENT}
   ${AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT}
   ${AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT}
 `;

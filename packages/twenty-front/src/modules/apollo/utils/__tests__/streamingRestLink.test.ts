@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-import { Operation } from '@apollo/client/core';
+import { type Operation } from '@apollo/client/core';
 import { StreamingRestLink } from '../streamingRestLink';
 
 global.fetch = jest.fn();

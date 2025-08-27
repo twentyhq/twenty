@@ -1,6 +1,6 @@
 import {
   IconClockPlay,
-  IconComponent,
+  type IconComponent,
   IconHours24,
   IconTimeDuration60,
   IconBrandDaysCounter,

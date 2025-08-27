@@ -15,10 +15,6 @@ export interface WorkspaceQueryHookOptions {
   scope?: Scope;
 }
 
-export function WorkspaceQueryHook(key: WorkspaceQueryHookKey): ClassDecorator;
-export function WorkspaceQueryHook(
-  options: WorkspaceQueryHookOptions,
-): ClassDecorator;
 export function WorkspaceQueryHook(
   keyOrOptions: WorkspaceQueryHookKey | WorkspaceQueryHookOptions,
 ): ClassDecorator {
@@ -32,7 +28,6 @@ export function WorkspaceQueryHook(
     options.type = WorkspaceQueryHookType.PRE_HOOK;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   return (target: Function) => {
     SetMetadata(SCOPE_OPTIONS_METADATA, options)(target);
     SetMetadata(WORKSPACE_QUERY_HOOK_METADATA, options)(target);

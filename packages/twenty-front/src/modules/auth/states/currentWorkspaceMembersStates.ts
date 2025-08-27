@@ -1,4 +1,4 @@
-import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { createState } from 'twenty-ui/utilities';
 
 export const currentWorkspaceMembersState = createState<

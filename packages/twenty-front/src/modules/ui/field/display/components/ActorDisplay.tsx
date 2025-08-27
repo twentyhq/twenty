@@ -1,8 +1,8 @@
-import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 import { useMemo } from 'react';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { Chip, AvatarChip } from 'twenty-ui/components';
+import { AvatarChip, Chip } from 'twenty-ui/components';
 import {
   IconApi,
   IconCalendar,

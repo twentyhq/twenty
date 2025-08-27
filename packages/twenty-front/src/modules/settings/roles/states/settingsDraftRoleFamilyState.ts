@@ -1,5 +1,5 @@
 import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
-import { Role } from '~/generated/graphql';
+import { type Role } from '~/generated/graphql';
 
 export const settingsDraftRoleFamilyState = createFamilyState<Role, string>({
   key: 'settingsDraftRoleFamilyState',

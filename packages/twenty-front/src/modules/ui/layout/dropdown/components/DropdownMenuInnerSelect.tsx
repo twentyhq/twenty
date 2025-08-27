@@ -6,7 +6,7 @@ import { useTheme } from '@emotion/react';
 
 import styled from '@emotion/styled';
 import { IconChevronDown } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelect } from 'twenty-ui/navigation';
 
 const StyledDropdownMenuInnerSelectDropdownButton = styled.div`

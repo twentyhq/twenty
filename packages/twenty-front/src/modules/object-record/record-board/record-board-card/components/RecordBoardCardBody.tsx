@@ -1,20 +1,22 @@
+import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardCardBodyContainer } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBodyContainer';
 import { StopPropagationContainer } from '@/object-record/record-board/record-board-card/components/StopPropagationContainer';
 import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
-import { RecordBoardFieldDefinition } from '@/object-record/record-board/types/RecordBoardFieldDefinition';
+import { recordBoardCardHoverPositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardHoverPositionComponentState';
+import { type RecordBoardFieldDefinition } from '@/object-record/record-board/types/RecordBoardFieldDefinition';
 import {
   FieldContext,
-  RecordUpdateHook,
-  RecordUpdateHookParams,
-} from '@/object-record/record-field/contexts/FieldContext';
-import { isRecordFieldReadOnly } from '@/object-record/record-field/hooks/read-only/utils/isRecordFieldReadOnly';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
+  type RecordUpdateHook,
+  type RecordUpdateHookParams,
+} from '@/object-record/record-field/ui/contexts/FieldContext';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { getFieldButtonIcon } from '@/object-record/record-field/ui/utils/getFieldButtonIcon';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useContext } from 'react';
 
 export const RecordBoardCardBody = ({
@@ -43,19 +45,25 @@ export const RecordBoardCardBody = ({
       isRecordFieldReadOnly: isRecordFieldReadOnly({
         isRecordReadOnly,
         objectPermissions,
-        fieldMetadataId: fieldDefinition.fieldMetadataId,
-        fieldName: fieldDefinition.metadata.fieldName,
-        fieldType: fieldDefinition.type,
-        isCustom: fieldDefinition.metadata.isCustom,
-        objectNameSingular:
-          fieldDefinition.metadata.objectMetadataNameSingular ?? '',
+        fieldMetadataItem: {
+          id: fieldDefinition.fieldMetadataId,
+          isUIReadOnly: fieldDefinition.metadata.isUIReadOnly ?? false,
+        },
       }),
     }),
   );
 
+  const setRecordBoardCardHoverPosition = useSetRecoilComponentState(
+    recordBoardCardHoverPositionComponentState,
+  );
+
+  const handleMouseEnter = (index: number) => {
+    setRecordBoardCardHoverPosition(index);
+  };
+
   return (
     <RecordBoardCardBodyContainer>
-      {fieldDefinitionsWithReadOnly.map((fieldDefinition) => (
+      {fieldDefinitionsWithReadOnly.map((fieldDefinition, index) => (
         <StopPropagationContainer key={fieldDefinition.fieldMetadataId}>
           <FieldContext.Provider
             value={{
@@ -79,6 +87,8 @@ export const RecordBoardCardBody = ({
               useUpdateRecord: useUpdateOneRecordHook,
               isDisplayModeFixHeight: true,
               triggerEvent: 'CLICK',
+              anchorId: `${RECORD_BOARD_CARD_INPUT_ID_PREFIX}-${recordId}-${fieldDefinition.metadata.fieldName}`,
+              onMouseEnter: () => handleMouseEnter(index),
             }}
           >
             <RecordFieldComponentInstanceContext.Provider

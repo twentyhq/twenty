@@ -1,5 +1,5 @@
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
-import { Country } from '@/ui/input/components/internal/types/Country';
+import { type Country } from '@/ui/input/components/internal/types/Country';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';

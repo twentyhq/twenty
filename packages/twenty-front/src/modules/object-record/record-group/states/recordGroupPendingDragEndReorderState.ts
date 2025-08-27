@@ -1,4 +1,4 @@
-import { OnDragEndResponder } from '@hello-pangea/dnd';
+import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { atom } from 'recoil';
 
 export const recordGroupPendingDragEndReorderState =

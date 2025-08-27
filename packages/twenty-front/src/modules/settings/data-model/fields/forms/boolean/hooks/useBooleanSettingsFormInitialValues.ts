@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { SettingsDataModelFieldBooleanFormValues } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type SettingsDataModelFieldBooleanFormValues } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm';
 
 export const useBooleanSettingsFormInitialValues = ({
   fieldMetadataItem,

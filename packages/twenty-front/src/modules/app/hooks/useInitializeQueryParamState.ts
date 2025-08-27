@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
-import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import { BILLING_CHECKOUT_SESSION_DEFAULT_VALUE } from '@/billing/constants/BillingCheckoutSessionDefaultValue';
 import deepEqual from 'deep-equal';
 

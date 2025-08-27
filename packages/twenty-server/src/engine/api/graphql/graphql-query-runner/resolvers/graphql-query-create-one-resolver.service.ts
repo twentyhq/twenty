@@ -34,6 +34,7 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const objectRecords: InsertResult = !executionArgs.args.upsert
@@ -60,6 +61,7 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const upsertedRecords = (await queryBuilder

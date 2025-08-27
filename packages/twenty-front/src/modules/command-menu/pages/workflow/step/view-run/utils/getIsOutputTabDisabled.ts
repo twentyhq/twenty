@@ -1,4 +1,4 @@
-import { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
+import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 
 export const getIsOutputTabDisabled = ({
   stepExecutionStatus,

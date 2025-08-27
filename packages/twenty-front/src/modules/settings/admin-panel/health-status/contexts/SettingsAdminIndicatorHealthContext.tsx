@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 import {
-  AdminPanelHealthServiceData,
+  type AdminPanelHealthServiceData,
   AdminPanelHealthServiceStatus,
   HealthIndicatorId,
 } from '~/generated/graphql';

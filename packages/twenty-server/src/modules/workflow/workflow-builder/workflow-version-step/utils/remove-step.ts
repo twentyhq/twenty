@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 import {
   type WorkflowAction,
@@ -181,7 +182,7 @@ const removeTrigger = ({
   return {
     updatedSteps,
     updatedTrigger: null,
-    removedStepIds: ['trigger', ...stepIdsToRemove],
+    removedStepIds: [TRIGGER_STEP_ID, ...stepIdsToRemove],
   };
 };
 
@@ -196,7 +197,7 @@ export const removeStep = ({
   stepIdToDelete: string;
   stepToDeleteChildrenIds?: string[];
 }) => {
-  if (stepIdToDelete === 'trigger') {
+  if (stepIdToDelete === TRIGGER_STEP_ID) {
     return removeTrigger({
       existingSteps,
       triggerChildrenIds: stepToDeleteChildrenIds,

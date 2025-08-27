@@ -1,7 +1,7 @@
 import groupBy from 'lodash.groupby';
 
 import { CalendarEventParticipantsResponseStatusField } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatusField';
-import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
+import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 
 export const CalendarEventParticipantsResponseStatus = ({
   participants,

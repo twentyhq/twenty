@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { TaskList } from '@/activities/tasks/components/TaskList';
 import { ComponentDecorator } from 'twenty-ui/testing';

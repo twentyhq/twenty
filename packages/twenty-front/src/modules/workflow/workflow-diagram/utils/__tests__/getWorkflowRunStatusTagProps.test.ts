@@ -1,4 +1,4 @@
-import { WorkflowRunStatus } from '@/workflow/types/Workflow';
+import { type WorkflowRunStatus } from '@/workflow/types/Workflow';
 import { getWorkflowRunStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps';
 
 describe('getWorkflowRunStatusTagProps', () => {

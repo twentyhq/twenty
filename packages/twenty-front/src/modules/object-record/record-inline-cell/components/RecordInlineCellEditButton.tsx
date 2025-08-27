@@ -1,17 +1,23 @@
 import styled from '@emotion/styled';
-import { AnimatedContainer } from 'twenty-ui/utilities';
+import { type IconComponent } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
-import { IconComponent } from 'twenty-ui/display';
+import { AnimatedContainer } from 'twenty-ui/utilities';
 
 const StyledInlineCellButtonContainer = styled.div`
   align-items: center;
   display: flex;
 `;
 
-export const RecordInlineCellButton = ({ Icon }: { Icon: IconComponent }) => {
+export const RecordInlineCellButton = ({
+  Icon,
+  onClick,
+}: {
+  Icon: IconComponent;
+  onClick?: () => void;
+}) => {
   return (
     <AnimatedContainer>
-      <StyledInlineCellButtonContainer>
+      <StyledInlineCellButtonContainer onClick={onClick}>
         <FloatingIconButton
           size="small"
           Icon={Icon}

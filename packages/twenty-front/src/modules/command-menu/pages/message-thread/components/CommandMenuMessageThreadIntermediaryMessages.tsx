@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
-import { EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { Button } from 'twenty-ui/input';
 import { IconArrowsVertical } from 'twenty-ui/display';
 

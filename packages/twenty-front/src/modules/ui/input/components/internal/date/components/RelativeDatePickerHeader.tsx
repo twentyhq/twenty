@@ -2,20 +2,20 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { RELATIVE_DATE_DIRECTION_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateDirectionSelectOptions';
 import { RELATIVE_DATE_UNITS_SELECT_OPTIONS } from '@/ui/input/components/internal/date/constants/RelativeDateUnitSelectOptions';
+import { variableDateViewFilterValuePartsSchema } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import {
-  VariableDateViewFilterValueDirection,
-  VariableDateViewFilterValueUnit,
-  variableDateViewFilterValuePartsSchema,
-} from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
+  type VariableDateViewFilterValueDirection,
+  type VariableDateViewFilterValueUnit,
+} from 'twenty-shared/types';
 
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ noPadding: boolean }>`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme, noPadding }) => (noPadding ? '0' : theme.spacing(2))};
   padding-bottom: 0;
 `;
 
@@ -28,6 +28,9 @@ type RelativeDatePickerHeaderProps = {
     amount?: number;
     unit: VariableDateViewFilterValueUnit;
   }) => void;
+  isFormField?: boolean;
+  readonly?: boolean;
+  unitDropdownWidth?: number;
 };
 
 export const RelativeDatePickerHeader = (
@@ -55,7 +58,7 @@ export const RelativeDatePickerHeader = (
   }));
 
   return (
-    <StyledContainer>
+    <StyledContainer noPadding={props.isFormField ?? false}>
       <Select
         dropdownId="direction-select"
         value={direction}
@@ -70,6 +73,7 @@ export const RelativeDatePickerHeader = (
         }}
         options={RELATIVE_DATE_DIRECTION_SELECT_OPTIONS}
         fullWidth
+        disabled={props.readonly}
       />
       <SettingsTextInput
         instanceId="relative-date-picker-amount"
@@ -94,7 +98,7 @@ export const RelativeDatePickerHeader = (
           }
         }}
         placeholder={textInputPlaceholder}
-        disabled={direction === 'THIS'}
+        disabled={direction === 'THIS' || props.readonly}
       />
       <Select
         dropdownId="unit-select"
@@ -108,8 +112,10 @@ export const RelativeDatePickerHeader = (
             unit: newUnit,
           });
         }}
-        options={unitSelectOptions}
         fullWidth
+        options={unitSelectOptions}
+        disabled={props.readonly}
+        dropdownWidth={props.unitDropdownWidth}
       />
     </StyledContainer>
   );

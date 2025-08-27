@@ -1,11 +1,11 @@
-import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
+import { useQuery, type WatchQueryFetchPolicy } from '@apollo/client';
 
 import { GET_ONE_DATABASE_CONNECTION } from '@/databases/graphql/queries/findOneDatabaseConnection';
 import { getForeignDataWrapperType } from '@/databases/utils/getForeignDataWrapperType';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import {
-  GetOneDatabaseConnectionQuery,
-  GetOneDatabaseConnectionQueryVariables,
+  type GetOneDatabaseConnectionQuery,
+  type GetOneDatabaseConnectionQueryVariables,
 } from '~/generated-metadata/graphql';
 
 type UseGetDatabaseConnectionParams = {

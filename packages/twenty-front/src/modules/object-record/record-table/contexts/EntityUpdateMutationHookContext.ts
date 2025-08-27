@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-import { RecordUpdateHookParams } from '@/object-record/record-field/contexts/FieldContext';
+import { type RecordUpdateHookParams } from '@/object-record/record-field/ui/contexts/FieldContext';
 
 export const RecordUpdateContext = createContext<
   (params: RecordUpdateHookParams) => void

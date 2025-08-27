@@ -1,4 +1,4 @@
-import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 
 export type AggregateOperationsOmittingStandardOperations = Exclude<
   AggregateOperations,

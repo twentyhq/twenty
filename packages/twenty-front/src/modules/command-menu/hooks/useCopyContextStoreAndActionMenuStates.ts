@@ -2,6 +2,7 @@ import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/s
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
+import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -75,6 +76,21 @@ export const useCopyContextStoreStates = () => {
             instanceId: instanceIdToCopyTo,
           }),
           contextStoreFilters,
+        );
+
+        const contextStoreFilterGroups = snapshot
+          .getLoadable(
+            contextStoreFilterGroupsComponentState.atomFamily({
+              instanceId: instanceIdToCopyFrom,
+            }),
+          )
+          .getValue();
+
+        set(
+          contextStoreFilterGroupsComponentState.atomFamily({
+            instanceId: instanceIdToCopyTo,
+          }),
+          contextStoreFilterGroups,
         );
 
         const contextStoreAnyFieldFilterValue = snapshot

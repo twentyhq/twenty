@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 
 import DOMPurify from 'dompurify';
 import FileType from 'file-type';
-import { JSDOM } from 'jsdom';
 import sharp from 'sharp';
 import { v4 } from 'uuid';
 
@@ -12,8 +11,8 @@ import { type FileFolder } from 'src/engine/core-modules/file/interfaces/file-fo
 import { settings } from 'src/engine/constants/settings';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { getCropSize, getImageBufferFromUrl } from 'src/utils/image';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
+import { getCropSize, getImageBufferFromUrl } from 'src/utils/image';
 
 export type SignedFile = { path: string; token: string };
 
@@ -60,6 +59,7 @@ export class FileUploadService {
     mimeType: string | undefined;
   }): Buffer | Uint8Array | string {
     if (ext === 'svg' || mimeType === 'image/svg+xml') {
+      const { JSDOM } = require('jsdom');
       const window = new JSDOM('').window;
       const purify = DOMPurify(window);
 

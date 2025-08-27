@@ -1,4 +1,4 @@
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { type PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 
 export const prefetchIsLoadedFamilyState = createFamilyState<

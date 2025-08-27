@@ -1,12 +1,12 @@
 import { useRecoilValue } from 'recoil';
 
 import { findActivityTargetsOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivityTargetsOperationSignatureFactory';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { NoteTarget } from '@/activities/types/NoteTarget';
-import { TaskTarget } from '@/activities/types/TaskTarget';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type NoteTarget } from '@/activities/types/NoteTarget';
+import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 export const useActivityTargetsForTargetableObjects = ({

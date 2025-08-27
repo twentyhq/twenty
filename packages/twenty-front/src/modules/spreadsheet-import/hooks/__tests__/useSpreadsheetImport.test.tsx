@@ -5,8 +5,8 @@ import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOp
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import {
-  ImportedRow,
-  SpreadsheetImportDialogOptions,
+  type ImportedRow,
+  type SpreadsheetImportDialogOptions,
 } from '@/spreadsheet-import/types';
 import { act } from 'react';
 

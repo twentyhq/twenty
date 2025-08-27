@@ -7,7 +7,7 @@ import {
   getEditionSchemaForForm,
   getFormDefaultValuesFromConnection,
 } from '@/settings/integrations/database-connection/utils/editDatabaseConnection';
-import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import { type SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
@@ -17,10 +17,10 @@ import { Section } from '@react-email/components';
 import pick from 'lodash.pick';
 import { FormProvider, useForm } from 'react-hook-form';
 import { H2Title, Info } from 'twenty-ui/display';
-import { z } from 'zod';
+import { type z } from 'zod';
 import {
-  RemoteServer,
-  RemoteTable,
+  type RemoteServer,
+  type RemoteTable,
   RemoteTableStatus,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

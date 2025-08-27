@@ -3,14 +3,14 @@ import { BlockNoteView } from '@blocknote/mantine';
 import { SuggestionMenuController } from '@blocknote/react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ClipboardEvent } from 'react';
+import { type ClipboardEvent } from 'react';
 
-import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { getSlashMenu } from '@/activities/blocks/utils/getSlashMenu';
 import { CustomSideMenu } from '@/ui/input/editor/components/CustomSideMenu';
 import {
   CustomSlashMenu,
-  SuggestionItem,
+  type SuggestionItem,
 } from '@/ui/input/editor/components/CustomSlashMenu';
 
 interface BlockEditorProps {

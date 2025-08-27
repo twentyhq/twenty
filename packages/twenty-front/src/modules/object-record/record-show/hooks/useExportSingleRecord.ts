@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { csvDownloader } from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 
 export type UseSingleExportTableDataOptions = {

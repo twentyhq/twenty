@@ -1,8 +1,8 @@
 import { useApolloClient, useMutation } from '@apollo/client';
 
 import {
-  UpdateOneFieldMetadataItemMutation,
-  UpdateOneFieldMetadataItemMutationVariables,
+  type UpdateOneFieldMetadataItemMutation,
+  type UpdateOneFieldMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
 import { UPDATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
@@ -16,7 +16,7 @@ import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useSetRecoilState } from 'recoil';
 
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
 import { isDefined } from 'twenty-shared/utils';
 

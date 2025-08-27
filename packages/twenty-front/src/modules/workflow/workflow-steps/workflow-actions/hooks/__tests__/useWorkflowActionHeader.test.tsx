@@ -1,7 +1,7 @@
 import {
-  WorkflowFormAction,
-  WorkflowHttpRequestAction,
-  WorkflowSendEmailAction,
+  type WorkflowFormAction,
+  type WorkflowHttpRequestAction,
+  type WorkflowSendEmailAction,
 } from '@/workflow/types/Workflow';
 import {
   workflowFormActionSettingsSchema,

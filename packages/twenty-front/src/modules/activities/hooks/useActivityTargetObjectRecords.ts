@@ -1,9 +1,9 @@
 import { useRecoilValue } from 'recoil';
 
-import { Note } from '@/activities/types/Note';
-import { NoteTarget } from '@/activities/types/NoteTarget';
-import { Task } from '@/activities/types/Task';
-import { TaskTarget } from '@/activities/types/TaskTarget';
+import { type Note } from '@/activities/types/Note';
+import { type NoteTarget } from '@/activities/types/NoteTarget';
+import { type Task } from '@/activities/types/Task';
+import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { getActivityTargetObjectRecords } from '@/activities/utils/getActivityTargetObjectRecords';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';

@@ -1,16 +1,16 @@
 import { act, renderHook } from '@testing-library/react';
 
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
+import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
-import { ViewSort } from '@/views/types/ViewSort';
+import { type ViewSort } from '@/views/types/ViewSort';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 
-import { View } from '@/views/types/View';
+import { type View } from '@/views/types/View';
 import { isDefined } from 'twenty-shared/utils';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { mockedViewsData } from '~/testing/mock-data/views';

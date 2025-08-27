@@ -8,8 +8,8 @@ import { SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/Slash
 import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
 import { CustomSlashMenuListItem } from '@/ui/input/editor/components/CustomSlashMenuListItem';
 import {
-  CustomSlashMenuProps,
-  SuggestionItem,
+  type CustomSlashMenuProps,
+  type SuggestionItem,
 } from '@/ui/input/editor/components/types';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -48,34 +48,36 @@ export const CustomSlashMenu = ({
 
   return (
     <StyledContainer ref={refs.setReference}>
-      {createPortal(
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.1 }}
-        >
-          <OverlayContainer
-            ref={refs.setFloating}
-            style={floatingStyles}
-            data-click-outside-id={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
+      <>
+        {createPortal(
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.1 }}
           >
-            <DropdownContent>
-              <DropdownMenuItemsContainer hasMaxHeight>
-                <SelectableList
-                  focusId={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
-                  selectableListInstanceId={SLASH_MENU_LIST_ID}
-                  selectableItemIdArray={items.map((item) => item.title)}
-                >
-                  {items.map((item) => (
-                    <CustomSlashMenuListItem key={item.title} item={item} />
-                  ))}
-                </SelectableList>
-              </DropdownMenuItemsContainer>
-            </DropdownContent>
-          </OverlayContainer>
-        </motion.div>,
-        document.body,
-      )}
+            <OverlayContainer
+              ref={refs.setFloating}
+              style={floatingStyles}
+              data-click-outside-id={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
+            >
+              <DropdownContent>
+                <DropdownMenuItemsContainer hasMaxHeight>
+                  <SelectableList
+                    focusId={SLASH_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
+                    selectableListInstanceId={SLASH_MENU_LIST_ID}
+                    selectableItemIdArray={items.map((item) => item.title)}
+                  >
+                    {items.map((item) => (
+                      <CustomSlashMenuListItem key={item.title} item={item} />
+                    ))}
+                  </SelectableList>
+                </DropdownMenuItemsContainer>
+              </DropdownContent>
+            </OverlayContainer>
+          </motion.div>,
+          document.body,
+        )}
+      </>
     </StyledContainer>
   );
 };

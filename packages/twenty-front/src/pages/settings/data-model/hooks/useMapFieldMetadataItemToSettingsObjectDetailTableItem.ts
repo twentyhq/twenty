@@ -1,12 +1,12 @@
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { FieldType } from '@/settings/data-model/types/FieldType';
-import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type FieldType } from '@/settings/data-model/types/FieldType';
+import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { getFieldIdentifierType } from '@/settings/data-model/utils/getFieldIdentifierType';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
-import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
+import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 import { getSettingsObjectFieldType } from '~/pages/settings/data-model/utils/getSettingsObjectFieldType';
 
 export const useMapFieldMetadataItemToSettingsObjectDetailTableItem = (

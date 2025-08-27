@@ -1,5 +1,5 @@
-import { WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
-import { WebhookHttpMethods } from '@/workflow/workflow-trigger/constants/WebhookTriggerHttpMethodOptions';
+import { type WorkflowWebhookTrigger } from '@/workflow/types/Workflow';
+import { type WebhookHttpMethods } from '@/workflow/workflow-trigger/constants/WebhookTriggerHttpMethodOptions';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getWebhookTriggerDefaultSettings = (

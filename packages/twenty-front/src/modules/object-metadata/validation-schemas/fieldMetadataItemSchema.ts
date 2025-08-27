@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metadataLabelSchema';
 import { themeColorSchema } from 'twenty-ui/theme';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -19,6 +19,7 @@ export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
     isNullable: z.boolean(),
     isUnique: z.boolean(),
     isSystem: z.boolean(),
+    isUIReadOnly: z.boolean(),
     label: metadataLabelSchema(existingLabels),
     isLabelSyncedWithName: z.boolean(),
     name: camelCaseStringSchema,

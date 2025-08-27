@@ -1,4 +1,4 @@
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 export type SpreadsheetImportCheckbox = {
   type: 'checkbox';
   // Alternate values to be treated as booleans, e.g. {yes: true, no: false}

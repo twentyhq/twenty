@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
-import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
+import { type ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 
 export const useGetObjectRecordIdentifierByNameSingular = () => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);

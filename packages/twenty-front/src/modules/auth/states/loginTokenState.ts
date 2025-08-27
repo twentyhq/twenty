@@ -1,5 +1,5 @@
 import { createState } from 'twenty-ui/utilities';
-import { AuthToken } from '~/generated/graphql';
+import { type AuthToken } from '~/generated/graphql';
 
 export const loginTokenState = createState<AuthToken['token'] | null>({
   key: 'loginTokenState',

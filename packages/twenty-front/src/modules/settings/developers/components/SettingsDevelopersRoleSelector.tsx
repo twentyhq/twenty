@@ -2,7 +2,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Select } from '@/ui/input/components/Select';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui/display';
-import { Role } from '~/generated-metadata/graphql';
+import { type Role } from '~/generated-metadata/graphql';
 
 type SettingsDevelopersRoleSelectorProps = {
   value?: string | null | undefined;

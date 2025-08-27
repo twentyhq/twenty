@@ -23,7 +23,7 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
   BillingPlanKey,
-  BillingPlanOutput,
+  type BillingPlanOutput,
   BillingProductKey,
   SubscriptionInterval,
   SubscriptionStatus,

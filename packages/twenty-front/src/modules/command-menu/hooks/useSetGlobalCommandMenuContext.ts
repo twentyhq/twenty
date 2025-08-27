@@ -5,6 +5,7 @@ import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageI
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
+import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -41,6 +42,13 @@ export const useSetGlobalCommandMenuContext = () => {
 
         set(
           contextStoreFiltersComponentState.atomFamily({
+            instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
+          }),
+          [],
+        );
+
+        set(
+          contextStoreFilterGroupsComponentState.atomFamily({
             instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID,
           }),
           [],

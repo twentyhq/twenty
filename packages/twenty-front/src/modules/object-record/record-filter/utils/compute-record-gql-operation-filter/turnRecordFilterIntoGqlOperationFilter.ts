@@ -1,25 +1,25 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import {
-  ActorFilter,
-  AddressFilter,
-  ArrayFilter,
-  BooleanFilter,
-  CurrencyFilter,
-  DateFilter,
-  FloatFilter,
-  MultiSelectFilter,
-  PhonesFilter,
-  RatingFilter,
-  RawJsonFilter,
-  RecordGqlOperationFilter,
-  RelationFilter,
-  SelectFilter,
-  StringFilter,
-  TSVectorFilter,
-  UUIDFilter,
+  type ActorFilter,
+  type AddressFilter,
+  type ArrayFilter,
+  type BooleanFilter,
+  type CurrencyFilter,
+  type DateFilter,
+  type FloatFilter,
+  type MultiSelectFilter,
+  type PhonesFilter,
+  type RatingFilter,
+  type RawJsonFilter,
+  type RecordGqlOperationFilter,
+  type RelationFilter,
+  type SelectFilter,
+  type StringFilter,
+  type TSVectorFilter,
+  type UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { Field } from '~/generated/graphql';
+import { type Field } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
@@ -28,9 +28,9 @@ import {
   convertLessThanOrEqualRatingToArrayOfRatingValues,
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
+import { type RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 import { getEmptyRecordGqlOperationFilter } from '@/object-record/record-filter/utils/getEmptyRecordGqlOperationFilter';
 
 import { resolveDateViewFilterValue } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';

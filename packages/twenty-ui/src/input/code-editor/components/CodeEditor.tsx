@@ -164,6 +164,8 @@ export const CodeEditor = ({
         onValidate?.(markers);
       }}
       options={{
+        formatOnPaste: true,
+        formatOnType: true,
         overviewRulerLanes: 0,
         scrollbar: {
           vertical: 'hidden',

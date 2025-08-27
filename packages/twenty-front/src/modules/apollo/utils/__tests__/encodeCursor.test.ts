@@ -1,5 +1,5 @@
 import { encodeCursor } from '@/apollo/utils/encodeCursor';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Buffer } from 'buffer';
 
 describe('encodeCursor', () => {

@@ -1,21 +1,29 @@
-import { OnDragEndResponder } from '@hello-pangea/dnd';
+import { type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useCallback, useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { useReorderVisibleRecordFields } from '@/object-record/record-field/hooks/useReorderVisibleRecordFields';
+import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
+import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
+import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
-import { GraphQLView } from '@/views/types/GraphQLView';
-import { mapBoardFieldDefinitionsToViewFields } from '@/views/utils/mapBoardFieldDefinitionsToViewFields';
+import { type GraphQLView } from '@/views/types/GraphQLView';
+import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
+import { produce } from 'immer';
+import { findByProperty, isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
-import { moveArrayItem } from '~/utils/array/moveArrayItem';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { sortByProperty } from '~/utils/array/sortByProperty';
 
 type useObjectOptionsForBoardParams = {
   objectNameSingular: string;
@@ -71,6 +79,9 @@ export const useObjectOptionsForBoard = ({
     [recordIndexFieldDefinitions],
   );
 
+  const { reorderVisibleRecordFields } =
+    useReorderVisibleRecordFields(recordBoardId);
+
   const hiddenBoardFields = useMemo(
     () =>
       availableColumnDefinitions
@@ -97,86 +108,147 @@ export const useObjectOptionsForBoard = ({
         return;
       }
 
-      const reorderedVisibleBoardFields = moveArrayItem(visibleBoardFields, {
+      const updatedRecordField = reorderVisibleRecordFields({
         fromIndex: result.source.index - 1,
         toIndex: result.destination.index - 1,
       });
 
-      if (isDeeplyEqual(visibleBoardFields, reorderedVisibleBoardFields))
-        return;
+      saveViewFields([mapRecordFieldToViewField(updatedRecordField)]);
 
-      const updatedFields = [...reorderedVisibleBoardFields].map(
-        (field, index) => ({ ...field, position: index }),
+      const modifiedRecordIndexFieldDefinitions = produce(
+        recordIndexFieldDefinitions,
+        (draftRecordIndexFieldDefinitions) => {
+          const indexToModify = draftRecordIndexFieldDefinitions.findIndex(
+            (recordIndexFieldDefinitionToModify) =>
+              recordIndexFieldDefinitionToModify.fieldMetadataId ===
+              updatedRecordField.fieldMetadataItemId,
+          );
+
+          draftRecordIndexFieldDefinitions[indexToModify].position =
+            updatedRecordField.position;
+        },
       );
 
-      setRecordIndexFieldDefinitions(updatedFields);
-      saveViewFields(mapBoardFieldDefinitionsToViewFields(updatedFields));
+      // TODO: remove after refactor
+      setRecordIndexFieldDefinitions(modifiedRecordIndexFieldDefinitions);
     },
-    [saveViewFields, setRecordIndexFieldDefinitions, visibleBoardFields],
+    [
+      saveViewFields,
+      setRecordIndexFieldDefinitions,
+      recordIndexFieldDefinitions,
+      reorderVisibleRecordFields,
+    ],
   );
+
+  const currentRecordFields = useRecoilComponentValue(
+    currentRecordFieldsComponentState,
+    recordBoardId,
+  );
+
+  const { updateRecordField } = useUpdateRecordField(recordBoardId);
+  const { upsertRecordField } = useUpsertRecordField(recordBoardId);
 
   // Todo : this seems over complex and should at least be extracted to an util with unit test.
   // Let's refactor this as we introduce the new viewBar
   const handleBoardFieldVisibilityChange = useCallback(
     async (
-      updatedFieldDefinition: Omit<
+      updatedFieldDefinition: Pick<
         ColumnDefinition<FieldMetadata>,
-        'size' | 'position'
+        'fieldMetadataId' | 'isVisible'
       >,
     ) => {
-      const isNewViewField = !(
-        updatedFieldDefinition.fieldMetadataId in
-        recordIndexFieldDefinitionsByKey
+      const lastPosition = currentRecordFields.toSorted(
+        sortByProperty('position', 'desc'),
+      )[0].position;
+
+      const shouldShowFieldMetadataItem =
+        updatedFieldDefinition.isVisible === true;
+      const corresponingRecordField = currentRecordFields.find(
+        (recordFieldToFind) =>
+          recordFieldToFind.fieldMetadataItemId ===
+          updatedFieldDefinition.fieldMetadataId,
       );
 
-      let updatedFieldsDefinitions: ColumnDefinition<FieldMetadata>[];
+      const noExistingRecordField = !isDefined(corresponingRecordField);
 
-      if (isNewViewField) {
-        const correspondingFieldDefinition = availableColumnDefinitions.find(
-          (availableColumnDefinition) =>
-            availableColumnDefinition.fieldMetadataId ===
-            updatedFieldDefinition.fieldMetadataId,
-        );
+      if (noExistingRecordField) {
+        const recordFieldToUpsert: RecordField = {
+          id: v4(),
+          fieldMetadataItemId: updatedFieldDefinition.fieldMetadataId,
+          size: 100,
+          isVisible: shouldShowFieldMetadataItem,
+          position: lastPosition + 1,
+        };
 
-        if (!correspondingFieldDefinition) return;
+        upsertRecordField(recordFieldToUpsert);
 
-        const lastVisibleBoardField =
-          visibleBoardFields[visibleBoardFields.length - 1];
+        saveViewFields([mapRecordFieldToViewField(recordFieldToUpsert)]);
 
-        updatedFieldsDefinitions = [
-          ...recordIndexFieldDefinitions,
-          {
-            ...correspondingFieldDefinition,
-            position: (lastVisibleBoardField?.position || 0) + 1,
-            isVisible: true,
+        const correspondingAvailableColumnDefinition =
+          availableColumnDefinitions.find(
+            findByProperty(
+              'fieldMetadataId',
+              updatedFieldDefinition.fieldMetadataId,
+            ),
+          );
+
+        const modifiedRecordIndexFieldDefinitions = produce(
+          recordIndexFieldDefinitions,
+          (draftRecordIndexFieldDefinitions) => {
+            if (!isDefined(correspondingAvailableColumnDefinition)) {
+              throw new Error(
+                `correspondingAvailableColumnDefinition is not defined this should not happen.`,
+              );
+            }
+
+            draftRecordIndexFieldDefinitions.push({
+              ...correspondingAvailableColumnDefinition,
+              fieldMetadataId: updatedFieldDefinition.fieldMetadataId,
+              isVisible: shouldShowFieldMetadataItem,
+            });
           },
-        ];
-      } else {
-        updatedFieldsDefinitions = recordIndexFieldDefinitions.map(
-          (existingFieldDefinition) =>
-            existingFieldDefinition.fieldMetadataId ===
-            updatedFieldDefinition.fieldMetadataId
-              ? {
-                  ...existingFieldDefinition,
-                  isVisible: !existingFieldDefinition.isVisible,
-                }
-              : existingFieldDefinition,
         );
+
+        // TODO: remove after refactor
+        setRecordIndexFieldDefinitions(modifiedRecordIndexFieldDefinitions);
+      } else {
+        updateRecordField(updatedFieldDefinition.fieldMetadataId, {
+          isVisible: shouldShowFieldMetadataItem,
+        });
+
+        const updatedRecordField: RecordField = {
+          ...corresponingRecordField,
+          isVisible: shouldShowFieldMetadataItem,
+        };
+
+        saveViewFields([mapRecordFieldToViewField(updatedRecordField)]);
+
+        const modifiedRecordIndexFieldDefinitions = produce(
+          recordIndexFieldDefinitions,
+          (draftRecordIndexFieldDefinitions) => {
+            const indexToModify = draftRecordIndexFieldDefinitions.findIndex(
+              (recordIndexFieldDefinitionToModify) =>
+                recordIndexFieldDefinitionToModify.fieldMetadataId ===
+                updatedRecordField.fieldMetadataItemId,
+            );
+
+            draftRecordIndexFieldDefinitions[indexToModify].isVisible =
+              shouldShowFieldMetadataItem;
+          },
+        );
+
+        // TODO: remove after refactor
+        setRecordIndexFieldDefinitions(modifiedRecordIndexFieldDefinitions);
       }
-
-      setRecordIndexFieldDefinitions(updatedFieldsDefinitions);
-
-      saveViewFields(
-        mapBoardFieldDefinitionsToViewFields(updatedFieldsDefinitions),
-      );
     },
     [
-      recordIndexFieldDefinitionsByKey,
+      currentRecordFields,
+      updateRecordField,
+      upsertRecordField,
       setRecordIndexFieldDefinitions,
       saveViewFields,
-      availableColumnDefinitions,
-      visibleBoardFields,
       recordIndexFieldDefinitions,
+      availableColumnDefinitions,
     ],
   );
 

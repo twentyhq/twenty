@@ -1,21 +1,21 @@
 import { useCallback } from 'react';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useUpsertRecordSort } from '@/object-record/record-sort/hooks/useUpsertRecordSort';
-import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { v4 } from 'uuid';
+import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 type UseHandleToggleColumnSortProps = {
-  objectNameSingular: string;
+  objectMetadataItemId: string;
 };
 
 export const useHandleToggleColumnSort = ({
-  objectNameSingular,
+  objectMetadataItemId,
 }: UseHandleToggleColumnSortProps) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
+  const { objectMetadataItem } = useObjectMetadataItemById({
+    objectId: objectMetadataItemId,
   });
 
   const { columnDefinitions } =

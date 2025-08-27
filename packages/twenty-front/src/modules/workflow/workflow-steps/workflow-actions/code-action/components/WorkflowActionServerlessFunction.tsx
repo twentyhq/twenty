@@ -1,4 +1,4 @@
-import { WorkflowCodeAction } from '@/workflow/types/Workflow';
+import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { lazy, Suspense } from 'react';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 

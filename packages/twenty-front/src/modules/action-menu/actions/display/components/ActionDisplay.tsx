@@ -3,11 +3,11 @@ import { ActionDropdownItem } from '@/action-menu/actions/display/components/Act
 import { ActionListItem } from '@/action-menu/actions/display/components/ActionListItem';
 import { ActionConfigContext } from '@/action-menu/contexts/ActionConfigContext';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { MessageDescriptor } from '@lingui/core';
+import { type MessageDescriptor } from '@lingui/core';
 import { useContext } from 'react';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { IconComponent } from 'twenty-ui/display';
-import { MenuItemAccent } from 'twenty-ui/navigation';
+import { type IconComponent } from 'twenty-ui/display';
+import { type MenuItemAccent } from 'twenty-ui/navigation';
 
 export type ActionDisplayProps = {
   key: string;

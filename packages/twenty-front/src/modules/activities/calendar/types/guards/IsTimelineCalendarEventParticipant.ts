@@ -1,5 +1,5 @@
-import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
-import { TimelineCalendarEventParticipant } from '~/generated-metadata/graphql';
+import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
+import { type TimelineCalendarEventParticipant } from '~/generated-metadata/graphql';
 
 export const isTimelineCalendarEventParticipant = (
   participant: CalendarEventParticipant | TimelineCalendarEventParticipant,

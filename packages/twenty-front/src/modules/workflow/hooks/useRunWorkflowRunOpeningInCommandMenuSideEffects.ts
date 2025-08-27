@@ -1,14 +1,14 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
-import { WorkflowRun } from '@/workflow/types/Workflow';
+import { type WorkflowRun } from '@/workflow/types/Workflow';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { workflowRunDiagramAutomaticallyOpenedStepsComponentState } from '@/workflow/workflow-diagram/states/workflowRunDiagramAutomaticallyOpenedStepsComponentState';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
@@ -27,8 +27,8 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const isWorkflowFilteringEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
+  const isWorkflowBranchEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
   );
 
   const runWorkflowRunOpeningInCommandMenuSideEffects = useRecoilCallback(
@@ -62,7 +62,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
           steps: workflowRunRecord.state.flow.steps,
           stepInfos: workflowRunRecord.state.stepInfos,
           trigger: workflowRunRecord.state.flow.trigger,
-          isWorkflowFilteringEnabled,
+          isWorkflowBranchEnabled,
         });
 
         if (!isDefined(stepToOpenByDefault)) {
@@ -132,7 +132,7 @@ export const useRunWorkflowRunOpeningInCommandMenuSideEffects = () => {
     [
       apolloCoreClient.cache,
       objectPermissionsByObjectMetadataId,
-      isWorkflowFilteringEnabled,
+      isWorkflowBranchEnabled,
       openWorkflowRunViewStepInCommandMenu,
       getIcon,
     ],

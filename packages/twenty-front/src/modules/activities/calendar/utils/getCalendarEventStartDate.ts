@@ -1,4 +1,4 @@
-import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 
 export const getCalendarEventStartDate = (
   calendarEvent: Pick<CalendarEvent, 'startsAt'>,

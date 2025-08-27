@@ -1,14 +1,14 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { BooleanFieldInput } from '@/object-record/record-field/meta-types/input/components/BooleanFieldInput';
-import { RatingFieldInput } from '@/object-record/record-field/meta-types/input/components/RatingFieldInput';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/states/contexts/RecordFieldComponentInstanceContext';
+import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { BooleanFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/BooleanFieldInput';
+import { RatingFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RatingFieldInput';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
 import { SettingsDataModelSetPreviewRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetRecordEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
@@ -104,6 +104,16 @@ export const SettingsDataModelFieldPreview = ({
     previewRecord?.id ??
     `${objectMetadataItem.nameSingular}-${fieldName}-${fieldMetadataItem.relation?.type}-${relationObjectMetadataItem?.nameSingular}-preview`;
 
+  const metadata = {
+    fieldName,
+    objectMetadataNameSingular: objectMetadataItem.nameSingular,
+    relationObjectMetadataNameSingular:
+      relationObjectMetadataItem?.nameSingular || '',
+    options: fieldMetadataItem.options ?? [],
+    settings: fieldMetadataItem.settings,
+    relationType: fieldMetadataItem.relation?.type,
+  };
+
   return (
     <>
       <RecordFieldComponentInstanceContext.Provider
@@ -139,25 +149,21 @@ export const SettingsDataModelFieldPreview = ({
                 iconName: 'FieldIcon',
                 fieldMetadataId: fieldMetadataItem.id || '',
                 label: fieldMetadataItem.label,
-                metadata: {
-                  fieldName,
-                  objectMetadataNameSingular: objectMetadataItem.nameSingular,
-                  relationObjectMetadataNameSingular:
-                    relationObjectMetadataItem?.nameSingular,
-                  options: fieldMetadataItem.options ?? [],
-                  settings: fieldMetadataItem.settings,
-                  relationType: fieldMetadataItem.relation?.type,
-                },
+                metadata,
                 defaultValue: fieldMetadataItem.defaultValue,
               },
-              isRecordFieldReadOnly: false,
+              isRecordFieldReadOnly:
+                fieldMetadataItem.type === FieldMetadataType.BOOLEAN ||
+                fieldMetadataItem.type === FieldMetadataType.RATING
+                  ? true
+                  : false,
               disableChipClick: true,
             }}
           >
             {fieldMetadataItem.type === FieldMetadataType.BOOLEAN ? (
-              <BooleanFieldInput readonly />
+              <BooleanFieldInput />
             ) : fieldMetadataItem.type === FieldMetadataType.RATING ? (
-              <RatingFieldInput readonly />
+              <RatingFieldInput />
             ) : (
               <FieldDisplay />
             )}

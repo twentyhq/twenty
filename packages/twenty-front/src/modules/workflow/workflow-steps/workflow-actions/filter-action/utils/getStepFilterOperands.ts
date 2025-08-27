@@ -1,4 +1,4 @@
-import { ViewFilterOperand } from 'twenty-shared/src/types';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 const emptyOperands = [
   ViewFilterOperand.IsEmpty,
@@ -43,15 +43,7 @@ export const FILTER_OPERANDS_MAP = {
     ViewFilterOperand.IsToday,
     ViewFilterOperand.IsBefore,
     ViewFilterOperand.IsAfter,
-    ...emptyOperands,
-  ],
-  DATE: [
-    ViewFilterOperand.Is,
-    ViewFilterOperand.IsInPast,
-    ViewFilterOperand.IsInFuture,
-    ViewFilterOperand.IsToday,
-    ViewFilterOperand.IsBefore,
-    ViewFilterOperand.IsAfter,
+    ViewFilterOperand.IsRelative,
     ...emptyOperands,
   ],
   RATING: [ViewFilterOperand.Is, ViewFilterOperand.IsNot, ...emptyOperands],

@@ -11,6 +11,6 @@
     "skipLibCheck": true,
   },
   "exclude": [
-    "jest.config.ts"
+    "jest.config.mjs"
   ]
 }

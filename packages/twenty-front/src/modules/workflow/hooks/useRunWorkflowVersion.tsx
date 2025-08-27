@@ -15,14 +15,14 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/utils/computeOptimisticCreateRecordBaseRecordInput';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { RUN_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/runWorkflowVersion';
-import { WorkflowRun } from '@/workflow/types/Workflow';
+import { type WorkflowRun } from '@/workflow/types/Workflow';
 import { useMutation } from '@apollo/client';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import {
-  RunWorkflowVersionMutation,
-  RunWorkflowVersionMutationVariables,
+  type RunWorkflowVersionMutation,
+  type RunWorkflowVersionMutationVariables,
 } from '~/generated-metadata/graphql';
 
 export const useRunWorkflowVersion = () => {

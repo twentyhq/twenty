@@ -3,8 +3,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import {
-  BillingPlanKey,
-  SubscriptionInterval,
+  type BillingPlanKey,
+  type SubscriptionInterval,
   useCheckoutSessionMutation,
 } from '~/generated-metadata/graphql';
 

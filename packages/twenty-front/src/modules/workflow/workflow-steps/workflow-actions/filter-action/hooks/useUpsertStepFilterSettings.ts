@@ -5,7 +5,7 @@ import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/currentStepFiltersComponentState';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { StepFilter, StepFilterGroup } from 'twenty-shared/types';
+import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useUpsertStepFilterSettings = () => {

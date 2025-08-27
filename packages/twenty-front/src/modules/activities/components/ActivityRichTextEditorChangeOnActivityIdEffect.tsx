@@ -1,4 +1,4 @@
-import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { type BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { useReplaceActivityBlockEditorContent } from '@/activities/hooks/useReplaceActivityBlockEditorContent';
 import { useEffect, useState } from 'react';
 

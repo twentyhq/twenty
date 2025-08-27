@@ -1,5 +1,5 @@
 import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
-import { SuggestionItem } from '@/ui/input/editor/components/types';
+import { type SuggestionItem } from '@/ui/input/editor/components/types';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdComponentFamilySelector';

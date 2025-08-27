@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef } from 'react';
+import { type ReactNode, useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type NodeDimensionProps = {

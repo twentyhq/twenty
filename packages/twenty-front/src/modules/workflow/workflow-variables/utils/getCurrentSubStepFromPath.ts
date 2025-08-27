@@ -1,6 +1,6 @@
 import {
-  OutputSchema,
-  StepOutputSchema,
+  type OutputSchema,
+  type StepOutputSchema,
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';

@@ -1,5 +1,5 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 

@@ -1,14 +1,16 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export type GenerateEmptyFieldValueArgs = {
   fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relation'>;
+  shouldComputeFunctionDefaultValue?: boolean;
 };
 // TODO strictly type each fieldValue following their FieldMetadataType
 export const generateEmptyFieldValue = ({
   fieldMetadataItem,
+  shouldComputeFunctionDefaultValue = false,
 }: GenerateEmptyFieldValueArgs) => {
   switch (fieldMetadataItem.type) {
     case FieldMetadataType.TEXT: {
@@ -39,9 +41,15 @@ export const generateEmptyFieldValue = ({
       };
     }
     case FieldMetadataType.DATE_TIME: {
+      if (shouldComputeFunctionDefaultValue) {
+        return new Date().toISOString();
+      }
       return null;
     }
     case FieldMetadataType.DATE: {
+      if (shouldComputeFunctionDefaultValue) {
+        return new Date().toISOString();
+      }
       return null;
     }
     case FieldMetadataType.NUMBER:

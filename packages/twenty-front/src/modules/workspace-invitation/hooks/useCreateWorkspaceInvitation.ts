@@ -1,6 +1,6 @@
 import { useSetRecoilState } from 'recoil';
 import {
-  SendInvitationsMutationVariables,
+  type SendInvitationsMutationVariables,
   useSendInvitationsMutation,
 } from '~/generated-metadata/graphql';
 import { workspaceInvitationsState } from '../states/workspaceInvitationsStates';

@@ -1,4 +1,4 @@
-import { Shortcut, ShortcutType } from '../types/Shortcut';
+import { type Shortcut, ShortcutType } from '../types/Shortcut';
 
 export const KEYBOARD_SHORTCUTS_TABLE: Shortcut[] = [
   {

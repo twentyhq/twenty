@@ -1,4 +1,4 @@
-import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
+import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {

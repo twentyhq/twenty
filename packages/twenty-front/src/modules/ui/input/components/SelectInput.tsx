@@ -10,8 +10,8 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { TagColor } from 'twenty-ui/components';
-import { SelectOption } from 'twenty-ui/input';
+import { type TagColor } from 'twenty-ui/components';
+import { type SelectOption } from 'twenty-ui/input';
 import { MenuItemSelectTag } from 'twenty-ui/navigation';
 
 interface SelectInputProps {

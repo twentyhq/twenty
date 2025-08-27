@@ -64,6 +64,15 @@ describe('AdminPanelHealthService', () => {
 
     service = module.get<AdminPanelHealthService>(AdminPanelHealthService);
 
+    // Override the healthIndicators mapping with our mocked instances
+    (service as any)['healthIndicators'] = {
+      [HealthIndicatorId.database]: databaseHealth,
+      [HealthIndicatorId.redis]: redisHealth,
+      [HealthIndicatorId.worker]: workerHealth,
+      [HealthIndicatorId.connectedAccount]: connectedAccountHealth,
+      [HealthIndicatorId.app]: appHealth,
+    };
+
     loggerSpy = jest
       .spyOn(service['logger'], 'error')
       .mockImplementation(() => {});

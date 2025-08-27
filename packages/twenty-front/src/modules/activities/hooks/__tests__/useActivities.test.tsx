@@ -1,9 +1,9 @@
 import { renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { RecoilRoot } from 'recoil';
 
 import { useActivities } from '@/activities/hooks/useActivities';
-import { Task } from '@/activities/types/Task';
+import { type Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 jest.mock('@/activities/hooks/useActivityTargetsForTargetableObjects', () => ({

@@ -1,4 +1,4 @@
-import { BoardCardIndexes } from '@/object-record/record-board/types/BoardCardIndexes';
+import { type BoardCardIndexes } from '@/object-record/record-board/types/BoardCardIndexes';
 
 export const getRecordBoardCardFocusId = ({
   recordBoardId,

@@ -4,7 +4,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { WorkspaceMember } from '~/generated-metadata/graphql';
+import { type WorkspaceMember } from '~/generated-metadata/graphql';
 
 const StyledIconWrapper = styled.div`
   align-items: center;

@@ -1,10 +1,10 @@
 import {
-  type GraphQLResolveInfo,
-  type SelectionSetNode,
   Kind,
-  type SelectionNode,
   type FieldNode,
+  type GraphQLResolveInfo,
   type InlineFragmentNode,
+  type SelectionNode,
+  type SelectionSetNode,
   type ValueNode,
 } from 'graphql';
 
@@ -60,6 +60,7 @@ const parseValueNode = (
     case Kind.ENUM:
       return valueNode.value;
     case Kind.LIST:
+      // @ts-expect-error legacy noImplicitAny
       return valueNode.values.map((value) => parseValueNode(value, variables));
     case Kind.OBJECT:
       return valueNode.fields.reduce((obj, field) => {

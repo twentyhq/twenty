@@ -1,16 +1,14 @@
-import { Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react';
 import { useRecoilValue } from 'recoil';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
-import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import {
   RecordTableContextProvider,
@@ -23,7 +21,7 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { View } from '@/views/types/View';
+import { type View } from '@/views/types/View';
 import { useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
@@ -140,37 +138,29 @@ export const RecordTableDecorator: Decorator = (Story, context) => {
 
   return (
     <RecordTableComponentInstanceContext.Provider
-      value={{ instanceId: recordIndexId, onColumnsChange: () => {} }}
+      value={{ instanceId: recordIndexId }}
     >
       <ViewComponentInstanceContext.Provider
         value={{ instanceId: recordIndexId }}
       >
-        <RecordFilterGroupsComponentInstanceContext.Provider
-          value={{ instanceId: recordIndexId }}
+        <RecordComponentInstanceContextsWrapper
+          componentInstanceId={recordIndexId}
         >
-          <RecordFiltersComponentInstanceContext.Provider
-            value={{ instanceId: recordIndexId }}
+          <ActionMenuComponentInstanceContext.Provider
+            value={{
+              instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+            }}
           >
-            <RecordSortsComponentInstanceContext.Provider
-              value={{ instanceId: recordIndexId }}
+            <InternalTableContextProviders
+              objectMetadataItem={objectMetadataItem}
             >
-              <ActionMenuComponentInstanceContext.Provider
-                value={{
-                  instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
-                }}
-              >
-                <InternalTableContextProviders
-                  objectMetadataItem={objectMetadataItem}
-                >
-                  <InternalTableStateLoaderEffect
-                    objectMetadataItem={objectMetadataItem}
-                  />
-                  <Story />
-                </InternalTableContextProviders>
-              </ActionMenuComponentInstanceContext.Provider>
-            </RecordSortsComponentInstanceContext.Provider>
-          </RecordFiltersComponentInstanceContext.Provider>
-        </RecordFilterGroupsComponentInstanceContext.Provider>
+              <InternalTableStateLoaderEffect
+                objectMetadataItem={objectMetadataItem}
+              />
+              <Story />
+            </InternalTableContextProviders>
+          </ActionMenuComponentInstanceContext.Provider>
+        </RecordComponentInstanceContextsWrapper>
       </ViewComponentInstanceContext.Provider>
     </RecordTableComponentInstanceContext.Provider>
   );

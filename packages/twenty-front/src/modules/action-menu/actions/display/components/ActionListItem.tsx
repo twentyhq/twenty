@@ -1,4 +1,4 @@
-import { ActionDisplayProps } from '@/action-menu/actions/display/components/ActionDisplay';
+import { type ActionDisplayProps } from '@/action-menu/actions/display/components/ActionDisplay';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';

@@ -1,21 +1,20 @@
 import { ActionModal } from '@/action-menu/actions/components/ActionModal';
 import { useSelectedRecordIdOrThrow } from '@/action-menu/actions/record-actions/single-record/hooks/useSelectedRecordIdOrThrow';
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { AppPath } from '@/types/AppPath';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const DestroySingleRecordAction = () => {
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const { recordIndexId, objectMetadataItem } =
+    useRecordIndexIdFromCurrentContextStore();
 
   const recordId = useSelectedRecordIdOrThrow();
 
   const navigateApp = useNavigateApp();
 
-  const { resetTableRowSelection } = useRecordTable({
-    recordTableId: objectMetadataItem.namePlural,
-  });
+  const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
 
   const { destroyOneRecord } = useDestroyOneRecord({
     objectNameSingular: objectMetadataItem.nameSingular,

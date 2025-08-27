@@ -56,6 +56,7 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const objectRecord = await queryBuilder

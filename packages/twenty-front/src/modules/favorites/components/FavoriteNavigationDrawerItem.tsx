@@ -1,4 +1,4 @@
-import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
+import { type ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 

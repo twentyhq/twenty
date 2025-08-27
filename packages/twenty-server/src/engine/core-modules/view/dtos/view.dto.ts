@@ -4,11 +4,13 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 
 registerEnumType(ViewOpenRecordIn, { name: 'ViewOpenRecordIn' });
 registerEnumType(ViewType, { name: 'ViewType' });
+registerEnumType(ViewKey, { name: 'ViewKey' });
 
 @ObjectType('CoreView')
 export class ViewDTO {
@@ -24,8 +26,8 @@ export class ViewDTO {
   @Field(() => ViewType, { nullable: false, defaultValue: ViewType.TABLE })
   type: ViewType;
 
-  @Field({ nullable: true, defaultValue: 'INDEX' })
-  key: string;
+  @Field(() => ViewKey, { nullable: true, defaultValue: ViewKey.INDEX })
+  key: ViewKey | null;
 
   @Field({ nullable: false })
   icon: string;
@@ -35,6 +37,9 @@ export class ViewDTO {
 
   @Field({ nullable: false, defaultValue: false })
   isCompact: boolean;
+
+  @Field({ nullable: false, defaultValue: false })
+  isCustom: boolean;
 
   @Field(() => ViewOpenRecordIn, {
     nullable: false,

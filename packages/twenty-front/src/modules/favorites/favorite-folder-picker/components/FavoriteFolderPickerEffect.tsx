@@ -7,8 +7,8 @@ import { favoriteFolderPickerCheckedComponentState } from '@/favorites/favorite-
 import { favoriteFolderPickerComponentFamilyState } from '@/favorites/favorite-folder-picker/states/favoriteFolderPickerComponentFamilyState';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { usePrefetchedFavoritesFoldersData } from '@/favorites/hooks/usePrefetchedFavoritesFoldersData';
-import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';

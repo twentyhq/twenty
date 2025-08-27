@@ -1,6 +1,6 @@
-import { ApolloError } from '@apollo/client';
+import { type ApolloError } from '@apollo/client';
 
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useCallback } from 'react';
 import { logError } from '~/utils/logError';

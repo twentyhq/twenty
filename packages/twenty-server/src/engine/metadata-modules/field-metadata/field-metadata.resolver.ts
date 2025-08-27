@@ -87,6 +87,23 @@ export class FieldMetadataResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Context() context: I18nContext,
   ) {
+    const isWorkspaceMigrationV2Enabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        workspaceId,
+      );
+
+    if (isWorkspaceMigrationV2Enabled) {
+      try {
+        return await this.fieldMetadataServiceV2.updateOne({
+          updateFieldInput: { ...input.update, id: input.id },
+          workspaceId,
+        });
+      } catch (error) {
+        fieldMetadataGraphqlApiExceptionHandler(error);
+      }
+    }
+
     try {
       const updatedInput = (await this.beforeUpdateOneField.run(input, {
         workspaceId,

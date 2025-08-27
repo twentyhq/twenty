@@ -1,4 +1,4 @@
-import { ClientConfig } from '@/client-config/types/ClientConfig';
+import { type ClientConfig } from '@/client-config/types/ClientConfig';
 import { CaptchaDriverType, SupportDriver } from '~/generated/graphql';
 
 export const mockedClientConfig: ClientConfig = {

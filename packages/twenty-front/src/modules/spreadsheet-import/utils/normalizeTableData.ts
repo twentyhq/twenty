@@ -1,9 +1,9 @@
 import {
-  ImportedRow,
-  ImportedStructuredRow,
-  SpreadsheetImportFields,
+  type ImportedRow,
+  type ImportedStructuredRow,
+  type SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
-import { SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
+import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';

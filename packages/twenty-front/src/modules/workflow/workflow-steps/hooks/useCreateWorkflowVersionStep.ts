@@ -2,9 +2,9 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { CREATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/createWorkflowVersionStep';
 import { useMutation } from '@apollo/client';
 import {
-  CreateWorkflowVersionStepInput,
-  CreateWorkflowVersionStepMutation,
-  CreateWorkflowVersionStepMutationVariables,
+  type CreateWorkflowVersionStepInput,
+  type CreateWorkflowVersionStepMutation,
+  type CreateWorkflowVersionStepMutationVariables,
 } from '~/generated-metadata/graphql';
 import { useUpdateWorkflowVersionCache } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionCache';
 import { flowComponentState } from '@/workflow/states/flowComponentState';

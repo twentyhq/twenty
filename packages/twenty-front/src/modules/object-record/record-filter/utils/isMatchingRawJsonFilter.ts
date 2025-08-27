@@ -1,4 +1,4 @@
-import { RawJsonFilter } from '../../graphql/types/RecordGqlOperationFilter';
+import { type RawJsonFilter } from '../../graphql/types/RecordGqlOperationFilter';
 
 export const isMatchingRawJsonFilter = ({
   rawJsonFilter,

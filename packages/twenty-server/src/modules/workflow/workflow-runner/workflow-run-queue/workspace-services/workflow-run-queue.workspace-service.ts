@@ -1,17 +1,24 @@
 import { Injectable } from '@nestjs/common';
 
+import { In } from 'typeorm';
+
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import {
+  WorkflowRunStatus,
+  WorkflowRunWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { WORKFLOW_RUN_QUEUE_THROTTLE_LIMIT } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/workflow-run-queue-throttle-limit';
 import { getWorkflowRunQueuedCountCacheKey } from 'src/modules/workflow/workflow-runner/workflow-run-queue/utils/get-cache-workflow-run-count-key.util';
 
 @Injectable()
 export class WorkflowRunQueueWorkspaceService {
-  private readonly WORKFLOW_RUN_QUEUE_THROTTLE_LIMIT = 100;
-
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorage: CacheStorageService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   async increaseWorkflowRunQueuedCount(
@@ -40,11 +47,64 @@ export class WorkflowRunQueueWorkspaceService {
     );
   }
 
-  async getRemainingRunsToEnqueueCount(workspaceId: string): Promise<number> {
+  async recomputeWorkflowRunQueuedCount(workspaceId: string): Promise<void> {
+    const workflowRunRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        WorkflowRunWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const currentlyEnqueuedWorkflowRunCount = await workflowRunRepository.count(
+      {
+        where: {
+          status: In([WorkflowRunStatus.ENQUEUED, WorkflowRunStatus.RUNNING]),
+        },
+      },
+    );
+
+    await this.setWorkflowRunQueuedCount(
+      workspaceId,
+      currentlyEnqueuedWorkflowRunCount,
+    );
+  }
+
+  async getRemainingRunsToEnqueueCountFromCache(
+    workspaceId: string,
+  ): Promise<number> {
     const currentCount =
       await this.getCurrentWorkflowRunQueuedCount(workspaceId);
 
-    return this.WORKFLOW_RUN_QUEUE_THROTTLE_LIMIT - currentCount;
+    return WORKFLOW_RUN_QUEUE_THROTTLE_LIMIT - currentCount;
+  }
+
+  async getRemainingRunsToEnqueueCountFromDatabase(
+    workspaceId: string,
+  ): Promise<number> {
+    const workflowRunRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+        workspaceId,
+        WorkflowRunWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const currentCount = await workflowRunRepository.count({
+      where: {
+        status: In([WorkflowRunStatus.ENQUEUED, WorkflowRunStatus.RUNNING]),
+      },
+    });
+
+    return WORKFLOW_RUN_QUEUE_THROTTLE_LIMIT - currentCount;
+  }
+
+  private async setWorkflowRunQueuedCount(
+    workspaceId: string,
+    count: number,
+  ): Promise<void> {
+    await this.cacheStorage.set(
+      getWorkflowRunQueuedCountCacheKey(workspaceId),
+      count,
+    );
   }
 
   private async getCurrentWorkflowRunQueuedCount(

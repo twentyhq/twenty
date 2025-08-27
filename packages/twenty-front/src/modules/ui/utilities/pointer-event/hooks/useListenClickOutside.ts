@@ -2,14 +2,14 @@ import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/po
 import { clickOutsideListenerIsMouseDownInsideComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsMouseDownInsideComponentState';
 import { clickOutsideListenerMouseDownHappenedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerMouseDownHappenedComponentState';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import React, { useEffect } from 'react';
+import { useEffect, type RefObject } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 const CLICK_OUTSIDE_DEBUG_MODE = false;
 
 export type ClickOutsideListenerProps<T extends Element> = {
-  refs: Array<React.RefObject<T>>;
+  refs: Array<RefObject<T>>;
   excludedClickOutsideIds?: string[];
   callback: (event: MouseEvent | TouchEvent) => void;
   listenerId: string;

@@ -1,4 +1,4 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export class ObjectMetadataItemNotFoundError extends Error {
   constructor(objectName: string, objectMetadataItems: ObjectMetadataItem[]) {

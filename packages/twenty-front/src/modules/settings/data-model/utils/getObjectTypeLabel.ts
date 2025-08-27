@@ -1,4 +1,4 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export type ObjectTypeLabel =
   | StandardObjectTypeLabel
@@ -21,7 +21,7 @@ type RemoteObjectTypeLabel = {
 };
 
 export const getObjectTypeLabel = (
-  objectMetadataItem: ObjectMetadataItem,
+  objectMetadataItem: Pick<ObjectMetadataItem, 'isCustom' | 'isRemote'>,
 ): ObjectTypeLabel =>
   objectMetadataItem.isCustom
     ? {

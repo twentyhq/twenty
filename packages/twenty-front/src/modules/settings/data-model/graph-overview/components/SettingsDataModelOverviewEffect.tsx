@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { Edge, Node } from '@xyflow/react';
+import { type Edge, type Node } from '@xyflow/react';
 import { useEffect } from 'react';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';

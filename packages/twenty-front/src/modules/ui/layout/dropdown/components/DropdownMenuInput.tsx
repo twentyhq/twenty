@@ -1,9 +1,14 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { forwardRef, InputHTMLAttributes, ReactNode, useRef } from 'react';
+import {
+  forwardRef,
+  useRef,
+  type InputHTMLAttributes,
+  type ReactNode,
+} from 'react';
 import 'react-phone-number-input/style.css';
 
-import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
+import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 

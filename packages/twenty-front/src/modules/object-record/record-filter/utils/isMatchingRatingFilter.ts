@@ -1,4 +1,4 @@
-import { RatingFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { type RatingFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 
 export const isMatchingRatingFilter = ({
   ratingFilter,

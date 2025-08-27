@@ -1,4 +1,4 @@
-import { ApolloLink, gql, Operation } from '@apollo/client';
+import { ApolloLink, gql, type Operation } from '@apollo/client';
 import { logDebug } from '~/utils/logDebug';
 import { logError } from '~/utils/logError';
 

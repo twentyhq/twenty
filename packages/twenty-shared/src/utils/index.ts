@@ -7,6 +7,8 @@
  *                              |___/
  */
 
+export { findById } from './array/findById';
+export { findByProperty } from './array/findByProperty';
 export { assertUnreachable } from './assertUnreachable';
 export { deepMerge } from './deepMerge';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
@@ -23,6 +25,7 @@ export { getUniqueConstraintsFields } from './indexMetadata/getUniqueConstraints
 export { parseJson } from './parseJson';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';
+export { safeParseRelativeDateFilterValue } from './safeParseRelativeDateFilterValue';
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { capitalize } from './strings/capitalize';

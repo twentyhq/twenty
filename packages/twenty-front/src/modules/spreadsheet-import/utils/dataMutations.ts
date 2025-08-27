@@ -2,15 +2,15 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { v4 } from 'uuid';
 
 import {
-  Errors,
-  ImportedStructuredRowMetadata,
+  type Errors,
+  type ImportedStructuredRowMetadata,
 } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 import {
-  ImportedStructuredRow,
-  SpreadsheetImportFields,
-  SpreadsheetImportInfo,
-  SpreadsheetImportRowHook,
-  SpreadsheetImportTableHook,
+  type ImportedStructuredRow,
+  type SpreadsheetImportFields,
+  type SpreadsheetImportInfo,
+  type SpreadsheetImportRowHook,
+  type SpreadsheetImportTableHook,
 } from '@/spreadsheet-import/types';
 import { isDefined } from 'twenty-shared/utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';

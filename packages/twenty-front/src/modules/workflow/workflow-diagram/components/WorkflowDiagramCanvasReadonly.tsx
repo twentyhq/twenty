@@ -1,11 +1,11 @@
-import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
+import { type WorkflowVersionStatus } from '@/workflow/types/Workflow';
 import { WorkflowDiagramCanvasBase } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasBase';
 import { WorkflowDiagramDefaultEdgeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramDefaultEdgeReadonly';
-import { WorkflowDiagramEmptyTriggerReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramEmptyTriggerReadonly';
-import { WorkflowDiagramFilterEdgeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilterEdgeReadonly';
-import { WorkflowDiagramFilteringDisabledEdgeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramFilteringDisabledEdgeReadonly';
-import { WorkflowDiagramStepNodeReadonly } from '@/workflow/workflow-diagram/components/WorkflowDiagramStepNodeReadonly';
+
 import { getWorkflowVersionStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowVersionStatusTagProps';
+import { WorkflowDiagramEmptyTriggerReadonly } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly';
+import { WorkflowDiagramFilterEdgeReadonly } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeReadonly';
+import { WorkflowDiagramStepNodeReadonly } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeReadonly';
 import { ReactFlowProvider } from '@xyflow/react';
 
 export const WorkflowDiagramCanvasReadonly = ({
@@ -25,8 +25,6 @@ export const WorkflowDiagramCanvasReadonly = ({
           'empty-trigger': WorkflowDiagramEmptyTriggerReadonly,
         }}
         edgeTypes={{
-          'filtering-disabled--readonly':
-            WorkflowDiagramFilteringDisabledEdgeReadonly,
           'empty-filter--readonly': WorkflowDiagramDefaultEdgeReadonly,
           'filter--readonly': WorkflowDiagramFilterEdgeReadonly,
         }}

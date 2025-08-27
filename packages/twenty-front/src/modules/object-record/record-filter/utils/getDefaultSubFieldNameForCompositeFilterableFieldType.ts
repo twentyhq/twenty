@@ -1,7 +1,7 @@
 import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
-import { CompositeFilterableFieldType } from '@/object-record/record-filter/types/CompositeFilterableFieldType';
-import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import { FieldType } from '@/settings/data-model/types/FieldType';
+import { type CompositeFilterableFieldType } from '@/object-record/record-filter/types/CompositeFilterableFieldType';
+import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
+import { type FieldType } from '@/settings/data-model/types/FieldType';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getDefaultSubFieldNameForCompositeFilterableFieldType = (

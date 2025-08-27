@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { usePrepareFindManyActivitiesQuery } from '@/activities/hooks/usePrepareFindManyActivitiesQuery';
 import { objectShowPageTargetableObjectState } from '@/activities/timeline-activities/states/objectShowPageTargetableObjectIdState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { type CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { isDefined } from 'twenty-shared/utils';
 
 // This hook should only be executed if the normalized cache is up-to-date

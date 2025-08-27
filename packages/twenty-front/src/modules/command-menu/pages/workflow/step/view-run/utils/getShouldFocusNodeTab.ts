@@ -1,6 +1,6 @@
 import {
-  WorkflowActionType,
-  WorkflowRunStepStatus,
+  type WorkflowActionType,
+  type WorkflowRunStepStatus,
 } from '@/workflow/types/Workflow';
 
 export const getShouldFocusNodeTab = ({

@@ -1,8 +1,8 @@
 import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
-import { GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
+import { type FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { type FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
+import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { useRecoilCallback } from 'recoil';
 import { logDebug } from '~/utils/logDebug';
 

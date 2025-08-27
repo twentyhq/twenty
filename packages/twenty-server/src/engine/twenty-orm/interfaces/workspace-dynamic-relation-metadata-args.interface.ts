@@ -44,7 +44,7 @@ export interface WorkspaceDynamicRelationMetadataArgs {
   /**
    * Class to which relation is applied.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+
   readonly target: Function;
 
   /**

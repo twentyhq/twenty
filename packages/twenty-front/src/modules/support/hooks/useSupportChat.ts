@@ -6,7 +6,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { User, WorkspaceMember } from '~/generated-metadata/graphql';
+import { type User, type WorkspaceMember } from '~/generated-metadata/graphql';
 
 const insertScript = ({
   src,

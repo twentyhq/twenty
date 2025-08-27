@@ -1,8 +1,8 @@
 import {
-  DefaultValue,
-  GetRecoilValue,
-  ResetRecoilState,
-  SetRecoilState,
+  type DefaultValue,
+  type GetRecoilValue,
+  type ResetRecoilState,
+  type SetRecoilState,
 } from 'recoil';
 
 export type SelectorSetter<T, P> = (

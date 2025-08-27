@@ -1,5 +1,5 @@
-import { WorkflowAction } from '@/workflow/types/Workflow';
-import { IconComponent, useIcons } from 'twenty-ui/display';
+import { type WorkflowAction } from '@/workflow/types/Workflow';
+import { type IconComponent, useIcons } from 'twenty-ui/display';
 import { getActionIcon } from '../utils/getActionIcon';
 import { useActionHeaderTypeOrThrow } from './useActionHeaderTypeOrThrow';
 import { useActionIconColorOrThrow } from './useActionIconColorOrThrow';

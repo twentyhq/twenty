@@ -8,9 +8,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
-import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
+import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { AnimatePresence } from 'framer-motion';
@@ -50,35 +48,23 @@ export const CommandMenuContainer = ({
   useCommandMenuHotKeys();
 
   return (
-    <RecordFilterGroupsComponentInstanceContext.Provider
-      value={{ instanceId: recordIndexId }}
-    >
-      <RecordFiltersComponentInstanceContext.Provider
-        value={{ instanceId: recordIndexId }}
+    <RecordComponentInstanceContextsWrapper componentInstanceId={recordIndexId}>
+      <ContextStoreComponentInstanceContext.Provider
+        value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
       >
-        <RecordSortsComponentInstanceContext.Provider
-          value={{ instanceId: recordIndexId }}
+        <ActionMenuComponentInstanceContext.Provider
+          value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
         >
-          <ContextStoreComponentInstanceContext.Provider
-            value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
+          <AnimatePresence
+            mode="wait"
+            onExitComplete={commandMenuCloseAnimationCompleteCleanup}
           >
-            <ActionMenuComponentInstanceContext.Provider
-              value={{ instanceId: COMMAND_MENU_COMPONENT_INSTANCE_ID }}
-            >
-              <AnimatePresence
-                mode="wait"
-                onExitComplete={commandMenuCloseAnimationCompleteCleanup}
-              >
-                {isCommandMenuOpened && (
-                  <CommandMenuOpenContainer>
-                    {children}
-                  </CommandMenuOpenContainer>
-                )}
-              </AnimatePresence>
-            </ActionMenuComponentInstanceContext.Provider>
-          </ContextStoreComponentInstanceContext.Provider>
-        </RecordSortsComponentInstanceContext.Provider>
-      </RecordFiltersComponentInstanceContext.Provider>
-    </RecordFilterGroupsComponentInstanceContext.Provider>
+            {isCommandMenuOpened && (
+              <CommandMenuOpenContainer>{children}</CommandMenuOpenContainer>
+            )}
+          </AnimatePresence>
+        </ActionMenuComponentInstanceContext.Provider>
+      </ContextStoreComponentInstanceContext.Provider>
+    </RecordComponentInstanceContextsWrapper>
   );
 };

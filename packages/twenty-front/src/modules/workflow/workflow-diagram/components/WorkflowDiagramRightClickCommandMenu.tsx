@@ -1,6 +1,4 @@
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { useWorkflowDiagramScreenToFlowPosition } from '@/workflow/workflow-diagram/hooks/useWorkflowDiagramScreenToFlowPosition';
@@ -43,17 +41,7 @@ export const WorkflowDiagramRightClickCommandMenu = () => {
     workflowDiagramRightClickMenuPositionState,
   );
 
-  const workflowVisualizerWorkflowId = useRecoilComponentValue(
-    workflowVisualizerWorkflowIdComponentState,
-  );
-
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
-    workflowVisualizerWorkflowId,
-  );
-
-  const { tidyUpWorkflowVersion } = useTidyUpWorkflowVersion({
-    workflow: workflowWithCurrentVersion,
-  });
+  const { tidyUpWorkflowVersion } = useTidyUpWorkflowVersion();
 
   const handleReorderWorkflowDiagram = async () => {
     await tidyUpWorkflowVersion();

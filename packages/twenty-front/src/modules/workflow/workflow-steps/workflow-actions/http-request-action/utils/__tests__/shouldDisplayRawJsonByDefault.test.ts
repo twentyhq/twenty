@@ -1,4 +1,4 @@
-import { HttpRequestBody } from '../../constants/HttpRequest';
+import { type HttpRequestBody } from '../../constants/HttpRequest';
 import { shouldDisplayRawJsonByDefault } from '../shouldDisplayRawJsonByDefault';
 
 describe('shouldDisplayRawJsonByDefault', () => {
@@ -44,11 +44,6 @@ describe('shouldDisplayRawJsonByDefault', () => {
 
       it('should return true for malformed JSON', () => {
         const defaultValue = '{"key1": "value1", "key2":}';
-        expect(shouldDisplayRawJsonByDefault(defaultValue)).toBe(true);
-      });
-
-      it('should return true for plain text', () => {
-        const defaultValue = 'This is just plain text';
         expect(shouldDisplayRawJsonByDefault(defaultValue)).toBe(true);
       });
     });

@@ -1,4 +1,4 @@
-import { SpreadsheetImportInfo } from '@/spreadsheet-import/types';
+import { type SpreadsheetImportInfo } from '@/spreadsheet-import/types';
 
 export type ImportedStructuredRowMetadata = {
   __index: string;

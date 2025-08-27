@@ -1,7 +1,7 @@
-import { NoteTarget } from '@/activities/types/NoteTarget';
-import { TaskTarget } from '@/activities/types/TaskTarget';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type NoteTarget } from '@/activities/types/NoteTarget';
+import { type TaskTarget } from '@/activities/types/TaskTarget';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export type ActivityTargetWithTargetRecord = {
   targetObjectMetadataItem: ObjectMetadataItem;

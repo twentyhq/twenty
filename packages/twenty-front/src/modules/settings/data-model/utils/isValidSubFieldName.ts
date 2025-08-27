@@ -1,5 +1,5 @@
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
-import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
+import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { COMPOSITE_FIELD_TYPES } from '@/settings/data-model/types/CompositeFieldType';
 
 export const isValidSubFieldName = (

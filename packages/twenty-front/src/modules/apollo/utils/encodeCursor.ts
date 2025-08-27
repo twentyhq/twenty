@@ -1,4 +1,4 @@
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 import { Buffer } from 'buffer';
 import { isDefined } from 'twenty-shared/utils';

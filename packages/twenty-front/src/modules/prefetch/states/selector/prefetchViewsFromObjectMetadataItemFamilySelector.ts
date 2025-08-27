@@ -1,5 +1,5 @@
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
-import { View } from '@/views/types/View';
+import { type View } from '@/views/types/View';
 import { selectorFamily } from 'recoil';
 
 export const prefetchViewsFromObjectMetadataItemFamilySelector = selectorFamily<

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FallbackProps } from 'react-error-boundary';
+import { type FallbackProps } from 'react-error-boundary';
 import { useLocation } from 'react-router-dom';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 

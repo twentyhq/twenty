@@ -1,20 +1,26 @@
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
-import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
-import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
-import { FormSingleRecordPicker } from '@/object-record/record-field/form-types/components/FormSingleRecordPicker';
-import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
+import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
+import { FormRelativeDatePicker } from '@/object-record/record-field/ui/form-types/components/FormRelativeDatePicker';
+import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+
 import { WorkflowStepFilterValueCompositeInput } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueCompositeInput';
-import { useGetFilterFieldMetadataItem } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useGetFilterFieldMetadataItem';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useLingui } from '@lingui/react/macro';
 import { isObject, isString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { FieldMetadataType, StepFilter } from 'twenty-shared/src/types';
+import {
+  FieldMetadataType,
+  ViewFilterOperand,
+  type StepFilter,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { JsonValue } from 'type-fest';
+import { type JsonValue } from 'type-fest';
 
 type WorkflowStepFilterValueInputProps = {
   stepFilter: StepFilter;
@@ -56,7 +62,6 @@ export const WorkflowStepFilterValueInput = ({
   const { readonly } = useContext(WorkflowStepFilterContext);
 
   const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
-  const { getFilterFieldMetadataItem } = useGetFilterFieldMetadataItem();
 
   const handleValueChange = (value: JsonValue) => {
     const valueToUpsert = isString(value)
@@ -79,10 +84,6 @@ export const WorkflowStepFilterValueInput = ({
     (stepFilter && !configurableViewFilterOperands.has(stepFilter.operand)) ??
     true;
 
-  if (isDisabled || operandHasNoInput) {
-    return null;
-  }
-
   const {
     fieldMetadataId,
     type: variableType,
@@ -90,12 +91,11 @@ export const WorkflowStepFilterValueInput = ({
   } = stepFilter;
 
   const { fieldMetadataItem: selectedFieldMetadataItem, objectMetadataItem } =
-    isDefined(fieldMetadataId)
-      ? getFilterFieldMetadataItem(fieldMetadataId)
-      : {
-          fieldMetadataItem: undefined,
-          objectMetadataItem: undefined,
-        };
+    useFieldMetadataItemById(fieldMetadataId ?? '');
+
+  if (isDisabled || operandHasNoInput) {
+    return null;
+  }
 
   const isFilterableByMultiSelectValue =
     variableType === FieldMetadataType.MULTI_SELECT ||
@@ -105,6 +105,10 @@ export const WorkflowStepFilterValueInput = ({
     selectedFieldMetadataItem?.name === 'id' &&
     isDefined(objectMetadataItem?.nameSingular);
 
+  const isDateField =
+    variableType === FieldMetadataType.DATE_TIME ||
+    variableType === FieldMetadataType.DATE;
+
   if (isFullRecord) {
     return (
       <FormSingleRecordPicker
@@ -112,6 +116,7 @@ export const WorkflowStepFilterValueInput = ({
         onChange={handleValueChange}
         VariablePicker={WorkflowVariablePicker}
         objectNameSingular={objectMetadataItem.nameSingular}
+        disabled={readonly}
       />
     );
   }
@@ -153,6 +158,16 @@ export const WorkflowStepFilterValueInput = ({
         readonly={readonly}
         VariablePicker={WorkflowVariablePicker}
         options={selectedFieldMetadataItem?.options ?? []}
+      />
+    );
+  }
+
+  if (isDateField && stepFilter.operand === ViewFilterOperand.IsRelative) {
+    return (
+      <FormRelativeDatePicker
+        defaultValue={stepFilter.value}
+        onChange={handleValueChange}
+        readonly={readonly}
       />
     );
   }

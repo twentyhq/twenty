@@ -1,4 +1,4 @@
-import { WorkflowTrigger } from '@/workflow/types/Workflow';
+import { type WorkflowTrigger } from '@/workflow/types/Workflow';
 import { DatabaseTriggerDefaultLabel } from '@/workflow/workflow-trigger/constants/DatabaseTriggerDefaultLabel';
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 

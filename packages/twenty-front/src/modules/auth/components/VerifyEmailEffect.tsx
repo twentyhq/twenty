@@ -5,13 +5,14 @@ import { ApolloError } from '@apollo/client';
 
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
+import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
@@ -40,6 +41,7 @@ export const VerifyEmailEffect = () => {
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const { verifyLoginToken } = useVerifyLogin();
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
+  const clientConfigApiStatus = useRecoilValue(clientConfigApiStatusState);
 
   const { t } = useLingui();
   useEffect(() => {
@@ -112,10 +114,15 @@ export const VerifyEmailEffect = () => {
       }
     };
 
+    if (!clientConfigApiStatus.isLoadedOnce) {
+      return;
+    }
+
     verifyEmailToken();
+
     // Verify email only needs to run once at mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [clientConfigApiStatus.isLoadedOnce]);
 
   if (isError) {
     return (

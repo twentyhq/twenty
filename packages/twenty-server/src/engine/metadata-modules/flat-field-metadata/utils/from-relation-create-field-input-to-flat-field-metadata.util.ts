@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
@@ -33,7 +34,7 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
     return {
       relationType: RelationType.MANY_TO_ONE,
       onDelete: RelationOnDeleteAction.SET_NULL,
-      joinColumnName: fieldMetadataName,
+      joinColumnName: `${fieldMetadataName}Id`,
     };
   }
 
@@ -61,10 +62,12 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   if (!isDefined(rawCreationPayload)) {
     return {
       status: 'fail',
-      error: new FieldMetadataException(
-        `Relation creation payload is required`,
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      ),
+      error: {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: `Relation creation payload is required`,
+        userFriendlyMessage: t`Relation creation payload is required`,
+        value: rawCreationPayload,
+      },
     };
   }
 
@@ -80,7 +83,12 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
     if (error instanceof FieldMetadataException) {
       return {
         status: 'fail',
-        error,
+        error: {
+          code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+          message: `Relation creation payload is invalid ${JSON.stringify(relationCreationPayload)}`,
+          userFriendlyMessage: t`Invalid relation creation payload`,
+          value: relationCreationPayload,
+        },
       };
     } else {
       throw error;
@@ -95,10 +103,12 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   if (!isDefined(targetParentFlatObjectMetadata)) {
     return {
       status: 'fail',
-      error: new FieldMetadataException(
-        `Object metadata relation target not found for relation creation payload`,
-        FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-      ),
+      error: {
+        code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+        message: `Object metadata relation target not found for relation creation payload`,
+        userFriendlyMessage: t`Object targeted by field to create not found`,
+        value: relationCreationPayload,
+      },
     };
   }
 
@@ -131,9 +141,9 @@ export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
   const targetCreateFieldInput: CreateFieldInput = {
     icon: relationCreationPayload.targetFieldIcon ?? 'Icon123',
     label: relationCreationPayload.targetFieldLabel,
-    name: `${computeMetadataNameFromLabel(
+    name: computeMetadataNameFromLabel(
       relationCreationPayload.targetFieldLabel,
-    )}Id`,
+    ),
     objectMetadataId: targetParentFlatObjectMetadata.id,
     type: FieldMetadataType.RELATION,
     workspaceId,

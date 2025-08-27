@@ -1,11 +1,11 @@
 import { MessageThreadSubscriberDropdownAddSubscriberMenuItem } from '@/activities/emails/components/MessageThreadSubscriberDropdownAddSubscriberMenuItem';
-import { MessageThreadSubscriber } from '@/activities/emails/types/MessageThreadSubscriber';
+import { type MessageThreadSubscriber } from '@/activities/emails/types/MessageThreadSubscriber';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 export const MessageThreadSubscriberDropdownAddSubscriber = ({
   existingSubscribers,

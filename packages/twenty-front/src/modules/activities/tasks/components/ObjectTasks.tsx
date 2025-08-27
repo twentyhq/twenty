@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 
 const StyledContainer = styled.div`

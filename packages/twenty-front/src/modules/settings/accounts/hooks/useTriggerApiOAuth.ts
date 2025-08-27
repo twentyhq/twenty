@@ -1,4 +1,4 @@
-import { AppPath } from '@/types/AppPath';
+import { type AppPath } from '@/types/AppPath';
 import { useCallback } from 'react';
 
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
@@ -6,8 +6,8 @@ import { CustomError } from '@/error-handler/CustomError';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  CalendarChannelVisibility,
-  MessageChannelVisibility,
+  type CalendarChannelVisibility,
+  type MessageChannelVisibility,
   useGenerateTransientTokenMutation,
 } from '~/generated-metadata/graphql';
 

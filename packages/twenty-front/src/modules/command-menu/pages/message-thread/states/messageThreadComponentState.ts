@@ -1,4 +1,4 @@
-import { MessageThread } from '@/activities/emails/types/MessageThread';
+import { type MessageThread } from '@/activities/emails/types/MessageThread';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 

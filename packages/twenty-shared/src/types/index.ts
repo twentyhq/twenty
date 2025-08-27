@@ -24,6 +24,14 @@ export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export type { ObjectsPermissionsByRoleIdDeprecated } from './ObjectsPermissionsByRoleIdDeprecated';
 export type { ObjectsPermissionsDeprecated } from './ObjectsPermissionsDeprecated';
 export type { RelationAndMorphRelationFieldMetadataType } from './RelationAndMorphRelationFieldMetadataType';
+export type { RelationCreationPayload } from './RelationCreationPayload';
+export { RelationType } from './RelationType';
+export type {
+  VariableDateViewFilterValueDirection,
+  VariableDateViewFilterValueUnit,
+  VariableDateViewFilterValue,
+} from './RelativeDateValue';
+export { DEFAULT_RELATIVE_DATE_VALUE } from './RelativeDateValue';
 export type { RestrictedFieldPermissions } from './RestrictedFieldPermissions';
 export type { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
 export type { StepFilterGroup, StepFilter } from './StepFilters';

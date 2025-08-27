@@ -1,24 +1,35 @@
-import { ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
+import { type ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilterValueDependencies } from '@/object-record/record-filter/types/RecordFilterValueDependencies';
 import { computeRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeRecordGqlOperationFilter';
 import { turnAnyFieldFilterIntoRecordGqlFilter } from '@/object-record/record-filter/utils/turnAnyFieldFilterIntoRecordGqlFilter';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 
-export const computeContextStoreFilters = (
-  contextStoreTargetedRecordsRule: ContextStoreTargetedRecordsRule,
-  contextStoreFilters: RecordFilter[],
-  objectMetadataItem: ObjectMetadataItem,
-  filterValueDependencies: RecordFilterValueDependencies,
-  anyFieldFilterValue: string,
-) => {
+type ComputeContextStoreFiltersProps = {
+  contextStoreTargetedRecordsRule: ContextStoreTargetedRecordsRule;
+  contextStoreFilters: RecordFilter[];
+  contextStoreFilterGroups: RecordFilterGroup[];
+  objectMetadataItem: ObjectMetadataItem;
+  filterValueDependencies: RecordFilterValueDependencies;
+  contextStoreAnyFieldFilterValue: string;
+};
+
+export const computeContextStoreFilters = ({
+  contextStoreTargetedRecordsRule,
+  contextStoreFilters,
+  contextStoreFilterGroups,
+  objectMetadataItem,
+  filterValueDependencies,
+  contextStoreAnyFieldFilterValue,
+}: ComputeContextStoreFiltersProps) => {
   let queryFilter: RecordGqlOperationFilter | undefined;
 
   const { recordGqlOperationFilter: recordGqlFilterForAnyFieldFilter } =
     turnAnyFieldFilterIntoRecordGqlFilter({
-      filterValue: anyFieldFilterValue,
+      filterValue: contextStoreAnyFieldFilterValue,
       objectMetadataItem,
     });
 
@@ -29,7 +40,7 @@ export const computeContextStoreFilters = (
         filterValueDependencies,
         fields: objectMetadataItem?.fields ?? [],
         recordFilters: contextStoreFilters,
-        recordFilterGroups: [],
+        recordFilterGroups: contextStoreFilterGroups,
       }),
       contextStoreTargetedRecordsRule.excludedRecordIds.length > 0
         ? {
@@ -56,7 +67,7 @@ export const computeContextStoreFilters = (
         filterValueDependencies,
         fields: objectMetadataItem?.fields ?? [],
         recordFilters: contextStoreFilters,
-        recordFilterGroups: [],
+        recordFilterGroups: contextStoreFilterGroups,
       }),
     ]);
   }

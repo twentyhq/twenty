@@ -3,7 +3,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { useRecoilValue } from 'recoil';
-import { SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
+import { type SocialSSOSignInUpActionType } from '@/auth/types/socialSSOSignInUp.type';
 
 export const useSignInWithMicrosoft = () => {
   const workspaceInviteHash = useParams().workspaceInviteHash;

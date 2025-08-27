@@ -1,23 +1,34 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-name.util';
+import { isFieldMetadataTypeMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-morph-relation.util';
+import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
-import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 export const buildColumnsToSelect = ({
   select,
   relations,
   objectMetadataItemWithFieldMaps,
+  objectMetadataMaps,
 }: {
   select: Record<string, unknown>;
   relations: Record<string, unknown>;
   objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
+  objectMetadataMaps: {
+    byId: Partial<
+      Record<
+        string,
+        Pick<ObjectMetadataItemWithFieldMaps, 'nameSingular' | 'namePlural'>
+      >
+    >;
+  };
 }) => {
   const requiredRelationColumns = getRequiredRelationColumns(
     relations,
     objectMetadataItemWithFieldMaps,
+    objectMetadataMaps,
   );
 
   const fieldsToSelect: Record<string, boolean> = Object.entries(select)
@@ -35,37 +46,59 @@ export const buildColumnsToSelect = ({
 
 const getRequiredRelationColumns = (
   relations: Record<string, unknown>,
-  objectMetadataItem: ObjectMetadataItemWithFieldMaps,
+  objectMetadataItem: Pick<ObjectMetadataItemWithFieldMaps, 'fieldsById'>,
+  objectMetadataMaps: {
+    byId: Partial<
+      Record<
+        string,
+        Pick<ObjectMetadataItemWithFieldMaps, 'nameSingular' | 'namePlural'>
+      >
+    >;
+  },
 ): string[] => {
   const requiredColumns: string[] = [];
 
-  for (const [relationFieldName, _] of Object.entries(relations)) {
-    const fieldMetadataId = objectMetadataItem.fieldIdByName[relationFieldName];
+  for (const fieldMetadata of Object.values(objectMetadataItem.fieldsById)) {
+    if (isFieldMetadataTypeRelation(fieldMetadata)) {
+      const relationValue = relations[fieldMetadata.name];
 
-    if (!fieldMetadataId) {
-      throw new InternalServerError(
-        `Field metadata not found for relation field name: ${relationFieldName}`,
-      );
+      if (
+        !isDefined(relationValue) ||
+        !isDefined(fieldMetadata?.settings?.joinColumnName) ||
+        fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE
+      ) {
+        continue;
+      }
+
+      requiredColumns.push(fieldMetadata.settings.joinColumnName);
     }
 
-    const fieldMetadata = objectMetadataItem.fieldsById[fieldMetadataId];
+    if (isFieldMetadataTypeMorphRelation(fieldMetadata)) {
+      const targetObjectMetadata =
+        objectMetadataMaps.byId[fieldMetadata.relationTargetObjectMetadataId];
 
-    if (!fieldMetadata) {
-      throw new InternalServerError(
-        `Field metadata not found for relation field name: ${relationFieldName}`,
-      );
-    }
+      if (
+        !fieldMetadata.settings?.relationType ||
+        !isDefined(targetObjectMetadata)
+      ) {
+        continue;
+      }
 
-    if (
-      !isFieldMetadataEntityOfType(fieldMetadata, FieldMetadataType.RELATION)
-    ) {
-      continue;
-    }
+      const morphRelationFieldName = computeMorphRelationFieldName({
+        fieldName: fieldMetadata.name,
+        relationDirection: fieldMetadata.settings.relationType,
+        targetObjectMetadata,
+      });
 
-    if (
-      fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE &&
-      fieldMetadata.settings?.joinColumnName
-    ) {
+      const relationValue = relations[morphRelationFieldName];
+
+      if (
+        !isDefined(relationValue) ||
+        !isDefined(fieldMetadata?.settings?.joinColumnName)
+      ) {
+        continue;
+      }
+
       requiredColumns.push(fieldMetadata.settings.joinColumnName);
     }
   }

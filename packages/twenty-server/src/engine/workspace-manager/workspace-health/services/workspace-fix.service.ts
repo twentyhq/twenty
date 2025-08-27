@@ -77,7 +77,7 @@ export class WorkspaceFixService {
     manager: EntityManager,
     objectMetadataCollection: ObjectMetadataEntity[],
     type: WorkspaceHealthFixKind,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     issues: WorkspaceHealthIssue[],
   ): Promise<CompareEntity<unknown>[]> {
     switch (type) {

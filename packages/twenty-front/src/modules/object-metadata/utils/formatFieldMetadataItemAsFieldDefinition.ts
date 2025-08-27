@@ -1,9 +1,10 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 
-import { FieldMetadataItem } from '../types/FieldMetadataItem';
+import { getFieldButtonIcon } from '@/object-record/record-field/ui/utils/getFieldButtonIcon';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { type FieldMetadataItem } from '../types/FieldMetadataItem';
 
 export type FieldMetadataItemAsFieldDefinitionProps = {
   field: FieldMetadataItem;
@@ -22,10 +23,20 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
 
   const relationFieldMetadataId = field.relation?.targetFieldMetadata.id;
 
+  const isRelation = field.type === FieldMetadataType.RELATION;
+  const isMorphRelation = field.type === FieldMetadataType.MORPH_RELATION;
+
+  const relationType = isRelation
+    ? field.relation?.type
+    : isMorphRelation
+      ? field.morphRelations?.[0]?.type
+      : undefined;
+
   const fieldDefintionMetadata = {
     fieldName: field.name,
     placeHolder: field.label,
-    relationType: field.relation?.type,
+    relationType,
+    morphRelations: isMorphRelation ? field.morphRelations : [],
     relationFieldMetadataId,
     relationObjectMetadataNameSingular:
       relationObjectMetadataItem?.nameSingular ?? '',
@@ -38,6 +49,7 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
     settings: field.settings,
     isNullable: field.isNullable,
     isCustom: field.isCustom ?? false,
+    isUIReadOnly: field.isUIReadOnly ?? false,
   };
 
   return {

@@ -1,4 +1,4 @@
-import { atom, RecoilState } from 'recoil';
+import { atom, type RecoilState } from 'recoil';
 
 export const viewableRichTextComponentState: RecoilState<{
   activityId: string;

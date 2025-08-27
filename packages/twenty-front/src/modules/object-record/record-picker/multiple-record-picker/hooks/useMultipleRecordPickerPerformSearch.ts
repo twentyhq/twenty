@@ -1,6 +1,6 @@
 import { SEARCH_QUERY } from '@/command-menu/graphql/queries/search';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { usePerformCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/usePerformCombinedFindManyRecords';
 import { multipleRecordPickerIsLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerIsLoadingComponentState';
@@ -9,14 +9,15 @@ import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-r
 import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { searchRecordStoreComponentFamilyState } from '@/object-record/record-picker/multiple-record-picker/states/searchRecordStoreComponentFamilyState';
-import { RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { sortMorphItems } from '@/object-record/record-picker/multiple-record-picker/utils/sortMorphItems';
+import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
-import { ApolloClient } from '@apollo/client';
+import { type ApolloClient } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { SearchRecord } from '~/generated-metadata/graphql';
-import { SearchResultEdge } from '~/generated/graphql';
+import { type SearchRecord } from '~/generated-metadata/graphql';
+import { type SearchResultEdge } from '~/generated/graphql';
 
 const MULTIPLE_RECORD_PICKER_PAGE_SIZE = 30;
 
@@ -260,11 +261,16 @@ export const useMultipleRecordPickerPerformSearch = () => {
             )
           : newMorphItems;
 
+        const sortedMorphItems = sortMorphItems(morphItems, [
+          ...searchRecordsFilteredOnPickedRecords,
+          ...searchRecordsExcludingPickedRecords,
+        ]);
+
         set(
           multipleRecordPickerPickableMorphItemsComponentState.atomFamily({
             instanceId: multipleRecordPickerInstanceId,
           }),
-          morphItems,
+          sortedMorphItems,
         );
 
         const searchRecords = [

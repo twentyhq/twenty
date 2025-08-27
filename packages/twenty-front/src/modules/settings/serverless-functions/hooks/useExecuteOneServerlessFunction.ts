@@ -2,9 +2,9 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { EXECUTE_ONE_SERVERLESS_FUNCTION } from '@/settings/serverless-functions/graphql/mutations/executeOneServerlessFunction';
 import { useMutation } from '@apollo/client';
 import {
-  ExecuteOneServerlessFunctionMutation,
-  ExecuteOneServerlessFunctionMutationVariables,
-  ExecuteServerlessFunctionInput,
+  type ExecuteOneServerlessFunctionMutation,
+  type ExecuteOneServerlessFunctionMutationVariables,
+  type ExecuteServerlessFunctionInput,
 } from '~/generated-metadata/graphql';
 
 export const useExecuteOneServerlessFunction = () => {

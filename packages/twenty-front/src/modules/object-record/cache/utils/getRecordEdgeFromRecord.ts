@@ -1,8 +1,8 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
-import { RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const getRecordEdgeFromRecord = <T extends ObjectRecord>({
   objectMetadataItems,

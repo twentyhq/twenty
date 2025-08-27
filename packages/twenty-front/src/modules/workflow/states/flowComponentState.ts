@@ -1,5 +1,8 @@
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
-import { WorkflowAction, WorkflowTrigger } from '@/workflow/types/Workflow';
+import {
+  type WorkflowAction,
+  type WorkflowTrigger,
+} from '@/workflow/types/Workflow';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 
 export const flowComponentState = createComponentState<

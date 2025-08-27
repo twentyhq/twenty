@@ -1,6 +1,6 @@
-import { ImapSmtpCaldavAccount } from '@/accounts/types/ImapSmtpCaldavAccount';
-import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { MessageChannelVisibility } from '~/generated/graphql';
+import { type ImapSmtpCaldavAccount } from '@/accounts/types/ImapSmtpCaldavAccount';
+import { type ConnectedAccountProvider } from 'twenty-shared/types';
+import { type MessageChannelVisibility } from '~/generated/graphql';
 
 export enum MessageChannelContactAutoCreationPolicy {
   SENT_AND_RECEIVED = 'SENT_AND_RECEIVED',

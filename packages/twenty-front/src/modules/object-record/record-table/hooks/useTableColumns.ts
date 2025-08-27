@@ -1,111 +1,111 @@
 import { useCallback } from 'react';
 
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
-import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
-import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTableColumns';
-import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
-import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
-import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useCreateTableColumn } from '@/object-record/record-field/hooks/useCreateTableColumn';
+import { useMoveRecordField } from '@/object-record/record-field/hooks/useMoveRecordField';
+import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
+import { useUpdateTableColumn } from '@/object-record/record-field/hooks/useUpdateTableColumn';
+import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
+import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { useHandleColumnsChange } from '@/object-record/record-table/hooks/useHandleColumnsChange';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { ColumnDefinition } from '../types/ColumnDefinition';
+import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
+import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
+import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
+import { sortByProperty } from '~/utils/array/sortByProperty';
+import { type ColumnDefinition } from '../types/ColumnDefinition';
 
 type useRecordTableProps = {
-  recordTableId?: string;
-  objectMetadataId: string;
+  recordTableId: string;
 };
 
-export const useTableColumns = (props: useRecordTableProps) => {
-  const { onColumnsChange } = useRecordTable({
-    recordTableId: props?.recordTableId,
-  });
-
-  const { setTableColumns } = useSetTableColumns();
-
-  const availableTableColumns = useRecoilComponentValue(
-    availableTableColumnsComponentState,
-    props?.recordTableId,
+export const useTableColumns = ({ recordTableId }: useRecordTableProps) => {
+  const currentRecordFields = useRecoilComponentValue(
+    currentRecordFieldsComponentState,
+    recordTableId,
   );
 
-  const tableColumns = useRecoilComponentValue(
-    tableColumnsComponentState,
-    props?.recordTableId,
-  );
-  const visibleTableColumns = useRecoilComponentValue(
-    visibleTableColumnsComponentSelector,
-    props?.recordTableId,
-  );
+  const { unfocusRecordTableCell } = useUnfocusRecordTableCell(recordTableId);
 
-  const { handleColumnMove } = useMoveViewColumns();
+  const { handleColumnsChange } = useHandleColumnsChange();
 
-  const { unfocusRecordTableCell } = useUnfocusRecordTableCell(
-    props?.recordTableId,
-  );
+  const { updateRecordField } = useUpdateRecordField(recordTableId);
+  const { upsertRecordField } = useUpsertRecordField(recordTableId);
 
-  const instanceId = useAvailableComponentInstanceIdOrThrow(
-    RecordTableComponentInstanceContext,
-    props?.recordTableId,
-  );
+  const { saveViewFields } = useSaveCurrentViewFields();
 
-  const handleColumnsChange = useCallback(
-    async (columns: ColumnDefinition<FieldMetadata>[]) => {
-      setTableColumns(columns, instanceId, props.objectMetadataId);
-
-      await onColumnsChange?.(columns);
-    },
-    [setTableColumns, instanceId, onColumnsChange, props.objectMetadataId],
-  );
+  const { updateTableColumn } = useUpdateTableColumn(recordTableId);
+  const { createTableColumn } = useCreateTableColumn(recordTableId);
 
   const handleColumnVisibilityChange = useCallback(
     async (
-      viewField: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
+      viewField: Pick<
+        ColumnDefinition<FieldMetadata>,
+        'fieldMetadataId' | 'isVisible'
+      >,
     ) => {
-      const shouldShowColumn = !visibleTableColumns.some(
-        (visibleColumn) =>
-          visibleColumn.fieldMetadataId === viewField.fieldMetadataId,
+      const lastPosition = currentRecordFields.toSorted(
+        sortByProperty('position', 'desc'),
+      )[0].position;
+
+      const shouldShowFieldMetadataItem = viewField.isVisible === true;
+      const corresponingRecordField = currentRecordFields.find(
+        (recordFieldToFind) =>
+          recordFieldToFind.fieldMetadataItemId === viewField.fieldMetadataId,
       );
 
-      const tableColumnPositions = [...tableColumns]
-        .sort((a, b) => b.position - a.position)
-        .map((column) => column.position);
+      const noExistingRecordField = !isDefined(corresponingRecordField);
 
-      const lastPosition = tableColumnPositions[0] ?? 0;
+      if (noExistingRecordField) {
+        const recordFieldToUpsert: RecordField = {
+          id: v4(),
+          fieldMetadataItemId: viewField.fieldMetadataId,
+          size: 100,
+          isVisible: shouldShowFieldMetadataItem,
+          position: lastPosition + 1,
+        };
 
-      if (shouldShowColumn) {
-        const newColumn = availableTableColumns.find(
-          (availableTableColumn) =>
-            availableTableColumn.fieldMetadataId === viewField.fieldMetadataId,
-        );
+        upsertRecordField(recordFieldToUpsert);
 
-        if (!newColumn) return;
+        createTableColumn(viewField.fieldMetadataId, {
+          position: lastPosition + 1,
+          size: 100,
+          isVisible: shouldShowFieldMetadataItem,
+        });
 
-        const nextColumns = [
-          ...tableColumns,
-          { ...newColumn, isVisible: true, position: lastPosition + 1 },
-        ];
-
-        await handleColumnsChange(nextColumns);
+        saveViewFields([mapRecordFieldToViewField(recordFieldToUpsert)]);
       } else {
-        const nextColumns = visibleTableColumns.map((previousColumn) =>
-          previousColumn.fieldMetadataId === viewField.fieldMetadataId
-            ? { ...previousColumn, isVisible: !viewField.isVisible }
-            : previousColumn,
-        );
+        updateRecordField(viewField.fieldMetadataId, {
+          isVisible: shouldShowFieldMetadataItem,
+        });
 
-        await handleColumnsChange(nextColumns);
+        const updatedRecordField: RecordField = {
+          ...corresponingRecordField,
+          isVisible: shouldShowFieldMetadataItem,
+        };
+
+        updateTableColumn(viewField.fieldMetadataId, {
+          isVisible: shouldShowFieldMetadataItem,
+        });
+
+        saveViewFields([mapRecordFieldToViewField(updatedRecordField)]);
       }
     },
     [
-      tableColumns,
-      availableTableColumns,
-      handleColumnsChange,
-      visibleTableColumns,
+      updateTableColumn,
+      saveViewFields,
+      currentRecordFields,
+      upsertRecordField,
+      updateRecordField,
+      createTableColumn,
     ],
   );
+
+  const { moveRecordField } = useMoveRecordField(recordTableId);
 
   const handleMoveTableColumn = useCallback(
     async (
@@ -114,43 +114,17 @@ export const useTableColumns = (props: useRecordTableProps) => {
     ) => {
       unfocusRecordTableCell();
 
-      const currentColumnArrayIndex = visibleTableColumns.findIndex(
-        (visibleColumn) =>
-          visibleColumn.fieldMetadataId === column.fieldMetadataId,
-      );
-
-      const columns = handleColumnMove(
-        direction,
-        currentColumnArrayIndex,
-        visibleTableColumns,
-      );
-
-      await handleColumnsChange(columns);
+      moveRecordField({
+        direction: direction === 'left' ? 'before' : 'after',
+        fieldMetadataItemIdToMove: column.fieldMetadataId,
+      });
     },
-    [
-      unfocusRecordTableCell,
-      visibleTableColumns,
-      handleColumnMove,
-      handleColumnsChange,
-    ],
-  );
-
-  const handleColumnReorder = useCallback(
-    async (columns: ColumnDefinition<FieldMetadata>[]) => {
-      const updatedColumns = columns.map((column, index) => ({
-        ...column,
-        position: index,
-      }));
-
-      await handleColumnsChange(updatedColumns);
-    },
-    [handleColumnsChange],
+    [unfocusRecordTableCell, moveRecordField],
   );
 
   return {
     handleColumnVisibilityChange,
     handleMoveTableColumn,
-    handleColumnReorder,
     handleColumnsChange,
   };
 };

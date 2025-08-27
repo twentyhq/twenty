@@ -1,4 +1,4 @@
-import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
+import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { createContext } from 'react';
 
 export type ActionMenuContextType = {

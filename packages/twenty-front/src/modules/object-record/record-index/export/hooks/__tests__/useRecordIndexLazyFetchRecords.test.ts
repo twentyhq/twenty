@@ -11,7 +11,6 @@ import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdow
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { ViewType } from '@/views/types/ViewType';
-import { expect } from '@storybook/test';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
@@ -225,6 +224,7 @@ describe('useRecordData', () => {
                 fieldName: 'updatedAt',
                 isCustom: false,
                 isNullable: false,
+                isUIReadOnly: false,
                 objectMetadataNameSingular: 'person',
                 options: null,
                 placeHolder: 'Last update',
@@ -233,6 +233,7 @@ describe('useRecordData', () => {
                 relationObjectMetadataNamePlural: '',
                 relationObjectMetadataNameSingular: '',
                 relationType: undefined,
+                morphRelations: [],
                 targetFieldMetadataName: '',
                 settings: {
                   displayFormat: 'RELATIVE',

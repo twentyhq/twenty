@@ -1,5 +1,5 @@
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
-import { useIsRecordReadOnly } from '@/object-record/record-field/hooks/read-only/useIsRecordReadOnly';
+import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
@@ -10,7 +10,7 @@ import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/rec
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
-import { ReactNode, forwardRef } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 
 const StyledTr = styled.tr<{
   isDragging: boolean;

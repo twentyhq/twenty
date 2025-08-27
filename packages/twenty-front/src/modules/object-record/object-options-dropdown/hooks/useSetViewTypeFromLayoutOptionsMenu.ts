@@ -7,8 +7,8 @@ import { recordIndexViewTypeState } from '@/object-record/record-index/states/re
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
-import { GraphQLView } from '@/views/types/GraphQLView';
-import { ViewGroup } from '@/views/types/ViewGroup';
+import { type GraphQLView } from '@/views/types/GraphQLView';
+import { type ViewGroup } from '@/views/types/ViewGroup';
 import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForKanban } from '@/views/view-picker/hooks/useGetAvailableFieldsForKanban';
 import { useCallback } from 'react';

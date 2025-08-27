@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 
 import { IconSearch } from 'twenty-ui/display';
-import { CatalogDecorator, CatalogStory } from 'twenty-ui/testing';
+import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';

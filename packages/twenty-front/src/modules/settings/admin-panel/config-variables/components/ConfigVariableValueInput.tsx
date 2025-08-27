@@ -4,8 +4,8 @@ import { isConfigVariablesInDbEnabledState } from '@/client-config/states/isConf
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { ConfigVariableValue } from 'twenty-shared/types';
-import { ConfigVariable } from '~/generated/graphql';
+import { type ConfigVariableValue } from 'twenty-shared/types';
+import { type ConfigVariable } from '~/generated/graphql';
 import { ConfigVariableDatabaseInput } from './ConfigVariableDatabaseInput';
 
 type ConfigVariableValueInputProps = {

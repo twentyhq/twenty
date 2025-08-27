@@ -45,6 +45,7 @@ export class InputTypeDefinitionFactory {
     const inputType = new GraphQLInputObjectType({
       name: `${pascalCase(objectMetadata.nameSingular)}${kind.toString()}Input`,
       description: objectMetadata.description,
+      // @ts-expect-error legacy noImplicitAny
       fields: () => {
         switch (kind) {
           /**

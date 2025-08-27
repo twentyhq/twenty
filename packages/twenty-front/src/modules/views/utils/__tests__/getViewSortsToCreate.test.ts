@@ -1,4 +1,4 @@
-import { ViewSort } from '@/views/types/ViewSort';
+import { type ViewSort } from '@/views/types/ViewSort';
 import { getViewSortsToCreate } from '../getViewSortsToCreate';
 
 describe('getViewSortsToCreate', () => {

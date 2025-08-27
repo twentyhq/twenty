@@ -1,13 +1,13 @@
 import {
   ApolloClient,
-  ApolloClientOptions,
+  type ApolloClientOptions,
   ApolloLink,
-  FetchResult,
+  type FetchResult,
   fromPromise,
-  Observable,
-  Operation,
-  ServerError,
-  ServerParseError,
+  type Observable,
+  type Operation,
+  type ServerError,
+  type ServerParseError,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
@@ -16,25 +16,25 @@ import { RestLink } from 'apollo-link-rest';
 import { createUploadLink } from 'apollo-upload-client';
 
 import { renewToken } from '@/auth/services/AuthService';
-import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
-import { CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import { AuthTokenPair } from '~/generated/graphql';
+import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
+import { type AuthTokenPair } from '~/generated/graphql';
 import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import {
-  DefinitionNode,
-  DirectiveNode,
-  GraphQLFormattedError,
-  SelectionNode,
+  type DefinitionNode,
+  type DirectiveNode,
+  type GraphQLFormattedError,
+  type SelectionNode,
 } from 'graphql';
 import isEmpty from 'lodash.isempty';
 import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { ApolloManager } from '../types/apolloManager.interface';
+import { type ApolloManager } from '../types/apolloManager.interface';
 import { getTokenPair } from '../utils/getTokenPair';
 import { loggerLink } from '../utils/loggerLink';
 import { StreamingRestLink } from '../utils/streamingRestLink';

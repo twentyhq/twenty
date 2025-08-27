@@ -1,4 +1,4 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FIELD_LEVEL_PERMISSION_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/constants/FieldLevelPermissionTableGridTemplateColumns';
 import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
 import { useRemoveReadOverrideOnAllFieldsOfObject } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRemoveReadOverrideOnAllFieldsOfObject';
@@ -92,35 +92,39 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
       }
     };
 
+    const shouldShowSeeTableHeader = !cannotAllowFieldReadRestrict;
+    const shouldShowUpdateTableHeader =
+      !cannotAllowFieldReadRestrict && !cannotAllowFieldUpdateRestrict;
+    const shouldShowEmptyTableHeader = cannotAllowFieldUpdateRestrict;
+
     return (
       <>
         <StyledSectionHeader>
           <Label>{t`All`}</Label>
           <div></div>
-          {cannotAllowFieldReadRestrict ? (
-            <div></div>
-          ) : (
-            <StyledCheckboxContainer>
-              <OverridableCheckbox
-                disabled={false}
-                checked={true}
-                onChange={handleReadAllChange}
-                type={hasAnyRestrictionOnRead ? 'override' : 'default'}
-              />
-            </StyledCheckboxContainer>
-          )}
-          {cannotAllowFieldUpdateRestrict ? (
-            <div></div>
-          ) : (
-            <StyledCheckboxContainer>
-              <OverridableCheckbox
-                disabled={false}
-                checked={true}
-                onChange={handleUpdateAllChange}
-                type={hasAnyRestrictionOnUpdate ? 'override' : 'default'}
-              />
-            </StyledCheckboxContainer>
-          )}
+          <>
+            {shouldShowEmptyTableHeader && <div />}
+            {shouldShowSeeTableHeader && (
+              <StyledCheckboxContainer>
+                <OverridableCheckbox
+                  disabled={false}
+                  checked={true}
+                  onChange={handleReadAllChange}
+                  type={hasAnyRestrictionOnRead ? 'override' : 'default'}
+                />
+              </StyledCheckboxContainer>
+            )}
+            {shouldShowUpdateTableHeader && (
+              <StyledCheckboxContainer>
+                <OverridableCheckbox
+                  disabled={false}
+                  checked={true}
+                  onChange={handleUpdateAllChange}
+                  type={hasAnyRestrictionOnUpdate ? 'override' : 'default'}
+                />
+              </StyledCheckboxContainer>
+            )}
+          </>
         </StyledSectionHeader>
       </>
     );

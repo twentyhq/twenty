@@ -4,13 +4,13 @@ import { useMemo } from 'react';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
 import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import {
-  UseRecordDataOptions,
   useRecordIndexLazyFetchRecords,
+  type UseRecordDataOptions,
 } from '@/object-record/record-index/export/hooks/useRecordIndexLazyFetchRecords';
-import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 import { escapeCSVValue } from '@/spreadsheet-import/utils/escapeCSVValue';
 import { t } from '@lingui/core/macro';

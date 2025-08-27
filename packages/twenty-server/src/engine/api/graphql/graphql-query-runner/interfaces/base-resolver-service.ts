@@ -174,6 +174,7 @@ export abstract class GraphqlQueryBaseResolverService<
         graphqlQueryParser.parseSelectedFields(
           objectMetadataItemWithFieldMaps,
           selectedFields,
+          options.objectMetadataMaps,
         );
 
       const graphqlQueryResolverExecutionArgs = {
@@ -209,7 +210,7 @@ export abstract class GraphqlQueryBaseResolverService<
 
       return resultWithGetters;
     } catch (error) {
-      workspaceQueryRunnerGraphqlApiExceptionHandler(error, options);
+      workspaceQueryRunnerGraphqlApiExceptionHandler(error);
     }
   }
 

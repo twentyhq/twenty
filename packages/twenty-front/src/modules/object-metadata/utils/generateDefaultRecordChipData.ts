@@ -1,6 +1,6 @@
-import { RecordChipData } from '@/object-record/record-field/types/RecordChipData';
-import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type RecordChipData } from '@/object-record/record-field/ui/types/RecordChipData';
+import { isFieldFullNameValue } from '@/object-record/record-field/ui/types/guards/isFieldFullNameValue';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type GenerateDefaultRecordChipDataArgs = {
   record: ObjectRecord;

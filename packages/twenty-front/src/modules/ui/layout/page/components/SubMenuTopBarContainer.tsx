@@ -1,10 +1,10 @@
 import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
 import {
   Breadcrumb,
-  BreadcrumbProps,
+  type BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import styled from '@emotion/styled';
-import { JSX, ReactNode } from 'react';
+import { type JSX, type ReactNode } from 'react';
 import { PageBody } from './PageBody';
 import { PageHeader } from './PageHeader';
 

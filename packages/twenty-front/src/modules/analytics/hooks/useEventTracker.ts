@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { v4 } from 'uuid';
 import {
   AnalyticsType,
-  MutationTrackAnalyticsArgs,
+  type MutationTrackAnalyticsArgs,
   useTrackAnalyticsMutation,
 } from '~/generated-metadata/graphql';
 

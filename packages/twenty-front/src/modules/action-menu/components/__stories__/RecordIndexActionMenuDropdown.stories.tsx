@@ -1,6 +1,6 @@
-import { expect, jest } from '@storybook/jest';
-import { Meta, StoryObj } from '@storybook/react';
-import { userEvent, waitFor, within } from '@storybook/testing-library';
+import { expect, userEvent, waitFor, within } from '@storybook/test';
+import * as test from '@storybook/test';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
@@ -17,9 +17,9 @@ import {
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
-const deleteMock = jest.fn();
-const addToFavoritesMock = jest.fn();
-const exportMock = jest.fn();
+const deleteMock = test.fn();
+const addToFavoritesMock = test.fn();
+const exportMock = test.fn();
 
 const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
   title: 'Modules/ActionMenu/RecordIndexActionMenuDropdown',

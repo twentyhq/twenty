@@ -25,7 +25,6 @@ export const handleCompositeKey = (
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const parseResult = (obj: any): any => {
   if (obj === null || typeof obj !== 'object' || typeof obj === 'function') {
     return obj;

@@ -1,4 +1,4 @@
-import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 
 export const isFieldTypeCompatibleWithRecordId = (
   type?: InputSchemaPropertyType,

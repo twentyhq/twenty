@@ -4,9 +4,8 @@ import { act } from 'react';
 import { query } from '@/object-record/hooks/__mocks__/useDeleteOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { MockedResponse } from '@apollo/client/testing';
-import { expect } from '@storybook/jest';
+import { type MockedResponse } from '@apollo/client/testing';
+
 import { InMemoryTestingCacheInstance } from '~/testing/cache/inMemoryTestingCacheInstance';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockCompanyObjectMetadataItem } from '~/testing/mock-data/companies';
@@ -97,7 +96,7 @@ describe('useDeleteOneRecord', () => {
         const deleteOneResult = await result.current.deleteOneRecord(
           personRecord.id,
         );
-        expect(deleteOneResult).toStrictEqual<ObjectRecord>({
+        expect(deleteOneResult).toStrictEqual({
           __typename: personRecord.__typename,
           deletedAt: expect.any(String),
           id: personRecord.id,
@@ -229,7 +228,7 @@ describe('useDeleteOneRecord', () => {
 
       await act(async () => {
         const res = await result.current.deleteOneRecord(personRecord.id);
-        expect(res).toMatchObject<ObjectRecord>({
+        expect(res).toMatchObject({
           __typename: 'Person',
           id: personRecord.id,
           deletedAt: expect.any(String),

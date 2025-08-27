@@ -33,8 +33,7 @@ export class ViewFilter {
   @Column({
     nullable: false,
     type: 'enum',
-    enumName: 'ViewFilterOperand',
-    enum: ViewFilterOperand,
+    enum: Object.values(ViewFilterOperand),
     default: ViewFilterOperand.CONTAINS,
   })
   operand: ViewFilterOperand;

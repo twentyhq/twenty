@@ -2,15 +2,13 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { RecordInlineCellValue } from '@/object-record/record-inline-cell/components/RecordInlineCellValue';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 
-import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
-import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
-import { RecordInlineCellCloseOnCommandMenuOpeningEffect } from '@/object-record/record-inline-cell/components/RecordInlineCellCloseOnCommandMenuOpeningEffect';
-import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
+import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
+import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
 import {
   AppTooltip,
   OverflowingTextWithTooltip,
@@ -43,26 +41,16 @@ const StyledLabelAndIconContainer = styled.div`
   height: 24px;
 `;
 
-const StyledValueContainer = styled.div<{ readonly: boolean }>`
+const StyledValueContainer = styled.div<{
+  readonly: boolean;
+}>`
   display: flex;
   min-width: 0;
   position: relative;
+  width: 100%;
 
-  &:hover {
-    ${({ readonly, theme }) =>
-      readonly &&
-      `
-      outline: 1px solid ${theme.border.color.medium};
-      border-radius: ${theme.border.radius.sm};
-      
-      ${StyledIconContainer}, ${StyledLabelContainer} {
-        color: ${theme.font.color.secondary};
-      }
-      
-      img {
-        opacity: 0.64;
-      }
-    `}
+  &:hover .record-inline-cell-value-display {
+    opacity: 0;
   }
 `;
 
@@ -88,21 +76,11 @@ export const StyledSkeletonDiv = styled.div`
 `;
 
 export const RecordInlineCellContainer = () => {
-  const {
-    readonly,
-    IconLabel,
-    label,
-    labelWidth,
-    showLabel,
-    editModeContentOnly,
-  } = useRecordInlineCellContext();
+  const { readonly, IconLabel, label, labelWidth, showLabel } =
+    useRecordInlineCellContext();
 
-  const { isInlineCellInEditMode, openInlineCell } = useInlineCell();
-
-  const { recordId, fieldDefinition } = useContext(FieldContext);
-
-  const shouldContainerBeClickable =
-    !readonly && !editModeContentOnly && !isInlineCellInEditMode;
+  const { recordId, fieldDefinition, onMouseEnter, onMouseLeave, anchorId } =
+    useContext(FieldContext);
 
   if (isFieldText(fieldDefinition)) {
     assertFieldMetadata(FieldMetadataType.TEXT, isFieldText, fieldDefinition);
@@ -114,12 +92,14 @@ export const RecordInlineCellContainer = () => {
     if (!readonly) {
       setIsFocused(true);
     }
+    onMouseEnter?.();
   };
 
   const handleContainerMouseLeave = () => {
     if (!readonly) {
       setIsFocused(false);
     }
+    onMouseLeave?.();
   };
 
   const theme = useTheme();
@@ -133,7 +113,6 @@ export const RecordInlineCellContainer = () => {
       readonly={readonly ?? false}
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
-      onClick={shouldContainerBeClickable ? openInlineCell : undefined}
     >
       {(IconLabel || label) && (
         <StyledLabelAndIconContainer id={labelId}>
@@ -161,11 +140,9 @@ export const RecordInlineCellContainer = () => {
           )}
         </StyledLabelAndIconContainer>
       )}
-      {isInlineCellInEditMode && (
-        <RecordInlineCellCloseOnCommandMenuOpeningEffect />
-      )}
-      <StyledValueContainer readonly={readonly ?? false}>
-        <RecordInlineCellValue />
+
+      <StyledValueContainer readonly={readonly ?? false} id={anchorId}>
+        <RecordInlineCellValue className="record-inline-cell-value-display" />
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>
   );

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
-import { MessageDescriptor } from '@lingui/core';
+import { type MessageDescriptor } from '@lingui/core';
 import { Trans } from '@lingui/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { Card, CardContent } from 'twenty-ui/layout';
 import { Radio } from 'twenty-ui/input';
 

@@ -1,5 +1,5 @@
 import { createState } from 'twenty-ui/utilities';
-import { AvailableWorkspaces } from '~/generated/graphql';
+import { type AvailableWorkspaces } from '~/generated/graphql';
 
 export const availableWorkspacesState = createState<AvailableWorkspaces>({
   key: 'availableWorkspacesState',

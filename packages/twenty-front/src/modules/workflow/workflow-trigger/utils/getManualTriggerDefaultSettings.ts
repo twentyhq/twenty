@@ -1,7 +1,7 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
-  WorkflowManualTriggerAvailability,
-  WorkflowManualTriggerSettings,
+  type WorkflowManualTriggerAvailability,
+  type WorkflowManualTriggerSettings,
 } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { assertUnreachable } from 'twenty-shared/utils';
@@ -10,10 +10,12 @@ export const getManualTriggerDefaultSettings = ({
   availability,
   activeNonSystemObjectMetadataItems,
   icon,
+  isPinned,
 }: {
   availability: WorkflowManualTriggerAvailability;
   activeNonSystemObjectMetadataItems: ObjectMetadataItem[];
   icon?: string;
+  isPinned?: boolean;
 }): WorkflowManualTriggerSettings => {
   switch (availability) {
     case 'EVERYWHERE': {
@@ -21,6 +23,7 @@ export const getManualTriggerDefaultSettings = ({
         objectType: undefined,
         outputSchema: {},
         icon: icon || COMMAND_MENU_DEFAULT_ICON,
+        isPinned: isPinned || false,
       };
     }
     case 'WHEN_RECORD_SELECTED': {
@@ -28,6 +31,7 @@ export const getManualTriggerDefaultSettings = ({
         objectType: activeNonSystemObjectMetadataItems[0].nameSingular,
         outputSchema: {},
         icon: icon || COMMAND_MENU_DEFAULT_ICON,
+        isPinned: isPinned || false,
       };
     }
   }

@@ -1,4 +1,4 @@
-import { HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
+import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
@@ -58,10 +58,7 @@ export const useTestHttpRequest = (actionId: string) => {
 
       const requestOptions: RequestInit = {
         method: httpRequestFormData.method,
-        headers: {
-          'Content-Type': 'application/json',
-          ...(substitutedHeaders as Record<string, string>),
-        },
+        headers: substitutedHeaders as Record<string, string>,
       };
 
       if (['POST', 'PUT', 'PATCH'].includes(httpRequestFormData.method)) {

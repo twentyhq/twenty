@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useSystemColorScheme = (): ColorScheme => {

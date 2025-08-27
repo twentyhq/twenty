@@ -1,5 +1,5 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { v4 } from 'uuid';
 
 export const createAnyFieldRecordFilterBaseProperties = ({

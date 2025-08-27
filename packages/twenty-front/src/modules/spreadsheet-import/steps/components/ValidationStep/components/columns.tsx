@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 // @ts-expect-error // Todo: remove usage of react-data-grid
-import { Column, useRowSelection } from 'react-data-grid';
+import { type Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';
 
 import {
-  ImportedStructuredRow,
-  SpreadsheetImportFields,
+  type ImportedStructuredRow,
+  type SpreadsheetImportFields,
 } from '@/spreadsheet-import/types';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
@@ -13,7 +13,7 @@ import camelCase from 'lodash.camelcase';
 import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
 import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
-import { ImportedStructuredRowMetadata } from '../types';
+import { type ImportedStructuredRowMetadata } from '../types';
 
 const StyledHeaderContainer = styled.div`
   align-items: center;
@@ -118,15 +118,17 @@ export const generateColumns = (
           <StyledHeaderLabel id={formatSafeId(column.key)}>
             {column.label}
           </StyledHeaderLabel>
-          {column.description &&
-            createPortal(
-              <AppTooltip
-                anchorSelect={`#${formatSafeId(column.key)}`}
-                place="top"
-                content={column.description}
-              />,
-              document.body,
-            )}
+          <>
+            {column.description &&
+              createPortal(
+                <AppTooltip
+                  anchorSelect={`#${formatSafeId(column.key)}`}
+                  place="top"
+                  content={column.description}
+                />,
+                document.body,
+              )}
+          </>
         </StyledHeaderContainer>
       ),
       editable: column.fieldType.type !== 'checkbox',

@@ -1,5 +1,5 @@
-import { parsePhoneNumber, PhoneNumber } from 'libphonenumber-js';
-import { MouseEvent } from 'react';
+import { parsePhoneNumber, type PhoneNumber } from 'libphonenumber-js';
+import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ContactLink } from 'twenty-ui/navigation';
 

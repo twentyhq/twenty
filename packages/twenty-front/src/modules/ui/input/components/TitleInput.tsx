@@ -1,8 +1,8 @@
-import { TextInput, TextInputSize } from '@/ui/input/components/TextInput';
+import { TextInput, type TextInputSize } from '@/ui/input/components/TextInput';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
+import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { HTMLAttributes } from 'react';
+import { type HTMLAttributes } from 'react';
 import { Label } from 'twenty-ui/display';
 
 type InputLabelProps = HTMLAttributes<HTMLLabelElement> & {

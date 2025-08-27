@@ -4,7 +4,6 @@ export const query = gql`
   mutation DeleteOneObjectMetadataItem($idToDelete: UUID!) {
     deleteOneObject(input: { id: $idToDelete }) {
       id
-      dataSourceId
       nameSingular
       namePlural
       labelSingular
@@ -27,7 +26,6 @@ export const variables = { idToDelete: 'idToDelete' };
 
 export const responseData = {
   id: '',
-  dataSourceId: '',
   nameSingular: '',
   namePlural: '',
   labelSingular: '',

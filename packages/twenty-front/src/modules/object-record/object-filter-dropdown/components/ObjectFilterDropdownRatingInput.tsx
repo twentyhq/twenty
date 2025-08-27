@@ -1,5 +1,5 @@
-import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
-import { FieldRatingValue } from '@/object-record/record-field/types/FieldMetadata';
+import { RATING_VALUES } from '@/object-record/record-field/ui/meta-types/constants/RatingValues';
+import { type FieldRatingValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RatingInput } from '@/ui/field/input/components/RatingInput';
 
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';

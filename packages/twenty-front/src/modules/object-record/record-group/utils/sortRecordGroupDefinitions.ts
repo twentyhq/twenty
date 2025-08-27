@@ -1,4 +1,4 @@
-import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { type RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 
 export const sortRecordGroupDefinitions = (

@@ -1,8 +1,9 @@
-import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import {
-  BaseOutputSchema,
-  OutputSchema,
-  RecordOutputSchema,
+  type BaseOutputSchema,
+  type FieldOutputSchema,
+  type OutputSchema,
+  type RecordOutputSchema,
 } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
 import { isFieldTypeCompatibleWithRecordId } from '@/workflow/workflow-variables/utils/isFieldTypeCompatibleWithRecordId';
@@ -35,7 +36,7 @@ const filterRecordOutputSchema = ({
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
 }): RecordOutputSchema | undefined => {
-  const filteredFields: BaseOutputSchema = {};
+  const filteredFields: Record<string, FieldOutputSchema> = {};
   let hasValidFields = false;
 
   for (const key in outputSchema.fields) {
@@ -135,8 +136,8 @@ const filterRecordOutputSchemaFieldsByType = ({
 }: {
   outputSchema: RecordOutputSchema;
   fieldTypesToExclude: InputSchemaPropertyType[];
-}) => {
-  const filteredFields: BaseOutputSchema = {};
+}): RecordOutputSchema => {
+  const filteredFields: Record<string, FieldOutputSchema> = {};
 
   for (const key in outputSchema.fields) {
     const field = outputSchema.fields[key];

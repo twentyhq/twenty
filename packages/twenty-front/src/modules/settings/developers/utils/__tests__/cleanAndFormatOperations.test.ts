@@ -1,4 +1,4 @@
-import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
+import { type WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
 import { cleanAndFormatOperations } from '../cleanAndFormatOperations';
 
 describe('cleanAndFormatOperations', () => {

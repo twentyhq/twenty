@@ -1,6 +1,6 @@
 import { isPast } from 'date-fns';
 
-import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendarEventEndDate';
 
 export const hasCalendarEventEnded = (

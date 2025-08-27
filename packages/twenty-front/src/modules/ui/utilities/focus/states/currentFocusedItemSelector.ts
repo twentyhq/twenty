@@ -1,4 +1,4 @@
-import { FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
+import { type FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
 import { selector } from 'recoil';
 import { focusStackState } from './focusStackState';
 

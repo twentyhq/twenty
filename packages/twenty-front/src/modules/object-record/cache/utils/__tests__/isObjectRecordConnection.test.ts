@@ -1,4 +1,4 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
 import { RelationType } from '~/generated-metadata/graphql';
 describe('isObjectRecordConnection', () => {

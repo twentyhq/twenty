@@ -1,13 +1,13 @@
-import { FieldNumberVariant } from '@/object-record/record-field/types/FieldMetadata';
-import { MessageDescriptor } from '@lingui/core';
+import { type FieldNumberVariant } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { ForwardRefExoticComponent, RefAttributes } from 'react';
+import { type ForwardRefExoticComponent, type RefAttributes } from 'react';
 import {
-  IconComponent,
-  IconComponentProps,
   IconLetterK,
   IconNumber9,
   IconPercentage,
+  type IconComponent,
+  type IconComponentProps,
 } from 'twenty-ui/display';
 
 type NumberDataModelSelectOptions = {

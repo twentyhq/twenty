@@ -72,10 +72,10 @@ const getSubDirectoryPaths = (directoryPath: string): string[] => {
   }).sort((a, b) => a.localeCompare(b));
 };
 
-const partitionFileExportsByType = (declarations: DeclarationOccurence[]) => {
+const partitionFileExportsByType = (declarations: DeclarationOccurrence[]) => {
   return declarations.reduce<{
-    typeAndInterfaceDeclarations: DeclarationOccurence[];
-    otherDeclarations: DeclarationOccurence[];
+    typeAndInterfaceDeclarations: DeclarationOccurrence[];
+    otherDeclarations: DeclarationOccurrence[];
   }>(
     (acc, { kind, name }) => {
       if (kind === 'type' || kind === 'interface') {
@@ -117,7 +117,7 @@ const generateModuleIndexFiles = (exportByBarrel: ExportByBarrel[]) => {
             ),
           );
           const mapDeclarationNameAndJoin = (
-            declarations: DeclarationOccurence[],
+            declarations: DeclarationOccurrence[],
           ) => declarations.map(({ name }) => name).join(', ');
 
           const typeExport =
@@ -187,12 +187,13 @@ const updateNxProjectConfigurationBuildOutputs = (outputs: JsonUpdate) => {
   });
 };
 
-type ExportOccurence = {
+type ExportOccurrence = {
   types: string;
   import: string;
   require: string;
 };
-type ExportsConfig = Record<string, ExportOccurence | string>;
+type ExportsConfig = Record<string, ExportOccurrence | string>;
+
 const generateModulePackageExports = (moduleDirectories: string[]) => {
   return moduleDirectories.reduce<ExportsConfig>(
     (acc, moduleDirectory) => {
@@ -222,9 +223,26 @@ const computePackageJsonFilesAndExportsConfig = (
   moduleDirectories: string[],
 ) => {
   const entrypoints = moduleDirectories.map(getLastPathFolder);
-  const exports = generateModulePackageExports(moduleDirectories);
+  const exports = {
+    '.': {
+      types: './dist/index.d.ts',
+      import: './dist/index.mjs',
+      require: './dist/index.cjs',
+    },
+    ...generateModulePackageExports(moduleDirectories),
+  } satisfies ExportsConfig;
+
+  const typesVersionsEntries = entrypoints.reduce<Record<string, string[]>>(
+    (acc, moduleName) => ({
+      ...acc,
+      [`${moduleName}`]: [`dist/${moduleName}/index.d.ts`],
+    }),
+    {},
+  );
+
   return {
     exports,
+    typesVersions: { '*': typesVersionsEntries },
     files: ['dist', 'assets', ...entrypoints],
   };
 };
@@ -254,7 +272,6 @@ const EXCLUDED_DIRECTORIES = [
   '**/__mocks__/**',
   '**/__stories__/**',
   '**/internal/**',
-  '**/assets/**',
 ] as const;
 function getTypeScriptFiles(
   directoryPath: string,
@@ -291,7 +308,7 @@ const getKind = (
 };
 
 function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
-  const exports: DeclarationOccurence[] = [];
+  const exports: DeclarationOccurrence[] = [];
 
   function visit(node: ts.Node) {
     if (!ts.canHaveModifiers(node)) {
@@ -368,7 +385,6 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
           name: node.name.text,
         });
         break;
-
       case ts.isExportDeclaration(node):
         if (node.exportClause && ts.isNamedExports(node.exportClause)) {
           node.exportClause.elements.forEach((element) => {
@@ -410,10 +426,10 @@ type ExportKind =
   | 'let'
   | 'var'
   | 'class';
-type DeclarationOccurence = { kind: ExportKind; name: string };
+type DeclarationOccurrence = { kind: ExportKind; name: string };
 type FileExports = Array<{
   file: string;
-  exports: DeclarationOccurence[];
+  exports: DeclarationOccurrence[];
 }>;
 
 function findAllExports(directoryPath: string): FileExports {

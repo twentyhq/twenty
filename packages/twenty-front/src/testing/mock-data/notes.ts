@@ -1,5 +1,5 @@
-import { Note } from '@/activities/types/Note';
-import { NoteTarget } from '@/activities/types/NoteTarget';
+import { type Note } from '@/activities/types/Note';
+import { type NoteTarget } from '@/activities/types/NoteTarget';
 
 type MockedNote = Partial<Note> & { __typename?: string };
 

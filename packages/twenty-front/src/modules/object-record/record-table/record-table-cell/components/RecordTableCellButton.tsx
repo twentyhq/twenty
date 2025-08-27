@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { AnimatedContainer } from 'twenty-ui/utilities';
 import { FloatingIconButton } from 'twenty-ui/input';
-import { IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/display';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledButtonContainer = styled.div`

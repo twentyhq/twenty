@@ -1,11 +1,11 @@
-import { CalendarChannel } from '@/accounts/types/CalendarChannel';
+import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
-import { CalendarChannelVisibility } from '~/generated-metadata/graphql';
+import { type CalendarChannelVisibility } from '~/generated-metadata/graphql';
 import { t } from '@lingui/core/macro';
 import { Card } from 'twenty-ui/layout';
 import { H2Title, IconUserPlus } from 'twenty-ui/display';

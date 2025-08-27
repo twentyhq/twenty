@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -11,16 +11,16 @@ import { arrayToChunks } from '~/utils/array/arrayToChunks';
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
+import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { t } from '@lingui/core/macro';
-import { IconApps, IconComponent, useIcons } from 'twenty-ui/display';
+import { IconApps, type IconComponent, useIcons } from 'twenty-ui/display';
 import {
   IconButton,
-  IconButtonSize,
-  IconButtonVariant,
+  type IconButtonSize,
+  type IconButtonVariant,
   LightIconButton,
 } from 'twenty-ui/input';
 

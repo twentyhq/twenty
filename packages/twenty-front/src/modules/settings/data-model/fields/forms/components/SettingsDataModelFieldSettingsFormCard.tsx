@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import omit from 'lodash.omit';
 import { z } from 'zod';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { settingsDataModelFieldAddressFormSchema } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm';
@@ -16,6 +16,9 @@ import { settingsDataModelFieldCurrencyFormSchema } from '@/settings/data-model/
 import { SettingsDataModelFieldCurrencySettingsFormCard } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencySettingsFormCard';
 import { settingsDataModelFieldDateFormSchema } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
 import { SettingsDataModelFieldDateSettingsFormCard } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateSettingsFormCard';
+import { settingsDataModelFieldMorphRelationFormSchema } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm';
+
+import { SettingsDataModelFieldMorphRelationFormCard } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationFormCard';
 import { settingsDataModelFieldNumberFormSchema } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
 import { SettingsDataModelFieldNumberSettingsFormCard } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberSettingsFormCard';
 import { settingsDataModelFieldPhonesFormSchema } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';
@@ -29,7 +32,7 @@ import {
 import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectSettingsFormCard';
 import {
   SettingsDataModelFieldPreviewCard,
-  SettingsDataModelFieldPreviewCardProps,
+  type SettingsDataModelFieldPreviewCardProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -58,6 +61,10 @@ const dateTimeFieldFormSchema = z
 const relationFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.RELATION) })
   .merge(settingsDataModelFieldRelationFormSchema);
+
+const morphRelationFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.MORPH_RELATION) })
+  .merge(settingsDataModelFieldMorphRelationFormSchema);
 
 const selectFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.SELECT) })
@@ -94,6 +101,7 @@ const otherFieldsFormSchema = z
           FieldMetadataType.BOOLEAN,
           FieldMetadataType.CURRENCY,
           FieldMetadataType.RELATION,
+          FieldMetadataType.MORPH_RELATION,
           FieldMetadataType.SELECT,
           FieldMetadataType.MULTI_SELECT,
           FieldMetadataType.DATE,
@@ -116,6 +124,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     dateFieldFormSchema,
     dateTimeFieldFormSchema,
     relationFieldFormSchema,
+    morphRelationFieldFormSchema,
     selectFieldFormSchema,
     multiSelectFieldFormSchema,
     numberFieldFormSchema,
@@ -154,6 +163,7 @@ const previewableTypes = [
   FieldMetadataType.RATING,
   FieldMetadataType.RAW_JSON,
   FieldMetadataType.RELATION,
+  FieldMetadataType.MORPH_RELATION,
   FieldMetadataType.SELECT,
   FieldMetadataType.TEXT,
   FieldMetadataType.UUID,
@@ -200,6 +210,15 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.RELATION) {
     return (
       <SettingsDataModelFieldRelationSettingsFormCard
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
+
+  if (fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION) {
+    return (
+      <SettingsDataModelFieldMorphRelationFormCard
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />
@@ -265,6 +284,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
       form={
         <SettingsDataModelFieldIsUniqueForm
           fieldMetadataItem={fieldMetadataItem}
+          objectMetadataItem={objectMetadataItem}
         />
       }
     />

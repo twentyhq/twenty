@@ -2,7 +2,7 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
-  TwoFactorAuthenticationMethodDto,
+  type TwoFactorAuthenticationMethodDto,
   useInitiateOtpProvisioningMutation,
 } from '~/generated-metadata/graphql';
 

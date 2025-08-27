@@ -109,15 +109,30 @@ export class BillingResolver {
         interval: recurringInterval,
       },
     );
-    const checkoutSessionURL =
-      await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
-        ...checkoutSessionParams,
-        billingPricesPerPlan,
-      });
 
-    return {
-      url: checkoutSessionURL,
-    };
+    // For 7-day trials (no payment method required), create subscription directly
+    // For 30-day trials (payment method required), use checkout session flow
+    if (!requirePaymentMethod) {
+      const successUrl =
+        await this.billingPortalWorkspaceService.createDirectSubscription({
+          ...checkoutSessionParams,
+          billingPricesPerPlan,
+        });
+
+      return {
+        url: successUrl,
+      };
+    } else {
+      const checkoutSessionURL =
+        await this.billingPortalWorkspaceService.computeCheckoutSessionURL({
+          ...checkoutSessionParams,
+          billingPricesPerPlan,
+        });
+
+      return {
+        url: checkoutSessionURL,
+      };
+    }
   }
 
   @Mutation(() => BillingUpdateOutput)

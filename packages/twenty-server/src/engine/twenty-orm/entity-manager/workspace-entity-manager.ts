@@ -44,6 +44,7 @@ import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-module
 import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { type DeepPartialWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/deep-partial-entity-with-nested-relation-fields.type';
 import { type QueryDeepPartialEntityWithNestedRelationFields } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
+import { getEntityTarget } from 'src/engine/twenty-orm/entity-manager/utils/get-entity-target';
 import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/relation-nested-queries/relation-nested-queries';
 import {
@@ -409,8 +410,6 @@ export class WorkspaceEntityManager extends EntityManager {
       selectedColumns,
       allFieldsSelected: false,
       updatedColumns,
-      isFieldPermissionsEnabled:
-        this.getFeatureFlagMap().IS_FIELDS_PERMISSIONS_ENABLED,
     });
   }
 
@@ -1213,14 +1212,11 @@ export class WorkspaceEntityManager extends EntityManager {
         entities: createdEntities,
       });
 
-      const isFieldPermissionsEnabled =
-        this.getFeatureFlagMap().IS_FIELDS_PERMISSIONS_ENABLED;
-
       const permissionCheckApplies =
         permissionOptionsFromArgs?.shouldBypassPermissionChecks !== true &&
         objectMetadataItem.isSystem !== true;
 
-      if (isFieldPermissionsEnabled && permissionCheckApplies) {
+      if (permissionCheckApplies) {
         formattedResult = this.getFormattedResultWithoutNonReadableFields({
           formattedResult,
           objectMetadataItem,
@@ -1230,7 +1226,12 @@ export class WorkspaceEntityManager extends EntityManager {
 
       return isEntityArray ? formattedResult : formattedResult[0];
     } catch (error) {
-      throw computeTwentyORMException(error);
+      const objectMetadataItem = getObjectMetadataFromEntityTarget(
+        getEntityTarget(targetOrEntity, entityOrMaybeOptions),
+        this.internalContext,
+      );
+
+      throw computeTwentyORMException(error, objectMetadataItem);
     }
   }
 

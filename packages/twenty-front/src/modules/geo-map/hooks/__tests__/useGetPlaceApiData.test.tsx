@@ -1,6 +1,6 @@
-import { MockedProvider, MockedResponse } from '@apollo/client/testing';
+import { MockedProvider, type MockedResponse } from '@apollo/client/testing';
 import { renderHook, waitFor } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import {
   GET_AUTOCOMPLETE_QUERY,
@@ -8,8 +8,8 @@ import {
 } from '@/geo-map/graphql-query/geo-map-appolo.api';
 import { useGetPlaceApiData } from '@/geo-map/hooks/useGetPlaceApiData';
 import {
-  PlaceAutocompleteResult,
-  PlaceDetailsResult,
+  type PlaceAutocompleteResult,
+  type PlaceDetailsResult,
 } from '@/geo-map/types/placeApi';
 
 const mockAutocompleteResults: PlaceAutocompleteResult[] = [

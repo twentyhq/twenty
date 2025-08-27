@@ -1,7 +1,8 @@
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { Separator } from '@/settings/components/Separator';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { canBeUnique } from '@/settings/data-model/fields/forms/utils/canBeUnique.util';
@@ -14,14 +15,29 @@ type SettingsDataModelFieldIsUniqueFormValues = {
 };
 
 type SettingsDataModelFieldIsUniqueFormProps = {
-  fieldMetadataItem: Pick<FieldMetadataItem, 'isUnique' | 'type' | 'isCustom'>;
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'icon' | 'label' | 'type' | 'isCustom' | 'settings' | 'isUnique'
+  > &
+    Partial<{ id: string }>;
+  objectMetadataItem: Pick<ObjectMetadataItem, 'indexMetadatas'>;
 };
 
 export const SettingsDataModelFieldIsUniqueForm = ({
   fieldMetadataItem,
+  objectMetadataItem,
 }: SettingsDataModelFieldIsUniqueFormProps) => {
   const { control } =
     useFormContext<SettingsDataModelFieldIsUniqueFormValues>();
+
+  const hasStandardUniqueIndex = objectMetadataItem.indexMetadatas.some(
+    (index) =>
+      index.isUnique &&
+      !index.isCustom &&
+      index.indexFieldMetadatas?.some(
+        (field) => field.fieldMetadataId === fieldMetadataItem.id,
+      ),
+  );
 
   if (!canBeUnique(fieldMetadataItem)) {
     return null;
@@ -41,12 +57,13 @@ export const SettingsDataModelFieldIsUniqueForm = ({
             <SettingsOptionCardContentSelect
               Icon={IconKey}
               title={t`Unique`}
-              description={t`Prevent from assigining the same value to different records`}
+              description={t`Prevent from assigning the same value to different records`}
             >
               <Toggle
                 toggleSize="small"
                 value={isUnique}
                 onChange={(value) => onChange(value)}
+                disabled={hasStandardUniqueIndex}
               />
             </SettingsOptionCardContentSelect>
           </>

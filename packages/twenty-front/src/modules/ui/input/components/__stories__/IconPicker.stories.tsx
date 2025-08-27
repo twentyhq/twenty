@@ -1,12 +1,12 @@
 import { useArgs } from '@storybook/preview-api';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { sleep } from '~/utils/sleep';
 
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { IconPicker, IconPickerProps } from '../IconPicker';
+import { IconPicker, type IconPickerProps } from '../IconPicker';
 
 type RenderProps = IconPickerProps;
 const Render = (args: RenderProps) => {

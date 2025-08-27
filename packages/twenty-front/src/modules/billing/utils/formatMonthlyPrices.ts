@@ -1,8 +1,8 @@
 import {
   BillingPlanKey,
   SubscriptionInterval,
-  BillingPlanOutput,
-  BillingPriceLicensedDto,
+  type BillingPlanOutput,
+  type BillingPriceLicensedDto,
 } from '~/generated/graphql';
 import { isDefined } from 'twenty-shared/utils';
 

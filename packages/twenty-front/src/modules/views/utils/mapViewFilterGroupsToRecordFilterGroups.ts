@@ -1,5 +1,5 @@
-import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
-import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
+import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator } from '@/views/utils/mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator';
 
 export const mapViewFilterGroupsToRecordFilterGroups = (

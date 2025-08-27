@@ -2,13 +2,16 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
+import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { WatchQueryFetchPolicy } from '@apollo/client';
+import { type WatchQueryFetchPolicy } from '@apollo/client';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { ObjectRecordFilterInput, useSearchQuery } from '~/generated/graphql';
+import {
+  type ObjectRecordFilterInput,
+  useSearchQuery,
+} from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
 export type UseSearchRecordsParams = ObjectMetadataItemIdentifier & {

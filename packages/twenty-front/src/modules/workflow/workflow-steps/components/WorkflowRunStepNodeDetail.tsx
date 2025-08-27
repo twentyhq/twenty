@@ -1,7 +1,7 @@
 import {
-  WorkflowAction,
-  WorkflowRunStepStatus,
-  WorkflowTrigger,
+  type WorkflowAction,
+  type WorkflowRunStepStatus,
+  type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { WorkflowEditActionAiAgent } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent';

@@ -76,6 +76,9 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
   @Column({ default: false })
   isSystem: boolean;
 
+  @Column({ default: false })
+  isUIReadOnly: boolean;
+
   @Column({ default: true })
   isAuditLogged: boolean;
 

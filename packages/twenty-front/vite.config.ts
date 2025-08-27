@@ -6,7 +6,12 @@ import wyw from '@wyw-in-js/vite';
 import fs from 'fs';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
-import { defineConfig, loadEnv, PluginOption, searchForWorkspaceRoot } from 'vite';
+import {
+  defineConfig,
+  loadEnv,
+  searchForWorkspaceRoot,
+  type PluginOption,
+} from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -36,7 +41,6 @@ export default defineConfig(({ command, mode }) => {
   const tsConfigPath = isBuildCommand
     ? path.resolve(__dirname, './tsconfig.build.json')
     : path.resolve(__dirname, './tsconfig.dev.json');
-
 
   const CHUNK_SIZE_WARNING_LIMIT = 1024 * 1024; // 1MB
   // Please don't increase this limit for main index chunk
@@ -71,9 +75,8 @@ export default defineConfig(({ command, mode }) => {
 
   if (VITE_DISABLE_ESLINT_CHECKER !== 'true') {
     checkers['eslint'] = {
-      lintCommand:
-        // Appended to packages/twenty-front/.eslintrc.cjs
-        'ESLINT_USE_FLAT_CONFIG=false eslint ../../packages/twenty-front --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs',
+      lintCommand: 'eslint ../../packages/twenty-front --max-warnings 0',
+      useFlatConfig: true,
     };
   }
 
@@ -187,27 +190,32 @@ export default defineConfig(({ command, mode }) => {
               name: 'chunk-size-limit',
               generateBundle(_options, bundle) {
                 const oversizedChunks: string[] = [];
-                
+
                 Object.entries(bundle).forEach(([fileName, chunk]) => {
-                  if (chunk.type === 'chunk' && chunk.code) {
+                  if (chunk.type === 'chunk' && chunk.code !== undefined) {
                     const size = Buffer.byteLength(chunk.code, 'utf8');
-                    const isMainChunk = fileName.includes('index') && chunk.isEntry;
-                    const sizeLimit = isMainChunk ? MAIN_CHUNK_SIZE_LIMIT : OTHER_CHUNK_SIZE_LIMIT;
+                    const isMainChunk =
+                      fileName.includes('index') && chunk.isEntry;
+                    const sizeLimit = isMainChunk
+                      ? MAIN_CHUNK_SIZE_LIMIT
+                      : OTHER_CHUNK_SIZE_LIMIT;
                     const limitType = isMainChunk ? 'main' : 'other';
-                    
+
                     if (size > sizeLimit) {
-                      oversizedChunks.push(`${fileName} (${limitType}): ${(size / 1024 / 1024).toFixed(2)}MB (limit: ${(sizeLimit / 1024 / 1024).toFixed(2)}MB)`);
+                      oversizedChunks.push(
+                        `${fileName} (${limitType}): ${(size / 1024 / 1024).toFixed(2)}MB (limit: ${(sizeLimit / 1024 / 1024).toFixed(2)}MB)`,
+                      );
                     }
                   }
                 });
-                
+
                 if (oversizedChunks.length > 0) {
-                  const errorMessage = `Build failed: The following chunks exceed their size limits:\n${oversizedChunks.map(chunk => `  - ${chunk}`).join('\n')}`;
+                  const errorMessage = `Build failed: The following chunks exceed their size limits:\n${oversizedChunks.map((chunk) => `  - ${chunk}`).join('\n')}`;
                   this.error(errorMessage);
                 }
-              }
+              },
             },
-            // TODO; later - think about prefetching modules such 
+            // TODO; later - think about prefetching modules such
             // as date time picker, phone input etc...
             /*
             {
@@ -249,8 +257,8 @@ export default defineConfig(({ command, mode }) => {
              
               },
             }*/
-          ]
-        }
+          ],
+        },
       },
     },
 

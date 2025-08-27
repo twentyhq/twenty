@@ -12,6 +12,9 @@ import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadat
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { BeforeUpdateOneField } from 'src/engine/metadata-modules/field-metadata/hooks/before-update-one-field.hook';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
+import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { getMockFieldMetadataEntity } from 'src/utils/__test__/get-field-metadata-entity.mock';
 
 jest.mock('@lingui/core', () => ({
@@ -26,6 +29,7 @@ type UpdateFieldInputForTest = Omit<UpdateFieldInput, 'id' | 'workspaceId'>;
 describe('BeforeUpdateOneField', () => {
   let hook: BeforeUpdateOneField<UpdateFieldInput>;
   let fieldMetadataService: FieldMetadataService;
+  let objectMetadataService: ObjectMetadataService;
 
   const mockWorkspaceId = 'workspace-id';
   const mockFieldId = 'field-id';
@@ -40,6 +44,12 @@ describe('BeforeUpdateOneField', () => {
             findOneWithinWorkspace: jest.fn(),
           },
         },
+        {
+          provide: ObjectMetadataService,
+          useValue: {
+            findOneWithinWorkspace: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -47,6 +57,9 @@ describe('BeforeUpdateOneField', () => {
       module.get<BeforeUpdateOneField<UpdateFieldInput>>(BeforeUpdateOneField);
     fieldMetadataService =
       module.get<FieldMetadataService>(FieldMetadataService);
+    objectMetadataService = module.get<ObjectMetadataService>(
+      ObjectMetadataService,
+    );
   });
 
   afterEach(() => {
@@ -566,6 +579,103 @@ describe('BeforeUpdateOneField', () => {
           icon: 'IconStar',
           description: 'New Description',
         },
+      },
+    };
+
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('should throw ValidationError if isUnique is updated for a standard field with a standard unique index', async () => {
+    const mockField: Partial<FieldMetadataEntity> = {
+      id: mockFieldId,
+      isCustom: false,
+      isUnique: true,
+    };
+
+    jest
+      .spyOn(fieldMetadataService, 'findOneWithinWorkspace')
+      .mockResolvedValue(mockField as FieldMetadataEntity);
+
+    const mockObjectMetadata: Partial<ObjectMetadataEntity> = {
+      id: mockWorkspaceId,
+      indexMetadatas: [
+        {
+          isUnique: true,
+          isCustom: false,
+          indexFieldMetadatas: [{ fieldMetadataId: mockFieldId }],
+        } as IndexMetadataEntity,
+      ],
+    };
+
+    jest
+      .spyOn(objectMetadataService, 'findOneWithinWorkspace')
+      .mockResolvedValue(mockObjectMetadata as ObjectMetadataEntity);
+
+    const instance: UpdateOneInputType<UpdateFieldInputForTest> = {
+      id: mockFieldId,
+      update: {
+        isUnique: false,
+      },
+    };
+
+    await expect(
+      hook.run(instance as UpdateOneInputType<UpdateFieldInput>, {
+        workspaceId: mockWorkspaceId,
+        locale: undefined,
+      }),
+    ).rejects.toThrow(ValidationError);
+  });
+
+  it('should not throw ValidationError if isUnique is updated for a standard field without a standard unique index', async () => {
+    const mockField: Partial<FieldMetadataEntity> = {
+      id: mockFieldId,
+      isCustom: false,
+      isUnique: true,
+    };
+
+    jest
+      .spyOn(fieldMetadataService, 'findOneWithinWorkspace')
+      .mockResolvedValue(mockField as FieldMetadataEntity);
+
+    const mockObjectMetadata: Partial<ObjectMetadataEntity> = {
+      id: mockWorkspaceId,
+      indexMetadatas: [
+        {
+          isUnique: false,
+          isCustom: false,
+          indexFieldMetadatas: [{ fieldMetadataId: mockFieldId }],
+        } as IndexMetadataEntity,
+      ],
+    };
+
+    jest
+      .spyOn(objectMetadataService, 'findOneWithinWorkspace')
+      .mockResolvedValue(mockObjectMetadata as ObjectMetadataEntity);
+
+    const instance: UpdateOneInputType<UpdateFieldInputForTest> = {
+      id: mockFieldId,
+      update: {
+        isUnique: false,
+      },
+    };
+
+    jest
+      .spyOn(fieldMetadataService, 'findOneWithinWorkspace')
+      .mockResolvedValue(mockField as FieldMetadataEntity);
+
+    const result = await hook.run(
+      instance as UpdateOneInputType<UpdateFieldInput>,
+      {
+        workspaceId: mockWorkspaceId,
+        locale: undefined,
+      },
+    );
+
+    const expectedResult = {
+      id: mockFieldId,
+      update: {
+        isUnique: false,
+        standardOverrides: {},
       },
     };
 

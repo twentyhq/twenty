@@ -1,5 +1,5 @@
 import {
-  CurrentWorkspace,
+  type CurrentWorkspace,
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
@@ -10,8 +10,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { H2Title, IconUserPin, useIcons } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
 import {
-  Role,
-  UpdateWorkspaceMutation,
+  type Role,
+  type UpdateWorkspaceMutation,
   useUpdateWorkspaceMutation,
 } from '~/generated-metadata/graphql';
 

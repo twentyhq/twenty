@@ -416,7 +416,7 @@ export const fieldPhonesMock = getMockFieldMetadataEntity({
   updatedAt: new Date(),
 });
 
-export const fields = [
+const FIELDS_MOCK = [
   fieldUuidMock,
   fieldTextMock,
   fieldPhonesMock,
@@ -457,21 +457,21 @@ export const objectMetadataItemMock: ObjectMetadataEntity = {
   isSystem: false,
   isAuditLogged: true,
   isSearchable: true,
-  fields,
+  fields: FIELDS_MOCK,
   createdAt: new Date(),
   updatedAt: new Date(),
 } as ObjectMetadataEntity;
 
 export const objectMetadataMapItemMock: ObjectMetadataItemWithFieldMaps = {
   ...objectMetadataItemMock,
-  fieldsById: fields.reduce(
+  fieldsById: FIELDS_MOCK.reduce(
     (acc, field) => ({
       ...acc,
       [field.id]: field,
     }),
     {},
   ),
-  fieldIdByName: fields.reduce(
+  fieldIdByName: FIELDS_MOCK.reduce(
     (acc, field) => ({
       ...acc,
       [field.name]: field.id,

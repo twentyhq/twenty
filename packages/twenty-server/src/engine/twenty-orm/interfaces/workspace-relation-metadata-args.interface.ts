@@ -15,7 +15,7 @@ export interface WorkspaceRelationMetadataArgs {
   /**
    * Class to which relation is applied.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+
   readonly target: Function;
 
   /**
@@ -69,6 +69,11 @@ export interface WorkspaceRelationMetadataArgs {
    * Is system field.
    */
   readonly isSystem: boolean;
+
+  /**
+   * Is UI read-only field.
+   */
+  readonly isUIReadOnly: boolean;
 
   /**
    * Is nullable field.

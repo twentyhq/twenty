@@ -4,6 +4,22 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
 
+// Add Jest matchers for toThrowError and other missing methods
+declare global {
+  namespace jest {
+    interface Matchers<R> {
+      toThrowError(error?: string | RegExp | Error): R;
+      toMatchSnapshot(propertyMatchers?: any): R;
+    }
+  }
+
+  namespace Vi {
+    interface Assertion {
+      toMatchSnapshot(propertyMatchers?: any): void;
+    }
+  }
+}
+
 /**
  * The structuredClone global function is not available in jsdom, it needs to be mocked for now.
  *

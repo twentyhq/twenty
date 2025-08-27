@@ -1,10 +1,10 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
 import { SettingsObjectNewFieldConfigure } from '~/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure';
 
 import {
   PageDecorator,
-  PageDecoratorArgs,
+  type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 

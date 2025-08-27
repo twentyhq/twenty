@@ -1,4 +1,4 @@
-import { StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -22,8 +22,18 @@ describe('searchVariableThroughOutputSchema', () => {
               objectMetadataId: '123',
             },
             fields: {
-              name: { label: 'Name', value: 'Twenty', isLeaf: true },
-              address: { label: 'Address', value: '123 Main St', isLeaf: true },
+              name: {
+                label: 'Name',
+                value: 'Twenty',
+                isLeaf: true,
+                fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+              },
+              address: {
+                label: 'Address',
+                value: '123 Main St',
+                isLeaf: true,
+                fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+              },
             },
             _outputSchemaType: 'RECORD',
           },
@@ -42,12 +52,23 @@ describe('searchVariableThroughOutputSchema', () => {
               objectMetadataId: '123',
             },
             fields: {
-              firstName: { label: 'First Name', value: 'Jane', isLeaf: true },
-              lastName: { label: 'Last Name', value: 'Doe', isLeaf: true },
+              firstName: {
+                label: 'First Name',
+                value: 'Jane',
+                isLeaf: true,
+                fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+              },
+              lastName: {
+                label: 'Last Name',
+                value: 'Doe',
+                isLeaf: true,
+                fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+              },
               email: {
                 label: 'Email',
                 value: 'jane@example.com',
                 isLeaf: true,
+                fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
               },
             },
             _outputSchemaType: 'RECORD',
@@ -90,6 +111,8 @@ describe('searchVariableThroughOutputSchema', () => {
       });
 
       expect(result).toEqual({
+        compositeFieldSubFieldName: undefined,
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
         variableLabel: 'Name',
         variablePathLabel: 'Step 1 > Company > Name',
         variableType: 'unknown',
@@ -104,6 +127,8 @@ describe('searchVariableThroughOutputSchema', () => {
       });
 
       expect(result).toEqual({
+        compositeFieldSubFieldName: undefined,
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
         variableLabel: 'Email',
         variablePathLabel: 'Step 1 > Person > Email',
         variableType: 'unknown',
@@ -237,6 +262,7 @@ describe('searchVariableThroughOutputSchema', () => {
             label: 'Id',
             value: '123e4567-e89b-12d3-a456-426614174000',
             isLeaf: true,
+            fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
           },
           'properties.after.name': {
             icon: 'IconBuildingSkyscraper',
@@ -244,22 +270,28 @@ describe('searchVariableThroughOutputSchema', () => {
             label: 'Name',
             value: 'My text',
             isLeaf: true,
+            fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
           },
           'properties.after.annualRecurringRevenue': {
             icon: 'IconMoneybag',
             label: 'ARR',
+            fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
             value: {
               amountMicros: {
                 type: FieldMetadataType.NUMERIC,
                 label: ' Amount Micros',
                 value: null,
                 isLeaf: true,
+                fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+                isCompositeSubField: true,
               },
               currencyCode: {
                 type: FieldMetadataType.TEXT,
                 label: ' Currency Code',
                 value: 'My text',
                 isLeaf: true,
+                fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
+                isCompositeSubField: true,
               },
             },
             isLeaf: false,
@@ -285,6 +317,8 @@ describe('searchVariableThroughOutputSchema', () => {
       });
 
       expect(result).toEqual({
+        compositeFieldSubFieldName: undefined,
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
         variableLabel: 'Name',
         variablePathLabel: 'Record is Created > Name',
         variableType: FieldMetadataType.TEXT,
@@ -300,6 +334,8 @@ describe('searchVariableThroughOutputSchema', () => {
       });
 
       expect(result).toEqual({
+        compositeFieldSubFieldName: 'amountMicros',
+        fieldMetadataId: '123e4567-e89b-12d3-a456-426614174000',
         variableLabel: ' Amount Micros',
         variablePathLabel: 'Record is Created > ARR >  Amount Micros',
         variableType: FieldMetadataType.NUMERIC,

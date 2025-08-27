@@ -2,7 +2,7 @@ import { AdvancedFilterLogicalOperatorDropdown } from '@/object-record/advanced-
 import { ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS } from '@/object-record/advanced-filter/constants/AdvancedFilterLogicalOperatorOptions';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
-import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
@@ -11,9 +11,10 @@ import { useContext } from 'react';
 import { capitalize } from 'twenty-shared/utils';
 
 const StyledText = styled.div`
-  height: ${({ theme }) => theme.spacing(8)};
-  display: flex;
   align-items: center;
+  color: ${({ theme }) => theme.font.color.primary};
+  display: flex;
+  height: ${({ theme }) => theme.spacing(8)};
 `;
 
 const StyledContainer = styled.div`
@@ -41,7 +42,6 @@ export const WorkflowAdvancedFilterLogicalOperatorCell = ({
       ) : index === 1 ? (
         readonly ? (
           <Select
-            fullWidth
             dropdownWidth={GenericDropdownContentWidth.Narrow}
             dropdownId={`advanced-filter-logical-operator-${recordFilterGroup.id}`}
             value={recordFilterGroup.logicalOperator}

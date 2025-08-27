@@ -1,24 +1,30 @@
 import { useWorkflowCommandMenu } from '@/command-menu/hooks/useWorkflowCommandMenu';
+import { WorkflowActionMenuItems } from '@/command-menu/pages/workflow/action/components/WorkflowActionMenuItems';
 import { commandMenuNavigationStackState } from '@/command-menu/states/commandMenuNavigationStackState';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
 import {
-  WorkflowActionType,
-  WorkflowWithCurrentVersion,
+  type WorkflowActionType,
+  type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { useCloseRightClickMenu } from '@/workflow/workflow-diagram/hooks/useCloseRightClickMenu';
 import { RightDrawerStepListContainer } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepContainer';
 import { RightDrawerWorkflowSelectStepTitle } from '@/workflow/workflow-steps/components/RightDrawerWorkflowSelectStepTitle';
 import { useCreateStep } from '@/workflow/workflow-steps/hooks/useCreateStep';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
+import { AI_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/AiActions';
+import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/CoreActions';
+import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
-import { useFilteredOtherActions } from '@/workflow/workflow-steps/workflow-actions/hooks/useFilteredOtherActions';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useTheme } from '@emotion/react';
+import { useLingui } from '@lingui/react/macro';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { MenuItemCommand } from 'twenty-ui/navigation';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 export const CommandMenuWorkflowSelectActionContent = ({
   workflow,
@@ -30,7 +36,6 @@ export const CommandMenuWorkflowSelectActionContent = ({
   const { createStep } = useCreateStep({
     workflow,
   });
-  const filteredOtherActions = useFilteredOtherActions();
 
   const { closeRightClickMenu } = useCloseRightClickMenu();
 
@@ -83,30 +88,34 @@ export const CommandMenuWorkflowSelectActionContent = ({
     );
   };
 
+  const theme = useTheme();
+
+  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+
+  const { t } = useLingui();
+
   return (
     <RightDrawerStepListContainer>
       <RightDrawerWorkflowSelectStepTitle>
-        Records
+        {t`Data`}
       </RightDrawerWorkflowSelectStepTitle>
-      {RECORD_ACTIONS.map((action) => (
-        <MenuItemCommand
-          key={action.type}
-          LeftIcon={getIcon(action.icon)}
-          text={action.label}
-          onClick={() => handleCreateStep(action.type)}
-        />
-      ))}
+      {WorkflowActionMenuItems(RECORD_ACTIONS, theme, handleCreateStep)}
+      {isAiEnabled && (
+        <>
+          <RightDrawerWorkflowSelectStepTitle>
+            {t`AI`}
+          </RightDrawerWorkflowSelectStepTitle>
+          {WorkflowActionMenuItems(AI_ACTIONS, theme, handleCreateStep)}
+        </>
+      )}
       <RightDrawerWorkflowSelectStepTitle>
-        Other
+        {t`Core`}
       </RightDrawerWorkflowSelectStepTitle>
-      {filteredOtherActions.map((action) => (
-        <MenuItemCommand
-          key={action.type}
-          LeftIcon={getIcon(action.icon)}
-          text={action.label}
-          onClick={() => handleCreateStep(action.type)}
-        />
-      ))}
+      {WorkflowActionMenuItems(CORE_ACTIONS, theme, handleCreateStep)}
+      <RightDrawerWorkflowSelectStepTitle>
+        {t`Human Input`}
+      </RightDrawerWorkflowSelectStepTitle>
+      {WorkflowActionMenuItems(HUMAN_INPUT_ACTIONS, theme, handleCreateStep)}
     </RightDrawerStepListContainer>
   );
 };

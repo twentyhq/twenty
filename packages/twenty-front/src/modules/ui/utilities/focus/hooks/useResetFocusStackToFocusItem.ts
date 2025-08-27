@@ -1,6 +1,6 @@
 import { DEBUG_FOCUS_STACK } from '@/ui/utilities/focus/constants/DebugFocusStack';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
-import { FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
+import { type FocusStackItem } from '@/ui/utilities/focus/types/FocusStackItem';
 import { useRecoilCallback } from 'recoil';
 import { logDebug } from '~/utils/logDebug';
 

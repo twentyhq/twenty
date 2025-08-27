@@ -7,7 +7,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { ImportDataStep } from '@/spreadsheet-import/steps/components/ImportDataStep';
-import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
+import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { CircularProgressBar } from 'twenty-ui/feedback';
 import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';

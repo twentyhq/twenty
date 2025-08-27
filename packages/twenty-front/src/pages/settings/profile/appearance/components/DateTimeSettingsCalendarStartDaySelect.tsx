@@ -3,9 +3,9 @@ import { useMemo } from 'react';
 import { CalendarStartDay } from '@/localization/constants/CalendarStartDay';
 import { detectCalendarStartDay } from '@/localization/utils/detectCalendarStartDay';
 import { Select } from '@/ui/input/components/Select';
-import { DayNameWithIndex } from '@/ui/input/components/internal/date/types/DayNameWithIndex';
+import { type DayNameWithIndex } from '@/ui/input/components/internal/date/types/DayNameWithIndex';
 import { t } from '@lingui/core/macro';
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 
 type DateTimeSettingsCalendarStartDaySelectProps = {
   value: number;

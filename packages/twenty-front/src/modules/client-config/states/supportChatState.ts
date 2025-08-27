@@ -1,5 +1,5 @@
 import { createState } from 'twenty-ui/utilities';
-import { Support, SupportDriver } from '~/generated/graphql';
+import { type Support, SupportDriver } from '~/generated/graphql';
 
 export const supportChatState = createState<Support>({
   key: 'supportChatState',

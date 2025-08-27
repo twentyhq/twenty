@@ -1,4 +1,4 @@
-import { VariableDateViewFilterValueUnit } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
+import { type VariableDateViewFilterValueUnit } from 'twenty-shared/types';
 
 type RelativeDateUnit = {
   value: VariableDateViewFilterValueUnit;

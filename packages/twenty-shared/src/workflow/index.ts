@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export { TRIGGER_STEP_ID } from './constants/TriggerStepId';
 export type {
   WorkflowRunStepInfo,
   WorkflowRunStepInfos,

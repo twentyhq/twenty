@@ -1,6 +1,6 @@
-import { FieldType } from '@/settings/data-model/types/FieldType';
-import { SettingsExcludedFieldType } from '@/settings/data-model/types/SettingsExcludedFieldType';
-import { ExcludeLiteral } from '~/types/ExcludeLiteral';
+import { type FieldType } from '@/settings/data-model/types/FieldType';
+import { type SettingsExcludedFieldType } from '@/settings/data-model/types/SettingsExcludedFieldType';
+import { type ExcludeLiteral } from '~/types/ExcludeLiteral';
 
 export type SettingsFieldType = ExcludeLiteral<
   FieldType,

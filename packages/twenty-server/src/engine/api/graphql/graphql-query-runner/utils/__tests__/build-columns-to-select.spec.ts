@@ -101,6 +101,16 @@ describe('buildColumnsToSelect', () => {
     },
   };
 
+  const mockObjectMetadataMaps = {
+    byId: {
+      '9af20778-2f2c-4e22-ae83-2e77e479b57c': {
+        id: '9af20778-2f2c-4e22-ae83-2e77e479b57c',
+        nameSingular: 'company',
+        namePlural: 'companies',
+      },
+    },
+  };
+
   it('should build columns to select with relation fields', () => {
     const select = {
       nameFirstName: true,
@@ -118,6 +128,7 @@ describe('buildColumnsToSelect', () => {
       select,
       relations,
       objectMetadataItemWithFieldMaps: mockObjectMetadataItemWithFieldMaps,
+      objectMetadataMaps: mockObjectMetadataMaps,
     });
 
     expect(result).toEqual({
@@ -139,6 +150,7 @@ describe('buildColumnsToSelect', () => {
       select,
       relations,
       objectMetadataItemWithFieldMaps: mockObjectMetadataItemWithFieldMaps,
+      objectMetadataMaps: mockObjectMetadataMaps,
     });
 
     expect(result).toEqual({
@@ -161,6 +173,7 @@ describe('buildColumnsToSelect', () => {
       select,
       relations,
       objectMetadataItemWithFieldMaps: mockObjectMetadataItemWithFieldMaps,
+      objectMetadataMaps: mockObjectMetadataMaps,
     });
 
     expect(result).toEqual({
@@ -182,6 +195,7 @@ describe('buildColumnsToSelect', () => {
       select,
       relations,
       objectMetadataItemWithFieldMaps: mockObjectMetadataItemWithFieldMaps,
+      objectMetadataMaps: mockObjectMetadataMaps,
     });
 
     expect(result).toEqual({
@@ -219,6 +233,7 @@ describe('buildColumnsToSelect', () => {
       select,
       relations,
       objectMetadataItemWithFieldMaps: mockObjectMetadataWithOneToMany,
+      objectMetadataMaps: mockObjectMetadataMaps,
     });
 
     expect(result).toEqual({
@@ -256,6 +271,7 @@ describe('buildColumnsToSelect', () => {
       select,
       relations,
       objectMetadataItemWithFieldMaps: mockObjectMetadataWithoutJoinColumn,
+      objectMetadataMaps: mockObjectMetadataMaps,
     });
 
     expect(result).toEqual({

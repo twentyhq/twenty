@@ -33,7 +33,7 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
-import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
+import { type SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledIconChevronRight = styled(IconChevronRight)`

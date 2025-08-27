@@ -1,20 +1,15 @@
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
-import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
+import { type WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagramEdge';
 import { useCreateWorkflowVersionEdge } from '@/workflow/workflow-steps/hooks/useCreateWorkflowVersionEdge';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { WorkflowDiagramEdge } from '@/workflow/workflow-diagram/types/WorkflowDiagramEdge';
 
-export const useCreateEdge = ({
-  workflow,
-}: {
-  workflow: WorkflowWithCurrentVersion;
-}) => {
+export const useCreateEdge = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { createWorkflowVersionEdge } = useCreateWorkflowVersionEdge();
 
-  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
+  const { getUpdatableWorkflowVersion } =
+    useGetUpdatableWorkflowVersionOrThrow();
 
   const createEdge = async ({ source, target }: WorkflowDiagramEdge) => {
     if (isLoading) {
@@ -24,11 +19,7 @@ export const useCreateEdge = ({
     setIsLoading(true);
 
     try {
-      const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
-
-      if (!isDefined(workflowVersionId)) {
-        throw new Error('Cannot find a workflow version to update');
-      }
+      const workflowVersionId = await getUpdatableWorkflowVersion();
 
       const createdEdge = (
         await createWorkflowVersionEdge({

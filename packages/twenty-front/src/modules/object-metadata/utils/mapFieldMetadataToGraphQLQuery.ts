@@ -2,13 +2,13 @@ import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObje
 import { isUndefined } from '@sniptt/guards';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
-import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
+import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { FieldMetadataItem } from '../types/FieldMetadataItem';
-import { ObjectPermissions } from 'twenty-shared/types';
+import { type FieldMetadataItem } from '../types/FieldMetadataItem';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];
@@ -23,7 +23,6 @@ type MapFieldMetadataToGraphQLQueryArgs = {
     string,
     ObjectPermissions & { objectMetadataId: string }
   >;
-  isFieldsPermissionsEnabled?: boolean;
 };
 // TODO: change ObjectMetadataItems mock before refactoring with relation computed field
 export const mapFieldMetadataToGraphQLQuery = ({
@@ -33,7 +32,6 @@ export const mapFieldMetadataToGraphQLQuery = ({
   relationRecordGqlFields,
   computeReferences = false,
   objectPermissionsByObjectMetadataId,
-  isFieldsPermissionsEnabled,
 }: MapFieldMetadataToGraphQLQueryArgs): string => {
   const fieldType = fieldMetadata.type;
 
@@ -89,7 +87,6 @@ ${mapObjectMetadataToGraphQLQuery({
   computeReferences: computeReferences,
   isRootLevel: false,
   objectPermissionsByObjectMetadataId,
-  isFieldsPermissionsEnabled,
 })}`;
   }
 
@@ -137,7 +134,6 @@ ${mapObjectMetadataToGraphQLQuery({
       computeReferences,
       isRootLevel: false,
       objectPermissionsByObjectMetadataId,
-      isFieldsPermissionsEnabled,
     })}
   }
 }`;

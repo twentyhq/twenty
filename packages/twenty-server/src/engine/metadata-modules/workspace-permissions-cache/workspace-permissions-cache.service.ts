@@ -9,7 +9,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
@@ -28,6 +27,11 @@ type CacheResult<T, U> = {
 
 export const USER_WORKSPACE_ROLE_MAP = 'User workspace role map';
 export const ROLES_PERMISSIONS = 'Roles permissions';
+const WORKFLOW_STANDARD_OBJECT_IDS = [
+  STANDARD_OBJECT_IDS.workflow,
+  STANDARD_OBJECT_IDS.workflowRun,
+  STANDARD_OBJECT_IDS.workflowVersion,
+] as const;
 
 @Injectable()
 export class WorkspacePermissionsCacheService {
@@ -174,24 +178,12 @@ export class WorkspacePermissionsCacheService {
   }): Promise<ObjectsPermissionsByRoleIdDeprecated> {
     let roles: RoleEntity[] = [];
 
-    const workspaceFeatureFlagsMap =
-      await this.workspaceFeatureFlagsMapCacheService.getWorkspaceFeatureFlagsMap(
-        { workspaceId },
-      );
-
-    const isFieldPermissionsEnabled =
-      workspaceFeatureFlagsMap[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
-
     roles = await this.roleRepository.find({
       where: {
         workspaceId,
         ...(roleIds ? { id: In(roleIds) } : {}),
       },
-      relations: [
-        'objectPermissions',
-        'permissionFlags',
-        ...(isFieldPermissionsEnabled ? ['fieldPermissions'] : []),
-      ],
+      relations: ['objectPermissions', 'permissionFlags', 'fieldPermissions'],
     });
 
     const workspaceObjectMetadataCollection =
@@ -213,11 +205,9 @@ export class WorkspacePermissionsCacheService {
 
         if (
           standardId &&
-          [
-            STANDARD_OBJECT_IDS.workflow,
-            STANDARD_OBJECT_IDS.workflowRun,
-            STANDARD_OBJECT_IDS.workflowVersion,
-          ].includes(standardId)
+          WORKFLOW_STANDARD_OBJECT_IDS.includes(
+            standardId as (typeof WORKFLOW_STANDARD_OBJECT_IDS)[number],
+          )
         ) {
           const hasWorkflowsPermissions = this.hasWorkflowsPermissions(role);
 
@@ -253,22 +243,20 @@ export class WorkspacePermissionsCacheService {
             canDestroy,
           );
 
-          if (isFieldPermissionsEnabled) {
-            const fieldPermissions = role.fieldPermissions.filter(
-              (fieldPermission) =>
-                fieldPermission.objectMetadataId === objectMetadataId,
-            );
+          const fieldPermissions = role.fieldPermissions.filter(
+            (fieldPermission) =>
+              fieldPermission.objectMetadataId === objectMetadataId,
+          );
 
-            for (const fieldPermission of fieldPermissions) {
-              if (
-                isDefined(fieldPermission.canReadFieldValue) ||
-                isDefined(fieldPermission.canUpdateFieldValue)
-              ) {
-                restrictedFields[fieldPermission.fieldMetadataId] = {
-                  canRead: fieldPermission.canReadFieldValue,
-                  canUpdate: fieldPermission.canUpdateFieldValue,
-                };
-              }
+          for (const fieldPermission of fieldPermissions) {
+            if (
+              isDefined(fieldPermission.canReadFieldValue) ||
+              isDefined(fieldPermission.canUpdateFieldValue)
+            ) {
+              restrictedFields[fieldPermission.fieldMetadataId] = {
+                canRead: fieldPermission.canReadFieldValue,
+                canUpdate: fieldPermission.canUpdateFieldValue,
+              };
             }
           }
         }

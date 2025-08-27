@@ -2,7 +2,7 @@ import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import {
   Breadcrumb,
-  BreadcrumbProps,
+  type BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import styled from '@emotion/styled';
 import { useIsMobile } from 'twenty-ui/utilities';

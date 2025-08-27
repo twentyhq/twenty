@@ -1,6 +1,6 @@
-import { RecordTableFooterAggregateContentId } from '@/object-record/record-table/record-table-footer/types/RecordTableFooterAggregateContentId';
+import { type RecordTableFooterAggregateContentId } from '@/object-record/record-table/record-table-footer/types/RecordTableFooterAggregateContentId';
 import { createContext } from 'react';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { type FieldMetadataType } from '~/generated-metadata/graphql';
 
 export type RecordTableColumnAggregateFooterDropdownContextValue = {
   currentContentId: RecordTableFooterAggregateContentId | null;

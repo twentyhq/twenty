@@ -1,12 +1,11 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
-import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
-import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { useIsFieldEmpty } from '@/object-record/record-field/ui/hooks/useIsFieldEmpty';
+import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import {
-  RecordInlineCellContextProps,
   useRecordInlineCellContext,
+  type RecordInlineCellContextProps,
 } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { RecordInlineCellButton } from '@/object-record/record-inline-cell/components/RecordInlineCellEditButton';
 import { useLingui } from '@lingui/react/macro';
@@ -14,9 +13,12 @@ import { useLingui } from '@lingui/react/macro';
 const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   Pick<
     RecordInlineCellContextProps,
-    'isDisplayModeFixHeight' | 'disableHoverEffect'
+    'isDisplayModeFixHeight' | 'disableHoverEffect' | 'readonly'
   > & { isHovered?: boolean }
 >`
+  outline: 1px solid
+    ${({ theme, isHovered, readonly }) =>
+      isHovered && readonly ? theme.border.color.medium : 'transparent'};
   align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
@@ -27,7 +29,7 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   padding-right: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
   ${(props) => {
-    if (props.isHovered === true) {
+    if (props.isHovered === true && !props.readonly) {
       return css`
         background-color: ${!props.disableHoverEffect
           ? props.theme.background.transparent.light
@@ -54,38 +56,46 @@ const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
 `;
 
 const StyledEmptyField = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  height: 20px;
-  display: flex;
   align-items: center;
+  color: ${({ theme }) => theme.font.color.light};
+  display: flex;
+  height: 20px;
 `;
 
 export const RecordInlineCellDisplayMode = ({
   children,
-}: React.PropsWithChildren<unknown>) => {
-  const { isFocused } = useFieldFocus();
-
+  onClick,
+  isHovered,
+}: React.PropsWithChildren<{
+  isHovered: boolean;
+  onClick?: () => void;
+}>) => {
   const { t } = useLingui();
 
-  const { editModeContentOnly, showLabel, label, buttonIcon } =
+  const { editModeContentOnly, showLabel, label, buttonIcon, readonly } =
     useRecordInlineCellContext();
 
   const isDisplayModeContentEmpty = useIsFieldEmpty();
   const showEditButton =
     buttonIcon &&
-    isFocused &&
+    isHovered &&
+    !readonly &&
     !isDisplayModeContentEmpty &&
     !editModeContentOnly;
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const shouldDisplayEditModeOnFocus = isFocused && isFieldInputOnly;
+  const shouldDisplayEditModeOnFocus = isHovered && isFieldInputOnly;
 
   const emptyPlaceHolder = showLabel ? t`Empty` : label;
 
   return (
     <>
-      <StyledRecordInlineCellNormalModeOuterContainer isHovered={isFocused}>
+      <StyledRecordInlineCellNormalModeOuterContainer
+        isHovered={isHovered}
+        readonly={readonly}
+        onClick={onClick}
+      >
         <StyledRecordInlineCellNormalModeInnerContainer>
           {(isDisplayModeContentEmpty && !shouldDisplayEditModeOnFocus) ||
           !children ? (
@@ -95,7 +105,9 @@ export const RecordInlineCellDisplayMode = ({
           )}
         </StyledRecordInlineCellNormalModeInnerContainer>
       </StyledRecordInlineCellNormalModeOuterContainer>
-      {showEditButton && <RecordInlineCellButton Icon={buttonIcon} />}
+      {showEditButton && (
+        <RecordInlineCellButton Icon={buttonIcon} onClick={onClick} />
+      )}
     </>
   );
 };

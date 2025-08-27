@@ -1,20 +1,26 @@
 import { Injectable } from '@nestjs/common';
 
+import { t } from '@lingui/core/macro';
+import { isDefined } from 'class-validator';
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { ValidateOneFieldMetadataArgs } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { type FlatFieldMetadataTypeValidator } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
+import { FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { isEnumValidateOneFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-validate-one-field-metadata-args.util';
-import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-enum-flat-field-metadata.validator';
-import { validateRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/validate-relation-flat-field-metadata.validator';
+import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util';
+import { validateRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-flat-field-metadata.util';
 @Injectable()
 export class FlatFieldMetadataTypeValidatorService {
   constructor(private readonly featureFlagService: FeatureFlagService) {}
 
-  public readonly FIELD_METADATA_TYPE_VALIDATOR_HASHMAP: FlatFieldMetadataTypeValidator =
+  private readonly FIELD_METADATA_TYPE_VALIDATOR_HASHMAP: FlatFieldMetadataTypeValidator =
     {
       ACTOR: async (_args) => {
         return [];
@@ -55,10 +61,11 @@ export class FlatFieldMetadataTypeValidatorService {
 
         if (!isMorphRelationEnabled) {
           return [
-            new FieldMetadataException(
-              'Morph relation feature is disabled',
-              FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-            ),
+            {
+              code: FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION,
+              message: 'Morph relation feature flag is disabled',
+              userFriendlyMessage: t`Morph relation fields are disabled for your workspace`,
+            },
           ];
         }
 
@@ -67,7 +74,7 @@ export class FlatFieldMetadataTypeValidatorService {
       MULTI_SELECT: (args) => {
         if (!isEnumValidateOneFieldMetadata(args)) {
           throw new FieldMetadataException(
-            'Should never occur, invaliad enum field metadata type',
+            'Should never occur, invalid enum field metadata type',
             FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
           );
         }
@@ -89,7 +96,7 @@ export class FlatFieldMetadataTypeValidatorService {
       RATING: (args) => {
         if (!isEnumValidateOneFieldMetadata(args)) {
           throw new FieldMetadataException(
-            'Should never occur, invaliad enum field metadata type',
+            'Should never occur, invalid enum field metadata type',
             FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
           );
         }
@@ -109,7 +116,7 @@ export class FlatFieldMetadataTypeValidatorService {
       SELECT: (args) => {
         if (!isEnumValidateOneFieldMetadata(args)) {
           throw new FieldMetadataException(
-            'Should never occur, invaliad enum field metadata type',
+            'Should never occur, invalid enum field metadata type',
             FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
           );
         }
@@ -126,4 +133,38 @@ export class FlatFieldMetadataTypeValidatorService {
         return [];
       },
     };
+
+  public async validateFlatFieldMetadataTypeSpecificities<
+    T extends FieldMetadataType = FieldMetadataType,
+  >({
+    existingFlatObjectMetadataMaps,
+    flatFieldMetadataToValidate,
+    workspaceId,
+    otherFlatObjectMetadataMapsToValidate,
+  }: ValidateOneFieldMetadataArgs<T>): Promise<
+    FlatFieldMetadataValidationError[]
+  > {
+    const fieldMetadataTypeValidator =
+      this.FIELD_METADATA_TYPE_VALIDATOR_HASHMAP[
+        flatFieldMetadataToValidate.type
+      ];
+
+    if (!isDefined(fieldMetadataTypeValidator)) {
+      return [
+        {
+          code: FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION,
+          message: `Unsupported field metadata type ${flatFieldMetadataToValidate.type}`,
+          value: flatFieldMetadataToValidate.type,
+          userFriendlyMessage: t`Unsupported field metadata type ${flatFieldMetadataToValidate.type}`,
+        },
+      ];
+    }
+
+    return await fieldMetadataTypeValidator({
+      existingFlatObjectMetadataMaps,
+      flatFieldMetadataToValidate,
+      workspaceId,
+      otherFlatObjectMetadataMapsToValidate,
+    });
+  }
 }

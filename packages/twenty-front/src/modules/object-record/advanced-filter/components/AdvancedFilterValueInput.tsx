@@ -10,7 +10,7 @@ import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
+import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 

@@ -1,4 +1,4 @@
-import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { joinAddressFieldValues } from '../joinAddressFieldValues';
 
 describe('joinAddressFieldValues', () => {

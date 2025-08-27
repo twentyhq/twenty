@@ -5,11 +5,11 @@ import { calculateHandlePosition } from '@/settings/data-model/graph-overview/ut
 import styled from '@emotion/styled';
 import {
   Background,
-  Edge,
-  Node,
-  NodeTypes,
-  OnEdgesChange,
-  OnNodesChange,
+  type Edge,
+  type Node,
+  type NodeTypes,
+  type OnEdgesChange,
+  type OnNodesChange,
   ReactFlow,
   applyEdgeChanges,
   applyNodeChanges,

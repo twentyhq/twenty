@@ -20,6 +20,7 @@ export const buildUpdatableStandardFieldInput = (
     defaultValue: fieldMetadataInput.defaultValue,
     settings: fieldMetadataInput.settings,
     isLabelSyncedWithName: fieldMetadataInput.isLabelSyncedWithName,
+    isUnique: fieldMetadataInput.isUnique,
   };
 
   if ('standardOverrides' in fieldMetadataInput) {

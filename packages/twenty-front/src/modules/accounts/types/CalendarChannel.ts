@@ -1,4 +1,4 @@
-import { CalendarChannelVisibility } from '~/generated/graphql';
+import { type CalendarChannelVisibility } from '~/generated/graphql';
 
 export enum CalendarChannelSyncStatus {
   NOT_SYNCED = 'NOT_SYNCED',

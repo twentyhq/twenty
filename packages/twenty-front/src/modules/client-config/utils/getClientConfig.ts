@@ -1,4 +1,4 @@
-import { ClientConfig } from '@/client-config/types/ClientConfig';
+import { type ClientConfig } from '@/client-config/types/ClientConfig';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 export const getClientConfig = async (): Promise<ClientConfig> => {

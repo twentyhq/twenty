@@ -1,5 +1,5 @@
-import { RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
-import { Nullable } from 'twenty-ui/utilities';
+import { type RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
+import { type Nullable } from 'twenty-ui/utilities';
 
 export type RecordGqlConnection = {
   __typename?: string;

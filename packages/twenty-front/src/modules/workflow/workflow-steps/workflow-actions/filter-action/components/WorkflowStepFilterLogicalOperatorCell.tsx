@@ -6,13 +6,14 @@ import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-ac
 
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { StepFilterGroup, StepLogicalOperator } from 'twenty-shared/src/types';
+import { StepLogicalOperator, type StepFilterGroup } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
 const StyledText = styled.div`
-  height: ${({ theme }) => theme.spacing(8)};
-  display: flex;
   align-items: center;
+  color: ${({ theme }) => theme.font.color.primary};
+  display: flex;
+  height: ${({ theme }) => theme.spacing(8)};
 `;
 
 const StyledContainer = styled.div`
@@ -64,7 +65,6 @@ export const WorkflowStepFilterLogicalOperatorCell = ({
       ) : index === 1 ? (
         readonly ? (
           <Select
-            fullWidth
             dropdownWidth={GenericDropdownContentWidth.Narrow}
             dropdownId={`advanced-filter-logical-operator-${stepFilterGroup.id}`}
             value={stepFilterGroup.logicalOperator}
@@ -74,7 +74,6 @@ export const WorkflowStepFilterLogicalOperatorCell = ({
           />
         ) : (
           <Select
-            fullWidth
             dropdownWidth={GenericDropdownContentWidth.Narrow}
             dropdownId={`advanced-filter-logical-operator-${stepFilterGroup.id}`}
             value={stepFilterGroup.logicalOperator}

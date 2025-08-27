@@ -4,7 +4,6 @@ export const mockPerformance = {
   objectMetadataItem: {
     __typename: 'object',
     id: '4916628e-8570-4242-8970-f58c509e5a93',
-    dataSourceId: '0fd9fd54-0e8d-4f78-911c-76b33436a768',
     nameSingular: 'person',
     namePlural: 'people',
     primaryLinkLabelSingular: 'Person',

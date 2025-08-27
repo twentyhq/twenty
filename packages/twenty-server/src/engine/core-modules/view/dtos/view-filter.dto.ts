@@ -1,11 +1,9 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import GraphQLJSON from 'graphql-type-json';
 
-import {
-  RawJSONScalar,
-  UUIDScalarType,
-} from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import { ViewFilterValue } from 'src/engine/core-modules/view/types/view-filter-value.type';
 
@@ -24,7 +22,7 @@ export class ViewFilterDTO {
   @Field({ nullable: false, defaultValue: ViewFilterOperand.CONTAINS })
   operand: ViewFilterOperand;
 
-  @Field(() => RawJSONScalar, { nullable: false })
+  @Field(() => GraphQLJSON, { nullable: false })
   value: ViewFilterValue;
 
   @Field(() => UUIDScalarType, { nullable: true })

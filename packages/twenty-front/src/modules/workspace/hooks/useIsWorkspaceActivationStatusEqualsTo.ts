@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { type WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 export const useIsWorkspaceActivationStatusEqualsTo = (
   activationStatus: WorkspaceActivationStatus,

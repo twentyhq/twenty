@@ -3,7 +3,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useTheme } from '@emotion/react';
 import {
   IconAppWindow,
-  IconComponent,
+  type IconComponent,
   IconDatabase,
   IconServer2,
   IconTool,
@@ -11,7 +11,7 @@ import {
 } from 'twenty-ui/display';
 import {
   HealthIndicatorId,
-  SystemHealthService,
+  type SystemHealthService,
 } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { SettingsAdminHealthStatusRightContainer } from './SettingsAdminHealthStatusRightContainer';

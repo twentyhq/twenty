@@ -1,7 +1,7 @@
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
-import { EditorProps, Monaco } from '@monaco-editor/react';
+import { type EditorProps, type Monaco } from '@monaco-editor/react';
 import dotenv from 'dotenv';
-import { editor, MarkerSeverity } from 'monaco-editor';
+import { type editor, MarkerSeverity } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';

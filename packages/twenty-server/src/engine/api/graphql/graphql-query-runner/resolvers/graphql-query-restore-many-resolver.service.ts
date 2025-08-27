@@ -48,6 +48,7 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const restoredObjectRecords = await queryBuilder

@@ -1,4 +1,4 @@
-import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/selectAutocompleteListDropDownId';
+import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/SelectAutocompleteListDropDownId';
 
 describe('selectAutocompleteListDropDownId', () => {
   it('should have the correct constant value', () => {

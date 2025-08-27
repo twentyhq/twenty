@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 export const getOperandLabel = (
   operand: ViewFilterOperand | null | undefined,

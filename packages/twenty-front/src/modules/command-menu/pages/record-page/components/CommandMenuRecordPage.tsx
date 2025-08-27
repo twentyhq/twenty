@@ -5,12 +5,10 @@ import { viewableRecordNameSingularComponentState } from '@/command-menu/pages/r
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { INFORMATION_BANNER_HEIGHT } from '@/information-banner/constants/InformationBannerHeight';
-import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
+import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
-import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
@@ -71,48 +69,40 @@ export const CommandMenuRecordPage = () => {
   }
 
   return (
-    <RecordFilterGroupsComponentInstanceContext.Provider
-      value={{ instanceId: `record-show-${objectRecordId}` }}
+    <RecordComponentInstanceContextsWrapper
+      componentInstanceId={`record-show-${objectRecordId}`}
     >
-      <RecordFiltersComponentInstanceContext.Provider
-        value={{ instanceId: `record-show-${objectRecordId}` }}
+      <ContextStoreComponentInstanceContext.Provider
+        value={{
+          instanceId: commandMenuPageInstanceId,
+        }}
       >
-        <RecordSortsComponentInstanceContext.Provider
-          value={{ instanceId: `record-show-${objectRecordId}` }}
+        <ActionMenuComponentInstanceContext.Provider
+          value={{ instanceId: commandMenuPageInstanceId }}
         >
-          <ContextStoreComponentInstanceContext.Provider
-            value={{
-              instanceId: commandMenuPageInstanceId,
-            }}
+          <StyledRightDrawerRecord
+            isMobile={isMobile}
+            hasDeletedRecordBanner={!!recordDeletedAt}
           >
-            <ActionMenuComponentInstanceContext.Provider
-              value={{ instanceId: commandMenuPageInstanceId }}
+            <TimelineActivityContext.Provider
+              value={{
+                recordId: objectRecordId,
+              }}
             >
-              <StyledRightDrawerRecord
-                isMobile={isMobile}
-                hasDeletedRecordBanner={!!recordDeletedAt}
-              >
-                <TimelineActivityContext.Provider
-                  value={{
-                    recordId: objectRecordId,
-                  }}
-                >
-                  <RecordShowEffect
-                    objectNameSingular={objectNameSingular}
-                    recordId={objectRecordId}
-                  />
-                  <RecordShowContainer
-                    objectNameSingular={objectNameSingular}
-                    objectRecordId={objectRecordId}
-                    loading={false}
-                    isInRightDrawer={true}
-                  />
-                </TimelineActivityContext.Provider>
-              </StyledRightDrawerRecord>
-            </ActionMenuComponentInstanceContext.Provider>
-          </ContextStoreComponentInstanceContext.Provider>
-        </RecordSortsComponentInstanceContext.Provider>
-      </RecordFiltersComponentInstanceContext.Provider>
-    </RecordFilterGroupsComponentInstanceContext.Provider>
+              <RecordShowEffect
+                objectNameSingular={objectNameSingular}
+                recordId={objectRecordId}
+              />
+              <RecordShowContainer
+                objectNameSingular={objectNameSingular}
+                objectRecordId={objectRecordId}
+                loading={false}
+                isInRightDrawer={true}
+              />
+            </TimelineActivityContext.Provider>
+          </StyledRightDrawerRecord>
+        </ActionMenuComponentInstanceContext.Provider>
+      </ContextStoreComponentInstanceContext.Provider>
+    </RecordComponentInstanceContextsWrapper>
   );
 };

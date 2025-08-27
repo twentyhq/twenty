@@ -3,10 +3,10 @@ import { useFormContext } from 'react-hook-form';
 import { v4 } from 'uuid';
 
 import {
-  FieldMetadataItem,
-  FieldMetadataItemOption,
+  type FieldMetadataItem,
+  type FieldMetadataItemOption,
 } from '@/object-metadata/types/FieldMetadataItem';
-import { SettingsDataModelFieldSelectFormValues } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
+import { type SettingsDataModelFieldSelectFormValues } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
 
 const DEFAULT_OPTION: FieldMetadataItemOption = {

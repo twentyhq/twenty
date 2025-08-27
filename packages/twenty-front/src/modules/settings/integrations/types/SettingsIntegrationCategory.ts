@@ -1,4 +1,4 @@
-import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import { type SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 
 export type SettingsIntegrationCategory = {
   key: string;

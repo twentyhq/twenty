@@ -1,7 +1,7 @@
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { TAB_LIST_LEFT_PADDING } from '@/ui/layout/tab-list/constants/TabListPadding';
-import { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { TabWidthsById } from '@/ui/layout/tab-list/types/TabWidthsById';
+import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { type TabWidthsById } from '@/ui/layout/tab-list/types/TabWidthsById';
 
 type CalculateVisibleTabCountParams = {
   visibleTabs: SingleTabProps[];

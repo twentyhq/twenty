@@ -1,4 +1,4 @@
-import { WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
+import { type WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { act, renderHook } from '@testing-library/react';
 import { useHttpRequestForm } from '../useHttpRequestForm';
 

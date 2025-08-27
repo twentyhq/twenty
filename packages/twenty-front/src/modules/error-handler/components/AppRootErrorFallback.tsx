@@ -1,4 +1,4 @@
-import { AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
+import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { motion } from 'framer-motion';

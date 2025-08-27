@@ -2,11 +2,11 @@ import styled from '@emotion/styled';
 
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { useActivityTargetsComponentInstanceId } from '@/activities/inline-cell/hooks/useActivityTargetsComponentInstanceId';
-import { Note } from '@/activities/types/Note';
+import { type Note } from '@/activities/types/Note';
 import { getActivityPreview } from '@/activities/utils/getActivityPreview';
 import { useOpenRecordInCommandMenu } from '@/command-menu/hooks/useOpenRecordInCommandMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { FieldContextProvider } from '@/object-record/record-field/components/FieldContextProvider';
+import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
   align-items: flex-start;

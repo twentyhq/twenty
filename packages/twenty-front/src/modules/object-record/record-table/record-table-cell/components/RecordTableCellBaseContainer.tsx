@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
-import { ReactNode, useContext } from 'react';
+import { useContext, type ReactNode } from 'react';
 
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
-import { isFieldIdentifierDisplay } from '@/object-record/record-field/meta-types/display/utils/isFieldIdentifierDisplay';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
+import { isFieldIdentifierDisplay } from '@/object-record/record-field/ui/meta-types/display/utils/isFieldIdentifierDisplay';
 import { RECORD_CHIP_CLICK_OUTSIDE_ID } from '@/object-record/record-table/constants/RecordChipClickOutsideId';
 import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';

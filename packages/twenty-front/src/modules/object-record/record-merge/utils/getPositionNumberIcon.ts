@@ -1,4 +1,4 @@
-import { MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
+import { type MUTATION_MAX_MERGE_RECORDS } from 'twenty-shared/constants';
 import {
   IconSquareNumber1,
   IconSquareNumber2,
@@ -10,7 +10,7 @@ import {
   IconSquareNumber8,
   IconSquareNumber9,
 } from 'twenty-ui/display';
-import { FixedLengthArray } from '../types/FixedLengthArray';
+import { type FixedLengthArray } from '../types/FixedLengthArray';
 
 export const getPositionNumberIcon = (index: number) => {
   const iconMapping: FixedLengthArray<

@@ -8,7 +8,7 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
-import { ServerlessFunction } from '~/generated-metadata/graphql';
+import { type ServerlessFunction } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledTableRow = styled(TableRow)`

@@ -5,7 +5,7 @@ import {
   isObject,
   isString,
 } from '@sniptt/guards';
-import { GraphQLVariables } from 'msw';
+import { type GraphQLVariables } from 'msw';
 import { isDefined } from 'twenty-shared/utils';
 
 type StringFilter = {

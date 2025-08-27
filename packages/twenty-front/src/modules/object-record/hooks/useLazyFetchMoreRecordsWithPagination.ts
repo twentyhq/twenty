@@ -1,26 +1,26 @@
 import {
-  ApolloError,
-  ApolloQueryResult,
-  FetchMoreQueryOptions,
-  OperationVariables,
-  WatchQueryFetchPolicy,
+  type ApolloError,
+  type ApolloQueryResult,
+  type FetchMoreQueryOptions,
+  type OperationVariables,
+  type WatchQueryFetchPolicy,
 } from '@apollo/client';
-import { Unmasked } from '@apollo/client/masking';
+import { type Unmasked } from '@apollo/client/masking';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabled';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
-import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
-import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
-import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
+import { type RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
+import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
+import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
+import { type RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 import { useHandleFindManyRecordsError } from '@/object-record/hooks/useHandleFindManyRecordsError';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type OnFindManyRecordsCompleted } from '@/object-record/types/OnFindManyRecordsCompleted';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { getQueryIdentifier } from '@/object-record/utils/getQueryIdentifier';
 

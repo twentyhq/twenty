@@ -1,7 +1,7 @@
-import { FetchResult } from '@apollo/client';
+import { type FetchResult } from '@apollo/client';
 import styled from '@emotion/styled';
 
-import { SyncRemoteTableSchemaChangesMutation } from '~/generated-metadata/graphql';
+import { type SyncRemoteTableSchemaChangesMutation } from '~/generated-metadata/graphql';
 import { Button } from 'twenty-ui/input';
 import { IconReload } from 'twenty-ui/display';
 

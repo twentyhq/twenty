@@ -1,5 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
+import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { createApolloStoreFieldName } from '~/utils/createApolloStoreFieldName';
 
 export const useRecordIdsFromFindManyCacheRootQuery = ({

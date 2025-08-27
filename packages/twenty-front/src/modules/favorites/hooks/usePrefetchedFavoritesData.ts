@@ -1,5 +1,5 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { Favorite } from '@/favorites/types/Favorite';
+import { type Favorite } from '@/favorites/types/Favorite';
 import { prefetchFavoritesState } from '@/prefetch/states/prefetchFavoritesState';
 import { useRecoilValue } from 'recoil';
 

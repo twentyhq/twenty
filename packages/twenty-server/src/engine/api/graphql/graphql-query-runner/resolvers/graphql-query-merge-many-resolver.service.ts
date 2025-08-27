@@ -247,7 +247,8 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
     priorityRecordId: string,
     mergedData: Partial<ObjectRecord>,
   ): Promise<ObjectRecord> {
-    const { objectMetadataItemWithFieldMaps } = executionArgs.options;
+    const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+      executionArgs.options;
 
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
@@ -257,6 +258,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const updatedObjectRecords = await queryBuilder

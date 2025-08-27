@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import { getFieldLinkDefinedLinks } from '@/object-record/record-field/meta-types/input/utils/getFieldLinkDefinedLinks';
-import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
+import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
+import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import {
   getAbsoluteUrlOrThrow,

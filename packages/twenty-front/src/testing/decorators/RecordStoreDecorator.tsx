@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react';
 
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 

@@ -1,6 +1,6 @@
 import { ApolloProvider } from '@apollo/client';
 import { loadDevMessages } from '@apollo/client/dev';
-import { Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react';
 import { HelmetProvider } from 'react-helmet-async';
 import {
   createMemoryRouter,
@@ -24,9 +24,7 @@ import { MainContextStoreProvider } from '@/context-store/components/MainContext
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/ObjectMetadataItemsLoadEffect';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
-import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
-import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
+import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
@@ -97,26 +95,11 @@ const Providers = () => {
                       <HelmetProvider>
                         <IconsProvider>
                           <PrefetchDataProvider>
-                            <RecordFilterGroupsComponentInstanceContext.Provider
-                              value={{
-                                instanceId:
-                                  'storybook-test-record-filter-groups',
-                              }}
+                            <RecordComponentInstanceContextsWrapper
+                              componentInstanceId={'storybook-test-record'}
                             >
-                              <RecordFiltersComponentInstanceContext.Provider
-                                value={{
-                                  instanceId: 'storybook-test-record-filters',
-                                }}
-                              >
-                                <RecordSortsComponentInstanceContext.Provider
-                                  value={{
-                                    instanceId: 'storybook-test-record-sorts',
-                                  }}
-                                >
-                                  <Outlet />
-                                </RecordSortsComponentInstanceContext.Provider>
-                              </RecordFiltersComponentInstanceContext.Provider>
-                            </RecordFilterGroupsComponentInstanceContext.Provider>
+                              <Outlet />
+                            </RecordComponentInstanceContextsWrapper>
                           </PrefetchDataProvider>
                         </IconsProvider>
                       </HelmetProvider>

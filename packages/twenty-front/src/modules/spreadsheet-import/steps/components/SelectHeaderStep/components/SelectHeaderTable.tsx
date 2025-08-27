@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
-import { ImportedRow } from '@/spreadsheet-import/types';
+import { type ImportedRow } from '@/spreadsheet-import/types';
 
 import { generateSelectionColumns } from './SelectColumn';
 

@@ -122,6 +122,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const objectRecords = (await queryBuilder

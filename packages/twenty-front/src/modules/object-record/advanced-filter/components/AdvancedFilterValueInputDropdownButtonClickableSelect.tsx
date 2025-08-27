@@ -1,4 +1,3 @@
-import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { getAdvancedFilterInputPlaceholderText } from '@/object-record/advanced-filter/utils/getAdvancedFilterInputPlacedholderText';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -8,6 +7,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import styled from '@emotion/styled';
 
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { isDefined } from 'twenty-shared/utils';
 
 // TODO: factorize this with https://github.com/twentyhq/core-team-issues/issues/752
@@ -48,11 +48,9 @@ export const AdvancedFilterValueInputDropdownButtonClickableSelect = ({
 
   const shouldUsePlaceholder = !isNonEmptyString(recordFilter?.value);
 
-  const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
-
-  const fieldMetadataItem = isNonEmptyString(recordFilter?.fieldMetadataId)
-    ? getFieldMetadataItemById(recordFilter?.fieldMetadataId)
-    : undefined;
+  const { fieldMetadataItem } = useFieldMetadataItemById(
+    recordFilter?.fieldMetadataId ?? '',
+  );
 
   const placeholderText = isDefined(fieldMetadataItem)
     ? getAdvancedFilterInputPlaceholderText(fieldMetadataItem)

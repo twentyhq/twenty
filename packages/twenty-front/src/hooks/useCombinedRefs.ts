@@ -1,4 +1,4 @@
-import { Ref, RefCallback } from 'react';
+import { type Ref, type RefCallback } from 'react';
 import { combineRefs } from '~/utils/combineRefs';
 
 export const useCombinedRefs = <T>(

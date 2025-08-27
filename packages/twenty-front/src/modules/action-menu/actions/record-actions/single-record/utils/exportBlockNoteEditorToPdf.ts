@@ -1,4 +1,4 @@
-import { BlockNoteEditor, PartialBlock } from '@blocknote/core';
+import { BlockNoteEditor, type PartialBlock } from '@blocknote/core';
 import {
   PDFExporter,
   pdfDefaultSchemaMappings,

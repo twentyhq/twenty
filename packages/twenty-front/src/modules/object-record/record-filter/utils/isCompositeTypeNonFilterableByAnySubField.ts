@@ -1,4 +1,4 @@
-import { FieldType } from '@/settings/data-model/types/FieldType';
+import { type FieldType } from '@/settings/data-model/types/FieldType';
 
 const COMPOSITE_TYPES_NON_FILTERABLE_WITH_ANY = [
   'ACTOR',

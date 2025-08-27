@@ -1,4 +1,4 @@
-import { BillingPriceLicensedDto } from '~/generated/graphql';
+import { type BillingPriceLicensedDto } from '~/generated/graphql';
 
 export const isBillingPriceLicensed = <T extends { __typename?: string }>(
   price: T,

@@ -6,7 +6,7 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { WorkflowRunTabId } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
+import { type WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 
 export const useSetInitialWorkflowRunRightDrawerTab = () => {
   const setInitialWorkflowRunRightDrawerTab = useRecoilCallback(

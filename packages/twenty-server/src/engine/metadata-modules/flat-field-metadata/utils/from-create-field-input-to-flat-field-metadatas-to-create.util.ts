@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   assertUnreachable,
@@ -10,10 +11,7 @@ import { type FieldMetadataOptions } from 'src/engine/metadata-modules/field-met
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import {
-  FieldMetadataException,
-  FieldMetadataExceptionCode,
-} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { generateRatingOptions } from 'src/engine/metadata-modules/field-metadata/utils/generate-rating-optionts.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -37,10 +35,10 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   if (rawCreateFieldInput.isRemoteCreation) {
     return {
       status: 'fail',
-      error: new FieldMetadataException(
-        "Remote fields aren't supported",
-        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      ),
+      error: {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: "Remote fields aren't supported",
+      },
     };
   }
   const createFieldInput =
@@ -54,14 +52,11 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   if (!isDefined(parentFlatObjectMetadata)) {
     return {
       status: 'fail',
-      error: new FieldMetadataException(
-        'Provided object metadata id does not exist',
-        FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
-        {
-          userFriendlyMessage:
-            'Created field metadata, parent object metadata not found',
-        },
-      ),
+      error: {
+        code: FieldMetadataExceptionCode.OBJECT_METADATA_NOT_FOUND,
+        message: 'Provided object metadata id does not exist',
+        userFriendlyMessage: t`Created field metadata, parent object metadata not found`,
+      },
     };
   }
 
@@ -74,7 +69,6 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
 
   switch (createFieldInput.type) {
     case FieldMetadataType.MORPH_RELATION: {
-      // TODO prastoin
       throw new UserInputError(
         'Morph relation feature is not migrated to workspace migration v2 yet',
       );
@@ -125,6 +119,15 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
         ],
       };
     }
+    case FieldMetadataType.TS_VECTOR: {
+      return {
+        status: 'fail',
+        error: {
+          code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+          message: 'TS Vector is not supported for field creation',
+        },
+      };
+    }
     case FieldMetadataType.UUID:
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONES:
@@ -143,8 +146,7 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
     case FieldMetadataType.RICH_TEXT:
     case FieldMetadataType.RICH_TEXT_V2:
     case FieldMetadataType.ACTOR:
-    case FieldMetadataType.ARRAY:
-    case FieldMetadataType.TS_VECTOR: {
+    case FieldMetadataType.ARRAY: {
       return {
         status: 'success',
         result: [

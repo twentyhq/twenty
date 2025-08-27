@@ -1,7 +1,6 @@
-import { WorkflowRunFlow } from '@/workflow/types/Workflow';
-import { TRIGGER_STEP_ID } from '@/workflow/workflow-trigger/constants/TriggerStepId';
+import { type WorkflowRunFlow } from '@/workflow/types/Workflow';
+import { StepStatus, TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { getWorkflowRunStepContext } from '../getWorkflowRunStepContext';
-import { StepStatus } from 'twenty-shared/workflow';
 
 describe('getWorkflowRunStepContext', () => {
   it('should return an empty array for trigger step', () => {

@@ -1,4 +1,4 @@
-import { DependencyList, EffectCallback, useEffect } from 'react';
+import { type DependencyList, type EffectCallback, useEffect } from 'react';
 
 import { useFirstMountState } from './useFirstMountState';
 

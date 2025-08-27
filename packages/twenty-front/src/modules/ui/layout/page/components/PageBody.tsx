@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 
 import { PagePanel } from './PagePanel';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';

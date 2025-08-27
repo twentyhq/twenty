@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-import { ImportedRow } from '@/spreadsheet-import/types';
+import { type ImportedRow } from '@/spreadsheet-import/types';
 
-import { SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
+import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`

@@ -1,4 +1,4 @@
-import { SpreadsheetImportErrorLevel } from './SpreadsheetImportErrorLevel';
+import { type SpreadsheetImportErrorLevel } from './SpreadsheetImportErrorLevel';
 
 export type SpreadsheetImportInfo = {
   message: string;

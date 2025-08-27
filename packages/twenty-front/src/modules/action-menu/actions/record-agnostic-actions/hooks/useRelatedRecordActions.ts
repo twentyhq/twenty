@@ -1,15 +1,16 @@
 import { CreateRelatedRecordAction } from '@/action-menu/actions/record-actions/single-record/components/CreateRelatedRecordAction';
-import { ActionConfig } from '@/action-menu/actions/types/ActionConfig';
+import { type ActionConfig } from '@/action-menu/actions/types/ActionConfig';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { ActionViewType } from '@/action-menu/actions/types/ActionViewType';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
 import { msg } from '@lingui/core/macro';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconComponent, IconPlus } from 'twenty-ui/display';
+import { type IconComponent, IconPlus } from 'twenty-ui/display';
 
 interface GenerateRelatedRecordActionsParams {
   sourceObjectMetadataItem?: ObjectMetadataItem;
@@ -80,9 +81,18 @@ export const useRelatedRecordActions = ({
         selectedRecord,
         objectPermissions,
         getTargetObjectWritePermission,
+        objectMetadataItem,
       }) =>
         (isDefined(selectedRecord) &&
-          !selectedRecord.isRemote &&
+          isDefined(objectMetadataItem) &&
+          isRecordReadOnly({
+            objectPermissions: {
+              canUpdateObjectRecords: objectPermissions.canUpdateObjectRecords,
+              objectMetadataId: objectMetadataItem.id,
+            },
+            objectMetadataItem,
+            isRecordDeleted: isDefined(selectedRecord.deletedAt),
+          }) &&
           objectPermissions.canUpdateObjectRecords &&
           getTargetObjectWritePermission(
             targetObjectNameSingular === CoreObjectNameSingular.TaskTarget

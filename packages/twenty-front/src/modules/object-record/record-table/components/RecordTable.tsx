@@ -11,7 +11,7 @@ import { RecordTableScrollToFocusedCellEffect } from '@/object-record/record-tab
 import { RecordTableScrollToFocusedRowEffect } from '@/object-record/record-table/components/RecordTableScrollToFocusedRowEffect';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -45,9 +45,7 @@ export const RecordTable = () => {
     recordTableId,
   );
 
-  const { resetTableRowSelection, setRowSelected } = useRecordTable({
-    recordTableId,
-  });
+  const { resetTableRowSelection } = useResetTableRowSelection(recordTableId);
 
   const recordTableIsEmpty =
     !isRecordTableInitialLoading && allRecordIds.length === 0;
@@ -84,7 +82,6 @@ export const RecordTable = () => {
           tableBodyRef={tableBodyRef}
           handleDragSelectionStart={handleDragSelectionStart}
           handleDragSelectionEnd={handleDragSelectionEnd}
-          setRowSelected={setRowSelected}
           hasRecordGroups={hasRecordGroups}
           recordTableId={recordTableId}
         />

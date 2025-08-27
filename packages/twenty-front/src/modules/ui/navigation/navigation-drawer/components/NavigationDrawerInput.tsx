@@ -4,10 +4,10 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { FocusEvent, useRef } from 'react';
+import { type FocusEvent, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { IconComponent, TablerIconsProps } from 'twenty-ui/display';
+import { type IconComponent, type TablerIconsProps } from 'twenty-ui/display';
 
 type NavigationDrawerInputProps = {
   className?: string;

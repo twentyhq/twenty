@@ -1,6 +1,6 @@
-import { ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
-import { ComponentStateType } from '@/ui/utilities/state/component-state/types/ComponentStateType';
-import { RecoilState } from 'recoil';
+import { type ComponentStateKey } from '@/ui/utilities/state/component-state/types/ComponentStateKey';
+import { type ComponentStateType } from '@/ui/utilities/state/component-state/types/ComponentStateType';
+import { type RecoilState } from 'recoil';
 
 export type ComponentState<StateType> = {
   type: Extract<ComponentStateType, 'ComponentState'>;

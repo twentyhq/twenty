@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 
 import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
 import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { type ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
@@ -38,6 +39,11 @@ export class ViewSyncService {
         } else if (key === 'type') {
           updateData[key] =
             diffValue.after === 'table' ? ViewType.TABLE : ViewType.KANBAN;
+        } else if (key === 'key') {
+          updateData[key] =
+            diffValue.after === 'INDEX' || diffValue.after === ViewKey.INDEX
+              ? ViewKey.INDEX
+              : null;
         } else {
           updateData[key] = diffValue.after;
         }
@@ -51,15 +57,26 @@ export class ViewSyncService {
     workspaceId: string,
     workspaceView: ViewWorkspaceEntity,
   ): Promise<void> {
+    let viewName = workspaceView.name;
+
+    if (workspaceView.key === 'INDEX') {
+      // All INDEX views use the template for consistency
+      viewName = 'All {objectLabelPlural}';
+    }
+
     const coreView: Partial<View> = {
       id: workspaceView.id,
-      name: workspaceView.name,
+      name: viewName,
       objectMetadataId: workspaceView.objectMetadataId,
       type: workspaceView.type === 'table' ? ViewType.TABLE : ViewType.KANBAN,
-      key: workspaceView.key,
+      key:
+        workspaceView.key === 'INDEX' || workspaceView.key === ViewKey.INDEX
+          ? ViewKey.INDEX
+          : null,
       icon: workspaceView.icon,
       position: workspaceView.position,
       isCompact: workspaceView.isCompact,
+      isCustom: workspaceView.key !== 'INDEX',
       openRecordIn:
         workspaceView.openRecordIn === 'SIDE_PANEL'
           ? ViewOpenRecordIn.SIDE_PANEL

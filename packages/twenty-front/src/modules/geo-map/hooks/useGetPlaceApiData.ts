@@ -3,8 +3,8 @@ import {
   GET_PLACE_DETAILS_QUERY,
 } from '@/geo-map/graphql-query/geo-map-appolo.api';
 import {
-  PlaceAutocompleteResult,
-  PlaceDetailsResult,
+  type PlaceAutocompleteResult,
+  type PlaceDetailsResult,
 } from '@/geo-map/types/placeApi';
 import { useApolloClient } from '@apollo/client';
 

@@ -1,6 +1,6 @@
 import { useLinkedObjectsTitle } from '@/activities/timeline-activities/hooks/useLinkedObjectsTitle';
-import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';

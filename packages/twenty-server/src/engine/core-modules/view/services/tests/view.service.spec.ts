@@ -28,6 +28,7 @@ describe('ViewService', () => {
     icon: 'test-icon',
     position: 0,
     isCompact: false,
+    isCustom: true,
     key: 'INDEX',
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
     kanbanAggregateOperation: null,
@@ -181,7 +182,10 @@ describe('ViewService', () => {
 
       const result = await viewService.create(validViewData);
 
-      expect(viewRepository.create).toHaveBeenCalledWith(validViewData);
+      expect(viewRepository.create).toHaveBeenCalledWith({
+        ...validViewData,
+        isCustom: true,
+      });
       expect(viewRepository.save).toHaveBeenCalledWith(mockView);
       expect(result).toEqual(mockView);
     });

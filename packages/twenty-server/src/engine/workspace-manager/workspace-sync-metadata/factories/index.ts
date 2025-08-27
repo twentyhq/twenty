@@ -1,4 +1,5 @@
 import { StandardIndexFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-index.factory';
+import { StandardRoleFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-role.factory';
 
 import { StandardFieldRelationFactory } from './standard-field-relation.factory';
 import { StandardFieldFactory } from './standard-field.factory';
@@ -9,4 +10,5 @@ export const workspaceSyncMetadataFactories = [
   StandardObjectFactory,
   StandardFieldRelationFactory,
   StandardIndexFactory,
+  StandardRoleFactory,
 ];

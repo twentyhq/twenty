@@ -3,8 +3,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { SettingsObjectNewFieldSelector } from '@/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector';
-import { FieldType } from '@/settings/data-model/types/FieldType';
-import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
+import { type FieldType } from '@/settings/data-model/types/FieldType';
+import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';

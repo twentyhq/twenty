@@ -40,6 +40,7 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const deletedObjectRecords = await queryBuilder

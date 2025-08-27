@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { PROFILING_REPORTER_DIV_ID } from '~/testing/profiling/constants/ProfilingReporterDivId';
-import { ProfilingReport } from '~/testing/profiling/types/ProfilingReportByRun';
+import { type ProfilingReport } from '~/testing/profiling/types/ProfilingReportByRun';
 import { parseProfilingReportString } from '~/testing/profiling/utils/parseProfilingReportString';
 import { isDefined } from 'twenty-shared/utils';
 

@@ -1,6 +1,6 @@
 import { AUTH_MODAL_CONFIG } from '@/auth/constants/AuthModalConfig';
 import { AppPath } from '@/types/AppPath';
-import { Location } from 'react-router-dom';
+import { type Location } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 

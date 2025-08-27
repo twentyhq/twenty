@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
+import { type WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
 
 export const cleanAndFormatOperations = (
   operations: WebhookOperationType[],

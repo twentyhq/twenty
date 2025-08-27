@@ -1,4 +1,4 @@
-import { ViewFilterOperand } from 'twenty-shared/src/types/ViewFilterOperand';
+import { ViewFilterOperand } from 'twenty-shared/types';
 
 export const isFilterOperandExpectingValue = (operand: ViewFilterOperand) => {
   switch (operand) {

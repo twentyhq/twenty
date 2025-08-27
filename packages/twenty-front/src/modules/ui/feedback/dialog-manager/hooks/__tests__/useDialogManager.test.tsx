@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { dialogInternalComponentState } from '@/ui/feedback/dialog-manager/states/dialogInternalComponentState';
-import { DialogOptions } from '@/ui/feedback/dialog-manager/types/DialogOptions';
+import { type DialogOptions } from '@/ui/feedback/dialog-manager/types/DialogOptions';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 const mockedUuid = 'mocked-uuid';

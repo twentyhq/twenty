@@ -1,4 +1,4 @@
-import { FieldPermission } from '~/generated/graphql';
+import { type FieldPermission } from '~/generated/graphql';
 
 export const newFieldPermissionsFilter = (
   dirtyFieldPermission: FieldPermission,

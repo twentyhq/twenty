@@ -94,7 +94,7 @@
         "twenty-server:jest",
         "--",
         "--config",
-        "./jest.config.ts",
+        "./jest.config.mjs",
         "${relativeFile}"
       ],
       "cwd": "${workspaceFolder}/packages/twenty-server",

@@ -1,9 +1,9 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { EachTestingContext } from 'twenty-shared/testing';
+import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
+import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const fields = [
@@ -31,6 +31,7 @@ const objectMetadataItemWithPositionField: ObjectMetadataItem = {
   icon: 'icon',
   isActive: true,
   isSystem: false,
+  isUIReadOnly: false,
   isCustom: false,
   isRemote: false,
   isSearchable: false,

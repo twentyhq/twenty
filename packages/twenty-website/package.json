@@ -6,21 +6,33 @@
     "dev": "npx next dev",
     "build": "npx next build",
     "start": "npx next start",
-    "lint": "ESLINT_USE_FLAT_CONFIG=false npx next lint",
+    "lint": "ESLINT_USE_FLAT_CONFIG=true npx next lint",
     "github:sync": "npx tsx src/github/github-sync.ts",
     "github:init": "npx tsx src/github/github-sync.ts --isFullSync",
     "database:migrate": "npx tsx src/database/migrate-database.ts",
     "database:generate:pg": "npx drizzle-kit generate:pg --config=src/database/drizzle-posgres.config.ts"
   },
   "dependencies": {
+    "@codesandbox/sandpack-react": "^2.13.5",
     "@docsearch/react": "^3.6.2",
     "@keystatic/core": "^0.5.45",
     "@keystatic/next": "^5.0.3",
     "@markdoc/markdoc": "^0.5.1",
     "@nivo/calendar": "^0.87.0",
+    "date-fns": "^2.30.0",
+    "drizzle-kit": "^0.20.14",
+    "facepaint": "^1.2.1",
     "gray-matter": "^4.0.3",
+    "next": "^14.2.0",
+    "next-mdx-remote": "^4.4.1",
     "next-runtime-env": "^3.2.2",
     "postgres": "^3.4.3",
+    "react-tooltip": "^5.13.1",
     "twenty-ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@next/eslint-plugin-next": "^14.1.4",
+    "@types/facepaint": "^1.2.5",
+    "eslint-config-next": "^15.1.0"
   }
 }

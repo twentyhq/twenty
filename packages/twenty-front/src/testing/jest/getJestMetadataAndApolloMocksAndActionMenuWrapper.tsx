@@ -1,16 +1,14 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
-import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
+import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
-import { MockedResponse } from '@apollo/client/testing';
-import { ReactNode } from 'react';
-import { MutableSnapshot } from 'recoil';
+import { type MockedResponse } from '@apollo/client/testing';
+import { type ReactNode } from 'react';
+import { type MutableSnapshot } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import {
   JestContextStoreSetter,
-  JestContextStoreSetterMocks,
+  type JestContextStoreSetterMocks,
 } from '~/testing/jest/JestContextStoreSetter';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -51,58 +49,48 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
 
   return ({ children }: { children: ReactNode }) => (
     <Wrapper>
-      <RecordFilterGroupsComponentInstanceContext.Provider
-        value={{ instanceId: componentInstanceId }}
+      <RecordComponentInstanceContextsWrapper
+        componentInstanceId={componentInstanceId}
       >
-        <RecordFiltersComponentInstanceContext.Provider
-          value={{
-            instanceId: componentInstanceId,
-          }}
+        <ContextStoreComponentInstanceContext.Provider
+          value={{ instanceId: componentInstanceId }}
         >
-          <RecordSortsComponentInstanceContext.Provider
-            value={{ instanceId: componentInstanceId }}
+          <ActionMenuComponentInstanceContext.Provider
+            value={{
+              instanceId: componentInstanceId,
+            }}
           >
-            <ContextStoreComponentInstanceContext.Provider
-              value={{ instanceId: componentInstanceId }}
+            <RecordIndexContextProvider
+              value={{
+                objectPermissionsByObjectMetadataId: {},
+                indexIdentifierUrl: () => 'indexIdentifierUrl',
+                onIndexRecordsLoaded: () => {},
+                objectNamePlural: mockObjectMetadataItem.namePlural,
+                objectNameSingular: mockObjectMetadataItem.nameSingular,
+                objectMetadataItem: mockObjectMetadataItem,
+                recordIndexId: 'recordIndexId',
+              }}
             >
-              <ActionMenuComponentInstanceContext.Provider
-                value={{
-                  instanceId: componentInstanceId,
-                }}
+              <JestContextStoreSetter
+                contextStoreCurrentViewId={contextStoreCurrentViewId}
+                contextStoreFilters={contextStoreFilters}
+                contextStoreTargetedRecordsRule={
+                  contextStoreTargetedRecordsRule
+                }
+                contextStoreNumberOfSelectedRecords={
+                  contextStoreNumberOfSelectedRecords
+                }
+                contextStoreCurrentObjectMetadataNameSingular={
+                  contextStoreCurrentObjectMetadataNameSingular
+                }
+                contextStoreCurrentViewType={contextStoreCurrentViewType}
               >
-                <RecordIndexContextProvider
-                  value={{
-                    objectPermissionsByObjectMetadataId: {},
-                    indexIdentifierUrl: () => 'indexIdentifierUrl',
-                    onIndexRecordsLoaded: () => {},
-                    objectNamePlural: mockObjectMetadataItem.namePlural,
-                    objectNameSingular: mockObjectMetadataItem.nameSingular,
-                    objectMetadataItem: mockObjectMetadataItem,
-                    recordIndexId: 'recordIndexId',
-                  }}
-                >
-                  <JestContextStoreSetter
-                    contextStoreCurrentViewId={contextStoreCurrentViewId}
-                    contextStoreFilters={contextStoreFilters}
-                    contextStoreTargetedRecordsRule={
-                      contextStoreTargetedRecordsRule
-                    }
-                    contextStoreNumberOfSelectedRecords={
-                      contextStoreNumberOfSelectedRecords
-                    }
-                    contextStoreCurrentObjectMetadataNameSingular={
-                      contextStoreCurrentObjectMetadataNameSingular
-                    }
-                    contextStoreCurrentViewType={contextStoreCurrentViewType}
-                  >
-                    {children}
-                  </JestContextStoreSetter>
-                </RecordIndexContextProvider>
-              </ActionMenuComponentInstanceContext.Provider>
-            </ContextStoreComponentInstanceContext.Provider>
-          </RecordSortsComponentInstanceContext.Provider>
-        </RecordFiltersComponentInstanceContext.Provider>
-      </RecordFilterGroupsComponentInstanceContext.Provider>
+                {children}
+              </JestContextStoreSetter>
+            </RecordIndexContextProvider>
+          </ActionMenuComponentInstanceContext.Provider>
+        </ContextStoreComponentInstanceContext.Provider>
+      </RecordComponentInstanceContextsWrapper>
     </Wrapper>
   );
 };

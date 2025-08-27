@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
 import {
   CalendarChannelVisibility,
-  TimelineCalendarEvent,
+  type TimelineCalendarEvent,
 } from '~/generated/graphql';
 
 const calendarEvents: TimelineCalendarEvent[] = [

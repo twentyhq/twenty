@@ -1,13 +1,13 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
-  EmailsFilter,
-  RecordGqlOperationFilter,
+  type EmailsFilter,
+  type RecordGqlOperationFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 
 import { CustomError } from '@/error-handler/CustomError';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
-import { CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
+import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { isNonEmptyString } from '@sniptt/guards';
 
 export const computeGqlOperationFilterForEmails = ({

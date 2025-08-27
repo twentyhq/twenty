@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import {
-  OTPFormValues,
+  type OTPFormValues,
   useTwoFactorAuthenticationForm,
 } from '@/auth/sign-in-up/hooks/useTwoFactorAuthenticationForm';
 import { loginTokenState } from '@/auth/states/loginTokenState';
@@ -15,7 +15,7 @@ import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { OTPInput, SlotProps } from 'input-otp';
+import { OTPInput, type SlotProps } from 'input-otp';
 import { Controller } from 'react-hook-form';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { MainButton } from 'twenty-ui/input';

@@ -1,4 +1,4 @@
-import { ActionDisplayProps } from '@/action-menu/actions/display/components/ActionDisplay';
+import { type ActionDisplayProps } from '@/action-menu/actions/display/components/ActionDisplay';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';

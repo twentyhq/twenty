@@ -1,4 +1,4 @@
-import { ObjectPermissions } from 'twenty-shared/types';
+import { type ObjectPermissions } from 'twenty-shared/types';
 
 type GetNonReadableFieldMetadataIdsFromObjectPermissionsArgs = {
   objectPermissions: ObjectPermissions;

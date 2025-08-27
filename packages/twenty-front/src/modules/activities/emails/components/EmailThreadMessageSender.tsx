@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
-import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
+import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledEmailThreadMessageSender = styled.div`

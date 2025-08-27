@@ -1,7 +1,7 @@
-import { ReactElement } from 'react';
+import { type ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { Note } from '@/activities/types/Note';
+import { type Note } from '@/activities/types/Note';
 
 import { NoteCard } from './NoteCard';
 

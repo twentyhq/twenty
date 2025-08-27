@@ -34,7 +34,6 @@ import { type Workspace } from 'src/engine/core-modules/workspace/workspace.enti
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceInvitationService {
   constructor(
     @InjectRepository(AppToken, 'core')

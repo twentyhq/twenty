@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
+import { type Workflow, type WorkflowVersion } from '@/workflow/types/Workflow';
 
 export const useActiveWorkflowVersion = (workflowId: string) => {
   const { records: workflowVersions, loading } = useFindManyRecords<

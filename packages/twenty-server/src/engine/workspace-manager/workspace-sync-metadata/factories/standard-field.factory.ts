@@ -153,6 +153,7 @@ export class StandardFieldFactory {
         isCustom: workspaceFieldMetadataArgs.isDeprecated ? true : false,
         isSystem: workspaceFieldMetadataArgs.isSystem ?? false,
         isActive: workspaceFieldMetadataArgs.isActive ?? true,
+        isUIReadOnly: workspaceFieldMetadataArgs.isUIReadOnly ?? false,
         asExpression: workspaceFieldMetadataArgs.asExpression,
         generatedType: workspaceFieldMetadataArgs.generatedType,
         isLabelSyncedWithName: workspaceFieldMetadataArgs.isLabelSyncedWithName,
@@ -195,6 +196,7 @@ export class StandardFieldFactory {
       isSystem:
         workspaceEntityMetadataArgs?.isSystem ||
         workspaceRelationMetadataArgs.isSystem,
+      isUIReadOnly: workspaceRelationMetadataArgs.isUIReadOnly,
       isNullable: true,
       isUnique: false,
       isActive: workspaceRelationMetadataArgs.isActive ?? true,

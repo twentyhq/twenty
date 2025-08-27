@@ -1,9 +1,9 @@
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
-import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
+import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { useObjectPermissionDerivedStates } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useObjectPermissionDerivedStates';
 import { useUpsertFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useUpsertFieldPermissionInDraftRole';
 import { OverridableCheckbox } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/OverridableCheckbox';
@@ -15,11 +15,7 @@ import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { v4 } from 'uuid';
-import {
-  FieldMetadataType,
-  FieldPermission,
-  RelationType,
-} from '~/generated/graphql';
+import { type FieldPermission, RelationType } from '~/generated/graphql';
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
   grid-template-columns: 180px 1fr 60px 60px;
@@ -34,6 +30,8 @@ const StyledNameLabel = styled.div`
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+
+  user-select: none;
 `;
 
 type SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRowProps = {
@@ -74,21 +72,6 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
 
     const { upsertFieldPermissionInDraftRole } =
       useUpsertFieldPermissionInDraftRole(roleId);
-
-    const fieldIsCreatedBy =
-      fieldMetadataItem.name === 'createdBy' &&
-      fieldMetadataItem.type === FieldMetadataType.ACTOR;
-
-    const fieldIsDeletedAt =
-      fieldMetadataItem.name === 'deletedAt' &&
-      fieldMetadataItem.type === FieldMetadataType.DATE_TIME;
-
-    const fieldIsLabelIdentifier =
-      fieldMetadataItem.id ===
-      objectMetadataItem.labelIdentifierFieldMetadataId;
-
-    const fieldMustBeReadableAndUpdatable =
-      fieldIsLabelIdentifier || fieldIsCreatedBy || fieldIsDeletedAt;
 
     const handleSeeChange = () => {
       if (isDefined(fieldPermissionForThisFieldMetadataItem)) {
@@ -155,11 +138,16 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
       hasRestriction &&
       fieldPermissionForThisFieldMetadataItem?.canUpdateFieldValue === false;
 
-    const { objectReadIsRestricted, objectUpdateIsRestricted } =
+    const { cannotAllowFieldReadRestrict, cannotAllowFieldUpdateRestrict } =
       useObjectPermissionDerivedStates({
         roleId,
         objectMetadataItemId: objectMetadataItem.id,
       });
+
+    const shouldShowSeeTableHeader = !cannotAllowFieldReadRestrict;
+    const shouldShowUpdateTableHeader =
+      !cannotAllowFieldReadRestrict && !cannotAllowFieldUpdateRestrict;
+    const shouldShowEmptyTableHeader = cannotAllowFieldUpdateRestrict;
 
     return (
       <StyledObjectFieldTableRow>
@@ -191,30 +179,29 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
             value={fieldType as SettingsFieldType}
           />
         </TableCell>
-        {objectReadIsRestricted ? (
-          <TableCell />
-        ) : (
-          <TableCell>
-            <OverridableCheckbox
-              disabled={fieldMustBeReadableAndUpdatable ?? false}
-              checked={true}
-              onChange={handleSeeChange}
-              type={isReadRestricted ? 'override' : 'default'}
-            />
-          </TableCell>
-        )}
-        {objectUpdateIsRestricted ? (
-          <TableCell />
-        ) : (
-          <TableCell align="left">
-            <OverridableCheckbox
-              disabled={fieldMustBeReadableAndUpdatable ?? false}
-              checked={true}
-              onChange={handleUpdateChange}
-              type={isUpdateRestricted ? 'override' : 'default'}
-            />
-          </TableCell>
-        )}
+        <>
+          {shouldShowEmptyTableHeader && <TableCell />}
+          {shouldShowSeeTableHeader && (
+            <TableCell>
+              <OverridableCheckbox
+                disabled={fieldMetadataItem.isUIReadOnly ?? false}
+                checked={true}
+                onChange={handleSeeChange}
+                type={isReadRestricted ? 'override' : 'default'}
+              />
+            </TableCell>
+          )}
+          {shouldShowUpdateTableHeader && (
+            <TableCell align="left">
+              <OverridableCheckbox
+                disabled={fieldMetadataItem.isUIReadOnly ?? false}
+                checked={true}
+                onChange={handleUpdateChange}
+                type={isUpdateRestricted ? 'override' : 'default'}
+              />
+            </TableCell>
+          )}
+        </>
       </StyledObjectFieldTableRow>
     );
   };

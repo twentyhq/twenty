@@ -1,5 +1,5 @@
-import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
-import { TimelineActivityLinkedObject } from '@/activities/timeline-activities/types/TimelineActivityLinkedObject';
+import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { type TimelineActivityLinkedObject } from '@/activities/timeline-activities/types/TimelineActivityLinkedObject';
 
 export const filterTimelineActivityByLinkedObjectTypes =
   (linkedObjectTypes: TimelineActivityLinkedObject[]) =>

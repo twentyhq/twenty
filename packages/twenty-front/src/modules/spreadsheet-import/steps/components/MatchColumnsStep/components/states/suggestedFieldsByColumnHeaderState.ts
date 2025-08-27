@@ -1,4 +1,4 @@
-import { SpreadsheetImportField } from '@/spreadsheet-import/types';
+import { type SpreadsheetImportField } from '@/spreadsheet-import/types';
 import { createState } from 'twenty-ui/utilities';
 
 export const suggestedFieldsByColumnHeaderState = createState({

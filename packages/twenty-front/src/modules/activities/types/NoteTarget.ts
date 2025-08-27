@@ -1,6 +1,6 @@
-import { Note } from '@/activities/types/Note';
-import { Company } from '@/companies/types/Company';
-import { Person } from '@/people/types/Person';
+import { type Note } from '@/activities/types/Note';
+import { type Company } from '@/companies/types/Company';
+import { type Person } from '@/people/types/Person';
 
 export type NoteTarget = {
   id: string;

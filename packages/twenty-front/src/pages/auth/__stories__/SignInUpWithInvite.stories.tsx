@@ -1,5 +1,5 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { fireEvent, within } from '@storybook/test';
 import { HttpResponse, graphql } from 'msw';
 
@@ -7,7 +7,7 @@ import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { GET_WORKSPACE_FROM_INVITE_HASH } from '@/workspace/graphql/queries/getWorkspaceFromInviteHash';
 import {
   PageDecorator,
-  PageDecoratorArgs,
+  type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 

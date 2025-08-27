@@ -9,9 +9,12 @@ import { getTimelineThreadsFromCompanyId } from '@/activities/emails/graphql/que
 import { getTimelineThreadsFromPersonId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromPersonId';
 import { getTimelineThreadsFromOpportunityId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromOpportunityId';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { TimelineThread, TimelineThreadsWithTotal } from '~/generated/graphql';
+import {
+  type TimelineThread,
+  type TimelineThreadsWithTotal,
+} from '~/generated/graphql';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,

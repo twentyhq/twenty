@@ -35,6 +35,7 @@ export const getMockObjectMetadataEntity = (
     isRemote: false,
     isSearchable: true,
     isSystem: false,
+    isUIReadOnly: false,
     labelPlural: 'Default mock plural label',
     labelSingular: 'Default mock plural singular',
     objectPermissions: [],

@@ -1,4 +1,4 @@
-import { AppPath } from '@/types/AppPath';
+import { type AppPath } from '@/types/AppPath';
 
 export const buildAppPathWithQueryParams = (
   path: AppPath,

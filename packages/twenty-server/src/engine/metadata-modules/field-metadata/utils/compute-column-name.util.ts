@@ -17,14 +17,6 @@ export type FieldTypeAndNameMetadata = {
   type: FieldMetadataType;
 };
 
-export function computeColumnName(
-  fieldName: string,
-  options?: ComputeColumnNameOptions,
-): string;
-export function computeColumnName<T extends FieldMetadataType>(
-  fieldMetadata: FieldMetadataEntity<T>,
-  options?: ComputeColumnNameOptions,
-): string;
 // TODO: If we need to implement custom name logic for columns, we can do it here
 export function computeColumnName<T extends FieldMetadataType>(
   fieldMetadataOrFieldName: FieldMetadataEntity<T> | string,
@@ -47,14 +39,6 @@ export function computeColumnName<T extends FieldMetadataType>(
 
   return generateName(fieldMetadataOrFieldName.name);
 }
-export function computeCompositeColumnName(
-  fieldName: string,
-  compositeProperty: CompositeProperty,
-): string;
-export function computeCompositeColumnName<T extends FieldMetadataType>(
-  fieldMetadata: FieldTypeAndNameMetadata | FieldMetadataEntity<T>,
-  compositeProperty: CompositeProperty,
-): string;
 export function computeCompositeColumnName<T extends FieldMetadataType>(
   fieldMetadataOrFieldName:
     | FieldTypeAndNameMetadata

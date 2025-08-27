@@ -1,5 +1,5 @@
-import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
-import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import { type BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 

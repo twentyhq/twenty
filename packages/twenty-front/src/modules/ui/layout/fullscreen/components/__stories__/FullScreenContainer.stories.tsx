@@ -1,6 +1,6 @@
 import { FullScreenContainer } from '@/ui/layout/fullscreen/components/FullScreenContainer';
 import styled from '@emotion/styled';
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import {
   ComponentDecorator,

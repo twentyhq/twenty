@@ -48,6 +48,11 @@ export type FieldMetadataAddressSettings = {
   subFields?: AllowedAddressSubField[];
 };
 
+export type FieldMetadataTsVectorSettings = {
+  asExpression?: string;
+  generatedType?: 'STORED' | 'VIRTUAL';
+};
+
 type FieldMetadataSettingsMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings | null;
   [FieldMetadataType.DATE]: FieldMetadataDateSettings | null;
@@ -56,6 +61,7 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
   [FieldMetadataType.ADDRESS]: FieldMetadataAddressSettings | null;
   [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings | null; // TODO Should not be null
+  [FieldMetadataType.TS_VECTOR]: FieldMetadataTsVectorSettings | null;
 };
 
 export type AllFieldMetadataSettings =

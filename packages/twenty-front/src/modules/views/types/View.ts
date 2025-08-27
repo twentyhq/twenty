@@ -1,12 +1,12 @@
-import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
-import { ViewField } from '@/views/types/ViewField';
-import { ViewFilter } from '@/views/types/ViewFilter';
-import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
-import { ViewGroup } from '@/views/types/ViewGroup';
-import { ViewKey } from '@/views/types/ViewKey';
-import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
-import { ViewSort } from '@/views/types/ViewSort';
-import { ViewType } from '@/views/types/ViewType';
+import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { type ViewField } from '@/views/types/ViewField';
+import { type ViewFilter } from '@/views/types/ViewFilter';
+import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
+import { type ViewGroup } from '@/views/types/ViewGroup';
+import { type ViewKey } from '@/views/types/ViewKey';
+import { type ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { type ViewSort } from '@/views/types/ViewSort';
+import { type ViewType } from '@/views/types/ViewType';
 
 export type View = {
   id: string;

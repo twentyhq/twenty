@@ -1,4 +1,4 @@
-import { SettingsRolePermissionsObjectPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
+import { type SettingsRolePermissionsObjectPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -43,7 +43,7 @@ export const SettingsRolePermissionsObjectsTableHeader = ({
 
   return (
     <TableRow>
-      <StyledNameHeader>{t`Name`}</StyledNameHeader>
+      <StyledNameHeader>{t`All Objects`}</StyledNameHeader>
       <StyledActionsHeader aria-label={t`Actions`}>
         <Checkbox
           checked={allPermissionsEnabled}

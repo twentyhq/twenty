@@ -1,5 +1,5 @@
 import { isString } from '@sniptt/guards';
-import { JsonArray, JsonObject } from 'type-fest';
+import { type JsonArray, type JsonObject } from 'type-fest';
 
 export const hasNonStringValues = (obj: JsonObject | JsonArray): boolean => {
   const values = Object.values(obj);

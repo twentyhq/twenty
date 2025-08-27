@@ -1,4 +1,4 @@
-import { MockedResponse } from '@apollo/client/testing';
+import { type MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 

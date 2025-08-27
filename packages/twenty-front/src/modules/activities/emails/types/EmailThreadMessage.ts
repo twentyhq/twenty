@@ -1,5 +1,5 @@
-import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
-import { MessageThread } from '@/activities/emails/types/MessageThread';
+import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
+import { type MessageThread } from '@/activities/emails/types/MessageThread';
 
 export type EmailThreadMessage = {
   id: string;

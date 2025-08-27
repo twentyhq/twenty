@@ -1,4 +1,3 @@
-/* eslint-disable @nx/workspace-no-hardcoded-colors */
 import { ANIMATION } from './Animation';
 import { COLOR } from './Colors';
 import { GRAY_SCALE } from './GrayScale';

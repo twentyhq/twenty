@@ -1,4 +1,4 @@
-import { IndexType } from '~/generated-metadata/graphql';
+import { type IndexType } from '~/generated-metadata/graphql';
 
 export type SettingsObjectIndexesTableItem = {
   name: string;

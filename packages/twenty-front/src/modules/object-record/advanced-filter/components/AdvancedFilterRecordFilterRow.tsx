@@ -6,8 +6,8 @@ import { AdvancedFilterRecordFilterOptionsDropdown } from '@/object-record/advan
 import { AdvancedFilterValueInput } from '@/object-record/advanced-filter/components/AdvancedFilterValueInput';
 import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/object-record/advanced-filter/utils/getAdvancedFilterObjectFilterDropdownComponentInstanceId';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 
 export const AdvancedFilterRecordFilterRow = ({
   recordFilterGroup,

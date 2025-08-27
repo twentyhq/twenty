@@ -4,8 +4,8 @@ import { GET_MANY_DATABASE_CONNECTIONS } from '@/databases/graphql/queries/findM
 import { getForeignDataWrapperType } from '@/databases/utils/getForeignDataWrapperType';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import {
-  GetManyDatabaseConnectionsQuery,
-  GetManyDatabaseConnectionsQueryVariables,
+  type GetManyDatabaseConnectionsQuery,
+  type GetManyDatabaseConnectionsQueryVariables,
 } from '~/generated-metadata/graphql';
 
 type UseGetDatabaseConnectionsParams = {

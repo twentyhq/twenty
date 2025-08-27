@@ -1,14 +1,11 @@
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
-import {
-  WorkflowVersion,
-  WorkflowWithCurrentVersion,
-} from '@/workflow/types/Workflow';
+import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
+import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { useMutation } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  UpdateWorkflowVersionPositionsMutation,
-  UpdateWorkflowVersionPositionsMutationVariables,
-  WorkflowAction,
+  type UpdateWorkflowVersionPositionsMutation,
+  type UpdateWorkflowVersionPositionsMutationVariables,
+  type WorkflowAction,
 } from '~/generated-metadata/graphql';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -23,11 +20,7 @@ import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/state
 import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
 import { UPDATE_WORKFLOW_VERSION_POSITIONS } from '@/workflow/workflow-version/graphql/mutations/updateWorkflowVersionPositions';
 
-export const useTidyUpWorkflowVersion = ({
-  workflow,
-}: {
-  workflow?: WorkflowWithCurrentVersion;
-}) => {
+export const useTidyUpWorkflowVersion = () => {
   const [workflowDiagram, setWorkflowDiagram] = useRecoilComponentState(
     workflowDiagramComponentState,
   );
@@ -49,20 +42,13 @@ export const useTidyUpWorkflowVersion = ({
     UpdateWorkflowVersionPositionsMutationVariables
   >(UPDATE_WORKFLOW_VERSION_POSITIONS, { client: apolloCoreClient });
 
-  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
+  const { getUpdatableWorkflowVersion } =
+    useGetUpdatableWorkflowVersionOrThrow();
 
   const updateWorkflowVersionPosition = async (
     positions: { id: string; position: { x: number; y: number } }[],
   ) => {
-    if (!isDefined(workflow)) {
-      throw new Error('Cannot find a workflow to update');
-    }
-
-    const workflowVersionId = await getUpdatableWorkflowVersion(workflow);
-
-    if (!isDefined(workflowVersionId)) {
-      throw new Error('Cannot find a workflow version to update');
-    }
+    const workflowVersionId = await getUpdatableWorkflowVersion();
 
     await mutate({ variables: { input: { workflowVersionId, positions } } });
 
@@ -115,7 +101,7 @@ export const useTidyUpWorkflowVersion = ({
   };
 
   const tidyUpWorkflowVersion = async () => {
-    if (!isDefined(workflowDiagram) || !isDefined(workflow?.currentVersion)) {
+    if (!isDefined(workflowDiagram)) {
       return;
     }
 

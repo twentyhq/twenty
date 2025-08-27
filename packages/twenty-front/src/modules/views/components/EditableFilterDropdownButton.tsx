@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 

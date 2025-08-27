@@ -1,6 +1,7 @@
 import { extractAndSanitizeObjectStringFields } from 'twenty-shared/utils';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
@@ -18,6 +19,8 @@ export const getDefaultFlatFieldMetadata = ({
     createFieldInput,
     ['defaultValue', 'settings'],
   );
+
+  const createdAt = new Date();
 
   return {
     description: createFieldInput.description ?? null,
@@ -46,7 +49,10 @@ export const getDefaultFlatFieldMetadata = ({
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,
     options: null,
-    defaultValue: defaultValue ?? null,
+    defaultValue: defaultValue ?? generateDefaultValue(createFieldInput.type),
     settings: settings ?? null,
+    createdAt,
+    updatedAt: createdAt,
+    isUIReadOnly: createFieldInput.isUIReadOnly ?? false,
   } as const satisfies FlatFieldMetadata;
 };

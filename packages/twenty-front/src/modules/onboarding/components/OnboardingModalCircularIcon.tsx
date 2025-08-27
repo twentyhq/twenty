@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/display';
 import { RGBA } from 'twenty-ui/theme';
 
 const StyledCheckContainer = styled.div<{ color: string }>`

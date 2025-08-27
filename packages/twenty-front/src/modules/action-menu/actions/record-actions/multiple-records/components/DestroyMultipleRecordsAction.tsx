@@ -1,21 +1,22 @@
 import { ActionModal } from '@/action-menu/actions/components/ActionModal';
-import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
-import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { type RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { useDestroyManyRecords } from '@/object-record/hooks/useDestroyManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const DestroyMultipleRecordsAction = () => {
-  const { objectMetadataItem } = useContextStoreObjectMetadataItemOrThrow();
+  const { recordIndexId, objectMetadataItem } =
+    useRecordIndexIdFromCurrentContextStore();
 
   const contextStoreCurrentViewId = useRecoilComponentValue(
     contextStoreCurrentViewIdComponentState,
@@ -25,12 +26,7 @@ export const DestroyMultipleRecordsAction = () => {
     throw new Error('Current view ID is not defined');
   }
 
-  const { resetTableRowSelection } = useRecordTable({
-    recordTableId: getRecordIndexIdFromObjectNamePluralAndViewId(
-      objectMetadataItem.namePlural,
-      contextStoreCurrentViewId,
-    ),
-  });
+  const { resetTableRowSelection } = useResetTableRowSelection(recordIndexId);
 
   const { destroyManyRecords } = useDestroyManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -44,6 +40,10 @@ export const DestroyMultipleRecordsAction = () => {
     contextStoreFiltersComponentState,
   );
 
+  const contextStoreFilterGroups = useRecoilComponentValue(
+    contextStoreFilterGroupsComponentState,
+  );
+
   const contextStoreAnyFieldFilterValue = useRecoilComponentValue(
     contextStoreAnyFieldFilterValueComponentState,
   );
@@ -54,13 +54,14 @@ export const DestroyMultipleRecordsAction = () => {
     deletedAt: { is: 'NOT_NULL' },
   };
   const graphqlFilter = {
-    ...computeContextStoreFilters(
+    ...computeContextStoreFilters({
       contextStoreTargetedRecordsRule,
       contextStoreFilters,
+      contextStoreFilterGroups,
       objectMetadataItem,
       filterValueDependencies,
       contextStoreAnyFieldFilterValue,
-    ),
+    }),
     ...deletedAtFilter,
   };
 

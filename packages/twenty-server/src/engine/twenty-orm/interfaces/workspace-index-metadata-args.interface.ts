@@ -6,7 +6,7 @@ export interface WorkspaceIndexMetadataArgs {
   /**
    * Class to which index is applied.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+
   readonly target: Function;
 
   /*

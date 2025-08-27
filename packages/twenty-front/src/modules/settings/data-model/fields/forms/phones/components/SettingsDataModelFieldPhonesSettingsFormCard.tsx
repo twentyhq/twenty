@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 
@@ -8,15 +8,16 @@ import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields
 import { SettingsDataModelFieldPhonesForm } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';
 import {
   SettingsDataModelFieldPreviewCard,
-  SettingsDataModelFieldPreviewCardProps,
+  type SettingsDataModelFieldPreviewCardProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 
 type SettingsDataModelFieldPhonesSettingsFormCardProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue' | 'isUnique' | 'isCustom'
-  >;
+    'icon' | 'label' | 'type' | 'isCustom' | 'settings'
+  > &
+    Partial<{ id: string }>;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
@@ -44,6 +45,7 @@ export const SettingsDataModelFieldPhonesSettingsFormCard = ({
           />
           <SettingsDataModelFieldIsUniqueForm
             fieldMetadataItem={fieldMetadataItem}
+            objectMetadataItem={objectMetadataItem}
           />
         </>
       }

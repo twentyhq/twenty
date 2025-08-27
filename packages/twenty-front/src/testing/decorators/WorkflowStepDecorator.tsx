@@ -1,11 +1,12 @@
 import { useStepsOutputSchema } from '@/workflow/hooks/useStepsOutputSchema';
-import { WorkflowStepContextProvider } from '@/workflow/states/context/WorkflowStepContext';
 import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowIdComponentState';
-import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { workflowVisualizerWorkflowRunIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowRunIdComponentState';
+import { workflowVisualizerWorkflowVersionIdComponentState } from '@/workflow/states/workflowVisualizerWorkflowVersionIdComponentState';
+import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
-import { Decorator } from '@storybook/react';
+import { type Decorator } from '@storybook/react';
 import { useEffect, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 import {
@@ -29,6 +30,18 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
             instanceId: workflowVisualizerComponentInstanceId,
           }),
           getWorkflowMock().id,
+        );
+        set(
+          workflowVisualizerWorkflowVersionIdComponentState.atomFamily({
+            instanceId: workflowVisualizerComponentInstanceId,
+          }),
+          workflowVersion.id,
+        );
+        set(
+          workflowVisualizerWorkflowRunIdComponentState.atomFamily({
+            instanceId: workflowVisualizerComponentInstanceId,
+          }),
+          '123',
         );
         set(
           workflowSelectedNodeComponentState.atomFamily({
@@ -62,14 +75,7 @@ export const WorkflowStepDecorator: Decorator = (Story) => {
         instanceId: workflowVisualizerComponentInstanceId,
       }}
     >
-      <WorkflowStepContextProvider
-        value={{
-          workflowVersionId: workflowVersion.id,
-          workflowRunId: '123',
-        }}
-      >
-        {ready && <Story />}
-      </WorkflowStepContextProvider>
+      {ready && <Story />}
     </WorkflowVisualizerComponentInstanceContext.Provider>
   );
 };

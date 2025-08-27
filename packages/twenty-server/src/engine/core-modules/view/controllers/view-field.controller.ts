@@ -20,11 +20,10 @@ import { ViewFieldRestApiExceptionFilter } from 'src/engine/core-modules/view/fi
 import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @Controller('rest/metadata/viewFields')
-@UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
+@UseGuards(WorkspaceAuthGuard)
 @UseFilters(ViewFieldRestApiExceptionFilter)
 export class ViewFieldController {
   constructor(private readonly viewFieldService: ViewFieldService) {}

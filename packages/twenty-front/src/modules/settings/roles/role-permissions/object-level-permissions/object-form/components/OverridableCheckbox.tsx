@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconReload, IconX } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
+import { AnimatedRotate } from 'twenty-ui/utilities';
 
 export type OverridableCheckboxType = 'default' | 'override' | 'no_cta';
 
@@ -59,10 +60,14 @@ export const OverridableCheckbox = ({
               onClick={disabled ? undefined : onChange}
               isDisabled={disabled}
             >
-              <IconX
-                size={theme.icon.size.md}
-                color={theme.font.color.secondary}
-              />
+              {!disabled && (
+                <AnimatedRotate>
+                  <IconX
+                    size={theme.icon.size.md}
+                    color={theme.font.color.secondary}
+                  />
+                </AnimatedRotate>
+              )}
             </StyledIconWrapper>
           </StyledOverridableCheckboxContainerItem>
         </>
@@ -77,17 +82,25 @@ export const OverridableCheckbox = ({
               onClick={disabled ? undefined : onChange}
               isDisabled={disabled}
             >
-              <IconReload
-                size={theme.icon.size.md}
-                color={theme.adaptiveColors.orange4}
-              />
+              <AnimatedRotate animateOnHover={!disabled}>
+                <IconReload
+                  size={theme.icon.size.md}
+                  color={theme.adaptiveColors.orange4}
+                />
+              </AnimatedRotate>
             </StyledIconWrapper>
           </StyledOverridableCheckboxContainerItem>
         </>
       )}
       {type === 'no_cta' && (
         <StyledOverridableCheckboxContainerItem>
-          <Checkbox checked={checked} disabled={disabled} onChange={onChange} />
+          <AnimatedRotate>
+            <Checkbox
+              checked={checked}
+              disabled={disabled}
+              onChange={onChange}
+            />
+          </AnimatedRotate>
         </StyledOverridableCheckboxContainerItem>
       )}
     </StyledOverridableCheckboxContainer>

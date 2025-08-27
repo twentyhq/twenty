@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { H2Title } from 'twenty-ui/display';
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
   useFindAgentHandoffsQuery,

@@ -1,5 +1,5 @@
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { ViewFilter } from '@/views/types/ViewFilter';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type ViewFilter } from '@/views/types/ViewFilter';
 
 export const mapRecordFilterToViewFilter = (
   recordFilter: RecordFilter,

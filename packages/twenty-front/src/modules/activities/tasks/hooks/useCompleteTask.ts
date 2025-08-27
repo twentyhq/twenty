@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { Task } from '@/activities/types/Task';
+import { type Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 

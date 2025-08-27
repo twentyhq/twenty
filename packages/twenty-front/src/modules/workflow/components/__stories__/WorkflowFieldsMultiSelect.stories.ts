@@ -1,7 +1,6 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { expect } from '@storybook/jest';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import type { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/testing-library';
+import { expect, within } from '@storybook/test';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { WorkflowFieldsMultiSelect } from '../WorkflowEditUpdateEventFieldsMultiSelect';
 
@@ -26,6 +25,7 @@ const fields = [
     isCustom: false,
     isActive: true,
     isSystem: false,
+    isUIReadOnly: false,
     isNullable: false,
     createdAt: '',
     updatedAt: '',
@@ -39,6 +39,7 @@ const fields = [
     isCustom: false,
     isActive: true,
     isSystem: false,
+    isUIReadOnly: false,
     isNullable: true,
     createdAt: '',
     updatedAt: '',
@@ -52,6 +53,7 @@ const fields = [
     isCustom: false,
     isActive: true,
     isSystem: false,
+    isUIReadOnly: false,
     isNullable: true,
     createdAt: '',
     updatedAt: '',
@@ -67,6 +69,7 @@ const mockObjectMetadataItem: ObjectMetadataItem = {
   description: 'A company',
   icon: 'IconBuilding',
   isSystem: false,
+  isUIReadOnly: false,
   isCustom: false,
   isActive: true,
   createdAt: '',

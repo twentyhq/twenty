@@ -1,4 +1,4 @@
-import { FieldArrayValue } from '@/object-record/record-field/types/FieldMetadata';
+import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { Chip, ChipVariant } from 'twenty-ui/components';
 

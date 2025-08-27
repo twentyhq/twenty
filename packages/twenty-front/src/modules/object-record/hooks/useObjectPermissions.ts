@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { ObjectPermissions } from 'twenty-shared/types';
+import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type useObjectPermissionsReturnType = {

@@ -1,10 +1,10 @@
 import { useTheme } from '@emotion/react';
 
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import {
-  FieldCurrencyMetadata,
-  FieldCurrencyValue,
-} from '@/object-record/record-field/types/FieldMetadata';
+  type FieldCurrencyMetadata,
+  type FieldCurrencyValue,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { isDefined } from 'twenty-shared/utils';

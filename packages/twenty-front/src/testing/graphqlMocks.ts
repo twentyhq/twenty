@@ -1,5 +1,5 @@
 import { getOperationName } from '@apollo/client/utilities';
-import { graphql, GraphQLQuery, http, HttpResponse } from 'msw';
+import { graphql, type GraphQLQuery, http, HttpResponse } from 'msw';
 
 import { TRACK_ANALYTICS } from '@/analytics/graphql/queries/track';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';

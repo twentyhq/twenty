@@ -1,4 +1,4 @@
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 
 type AppLocale = keyof typeof APP_LOCALES;
 export const getDateFnsLocaleImport = (locale: AppLocale) => {

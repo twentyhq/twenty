@@ -1,4 +1,4 @@
-import { SafeParseError } from 'zod';
+import { type SafeParseError } from 'zod';
 
 import { simpleQuotesStringSchema } from '../simpleQuotesStringSchema';
 

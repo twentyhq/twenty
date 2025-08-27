@@ -1,5 +1,5 @@
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
-import { EachTestingContext } from 'twenty-shared/testing';
+import { type EachTestingContext } from 'twenty-shared/testing';
 
 type BuildRecordFromKeysWithSameValueTestContext = EachTestingContext<{
   array: string[];

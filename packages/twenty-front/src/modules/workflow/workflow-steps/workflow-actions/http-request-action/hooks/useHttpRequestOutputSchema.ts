@@ -1,6 +1,6 @@
-import { WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
+import { type WorkflowHttpRequestAction } from '@/workflow/types/Workflow';
 import { parseAndValidateVariableFriendlyStringifiedJson } from '@/workflow/utils/parseAndValidateVariableFriendlyStringifiedJson';
-import { BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { convertOutputSchemaToJson } from '../utils/convertOutputSchemaToJson';

@@ -257,7 +257,7 @@ export class WorkspaceMigrationRunnerService {
           `Unique index creation failed because of unique constraint violation`,
           IndexMetadataExceptionCode.INDEX_CREATION_FAILED,
           {
-            userFriendlyMessage: t`Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first.`,
+            userFriendlyMessage: t`Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records).`,
           },
         );
       }

@@ -14,7 +14,6 @@ import { clientConfigApiStatusState } from '@/client-config/states/clientConfigA
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
-  AuthTokenPair,
   useCheckUserExistsLazyQuery,
   useGetAuthTokensFromLoginTokenMutation,
   useGetAuthTokensFromOtpMutation,
@@ -24,6 +23,7 @@ import {
   useSignInMutation,
   useSignUpInWorkspaceMutation,
   useSignUpMutation,
+  type AuthTokenPair,
 } from '~/generated-metadata/graphql';
 
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
@@ -36,7 +36,7 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
+import { type BillingCheckoutSession } from '@/auth/types/billingCheckoutSession.type';
 import {
   countAvailableWorkspaces,
   getFirstAvailableWorkspaces,
@@ -60,7 +60,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { iconsState } from 'twenty-ui/display';
-import { AuthToken } from '~/generated/graphql';
+import { type AuthToken } from '~/generated/graphql';
 import { cookieStorage } from '~/utils/cookie-storage';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { loginTokenState } from '../states/loginTokenState';

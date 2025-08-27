@@ -1,7 +1,7 @@
 import { useActivities } from '@/activities/hooks/useActivities';
 import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline-activities/constants/FindManyTimelineActivitiesOrderBy';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { Task } from '@/activities/types/Task';
+import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { type Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 type UseTasksProps = {

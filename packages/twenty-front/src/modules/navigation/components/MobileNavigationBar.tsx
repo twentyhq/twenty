@@ -5,7 +5,7 @@ import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useRecoilState } from 'recoil';
 import {
-  IconComponent,
+  type IconComponent,
   IconList,
   IconSearch,
   IconSettings,

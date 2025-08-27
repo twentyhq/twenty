@@ -1,6 +1,6 @@
 import { addDays, subHours, subMonths } from 'date-fns';
 
-import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { type CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { CalendarChannelVisibility } from '~/generated/graphql';
 
 export const mockedCalendarEvents: CalendarEvent[] = [

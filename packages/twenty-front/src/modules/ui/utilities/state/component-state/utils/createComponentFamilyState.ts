@@ -1,14 +1,14 @@
-import { ComponentFamilyState } from '@/ui/utilities/state/component-state/types/ComponentFamilyState';
-import { ComponentFamilyStateKey } from '@/ui/utilities/state/component-state/types/ComponentFamilyStateKey';
-import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
+import { type ComponentFamilyState } from '@/ui/utilities/state/component-state/types/ComponentFamilyState';
+import { type ComponentFamilyStateKey } from '@/ui/utilities/state/component-state/types/ComponentFamilyStateKey';
+import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import {
-  AtomEffect,
+  type AtomEffect,
   atomFamily,
-  Loadable,
-  RecoilValue,
-  SerializableParam,
-  WrappedValue,
+  type Loadable,
+  type RecoilValue,
+  type SerializableParam,
+  type WrappedValue,
 } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 

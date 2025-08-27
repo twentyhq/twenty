@@ -1,6 +1,6 @@
 import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
-import { MockedResponse } from '@apollo/client/testing';
+import { type MockedResponse } from '@apollo/client/testing';
 import { expect } from '@storybook/test';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import gql from 'graphql-tag';

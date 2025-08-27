@@ -1,28 +1,30 @@
 import { IANA_TIME_ZONES } from '@/localization/constants/IanaTimeZones';
 import { formatTimeZoneLabel } from '@/localization/utils/formatTimeZoneLabel';
-import { SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/input';
 
-export const AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL = IANA_TIME_ZONES.reduce<
-  Record<string, SelectOption>
->((result, ianaTimeZone) => {
-  const timeZoneLabel = formatTimeZoneLabel(ianaTimeZone);
+const { AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL } = {
+  AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL: IANA_TIME_ZONES.reduce<
+    Record<string, SelectOption>
+  >((result, ianaTimeZone) => {
+    // Skip time zones with GMT, UTC, or UCT in their name,
+    // and duplicates.
+    if (
+      formatTimeZoneLabel(ianaTimeZone).slice(11).includes('GMT') ||
+      formatTimeZoneLabel(ianaTimeZone).slice(11).includes('UTC') ||
+      formatTimeZoneLabel(ianaTimeZone).slice(11).includes('UCT') ||
+      formatTimeZoneLabel(ianaTimeZone) in result
+    ) {
+      return result;
+    }
 
-  // Remove the '(GMT±00:00) ' prefix from the label.
-  const timeZoneName = timeZoneLabel.slice(11);
+    return {
+      ...result,
+      [formatTimeZoneLabel(ianaTimeZone)]: {
+        label: formatTimeZoneLabel(ianaTimeZone),
+        value: ianaTimeZone,
+      },
+    };
+  }, {}),
+};
 
-  // Skip time zones with GMT, UTC, or UCT in their name,
-  // and duplicates.
-  if (
-    timeZoneName.includes('GMT') ||
-    timeZoneName.includes('UTC') ||
-    timeZoneName.includes('UCT') ||
-    timeZoneLabel in result
-  ) {
-    return result;
-  }
-
-  return {
-    ...result,
-    [timeZoneLabel]: { label: timeZoneLabel, value: ianaTimeZone },
-  };
-}, {});
+export { AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL };

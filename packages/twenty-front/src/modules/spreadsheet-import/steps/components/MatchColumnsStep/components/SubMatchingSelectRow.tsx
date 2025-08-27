@@ -1,10 +1,10 @@
 import { SubMatchingSelectRowLeftSelect } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectRowLeftSelect';
 import { SubMatchingSelectRowRightDropdown } from '@/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectRowRightDropdown';
 import {
-  SpreadsheetMatchedSelectColumn,
-  SpreadsheetMatchedSelectOptionsColumn,
+  type SpreadsheetMatchedSelectColumn,
+  type SpreadsheetMatchedSelectOptionsColumn,
 } from '@/spreadsheet-import/types/SpreadsheetColumn';
-import { SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
+import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 import styled from '@emotion/styled';
 
 const StyledRowContainer = styled.div`

@@ -1,7 +1,7 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { buildRecordGqlFieldsAggregateForView } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregateForView';
-import { KanbanAggregateOperation } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
+import { type KanbanAggregateOperation } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -35,6 +35,7 @@ describe('buildRecordGqlFieldsAggregateForView', () => {
     isCustom: false,
     isActive: true,
     isSystem: false,
+    isUIReadOnly: false,
     isRemote: false,
     isSearchable: false,
     labelIdentifierFieldMetadataId: '06b33746-5293-4d07-9f7f-ebf5ad396064',

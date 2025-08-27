@@ -6,11 +6,11 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { DEACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/deactivateWorkflowVersion';
-import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  DeactivateWorkflowVersionMutation,
-  DeactivateWorkflowVersionMutationVariables,
+  type DeactivateWorkflowVersionMutation,
+  type DeactivateWorkflowVersionMutationVariables,
 } from '~/generated-metadata/graphql';
 
 export const useDeactivateWorkflowVersion = () => {

@@ -1,5 +1,5 @@
 import {
-  EventRowDynamicComponentProps,
+  type EventRowDynamicComponentProps,
   StyledEventRowItemAction,
   StyledEventRowItemColumn,
 } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';

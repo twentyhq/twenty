@@ -1,4 +1,4 @@
-import { FeatureFlag } from '@/settings/admin-panel/types/FeatureFlag';
+import { type FeatureFlag } from '@/settings/admin-panel/types/FeatureFlag';
 
 export type WorkspaceInfo = {
   id: string;

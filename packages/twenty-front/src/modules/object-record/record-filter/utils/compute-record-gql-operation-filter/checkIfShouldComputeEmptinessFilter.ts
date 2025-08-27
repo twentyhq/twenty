@@ -1,7 +1,7 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
-import { FilterableAndTSVectorFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
-import { RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { type FilterableAndTSVectorFieldType } from '@/object-record/record-filter/types/FilterableFieldType';
+import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isEmptinessOperand } from '@/object-record/record-filter/utils/isEmptinessOperand';
 
 export const checkIfShouldComputeEmptinessFilter = ({

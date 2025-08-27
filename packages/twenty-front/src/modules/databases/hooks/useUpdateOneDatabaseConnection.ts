@@ -3,9 +3,9 @@ import { useMutation } from '@apollo/client';
 import { UPDATE_ONE_DATABASE_CONNECTION } from '@/databases/graphql/mutations/updateOneDatabaseConnection';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import {
-  UpdateRemoteServerInput,
-  UpdateServerMutation,
-  UpdateServerMutationVariables,
+  type UpdateRemoteServerInput,
+  type UpdateServerMutation,
+  type UpdateServerMutationVariables,
 } from '~/generated-metadata/graphql';
 
 export const useUpdateOneDatabaseConnection = () => {

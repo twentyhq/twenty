@@ -1,27 +1,31 @@
 import { useMatch, useResolvedPath } from 'react-router-dom';
 
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
-import { SettingsNavigationItem } from '@/settings/hooks/useSettingsNavigationItems';
+import { type SettingsNavigationItem } from '@/settings/hooks/useSettingsNavigationItems';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
+import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isDefined } from 'twenty-shared/utils';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 type SettingsNavigationDrawerItemProps = {
   item: SettingsNavigationItem;
   subItemState?: NavigationDrawerSubItemState;
+  hasActiveSubItem?: boolean;
 };
 
 export const SettingsNavigationDrawerItem = ({
   item,
   subItemState,
+  hasActiveSubItem = false,
 }: SettingsNavigationDrawerItemProps) => {
   const href = item.path ? getSettingsPath(item.path) : '';
   const pathName = useResolvedPath(href).pathname;
-  const isActive = !!useMatch({
+  const matchResult = useMatch({
     path: pathName,
     end: item.matchSubPages === false,
   });
+
+  const isActive = !!matchResult && !hasActiveSubItem;
 
   if (isDefined(item.isHidden) && item.isHidden) {
     return null;

@@ -68,6 +68,7 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     if (executionArgs.args.ids) {

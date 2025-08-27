@@ -119,6 +119,7 @@ export class GraphqlQueryParser {
     parentObjectMetadata: ObjectMetadataItemWithFieldMaps,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     graphqlSelectedFields: Partial<Record<string, any>>,
+    objectMetadataMaps: ObjectMetadataMaps,
   ): GraphqlQuerySelectedFieldsResult {
     const objectMetadataMapItem = getObjectMetadataMapItemByNameSingular(
       this.objectMetadataMaps,
@@ -139,6 +140,7 @@ export class GraphqlQueryParser {
     return selectedFieldsParser.parse(
       graphqlSelectedFields,
       objectMetadataMapItem,
+      objectMetadataMaps,
     );
   }
 }

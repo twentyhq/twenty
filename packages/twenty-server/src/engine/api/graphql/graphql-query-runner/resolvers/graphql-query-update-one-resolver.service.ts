@@ -40,6 +40,7 @@ export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolv
       select: executionArgs.graphqlQuerySelectedFieldsResult.select,
       relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
       objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     });
 
     const updatedObjectRecords = await queryBuilder

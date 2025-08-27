@@ -2,7 +2,7 @@ import { MOCK_REMOTE_DATABASES } from '@/settings/integrations/constants/MockRem
 import { SETTINGS_INTEGRATION_AI_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationMcp';
 import { SETTINGS_INTEGRATION_REQUEST_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationRequest';
 import { SETTINGS_INTEGRATION_ZAPIER_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationZapier';
-import { SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
+import { type SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
 import { getSettingsIntegrationAll } from '@/settings/integrations/utils/getSettingsIntegrationAll';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated/graphql';

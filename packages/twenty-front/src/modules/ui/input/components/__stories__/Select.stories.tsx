@@ -1,8 +1,8 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { type Meta, type StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
 import { useState } from 'react';
 
-import { Select, SelectProps } from '../Select';
+import { Select, type SelectProps } from '../Select';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { IconPlus } from 'twenty-ui/display';
 
