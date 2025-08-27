@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
@@ -21,6 +22,7 @@ export const prefillViews = async (
   entityManager: WorkspaceEntityManager,
   schemaName: string,
   objectMetadataItems: ObjectMetadataEntity[],
+  featureFlags?: Record<string, boolean>,
 ) => {
   const customObjectMetadataItems = objectMetadataItems.filter(
     (item) => item.isCustom,
@@ -32,7 +34,6 @@ export const prefillViews = async (
 
   const views = [
     companiesAllView(objectMetadataItems),
-    dashboardsAllView(objectMetadataItems),
     peopleAllView(objectMetadataItems),
     opportunitiesAllView(objectMetadataItems),
     opportunitiesByStageView(objectMetadataItems),
@@ -45,6 +46,11 @@ export const prefillViews = async (
     workflowRunsAllView(objectMetadataItems),
     ...customViews,
   ];
+
+  // Only include dashboards view if page layout feature flag is enabled
+  if (featureFlags?.[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED]) {
+    views.push(dashboardsAllView(objectMetadataItems));
+  }
 
   return createWorkspaceViews(entityManager, schemaName, views);
 };

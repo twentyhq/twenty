@@ -3,6 +3,7 @@ import { type ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared
 import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
@@ -31,6 +32,7 @@ export const prefillCoreViews = async (
   dataSource: DataSource,
   workspaceId: string,
   objectMetadataItems: ObjectMetadataEntity[],
+  featureFlags?: Record<string, boolean>,
 ): Promise<ViewEntity[]> => {
   const views = [
     companiesAllView(objectMetadataItems, true),
@@ -44,8 +46,11 @@ export const prefillCoreViews = async (
     workflowsAllView(objectMetadataItems, true),
     workflowVersionsAllView(objectMetadataItems, true),
     workflowRunsAllView(objectMetadataItems, true),
-    dashboardsAllView(objectMetadataItems, true),
   ];
+
+  if (featureFlags?.[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED]) {
+    views.push(dashboardsAllView(objectMetadataItems, true));
+  }
 
   const queryRunner = dataSource.createQueryRunner();
 
