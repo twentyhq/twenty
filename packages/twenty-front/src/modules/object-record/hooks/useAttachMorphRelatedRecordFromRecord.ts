@@ -7,6 +7,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useUpdateManyRecordsFromManyObjects } from '@/object-record/hooks/useUpdateManyRecordsFromManyObjects';
 import { getTargetFieldMetadataName } from '@/object-record/multiple-objects/utils/getTargetFieldMetadataName';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -19,6 +20,22 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
     useUpdateManyRecordsFromManyObjects();
 
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  if (!isFieldMorphRelation(fieldDefinition)) {
+    throw new Error('Field is not a morph relation');
+  }
+
+  const objectNameSingular =
+    fieldDefinition.metadata.morphRelations[0].sourceObjectMetadata
+      .nameSingular;
+  const objectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === objectNameSingular,
+  );
+
+  if (!isDefined(objectMetadataItem)) {
+    throw new Error('Could not find object metadata item');
+  }
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const updateOneRecordAndAttachMorphRelations = async ({
@@ -76,16 +93,24 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
     const previousRecordId = cachedRelatedRecord?.[`${fieldOnRelatedObject}Id`];
 
     if (isDefined(previousRecordId)) {
-      const previousRecord = getRecordFromCache<ObjectRecord>(previousRecordId);
+      const previousRecord = getRecordFromCache<ObjectRecord>({
+        objectMetadataItem,
+        recordId: previousRecordId,
+        cache: apolloCoreClient.cache,
+        objectMetadataItems,
+        objectPermissionsByObjectMetadataId,
+      });
 
       const previousRecordWithRelation = {
         ...cachedRelatedRecord,
         [fieldOnRelatedObject]: previousRecord,
       };
+
       const gqlFields = computeDepthOneRecordGqlFieldsFromRecord({
         objectMetadataItem: relatedObjectMetadataItem,
         record: previousRecordWithRelation,
       });
+
       updateRecordFromCache({
         objectMetadataItems,
         objectMetadataItem: relatedObjectMetadataItem,
