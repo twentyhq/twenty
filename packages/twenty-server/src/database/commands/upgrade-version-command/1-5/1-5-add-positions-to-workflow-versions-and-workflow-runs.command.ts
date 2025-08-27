@@ -1,12 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Command } from 'nest-commander';
+import { Command, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import Dagre from '@dagrejs/dagre';
 
 import {
+  ActiveOrSuspendedWorkspacesMigrationCommandOptions,
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
@@ -32,6 +33,11 @@ type Diagram = {
   edges: Edge[];
 };
 
+export type AddPositionsToWorkflowVersionsAndWorkflowRunsOptions =
+  ActiveOrSuspendedWorkspacesMigrationCommandOptions & {
+    processWorkflowRuns?: boolean;
+  };
+
 @Command({
   name: 'upgrade:1-5:add-positions-to-workflow-versions-and-workflow-runs',
   description: 'Add positions to workflow versions and workflow runs',
@@ -46,11 +52,26 @@ export class AddPositionsToWorkflowVersionsAndWorkflowRuns extends ActiveOrSuspe
     super(workspaceRepository, twentyORMGlobalManager);
   }
 
+  @Option({
+    flags: '--process-workflow-runs [process_workflow_runs]',
+    description: 'Process workflowRuns positions (default false)',
+    required: false,
+  })
+  parseProcessWorkflowRuns(): boolean {
+    return true;
+  }
+
   override async runOnWorkspace({
     workspaceId,
-  }: RunOnWorkspaceArgs): Promise<void> {
+    options,
+  }: Omit<RunOnWorkspaceArgs, 'options'> & {
+    options: AddPositionsToWorkflowVersionsAndWorkflowRunsOptions;
+  }): Promise<void> {
     await this.addPositionsToWorkflowVersions({ workspaceId });
-    await this.addPositionsToWorkflowRuns({ workspaceId });
+
+    if (options.processWorkflowRuns) {
+      await this.addPositionsToWorkflowRuns({ workspaceId });
+    }
   }
 
   private async addPositionsToWorkflowVersions({
@@ -67,13 +88,12 @@ export class AddPositionsToWorkflowVersionsAndWorkflowRuns extends ActiveOrSuspe
 
     const workflowVersions = await workflowVersionRepository.find();
 
-    let multiBranchCount = 0;
+    let count = 0;
 
     for (const workflowVersion of workflowVersions) {
       try {
         // We only update one branch workflow
         if (this.isWorkflowMultiBranch(workflowVersion)) {
-          multiBranchCount += 1;
           continue;
         }
 
@@ -87,6 +107,7 @@ export class AddPositionsToWorkflowVersionsAndWorkflowRuns extends ActiveOrSuspe
           trigger: updatedTrigger,
           steps: updatedSteps,
         });
+        count += 1;
       } catch (error) {
         this.logger.error(
           `Error while adding positions to workflowVersion '${workflowVersion.id}'`,
@@ -96,7 +117,7 @@ export class AddPositionsToWorkflowVersionsAndWorkflowRuns extends ActiveOrSuspe
     }
 
     this.logger.log(
-      `Workflow versions updated count: ${workflowVersions.length - multiBranchCount} out of ${workflowVersions.length}`,
+      `Workflow versions updated count: ${count} out of ${workflowVersions.length}`,
     );
   }
 
