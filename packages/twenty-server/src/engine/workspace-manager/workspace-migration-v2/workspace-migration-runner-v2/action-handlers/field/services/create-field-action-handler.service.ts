@@ -40,7 +40,6 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   }
 
   async executeForWorkspaceSchema(
-    // here
     context: WorkspaceMigrationActionRunnerArgs<CreateFieldAction>,
   ): Promise<void> {
     const { action, queryRunner, flatObjectMetadataMaps, workspaceId } =
