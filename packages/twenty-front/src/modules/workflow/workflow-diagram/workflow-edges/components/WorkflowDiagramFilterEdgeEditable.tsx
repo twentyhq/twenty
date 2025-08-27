@@ -9,12 +9,6 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBaseEdge';
-import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup';
-import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2Container';
-import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2VisibilityContainer';
-import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
-import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
 import { useOpenWorkflowEditFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowEditFilterInCommandMenu';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { workflowDiagramPanOnDragComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramPanOnDragComponentState';
@@ -24,10 +18,18 @@ import {
   type WorkflowDiagramEdgeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
+import { WorkflowDiagramBaseEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramBaseEdge';
+import { WorkflowDiagramEdgeButtonGroup } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeButtonGroup';
+import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2Container';
+import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2VisibilityContainer';
+import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
+import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
+import { WorkflowStepFilterCounter } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterCounter';
+import { useFilterCounter } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useFilterCounter';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { css } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -38,6 +40,7 @@ import {
 } from '@xyflow/react';
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
+
 import {
   IconDotsVertical,
   IconFilter,
@@ -61,6 +64,12 @@ const assertFilterEdgeDataOrThrow: (
   }
 };
 
+const StyledConfiguredFilterContainer = styled.div`
+  height: 26px;
+  width: 26px;
+  position: relative;
+`;
+
 const StyledIconButtonGroup = styled(IconButtonGroup)<{ selected?: boolean }>`
   pointer-events: all;
 
@@ -72,11 +81,6 @@ const StyledIconButtonGroup = styled(IconButtonGroup)<{ selected?: boolean }>`
       border: 1px solid ${colors.selected.borderColor};
     `;
   }}
-`;
-
-const StyledConfiguredFilterContainer = styled.div`
-  height: 26px;
-  width: 26px;
 `;
 
 export const WorkflowDiagramFilterEdgeEditable = ({
@@ -93,6 +97,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
   assertFilterEdgeDataOrThrow(data);
 
   const { t } = useLingui();
+  const theme = useTheme();
   const isWorkflowBranchEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
   );
@@ -178,6 +183,9 @@ export const WorkflowDiagramFilterEdgeEditable = ({
     await deleteEdge({ source, target });
   };
 
+  const { filterCounter } = useFilterCounter({ stepId: data.stepId });
+  const { unselected } = getWorkflowDiagramColors({ theme });
+
   return (
     <>
       <WorkflowDiagramBaseEdge
@@ -196,6 +204,11 @@ export const WorkflowDiagramFilterEdgeEditable = ({
         >
           <WorkflowDiagramEdgeV2VisibilityContainer shouldDisplay>
             <StyledConfiguredFilterContainer>
+              <WorkflowStepFilterCounter
+                backgroundColor={unselected.tagBackground}
+                textColor={theme.font.color.inverted}
+                counter={filterCounter}
+              />
               {isEdgeHovered({ source, target }) ||
               isDropdownOpen ||
               nodeCreationStarted ? (

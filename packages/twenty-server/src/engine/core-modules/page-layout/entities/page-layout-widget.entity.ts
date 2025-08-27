@@ -6,45 +6,43 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
-import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
+import { GridPosition } from 'src/engine/core-modules/page-layout/types/grid-position.type';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
-@Entity({ name: 'pageLayout', schema: 'core' })
-@Index('IDX_PAGE_LAYOUT_WORKSPACE_ID_OBJECT_METADATA_ID', [
-  'workspaceId',
-  'objectMetadataId',
-])
-export class PageLayoutEntity implements Required<PageLayoutEntity> {
+@Entity({ name: 'pageLayoutWidget', schema: 'core' })
+@Index('IDX_PAGE_LAYOUT_WIDGET_PAGE_LAYOUT_TAB_ID', ['pageLayoutTabId'])
+export class PageLayoutWidgetEntity
+  implements Required<PageLayoutWidgetEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false })
-  name: string;
-
   @Column({ nullable: false, type: 'uuid' })
-  workspaceId: string;
+  pageLayoutTabId: string;
 
-  @ManyToOne(() => Workspace, {
+  @ManyToOne(() => PageLayoutTabEntity, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
+  @JoinColumn({ name: 'pageLayoutTabId' })
+  pageLayoutTab: Relation<PageLayoutTabEntity>;
+
+  @Column({ nullable: false })
+  title: string;
 
   @Column({
     type: 'enum',
-    enum: Object.values(PageLayoutType),
+    enum: Object.values(WidgetType),
     nullable: false,
-    default: PageLayoutType.RECORD_PAGE,
+    default: WidgetType.VIEW,
   })
-  type: PageLayoutType;
+  type: WidgetType;
 
   @Column({ nullable: true, type: 'uuid' })
   objectMetadataId: string | null;
@@ -56,10 +54,11 @@ export class PageLayoutEntity implements Required<PageLayoutEntity> {
   @JoinColumn({ name: 'objectMetadataId' })
   objectMetadata: Relation<ObjectMetadataEntity> | null;
 
-  @OneToMany(() => PageLayoutTabEntity, (tab) => tab.pageLayout, {
-    cascade: true,
-  })
-  tabs: Relation<PageLayoutTabEntity[]>;
+  @Column({ type: 'jsonb', nullable: false })
+  gridPosition: GridPosition;
+
+  @Column({ type: 'jsonb', nullable: true })
+  configuration: Record<string, unknown> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
