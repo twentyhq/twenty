@@ -35,8 +35,8 @@ export class AiService {
     return streamText({
       model: options.model,
       messages,
-      temperature: options?.temperature,
-      maxTokens: options?.maxTokens,
+      temperature: options.temperature,
+      maxTokens: options.maxTokens,
     });
   }
 }
