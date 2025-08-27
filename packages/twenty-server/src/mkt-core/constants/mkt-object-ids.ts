@@ -32,12 +32,19 @@ export const MKT_OBJECT_IDS = {
   mktOrganizationLevel: 'd4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a',
   mktEmploymentStatus: 'e5f6a7b8-c9d0-1e2f-3a4b-5c6d7e8f9a0b',
   mktDepartment: 'f6a7b8c9-d0e1-2f3a-4b5c-6d7e8f9a0b1c',
+  mktDepartmentHierarchy: 'b152dcb4-3f48-4bd5-8c13-69171c40075d',
   mktStaffStatusHistory: 'b8c9d0e1-f2a3-4b5c-6d7e-8f9a0b1c2d3e',
   // kpi system
   mktKpi: 'a7b8c9d0-e1f2-3a4b-5c6d-7e8f9a0b1c2d',
   mktKpiTemplate: 'c9d0e1f2-3a4b-5c6d-7e8f-9a0b1c2d3e4f',
   mktKpiHistory: 'd0e1f2a3-4b5c-6d7e-8f9a-0b1c2d3e4f5a',
   mktKpiTemplateHistory: 'e1f2a3b4-5c6d-7e8f-9a0b-1c2d3e4f5a6b',
+  // temporary permission system
+  mktTemporaryPermission: 'dde9a4ee-2920-46f1-9f07-bf10944bc897',
+  // data access policy system
+  mktDataAccessPolicy: 'a8b9c0d1-e2f3-4567-89ab-cdef01234567',
+  // permission audit system
+  mktPermissionAudit: 'f4a5b6c7-d8e9-0123-4567-89abcdef0123',
   // customers
   mktCustomer: '2c720af2-4412-4317-8a48-0acdaf66bc90',
 };

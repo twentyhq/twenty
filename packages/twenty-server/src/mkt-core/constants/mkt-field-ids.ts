@@ -402,6 +402,14 @@ export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   //kpi system
   accountOwnerForMktKpiTemplates: '40404040-7c8d-9e0f-1a2b-3c4d5e6f7a8b',
   changedKpiHistories: '40404040-0b1c-2d3e-4f5a-6b7c8d9e0f1a',
+  // temporary permissions
+  grantedTemporaryPermissions: '60606060-4f5a-6b7c-8d9e-0f1a2b3c4d5e',
+  receivedTemporaryPermissions: '60606060-5a6b-7c8d-9e0f-1a2b3c4d5e6f',
+  revokedTemporaryPermissions: '60606060-6b7c-8d9e-0f1a-2b3c4d5e6f7a',
+  // data access policies
+  dataAccessPolicies: '70707070-7a8b-9c0d-1e2f-3a4b5c6d7e8f',
+  // permission audits
+  permissionAudits: '80808080-8b9c-0d1e-2f3a-4b5c6d7e8f9a',
 };
 
 export const MKT_RESELLER_TIER_FIELD_IDS = {
@@ -557,6 +565,9 @@ export const MKT_DEPARTMENT_FIELD_IDS = {
   isActive: 'd6e7f8a9-b0c1-2d3e-4f5a-6b7c8d9e0f1a',
   // relations
   staffMembers: 'e7f8a9b0-c1d2-3e4f-5a6b-7c8d9e0f1a2b',
+  childHierarchies: 'a1d2c3b4-e5f6-7a8b-9c0d-e1f2a3b4c5d6',
+  parentHierarchies: 'b2c3d4e5-f6a7-8b9c-0d1e-f2a3b4c5d6e7',
+  dataAccessPolicies: '6742dde7-8567-4e8f-a30d-e6b6c70ede0a',
   // standard fields
   position: 'f8a9b0c1-d2e3-4f5a-6b7c-8d9e0f1a2b3c',
   createdBy: 'a9b0c1d2-e3f4-5a6b-7c8d-9e0f1a2b3c4d',
@@ -578,8 +589,8 @@ export const MKT_KPI_FIELD_IDS = {
   // time period
   periodType: '20202020-5c6d-7e8f-9a0b-1c2d3e4f5a6b',
   periodYear: '20202020-6d7e-8f9a-0b1c-2d3e4f5a6b7c',
-  periodQuarter: '20202020-7e8f-9a0b-1c2d-3e4f5a6b7c8d',
-  periodMonth: '20202020-8f9a-0b1c-2d3e-4f5a6b7c8d9e',
+  periodQuarter: '3d72979b-ddf8-4f90-b0d3-650ee6c35611',
+  periodMonth: '14dbd050-ecec-4538-9721-0d2c98a55c57',
   periodWeek: '20202020-9a0b-1c2d-3e4f-5a6b7c8d9e0f',
   periodStartDate: '20202020-0b1c-2d3e-4f5a-6b7c8d9e0f1a',
   periodEndDate: '20202020-1c2d-3e4f-5a6b-7c8d9e0f1a2b',
@@ -587,7 +598,7 @@ export const MKT_KPI_FIELD_IDS = {
   // assignment
   assigneeType: '20202020-2d3e-4f5a-6b7c-8d9e0f1a2b3c',
   assigneeWorkspaceMember: '20202020-3e4f-5a6b-7c8d-9e0f1a2b3c4d',
-  assigneeDepartment: '20202020-4f5a-6b7c-8d9e-0f1a2b3c4d5e',
+  assigneeDepartment: '20202020-4f5c-6d7e-8f9a-0b1a2b3c4d5e',
 
   // status and progress
   status: '20202020-5a6b-7c8d-9e0f-1a2b3c4d5e6f',
@@ -607,6 +618,7 @@ export const MKT_KPI_FIELD_IDS = {
   position: '20202020-3c4d-5e6f-7a8b-9c0d1e2f3a4b',
   createdBy: '20202020-4d5e-6f7a-8b9c-0d1e2f3a4b5c',
   assignedTo: '20202020-5e6f-7a8b-9c0d-1e2f3a4b5c6d',
+  assignedToId: 'e99355eb-0c55-4ca4-ac32-2a8b389212ee',
 
   // relations
   kpiHistories: '20202020-6f7a-8b9c-0d1e-2f3a4b5c6d7e',
@@ -673,4 +685,119 @@ export const MKT_KPI_HISTORY_FIELD_IDS = {
   position: '40404040-7e8f-9a0b-1c2d-3e4f5a6b7c8d',
   createdBy: '40404040-8f9a-0b1c-2d3e-4f5a6b7c8d9e',
   searchVector: '40404040-9a0b-1c2d-3e4f-5a6b7c8d9e0f',
+};
+
+export const MKT_TEMPORARY_PERMISSION_FIELD_IDS = {
+  // grantee information
+  granteeWorkspaceMember: 'b7e2c1a4-3d5f-4e8a-9c2b-1f3e4d5a6b7c',
+  granterWorkspaceMember: 'c8f3d2b5-4e6a-4b9c-8d2e-2a3b4c5d6e7f',
+
+  // permission scope
+  objectName: 'd9a4e3c2-5b6f-4c8d-9e2a-3b4c5d6e7f8a',
+  recordId: 'e0b5f4d3-6c7a-4d9e-8f2b-4c5d6e7f8a9b',
+
+  // permissions granted
+  canRead: 'f1c6a5d4-7e8b-4f9a-9c3d-5e6f7a8b9c0d',
+  canUpdate: 'a2d7b6e5-8f9c-4a0b-9d4e-6f7a8b9c0d1e',
+  canDelete: 'b3e8c7f6-9a0d-4b1c-8e5f-7a8b9c0d1e2f',
+
+  // time control
+  expiresAt: 'c4f9d8e7-0b1a-4c2d-9f6e-8b9c0d1e2f3a',
+
+  // justification
+  reason: 'd5a0e9f8-1c2b-4d3e-8a7f-9c0d1e2f3a4b',
+  purpose: 'e6b1f0a9-2d3c-4e5f-9b8a-0d1e2f3a4b5c',
+
+  // status tracking
+  isActive: 'f7c2a1b0-3e4d-5f6a-8b9c-1e2f3a4b5c6d',
+  revokedAt: 'a8d3b2c1-4f5e-6a7b-9c0d-2f3a4b5c6d7e',
+  revokedBy: 'b9e4c3d2-5a6f-7b8c-0d1e-3a4b5c6d7e8f',
+  revokeReason: 'c0f5d4e3-6b7a-8c9d-1e2f-4b5c6d7e8f9a',
+
+  // standard fields
+  position: 'd1a6e5f4-7c8b-9d0e-2f3a-5c6d7e8f9a0b',
+  createdBy: 'e2b7f6a5-8d9c-0a1b-3c4d-6e7f8a9b0c1d',
+  searchVector: 'f3c8a7b6-9e0d-1b2c-4d5e-7f8a9b0c1d2e',
+};
+
+export const MKT_DEPARTMENT_HIERARCHY_FIELD_IDS = {
+  // parent department relation
+  parentDepartment: 'e1b2c3d4-5f6a-4b7c-8d9e-0f1a2b3c4d5e',
+  // child department relation (acts as departmentId in design)
+  childDepartment: '855bb84d-b802-4ee5-a048-7eeb68ef9c3a',
+  // hierarchy information
+  hierarchyLevel: 'a3d4e5f6-7b8c-4d9e-0f1a-2b3c4d5e6f7a',
+  hierarchyPath: 'b4e5f6a7-8c9d-4e0f-1a2b-3c4d5e6f7a8b',
+  // manager & permissions
+  manager: 'c5f6a7b8-9d0e-4f1a-2b3c-4d5e6f7a8b9c',
+  canViewTeamData: 'd6a7b8c9-0e1f-4a2b-3c4d-5e6f7a8b9c0d',
+  canEditTeamData: 'e7b8c9d0-1f2a-4b3c-5d6e-7a8b9c0d1e2f',
+  canExportTeamData: 'f8c9d0e1-2a3b-4c5d-6e7f-8a9b0c1d2e3f',
+  inheritsParentPermissions: 'a9d0e1f2-3b4c-5d6e-7f8a-9b0c1d2e3f4a',
+  // legacy / additional relationship type
+  relationshipType: 'b0e1f2a3-4c5d-6e7f-8a9b-0c1d2e3f4a5b',
+
+  // validity period
+  validFrom: 'c1f2a3b4-5d6e-7f8a-9b0c-1d2e3f4a5b6c',
+  validTo: 'd2a3b4c5-6e7f-8a9b-0c1d-2e3f4a5b6c7d',
+  // business configuration (legacy)
+  inheritsPermissions: 'e3b4c5d6-7f8a-9b0c-1d2e-3f4a5b6c7d8e',
+  canEscalateToParent: 'f4c5d6e7-8a9b-0c1d-2e3f-4a5b6c7d8e9f',
+  allowsCrossBranchAccess: 'a5d6e7f8-9b0c-1d2e-3f4a-5b6c7d8e9fa0',
+  // display and metadata
+  displayOrder: 'b6e7f8a9-0c1d-2e3f-4a5b-6c7d8e9fa0b1',
+  notes: 'c7f8a9b0-1d2e-3f4a-5b6c-7d8e9fa0b1c2',
+  isActive: 'd8a9b0c1-2e3f-4a5b-6c7d-8e9fa0b1c2d3',
+  // standard fields
+  position: 'e9b0c1d2-3f4a-5b6c-7d8e-9fa0b1c2d3e4',
+  createdBy: 'f0c1d2e3-4a5b-6c7d-8e9f-a0b1c2d3e4f5',
+  searchVector: 'a1d2e3f4-5b6c-7d8e-9fa0-b1c2d3e4f5a6',
+};
+
+export const MKT_DATA_ACCESS_POLICY_FIELD_IDS = {
+  // basic info
+  name: 'b2e3f4a5-6c7d-8e9f-a0b1-c2d3e4f5a6b7',
+  description: 'c3f4a5b6-7d8e-9fa0-b1c2-d3e4f5a6b7c8',
+
+  // applies to whom
+  department: 'd4a5b6c7-8e9f-a0b1-c2d3-e4f5a6b7c8d9',
+  specificMember: 'e5b6c7d8-9fa0-b1c2-d3e4-f5a6b7c8d9ea',
+
+  // applies to what
+  objectName: 'f6c7d8e9-a0b1-c2d3-e4f5-a6b7c8d9eafb',
+  filterConditions: 'a7d8e9fa-b1c2-d3e4-f5a6-b7c8d9eafba0',
+
+  // control
+  priority: 'b8e9fab0-c2d3-e4f5-a6b7-c8d9eafba0b1',
+  isActive: 'c9fab0c1-d3e4-f5a6-b7c8-d9eafba0b1c2',
+
+  // standard fields
+  position: 'd0b0c1d2-e4f5-a6b7-c8d9-eafba0b1c2d3',
+};
+
+export const MKT_PERMISSION_AUDIT_FIELD_IDS = {
+  // who performed the action
+  workspaceMember: 'e1f2a3b4-5c6d-7e8f-a0b1-c2d3e4f5a6b7',
+  userId: 'f2a3b4c5-6d7e-8f9a-b1c2-d3e4f5a6b7c8',
+
+  // what action was performed
+  action: 'a3b4c5d6-7e8f-9a0b-c2d3-e4f5a6b7c8d9',
+  objectName: 'b4c5d6e7-8f9a-0b1c-d3e4-f5a6b7c8d9ea',
+  recordId: 'c5d6e7f8-9a0b-1c2d-e4f5-a6b7c8d9eafb',
+
+  // permission check details
+  permissionSource: 'd6e7f8a9-0b1c-2d3e-f5a6-b7c8d9eafba0',
+  checkResult: 'e7f8a9b0-1c2d-3e4f-a6b7-c8d9eafba0b1',
+  denialReason: 'f8a9b0c1-2d3e-4f5a-b7c8-d9eafba0b1c2',
+
+  // request context
+  requestContext: 'a9b0c1d2-3e4f-5a6b-c8d9-eafba0b1c2d3',
+  ipAddress: 'b0c1d2e3-4f5a-6b7c-d9ea-fba0b1c2d3e4',
+  userAgent: 'c1d2e3f4-5a6b-7c8d-eafb-a0b1c2d3e4f5',
+
+  // performance metrics
+  checkDurationMs: 'd2e3f4a5-6b7c-8d9e-fba0-b1c2d3e4f5a6',
+
+  // standard fields
+  position: 'e3f4a5b6-7c8d-9eaf-ba0b-1c2d3e4f5a6b',
 };

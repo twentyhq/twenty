@@ -99,6 +99,22 @@ import {
   MKT_TEMPLATE_DATA_SEED_COLUMNS,
   MKT_TEMPLATE_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-template-data-seeds.constants';
+import {
+  MKT_TEMPORARY_PERMISSION_DATA_SEED_COLUMNS,
+  MKT_TEMPORARY_PERMISSION_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-temporary-permission-data-seeds.constants';
+import {
+  MKT_DEPARTMENT_HIERARCHY_DATA_SEED_COLUMNS,
+  MKT_DEPARTMENT_HIERARCHY_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-department-hierarchy-data-seeds.constants';
+import {
+  MKT_DATA_ACCESS_POLICY_DATA_SEED_COLUMNS,
+  MKT_DATA_ACCESS_POLICY_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-data-access-policy-data-seeds.constants';
+import {
+  MKT_PERMISSION_AUDIT_DATA_SEED_COLUMNS,
+  MKT_PERMISSION_AUDIT_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/constants/mkt-permission-audit-data-seeds.constants';
 
 export const MKT_RECORD_SEEDS_CONFIGS_FIRST_PHASE_TABLES = [
   // Organization configs
@@ -241,5 +257,26 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     tableName: 'mktStaffStatusHistory',
     pgColumns: MKT_STAFF_STATUS_HISTORY_DATA_SEED_COLUMNS,
     recordSeeds: MKT_STAFF_STATUS_HISTORY_DATA_SEEDS,
+  },
+  // Temporary Permission - needs to be after workspace members
+  {
+    tableName: 'mktTemporaryPermission',
+    pgColumns: MKT_TEMPORARY_PERMISSION_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_TEMPORARY_PERMISSION_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktDepartmentHierarchy',
+    pgColumns: MKT_DEPARTMENT_HIERARCHY_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_DEPARTMENT_HIERARCHY_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktDataAccessPolicy',
+    pgColumns: MKT_DATA_ACCESS_POLICY_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_DATA_ACCESS_POLICY_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktPermissionAudit',
+    pgColumns: MKT_PERMISSION_AUDIT_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_PERMISSION_AUDIT_DATA_SEEDS,
   },
 ];

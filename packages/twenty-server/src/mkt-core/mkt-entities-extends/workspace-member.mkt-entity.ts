@@ -30,6 +30,9 @@ import { MktOrganizationLevelWorkspaceEntity } from 'src/mkt-core/mkt-organizati
 import { MktEmploymentStatusWorkspaceEntity } from 'src/mkt-core/mkt-employment-status/mkt-employment-status.workspace-entity';
 import { MktKpiWorkspaceEntity } from 'src/mkt-core/mkt-kpi/mkt-kpi.workspace-entity';
 import { MktKpiTemplateWorkspaceEntity } from 'src/mkt-core/mkt-kpi-template/mkt-kpi-template.workspace-entity';
+import { MktTemporaryPermissionWorkspaceEntity } from 'src/mkt-core/mkt-temporary-permission/mkt-temporary-permission.workspace-entity';
+import { MktDataAccessPolicyWorkspaceEntity } from 'src/mkt-core/mkt-data-access-policy/mkt-data-access-policy.workspace-entity';
+import { MktPermissionAuditWorkspaceEntity } from 'src/mkt-core/mkt-permission-audit/mkt-permission-audit.workspace-entity';
 
 export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
   @WorkspaceRelation({
@@ -272,6 +275,7 @@ export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('employmentStatus')
   employmentStatusId: string | null;
+
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.createdKpis,
     type: RelationType.ONE_TO_MANY,
@@ -297,4 +301,74 @@ export class WorkspaceMemberMktEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   createdKpiTemplates: Relation<MktKpiTemplateWorkspaceEntity[]>;
+
+  // === TEMPORARY PERMISSIONS RELATIONS ===
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.grantedTemporaryPermissions,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Granted Temporary Permissions`,
+    description: msg`Temporary permissions granted by this user`,
+    icon: 'IconUserCheck',
+    inverseSideTarget: () => MktTemporaryPermissionWorkspaceEntity,
+    inverseSideFieldKey: 'granterWorkspaceMember',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  grantedTemporaryPermissions: Relation<
+    MktTemporaryPermissionWorkspaceEntity[]
+  >;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.receivedTemporaryPermissions,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Received Temporary Permissions`,
+    description: msg`Temporary permissions received by this user`,
+    icon: 'IconUser',
+    inverseSideTarget: () => MktTemporaryPermissionWorkspaceEntity,
+    inverseSideFieldKey: 'granteeWorkspaceMember',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsSystem()
+  receivedTemporaryPermissions: Relation<
+    MktTemporaryPermissionWorkspaceEntity[]
+  >;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.revokedTemporaryPermissions,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Revoked Temporary Permissions`,
+    description: msg`Temporary permissions revoked by this user`,
+    icon: 'IconUserX',
+    inverseSideTarget: () => MktTemporaryPermissionWorkspaceEntity,
+    inverseSideFieldKey: 'revokedBy',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsSystem()
+  revokedTemporaryPermissions: Relation<
+    MktTemporaryPermissionWorkspaceEntity[]
+  >;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.dataAccessPolicies,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Data Access Policies`,
+    description: msg`Data access policies specifically assigned to this member`,
+    icon: 'IconShield',
+    inverseSideTarget: () => MktDataAccessPolicyWorkspaceEntity,
+    inverseSideFieldKey: 'specificMember',
+  })
+  @WorkspaceIsSystem()
+  dataAccessPolicies: Relation<MktDataAccessPolicyWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_MKT_FIELD_IDS.permissionAudits,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Permission Audits`,
+    description: msg`Permission audit logs for this workspace member`,
+    icon: 'IconShieldSearch',
+    inverseSideTarget: () => MktPermissionAuditWorkspaceEntity,
+    inverseSideFieldKey: 'workspaceMember',
+  })
+  @WorkspaceIsSystem()
+  permissionAudits: Relation<MktPermissionAuditWorkspaceEntity[]>;
 }
