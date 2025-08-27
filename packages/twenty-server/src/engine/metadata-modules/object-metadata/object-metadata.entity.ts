@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
+import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
@@ -148,4 +149,13 @@ export class ObjectMetadataEntity implements Required<ObjectMetadataEntity> {
     },
   )
   fieldPermissions: Relation<FieldPermissionEntity[]>;
+
+  @OneToMany(
+    () => PageLayoutEntity,
+    (pageLayout: PageLayoutEntity) => pageLayout.objectMetadata,
+    {
+      cascade: true,
+    },
+  )
+  pageLayouts: Relation<PageLayoutEntity[]>;
 }
