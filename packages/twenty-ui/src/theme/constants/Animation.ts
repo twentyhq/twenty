@@ -1,3 +1,5 @@
+import { css } from '@emotion/react';
+
 export const ANIMATION = {
   duration: {
     instant: 0.075,
@@ -8,3 +10,11 @@ export const ANIMATION = {
 };
 
 export type AnimationDuration = 'instant' | 'fast' | 'normal';
+
+// eslint-disable-next-line @nx/workspace-max-consts-per-file
+export const ANIMATION_CSS = css`
+  --animation-duration-instant: ${ANIMATION.duration.instant};
+  --animation-duration-fast: ${ANIMATION.duration.fast};
+  --animation-duration-normal: ${ANIMATION.duration.normal};
+  --animation-duration-slow: ${ANIMATION.duration.slow};
+`;

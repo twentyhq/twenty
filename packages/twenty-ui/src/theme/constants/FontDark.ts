@@ -1,5 +1,6 @@
+import { css } from '@emotion/react';
 import { COLOR } from './Colors';
-import { FONT_COMMON } from './FontCommon';
+import { FONT_COMMON, FONT_COMMON_CSS } from './FontCommon';
 import { GRAY_SCALE } from './GrayScale';
 
 export const FONT_DARK = {
@@ -14,3 +15,15 @@ export const FONT_DARK = {
   },
   ...FONT_COMMON,
 };
+
+// eslint-disable-next-line @nx/workspace-max-consts-per-file
+export const FONT_DARK_CSS = css`
+  --font-color-primary: ${FONT_DARK.color.primary};
+  --font-color-secondary: ${FONT_DARK.color.secondary};
+  --font-color-tertiary: ${FONT_DARK.color.tertiary};
+  --font-color-light: ${FONT_DARK.color.light};
+  --font-color-extraLight: ${FONT_DARK.color.extraLight};
+  --font-color-inverted: ${FONT_DARK.color.inverted};
+  --font-color-danger: ${FONT_DARK.color.danger};
+  ${FONT_COMMON_CSS}
+`;

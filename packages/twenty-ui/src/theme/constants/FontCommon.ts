@@ -1,3 +1,5 @@
+import { css } from '@emotion/react';
+
 export const FONT_COMMON = {
   size: {
     xxs: '0.625rem',
@@ -15,3 +17,15 @@ export const FONT_COMMON = {
   },
   family: 'Inter, sans-serif',
 };
+
+// eslint-disable-next-line @nx/workspace-max-consts-per-file
+export const FONT_COMMON_CSS = css`
+  --font-family: ${FONT_COMMON.family};
+  --font-size-xxs: ${FONT_COMMON.size.xxs};
+  --font-size-xs: ${FONT_COMMON.size.xs};
+  --font-size-sm: ${FONT_COMMON.size.sm};
+  --font-size-md: ${FONT_COMMON.size.md};
+  --font-size-lg: ${FONT_COMMON.size.lg};
+  --font-size-xl: ${FONT_COMMON.size.xl};
+  --font-size-xxl: ${FONT_COMMON.size.xxl};
+`;

@@ -1,3 +1,5 @@
+import { css } from '@emotion/react';
+
 export const ICON = {
   size: {
     sm: 14,
@@ -11,3 +13,11 @@ export const ICON = {
     lg: 2.5,
   },
 };
+
+// eslint-disable-next-line @nx/workspace-max-consts-per-file
+export const ICON_CSS = css`
+  --icon-size-sm: ${ICON.size.sm};
+  --icon-size-md: ${ICON.size.md};
+  --icon-size-lg: ${ICON.size.lg};
+  --icon-size-xl: ${ICON.size.xl};
+`;

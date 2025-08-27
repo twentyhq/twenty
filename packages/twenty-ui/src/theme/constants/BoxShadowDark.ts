@@ -1,3 +1,4 @@
+import { css } from '@emotion/react';
 import { GRAY_SCALE } from './GrayScale';
 import { RGBA } from './Rgba';
 
@@ -16,3 +17,11 @@ export const BOX_SHADOW_DARK = {
     0.12,
   )}, 0px 2px 4px 0px ${RGBA(GRAY_SCALE.gray100, 0.04)}`,
 };
+
+// eslint-disable-next-line @nx/workspace-max-consts-per-file
+export const BOX_SHADOW_DARK_CSS = css`
+  --box-shadow-light: ${BOX_SHADOW_DARK.light};
+  --box-shadow-strong: ${BOX_SHADOW_DARK.strong};
+  --box-shadow-underline: ${BOX_SHADOW_DARK.underline};
+  --box-shadow-superHeavy: ${BOX_SHADOW_DARK.superHeavy};
+`;

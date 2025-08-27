@@ -1,4 +1,5 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
+import { css } from '@emotion/react';
 import { GRAY_SCALE } from './GrayScale';
 
 export const SECONDARY_COLORS = {
@@ -105,3 +106,83 @@ export const SECONDARY_COLORS = {
   blueAccent15: '#edf2fe',
   blueAccent10: '#f5f9fd',
 };
+
+// eslint-disable-next-line @nx/workspace-max-consts-per-file
+export const SECONDARY_COLORS_CSS = css`
+  --color-blue10: ${SECONDARY_COLORS.blue10};
+  --color-blue20: ${SECONDARY_COLORS.blue20};
+  --color-blue30: ${SECONDARY_COLORS.blue30};
+  --color-blue40: ${SECONDARY_COLORS.blue40};
+  --color-blue50: ${SECONDARY_COLORS.blue50};
+  --color-blue60: ${SECONDARY_COLORS.blue60};
+  --color-blue70: ${SECONDARY_COLORS.blue70};
+  --color-blue80: ${SECONDARY_COLORS.blue80};
+
+  --color-green10: ${SECONDARY_COLORS.green10};
+  --color-green20: ${SECONDARY_COLORS.green20};
+  --color-green30: ${SECONDARY_COLORS.green30};
+  --color-green40: ${SECONDARY_COLORS.green40};
+  --color-green50: ${SECONDARY_COLORS.green50};
+  --color-green60: ${SECONDARY_COLORS.green60};
+  --color-green70: ${SECONDARY_COLORS.green70};
+  --color-green80: ${SECONDARY_COLORS.green80};
+
+  --color-purple10: ${SECONDARY_COLORS.purple10};
+  --color-purple20: ${SECONDARY_COLORS.purple20};
+  --color-purple30: ${SECONDARY_COLORS.purple30};
+  --color-purple40: ${SECONDARY_COLORS.purple40};
+  --color-purple50: ${SECONDARY_COLORS.purple50};
+  --color-purple60: ${SECONDARY_COLORS.purple60};
+  --color-purple70: ${SECONDARY_COLORS.purple70};
+  --color-purple80: ${SECONDARY_COLORS.purple80};
+
+  --color-yellow10: ${SECONDARY_COLORS.yellow10};
+  --color-yellow20: ${SECONDARY_COLORS.yellow20};
+  --color-yellow30: ${SECONDARY_COLORS.yellow30};
+  --color-yellow40: ${SECONDARY_COLORS.yellow40};
+  --color-yellow50: ${SECONDARY_COLORS.yellow50};
+  --color-yellow60: ${SECONDARY_COLORS.yellow60};
+  --color-yellow70: ${SECONDARY_COLORS.yellow70};
+  --color-yellow80: ${SECONDARY_COLORS.yellow80};
+
+  --color-red10: ${SECONDARY_COLORS.red10};
+  --color-red20: ${SECONDARY_COLORS.red20};
+  --color-red30: ${SECONDARY_COLORS.red30};
+  --color-red40: ${SECONDARY_COLORS.red40};
+  --color-red50: ${SECONDARY_COLORS.red50};
+  --color-red60: ${SECONDARY_COLORS.red60};
+  --color-red70: ${SECONDARY_COLORS.red70};
+  --color-red80: ${SECONDARY_COLORS.red80};
+
+  --color-orange10: ${SECONDARY_COLORS.orange10};
+  --color-orange20: ${SECONDARY_COLORS.orange20};
+  --color-orange30: ${SECONDARY_COLORS.orange30};
+  --color-orange40: ${SECONDARY_COLORS.orange40};
+  --color-orange50: ${SECONDARY_COLORS.orange50};
+  --color-orange60: ${SECONDARY_COLORS.orange60};
+  --color-orange70: ${SECONDARY_COLORS.orange70};
+  --color-orange80: ${SECONDARY_COLORS.orange80};
+
+  --color-gray10: ${SECONDARY_COLORS.gray10};
+  --color-gray20: ${SECONDARY_COLORS.gray20};
+  --color-gray30: ${SECONDARY_COLORS.gray30};
+  --color-gray35: ${SECONDARY_COLORS.gray35};
+  --color-gray40: ${SECONDARY_COLORS.gray40};
+  --color-gray50: ${SECONDARY_COLORS.gray50};
+  --color-gray60: ${SECONDARY_COLORS.gray60};
+  --color-gray70: ${SECONDARY_COLORS.gray70};
+  --color-gray80: ${SECONDARY_COLORS.gray80};
+
+  --color-blueAccent90: ${SECONDARY_COLORS.blueAccent90};
+  --color-blueAccent85: ${SECONDARY_COLORS.blueAccent85};
+  --color-blueAccent80: ${SECONDARY_COLORS.blueAccent80};
+  --color-blueAccent75: ${SECONDARY_COLORS.blueAccent75};
+  --color-blueAccent70: ${SECONDARY_COLORS.blueAccent70};
+  --color-blueAccent60: ${SECONDARY_COLORS.blueAccent60};
+  --color-blueAccent40: ${SECONDARY_COLORS.blueAccent40};
+  --color-blueAccent35: ${SECONDARY_COLORS.blueAccent35};
+  --color-blueAccent25: ${SECONDARY_COLORS.blueAccent25};
+  --color-blueAccent20: ${SECONDARY_COLORS.blueAccent20};
+  --color-blueAccent15: ${SECONDARY_COLORS.blueAccent15};
+  --color-blueAccent10: ${SECONDARY_COLORS.blueAccent10};
+`;

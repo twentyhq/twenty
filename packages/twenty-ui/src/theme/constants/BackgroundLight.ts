@@ -1,6 +1,7 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
 import LightNoise from '@assets/themes/light-noise.png';
 
+import { css } from '@emotion/react';
 import { COLOR } from './Colors';
 import { GRAY_SCALE } from './GrayScale';
 import { RGBA } from './Rgba';
@@ -33,3 +34,31 @@ export const BACKGROUND_LIGHT = {
   primaryInverted: GRAY_SCALE.gray60,
   primaryInvertedHover: GRAY_SCALE.gray55,
 };
+
+// eslint-disable-next-line @nx/workspace-max-consts-per-file
+export const BACKGROUND_LIGHT_CSS = css`
+  --background-danger: ${BACKGROUND_LIGHT.danger};
+  --background-invertedPrimary: ${BACKGROUND_LIGHT.invertedPrimary};
+  --background-invertedSecondary: ${BACKGROUND_LIGHT.invertedSecondary};
+  --background-noisy: ${BACKGROUND_LIGHT.noisy};
+  --background-primary: ${BACKGROUND_LIGHT.primary};
+  --background-quaternary: ${BACKGROUND_LIGHT.quaternary};
+  --background-secondary: ${BACKGROUND_LIGHT.secondary};
+  --background-tertiary: ${BACKGROUND_LIGHT.tertiary};
+  --background-transparent-light: ${BACKGROUND_LIGHT.transparent.light};
+  --background-transparent-lighter: ${BACKGROUND_LIGHT.transparent.lighter};
+  --background-transparent-medium: ${BACKGROUND_LIGHT.transparent.medium};
+  --background-transparent-primary: ${BACKGROUND_LIGHT.transparent.primary};
+  --background-transparent-secondary: ${BACKGROUND_LIGHT.transparent.secondary};
+  --background-transparent-strong: ${BACKGROUND_LIGHT.transparent.strong};
+  --background-radialGradient: ${BACKGROUND_LIGHT.radialGradient};
+  --background-radialGradientHover: ${BACKGROUND_LIGHT.radialGradientHover};
+  --background-overlayPrimary: ${BACKGROUND_LIGHT.overlayPrimary};
+  --background-overlaySecondary: ${BACKGROUND_LIGHT.overlaySecondary};
+  --background-overlayTertiary: ${BACKGROUND_LIGHT.overlayTertiary};
+  --background-primaryInverted: ${BACKGROUND_LIGHT.primaryInverted};
+  --background-primaryInvertedHover: ${BACKGROUND_LIGHT.primaryInvertedHover};
+  --background-transparent-danger: ${BACKGROUND_LIGHT.transparent.danger};
+  --background-transparent-blue: ${BACKGROUND_LIGHT.transparent.blue};
+  --background-transparent-orange: ${BACKGROUND_LIGHT.transparent.orange};
+`;

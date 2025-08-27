@@ -1,6 +1,7 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
 import DarkNoise from '@assets/themes/dark-noise.jpg';
 
+import { css } from '@emotion/react';
 import { COLOR } from './Colors';
 import { GRAY_SCALE } from './GrayScale';
 import { RGBA } from './Rgba';
@@ -33,3 +34,31 @@ export const BACKGROUND_DARK = {
   primaryInverted: GRAY_SCALE.gray20,
   primaryInvertedHover: GRAY_SCALE.gray15,
 };
+
+// eslint-disable-next-line @nx/workspace-max-consts-per-file
+export const BACKGROUND_DARK_CSS = css`
+  --background-danger: ${BACKGROUND_DARK.danger};
+  --background-invertedPrimary: ${BACKGROUND_DARK.invertedPrimary};
+  --background-invertedSecondary: ${BACKGROUND_DARK.invertedSecondary};
+  --background-noisy: ${BACKGROUND_DARK.noisy};
+  --background-primary: ${BACKGROUND_DARK.primary};
+  --background-quaternary: ${BACKGROUND_DARK.quaternary};
+  --background-secondary: ${BACKGROUND_DARK.secondary};
+  --background-tertiary: ${BACKGROUND_DARK.tertiary};
+  --background-transparent-light: ${BACKGROUND_DARK.transparent.light};
+  --background-transparent-lighter: ${BACKGROUND_DARK.transparent.lighter};
+  --background-transparent-medium: ${BACKGROUND_DARK.transparent.medium};
+  --background-transparent-primary: ${BACKGROUND_DARK.transparent.primary};
+  --background-transparent-secondary: ${BACKGROUND_DARK.transparent.secondary};
+  --background-transparent-strong: ${BACKGROUND_DARK.transparent.strong};
+  --background-radialGradient: ${BACKGROUND_DARK.radialGradient};
+  --background-radialGradientHover: ${BACKGROUND_DARK.radialGradientHover};
+  --background-overlayPrimary: ${BACKGROUND_DARK.overlayPrimary};
+  --background-overlaySecondary: ${BACKGROUND_DARK.overlaySecondary};
+  --background-overlayTertiary: ${BACKGROUND_DARK.overlayTertiary};
+  --background-primaryInverted: ${BACKGROUND_DARK.primaryInverted};
+  --background-primaryInvertedHover: ${BACKGROUND_DARK.primaryInvertedHover};
+  --background-transparent-danger: ${BACKGROUND_DARK.transparent.danger};
+  --background-transparent-blue: ${BACKGROUND_DARK.transparent.blue};
+  --background-transparent-orange: ${BACKGROUND_DARK.transparent.orange};
+`;
