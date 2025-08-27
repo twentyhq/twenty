@@ -228,7 +228,7 @@ export class BillingResolver {
               amount: billingPrice.tiers[0].flat_amount,
               nickname: billingPrice.nickname,
               stripePriceId: billingPrice.stripePriceId,
-              interval: billingPrice.interval,
+              recurringInterval: billingPrice.interval,
             })
           : acc,
       [] as BillingPriceOutput[],

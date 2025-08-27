@@ -290,8 +290,8 @@ export type BillingPriceMeteredDto = {
 export type BillingPriceOutput = {
   __typename?: 'BillingPriceOutput';
   amount: Scalars['Float'];
-  interval: SubscriptionInterval;
   nickname: Scalars['String'];
+  recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String'];
 };
 
@@ -4141,7 +4141,7 @@ export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredPro
 export type ListAvailableMeteredBillingPricesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListAvailableMeteredBillingPricesQuery = { __typename?: 'Query', listAvailableMeteredBillingPrices: Array<{ __typename?: 'BillingPriceOutput', nickname: string, amount: number, stripePriceId: string, interval: SubscriptionInterval }> };
+export type ListAvailableMeteredBillingPricesQuery = { __typename?: 'Query', listAvailableMeteredBillingPrices: Array<{ __typename?: 'BillingPriceOutput', nickname: string, amount: number, stripePriceId: string, recurringInterval: SubscriptionInterval }> };
 
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: string, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: string, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };
 
@@ -7378,7 +7378,7 @@ export const ListAvailableMeteredBillingPricesDocument = gql`
     nickname
     amount
     stripePriceId
-    interval
+    recurringInterval
   }
 }
     `;

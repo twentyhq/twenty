@@ -14,7 +14,7 @@ export const useGetWorkflowNodeExecutionUsage = () => {
   if (loading === true || !workflowUsage) {
     return {
       usedCredits: 0,
-      grantedCredits: Infinity,
+      grantedCredits: 10000,
       unitPriceCents: 0,
     };
   }

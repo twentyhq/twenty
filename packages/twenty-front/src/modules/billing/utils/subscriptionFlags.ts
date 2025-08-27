@@ -16,13 +16,13 @@ export const isYearlyPlan = (
 export const isProPlan = (
   currentWorkspace: CurrentWorkspace | null | undefined,
 ): boolean =>
-  currentWorkspace?.currentBillingSubscription?.metadata['plan'] ===
+  currentWorkspace?.currentBillingSubscription?.metadata?.['plan'] ===
   BillingPlanKey.PRO;
 
 export const isEnterprisePlan = (
   currentWorkspace: CurrentWorkspace | null | undefined,
 ): boolean =>
-  currentWorkspace?.currentBillingSubscription?.metadata['plan'] ===
+  currentWorkspace?.currentBillingSubscription?.metadata?.['plan'] ===
   BillingPlanKey.ENTERPRISE;
 
 export const getIntervalLabel = (isMonthly: boolean): string =>

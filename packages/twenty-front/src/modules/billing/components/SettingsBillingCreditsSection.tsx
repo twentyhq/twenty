@@ -25,7 +25,7 @@ const StyledLineSeparator = styled.div`
   background-color: ${({ theme }) => theme.background.tertiary};
 `;
 
-export const SettingsBillingMonthlyCreditsSection = ({
+export const SettingsBillingCreditsSection = ({
   currentWorkspace,
 }: {
   currentWorkspace: CurrentWorkspace;
@@ -67,7 +67,7 @@ export const SettingsBillingMonthlyCreditsSection = ({
           {!isTrialing && (
             <SettingsBillingLabelValueItem
               label={t`Extra Credits Used`}
-              value={`${formatNumber(usedCredits - grantedCredits)}`}
+              value={`${formatNumber(Math.max(0, usedCredits - grantedCredits))}`}
             />
           )}
           <SettingsBillingLabelValueItem

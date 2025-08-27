@@ -290,8 +290,8 @@ export type BillingPriceMeteredDto = {
 export type BillingPriceOutput = {
   __typename?: 'BillingPriceOutput';
   amount: Scalars['Float'];
-  interval: SubscriptionInterval;
   nickname: Scalars['String'];
+  recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String'];
 };
 

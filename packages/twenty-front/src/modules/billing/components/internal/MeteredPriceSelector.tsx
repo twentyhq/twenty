@@ -66,7 +66,7 @@ export const MeteredPriceSelector = ({
     <>
       <H2Title
         title={t`Credit Plan`}
-        description={t`Number of new credits allocated every ${currentMeteredBillingPrice.interval.toLowerCase()}`}
+        description={t`Number of new credits allocated every ${currentMeteredBillingPrice?.recurringInterval?.toLowerCase()}`}
       />
       <Select
         dropdownId={'settings-billing-metered-price'}

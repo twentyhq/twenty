@@ -1,10 +1,12 @@
+import { isDefined } from 'twenty-shared/utils';
+
 export const findOrThrow = <T>(
   array: T[],
   predicate: (value: T) => boolean,
 ): T => {
   const result = array.find(predicate);
 
-  if (!result) {
+  if (!isDefined(result)) {
     throw new Error('Element not found');
   }
 

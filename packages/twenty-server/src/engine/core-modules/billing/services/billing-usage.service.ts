@@ -140,7 +140,6 @@ export class BillingUsageService {
             subscription.status === SubscriptionStatus.Trialing
               ? item.freeTrialQuantity
               : item.tierQuantity,
-          usageQuantity: meterEventsSum,
           unitPriceCents: item.unitPriceCents,
         };
       }),
