@@ -84,7 +84,6 @@ describe('AIBillingService', () => {
         'gpt-4o',
         mockTokenUsage,
         'workspace-1',
-        BillingMeterEventName.WORKFLOW_NODE_RUN,
       );
 
       // Expected credits: (0.75 cents / 100) * 1000 = 0.0075 * 1000 = 7.5 credits, rounded to 8

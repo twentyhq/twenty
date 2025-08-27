@@ -12,6 +12,7 @@ import {
   type BillingPriceOutput,
   type BillingSubscriptionItem,
 } from '~/generated/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 export const MeteredPriceSelector = ({
   meteredBillingPrices,
@@ -20,7 +21,7 @@ export const MeteredPriceSelector = ({
   meteredBillingPrices: Array<BillingPriceOutput>;
   billingSubscriptionItems: Array<BillingSubscriptionItem>;
 }) => {
-  const [currentMeteredStripeId, setCurrentMeteredStripeId] = useState(
+  const [currentMeteredBillingPrice, setCurrentMeteredBillingPrice] = useState(
     findMeteredPriceInCurrentWorkspaceSubscriptions(
       billingSubscriptionItems,
       meteredBillingPrices,
@@ -33,12 +34,21 @@ export const MeteredPriceSelector = ({
     UPDATE_SUBSCRIPTION_ITEM_PRICE,
   );
 
-  const options = meteredBillingPrices.map((elm) => {
-    return {
-      label: t`${elm.nickname} - ${formatNumber(elm?.amount / 100, 2)}$`,
-      value: elm.stripePriceId,
-    };
-  });
+  const options = meteredBillingPrices.reduce(
+    (options, meteredBillingPrice) => {
+      if (
+        isDefined(currentMeteredBillingPrice) &&
+        meteredBillingPrice?.amount < currentMeteredBillingPrice.amount
+      )
+        return options;
+
+      return options.concat({
+        label: t`${meteredBillingPrice.nickname} - ${formatNumber(meteredBillingPrice?.amount / 100, 2)}$`,
+        value: meteredBillingPrice.stripePriceId,
+      });
+    },
+    [] as Array<{ label: string; value: string }>,
+  );
 
   const handleChange = async (priceId: string) => {
     try {
@@ -46,7 +56,7 @@ export const MeteredPriceSelector = ({
         variables: { priceId },
       });
       enqueueSuccessSnackBar({ message: t`Price updated.` });
-      setCurrentMeteredStripeId(
+      setCurrentMeteredBillingPrice(
         meteredBillingPrices.find(
           ({ stripePriceId }) => stripePriceId === priceId,
         ),
@@ -67,7 +77,7 @@ export const MeteredPriceSelector = ({
       <Select
         dropdownId={'settings-billing-metered-price'}
         options={options}
-        value={currentMeteredStripeId?.stripePriceId}
+        value={currentMeteredBillingPrice?.stripePriceId}
         onChange={handleChange}
         disabled={isUpdating}
       />

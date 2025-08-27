@@ -3,22 +3,25 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { JsonContains, Repository } from 'typeorm';
 
+import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { type BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
+import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
 
 @Injectable()
 export class BillingSubscriptionItemService {
   constructor(
     @InjectRepository(BillingSubscriptionItem, 'core')
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
+    @InjectRepository(BillingPrice, 'core')
+    private readonly billingPriceRepository: Repository<BillingPrice>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly stripeSubscriptionService: StripeSubscriptionService,
   ) {}
@@ -37,13 +40,47 @@ export class BillingSubscriptionItemService {
             }),
           },
         },
-        relations: ['billingProduct'],
+        relations: ['billingProduct', 'billingProduct.billingPrices'],
       });
 
     if (!subscriptionItem) {
       throw new BillingException(
         `Cannot find subscription item for subscription ${subscriptionId}`,
         BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND,
+      );
+    }
+
+    const currentBillingPrice = subscriptionItem
+      ? this.findMatchingPrice(subscriptionItem)
+      : null;
+
+    if (!currentBillingPrice) {
+      throw new BillingException(
+        `Cannot find price for product ${subscriptionItem.stripeProductId}`,
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+      );
+    }
+
+    const newPrice = await this.billingPriceRepository.findOne({
+      where: { stripePriceId: newPriceId },
+    });
+
+    if (!newPrice) {
+      throw new BillingException(
+        `Cannot find price with id ${newPriceId}`,
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+      );
+    }
+
+    if (
+      !this.isFirstPriceTiersLowerThatSecondPriceTier(
+        currentBillingPrice,
+        newPrice,
+      )
+    ) {
+      throw new BillingException(
+        'Cannot update price of subscription item because the new tier is lower than the current tier.',
+        BillingExceptionCode.BILLING_PRICE_UPDATE_REQUIRES_INCREASE,
       );
     }
 
@@ -93,6 +130,16 @@ export class BillingSubscriptionItemService {
         unitPriceCents: number;
       }>,
     );
+  }
+
+  private isFirstPriceTiersLowerThatSecondPriceTier(
+    price1: BillingPrice,
+    price2: BillingPrice,
+  ) {
+    billingValidator.assertIsMeteredTiersSchemaOrThrow(price1.tiers);
+    billingValidator.assertIsMeteredTiersSchemaOrThrow(price2.tiers);
+
+    return price1.tiers[0].up_to < price2.tiers[0].up_to;
   }
 
   private findMatchingPrice(item: BillingSubscriptionItem): BillingPrice {
