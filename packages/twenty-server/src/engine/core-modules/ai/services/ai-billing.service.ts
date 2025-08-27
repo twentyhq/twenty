@@ -48,30 +48,24 @@ export class AIBillingService {
     modelId: ModelId,
     usage: TokenUsage,
     workspaceId: string,
-    billingMeteterEventName: BillingMeterEventName,
   ): Promise<void> {
     const costInCents = await this.calculateCost(modelId, usage);
 
     const costInDollars = costInCents / 100;
     const creditsUsed = Math.round(costInDollars * DOLLAR_TO_CREDIT_MULTIPLIER);
 
-    this.sendAiTokenUsageEvent(
-      workspaceId,
-      creditsUsed,
-      billingMeteterEventName,
-    );
+    this.sendAiTokenUsageEvent(workspaceId, creditsUsed);
   }
 
   private sendAiTokenUsageEvent(
     workspaceId: string,
     creditsUsed: number,
-    billingMeteterEventName: BillingMeterEventName,
   ): void {
     this.workspaceEventEmitter.emitCustomBatchEvent<BillingUsageEvent>(
       BILLING_FEATURE_USED,
       [
         {
-          eventName: billingMeteterEventName,
+          eventName: BillingMeterEventName.WORKFLOW_NODE_RUN,
           value: creditsUsed,
         },
       ],

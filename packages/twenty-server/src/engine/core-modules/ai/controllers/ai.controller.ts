@@ -77,7 +77,6 @@ export class AiController {
           model.modelId,
           usage,
           workspace.id,
-          BillingMeterEventName.AI_QUERY_EXECUTED,
         );
       });
 

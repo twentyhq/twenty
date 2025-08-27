@@ -21,7 +21,6 @@ import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 
 import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.guard';
-import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 
 @Injectable()
 export class AiAgentWorkflowAction implements WorkflowAction {
@@ -86,7 +85,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         agent?.modelId ?? 'auto',
         usage,
         workspaceId,
-        BillingMeterEventName.WORKFLOW_NODE_RUN
       );
 
       return {

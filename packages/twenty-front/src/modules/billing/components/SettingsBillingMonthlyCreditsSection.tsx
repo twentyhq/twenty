@@ -59,7 +59,7 @@ export const SettingsBillingMonthlyCreditsSection = ({
         />
         <SubscriptionInfoContainer>
           <SettingsBillingLabelValueItem
-            label={t`Free Credits Used`}
+            label={t`Credits Used`}
             value={`${formattedFreeUsageQuantity}/${formatAmount(includedFreeQuantity)}`}
           />
           <ProgressBar
