@@ -19,6 +19,7 @@ import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
@@ -122,6 +123,14 @@ describe('WorkspaceManagerService', () => {
             createOneAgent: jest
               .fn()
               .mockResolvedValue({ id: 'mock-agent-id' }),
+          },
+        },
+        {
+          provide: TwentyORMGlobalManager,
+          useValue: {
+            getDataSourceForWorkspace: jest.fn().mockResolvedValue({
+              transaction: jest.fn(),
+            }),
           },
         },
       ],
