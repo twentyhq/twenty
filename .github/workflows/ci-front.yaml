@@ -53,7 +53,7 @@ jobs:
   front-sb-test:
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
-    needs: front-sb-build
+    # needs: front-sb-build
     strategy:
       fail-fast: false
       matrix:
