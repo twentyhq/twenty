@@ -51,7 +51,7 @@ describe('Generate Column Definitions', () => {
 
       expect(column).toEqual({
         name: 'status',
-        type: `"${mockSchemaName}".\"_person_status_enum\"`,
+        type: `"${mockSchemaName}"."_person_status_enum"`,
         isArray: false,
         isNullable: true,
         isUnique: false,
@@ -94,7 +94,7 @@ describe('Generate Column Definitions', () => {
 
       expect(column).toEqual({
         name: 'tags',
-        type: `"${mockSchemaName}".\"_person_tags_enum\"`,
+        type: `"${mockSchemaName}"."_person_tags_enum"`,
         isArray: true,
         isNullable: true,
         isUnique: false,
@@ -307,7 +307,7 @@ describe('Generate Column Definitions', () => {
           type: 'text',
           isNullable: true,
           isUnique: false,
-          default: "NULL",
+          default: 'NULL',
           isArray: false,
         },
       ]);
