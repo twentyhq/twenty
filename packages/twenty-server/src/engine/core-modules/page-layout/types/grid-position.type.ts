@@ -1,6 +1,6 @@
 export type GridPosition = {
   row: number;
-  col: number;
+  column: number;
   rowSpan: number;
-  colSpan: number;
+  columnSpan: number;
 };
