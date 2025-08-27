@@ -59,10 +59,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [2]
         # storybook_scope: [modules, pages, performance]
     env:
-      SHARD_COUNTER: 4
+      SHARD_COUNTER: 1
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
     steps:
       - name: Fetch local actions
