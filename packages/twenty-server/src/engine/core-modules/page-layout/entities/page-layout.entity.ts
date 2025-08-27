@@ -6,11 +6,13 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
+import { PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
 import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -53,6 +55,11 @@ export class PageLayoutEntity implements Required<PageLayoutEntity> {
   })
   @JoinColumn({ name: 'objectMetadataId' })
   objectMetadata: Relation<ObjectMetadataEntity> | null;
+
+  @OneToMany(() => PageLayoutTabEntity, (tab) => tab.pageLayout, {
+    cascade: true,
+  })
+  tabs: Relation<PageLayoutTabEntity[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
