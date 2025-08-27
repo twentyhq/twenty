@@ -44,7 +44,6 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
-import { WorkspaceMigrationBuilderExceptionV2Interceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2.interceptor';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 
 @Module({
@@ -101,7 +100,6 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],
           interceptors: [
-            WorkspaceMigrationBuilderExceptionV2Interceptor,
             ObjectMetadataGraphqlApiExceptionInterceptor,
           ],
           filters: [PermissionsGraphqlApiExceptionFilter],
