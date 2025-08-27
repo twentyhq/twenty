@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { type MouseEvent } from 'react';
 
@@ -22,47 +22,47 @@ const StyledButton = styled.button<
 >`
   align-items: center;
   background: transparent;
-  border: ${({ theme, focus }) =>
-    focus ? `1px solid ${theme.color.blue}` : 'none'};
+  border: ${({ focus }) =>
+    focus ? `1px solid var(--border-color-blue)` : 'none'};
 
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: ${({ theme, focus }) =>
-    focus ? `0 0 0 3px  ${theme.color.blue10}` : 'none'};
-  color: ${({ theme, accent, active, disabled, focus }) => {
+  border-radius: var(--border-radius-sm);
+  box-shadow: ${({ focus }) =>
+    focus ? `0 0 0 3px var(--color-blue10)` : 'none'};
+  color: ${({ accent, active, disabled, focus }) => {
     switch (accent) {
       case 'secondary':
         return active || focus
-          ? theme.color.blue
+          ? 'var(--border-color-blue)'
           : !disabled
-            ? theme.font.color.secondary
-            : theme.font.color.extraLight;
+            ? 'var(--font-color-secondary)'
+            : 'var(--font-color-extra-light)';
       case 'tertiary':
         return active || focus
-          ? theme.color.blue
+          ? 'var(--border-color-blue)'
           : !disabled
-            ? theme.font.color.tertiary
-            : theme.font.color.extraLight;
+            ? 'var(--font-color-tertiary)'
+            : 'var(--font-color-extra-light)';
+      default:
+        return 'var(--font-color-light)';
     }
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
 
-  font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-family: var(--font-family-primary);
+  font-weight: var(--font-weight-regular);
+  gap: var(--spacing-1);
   height: 24px;
-  padding: ${({ theme }) => {
-    return `0 ${theme.spacing(2)}`;
-  }};
+  padding: 0 var(--spacing-2);
 
   transition: background 0.1s ease;
 
   white-space: nowrap;
 
   &:hover {
-    background: ${({ theme, disabled }) =>
-      !disabled ? theme.background.transparent.light : 'transparent'};
+    background: ${({ disabled }) =>
+      !disabled ? 'var(--background-transparent-light)' : 'transparent'};
   }
 
   &:focus {
@@ -70,8 +70,8 @@ const StyledButton = styled.button<
   }
 
   &:active {
-    background: ${({ theme, disabled }) =>
-      !disabled ? theme.background.transparent.medium : 'transparent'};
+    background: ${({ disabled }) =>
+      !disabled ? 'var(--background-transparent-medium)' : 'transparent'};
   }
 `;
 

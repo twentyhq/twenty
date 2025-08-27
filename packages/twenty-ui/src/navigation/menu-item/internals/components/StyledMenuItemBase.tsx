@@ -1,10 +1,9 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { isUndefined } from '@sniptt/guards';
 
+import { css } from '@linaria/core';
 import { IconCheck } from '@ui/display';
-import { HOVER_BACKGROUND } from '@ui/theme';
 import { type MenuItemAccent } from '../../types/MenuItemAccent';
 
 export type MenuItemBaseProps = {
@@ -16,68 +15,73 @@ export type MenuItemBaseProps = {
   focused?: boolean;
 };
 
+// TODO Charles: check hover background
 export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
-  --horizontal-padding: ${({ theme }) => theme.spacing(1)};
-  --vertical-padding: ${({ theme }) => theme.spacing(2)};
+  --horizontal-padding: var(--spacing-1);
+  --vertical-padding: var(--spacing-2);
   align-items: center;
 
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
 
   display: flex;
 
   flex-direction: row;
 
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: var(--font-size-sm);
 
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: var(--spacing-2);
 
   height: calc(32px - 2 * var(--vertical-padding));
   justify-content: space-between;
 
   padding: var(--vertical-padding) var(--horizontal-padding);
 
-  ${({ theme, isKeySelected }) =>
-    isKeySelected ? `background: ${theme.background.transparent.light};` : ''}
+  ${({ isKeySelected }) =>
+    isKeySelected ? `background: var(--background-transparent-light);` : ''}
 
   ${({ isHoverBackgroundDisabled, disabled }) =>
-    (disabled || isHoverBackgroundDisabled) ?? HOVER_BACKGROUND};
+    disabled || isHoverBackgroundDisabled ? '' : 'var(--hover-background)'};
 
-  ${({ theme, accent, disabled }) => {
+  ${({ accent, disabled }) => {
     if (!isUndefined(disabled) && disabled !== false) {
       return css`
-        color: ${theme.font.color.tertiary};
+        color: var(--font-color-tertiary);
       `;
     }
 
     switch (accent) {
       case 'danger': {
         return css`
-          color: ${theme.font.color.danger};
+          color: var(--font-color-danger);
           &:hover {
-            background: ${theme.background.transparent.danger};
+            background: var(--background-transparent-danger);
           }
         `;
       }
       case 'placeholder': {
         return css`
-          color: ${theme.font.color.tertiary};
+          color: var(--font-color-tertiary);
         `;
       }
       case 'default':
       default: {
         return css`
-          color: ${theme.font.color.secondary};
+          color: var(--font-color-secondary);
         `;
       }
     }
   }}
 
-  ${({ focused, theme }) =>
-    focused &&
-    css`
-      background: ${theme.background.transparent.light};
-    `};
+  ${({ focused }) => {
+    if (focused === true) {
+      return css`
+        background: var(--background-transparent-light);
+      `;
+    }
+
+    return '';
+  }};
 
   position: relative;
   user-select: none;
@@ -88,8 +92,8 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
 export const StyledMenuItemLabel = styled.div`
   display: flex;
   flex-direction: row;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
 
   overflow: hidden;
 
@@ -97,7 +101,7 @@ export const StyledMenuItemLabel = styled.div`
 `;
 
 export const StyledNoIconFiller = styled.div`
-  width: ${({ theme }) => theme.spacing(1)};
+  width: var(--spacing-1);
 `;
 
 export const StyledMenuItemLeftContent = styled.div`
@@ -106,7 +110,7 @@ export const StyledMenuItemLeftContent = styled.div`
 
   flex-direction: row;
 
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: var(--spacing-2);
   min-width: 0;
   width: 100%;
 
@@ -133,25 +137,26 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   isIconDisplayedOnHoverOnly?: boolean;
   cursor?: 'drag' | 'default';
 }>`
-  ${({ isIconDisplayedOnHoverOnly, theme }) =>
-    isIconDisplayedOnHoverOnly &&
-    css`
-      & .hoverable-buttons {
-        opacity: 0;
-        position: fixed;
-        right: ${theme.spacing(2)};
-      }
+  ${({ isIconDisplayedOnHoverOnly }) =>
+    isIconDisplayedOnHoverOnly
+      ? css`
+          & .hoverable-buttons {
+            opacity: 0;
+            position: fixed;
+            right: var(--spacing-2);
+          }
 
-      &:hover {
-        & .hoverable-buttons {
-          opacity: 1;
-          position: static;
-        }
-      }
-    `};
+          &:hover {
+            & .hoverable-buttons {
+              opacity: 1;
+              position: static;
+            }
+          }
+        `
+      : css``}
 
   & .hoverable-buttons {
-    transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
+    transition: opacity var(--animation-duration-instant) ease;
   }
 
   cursor: ${({ cursor, disabled }) => {
@@ -170,5 +175,5 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
 
 export const StyledMenuItemIconCheck = styled(IconCheck)`
   flex-shrink: 0;
-  margin-right: ${({ theme }) => theme.spacing(1)};
+  margin-right: var(--spacing-1);
 `;

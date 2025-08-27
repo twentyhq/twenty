@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
 
@@ -7,36 +7,36 @@ const StyledLabelContainer = styled.span<{
   highlighting?: JsonNodeHighlighting;
 }>`
   align-items: center;
-  background-color: ${({ theme, highlighting }) =>
+  background-color: ${({ highlighting }) =>
     highlighting === 'blue'
-      ? theme.adaptiveColors.blue1
+      ? 'var(--color-adaptive-blue-1)'
       : highlighting === 'red'
-        ? theme.background.danger
-        : theme.background.transparent.lighter};
-  border-color: ${({ theme, highlighting }) =>
+        ? 'var(--color-background-danger)'
+        : 'var(--color-background-transparent-lighter)'};
+  border-color: ${({ highlighting }) =>
     highlighting === 'blue'
-      ? theme.adaptiveColors.blue2
+      ? 'var(--color-adaptive-blue-2)'
       : highlighting === 'red'
-        ? theme.border.color.danger
-        : theme.border.color.medium};
-  color: ${({ theme, highlighting }) =>
+        ? 'var(--color-border-danger)'
+        : 'var(--color-border-medium)'};
+  color: ${({ highlighting }) =>
     highlighting === 'blue'
-      ? theme.color.blue
+      ? 'var(--color-blue)'
       : highlighting === 'red'
-        ? theme.font.color.danger
-        : theme.font.color.primary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+        ? 'var(--color-font-danger)'
+        : 'var(--color-font-primary)'};
+  border-radius: var(--border-radius-sm);
   border-style: solid;
   border-width: 1px;
   height: 24px;
   box-sizing: border-box;
-  column-gap: ${({ theme }) => theme.spacing(2)};
+  column-gap: var(--spacing-2);
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
   white-space: nowrap;
-  padding-block: ${({ theme }) => theme.spacing(1)};
-  padding-inline: ${({ theme }) => theme.spacing(2)};
+  padding-block: var(--spacing-1);
+  padding-inline: var(--spacing-2);
 `;
 
 export const JsonNodeLabel = ({

@@ -1,23 +1,23 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledEditorHeader = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  background-color: var(--background-transparent-lighter);
+  color: var(--font-color-tertiary);
+  font-weight: var(--font-weight-medium);
   display: flex;
-  height: ${({ theme }) => theme.spacing(10)};
-  padding: ${({ theme }) => `0 ${theme.spacing(2)}`};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
-  border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
+  height: var(--spacing-10);
+  padding: 0 var(--spacing-2);
+  border: 1px solid var(--border-color-medium);
+  border-top-left-radius: var(--border-radius-sm);
+  border-top-right-radius: var(--border-radius-sm);
   justify-content: space-between;
 `;
 
 const StyledElementContainer = styled.div`
   align-content: flex-end;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: var(--spacing-2);
 `;
 
 export type CoreEditorHeaderProps = {

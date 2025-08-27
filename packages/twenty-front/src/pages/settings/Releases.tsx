@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import React, { useEffect, useState } from 'react';
 import rehypeStringify from 'rehype-stringify';

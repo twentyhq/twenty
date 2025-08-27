@@ -1,6 +1,7 @@
 import { SettingsPath } from '@/types/SettingsPath';
-import styled from '@emotion/styled';
-import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { styled } from '@linaria/react';
+import { IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -9,8 +10,7 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
 } from 'twenty-ui/layout';
-import { Button } from 'twenty-ui/input';
-import { IconPlus } from 'twenty-ui/display';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledEmptyFunctionsContainer = styled.div`
   height: 60vh;

@@ -1,7 +1,7 @@
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { WorkflowVariablesDropdown } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdown';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 
 export const StyledSearchVariablesDropdownContainer = styled.div<{
   multiline?: boolean;

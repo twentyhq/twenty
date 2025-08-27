@@ -1,15 +1,15 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 
-const StyledCardContent = styled(motion.div)<{ divider?: boolean }>`
-  background-color: ${({ theme }) => theme.background.secondary};
-  padding: ${({ theme }) => theme.spacing(4)};
+const StyledCardContent = styled(motion.div as any)<{ divider?: boolean }>`
+  background-color: var(--color-background-secondary);
+  padding: var(--spacing-4);
 
-  ${({ divider, theme }) =>
+  ${({ divider }) =>
     divider
       ? css`
-          border-bottom: 1px solid ${theme.border.color.medium};
+          border-bottom: 1px solid var(--color-border-medium);
         `
       : ''}
 `;

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledSelectStepTitle = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};

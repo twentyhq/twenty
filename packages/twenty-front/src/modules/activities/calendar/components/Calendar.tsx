@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { format, getYear } from 'date-fns';
 
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';

@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconPoint } from 'twenty-ui/display';
 
 const StyledWrapper = styled.div`

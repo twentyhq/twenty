@@ -1,7 +1,7 @@
-import { type IconComponent } from '@ui/display';
-import styled from '@emotion/styled';
-import React from 'react';
 import { useTheme } from '@emotion/react';
+import { styled } from '@linaria/react';
+import { type IconComponent } from '@ui/display';
+import React from 'react';
 
 export type InsideButtonProps = {
   className?: string;
@@ -14,8 +14,8 @@ const StyledButton = styled.button`
   align-items: center;
   border: none;
   background-color: transparent;
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-  color: ${({ theme }) => theme.font.color.tertiary};
+  border-radius: var(--border-radius-xs);
+  color: var(--font-color-tertiary);
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
@@ -27,7 +27,7 @@ const StyledButton = styled.button`
   transition: background-color 0.1s ease;
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
+    background-color: var(--background-transparent-light);
   }
 `;
 

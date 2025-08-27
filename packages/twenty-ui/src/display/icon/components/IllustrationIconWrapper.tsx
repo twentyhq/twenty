@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledRectangleIllustrationIcon = styled('div')`
-  background-color: ${({ theme }) => theme.background.primary};
-  border: 0.75px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background-color: var(--background-primary);
+  border: 0.75px solid var(--border-color-medium);
+  border-radius: var(--border-radius-sm);
   display: flex;
   justify-content: center;
 `;

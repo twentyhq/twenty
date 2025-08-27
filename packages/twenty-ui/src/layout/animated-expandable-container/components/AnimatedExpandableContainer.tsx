@@ -1,26 +1,31 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 import { type AnimationDimension } from '@ui/layout/animated-expandable-container/types/AnimationDimension';
 import { type AnimationDurationObject } from '@ui/layout/animated-expandable-container/types/AnimationDurationObject';
 import { type AnimationDurations } from '@ui/layout/animated-expandable-container/types/AnimationDurations';
 import { type AnimationMode } from '@ui/layout/animated-expandable-container/types/AnimationMode';
 import { type AnimationSize } from '@ui/layout/animated-expandable-container/types/AnimationSize';
 import { getExpandableAnimationConfig } from '@ui/layout/animated-expandable-container/utils/getExpandableAnimationConfig';
-import { AnimatePresence, motion } from 'framer-motion';
-import { type ReactNode, useRef, useState } from 'react';
+import { AnimatePresence, motion, type MotionProps } from 'framer-motion';
+import { type ReactNode, type RefObject, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledMotionContainer = styled(motion.div)<{
-  containAnimation: boolean;
-}>`
+const StyledMotionContainer = styled(motion.div as any)<
+  MotionProps & {
+    containAnimation: boolean;
+    ref: RefObject<HTMLDivElement>;
+  }
+>`
   ${({ containAnimation }) =>
-    containAnimation &&
-    `
+    containAnimation
+      ? `
     display: flex;
     flex-direction: column;
     overflow: hidden;
     width: 100%;
-  `}
+  `
+      : css``}
 `;
 
 type AnimatedExpandableContainerProps = {

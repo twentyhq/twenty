@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
+import linaria from '@linaria/vite';
 import { lingui } from '@lingui/vite-plugin';
 import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
-import wyw from '@wyw-in-js/vite';
 import fs from 'fs';
 import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -107,6 +107,7 @@ export default defineConfig(({ command, mode }) => {
     },
 
     plugins: [
+      linaria(),
       react({
         jsxImportSource: '@emotion/react',
         plugins: [['@lingui/swc-plugin', {}]],
@@ -119,44 +120,6 @@ export default defineConfig(({ command, mode }) => {
         configPath: path.resolve(__dirname, './lingui.config.ts'),
       }),
       checker(checkers),
-      // TODO: fix this, we have to restrict the include to only the components that are using linaria
-      // Otherwise the build will fail because wyw tries to include emotion styled components
-      wyw({
-        include: [
-          '**/CurrencyDisplay.tsx',
-          '**/EllipsisDisplay.tsx',
-          '**/ContactLink.tsx',
-          '**/BooleanDisplay.tsx',
-          '**/LinksDisplay.tsx',
-          '**/RoundedLink.tsx',
-          '**/OverflowingTextWithTooltip.tsx',
-          '**/Chip.tsx',
-          '**/Tag.tsx',
-          '**/MultiSelectFieldDisplay.tsx',
-          '**/RatingInput.tsx',
-          '**/RecordTableCellContainer.tsx',
-          '**/RecordTableCellDisplayContainer.tsx',
-          '**/Avatar.tsx',
-          '**/RecordTableBodyDroppable.tsx',
-          '**/RecordTableCellBaseContainer.tsx',
-          '**/RecordTableCellTd.tsx',
-          '**/RecordTableTd.tsx',
-          '**/RecordTableHeaderDragDropColumn.tsx',
-          '**/ActorDisplay.tsx',
-          '**/BooleanDisplay.tsx',
-          '**/CurrencyDisplay.tsx',
-          '**/TextDisplay.tsx',
-          '**/EllipsisDisplay.tsx',
-          '**/AvatarChip.tsx',
-          '**/URLDisplay.tsx',
-          '**/EmailsDisplay.tsx',
-          '**/PhonesDisplay.tsx',
-          '**/MultiSelectDisplay.tsx',
-        ],
-        babelOptions: {
-          presets: ['@babel/preset-typescript', '@babel/preset-react'],
-        },
-      }),
       visualizer({
         open: true,
         gzipSize: true,

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useMemo, useState } from 'react';
 
 import { type Country } from '@/ui/input/components/internal/types/Country';

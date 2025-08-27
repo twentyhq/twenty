@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconCopy } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';

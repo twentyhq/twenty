@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Fragment } from 'react';
 
 const StyledContainer = styled.div`

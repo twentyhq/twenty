@@ -1,10 +1,16 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { BACKGROUND } from '@ui/layout/animated-placeholder/constants/Background';
 import { DARK_BACKGROUND } from '@ui/layout/animated-placeholder/constants/DarkBackground';
 import { DARK_MOVING_IMAGE } from '@ui/layout/animated-placeholder/constants/DarkMovingImage';
 import { MOVING_IMAGE } from '@ui/layout/animated-placeholder/constants/MovingImage';
-import { animate, motion, useMotionValue, useTransform } from 'framer-motion';
+import {
+  animate,
+  type HTMLMotionProps,
+  motion,
+  useMotionValue,
+  useTransform,
+} from 'framer-motion';
 import { useEffect } from 'react';
 
 const StyledContainer = styled.div`
@@ -26,7 +32,9 @@ const StyledBackgroundImage = styled.img<StyledImageProps>`
     type === 'error500' || type === 'error404' ? '245px' : '160px'};
 `;
 
-const StyledMovingImage = styled(motion.img)<StyledImageProps>`
+const StyledMovingImage = styled(motion.img as any)<
+  HTMLMotionProps<'img'> & StyledImageProps
+>`
   position: absolute;
   max-width: ${({ type }) =>
     type === 'error500' || type === 'error404' ? '185px' : '130px'};

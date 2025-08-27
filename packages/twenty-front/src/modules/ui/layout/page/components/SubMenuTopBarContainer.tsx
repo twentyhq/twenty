@@ -3,7 +3,7 @@ import {
   Breadcrumb,
   type BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type JSX, type ReactNode } from 'react';
 import { PageBody } from './PageBody';
 import { PageHeader } from './PageHeader';

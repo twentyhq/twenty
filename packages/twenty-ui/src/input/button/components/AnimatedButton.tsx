@@ -1,5 +1,6 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useTheme } from '@emotion/react';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 import { useIsMobile } from '@ui/utilities';
 import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
 import { type MotionProps, motion } from 'framer-motion';
@@ -36,114 +37,119 @@ const StyledButton = styled.button<
   >
 >`
   align-items: center;
-  ${({ theme, variant, inverted, accent, disabled, focus }) => {
+  ${({ variant, inverted, accent, disabled, focus }) => {
     switch (variant) {
       case 'primary':
         switch (accent) {
           case 'default':
             return css`
               background: ${!inverted
-                ? theme.background.secondary
-                : theme.background.primary};
+                ? 'var(--background-secondary)'
+                : 'var(--background-primary)'};
               border-color: ${!inverted
                 ? !disabled && focus
-                  ? theme.color.blue
-                  : theme.background.transparent.light
-                : theme.background.transparent.light};
+                  ? 'var(--color-blue)'
+                  : 'var(--background-transparent-light)'
+                : 'var(--background-transparent-light)'};
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
                     !inverted
-                      ? theme.accent.tertiary
-                      : theme.background.transparent.medium
+                      ? 'var(--accent-tertiary)'
+                      : 'var(--background-transparent-medium)'
                   }`
                 : 'none'};
               color: ${!inverted
                 ? !disabled
-                  ? theme.font.color.secondary
-                  : theme.font.color.extraLight
-                : theme.font.color.secondary};
+                  ? 'var(--font-color-secondary)'
+                  : 'var(--font-color-extra-light)'
+                : 'var(--font-color-secondary)'};
               &:hover {
                 background: ${!inverted
-                  ? theme.background.tertiary
-                  : theme.background.secondary};
+                  ? 'var(--background-tertiary)'
+                  : 'var(--background-secondary)'};
               }
               &:active {
                 background: ${!inverted
-                  ? theme.background.quaternary
-                  : theme.background.tertiary};
+                  ? 'var(--background-quaternary)'
+                  : 'var(--background-tertiary)'};
               }
             `;
           case 'blue':
             return css`
               background: ${!inverted
-                ? theme.color.blue
-                : theme.background.primary};
+                ? 'var(--color-blue)'
+                : 'var(--background-primary)'};
               border-color: ${!inverted
                 ? focus
-                  ? theme.color.blue
-                  : theme.background.transparent.light
-                : theme.background.transparent.light};
+                  ? 'var(--color-blue)'
+                  : 'var(--background-transparent-light)'
+                : 'var(--background-transparent-light)'};
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
                     !inverted
-                      ? theme.accent.tertiary
-                      : theme.background.transparent.medium
+                      ? 'var(--accent-tertiary)'
+                      : 'var(--background-transparent-medium)'
                   }`
                 : 'none'};
-              color: ${!inverted ? theme.grayScale.gray0 : theme.color.blue};
+              color: ${!inverted
+                ? 'var(--gray-scale-gray0)'
+                : 'var(--color-blue)'};
               ${disabled
                 ? ''
                 : css`
                     &:hover {
                       background: ${!inverted
-                        ? theme.color.blue50
-                        : theme.background.secondary};
+                        ? 'var(--color-blue50)'
+                        : 'var(--background-secondary)'};
                     }
                     &:active {
                       background: ${!inverted
-                        ? theme.color.blue60
-                        : theme.background.tertiary};
+                        ? 'var(--color-blue60)'
+                        : 'var(--background-tertiary)'};
                     }
                   `}
             `;
           case 'danger':
             return css`
               background: ${!inverted
-                ? theme.color.red
-                : theme.background.primary};
+                ? 'var(--color-red)'
+                : 'var(--background-primary)'};
               border-color: ${!inverted
                 ? focus
-                  ? theme.color.red
-                  : theme.background.transparent.light
-                : theme.background.transparent.light};
+                  ? 'var(--color-red)'
+                  : 'var(--background-transparent-light)'
+                : 'var(--background-transparent-light)'};
               border-width: 1px 1px !important;
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
                     !inverted
-                      ? theme.color.red10
-                      : theme.background.transparent.medium
+                      ? 'var(--color-red10)'
+                      : 'var(--background-transparent-medium)'
                   }`
                 : 'none'};
-              color: ${!inverted ? theme.background.primary : theme.color.red};
+              color: ${!inverted
+                ? 'var(--background-primary)'
+                : 'var(--color-red)'};
               ${disabled
                 ? ''
                 : css`
                     &:hover {
                       background: ${!inverted
-                        ? theme.color.red40
-                        : theme.background.secondary};
+                        ? 'var(--color-red40)'
+                        : 'var(--background-secondary)'};
                     }
                     &:active {
                       background: ${!inverted
-                        ? theme.color.red50
-                        : theme.background.tertiary};
+                        ? 'var(--color-red50)'
+                        : 'var(--background-tertiary)'};
                     }
                   `}
             `;
+          default:
+            return css``;
         }
-        break;
       case 'secondary':
       case 'tertiary':
         switch (accent) {
@@ -153,44 +159,44 @@ const StyledButton = styled.button<
               border-color: ${!inverted
                 ? variant === 'secondary'
                   ? !disabled && focus
-                    ? theme.color.blue
-                    : theme.background.transparent.medium
+                    ? 'var(--color-blue)'
+                    : 'var(--background-transparent-medium)'
                   : focus
-                    ? theme.color.blue
+                    ? 'var(--color-blue)'
                     : 'transparent'
                 : variant === 'secondary'
                   ? focus || disabled
-                    ? theme.grayScale.gray0
-                    : theme.background.transparent.primary
+                    ? 'var(--gray-scale-gray0)'
+                    : 'var(--background-transparent-primary)'
                   : focus
-                    ? theme.grayScale.gray0
+                    ? 'var(--gray-scale-gray0)'
                     : 'transparent'};
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
                     !inverted
-                      ? theme.accent.tertiary
-                      : theme.background.transparent.medium
+                      ? 'var(--accent-tertiary)'
+                      : 'var(--background-transparent-medium)'
                   }`
                 : 'none'};
               color: ${!inverted
                 ? !disabled
-                  ? theme.font.color.secondary
-                  : theme.font.color.extraLight
-                : theme.font.color.inverted};
+                  ? 'var(--font-color-secondary)'
+                  : 'var(--font-color-extra-light)'
+                : 'var(--font-color-inverted)'};
               &:hover {
                 background: ${!inverted
                   ? !disabled
-                    ? theme.background.transparent.light
+                    ? 'var(--background-transparent-light)'
                     : 'transparent'
-                  : theme.background.transparent.light};
+                  : 'var(--background-transparent-light)'};
               }
               &:active {
                 background: ${!inverted
                   ? !disabled
-                    ? theme.background.transparent.light
+                    ? 'var(--background-transparent-light)'
                     : 'transparent'
-                  : theme.background.transparent.medium};
+                  : 'var(--background-transparent-medium)'};
               }
             `;
           case 'blue':
@@ -199,44 +205,44 @@ const StyledButton = styled.button<
               border-color: ${!inverted
                 ? variant === 'secondary'
                   ? focus
-                    ? theme.color.blue
-                    : theme.accent.primary
+                    ? 'var(--color-blue)'
+                    : 'var(--accent-primary)'
                   : focus
-                    ? theme.color.blue
+                    ? 'var(--color-blue)'
                     : 'transparent'
                 : variant === 'secondary'
                   ? focus || disabled
-                    ? theme.grayScale.gray0
-                    : theme.background.transparent.primary
+                    ? 'var(--gray-scale-gray0)'
+                    : 'var(--background-transparent-primary)'
                   : focus
-                    ? theme.grayScale.gray0
+                    ? 'var(--gray-scale-gray0)'
                     : 'transparent'};
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
                     !inverted
-                      ? theme.accent.tertiary
-                      : theme.background.transparent.medium
+                      ? 'var(--accent-tertiary)'
+                      : 'var(--background-transparent-medium)'
                   }`
                 : 'none'};
               color: ${!inverted
                 ? !disabled
-                  ? theme.color.blue
-                  : theme.accent.accent4060
-                : theme.font.color.inverted};
+                  ? 'var(--color-blue)'
+                  : 'var(--accent-accent4060)'
+                : 'var(--font-color-inverted)'};
               &:hover {
                 background: ${!inverted
                   ? !disabled
-                    ? theme.accent.tertiary
+                    ? 'var(--accent-tertiary)'
                     : 'transparent'
-                  : theme.background.transparent.light};
+                  : 'var(--background-transparent-light)'};
               }
               &:active {
                 background: ${!inverted
                   ? !disabled
-                    ? theme.accent.secondary
+                    ? 'var(--accent-secondary)'
                     : 'transparent'
-                  : theme.background.transparent.medium};
+                  : 'var(--background-transparent-medium)'};
               }
             `;
           case 'danger':
@@ -245,59 +251,65 @@ const StyledButton = styled.button<
               border-color: ${!inverted
                 ? variant === 'secondary'
                   ? focus
-                    ? theme.color.red
-                    : theme.border.color.danger
+                    ? 'var(--color-red)'
+                    : 'var(--border-color-danger)'
                   : focus
-                    ? theme.color.red
+                    ? 'var(--color-red)'
                     : 'transparent'
                 : variant === 'secondary'
                   ? focus || disabled
-                    ? theme.grayScale.gray0
-                    : theme.background.transparent.primary
+                    ? 'var(--gray-scale-gray0)'
+                    : 'var(--background-transparent-primary)'
                   : focus
-                    ? theme.grayScale.gray0
+                    ? 'var(--gray-scale-gray0)'
                     : 'transparent'};
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
                     !inverted
-                      ? theme.color.red10
-                      : theme.background.transparent.medium
+                      ? 'var(--color-red10)'
+                      : 'var(--background-transparent-medium)'
                   }`
                 : 'none'};
               color: ${!inverted
-                ? theme.font.color.danger
-                : theme.font.color.inverted};
+                ? 'var(--font-color-danger)'
+                : 'var(--font-color-inverted)'};
               &:hover {
                 background: ${!inverted
                   ? !disabled
-                    ? theme.background.danger
+                    ? 'var(--background-danger)'
                     : 'transparent'
-                  : theme.background.transparent.light};
+                  : 'var(--background-transparent-light)'};
               }
               &:active {
                 background: ${!inverted
                   ? !disabled
-                    ? theme.background.danger
+                    ? 'var(--background-danger)'
                     : 'transparent'
-                  : theme.background.transparent.medium};
+                  : 'var(--background-transparent-medium)'};
               }
             `;
+          default:
+            return css``;
         }
+      default:
+        return css``;
     }
   }}
 
   text-decoration: none;
-  border-radius: ${({ position, theme }) => {
+  border-radius: ${({ position }) => {
     switch (position) {
       case 'left':
-        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
+        return `var(--border-radius-sm) 0px 0px var(--border-radius-sm)`;
       case 'right':
-        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
+        return `0px var(--border-radius-sm) var(--border-radius-sm) 0px`;
       case 'middle':
         return '0px';
       case 'standalone':
-        return theme.border.radius.sm;
+        return 'var(--border-radius-sm)';
+      default:
+        return '';
     }
   }};
   border-style: solid;
@@ -308,20 +320,20 @@ const StyledButton = styled.button<
         return position === 'middle' ? '1px 0px' : '1px';
       case 'tertiary':
         return '0';
+      default:
+        return '';
     }
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
-  font-family: ${({ theme }) => theme.font.family};
+  font-family: var(--font-family-primary);
   font-weight: 500;
-  font-size: ${({ theme }) => theme.font.size.md};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-size: var(--font-size-md);
+  gap: var(--spacing-1);
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
-  justify-content: ${({ justify }) => justify};
-  padding: ${({ theme }) => {
-    return `0 ${theme.spacing(2)}`;
-  }};
+  justify-content: ${({ justify }) => justify ?? 'flex-start'};
+  padding: 0 var(--spacing-2) 0 var(--spacing-2);
 
   transition: background 0.1s ease;
 
@@ -342,18 +354,18 @@ const StyledSeparator = styled.div<{
   buttonSize: ButtonSize;
   accent: ButtonAccent;
 }>`
-  background: ${({ theme, accent }) => {
+  background: ${({ accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.border.color.blue;
+        return 'var(--border-color-blue)';
       case 'danger':
-        return theme.border.color.danger;
+        return 'var(--border-color-danger)';
       default:
-        return theme.font.color.light;
+        return 'var(--font-color-light)';
     }
   }};
-  height: ${({ theme, buttonSize }) =>
-    theme.spacing(buttonSize === 'small' ? 2 : 4)};
+  height: ${({ buttonSize }) =>
+    buttonSize === 'small' ? 'var(--spacing-2)' : 'var(--spacing-4)'};
   margin: 0;
   width: 1px;
 `;
@@ -362,19 +374,19 @@ const StyledShortcutLabel = styled.div<{
   variant: ButtonVariant;
   accent: ButtonAccent;
 }>`
-  color: ${({ theme, variant, accent }) => {
+  color: ${({ variant, accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.border.color.blue;
+        return 'var(--border-color-blue)';
       case 'danger':
         return variant === 'primary'
-          ? theme.border.color.danger
-          : theme.color.red40;
+          ? 'var(--border-color-danger)'
+          : 'var(--color-red40)';
       default:
-        return theme.font.color.light;
+        return 'var(--font-color-light)';
     }
   }};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: var(--font-weight-medium);
 `;
 
 const StyledIconContainer = styled(motion.div)`

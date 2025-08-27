@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
-import { PagePanel } from './PagePanel';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import { PagePanel } from './PagePanel';
 
 type PageBodyProps = {
   children: ReactNode;

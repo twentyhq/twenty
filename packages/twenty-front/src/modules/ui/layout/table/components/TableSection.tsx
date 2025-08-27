@@ -1,8 +1,8 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
-import { TableBody } from './TableBody';
 import { IconChevronDown, IconChevronUp, Label } from 'twenty-ui/display';
+import { TableBody } from './TableBody';
 
 type TableSectionProps = {
   children: ReactNode;

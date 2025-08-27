@@ -1,6 +1,10 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
-import { ColorSample, type ColorSampleProps } from '@ui/display';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
+import {
+  ColorSample,
+  type ColorSampleProps,
+  type IconComponent,
+} from '@ui/display';
 import {
   LightIconButton,
   type LightIconButtonProps,
@@ -11,16 +15,20 @@ type ColorPickerButtonProps = Pick<ColorSampleProps, 'colorName'> &
     isSelected?: boolean;
   };
 
-const StyledButton = styled(LightIconButton)<{
-  isSelected?: boolean;
-}>`
-  ${({ isSelected, theme }) =>
+const StyledButton = styled(LightIconButton as any)<
+  {
+    isSelected?: boolean;
+    size: 'small' | 'medium';
+    Icon: IconComponent;
+  } & Pick<ColorPickerButtonProps, 'onClick'>
+>`
+  ${({ isSelected }) =>
     isSelected
       ? css`
-          background-color: ${theme.background.transparent.medium};
+          background-color: var(--background-transparent-medium);
 
           &:hover {
-            background-color: ${theme.background.transparent.medium};
+            background-color: var(--background-transparent-medium);
           }
         `
       : ''}

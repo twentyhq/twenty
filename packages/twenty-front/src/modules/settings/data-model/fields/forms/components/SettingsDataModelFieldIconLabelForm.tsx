@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { type z } from 'zod';
 

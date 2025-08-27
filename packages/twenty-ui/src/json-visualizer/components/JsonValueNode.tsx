@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { JsonListItem } from '@ui/json-visualizer/components/internal/JsonListItem';
 import { JsonNodeLabel } from '@ui/json-visualizer/components/internal/JsonNodeLabel';
@@ -6,7 +6,7 @@ import { JsonNodeValue } from '@ui/json-visualizer/components/internal/JsonNodeV
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';
 
 const StyledListItem = styled(JsonListItem)`
-  column-gap: ${({ theme }) => theme.spacing(2)};
+  column-gap: var(--spacing-2);
 `;
 
 type JsonValueNodeProps = {

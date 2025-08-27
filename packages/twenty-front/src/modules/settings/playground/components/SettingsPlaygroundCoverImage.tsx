@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
+import { Card } from 'twenty-ui/layout';
 import DarkCoverImage from '../assets/cover-dark.png';
 import LightCoverImage from '../assets/cover-light.png';
-import { Card } from 'twenty-ui/layout';
 
 export const StyledSettingsApiPlaygroundCoverImage = styled(Card)`
   align-items: center;

@@ -1,13 +1,13 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 
 import { NavigationBarItem } from './NavigationBarItem';
 
 const StyledContainer = styled.div`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: var(--spacing-4);
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: var(--spacing-3);
   z-index: 1001;
 `;
 

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { t } from '@lingui/core/macro';

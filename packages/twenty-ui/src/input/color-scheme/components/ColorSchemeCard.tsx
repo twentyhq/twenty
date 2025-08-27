@@ -1,10 +1,11 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Checkmark } from '@ui/display/checkmark/components/Checkmark';
 import { type ColorScheme } from '@ui/input/types/ColorScheme';
 import {
   AnimatePresence,
   type AnimationControls,
   motion,
+  type MotionProps,
   useAnimation,
 } from 'framer-motion';
 import React from 'react';
@@ -13,83 +14,85 @@ const StyledColorSchemeBackground = styled.div<
   Pick<ColorSchemeCardProps, 'variant'>
 >`
   align-items: flex-end;
-  background: ${({ variant, theme }) => {
+  background: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return theme.grayScale.gray75;
+        return 'var(--background-gray-75)';
       case 'Light':
       default:
-        return theme.grayScale.gray15;
+        return 'var(--background-gray-15)';
     }
   }};
-  border: ${({ variant, theme }) => {
+  border: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return `1px solid ${theme.grayScale.gray70};`;
+        return `1px solid var(--background-gray-70);`;
       case 'Light':
       default:
-        return `1px solid ${theme.grayScale.gray20};`;
+        return `1px solid var(--background-gray-20);`;
     }
   }};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: var(--border-radius-md);
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
   height: 80px;
   justify-content: flex-end;
   overflow: hidden;
-  padding-left: ${({ theme }) => theme.spacing(6)};
-  padding-top: ${({ theme }) => theme.spacing(6)};
+  padding-left: var(--spacing-6);
+  padding-top: var(--spacing-6);
   width: 160px;
 `;
 
-const StyledColorSchemeContent = styled(motion.div)<
-  Pick<ColorSchemeCardProps, 'variant'>
+const StyledColorSchemeContent = styled(motion.div as any)<
+  MotionProps & Pick<ColorSchemeCardProps, 'variant'>
 >`
-  background: ${({ theme, variant }) => {
+  background: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return theme.grayScale.gray75;
+        return 'var(--background-gray-75)';
       case 'Light':
-        return theme.grayScale.gray0;
+        return 'var(--background-gray-0)';
+      default:
+        return 'var(--background-gray-0)';
     }
   }};
 
-  border-left: ${({ variant, theme }) => {
+  border-left: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return `1px solid ${theme.grayScale.gray60};`;
+        return `1px solid var(--background-gray-60);`;
       case 'Light':
       default:
-        return `1px solid ${theme.grayScale.gray20};`;
+        return `1px solid var(--background-gray-20);`;
     }
   }};
-  border-radius: ${({ theme }) => theme.border.radius.md} 0px 0px 0px;
-  border-top: ${({ variant, theme }) => {
+  border-radius: var(--border-radius-md) 0px 0px 0px;
+  border-top: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return `1px solid ${theme.grayScale.gray60};`;
+        return `1px solid var(--background-gray-60);`;
       case 'Light':
       default:
-        return `1px solid ${theme.grayScale.gray20};`;
+        return `1px solid var(--background-gray-20);`;
     }
   }};
   box-sizing: border-box;
-  color: ${({ variant, theme }) => {
+  color: ${({ variant }) => {
     switch (variant) {
       case 'Dark':
-        return theme.grayScale.gray30;
+        return 'var(--background-gray-30)';
       case 'Light':
       default:
-        return theme.grayScale.gray60;
+        return 'var(--background-gray-60)';
     }
   }};
   display: flex;
   flex: 1;
   font-size: 20px;
   height: 56px;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-left: var(--spacing-2);
+  padding-top: var(--spacing-2);
 `;
 
 export type ColorSchemeSegmentProps = {
@@ -123,7 +126,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledMixedColorSchemeSegment = styled.div`
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: var(--border-radius-md);
   cursor: pointer;
   display: flex;
   height: 80px;
@@ -134,7 +137,7 @@ const StyledMixedColorSchemeSegment = styled.div`
 
 const StyledCheckmarkContainer = styled(motion.div)`
   bottom: 0px;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: var(--spacing-2);
   position: absolute;
   right: 0px;
 `;

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledTitle = styled.h3`
   color: ${({ theme }) => theme.font.color.extraLight};

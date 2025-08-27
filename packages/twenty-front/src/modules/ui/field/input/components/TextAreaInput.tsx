@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 

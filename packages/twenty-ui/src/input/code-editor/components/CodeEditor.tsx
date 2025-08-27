@@ -1,6 +1,7 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import Editor, { type EditorProps, type Monaco } from '@monaco-editor/react';
+import { useTheme } from '@emotion/react';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
+import { Editor, type EditorProps, type Monaco } from '@monaco-editor/react';
 import { Loader } from '@ui/feedback/loader/components/Loader';
 import { BASE_CODE_EDITOR_THEME_ID } from '@ui/input/code-editor/constants/BaseCodeEditorThemeId';
 import { getBaseCodeEditorTheme } from '@ui/input/code-editor/theme/utils/getBaseCodeEditorTheme';
@@ -29,13 +30,13 @@ const StyledEditorLoader = styled.div<{
   display: flex;
   height: ${({ height }) => height}px;
   justify-content: center;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  ${({ variant, theme }) => {
+  border: 1px solid var(--border-color-medium);
+  background-color: var(--background-transparent-lighter);
+  ${({ variant }) => {
     switch (variant) {
       case 'default':
         return css`
-          border-radius: ${theme.border.radius.sm};
+          border-radius: var(--border-radius-sm);
         `;
       case 'borderless':
         return css`
@@ -43,51 +44,55 @@ const StyledEditorLoader = styled.div<{
         `;
       case 'with-header':
         return css`
-          border-radius: 0 0 ${theme.border.radius.sm} ${theme.border.radius.sm};
+          border-radius: 0 0 var(--border-radius-sm) var(--border-radius-sm);
           border-top: none;
         `;
     }
   }}
 `;
 
-const StyledEditor = styled(Editor)<{
+const StyledEditorContainer = styled.div<{
   variant: CodeEditorVariant;
   transparentBackground?: boolean;
 }>`
   .monaco-editor {
     outline-width: 0;
 
-    ${({ theme, transparentBackground }) =>
-      !transparentBackground &&
-      css`
-        background-color: ${theme.background.secondary};
-      `}
+    ${({ transparentBackground }) =>
+      !transparentBackground
+        ? css`
+            background-color: var(--background-secondary);
+          `
+        : css``}
 
-    ${({ variant, theme }) =>
-      variant !== 'borderless' &&
-      css`
-        border-radius: ${theme.border.radius.sm};
-      `}
+    ${({ variant }) =>
+      variant !== 'borderless'
+        ? css`
+            border-radius: var(--border-radius-sm);
+          `
+        : css``}
   }
 
   .overflow-guard {
     box-sizing: border-box;
 
-    ${({ variant, theme }) => {
+    ${({ variant }) => {
       switch (variant) {
         case 'default': {
           return css`
-            border: 1px solid ${theme.border.color.medium};
-            border-radius: ${theme.border.radius.sm};
+            border: 1px solid var(--border-color-medium);
+            border-radius: var(--border-radius-sm);
           `;
         }
         case 'with-header': {
           return css`
-            border: 1px solid ${theme.border.color.medium};
-            border-radius: 0 0 ${theme.border.radius.sm}
-              ${theme.border.radius.sm};
+            border: 1px solid var(--border-color-medium);
+            border-radius: 0 0 var(--border-radius-sm) var(--border-radius-sm);
             border-top: none;
           `;
+        }
+        default: {
+          return css``;
         }
       }
     }}
@@ -132,50 +137,53 @@ export const CodeEditor = ({
       <Loader />
     </StyledEditorLoader>
   ) : (
-    <StyledEditor
-      height={height}
+    <StyledEditorContainer
       variant={variant}
-      value={isLoading ? '' : value}
-      language={language}
-      loading=""
       transparentBackground={transparentBackground}
-      onMount={(editor, monaco) => {
-        setMonaco(monaco);
-        setEditor(editor);
+    >
+      <Editor
+        height={height}
+        value={isLoading ? '' : value}
+        language={language}
+        loading=""
+        onMount={(editor, monaco) => {
+          setMonaco(monaco);
+          setEditor(editor);
 
-        monaco.editor.defineTheme(
-          BASE_CODE_EDITOR_THEME_ID,
-          getBaseCodeEditorTheme({
-            theme,
-          }),
-        );
-        monaco.editor.setTheme(BASE_CODE_EDITOR_THEME_ID);
+          monaco.editor.defineTheme(
+            BASE_CODE_EDITOR_THEME_ID,
+            getBaseCodeEditorTheme({
+              theme,
+            }),
+          );
+          monaco.editor.setTheme(BASE_CODE_EDITOR_THEME_ID);
 
-        onMount?.(editor, monaco);
-        setModelMarkers(editor, monaco);
-      }}
-      onChange={(value) => {
-        if (isDefined(value)) {
-          onChange?.(value);
+          onMount?.(editor, monaco);
           setModelMarkers(editor, monaco);
-        }
-      }}
-      onValidate={(markers) => {
-        onValidate?.(markers);
-      }}
-      options={{
-        formatOnPaste: true,
-        formatOnType: true,
-        overviewRulerLanes: 0,
-        scrollbar: {
-          vertical: 'hidden',
-          horizontal: 'hidden',
-        },
-        minimap: {
-          enabled: false,
-        },
-        ...options,
-      }}
-    />
+        }}
+        onChange={(value) => {
+          if (isDefined(value)) {
+            onChange?.(value);
+            setModelMarkers(editor, monaco);
+          }
+        }}
+        onValidate={(markers) => {
+          onValidate?.(markers);
+        }}
+        options={{
+          formatOnPaste: true,
+          formatOnType: true,
+          overviewRulerLanes: 0,
+          scrollbar: {
+            vertical: 'hidden',
+            horizontal: 'hidden',
+          },
+          minimap: {
+            enabled: false,
+          },
+          ...options,
+        }}
+      />
+    </StyledEditorContainer>
   );
 };

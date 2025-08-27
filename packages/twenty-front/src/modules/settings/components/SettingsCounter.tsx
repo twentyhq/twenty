@@ -1,5 +1,5 @@
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconMinus, IconPlus } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { castAsNumberOrNull } from '~/utils/cast-as-number-or-null';

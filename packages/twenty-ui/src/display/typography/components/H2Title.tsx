@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 
 type H2TitleProps = {
@@ -11,7 +11,7 @@ type H2TitleProps = {
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: var(--spacing-4);
 `;
 
 const StyledTitleContainer = styled.div`
@@ -21,18 +21,18 @@ const StyledTitleContainer = styled.div`
 `;
 
 const StyledTitle = styled.h2`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: var(--font-color-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semi-bold);
   margin: 0;
 `;
 
 const StyledDescription = styled.h3`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  color: var(--font-color-tertiary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
   margin: 0;
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: var(--spacing-2);
 `;
 
 export const H2Title = ({

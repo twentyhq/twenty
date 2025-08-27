@@ -4,7 +4,7 @@ import { type WorkflowStep } from '@/workflow/types/Workflow';
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useRecoilState } from 'recoil';
 
 const StyledVariableInputsContainer = styled.div`

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type IconComponent } from '@ui/display';
 import { JsonArrow } from '@ui/json-visualizer/components/internal/JsonArrow';
@@ -22,15 +22,18 @@ const StyledContainer = styled.li`
 const StyledLabelContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: var(--spacing-2);
 `;
 
 const StyledElementsCount = styled.span<{ variant?: 'red' }>`
-  color: ${({ theme, variant }) =>
-    variant === 'red' ? theme.font.color.danger : theme.font.color.tertiary};
+  color: ${({ variant }) =>
+    variant === 'red'
+      ? 'var(--color-font-danger)'
+      : 'var(--color-font-tertiary)'};
 `;
 
-const StyledJsonList = styled(JsonList)``.withComponent(motion.ul);
+// Charles TODO check
+const StyledJsonList = styled(JsonList as any)``.withComponent(motion.ul);
 
 export const JsonNestedNode = ({
   label,

@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { styled } from '@linaria/react';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';

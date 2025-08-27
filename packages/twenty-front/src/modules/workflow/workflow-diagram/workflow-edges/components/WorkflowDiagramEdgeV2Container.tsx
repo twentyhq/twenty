@@ -1,5 +1,5 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 
 const StyledContainer = styled.div<{ labelX: number; labelY: number }>`
   padding: ${({ theme }) => theme.spacing(1)};

@@ -1,5 +1,5 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
 import { useIMask } from 'react-imask';
 import { useRecoilValue } from 'recoil';

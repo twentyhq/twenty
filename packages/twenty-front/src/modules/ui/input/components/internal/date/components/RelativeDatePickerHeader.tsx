@@ -8,7 +8,7 @@ import {
   type VariableDateViewFilterValueUnit,
 } from 'twenty-shared/types';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
 
 const StyledContainer = styled.div<{ noPadding: boolean }>`

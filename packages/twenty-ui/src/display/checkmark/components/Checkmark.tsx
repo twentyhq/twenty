@@ -1,12 +1,12 @@
-import React from 'react';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import React from 'react';
 
 import { IconCheck } from '@ui/display/icon/components/TablerIcons';
 
 const StyledContainer = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.color.blue};
+  background-color: var(--color-blue);
   border-radius: 50%;
   display: flex;
   height: 20px;

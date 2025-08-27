@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledLayout = styled.div<{
@@ -6,9 +6,9 @@ const StyledLayout = styled.div<{
   backgroundColor?: string | undefined;
   height: number | 'fit-content';
 }>`
-  background: ${({ theme, backgroundColor }) =>
-    backgroundColor ?? theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
+  background: ${({ backgroundColor }) =>
+    backgroundColor ?? 'var(--background-primary)'};
+  border: 1px solid var(--border-color-light);
   border-radius: 5px;
 
   display: flex;

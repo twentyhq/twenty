@@ -10,7 +10,7 @@ import { WorkflowAdvancedFilterFieldSelectDisabled } from '@/workflow/workflow-s
 import { WorkflowAdvancedFilterValueFormInput } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterFormInput';
 import { WorkflowAdvancedFilterLogicalOperatorCell } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterLogicalOperatorCell';
 import { WorkflowAdvancedFilterRecordFilterOperandSelect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterRecordFilterOperandSelect';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
 
 const StyledContainer = styled.div`

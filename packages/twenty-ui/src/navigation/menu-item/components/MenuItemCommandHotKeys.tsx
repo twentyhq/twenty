@@ -1,34 +1,34 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import React from 'react';
 
 const StyledCommandTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: var(--spacing-1);
   justify-content: center;
 `;
 
 const StyledCommandText = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
+  color: var(--font-color-light);
   vertical-align: middle;
   white-space: nowrap;
 `;
 
 const StyledCommandKey = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.strong};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: ${({ theme }) => theme.boxShadow.underline};
+  background-color: var(--background-secondary);
+  border: 1px solid var(--border-color-strong);
+  border-radius: var(--border-radius-sm);
+  box-shadow: var(--box-shadow-underline);
   display: flex;
   flex-direction: column;
 
-  height: ${({ theme }) => theme.spacing(5)};
+  height: var(--spacing-5);
   height: 18px;
   justify-content: center;
   text-align: center;
-  width: ${({ theme }) => theme.spacing(4)};
+  width: var(--spacing-4);
 `;
 
 export type MenuItemCommandHotKeysProps = {

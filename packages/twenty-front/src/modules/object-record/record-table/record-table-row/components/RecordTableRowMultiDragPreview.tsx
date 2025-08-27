@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { NotificationCounter } from 'twenty-ui/navigation';
 
+import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 
 const StyledNotificationCounter = styled(NotificationCounter)`
   position: absolute;

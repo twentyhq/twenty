@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Section } from 'twenty-ui/layout';

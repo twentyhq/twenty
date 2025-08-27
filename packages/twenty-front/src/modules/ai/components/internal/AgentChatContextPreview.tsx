@@ -5,7 +5,7 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useDeleteFileMutation } from '~/generated-metadata/graphql';
 import { AgentChatFilePreview } from './AgentChatFilePreview';

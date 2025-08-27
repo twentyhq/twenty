@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
 import { type ThemeType } from 'twenty-ui/theme';
 
 export const FORM_FIELD_PLACEHOLDER_STYLES = (props: {

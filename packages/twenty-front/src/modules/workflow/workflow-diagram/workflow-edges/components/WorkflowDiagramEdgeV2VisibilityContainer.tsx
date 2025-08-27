@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledContainer = styled.div<{ shouldDisplay: boolean }>`
   opacity: ${({ shouldDisplay }) => (shouldDisplay ? 1 : 0)};

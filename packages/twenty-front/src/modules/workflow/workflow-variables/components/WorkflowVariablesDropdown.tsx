@@ -12,7 +12,7 @@ import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/workflow-variables/cons
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconVariablePlus } from 'twenty-ui/display';

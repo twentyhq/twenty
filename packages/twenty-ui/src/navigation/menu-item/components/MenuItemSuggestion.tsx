@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type MouseEvent } from 'react';
 
 import { type IconComponent } from '@ui/display';
@@ -17,30 +17,30 @@ export type MenuItemSuggestionProps = {
 const StyledSuggestionMenuItem = styled.li<{
   selected?: boolean;
 }>`
-  --horizontal-padding: ${({ theme }) => theme.spacing(1)};
-  --vertical-padding: ${({ theme }) => theme.spacing(2)};
+  --horizontal-padding: var(--spacing-1);
+  --vertical-padding: var(--spacing-2);
 
   align-items: center;
 
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
 
   display: flex;
 
   flex-direction: row;
 
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: var(--font-size-sm);
 
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: var(--spacing-2);
 
   height: calc(32px - 2 * var(--vertical-padding));
   justify-content: space-between;
 
   padding: var(--vertical-padding) var(--horizontal-padding);
 
-  background: ${({ selected, theme }) =>
-    selected ? theme.background.transparent.medium : ''};
-  color: ${({ theme }) => theme.font.color.secondary};
+  background: ${({ selected }) =>
+    selected ? 'var(--color-background-transparent-medium)' : ''};
+  color: var(--color-font-secondary);
 
   ${HOVER_BACKGROUND};
 

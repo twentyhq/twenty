@@ -1,5 +1,5 @@
 import { RecordInlineCellHoveredPortal } from '@/object-record/record-inline-cell/components/RecordInlineCellHoveredPortal';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledRecordTableCellHoveredPortalContent = styled.div<{
   readonly?: boolean;

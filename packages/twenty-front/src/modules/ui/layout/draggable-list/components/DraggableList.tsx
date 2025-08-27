@@ -1,10 +1,10 @@
-import styled from '@emotion/styled';
 import {
   DragDropContext,
   Droppable,
   type OnDragEndResponder,
   type OnDragStartResponder,
 } from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { v4 } from 'uuid';
 type DraggableListProps = {

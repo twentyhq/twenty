@@ -1,14 +1,14 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 
 const StyledIconButton = styled.button`
   align-items: center;
-  background: ${({ theme }) => theme.color.blue};
+  background: var(--color-blue);
   border: none;
 
   border-radius: 50%;
-  color: ${({ theme }) => theme.font.color.inverted};
+  color: var(--font-color-inverted);
 
   cursor: pointer;
   display: flex;
@@ -23,8 +23,8 @@ const StyledIconButton = styled.button`
     background 0.1s ease-in-out;
 
   &:disabled {
-    background: ${({ theme }) => theme.background.quaternary};
-    color: ${({ theme }) => theme.font.color.tertiary};
+    background: var(--background-quaternary);
+    color: var(--font-color-tertiary);
     cursor: default;
   }
   width: 20px;

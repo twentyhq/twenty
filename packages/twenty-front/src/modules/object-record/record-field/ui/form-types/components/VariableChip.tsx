@@ -1,7 +1,7 @@
 import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
 import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
 import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconAlertTriangle, IconX } from 'twenty-ui/display';

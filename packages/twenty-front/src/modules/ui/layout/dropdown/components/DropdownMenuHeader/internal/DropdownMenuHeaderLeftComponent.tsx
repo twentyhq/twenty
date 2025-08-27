@@ -1,6 +1,6 @@
-import { type MouseEvent, type ReactElement } from 'react';
-import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
+import { styled } from '@linaria/react';
+import { type MouseEvent, type ReactElement } from 'react';
 import {
   type Avatar,
   type AvatarProps,

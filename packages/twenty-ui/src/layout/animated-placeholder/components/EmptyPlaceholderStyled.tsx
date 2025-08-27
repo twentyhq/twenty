@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 
 const StyledEmptyContainer = styled(motion.div)`
@@ -7,7 +7,7 @@ const StyledEmptyContainer = styled(motion.div)`
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(6)};
+  gap: var(--spacing-6);
   justify-content: center;
   text-align: center;
 `;
@@ -26,7 +26,7 @@ const StyledEmptyTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: var(--spacing-2);
   justify-content: center;
   text-align: center;
   width: 100%;
@@ -35,18 +35,18 @@ const StyledEmptyTextContainer = styled.div`
 export { StyledEmptyTextContainer as AnimatedPlaceholderEmptyTextContainer };
 
 const StyledEmptyTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: var(--font-color-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semi-bold);
 `;
 
 export { StyledEmptyTitle as AnimatedPlaceholderEmptyTitle };
 
 const StyledEmptySubTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
+  color: var(--font-color-tertiary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-lg);
   max-height: 2.8em;
   overflow: hidden;
   width: 50%;

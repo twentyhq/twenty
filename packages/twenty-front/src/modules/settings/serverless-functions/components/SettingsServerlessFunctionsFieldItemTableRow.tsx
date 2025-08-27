@@ -1,9 +1,9 @@
-import styled from '@emotion/styled';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { type ServerlessFunction } from '~/generated-metadata/graphql';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
+import { styled } from '@linaria/react';
 import { IconChevronRight } from 'twenty-ui/display';
+import { type ServerlessFunction } from '~/generated-metadata/graphql';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
   grid-template-columns: 312px 132px 68px;

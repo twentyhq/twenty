@@ -2,7 +2,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconChevronRight } from 'twenty-ui/display';
 import { type ConfigVariable } from '~/generated/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';

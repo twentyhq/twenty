@@ -2,7 +2,7 @@
 
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useRecoilValue } from 'recoil';
 
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';

@@ -1,27 +1,27 @@
+import { styled } from '@linaria/react';
 import React from 'react';
-import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  color: ${({ theme }) => theme.font.color.extraLight};
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semi-bold);
+  color: var(--font-color-extra-light);
 
   &:before,
   &:after {
     content: '';
     height: 1px;
     flex-grow: 1;
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: var(--background-transparent-light);
   }
 
   &:before {
-    margin: 0 ${({ theme }) => theme.spacing(4)} 0 0;
+    margin: 0 var(--spacing-4) 0 0;
   }
   &:after {
-    margin: 0 0 0 ${({ theme }) => theme.spacing(4)};
+    margin: 0 0 0 var(--spacing-4);
   }
 `;
 

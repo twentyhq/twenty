@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import {
   type MessageChannel,
@@ -9,10 +9,10 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { type MessageChannelVisibility } from '~/generated-metadata/graphql';
 import { t } from '@lingui/core/macro';
-import { Card, Section } from 'twenty-ui/layout';
 import { H2Title, IconBriefcase, IconUsers } from 'twenty-ui/display';
+import { Card, Section } from 'twenty-ui/layout';
+import { type MessageChannelVisibility } from '~/generated-metadata/graphql';
 
 type SettingsAccountsMessageChannelDetailsProps = {
   messageChannel: Pick<

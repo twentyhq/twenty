@@ -6,7 +6,7 @@ import { type VariablePickerComponent } from '@/object-record/record-field/ui/fo
 import { BooleanInput } from '@/ui/field/input/components/BooleanInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 

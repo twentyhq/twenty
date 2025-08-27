@@ -1,7 +1,7 @@
-import { type IconComponent } from 'twenty-ui/display';
-import React from 'react';
-import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
+import { styled } from '@linaria/react';
+import React from 'react';
+import { type IconComponent } from 'twenty-ui/display';
 
 type SubscriptionInfoRowContainerProps = {
   Icon: IconComponent;

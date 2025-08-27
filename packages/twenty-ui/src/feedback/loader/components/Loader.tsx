@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ThemeColor } from '@ui/theme';
-import { motion } from 'framer-motion';
+import { motion, type MotionProps } from 'framer-motion';
 
 const StyledLoaderContainer = styled.div<{
   color?: ThemeColor;
@@ -9,26 +9,22 @@ const StyledLoaderContainer = styled.div<{
   justify-content: center;
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  width: ${({ theme }) => theme.spacing(6)};
-  height: ${({ theme }) => theme.spacing(3)};
-  border-radius: ${({ theme }) => theme.border.radius.pill};
+  gap: var(--spacing-2);
+  width: var(--spacing-6);
+  height: var(--spacing-3);
+  border-radius: var(--border-radius-pill);
   border: 1px solid
-    ${({ color, theme }) =>
-      color
-        ? theme.tag.text[color]
-        : `var(--tw-button-color, ${theme.font.color.tertiary})`};
+    ${({ color }) =>
+      color ? `var(--tag-text-${color})` : `var(--font-color-tertiary)`};
   overflow: hidden;
 `;
 
-const StyledLoader = styled(motion.div)<{
-  color?: ThemeColor;
-}>`
-  background-color: ${({ color, theme }) =>
-    color
-      ? theme.tag.text[color]
-      : `var(--tw-button-color, ${theme.font.color.tertiary})`};
-  border-radius: ${({ theme }) => theme.border.radius.pill};
+const StyledLoader = styled(motion.div as any)<
+  MotionProps & { color?: ThemeColor }
+>`
+  background-color: ${({ color }) =>
+    color ? `var(--tag-text-${color})` : `var(--font-color-tertiary)`};
+  border-radius: var(--border-radius-pill);
   height: 8px;
   width: 8px;
 `;

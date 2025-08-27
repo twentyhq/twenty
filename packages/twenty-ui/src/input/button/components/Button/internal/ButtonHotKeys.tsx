@@ -1,27 +1,27 @@
-import { getOsShortcutSeparator } from '@ui/utilities';
+import { styled } from '@linaria/react';
 import {
   type ButtonAccent,
   type ButtonSize,
   type ButtonVariant,
 } from '@ui/input';
-import styled from '@emotion/styled';
+import { getOsShortcutSeparator } from '@ui/utilities';
 
 const StyledSeparator = styled.div<{
   buttonSize: ButtonSize;
   accent: ButtonAccent;
 }>`
-  background: ${({ theme, accent }) => {
+  background: ${({ accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.border.color.blue;
+        return 'var(--border-color-blue)';
       case 'danger':
-        return theme.border.color.danger;
+        return 'var(--border-color-danger)';
       default:
-        return theme.font.color.light;
+        return 'var(--font-color-light)';
     }
   }};
-  height: ${({ theme, buttonSize }) =>
-    theme.spacing(buttonSize === 'small' ? 2 : 4)};
+  height: ${({ buttonSize }) =>
+    buttonSize === 'small' ? 'var(--spacing-2)' : 'var(--spacing-4)'};
   margin: 0;
   width: 1px;
 `;
@@ -30,19 +30,19 @@ const StyledShortcutLabel = styled.div<{
   variant: ButtonVariant;
   accent: ButtonAccent;
 }>`
-  color: ${({ theme, variant, accent }) => {
+  color: ${({ variant, accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.border.color.blue;
+        return 'var(--border-color-blue)';
       case 'danger':
         return variant === 'primary'
-          ? theme.border.color.danger
-          : theme.color.red40;
+          ? 'var(--border-color-danger)'
+          : 'var(--color-red40)';
       default:
-        return theme.font.color.light;
+        return 'var(--font-color-light)';
     }
   }};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: var(--font-weight-medium);
 `;
 
 export const ButtonHotkeys = ({

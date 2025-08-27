@@ -9,7 +9,7 @@ import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/u
 import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
 import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 const StyledEditableTitleContainer = styled.div`

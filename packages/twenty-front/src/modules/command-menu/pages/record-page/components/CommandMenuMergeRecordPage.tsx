@@ -7,7 +7,7 @@ import { RecordComponentInstanceContextsWrapper } from '@/object-record/componen
 import { MergeRecordsContainer } from '@/object-record/record-merge/components/MergeRecordsContainer';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledRightDrawerRecord = styled.div<{
   isMobile: boolean;

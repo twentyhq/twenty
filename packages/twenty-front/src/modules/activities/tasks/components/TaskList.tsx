@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ReactElement } from 'react';
 
 import { ActivityList } from '@/activities/components/ActivityList';

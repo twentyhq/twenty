@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
+import { styled } from '@linaria/react';
+import { motion } from 'framer-motion';
+import React from 'react';
 
 const StyledAnimatedContainer = styled(motion.div)`
   align-items: center;

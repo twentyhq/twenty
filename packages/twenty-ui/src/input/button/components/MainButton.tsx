@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import React, { type FunctionComponent } from 'react';
 
@@ -17,75 +17,75 @@ const StyledButton = styled.button<
   Pick<Props, 'fullWidth' | 'width' | 'variant'>
 >`
   align-items: center;
-  background: ${({ theme, variant, disabled }) => {
+  background: ${({ variant, disabled }) => {
     if (disabled === true) {
-      return theme.background.secondary;
+      return 'var(--background-secondary)';
     }
 
     switch (variant) {
       case 'primary':
-        return theme.background.primaryInverted;
+        return 'var(--background-primary-inverted)';
       case 'secondary':
-        return theme.background.primary;
+        return 'var(--background-primary)';
       default:
-        return theme.background.primary;
+        return 'var(--background-primary)';
     }
   }};
   border: 1px solid;
-  border-color: ${({ theme, disabled, variant }) => {
+  border-color: ${({ disabled, variant }) => {
     if (disabled === true) {
-      return theme.background.transparent.lighter;
+      return 'var(--background-transparent-lighter)';
     }
 
     switch (variant) {
       case 'primary':
-        return theme.background.transparent.strong;
+        return 'var(--background-transparent-strong)';
       case 'secondary':
-        return theme.border.color.medium;
+        return 'var(--border-color-medium)';
       default:
-        return theme.background.primary;
+        return 'var(--background-primary)';
     }
   }};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  ${({ theme, disabled }) => {
+  border-radius: var(--border-radius-md);
+  ${({ disabled }) => {
     if (disabled === true) {
       return '';
     }
 
-    return `box-shadow: ${theme.boxShadow.light};`;
+    return `box-shadow: var(--box-shadow-light);`;
   }}
-  color: ${({ theme, variant, disabled }) => {
+  color: ${({ variant, disabled }) => {
     if (disabled === true) {
-      return theme.font.color.light;
+      return 'var(--font-color-light)';
     }
 
     switch (variant) {
       case 'primary':
-        return theme.font.color.inverted;
+        return 'var(--font-color-inverted)';
       case 'secondary':
-        return theme.font.color.primary;
+        return 'var(--font-color-primary)';
       default:
-        return theme.font.color.primary;
+        return 'var(--font-color-primary)';
     }
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
-  font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  gap: ${({ theme }) => theme.spacing(2)};
+  font-family: var(--font-family-primary);
+  font-weight: var(--font-weight-semi-bold);
+  gap: var(--spacing-2);
   justify-content: center;
   outline: none;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
-  max-height: ${({ theme }) => theme.spacing(8)};
+  padding: var(--spacing-2) var(--spacing-3);
+  max-height: var(--spacing-8);
   width: ${({ fullWidth, width }) =>
     fullWidth ? '100%' : width ? `${width}px` : 'auto'};
-  ${({ theme, variant, disabled }) => {
+  ${({ variant, disabled }) => {
     switch (variant) {
       case 'secondary':
         return `
           &:hover {
-            background: ${theme.background.tertiary};
+            background: var(--background-tertiary);
           }
         `;
       default:
@@ -93,8 +93,8 @@ const StyledButton = styled.button<
           &:hover {
             background: ${
               !disabled
-                ? theme.background.primaryInvertedHover
-                : theme.background.secondary
+                ? 'var(--background-primary-inverted-hover)'
+                : 'var(--background-secondary)'
             };};
           }
         `;

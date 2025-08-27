@@ -8,7 +8,7 @@ import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { useRecoilComponentFamilyCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyCallbackState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useRef, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 

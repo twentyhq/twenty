@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type ComponentProps, type MouseEvent } from 'react';
 
 const StyledHeader = styled.li`

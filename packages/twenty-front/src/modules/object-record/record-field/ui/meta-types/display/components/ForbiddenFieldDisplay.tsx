@@ -1,5 +1,5 @@
 import { type Theme, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { IconLock } from 'twenty-ui/display';
 

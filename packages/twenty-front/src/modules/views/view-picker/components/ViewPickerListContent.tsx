@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
 import { type DropResult } from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
 import { type MouseEvent, useCallback } from 'react';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';

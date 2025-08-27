@@ -1,31 +1,31 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
+import { useRecoilValue } from 'recoil';
+import { capitalize } from 'twenty-shared/utils';
+import { Status } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { type ThemeColor } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   type CustomDomainRecord,
   type CustomDomainValidRecords,
 } from '~/generated/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { capitalize } from 'twenty-shared/utils';
-import { useRecoilValue } from 'recoil';
 import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
-import { type ThemeColor } from 'twenty-ui/theme';
-import { Status } from 'twenty-ui/display';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 
 const StyledTable = styled(Table)`
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid var(--border-color-light);
 `;
 
 const StyledTableCell = styled(TableCell)`
   overflow: hidden;
   display: block;
-  padding: 0 ${({ theme }) => theme.spacing(3)} 0 0;
+  padding: 0 var(--spacing-3) 0 0;
 
   &:first-of-type {
     padding-left: 0;
@@ -37,10 +37,10 @@ const StyledTableCell = styled(TableCell)`
 `;
 
 const StyledButton = styled(Button)`
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  height: ${({ theme }) => theme.spacing(6)};
+  border: 1px solid var(--border-color-medium);
+  color: var(--font-color-tertiary);
+  font-weight: var(--font-weight-regular);
+  height: var(--spacing-6);
   overflow: hidden;
   user-select: text;
   width: 100%;

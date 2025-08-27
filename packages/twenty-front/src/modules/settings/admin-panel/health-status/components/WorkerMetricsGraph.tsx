@@ -2,7 +2,7 @@ import { SettingsAdminTableCard } from '@/settings/admin-panel/components/Settin
 import { WorkerMetricsTooltip } from '@/settings/admin-panel/health-status/components/WorkerMetricsTooltip';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ResponsiveLine } from '@nivo/line';
 import {

@@ -16,7 +16,7 @@ import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useRecoilCallback } from 'recoil';
 import { NotFound } from '~/pages/not-found/NotFound';
 

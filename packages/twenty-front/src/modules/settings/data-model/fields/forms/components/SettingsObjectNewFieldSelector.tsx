@@ -13,7 +13,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Section } from '@react-email/components';
 import { useState } from 'react';

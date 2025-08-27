@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react';
 
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';

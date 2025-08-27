@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-import { Card, CardContent } from 'twenty-ui/layout';
+import { styled } from '@linaria/react';
 import { Toggle } from 'twenty-ui/input';
+import { Card, CardContent } from 'twenty-ui/layout';
 
 type Parameter = {
   value: boolean;

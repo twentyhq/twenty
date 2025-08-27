@@ -1,6 +1,6 @@
 import { type ActionDisplayProps } from '@/action-menu/actions/display/components/ActionDisplay';
 import { getActionLabel } from '@/action-menu/utils/getActionLabel';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';

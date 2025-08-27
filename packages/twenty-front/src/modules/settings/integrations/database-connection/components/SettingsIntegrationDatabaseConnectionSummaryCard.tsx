@@ -3,7 +3,7 @@ import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/inte
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
 import { type ReactNode } from 'react';
 
@@ -14,18 +14,18 @@ const StyledContainer = styled.div`
 `;
 
 const StyledH3Title = styled.h3`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  color: var(--font-color-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semi-bold);
   margin: 0;
 `;
 
 const StyledDescription = styled.h4`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  color: var(--font-color-tertiary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
   margin: 0;
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: var(--spacing-2);
 `;
 
 export const H3Title = ({ title, description, className }: H3TitleProps) => {

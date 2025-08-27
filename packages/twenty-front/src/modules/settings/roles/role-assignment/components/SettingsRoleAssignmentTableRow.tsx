@@ -1,7 +1,7 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useRecoilValue } from 'recoil';
 import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { type WorkspaceMember } from '~/generated-metadata/graphql';

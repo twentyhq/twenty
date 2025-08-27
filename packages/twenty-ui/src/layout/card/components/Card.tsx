@@ -1,10 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledCard = styled.div<{ fullWidth?: boolean; rounded?: boolean }>`
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme, rounded }) =>
-    rounded ? theme.border.radius.md : theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.secondary};
+  border: 1px solid var(--color-border-medium);
+  border-radius: ${({ rounded }) =>
+    rounded ? 'var(--border-radius-md)' : 'var(--border-radius-sm)'};
+  color: var(--color-font-secondary);
   overflow: hidden;
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;

@@ -3,7 +3,7 @@ import { PhonesFieldMenuItem } from '@/object-record/record-field/ui/meta-types/
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { phoneSchema } from '@/object-record/record-field/ui/validation-schemas/phoneSchema';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { parsePhoneNumber, type E164Number } from 'libphonenumber-js';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
@@ -14,7 +14,7 @@ import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts
 import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
 import { phonesSchema } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
 import { useContext } from 'react';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';

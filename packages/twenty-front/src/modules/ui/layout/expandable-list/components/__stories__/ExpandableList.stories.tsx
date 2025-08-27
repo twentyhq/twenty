@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
-import { expect, userEvent, within } from '@storybook/test';
+import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react';
+import { expect, userEvent, within } from '@storybook/test';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { isDefined } from 'twenty-shared/utils';

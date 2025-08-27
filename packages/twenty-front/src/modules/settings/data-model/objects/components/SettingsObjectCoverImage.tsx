@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { SettingsPath } from '@/types/SettingsPath';
 import { useLingui } from '@lingui/react/macro';

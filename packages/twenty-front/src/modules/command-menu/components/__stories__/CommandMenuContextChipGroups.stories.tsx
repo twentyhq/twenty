@@ -1,14 +1,14 @@
 import { type Meta, type StoryObj } from '@storybook/react';
 
-import styled from '@emotion/styled';
-import { CommandMenuContextChipGroups } from '../CommandMenuContextChipGroups';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { styled } from '@linaria/react';
 import {
   IconBuildingSkyscraper,
   IconSearch,
   IconSettingsAutomation,
   IconUser,
 } from 'twenty-ui/display';
+import { ComponentDecorator } from 'twenty-ui/testing';
+import { CommandMenuContextChipGroups } from '../CommandMenuContextChipGroups';
 
 const StyledContainer = styled.div`
   display: flex;

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { Tag } from '@ui/components';
 import { type IconComponent } from '@ui/display';
@@ -11,7 +11,7 @@ const StyledLeftContentWithCheckboxContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: var(--spacing-2);
 `;
 
 type MenuItemMultiSelectProps = {

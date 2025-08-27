@@ -1,5 +1,5 @@
 import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import React from 'react';
 
 const StyledGridContainer = styled.div`

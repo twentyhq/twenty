@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
+import { styled } from '@linaria/react';
+import { COLOR, RGBA } from '@ui/theme';
+import { type HTMLMotionProps, motion } from 'framer-motion';
 import * as React from 'react';
-import { RGBA } from '@ui/theme';
 import { RadioGroup } from './RadioGroup';
 
 export enum RadioSize {
@@ -31,12 +31,14 @@ type RadioInputProps = {
   'radio-size'?: RadioSize;
 };
 
-const StyledRadioInput = styled(motion.input)<RadioInputProps>`
+const StyledRadioInput = styled(motion.input as any)<
+  RadioInputProps & HTMLMotionProps<'input'>
+>`
   -webkit-appearance: none;
   appearance: none;
   background-color: transparent;
-  border: 1px solid ${({ theme }) => theme.font.color.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.rounded};
+  border: 1px solid var(--font-color-secondary);
+  border-radius: var(--border-radius-rounded);
   height: ${({ 'radio-size': radioSize }) =>
     radioSize === RadioSize.Large ? '18px' : '16px'};
   margin: 0;
@@ -46,25 +48,26 @@ const StyledRadioInput = styled(motion.input)<RadioInputProps>`
     radioSize === RadioSize.Large ? '18px' : '16px'};
 
   :hover {
-    background-color: ${({ theme, checked }) => {
+    background-color: ${({ checked }) => {
       if (!checked) {
-        return theme.background.tertiary;
+        return 'var(--background-tertiary)';
       }
+      return 'var(--background-tertiary)';
     }};
     outline: 4px solid
-      ${({ theme, checked }) => {
+      ${({ checked }) => {
         if (!checked) {
-          return theme.background.tertiary;
+          return 'var(--background-tertiary)';
         }
-        return RGBA(theme.color.blue, 0.12);
+        return RGBA(COLOR.blue, 0.12);
       }};
   }
 
   &:checked {
-    background-color: ${({ theme }) => theme.color.blue};
+    background-color: var(--color-blue);
     border: none;
     &::after {
-      background-color: ${({ theme }) => theme.grayScale.gray0};
+      background-color: var(--background-gray-0);
       border-radius: 50%;
       content: '';
       height: ${({ 'radio-size': radioSize }) =>
@@ -90,14 +93,14 @@ type LabelProps = {
 };
 
 const StyledLabel = styled.label<LabelProps>`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: var(--font-color-primary);
   cursor: pointer;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  margin-left: ${({ theme, labelPosition }) =>
-    labelPosition === LabelPosition.Right ? theme.spacing(2) : '0px'};
-  margin-right: ${({ theme, labelPosition }) =>
-    labelPosition === LabelPosition.Left ? theme.spacing(2) : '0px'};
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  margin-left: ${({ labelPosition }) =>
+    labelPosition === LabelPosition.Right ? 'var(--spacing-2)' : '0px'};
+  margin-right: ${({ labelPosition }) =>
+    labelPosition === LabelPosition.Left ? 'var(--spacing-2)' : '0px'};
   opacity: ${({ disabled }) => (disabled ? 0.32 : 1)};
 `;
 

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 

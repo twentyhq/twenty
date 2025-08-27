@@ -1,10 +1,10 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { baseTransitionTiming } from '@ui/input/button/components/Button/constant';
 
 const StyledEllipsis = styled.div<{ isLoading?: boolean }>`
   right: 0;
-  clip-path: ${({ theme, isLoading }) =>
-    isLoading ? `inset(0 0 0 0)` : `inset(0 0 0 ${theme.spacing(6)})`};
+  clip-path: ${({ isLoading }) =>
+    isLoading ? `inset(0 0 0 0)` : `inset(0 0 0 var(--spacing-6))`};
   overflow: hidden;
   position: absolute;
 
@@ -20,16 +20,16 @@ const StyledTextWrapper = styled.div`
 `;
 
 const StyledText = styled.div<{ isLoading?: boolean; hasIcon: boolean }>`
-  clip-path: ${({ isLoading, theme, hasIcon }) =>
+  clip-path: ${({ isLoading, hasIcon }) =>
     isLoading
-      ? ` inset(0 ${!hasIcon ? theme.spacing(12) : theme.spacing(6)} 0 0)`
+      ? ` inset(0 ${!hasIcon ? 'var(--spacing-12)' : 'var(--spacing-6)'} 0 0)`
       : ' inset(0 0 0 0)'};
 
   overflow: hidden;
 
-  transform: ${({ theme, isLoading, hasIcon }) =>
+  transform: ${({ isLoading, hasIcon }) =>
     isLoading
-      ? `translateX(${!hasIcon ? theme.spacing(7) : theme.spacing(3)})`
+      ? `translateX(${!hasIcon ? 'var(--spacing-7)' : 'var(--spacing-3)'})`
       : 'none'};
 
   transition:

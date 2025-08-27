@@ -1,5 +1,6 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useTheme } from '@emotion/react';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 
 import { IconCheck, IconChevronRight, type IconComponent } from '@ui/display';
 import { type ReactNode } from 'react';
@@ -10,7 +11,7 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
   disabled?: boolean;
   focused?: boolean;
 }>`
-  ${({ theme, disabled, focused }) => {
+  ${({ disabled, focused }) => {
     if (disabled === true) {
       return css`
         background: inherit;
@@ -18,7 +19,7 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
           background: inherit;
         }
 
-        color: ${theme.font.color.tertiary};
+        color: var(--color-font-tertiary);
 
         cursor: default;
       `;
@@ -26,6 +27,8 @@ export const StyledMenuItemSelect = styled(StyledMenuItemBase)<{
       return css`
         background: transparent;
       `;
+    } else {
+      return css``;
     }
   }}
 `;

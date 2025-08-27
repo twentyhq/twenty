@@ -1,5 +1,5 @@
+import { styled } from '@linaria/react';
 import { type ReactElement, type ReactNode } from 'react';
-import styled from '@emotion/styled';
 
 type StyledTextProps = {
   PrefixComponent?: ReactElement;
@@ -8,8 +8,8 @@ type StyledTextProps = {
 };
 
 export const StyledTextContent = styled.div`
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
 
   overflow: hidden;
   padding-left: 0;
@@ -20,8 +20,8 @@ export const StyledTextContent = styled.div`
 export const StyledTextWrapper = styled.div<{
   color?: string;
 }>`
-  --horizontal-padding: ${({ theme }) => theme.spacing(1)};
-  --vertical-padding: ${({ theme }) => theme.spacing(2)};
+  --horizontal-padding: var(--spacing-1);
+  --vertical-padding: var(--spacing-2);
 
   cursor: initial;
 
@@ -29,13 +29,13 @@ export const StyledTextWrapper = styled.div<{
 
   flex-direction: row;
 
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: var(--font-size-sm);
 
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: var(--spacing-2);
 
   padding: var(--vertical-padding) 0;
 
-  color: ${({ theme, color }) => color ?? theme.font.color.primary};
+  color: ${({ color }) => color ?? 'var(--font-color-primary)'};
 `;
 
 export const StyledText = ({

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { type MouseEvent } from 'react';
 
@@ -18,16 +18,16 @@ const StyledIconButtonGroupContainer = styled.div<
 >`
   display: inline-flex;
   align-items: flex-start;
-  background-color: ${({ disabled, theme }) =>
-    disabled ? 'inherit' : theme.background.transparent.lighter};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  border: 1px solid ${({ theme }) => theme.border.color.strong};
+  background-color: ${({ disabled }) =>
+    disabled ? 'inherit' : 'var(--background-transparent-lighter)'};
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color-strong);
   gap: 2px;
   padding: 2px;
   backdrop-filter: blur(20px);
 
   &:hover {
-    box-shadow: ${({ theme }) => theme.boxShadow.light};
+    box-shadow: var(--box-shadow-light);
   }
 `;
 

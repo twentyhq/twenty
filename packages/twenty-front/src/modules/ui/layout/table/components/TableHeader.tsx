@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledTableHeader = styled.div<{
   align?: 'left' | 'center' | 'right';

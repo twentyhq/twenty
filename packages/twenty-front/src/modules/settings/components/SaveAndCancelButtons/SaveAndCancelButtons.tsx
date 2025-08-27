@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { CancelButton } from './CancelButton';
 import { SaveButton } from './SaveButton';

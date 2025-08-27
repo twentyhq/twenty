@@ -1,5 +1,5 @@
 import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { format } from 'date-fns';
 import { useRecoilValue } from 'recoil';
 

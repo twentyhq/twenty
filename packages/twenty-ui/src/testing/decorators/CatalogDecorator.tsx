@@ -1,35 +1,35 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNumber, isString } from '@sniptt/guards';
 import { type Decorator } from '@storybook/react';
 import { type ComponentProps, type JSX } from 'react';
 
 const StyledColumnTitle = styled.h1`
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin: ${({ theme }) => theme.spacing(2)};
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semi-bold);
+  margin: var(--spacing-2);
 `;
 
 const StyledRowsTitle = styled.h2`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin: ${({ theme }) => theme.spacing(2)};
+  color: var(--font-color-secondary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semi-bold);
+  margin: var(--spacing-2);
   width: 100px;
 `;
 
 const StyledRowTitle = styled.h3`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin: ${({ theme }) => theme.spacing(2)};
+  color: var(--font-color-tertiary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semi-bold);
+  margin: var(--spacing-2);
   width: 100px;
 `;
 
 const StyledElementTitle = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  color: var(--font-color-light);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semi-bold);
+  margin-bottom: var(--spacing-1);
   text-align: center;
   text-transform: uppercase;
 `;
@@ -42,20 +42,20 @@ const StyledContainer = styled.div`
 const StyledColumnContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: var(--spacing-2);
 `;
 
 const StyledRowsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: var(--spacing-2);
 `;
 
 const StyledRowContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: var(--spacing-2);
 `;
 
 const StyledElementContainer = styled.div<{ width: number }>`
@@ -67,7 +67,7 @@ const StyledCellContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: var(--spacing-2);
 `;
 
 const emptyDimension = {

@@ -1,11 +1,11 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledCardHeader = styled.div`
-  background-color: ${({ theme }) => theme.background.primary};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding: ${({ theme }) => theme.spacing(2, 4)};
+  background-color: var(--color-background-primary);
+  border-bottom: 1px solid var(--color-border-medium);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  padding: var(--spacing-2) var(--spacing-4);
 `;
 
 export { StyledCardHeader as CardHeader };

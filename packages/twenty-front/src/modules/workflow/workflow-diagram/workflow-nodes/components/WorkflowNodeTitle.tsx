@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
-import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
-import { css } from '@emotion/react';
 import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
+import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 
 const StyledNodeTitle = styled.div<{
   highlight?: boolean;

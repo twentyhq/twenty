@@ -1,5 +1,5 @@
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import styled from '@emotion/styled';
 
 type SectionProps = {
   children: ReactNode;
@@ -25,7 +25,7 @@ const StyledSection = styled.div<{
   fullWidth: boolean;
   fontColor: SectionFontColor;
 }>`
-  color: ${({ theme, fontColor }) => theme.font.color[fontColor]};
+  color: ${({ fontColor }) => `var(--font-color-${fontColor})`};
   text-align: ${({ alignment }) => alignment};
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;

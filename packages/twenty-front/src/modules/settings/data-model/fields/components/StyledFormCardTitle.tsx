@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 export const StyledFormCardTitle = styled.h3`
   color: ${({ theme }) => theme.font.color.extraLight};

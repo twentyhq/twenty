@@ -17,7 +17,7 @@ import { WorkflowVisualizerEffect } from '@/workflow/workflow-diagram/components
 import { WorkflowRunVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowRunVisualizerComponentInstanceContext';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { lazy, Suspense, useId } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 

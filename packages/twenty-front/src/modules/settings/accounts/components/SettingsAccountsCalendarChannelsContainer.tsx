@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useRecoilValue } from 'recoil';
 
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';

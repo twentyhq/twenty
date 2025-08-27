@@ -3,7 +3,7 @@ import { WorkflowStepFilterGroupOptionsDropdown } from '@/workflow/workflow-step
 import { WorkflowStepFilterLogicalOperatorCell } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterLogicalOperatorCell';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { WorkflowAdvancedFilterDropdownColumn } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowAdvancedFilterDropdownColumn';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { type StepFilterGroup } from 'twenty-shared/types';
 

@@ -3,7 +3,7 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useRecoilState } from 'recoil';
 import { Checkbox } from 'twenty-ui/input';
 import { v4 } from 'uuid';

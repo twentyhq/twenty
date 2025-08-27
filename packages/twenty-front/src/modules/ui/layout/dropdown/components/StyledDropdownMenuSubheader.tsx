@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Label } from 'twenty-ui/display';
 
 export const StyledDropdownMenuSubheader = styled(Label)`

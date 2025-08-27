@@ -7,7 +7,7 @@ import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record
 import { type RecordBoardColumnHeaderAggregateContentId } from '@/object-record/record-board/types/RecordBoardColumnHeaderAggregateContentId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DROPDOWN_OFFSET_Y } from '@/ui/layout/dropdown/constants/DropdownOffsetY';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 type RecordBoardColumnHeaderAggregateDropdownProps = {
   aggregateValue?: string | number;

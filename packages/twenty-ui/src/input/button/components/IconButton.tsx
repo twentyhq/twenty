@@ -1,5 +1,6 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useTheme } from '@emotion/react';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import React from 'react';
 
@@ -30,73 +31,73 @@ const StyledButton = styled.button<
   >
 >`
   align-items: center;
-  ${({ theme, variant, accent, disabled, focus }) => {
+  ${({ variant, accent, disabled, focus }) => {
     switch (variant) {
       case 'primary':
         switch (accent) {
           case 'default':
             return css`
-              background: ${theme.background.secondary};
+              background: var(--background-secondary);
               border-color: ${focus
-                ? theme.color.blue
-                : theme.background.transparent.light};
+                ? 'var(--font-color-blue)'
+                : 'var(--background-transparent-light)'};
               border-width: ${!disabled && focus ? '1px 1px !important' : 0};
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.accent.tertiary}`
+                ? `0 0 0 3px var(--accent-tertiary)`
                 : 'none'};
               color: ${!disabled
-                ? theme.font.color.secondary
-                : theme.font.color.extraLight};
+                ? 'var(--font-color-secondary)'
+                : 'var(--font-color-extra-light)'};
               &:hover {
                 background: ${!disabled
-                  ? theme.background.tertiary
-                  : theme.background.secondary};
+                  ? 'var(--background-tertiary)'
+                  : 'var(--background-secondary)'};
               }
               &:active {
                 background: ${!disabled
-                  ? theme.background.quaternary
-                  : theme.background.secondary};
+                  ? 'var(--background-quaternary)'
+                  : 'var(--background-secondary)'};
               }
             `;
           case 'blue':
             return css`
-              background: ${theme.color.blue};
+              background: var(--font-color-blue);
               border-color: ${!disabled
                 ? focus
-                  ? theme.color.blue
-                  : theme.background.transparent.light
+                  ? 'var(--font-color-blue)'
+                  : 'var(--background-transparent-light)'
                 : 'transparent'};
               border-width: ${!disabled && focus ? '1px 1px !important' : 0};
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.accent.tertiary}`
+                ? `0 0 0 3px var(--accent-tertiary)`
                 : 'none'};
-              color: ${theme.grayScale.gray0};
+              color: var(--font-color-gray-0);
               opacity: ${disabled ? 0.24 : 1};
 
               ${disabled
                 ? ''
                 : css`
                     &:hover {
-                      background: ${theme.color.blue50};
+                      background: var(--font-color-blue-50);
                     }
                     &:active {
-                      background: ${theme.color.blue60};
+                      background: var(--font-color-blue-60);
                     }
                   `}
             `;
           case 'danger':
             return css`
-              background: ${theme.color.red};
+              background: var(--font-color-red);
               border-color: ${!disabled
                 ? focus
-                  ? theme.color.red
-                  : theme.background.transparent.light
+                  ? 'var(--font-color-red)'
+                  : 'var(--background-transparent-light)'
                 : 'transparent'};
               border-width: ${!disabled && focus ? '1px 1px !important' : 0};
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.color.red10}`
+                ? `0 0 0 3px var(--font-color-red-10)`
                 : 'none'};
-              color: ${theme.grayScale.gray0};
+              color: var(--font-color-gray-0);
               opacity: ${disabled ? 0.24 : 1};
 
               ${disabled
@@ -104,72 +105,75 @@ const StyledButton = styled.button<
                 : css`
                     &:hover,
                     &:active {
-                      background: ${theme.color.red50};
+                      background: var(--font-color-red-50);
                     }
                   `}
             `;
+          default:
+            return css``;
         }
-        break;
       case 'secondary':
       case 'tertiary':
         switch (accent) {
           case 'default':
             return css`
               background: ${focus
-                ? theme.background.transparent.primary
+                ? 'var(--background-transparent-primary)'
                 : 'transparent'};
               border-color: ${variant === 'secondary'
                 ? !disabled && focus
-                  ? theme.color.blue
-                  : theme.background.transparent.medium
+                  ? 'var(--font-color-blue)'
+                  : 'var(--background-transparent-medium)'
                 : focus
-                  ? theme.color.blue
+                  ? 'var(--font-color-blue)'
                   : 'transparent'};
               border-width: ${!disabled && focus ? '1px 1px !important' : 0};
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.accent.tertiary}`
+                ? `0 0 0 3px var(--accent-tertiary)`
                 : 'none'};
               color: ${disabled
-                ? theme.font.color.extraLight
+                ? 'var(--font-color-extra-light)'
                 : variant === 'secondary'
-                  ? theme.font.color.secondary
-                  : theme.font.color.tertiary};
+                  ? 'var(--font-color-secondary)'
+                  : 'var(--font-color-tertiary)'};
               &:hover {
                 background: ${!disabled
-                  ? theme.background.transparent.light
+                  ? 'var(--background-transparent-light)'
                   : 'transparent'};
               }
               &:active {
                 background: ${!disabled
-                  ? theme.background.transparent.light
+                  ? 'var(--background-transparent-light)'
                   : 'transparent'};
               }
             `;
           case 'blue':
             return css`
               background: ${focus
-                ? theme.background.transparent.primary
+                ? 'var(--background-transparent-primary)'
                 : 'transparent'};
               border-color: ${variant === 'secondary'
                 ? !disabled
-                  ? theme.color.blue
-                  : theme.color.blue20
+                  ? 'var(--font-color-blue)'
+                  : 'var(--font-color-blue-20)'
                 : focus
-                  ? theme.color.blue
+                  ? 'var(--font-color-blue)'
                   : 'transparent'};
               border-width: ${!disabled && focus ? '1px 1px !important' : 0};
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.accent.tertiary}`
+                ? `0 0 0 3px var(--accent-tertiary)`
                 : 'none'};
-              color: ${!disabled ? theme.color.blue : theme.accent.accent4060};
+              color: ${!disabled
+                ? 'var(--font-color-blue)'
+                : 'var(--accent-accent-40-60)'};
               &:hover {
                 background: ${!disabled
-                  ? theme.accent.tertiary
+                  ? 'var(--accent-tertiary)'
                   : 'transparent'};
               }
               &:active {
                 background: ${!disabled
-                  ? theme.accent.secondary
+                  ? 'var(--accent-secondary)'
                   : 'transparent'};
               }
             `;
@@ -177,40 +181,48 @@ const StyledButton = styled.button<
             return css`
               background: transparent;
               border-color: ${variant === 'secondary'
-                ? theme.border.color.danger
+                ? 'var(--border-color-danger)'
                 : focus
-                  ? theme.color.red
+                  ? 'var(--font-color-red)'
                   : 'transparent'};
               border-width: ${!disabled && focus ? '1px 1px !important' : 0};
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.color.red10}`
+                ? `0 0 0 3px var(--font-color-red-10)`
                 : 'none'};
-              color: ${!disabled ? theme.font.color.danger : theme.color.red20};
+              color: ${!disabled
+                ? 'var(--font-color-danger)'
+                : 'var(--font-color-red-20)'};
               &:hover {
                 background: ${!disabled
-                  ? theme.background.danger
+                  ? 'var(--background-danger)'
                   : 'transparent'};
               }
               &:active {
                 background: ${!disabled
-                  ? theme.background.danger
+                  ? 'var(--background-danger)'
                   : 'transparent'};
               }
             `;
+          default:
+            return css``;
         }
+      default:
+        return css``;
     }
   }}
 
-  border-radius: ${({ position, theme }) => {
+  border-radius: ${({ position }) => {
     switch (position) {
       case 'left':
-        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
+        return `var(--border-radius-sm) 0px 0px var(--border-radius-sm)`;
       case 'right':
-        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
+        return `0px var(--border-radius-sm) var(--border-radius-sm) 0px`;
       case 'middle':
         return '0px';
       case 'standalone':
-        return theme.border.radius.sm;
+        return 'var(--border-radius-sm)';
+      default:
+        return '';
     }
   }};
   border-style: solid;
@@ -221,15 +233,17 @@ const StyledButton = styled.button<
         return position === 'middle' ? '1px 0px' : '1px';
       case 'tertiary':
         return '0';
+      default:
+        return '';
     }
   }};
   box-sizing: border-box;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
-  font-family: ${({ theme }) => theme.font.family};
+  font-family: var(--font-family-primary);
   font-weight: 500;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: var(--spacing-1);
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: center;
   padding: 0;

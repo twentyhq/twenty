@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type PlacesType, type PositionStrategy, Tooltip } from 'react-tooltip';
 
+import { COLOR } from '@ui/theme';
 import { RGBA } from '@ui/theme/constants/Rgba';
 
 export enum TooltipPosition {
@@ -18,24 +19,24 @@ export enum TooltipDelay {
 }
 
 const StyledAppTooltip = styled(Tooltip)<{ width?: string }>`
-  backdrop-filter: ${({ theme }) => theme.blur.strong};
-  background-color: ${({ theme }) => RGBA(theme.color.gray80, 0.8)};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  backdrop-filter: var(--blur-strong);
+  background-color: ${RGBA(COLOR.gray80, 0.8)};
+  border-radius: var(--border-radius-sm);
 
-  box-shadow: ${({ theme }) => theme.boxShadow.light};
-  color: ${({ theme }) => theme.grayScale.gray0};
+  box-shadow: var(--box-shadow-light);
+  color: var(--color-gray-0);
 
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
 
   max-width: ${({ width }) => width || '40%'};
   overflow: visible;
 
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: var(--spacing-2);
 
   word-break: break-word;
 
-  z-index: ${({ theme }) => theme.lastLayerZIndex};
+  z-index: var(--last-layer-z-index);
 `;
 
 export type AppTooltipProps = {

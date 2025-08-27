@@ -1,5 +1,5 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 
 import { type ThemeColor } from '@ui/theme';
 
@@ -11,15 +11,14 @@ export type ColorSampleProps = {
 };
 
 const StyledColorSample = styled.div<ColorSampleProps>`
-  background-color: ${({ theme, colorName }) =>
-    theme.tag.background[colorName]};
-  border: 1px solid ${({ theme, colorName }) => theme.tag.text[colorName]};
+  background-color: ${({ colorName }) => `var(--tag-background-${colorName})`};
+  border: 1px solid ${({ colorName }) => `var(--tag-text-${colorName})`};
   border-radius: 60px;
-  height: ${({ theme }) => theme.spacing(4)};
-  width: ${({ theme }) => theme.spacing(3)};
+  height: var(--spacing-4);
+  width: var(--spacing-3);
 
-  ${({ colorName, theme, variant }) => {
-    if (variant === 'pipeline')
+  ${({ colorName, variant }) => {
+    if (variant === 'pipeline') {
       return css`
         align-items: center;
         border: 0;
@@ -27,14 +26,16 @@ const StyledColorSample = styled.div<ColorSampleProps>`
         justify-content: center;
 
         &:after {
-          background-color: ${theme.tag.text[colorName]};
-          border-radius: ${theme.border.radius.rounded};
+          background-color: ${`var(--tag-text-${colorName})`};
+          border-radius: var(--border-radius-rounded);
           content: '';
           display: block;
-          height: ${theme.spacing(1)};
-          width: ${theme.spacing(1)};
+          height: var(--spacing-1);
+          width: var(--spacing-1);
         }
       `;
+    }
+    return css``;
   }}
 `;
 

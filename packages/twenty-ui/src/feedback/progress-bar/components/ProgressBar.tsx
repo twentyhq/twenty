@@ -1,5 +1,5 @@
-import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
+import { styled } from '@linaria/react';
+import { motion, type MotionProps } from 'framer-motion';
 import { useState } from 'react';
 
 export type ProgressBarProps = {
@@ -17,23 +17,25 @@ export type StyledBarProps = {
 };
 
 const StyledBar = styled.div<StyledBarProps>`
-  height: ${({ theme }) => theme.spacing(2)};
-  background-color: ${({ backgroundColor }) => backgroundColor};
-  border-radius: ${({ withBorderRadius, theme }) =>
-    withBorderRadius ? theme.border.radius.xxl : '0'};
+  height: var(--spacing-2);
+  background-color: ${({ backgroundColor }) => backgroundColor ?? 'none'};
+  border-radius: ${({ withBorderRadius }) =>
+    withBorderRadius ? 'var(--border-radius-xxl)' : '0'};
   overflow: hidden;
   width: 100%;
 `;
 
-const StyledBarFilling = styled(motion.div)<{
-  barColor?: string;
-  withBorderRadius?: boolean;
-}>`
-  background-color: ${({ barColor, theme }) =>
-    barColor ?? theme.font.color.primary};
+const StyledBarFilling = styled(motion.div as any)<
+  MotionProps & {
+    barColor?: string;
+    withBorderRadius?: boolean;
+  }
+>`
+  background-color: ${({ barColor }) =>
+    barColor ?? 'var(--font-color-primary)'};
   height: 100%;
-  border-radius: ${({ withBorderRadius, theme }) =>
-    withBorderRadius ? theme.border.radius.md : '0'};
+  border-radius: ${({ withBorderRadius }) =>
+    withBorderRadius ? 'var(--border-radius-md)' : '0'};
 `;
 
 export const ProgressBar = ({

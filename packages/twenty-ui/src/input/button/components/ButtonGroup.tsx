@@ -1,11 +1,11 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import React, { type ReactNode } from 'react';
 
-import { type ButtonPosition, type ButtonProps } from './Button/Button';
 import { isDefined } from 'twenty-shared/utils';
+import { type ButtonPosition, type ButtonProps } from './Button/Button';
 
 const StyledButtonGroupContainer = styled.div`
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: var(--border-radius-md);
   display: flex;
 `;
 

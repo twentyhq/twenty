@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledErrorContainer = styled.div`
   align-items: center;
@@ -6,7 +6,7 @@ const StyledErrorContainer = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(8)};
+  gap: var(--spacing-8);
   justify-content: center;
   text-align: center;
 `;
@@ -17,7 +17,7 @@ const StyledErrorTextContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(4)};
+  gap: var(--spacing-4);
   justify-content: center;
   text-align: center;
   width: 100%;
@@ -26,19 +26,19 @@ const StyledErrorTextContainer = styled.div`
 export { StyledErrorTextContainer as AnimatedPlaceholderErrorTextContainer };
 
 const StyledErrorTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.xl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.lg};
+  color: var(--font-color-primary);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semi-bold);
+  line-height: var(--text-line-height-lg);
 `;
 
 export { StyledErrorTitle as AnimatedPlaceholderErrorTitle };
 
 const StyledErrorSubTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
+  color: var(--font-color-tertiary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--text-line-height-md);
   max-height: 2.4em;
   overflow: hidden;
 `;

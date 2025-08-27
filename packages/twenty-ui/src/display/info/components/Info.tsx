@@ -1,5 +1,6 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useTheme } from '@emotion/react';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 import { IconInfoCircle } from '@ui/display/icon/components/TablerIcons';
 
 import { Button } from '@ui/input/button/components/Button/Button';
@@ -18,7 +19,7 @@ export type InfoProps = {
 const StyledTextContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: var(--spacing-2);
 `;
 
 const StyledIconInfoCircle = styled(IconInfoCircle)`
@@ -27,25 +28,27 @@ const StyledIconInfoCircle = styled(IconInfoCircle)`
 
 const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
   align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: var(--border-radius-md);
   display: flex;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: var(--font-weight-medium);
   justify-content: space-between;
   max-width: 512px;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  ${({ theme, accent }) => {
+  gap: var(--spacing-2);
+  padding: var(--spacing-2);
+  ${({ accent }) => {
     switch (accent) {
       case 'blue':
         return css`
-          background: ${theme.color.blueAccent20};
-          color: ${theme.color.blue50};
+          background: var(--color-blue-accent-20);
+          color: var(--color-blue-50);
         `;
       case 'danger':
         return css`
-          background: ${theme.color.red10};
-          color: ${theme.color.red};
+          background: var(--color-red-10);
+          color: var(--color-red);
         `;
+      default:
+        return css``;
     }
   }}
 `;

@@ -1,5 +1,4 @@
-import React from 'react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledThreadMessageBodyPreview = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};

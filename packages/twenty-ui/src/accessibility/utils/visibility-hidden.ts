@@ -1,4 +1,4 @@
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
 
 export const VISIBILITY_HIDDEN = css`
   position: absolute;

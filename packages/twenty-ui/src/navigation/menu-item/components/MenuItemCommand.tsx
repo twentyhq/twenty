@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import {
   StyledMenuItemLabel,
@@ -12,34 +12,34 @@ import { type ReactNode } from 'react';
 import { MenuItemCommandHotKeys } from './MenuItemCommandHotKeys';
 
 const StyledMenuItemLabelText = styled(StyledMenuItemLabel)`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: var(--font-color-primary);
 `;
 
 const StyledBigIconContainer = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  background: var(--background-transparent-light);
+  border-radius: var(--border-radius-sm);
 
   display: flex;
 
   flex-direction: row;
 
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: var(--spacing-1);
 `;
 
 const StyledMenuItemCommandContainer = styled.div<{ isSelected?: boolean }>`
-  --horizontal-padding: ${({ theme }) => theme.spacing(1)};
-  --vertical-padding: ${({ theme }) => theme.spacing(2)};
+  --horizontal-padding: var(--spacing-1);
+  --vertical-padding: var(--spacing-2);
   align-items: center;
-  background: ${({ isSelected, theme }) =>
-    isSelected ? theme.background.transparent.light : 'transparent'};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.secondary};
+  background: ${({ isSelected }) =>
+    isSelected ? 'var(--background-transparent-light)' : 'transparent'};
+  border-radius: var(--border-radius-sm);
+  color: var(--font-color-secondary);
   cursor: pointer;
   display: flex;
   flex-direction: row;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  gap: ${({ theme }) => theme.spacing(2)};
+  font-size: var(--font-size-sm);
+  gap: var(--spacing-2);
   justify-content: space-between;
   padding: var(--vertical-padding) var(--horizontal-padding);
   position: relative;
@@ -50,13 +50,13 @@ const StyledMenuItemCommandContainer = styled.div<{ isSelected?: boolean }>`
   box-sizing: border-box;
   height: 40px;
   &:hover {
-    background: ${({ theme }) => theme.background.transparent.lighter};
+    background: var(--background-transparent-lighter);
   }
   &[data-selected='true'] {
-    background: ${({ theme }) => theme.background.transparent.light};
+    background: var(--background-transparent-light);
   }
   &[data-disabled='true'] {
-    color: ${({ theme }) => theme.font.color.light};
+    color: var(--font-color-light);
     cursor: not-allowed;
   }
   svg {
@@ -66,11 +66,11 @@ const StyledMenuItemCommandContainer = styled.div<{ isSelected?: boolean }>`
 `;
 
 const StyledDescription = styled.span`
-  color: ${({ theme }) => theme.font.color.light};
+  color: var(--color-font-light);
 
   &::before {
     content: '·';
-    margin: ${({ theme }) => theme.spacing(0, 1)};
+    margin: var(--spacing-0) var(--spacing-1);
   }
 `;
 

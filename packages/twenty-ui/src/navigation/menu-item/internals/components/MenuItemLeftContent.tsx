@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import { isString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import {
   type IconComponent,
   IconGripVertical,
@@ -23,7 +23,7 @@ const StyledMainText = styled.div`
 `;
 
 const StyledContextualText = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
+  color: var(--color-font-light);
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
@@ -31,7 +31,7 @@ const StyledContextualText = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-left: var(--spacing-1);
   flex-shrink: 1;
 `;
 

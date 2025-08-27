@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { type ColorScheme } from '@ui/input/types/ColorScheme';
 import { MOBILE_VIEWPORT } from '@ui/theme';
@@ -8,7 +8,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: row;
   > * + * {
-    margin-left: ${({ theme }) => theme.spacing(4)};
+    margin-left: var(--spacing-4);
   }
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     overflow: scroll;
@@ -21,10 +21,10 @@ const StyledCardContainer = styled.div`
 `;
 
 const StyledLabel = styled.span`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  color: var(--font-color-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  margin-top: var(--spacing-2);
 `;
 
 export type ColorSchemePickerProps = {

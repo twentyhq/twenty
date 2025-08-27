@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import React from 'react';
 import { Link, type LinkProps } from 'react-router-dom';
 

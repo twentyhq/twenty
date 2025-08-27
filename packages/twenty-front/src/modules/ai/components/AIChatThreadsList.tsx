@@ -1,11 +1,11 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { AIChatThreadGroup } from '@/ai/components/AIChatThreadGroup';
 import { AIChatThreadsListEffect } from '@/ai/components/AIChatThreadsListEffect';
+import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { useCreateNewAIChatThread } from '@/ai/hooks/useCreateNewAIChatThread';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { AIChatSkeletonLoader } from '@/ai/components/internal/AIChatSkeletonLoader';
 import { Key } from 'ts-key-enum';
 import { capitalize } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';

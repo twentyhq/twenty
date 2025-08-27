@@ -1,22 +1,21 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display/icon/types/IconComponent';
 
 const StyledIconButton = styled.div<{ isActive?: boolean }>`
   align-items: center;
-  background-color: ${({ isActive, theme }) =>
-    isActive ? theme.background.transparent.light : 'none'};
-  border-radius: ${({ theme }) => theme.spacing(1)};
+  background-color: ${({ isActive }) =>
+    isActive ? 'var(--background-transparent-light)' : 'none'};
+  border-radius: var(--border-radius-1);
   cursor: pointer;
   display: flex;
-  height: ${({ theme }) => theme.spacing(10)};
+  height: var(--spacing-10);
   justify-content: center;
-  transition: background-color ${({ theme }) => theme.animation.duration.fast}s
-    ease;
-  width: ${({ theme }) => theme.spacing(10)};
+  transition: background-color var(--animation-duration-fast) ease;
+  width: var(--spacing-10);
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.light};
+    background-color: var(--background-transparent-light);
   }
 `;
 

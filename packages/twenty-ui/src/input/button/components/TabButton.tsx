@@ -1,32 +1,29 @@
-import isPropValid from '@emotion/is-prop-valid';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Pill } from '@ui/components/Pill/Pill';
 import { Avatar, type IconComponent } from '@ui/display';
 import { ThemeContext } from '@ui/theme';
 import { type ReactElement, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
-const StyledTabButton = styled('button', {
-  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'active',
-})<{
+const StyledTabButton = styled('button')<{
   active?: boolean;
   disabled?: boolean;
   to?: string;
 }>`
   all: unset;
   align-items: center;
-  color: ${({ theme, active, disabled }) =>
+  color: ${({ active, disabled }) =>
     active
-      ? theme.font.color.primary
+      ? 'var(--font-color-primary)'
       : disabled
-        ? theme.font.color.light
-        : theme.font.color.secondary};
+        ? 'var(--font-color-light)'
+        : 'var(--font-color-secondary)'};
   cursor: pointer;
   background-color: transparent;
   border: none;
   font-family: inherit;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: var(--spacing-1);
   justify-content: center;
   pointer-events: ${({ disabled }) => (disabled ? 'none' : '')};
   text-decoration: none;
@@ -38,8 +35,8 @@ const StyledTabButton = styled('button', {
     left: 0;
     right: 0;
     height: 1px;
-    background-color: ${({ theme, active }) =>
-      active ? theme.border.color.inverted : 'transparent'};
+    background-color: ${({ active }) =>
+      active ? 'var(--border-color-inverted)' : 'transparent'};
     z-index: 1;
   }
 `;
@@ -48,20 +45,20 @@ const StyledTabHover = styled.span<{
   contentSize?: 'sm' | 'md';
 }>`
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme, contentSize }) =>
+  gap: var(--spacing-1);
+  padding: ${({ contentSize }) =>
     contentSize === 'sm'
-      ? `${theme.spacing(1)} ${theme.spacing(2)}`
-      : `${theme.spacing(2)} ${theme.spacing(2)}`};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+      ? `var(--spacing-1) var(--spacing-2)`
+      : `var(--spacing-2) var(--spacing-2)`};
+  font-weight: var(--font-weight-medium);
   width: 100%;
   white-space: nowrap;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: var(--border-radius-sm);
   &:hover {
-    background: ${({ theme }) => theme.background.tertiary};
+    background: var(--background-tertiary);
   }
   &:active {
-    background: ${({ theme }) => theme.background.quaternary};
+    background: var(--background-quaternary);
   }
 `;
 

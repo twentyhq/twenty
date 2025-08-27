@@ -1,6 +1,6 @@
 import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';

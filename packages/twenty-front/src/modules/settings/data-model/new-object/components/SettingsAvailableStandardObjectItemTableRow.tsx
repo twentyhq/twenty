@@ -1,11 +1,11 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Checkbox } from 'twenty-ui/input';
 import { useIcons } from 'twenty-ui/display';
+import { Checkbox } from 'twenty-ui/input';
 
 type SettingsAvailableStandardObjectItemTableRowProps = {
   isSelected?: boolean;

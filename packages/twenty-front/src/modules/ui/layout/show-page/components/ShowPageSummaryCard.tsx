@@ -1,21 +1,21 @@
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { type ChangeEvent, type ReactNode, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 as uuidV4 } from 'uuid';
-import {
-  beautifyExactDateTime,
-  beautifyPastDateRelativeToNow,
-} from '~/utils/date-utils';
 import {
   AppTooltip,
   Avatar,
   type AvatarType,
   type IconComponent,
 } from 'twenty-ui/display';
+import { v4 as uuidV4 } from 'uuid';
+import {
+  beautifyExactDateTime,
+  beautifyPastDateRelativeToNow,
+} from '~/utils/date-utils';
 
 type ShowPageSummaryCardProps = {
   avatarPlaceholder: string;

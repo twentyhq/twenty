@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
+import React, { useMemo } from 'react';
 
 const StyledContainer = styled(motion.div)`
   display: flex;

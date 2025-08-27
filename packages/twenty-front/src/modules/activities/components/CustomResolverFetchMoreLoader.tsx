@@ -1,5 +1,5 @@
+import { styled } from '@linaria/react';
 import { useInView } from 'react-intersection-observer';
-import styled from '@emotion/styled';
 import { GRAY_SCALE } from 'twenty-ui/theme';
 
 type CustomResolverFetchMoreLoaderProps = {

@@ -1,21 +1,21 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledBanner = styled.div<{ variant?: BannerVariant }>`
   align-items: center;
   backdrop-filter: blur(5px);
-  background: ${({ theme, variant }) =>
-    variant === 'danger' ? theme.color.red : theme.color.blue};
+  background: ${({ variant }) =>
+    variant === 'danger' ? 'var(--color-red)' : 'var(--color-blue)'};
   display: flex;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: var(--spacing-3);
   height: 40px;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(2) + ' ' + theme.spacing(3)};
+  padding: var(--spacing-2) var(--spacing-3);
   width: 100%;
-  color: ${({ theme }) => theme.font.color.inverted};
+  color: var(--font-color-inverted);
   font-family: Inter;
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: var(--font-size-md);
   font-style: normal;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: var(--font-weight-medium);
   line-height: 150%;
   box-sizing: border-box;
 `;

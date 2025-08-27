@@ -2,7 +2,7 @@ import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/C
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledScrollableItemsContainer = styled.div`
   display: flex;

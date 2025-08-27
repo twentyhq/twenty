@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isUndefined } from '@sniptt/guards';
 import { type ComponentPropsWithoutRef, type ReactNode, useMemo } from 'react';

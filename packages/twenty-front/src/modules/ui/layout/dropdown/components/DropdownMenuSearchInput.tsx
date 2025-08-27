@@ -1,5 +1,5 @@
 import { useInputFocusWithoutScrollOnMount } from '@/ui/input/hooks/useInputFocusWithoutScrollOnMount';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { forwardRef, type InputHTMLAttributes } from 'react';
 import { TEXT_INPUT_STYLE } from 'twenty-ui/theme';
 

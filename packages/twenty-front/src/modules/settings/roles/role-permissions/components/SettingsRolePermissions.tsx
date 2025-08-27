@@ -2,7 +2,7 @@ import { SettingsRolePermissionsObjectLevelSection } from '@/settings/roles/role
 import { SettingsRolePermissionsObjectsSection } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection';
 import { SettingsRolePermissionsSettingsSection } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection';
 import { SettingsRolePermissionsToolSection } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledRolePermissionsContainer = styled.div`
   display: flex;

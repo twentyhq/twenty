@@ -1,6 +1,5 @@
-import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import { Link } from 'react-router-dom';
 
@@ -20,11 +19,7 @@ export type FloatingButtonProps = {
   to?: string;
 };
 
-const StyledButton = styled('button', {
-  shouldForwardProp: (prop) =>
-    !['applyBlur', 'applyShadow', 'focus', 'position', 'size'].includes(prop) &&
-    isPropValid(prop),
-})<
+const StyledButton = styled.button<
   Pick<
     FloatingButtonProps,
     | 'size'
@@ -38,62 +33,59 @@ const StyledButton = styled('button', {
 >`
   align-items: center;
   backdrop-filter: ${({ applyBlur }) => (applyBlur ? 'blur(20px)' : 'none')};
-  background: ${({ theme }) => theme.background.primary};
+  background: var(--background-primary);
 
-  border: ${({ focus, theme }) =>
-    focus ? `1px solid ${theme.color.blue}` : 'none'};
-  border-radius: ${({ position, theme }) => {
+  border: ${({ focus }) => (focus ? `1px solid var(--color-blue)` : 'none')};
+  border-radius: ${({ position }) => {
     switch (position) {
       case 'left':
-        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
+        return `var(--border-radius-sm) 0px 0px var(--border-radius-sm)`;
       case 'right':
-        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
+        return `0px var(--border-radius-sm) var(--border-radius-sm) 0px`;
       case 'middle':
         return '0px';
       case 'standalone':
-        return theme.border.radius.sm;
+        return 'var(--border-radius-sm)';
+      default:
+        return 'var(--border-radius-sm)';
     }
   }};
-  box-shadow: ${({ theme, applyShadow, focus }) =>
+  box-shadow: ${({ applyShadow, focus }) =>
     applyShadow
-      ? `0px 2px 4px 0px ${
-          theme.background.transparent.light
-        }, 0px 0px 4px 0px ${theme.background.transparent.medium}${
-          focus ? `,0 0 0 3px ${theme.color.blue10}` : ''
+      ? `0px 2px 4px 0px var(--background-transparent-light), 0px 0px 4px 0px var(--background-transparent-medium)${
+          focus ? `,0 0 0 3px var(--color-blue10)` : ''
         }`
       : focus
-        ? `0 0 0 3px ${theme.color.blue10}`
+        ? `0 0 0 3px var(--color-blue10)`
         : 'none'};
-  color: ${({ theme, disabled, focus }) => {
+  color: ${({ disabled, focus }) => {
     return !disabled
       ? focus
-        ? theme.color.blue
-        : theme.font.color.secondary
-      : theme.font.color.extraLight;
+        ? 'var(--color-blue)'
+        : 'var(--font-color-secondary)'
+      : 'var(--font-color-extra-light)';
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
 
   flex-direction: row;
-  font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-regular);
+  gap: var(--spacing-1);
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
-  padding: ${({ theme }) => {
-    return `0 ${theme.spacing(2)}`;
-  }};
+  padding: 0 var(--spacing-2);
   transition: background 0.1s ease;
 
   white-space: nowrap;
 
   &:hover {
-    background: ${({ theme, disabled }) =>
-      !disabled ? theme.background.transparent.lighter : 'transparent'};
+    background: ${({ disabled }) =>
+      !disabled ? 'var(--background-transparent-lighter)' : 'transparent'};
   }
 
   &:active {
-    background: ${({ theme, disabled }) =>
-      !disabled ? theme.background.transparent.medium : 'transparent'};
+    background: ${({ disabled }) =>
+      !disabled ? 'var(--background-transparent-medium)' : 'transparent'};
   }
 
   &:focus {

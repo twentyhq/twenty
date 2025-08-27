@@ -1,5 +1,5 @@
+import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import styled from '@emotion/styled';
 
 type H1TitleProps = {
   title: ReactNode;
@@ -16,12 +16,12 @@ export enum H1TitleFontColor {
 const StyledTitle = styled.h2<{
   fontColor: H1TitleFontColor;
 }>`
-  color: ${({ theme, fontColor }) => theme.font.color[fontColor]};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
+  color: ${({ fontColor }) => `var(--font-color-${fontColor})`};
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semi-bold);
+  line-height: var(--line-height-md);
   margin: 0;
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
+  margin-bottom: var(--spacing-4);
 `;
 
 export const H1Title = ({

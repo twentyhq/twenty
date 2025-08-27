@@ -10,7 +10,7 @@ import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contex
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useRef } from 'react';
 const StyledModalDiv = styled(motion.div)<{

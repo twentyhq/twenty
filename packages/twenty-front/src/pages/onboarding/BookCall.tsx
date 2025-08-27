@@ -1,5 +1,5 @@
 import Cal from '@calcom/embed-react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { Link } from 'react-router-dom';
 
 import { currentUserState } from '@/auth/states/currentUserState';

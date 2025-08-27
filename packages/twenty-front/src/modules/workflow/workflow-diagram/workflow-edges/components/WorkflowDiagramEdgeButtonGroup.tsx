@@ -1,7 +1,7 @@
-import styled from '@emotion/styled';
-import { IconButtonGroup, type IconButtonGroupProps } from 'twenty-ui/input';
 import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
-import { css } from '@emotion/react';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
+import { IconButtonGroup, type IconButtonGroupProps } from 'twenty-ui/input';
 
 const StyledIconButtonGroup = styled(IconButtonGroup)<{ selected?: boolean }>`
   pointer-events: all;

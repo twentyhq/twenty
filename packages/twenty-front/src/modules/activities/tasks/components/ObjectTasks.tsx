@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';

@@ -1,8 +1,8 @@
-import styled from '@emotion/styled';
-import { Label } from 'twenty-ui/display';
 import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
-import { css } from '@emotion/react';
 import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
+import { Label } from 'twenty-ui/display';
 
 const StyledNodeLabel = styled(Label)<{
   runStatus?: WorkflowRunStepStatus;

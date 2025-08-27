@@ -7,6 +7,7 @@
     "@floating-ui/react": "^0.24.3",
     "@linaria/core": "^6.2.0",
     "@linaria/react": "^6.2.1",
+    "@linaria/vite": "^5.0.4",
     "@react-email/components": "0.0.35",
     "@react-email/render": "0.0.17",
     "@sentry/profiling-node": "^9.26.0",

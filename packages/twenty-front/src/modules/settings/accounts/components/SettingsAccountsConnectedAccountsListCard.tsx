@@ -4,7 +4,7 @@ import { SettingsConnectedAccountsTableHeader } from '@/settings/accounts/compon
 import { SettingsConnectedAccountsTableRow } from '@/settings/components/SettingsConnectedAccountsTableRow';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Table } from '@/ui/layout/table/components/Table';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/display';

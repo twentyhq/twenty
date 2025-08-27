@@ -10,13 +10,13 @@ import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workf
 import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionHeaderTypeOrThrow';
 import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { type Monaco } from '@monaco-editor/react';
 import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { isDefined } from 'twenty-shared/utils';
-import { CodeEditor } from 'twenty-ui/input';
 import { useIcons } from 'twenty-ui/display';
+import { CodeEditor } from 'twenty-ui/input';
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;

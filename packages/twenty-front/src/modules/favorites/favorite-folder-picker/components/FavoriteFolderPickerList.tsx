@@ -3,7 +3,7 @@ import { favoriteFolderSearchFilterComponentState } from '@/favorites/favorite-f
 import { type FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
 
 const StyledItemsContainer = styled.div`

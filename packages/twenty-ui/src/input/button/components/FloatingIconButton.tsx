@@ -1,5 +1,6 @@
-import { css, useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { useTheme } from '@emotion/react';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 import { type IconComponent } from '@ui/display';
 import React from 'react';
 
@@ -22,69 +23,63 @@ export type FloatingIconButtonProps = {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   isActive?: boolean;
 };
-const shouldForwardProp = (prop: string) =>
-  ![
-    'applyBlur',
-    'applyShadow',
-    'isActive',
-    'focus',
-    'position',
-    'size',
-  ].includes(prop);
 
-const StyledButton = styled('button', { shouldForwardProp })<
+// TODO: CharlesFix this
+const StyledButton = styled('button')<
   Pick<
     FloatingIconButtonProps,
     'size' | 'position' | 'applyShadow' | 'applyBlur' | 'focus' | 'isActive'
   >
 >`
   align-items: center;
-  backdrop-filter: ${({ theme, applyBlur }) =>
-    applyBlur ? theme.blur.medium : 'none'};
-  background: ${({ theme, isActive }) =>
-    isActive ? theme.background.transparent.medium : theme.background.primary};
-  border: ${({ focus, theme }) =>
+  backdrop-filter: ${({ applyBlur }) => (applyBlur ? 'blur(20px)' : 'none')};
+  background: ${({ isActive }) =>
+    isActive
+      ? 'var(--background-transparent-medium)'
+      : 'var(--background-primary)'};
+  border: ${({ focus }) =>
     focus
-      ? `1px solid ${theme.color.blue}`
-      : `1px solid ${theme.border.color.strong}`};
-  border-radius: ${({ position, theme }) => {
+      ? `1px solid var(--font-color-blue)`
+      : `1px solid var(--border-color-strong)`};
+  border-radius: ${({ position }) => {
     switch (position) {
       case 'left':
-        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
+        return `var(--border-radius-sm) 0px 0px var(--border-radius-sm)`;
       case 'right':
-        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
+        return `0px var(--border-radius-sm) var(--border-radius-sm) 0px`;
       case 'middle':
         return '0px';
       case 'standalone':
-        return theme.border.radius.sm;
+        return 'var(--border-radius-sm)';
+      default:
+        return '';
     }
   }};
-  box-shadow: ${({ theme, applyShadow, focus }) =>
+  box-shadow: ${({ applyShadow, focus }) =>
     applyShadow
-      ? theme.boxShadow.light
+      ? 'var(--box-shadow-light)'
       : focus
-        ? `0 0 0 3px ${theme.color.blue10}`
+        ? `0 0 0 3px var(--accent-tertiary)`
         : 'none'};
   box-sizing: border-box;
-  color: ${({ theme, disabled, focus }) => {
+  color: ${({ disabled, focus }) => {
     return !disabled
       ? focus
-        ? theme.color.blue
-        : theme.font.color.tertiary
-      : theme.font.color.extraLight;
+        ? 'var(--font-color-blue)'
+        : 'var(--font-color-tertiary)'
+      : 'var(--font-color-extra-light)';
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;
 
-  font-family: ${({ theme }) => theme.font.family};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  gap: ${({ theme }) => theme.spacing(1)};
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-regular);
+  gap: var(--spacing-1);
   justify-content: center;
   padding: 0;
   position: relative;
-  transition: background ${({ theme }) => theme.animation.duration.instant}s
-    ease;
+  transition: background var(--animation-duration-instant) ease;
   white-space: nowrap;
 
   ${({ position, size }) => {
@@ -97,17 +92,18 @@ const StyledButton = styled('button', { shouldForwardProp })<
     `;
   }}
 
-  ${({ theme, disabled }) =>
-    !disabled &&
-    css`
-      &:hover {
-        background: ${theme.background.transparent.lighter};
-      }
-    `}
+  ${({ disabled }) =>
+    !disabled
+      ? css`
+          &:hover {
+            background: var(--background-transparent-lighter);
+          }
+        `
+      : css``}
 
   &:active {
-    background: ${({ theme, disabled }) =>
-      !disabled ? theme.background.transparent.medium : 'transparent'};
+    background: ${({ disabled }) =>
+      !disabled ? 'var(--background-transparent-medium)' : 'transparent'};
   }
 
   &:focus {

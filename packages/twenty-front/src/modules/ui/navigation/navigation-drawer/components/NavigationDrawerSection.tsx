@@ -1,5 +1,5 @@
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledSection = styled.div<{ isSettingsDrawer?: boolean }>`

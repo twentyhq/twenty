@@ -1,12 +1,11 @@
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 const StyledCardFooter = styled.div<{ divider?: boolean }>`
-  background-color: ${({ theme }) => theme.background.primary};
-  border-top: ${({ divider = true, theme }) =>
-    divider ? css`1px solid ${theme.border.color.medium}` : 0};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  padding: ${({ theme }) => theme.spacing(2, 4)};
+  background-color: var(--background-primary);
+  border-top: ${({ divider = true }) =>
+    divider ? '1px solid var(--border-color-medium)' : 0};
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-2) var(--spacing-4);
 `;
 
 export { StyledCardFooter as CardFooter };

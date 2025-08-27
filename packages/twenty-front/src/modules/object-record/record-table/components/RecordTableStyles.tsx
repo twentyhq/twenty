@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 export const StyledTable = styled.table`
   border-radius: ${({ theme }) => theme.border.radius.sm};

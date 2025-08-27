@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 
 import { IconCheck, IconMinus } from '@ui/display/icon/components/TablerIcons';
 import * as React from 'react';
@@ -58,32 +58,32 @@ const StyledInputContainer = styled.div<InputProps>`
     }
   }};
   align-items: center;
-  border-radius: ${({ theme, shape }) =>
+  border-radius: ${({ shape }) =>
     shape === CheckboxShape.Rounded
-      ? theme.border.radius.rounded
-      : theme.border.radius.md};
+      ? 'var(--border-radius-rounded)'
+      : 'var(--border-radius-md)'};
 
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
-  padding: ${({ theme, checkboxSize, hoverable }) => {
+  padding: ${({ checkboxSize, hoverable }) => {
     if (hoverable === true) {
       return checkboxSize === CheckboxSize.Large
-        ? theme.spacing(1.5)
-        : theme.spacing(1.25);
+        ? 'var(--spacing-1.5)'
+        : 'var(--spacing-1.25)';
     } else {
       return 0;
     }
   }};
   position: relative;
-  ${({ hoverable, isChecked, theme, indeterminate, disabled, accent }) => {
+  ${({ hoverable, isChecked, indeterminate, disabled, accent }) => {
     if (!hoverable || disabled === true) return '';
     return `&:hover{
       background-color: ${
         indeterminate || isChecked
           ? accent === CheckboxAccent.Blue
-            ? theme.background.transparent.blue
-            : theme.background.transparent.orange
-          : theme.background.transparent.light
+            ? 'var(--background-transparent-blue)'
+            : 'var(--background-transparent-orange)'
+          : 'var(--background-transparent-light)'
       };
     }}
   }`;
@@ -109,18 +109,17 @@ const StyledInput = styled.input<InputProps>`
   & + label:before {
     --size: ${({ checkboxSize }) =>
       checkboxSize === CheckboxSize.Large ? '18px' : '12px'};
-    background: ${({ theme, indeterminate, isChecked, disabled, accent }) => {
+    background: ${({ indeterminate, isChecked, disabled, accent }) => {
       if (!(indeterminate || isChecked)) return 'transparent';
       return disabled
         ? accent === CheckboxAccent.Blue
-          ? theme.adaptiveColors.blue3
-          : theme.adaptiveColors.orange3
+          ? 'var(--adaptive-color-blue-3)'
+          : 'var(--adaptive-color-orange-3)'
         : accent === CheckboxAccent.Blue
-          ? theme.color.blue
-          : theme.color.orange;
+          ? 'var(--font-color-blue)'
+          : 'var(--font-color-orange)';
     }};
     border-color: ${({
-      theme,
       indeterminate,
       isChecked,
       variant,
@@ -131,25 +130,25 @@ const StyledInput = styled.input<InputProps>`
         case indeterminate || isChecked:
           return disabled
             ? accent === CheckboxAccent.Blue
-              ? theme.adaptiveColors.blue3
-              : theme.adaptiveColors.orange3
+              ? 'var(--adaptive-color-blue-3)'
+              : 'var(--adaptive-color-orange-3)'
             : accent === CheckboxAccent.Blue
-              ? theme.color.blue
-              : theme.color.orange;
+              ? 'var(--font-color-blue)'
+              : 'var(--font-color-orange)';
         case disabled:
-          return theme.border.color.strong;
+          return 'var(--border-color-strong)';
         case variant === CheckboxVariant.Primary:
-          return theme.border.color.inverted;
+          return 'var(--border-color-inverted)';
         case variant === CheckboxVariant.Tertiary:
-          return theme.border.color.medium;
+          return 'var(--border-color-medium)';
         default:
-          return theme.border.color.secondaryInverted;
+          return 'var(--border-color-secondary-inverted)';
       }
     }};
-    border-radius: ${({ theme, shape }) =>
+    border-radius: ${({ shape }) =>
       shape === CheckboxShape.Rounded
-        ? theme.border.radius.rounded
-        : theme.border.radius.sm};
+        ? 'var(--border-radius-rounded)'
+        : 'var(--border-radius-sm)'};
     border-style: solid;
     border-width: ${({ variant, checkboxSize }) =>
       checkboxSize === CheckboxSize.Large ||
@@ -170,7 +169,7 @@ const StyledInput = styled.input<InputProps>`
     height: var(--size);
     left: var(--padding);
     position: absolute;
-    stroke: ${({ theme }) => theme.font.color.inverted};
+    stroke: var(--font-color-inverted);
     top: var(--padding);
     width: var(--size);
   }

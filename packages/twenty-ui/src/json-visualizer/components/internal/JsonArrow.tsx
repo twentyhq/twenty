@@ -1,25 +1,29 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { VisibilityHidden } from '@ui/accessibility';
 import { IconChevronDown } from '@ui/display';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { ANIMATION } from '@ui/theme';
-import { motion } from 'framer-motion';
+import { type HTMLMotionProps, motion } from 'framer-motion';
 
-const StyledButton = styled(motion.button)<{ variant?: 'blue' | 'red' }>`
+const StyledButton = styled(motion.button as any)<
+  { variant?: 'blue' | 'red' } & HTMLMotionProps<'button'>
+>`
   align-items: center;
-  background-color: ${({ theme, variant }) =>
+  background-color: ${({ variant }) =>
     variant === 'red'
-      ? theme.background.danger
-      : theme.background.transparent.lighter};
-  border-color: ${({ theme, variant }) =>
-    variant === 'red' ? theme.border.color.danger : theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+      ? 'var(--background-danger)'
+      : 'var(--background-transparent-lighter)'};
+  border-color: ${({ variant }) =>
+    variant === 'red'
+      ? 'var(--border-color-danger)'
+      : 'var(--border-color-medium)'};
+  border-radius: var(--border-radius-sm);
   border-style: solid;
   border-width: 1px;
   display: flex;
   justify-content: center;
-  padding-inline: ${({ theme }) => theme.spacing(1)};
+  padding-inline: var(--spacing-1);
   height: 24px;
   width: 24px;
   box-sizing: border-box;

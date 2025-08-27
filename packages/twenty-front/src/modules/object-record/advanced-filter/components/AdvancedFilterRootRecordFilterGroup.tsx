@@ -9,7 +9,7 @@ import { isRecordFilterGroupChildARecordFilterGroup } from '@/object-record/adva
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { id } from 'date-fns/locale';
 import { isDefined } from 'twenty-shared/utils';
 
