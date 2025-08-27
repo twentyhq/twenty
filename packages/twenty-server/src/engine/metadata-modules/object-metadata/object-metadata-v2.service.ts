@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
@@ -291,25 +292,25 @@ export class ObjectMetadataServiceV2 {
       );
     }
 
-    // const [view] = await this.viewRepository.find({
-    //   where: {
-    //     objectMetadataId: createdFlatObjectMetadata.id,
-    //     key: ViewKey.INDEX,
-    //     workspaceId,
-    //   },
-    // });
+    const [view] = await this.viewRepository.find({
+      where: {
+        objectMetadataId: createdFlatObjectMetadata.id,
+        key: ViewKey.INDEX,
+        workspaceId,
+      },
+    });
 
-    // if (!isDefined(view)) {
-    //   throw new ObjectMetadataException(
-    //     'View not created',
-    //     ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-    //   );
-    // }
+    if (!isDefined(view)) {
+      throw new ObjectMetadataException(
+        'View not created',
+        ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
 
-    // await this.objectMetadataRelatedRecordsService.createViewWorkspaceFavorite(
-    //   workspaceId,
-    //   view.id,
-    // );
+    await this.objectMetadataRelatedRecordsService.createViewWorkspaceFavorite(
+      workspaceId,
+      view.id,
+    );
 
     return createdFlatObjectMetadata;
   }
