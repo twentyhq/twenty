@@ -23,7 +23,7 @@ jobs:
         packages/twenty-ui/**
         packages/twenty-shared/**
   front-sb-build:
-    needs: changed-files-check
+    needs: [changed-files-check]
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
