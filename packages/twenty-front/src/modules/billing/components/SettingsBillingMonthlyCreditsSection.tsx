@@ -34,25 +34,13 @@ export const SettingsBillingMonthlyCreditsSection = ({
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
 
-  const {
-    freeUsageQuantity,
-    includedFreeQuantity,
-    paidUsageQuantity,
-    unitPriceCents,
-    totalCostCents,
-  } = useGetWorkflowNodeExecutionUsage();
+  const { usedCredits, grantedCredits, unitPriceCents } =
+    useGetWorkflowNodeExecutionUsage();
 
   const { data: meteredBillingPrices } =
     useListAvailableMeteredBillingPricesQuery();
 
-  const isFreeCreditProgressBarCompleted =
-    freeUsageQuantity === includedFreeQuantity;
-
-  const progressBarValue = (freeUsageQuantity / includedFreeQuantity) * 100;
-
-  const formattedFreeUsageQuantity = isFreeCreditProgressBarCompleted
-    ? formatAmount(freeUsageQuantity)
-    : formatNumber(freeUsageQuantity);
+  const progressBarValue = (usedCredits / grantedCredits) * 100;
 
   const intervalLabel = getIntervalLabel(isMonthlyPlan(currentWorkspace));
 
@@ -66,15 +54,11 @@ export const SettingsBillingMonthlyCreditsSection = ({
         <SubscriptionInfoContainer>
           <SettingsBillingLabelValueItem
             label={t`Credits Used`}
-            value={`${formattedFreeUsageQuantity}/${formatAmount(includedFreeQuantity)}`}
+            value={`${formatNumber(usedCredits)}/${formatAmount(grantedCredits)}`}
           />
           <ProgressBar
             value={progressBarValue}
-            barColor={
-              isFreeCreditProgressBarCompleted
-                ? BACKGROUND_LIGHT.quaternary
-                : COLOR.blue
-            }
+            barColor={progressBarValue > 100 ? COLOR.red40 : COLOR.blue}
             backgroundColor={BACKGROUND_LIGHT.tertiary}
             withBorderRadius={true}
           />
@@ -83,7 +67,7 @@ export const SettingsBillingMonthlyCreditsSection = ({
           {!isTrialing && (
             <SettingsBillingLabelValueItem
               label={t`Extra Credits Used`}
-              value={`${formatNumber(paidUsageQuantity)}`}
+              value={`${formatNumber(usedCredits - grantedCredits)}`}
             />
           )}
           <SettingsBillingLabelValueItem
@@ -94,7 +78,7 @@ export const SettingsBillingMonthlyCreditsSection = ({
             <SettingsBillingLabelValueItem
               label={t`Cost`}
               isValueInPrimaryColor={true}
-              value={`$${formatNumber(totalCostCents / 100, 2)}`}
+              value={`$${formatNumber(((usedCredits - grantedCredits) * unitPriceCents) / 100, 2)}`}
             />
           )}
         </SubscriptionInfoContainer>
@@ -109,6 +93,7 @@ export const SettingsBillingMonthlyCreditsSection = ({
             meteredBillingPrices={
               meteredBillingPrices.listAvailableMeteredBillingPrices
             }
+            isTrialing={isTrialing}
           />
         )}
       </Section>

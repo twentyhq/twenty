@@ -23,6 +23,7 @@ import {
   H2Title,
   IconArrowUp,
   IconCalendarEvent,
+  IconCircleX,
   IconTag,
   IconUsers,
 } from 'twenty-ui/display';
@@ -32,16 +33,21 @@ import {
   BillingPlanKey,
   type BillingPlanOutput,
   BillingProductKey,
+  PermissionFlagType,
   SubscriptionInterval,
   SubscriptionStatus,
   useBillingBaseProductPricesQuery,
   useSwitchSubscriptionToEnterprisePlanMutation,
   useSwitchSubscriptionToYearlyIntervalMutation,
 } from '~/generated-metadata/graphql';
+import { useEndSubscriptionTrialPeriod } from '@/billing/hooks/useEndSubscriptionTrialPeriod';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 
 const SWITCH_BILLING_INTERVAL_MODAL_ID = 'switch-billing-interval-modal';
 
 const SWITCH_BILLING_PLAN_MODAL_ID = 'switch-billing-plan-modal';
+
+const END_TRIAL_PERIOD_MODAL_ID = 'end-trial-period-modal';
 
 const StyledSwitchButtonContainer = styled.div`
   align-items: center;
@@ -79,13 +85,28 @@ export const SettingsBillingSubscriptionInfo = () => {
 
   const isEnterprisePlan = isEnterprisePlanFn(currentWorkspace);
 
+  const isTrialPeriod = subscriptionStatus === SubscriptionStatus.Trialing;
+
   const canSwitchSubscription =
     subscriptionStatus !== SubscriptionStatus.PastDue;
 
-  const planTag = isProPlan ? (
-    <Tag color={'sky'} text={t`Pro`} />
-  ) : isEnterprisePlan ? (
-    <Tag color={'purple'} text={t`Organization`} />
+  const { endTrialPeriod, isLoading: isEndTrialPeriodLoading } =
+    useEndSubscriptionTrialPeriod();
+
+  const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
+    usePermissionFlagMap();
+
+  const planDescriptor = isProPlan
+    ? { color: 'sky' as const, label: t`Pro` }
+    : isEnterprisePlan
+      ? { color: 'purple' as const, label: t`Organization` }
+      : undefined;
+
+  const planTag = planDescriptor ? (
+    <>
+      <Tag color={planDescriptor.color} text={planDescriptor.label} />
+      {isTrialPeriod && <Tag color="blue" text={t`Trial`} />}
+    </>
   ) : undefined;
 
   const intervalLabel = capitalize(getIntervalLabel(isMonthlyPlan));
@@ -203,6 +224,15 @@ export const SettingsBillingSubscriptionInfo = () => {
             disabled={!canSwitchSubscription}
           />
         )}
+        {isTrialPeriod && hasPermissionToEndTrialPeriod && (
+          <Button
+            Icon={IconCircleX}
+            title={t`End Trial`}
+            variant="secondary"
+            onClick={() => openModal(END_TRIAL_PERIOD_MODAL_ID)}
+            disabled={isEndTrialPeriodLoading}
+          />
+        )}
       </StyledSwitchButtonContainer>
       <ConfirmationModal
         modalId={SWITCH_BILLING_INTERVAL_MODAL_ID}
@@ -223,6 +253,15 @@ export const SettingsBillingSubscriptionInfo = () => {
         onConfirmClick={switchPlan}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent={'blue'}
+      />
+      <ConfirmationModal
+        modalId={END_TRIAL_PERIOD_MODAL_ID}
+        title={t`End trial period?`}
+        subtitle={t`Your trial will end immediately and billing will be activated for your workspace. This action cannot be undone.`}
+        onConfirmClick={endTrialPeriod}
+        confirmButtonText={t`Confirm`}
+        confirmButtonAccent={'blue'}
+        loading={isEndTrialPeriodLoading}
       />
     </Section>
   );

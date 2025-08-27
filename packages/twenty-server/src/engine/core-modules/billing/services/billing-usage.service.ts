@@ -131,20 +131,17 @@ export class BillingUsageService {
             periodEnd,
           );
 
-        const totalCostCents =
-          meterEventsSum - item.tierQuantity > 0
-            ? (meterEventsSum - item.tierQuantity) * item.unitPriceCents
-            : 0;
-
         return {
           productKey: item.productKey,
           periodStart,
           periodEnd,
+          usedCredits: meterEventsSum,
+          grantedCredits:
+            subscription.status === SubscriptionStatus.Trialing
+              ? item.freeTrialQuantity
+              : item.tierQuantity,
           usageQuantity: meterEventsSum,
-          tierQuantity: item.tierQuantity,
-          freeTrialQuantity: item.freeTrialQuantity,
           unitPriceCents: item.unitPriceCents,
-          totalCostCents,
         };
       }),
     );

@@ -46,8 +46,13 @@ export class StripeCustomerService {
     return paymentMethods.length > 0;
   }
 
-  async createStripeCustomer(userEmail: string, workspaceId: string) {
+  async createStripeCustomer(
+    userEmail: string,
+    workspaceId: string,
+    customerName: string | undefined
+  ) {
     const customer = await this.stripe.customers.create({
+      name: customerName,
       email: userEmail,
       metadata: {
         workspaceId,

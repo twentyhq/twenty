@@ -1,13 +1,9 @@
-import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
   BillingProductKey,
-  SubscriptionStatus,
   useGetMeteredProductsUsageQuery,
 } from '~/generated-metadata/graphql';
 
 export const useGetWorkflowNodeExecutionUsage = () => {
-  const subscriptionStatus = useSubscriptionStatus();
-
   const { data, loading } = useGetMeteredProductsUsageQuery();
 
   const workflowUsage = data?.getMeteredProductsUsage.find(
@@ -17,31 +13,15 @@ export const useGetWorkflowNodeExecutionUsage = () => {
 
   if (loading === true || !workflowUsage) {
     return {
-      usageQuantity: 0,
-      freeUsageQuantity: 0,
-      includedFreeQuantity: 10000,
-      paidUsageQuantity: 0,
+      usedCredits: 0,
+      grantedCredits: Infinity,
       unitPriceCents: 0,
-      totalCostCents: 0,
     };
   }
 
-  const includedFreeQuantity =
-    subscriptionStatus === SubscriptionStatus.Trialing
-      ? workflowUsage.freeTrialQuantity
-      : workflowUsage.tierQuantity;
   return {
-    usageQuantity: workflowUsage.usageQuantity,
-    freeUsageQuantity:
-      workflowUsage.usageQuantity > includedFreeQuantity
-        ? includedFreeQuantity
-        : workflowUsage.usageQuantity,
-    includedFreeQuantity,
-    paidUsageQuantity:
-      workflowUsage.usageQuantity > includedFreeQuantity
-        ? workflowUsage.usageQuantity - includedFreeQuantity
-        : 0,
+    usedCredits: workflowUsage.usedCredits,
+    grantedCredits: workflowUsage.grantedCredits,
     unitPriceCents: workflowUsage.unitPriceCents,
-    totalCostCents: workflowUsage.totalCostCents,
   };
 };

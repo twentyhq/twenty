@@ -17,9 +17,11 @@ import { findOrThrow } from '~/utils/array/findOrThrow';
 export const MeteredPriceSelector = ({
   meteredBillingPrices,
   billingSubscriptionItems,
+  isTrialing = false,
 }: {
   meteredBillingPrices: Array<BillingPriceOutput>;
   billingSubscriptionItems: Array<BillingSubscriptionItem>;
+  isTrialing?: boolean;
 }) => {
   const [currentMeteredBillingPrice, setCurrentMeteredBillingPrice] = useState(
     findMeteredPriceInCurrentWorkspaceSubscriptions(
@@ -62,14 +64,21 @@ export const MeteredPriceSelector = ({
 
   return (
     <>
-      <H2Title title={t`Credit Plan`} />
+      <H2Title
+        title={t`Credit Plan`}
+        description={t`Number of new credits allocated every ${currentMeteredBillingPrice.interval.toLowerCase()}`}
+      />
       <Select
-        label={t`Number of new credits allocated every ${currentMeteredBillingPrice.interval.toLowerCase()}`}
         dropdownId={'settings-billing-metered-price'}
         options={options}
         value={currentMeteredBillingPrice?.stripePriceId}
         onChange={handleChange}
-        disabled={isUpdating}
+        disabled={isUpdating || isTrialing}
+        description={
+          isTrialing
+            ? t`You are currently in a trial period. To change the number of credits, please end the trial period first.`
+            : undefined
+        }
       />
     </>
   );

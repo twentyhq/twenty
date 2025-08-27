@@ -248,14 +248,12 @@ export type BillingEndTrialPeriodOutput = {
 
 export type BillingMeteredProductUsageOutput = {
   __typename?: 'BillingMeteredProductUsageOutput';
-  freeTrialQuantity: Scalars['Float'];
+  grantedCredits: Scalars['Float'];
   periodEnd: Scalars['DateTime'];
   periodStart: Scalars['DateTime'];
   productKey: BillingProductKey;
-  tierQuantity: Scalars['Float'];
-  totalCostCents: Scalars['Float'];
   unitPriceCents: Scalars['Float'];
-  usageQuantity: Scalars['Float'];
+  usedCredits: Scalars['Float'];
 };
 
 /** The different billing plans available */
@@ -4138,7 +4136,7 @@ export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSes
 export type GetMeteredProductsUsageQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsageOutput', productKey: BillingProductKey, usageQuantity: number, tierQuantity: number, freeTrialQuantity: number, unitPriceCents: number, totalCostCents: number }> };
+export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsageOutput', productKey: BillingProductKey, usedCredits: number, grantedCredits: number, unitPriceCents: number }> };
 
 export type ListAvailableMeteredBillingPricesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -7341,11 +7339,9 @@ export const GetMeteredProductsUsageDocument = gql`
     query GetMeteredProductsUsage {
   getMeteredProductsUsage {
     productKey
-    usageQuantity
-    tierQuantity
-    freeTrialQuantity
+    usedCredits
+    grantedCredits
     unitPriceCents
-    totalCostCents
   }
 }
     `;

@@ -14,17 +14,11 @@ export class BillingMeteredProductUsageOutput {
   periodEnd: Date;
 
   @Field(() => Number)
-  usageQuantity: number;
+  usedCredits: number;
 
   @Field(() => Number)
-  tierQuantity: number;
-
-  @Field(() => Number)
-  freeTrialQuantity: number;
+  grantedCredits: number;
 
   @Field(() => Number)
   unitPriceCents: number;
-
-  @Field(() => Number)
-  totalCostCents: number;
 }

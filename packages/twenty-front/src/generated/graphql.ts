@@ -248,14 +248,12 @@ export type BillingEndTrialPeriodOutput = {
 
 export type BillingMeteredProductUsageOutput = {
   __typename?: 'BillingMeteredProductUsageOutput';
-  freeTrialQuantity: Scalars['Float'];
+  grantedCredits: Scalars['Float'];
   periodEnd: Scalars['DateTime'];
   periodStart: Scalars['DateTime'];
   productKey: BillingProductKey;
-  tierQuantity: Scalars['Float'];
-  totalCostCents: Scalars['Float'];
   unitPriceCents: Scalars['Float'];
-  usageQuantity: Scalars['Float'];
+  usedCredits: Scalars['Float'];
 };
 
 /** The different billing plans available */
