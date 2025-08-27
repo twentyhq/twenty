@@ -70,11 +70,9 @@ export const MeteredPriceSelector = ({
 
   return (
     <>
-      <H2Title
-        title={t`Current Monthly Credits Available`}
-        description={t`Number of credits available each month.`}
-      />
+      <H2Title title={t`Credit Plan`} />
       <Select
+        label={t`Number of new credits allocated every month`}
         dropdownId={'settings-billing-metered-price'}
         options={options}
         value={currentMeteredBillingPrice?.stripePriceId}

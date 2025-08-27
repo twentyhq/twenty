@@ -54,7 +54,7 @@ export const SettingsBillingMonthlyCreditsSection = ({
     <>
       <Section>
         <H2Title
-          title={t`Monthly Credits`}
+          title={t`Credit Usage`}
           description={t`Track your monthly workflow credit consumption.`}
         />
         <SubscriptionInfoContainer>

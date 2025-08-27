@@ -18,7 +18,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
-import { BillingMeterEventName } from 'src/engine/core-modules/billing/enums/billing-meter-event-names';
 
 export interface ChatRequest {
   messages: CoreMessage[];
