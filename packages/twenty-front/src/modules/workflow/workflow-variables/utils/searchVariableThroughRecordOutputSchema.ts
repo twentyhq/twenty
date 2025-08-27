@@ -73,7 +73,9 @@ const buildVariableResult = (
   const targetField = getFieldFromSchema(targetFieldName, targetSchema);
   // Determine the variable label based on whether we want the full record or a specific field
   const variableLabel =
-    isFullRecord && isRecordOutputSchemaV2(targetSchema)
+    isFullRecord &&
+    isRecordOutputSchemaV2(targetSchema) &&
+    targetFieldName === 'id'
       ? getRecordObjectLabel(targetSchema)
       : targetField?.label;
 
