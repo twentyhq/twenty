@@ -18,13 +18,18 @@ import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/type
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
+type Node = {
+  id: string;
+  position: { x: number; y: number };
+  size: number;
+  measured?: { width: number; height: number };
+};
+
+type Edge = { id: string; source: string; target: string };
+
 type Diagram = {
-  nodes: {
-    id: string;
-    position: { x: number; y: number };
-    measured?: { width: number; height: number };
-  }[];
-  edges: { id: string; source: string; target: string }[];
+  nodes: Node[];
+  edges: Edge[];
 };
 
 @Command({
@@ -172,11 +177,9 @@ export class AddPositionsToWorkflowVersionsAndWorkflowRuns extends ActiveOrSuspe
     trigger?: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
   }): Diagram {
-    const nodes: { id: string; position: { x: number; y: number } }[] = [];
+    const nodes: Node[] = [];
 
-    const edges: { id: string; source: string; target: string }[] = [];
-
-    nodes.push({ id: 'trigger', position: { x: 0, y: 0 } });
+    const edges: Edge[] = [];
 
     if (!isDefined(trigger)) {
       const triggerNextStepIds = isDefined(steps)
@@ -190,11 +193,19 @@ export class AddPositionsToWorkflowVersionsAndWorkflowRuns extends ActiveOrSuspe
           target: stepId,
         });
       });
+      nodes.push({ id: 'trigger', size: 13, position: { x: 0, y: 0 } });
+    } else {
+      nodes.push({
+        id: 'trigger',
+        size: Math.min(trigger.name.length, 29),
+        position: { x: 0, y: 0 },
+      });
     }
 
     for (const step of steps || []) {
       nodes.push({
         id: step.id,
+        size: Math.min(step.name.length, 29),
         position: { x: 0, y: 0 },
       });
 
@@ -280,8 +291,8 @@ export class AddPositionsToWorkflowVersionsAndWorkflowRuns extends ActiveOrSuspe
     diagram.edges.forEach((edge) => graph.setEdge(edge.source, edge.target));
     diagram.nodes.forEach((node) =>
       graph.setNode(node.id, {
-        width: 120,
-        height: 42,
+        width: node.size * 6,
+        height: 50,
       }),
     );
 
