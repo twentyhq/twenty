@@ -132,14 +132,10 @@ export const applyWorkspaceMigrationActionOnFlatObjectMetadataMaps = <
         objectMetadataId: action.objectMetadataId,
       });
     }
-    case 'create_index': {
-      // TODO prastoin handle indexes
+    case 'create_index':
+    case 'delete_index':
+    case 'create_view':
       return flatObjectMetadataMaps;
-    }
-    case 'delete_index': {
-      // TODO prastoin handle indexes
-      return flatObjectMetadataMaps;
-    }
     default: {
       assertUnreachable(
         action,

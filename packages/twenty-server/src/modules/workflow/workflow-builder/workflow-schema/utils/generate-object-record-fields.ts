@@ -60,7 +60,6 @@ export const generateObjectRecordFields = ({
               objectMetadataMaps: objectMetadataInfo.objectMetadataMaps,
             },
             depth: depth + 1,
-            isRelationField: true,
           }),
         };
       }

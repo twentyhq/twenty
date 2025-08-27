@@ -1,22 +1,29 @@
 import { useMemo } from 'react';
 
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
-import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
-import { type SettingsDataModelFieldPreviewCardProps } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
+type UseRelationSettingsFormInitialValuesProps = {
+  existingFieldMetadataId: string;
+  objectMetadataItem?: Pick<
+    ObjectMetadataItem,
+    'id' | 'icon' | 'labelSingular' | 'labelPlural'
+  >;
+};
+
 export const useRelationSettingsFormInitialValues = ({
-  fieldMetadataItem,
+  existingFieldMetadataId,
   objectMetadataItem,
-}: {
-  fieldMetadataItem?: Pick<FieldMetadataItem, 'type' | 'relation'>;
-  objectMetadataItem?: SettingsDataModelFieldPreviewCardProps['objectMetadataItem'];
-}) => {
+}: UseRelationSettingsFormInitialValuesProps) => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+  const { fieldMetadataItem } = useFieldMetadataItemById(
+    existingFieldMetadataId,
+  );
 
   const getRelationMetadata = useGetRelationMetadata();
   const {
@@ -52,14 +59,10 @@ export const useRelationSettingsFormInitialValues = ({
   const initialRelationType =
     relationTypeFromFieldMetadata ?? RelationType.ONE_TO_MANY;
 
-  const targetIsMorphRelation =
-    isDefined(relationFieldMetadataItem) &&
-    isFieldMorphRelation(relationFieldMetadataItem);
-
   return {
     disableFieldEdition:
-      relationFieldMetadataItem &&
-      (!relationFieldMetadataItem.isCustom || targetIsMorphRelation),
+      isDefined(relationFieldMetadataItem) &&
+      relationFieldMetadataItem?.isCustom === true,
     disableRelationEdition: !!relationFieldMetadataItem,
     initialRelationFieldMetadataItem: relationFieldMetadataItem ?? {
       icon: initialRelationObjectMetadataItem.icon ?? 'IconUsers',

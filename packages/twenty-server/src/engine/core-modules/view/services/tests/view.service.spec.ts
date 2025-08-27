@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
-import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import {
@@ -17,7 +17,7 @@ import { ViewService } from 'src/engine/core-modules/view/services/view.service'
 
 describe('ViewService', () => {
   let viewService: ViewService;
-  let viewRepository: Repository<View>;
+  let viewRepository: Repository<ViewEntity>;
 
   const mockView = {
     id: 'view-id',
@@ -37,14 +37,14 @@ describe('ViewService', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
-  } as View;
+  } as ViewEntity;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ViewService,
         {
-          provide: getRepositoryToken(View, 'core'),
+          provide: getRepositoryToken(ViewEntity, 'core'),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -58,8 +58,8 @@ describe('ViewService', () => {
     }).compile();
 
     viewService = module.get<ViewService>(ViewService);
-    viewRepository = module.get<Repository<View>>(
-      getRepositoryToken(View, 'core'),
+    viewRepository = module.get<Repository<ViewEntity>>(
+      getRepositoryToken(ViewEntity, 'core'),
     );
   });
 

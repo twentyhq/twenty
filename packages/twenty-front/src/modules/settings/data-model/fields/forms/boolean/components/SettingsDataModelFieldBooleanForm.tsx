@@ -1,7 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { BOOLEAN_DATA_MODEL_SELECT_OPTIONS } from '@/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions';
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
@@ -18,17 +17,17 @@ export type SettingsDataModelFieldBooleanFormValues = z.infer<
 >;
 
 type SettingsDataModelFieldBooleanFormProps = {
-  fieldMetadataItem: Pick<FieldMetadataItem, 'defaultValue'>;
+  existingFieldMetadataId: string;
 };
 
 export const SettingsDataModelFieldBooleanForm = ({
-  fieldMetadataItem,
+  existingFieldMetadataId,
 }: SettingsDataModelFieldBooleanFormProps) => {
   const { t } = useLingui();
   const { control } = useFormContext<SettingsDataModelFieldBooleanFormValues>();
 
   const { initialDefaultValue } = useBooleanSettingsFormInitialValues({
-    fieldMetadataItem,
+    existingFieldMetadataId,
   });
 
   return (

@@ -1,21 +1,30 @@
 import { useFormContext } from 'react-hook-form';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { CurrencyCode } from '@/object-record/record-field/ui/types/CurrencyCode';
 import { type SettingsDataModelFieldCurrencyFormValues } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
+import { isNonEmptyString } from '@sniptt/guards';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
+import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 type UseCurrencySettingsFormInitialValuesArgs = {
-  fieldMetadataItem?: Pick<FieldMetadataItem, 'defaultValue' | 'settings'>;
+  existingFieldMetadataId: string;
 };
 export const useCurrencySettingsFormInitialValues = ({
-  fieldMetadataItem,
+  existingFieldMetadataId,
 }: UseCurrencySettingsFormInitialValuesArgs) => {
+  const { fieldMetadataItem } = useFieldMetadataItemById(
+    existingFieldMetadataId,
+  );
+
   const initialAmountMicrosValue =
     (fieldMetadataItem?.defaultValue?.amountMicros as number | null) ?? null;
-  const initialCurrencyCodeValue =
-    fieldMetadataItem?.defaultValue?.currencyCode ??
-    applySimpleQuotesToString(CurrencyCode.USD);
+  const initialCurrencyCodeValue = isNonEmptyString(
+    stripSimpleQuotesFromString(fieldMetadataItem?.defaultValue?.currencyCode),
+  )
+    ? fieldMetadataItem?.defaultValue?.currencyCode
+    : applySimpleQuotesToString(CurrencyCode.USD);
+
   const initialFormValues: SettingsDataModelFieldCurrencyFormValues = {
     settings: {
       format: fieldMetadataItem?.settings?.format ?? 'short',

@@ -1,13 +1,19 @@
 import { useFormContext } from 'react-hook-form';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { type SettingsDataModelFieldBooleanFormValues } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm';
 
+type UseBooleanSettingsFormInitialValuesProps = {
+  existingFieldMetadataId: string;
+};
+
 export const useBooleanSettingsFormInitialValues = ({
-  fieldMetadataItem,
-}: {
-  fieldMetadataItem?: Pick<FieldMetadataItem, 'defaultValue'>;
-}) => {
+  existingFieldMetadataId,
+}: UseBooleanSettingsFormInitialValuesProps) => {
+  const { fieldMetadataItem } = useFieldMetadataItemById(
+    existingFieldMetadataId,
+  );
+
   const initialDefaultValue =
     (fieldMetadataItem?.defaultValue as SettingsDataModelFieldBooleanFormValues['defaultValue']) ??
     true;
