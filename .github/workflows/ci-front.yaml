@@ -49,7 +49,7 @@ jobs:
       - name: Save storybook build cache
         uses: ./.github/workflows/actions/save-cache
         with:
-          key: storybook-build-${{ github.sha }}
+          key: storybook-build-${{ github.ref_name }}
   front-sb-test:
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
@@ -76,7 +76,7 @@ jobs:
       - name: Restore storybook build cache
         uses: ./.github/workflows/actions/restore-cache
         with:
-          key: storybook-build-${{ github.sha }}
+          key: storybook-build-${{ github.ref_name }}
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       # - name: Front / Build storybook
