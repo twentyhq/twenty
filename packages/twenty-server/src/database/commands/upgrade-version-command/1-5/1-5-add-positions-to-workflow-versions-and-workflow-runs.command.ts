@@ -28,7 +28,7 @@ type Diagram = {
 };
 
 @Command({
-  name: 'upgrade:1-3:add-positions-to-workflow-versions-and-workflow-runs',
+  name: 'upgrade:1-5:add-positions-to-workflow-versions-and-workflow-runs',
   description: 'Add positions to workflow versions and workflow runs',
 })
 export class AddPositionsToWorkflowVersionsAndWorkflowRuns extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
