@@ -524,7 +524,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option value must be a string",
+                "message": "Option value must be a string of at least one character",
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
@@ -838,7 +838,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option value must be a string",
+                "message": "Option value must be a string of at least one character",
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
@@ -1108,7 +1108,7 @@ exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option value must be a string",
+                "message": "Option value must be a string of at least one character",
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
@@ -1930,7 +1930,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option value must be a string",
+                "message": "Option value must be a string of at least one character",
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
@@ -2154,7 +2154,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option value must be a string",
+                "message": "Option value must be a string of at least one character",
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
@@ -2424,7 +2424,7 @@ exports[`Failing update field metadata SELECT tests suite v2 Update should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option value must be a string",
+                "message": "Option value must be a string of at least one character",
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
