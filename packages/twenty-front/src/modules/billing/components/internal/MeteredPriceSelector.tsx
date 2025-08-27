@@ -34,21 +34,12 @@ export const MeteredPriceSelector = ({
     UPDATE_SUBSCRIPTION_ITEM_PRICE,
   );
 
-  const options = meteredBillingPrices.reduce(
-    (options, meteredBillingPrice) => {
-      if (
-        isDefined(currentMeteredBillingPrice) &&
-        meteredBillingPrice?.amount < currentMeteredBillingPrice.amount
-      )
-        return options;
-
-      return options.concat({
-        label: t`${meteredBillingPrice.nickname} - ${formatNumber(meteredBillingPrice?.amount / 100, 2)}$`,
-        value: meteredBillingPrice.stripePriceId,
-      });
-    },
-    [] as Array<{ label: string; value: string }>,
-  );
+  const options = meteredBillingPrices.map((meteredBillingPrice) => {
+    return {
+      label: t`${meteredBillingPrice.nickname} - ${formatNumber(meteredBillingPrice?.amount / 100, 2)}$`,
+      value: meteredBillingPrice.stripePriceId,
+    };
+  });
 
   const handleChange = async (priceId: string) => {
     try {
