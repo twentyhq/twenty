@@ -19,7 +19,12 @@ import { ApiKeyController } from './controllers/api-key.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ApiKey, RoleTargetsEntity, RoleEntity, Workspace]),
+    TypeOrmModule.forFeature([
+      ApiKey,
+      RoleTargetsEntity,
+      RoleEntity,
+      Workspace,
+    ]),
     JwtModule,
     TokenModule,
     WorkspacePermissionsCacheModule,

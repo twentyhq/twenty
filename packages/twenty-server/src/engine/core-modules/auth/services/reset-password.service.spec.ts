@@ -71,9 +71,7 @@ describe('ResetPasswordService', () => {
     }).compile();
 
     service = module.get<ResetPasswordService>(ResetPasswordService);
-    userRepository = module.get<Repository<User>>(
-      getRepositoryToken(User),
-    );
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
     workspaceRepository = module.get<Repository<Workspace>>(
       getRepositoryToken(Workspace),
     );

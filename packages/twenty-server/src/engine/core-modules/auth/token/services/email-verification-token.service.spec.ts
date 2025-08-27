@@ -53,9 +53,7 @@ describe('EmailVerificationTokenService', () => {
     appTokenRepository = module.get<Repository<AppToken>>(
       getRepositoryToken(AppToken),
     );
-    userRepository = module.get<Repository<User>>(
-      getRepositoryToken(User),
-    );
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
   });
 

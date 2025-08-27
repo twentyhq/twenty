@@ -23,7 +23,11 @@ import { PgPoolSharedModule } from './pg-shared-pool/pg-shared-pool.module';
 @Global()
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ObjectMetadataEntity, RoleTargetsEntity, Workspace]),
+    TypeOrmModule.forFeature([
+      ObjectMetadataEntity,
+      RoleTargetsEntity,
+      Workspace,
+    ]),
     DataSourceModule,
     WorkspaceCacheStorageModule,
     WorkspaceMetadataCacheModule,

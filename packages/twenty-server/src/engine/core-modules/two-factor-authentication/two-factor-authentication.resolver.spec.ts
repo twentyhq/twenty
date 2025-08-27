@@ -103,9 +103,7 @@ describe('TwoFactorAuthenticationResolver', () => {
     loginTokenService = module.get(LoginTokenService);
     userService = module.get(UserService);
     domainManagerService = module.get(DomainManagerService);
-    repository = module.get(
-      getRepositoryToken(TwoFactorAuthenticationMethod),
-    );
+    repository = module.get(getRepositoryToken(TwoFactorAuthenticationMethod));
   });
 
   afterEach(() => {

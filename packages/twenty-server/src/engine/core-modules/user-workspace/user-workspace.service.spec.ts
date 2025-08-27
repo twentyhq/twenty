@@ -140,9 +140,7 @@ describe('UserWorkspaceService', () => {
 
     service = module.get<UserWorkspaceService>(UserWorkspaceService);
     fileService = module.get<FileService>(FileService);
-    userWorkspaceRepository = module.get(
-      getRepositoryToken(UserWorkspace),
-    );
+    userWorkspaceRepository = module.get(getRepositoryToken(UserWorkspace));
     userRepository = module.get(getRepositoryToken(User));
     typeORMService = module.get<TypeORMService>(TypeORMService);
     workspaceInvitationService = module.get<WorkspaceInvitationService>(

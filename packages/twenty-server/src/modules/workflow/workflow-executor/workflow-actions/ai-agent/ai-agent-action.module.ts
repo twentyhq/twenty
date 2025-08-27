@@ -9,11 +9,7 @@ import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/s
 import { AiAgentWorkflowAction } from './ai-agent.workflow-action';
 
 @Module({
-  imports: [
-    AgentModule,
-    AiModule,
-    TypeOrmModule.forFeature([AgentEntity]),
-  ],
+  imports: [AgentModule, AiModule, TypeOrmModule.forFeature([AgentEntity])],
   providers: [ScopedWorkspaceContextFactory, AiAgentWorkflowAction],
   exports: [AiAgentWorkflowAction],
 })

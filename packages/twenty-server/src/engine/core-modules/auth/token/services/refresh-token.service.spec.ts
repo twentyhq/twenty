@@ -55,9 +55,7 @@ describe('RefreshTokenService', () => {
     appTokenRepository = module.get<Repository<AppToken>>(
       getRepositoryToken(AppToken),
     );
-    userRepository = module.get<Repository<User>>(
-      getRepositoryToken(User),
-    );
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
   });
 
   it('should be defined', () => {

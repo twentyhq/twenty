@@ -99,9 +99,7 @@ describe('TwoFactorAuthenticationService', () => {
     service = module.get<TwoFactorAuthenticationService>(
       TwoFactorAuthenticationService,
     );
-    repository = module.get(
-      getRepositoryToken(TwoFactorAuthenticationMethod),
-    );
+    repository = module.get(getRepositoryToken(TwoFactorAuthenticationMethod));
     userWorkspaceService =
       module.get<UserWorkspaceService>(UserWorkspaceService);
     simpleSecretEncryptionUtil = module.get<SimpleSecretEncryptionUtil>(

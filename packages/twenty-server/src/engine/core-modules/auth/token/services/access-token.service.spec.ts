@@ -85,9 +85,7 @@ describe('AccessTokenService', () => {
     service = module.get<AccessTokenService>(AccessTokenService);
     jwtWrapperService = module.get<JwtWrapperService>(JwtWrapperService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    userRepository = module.get<Repository<User>>(
-      getRepositoryToken(User),
-    );
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
     workspaceRepository = module.get<Repository<Workspace>>(
       getRepositoryToken(Workspace),
     );

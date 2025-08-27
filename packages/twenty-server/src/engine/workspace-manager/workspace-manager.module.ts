@@ -38,7 +38,11 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     TypeOrmModule.forFeature([UserWorkspace, Workspace]),
     RoleModule,
     UserRoleModule,
-    TypeOrmModule.forFeature([FieldMetadataEntity, RoleTargetsEntity, RoleEntity]),
+    TypeOrmModule.forFeature([
+      FieldMetadataEntity,
+      RoleTargetsEntity,
+      RoleEntity,
+    ]),
   ],
   exports: [WorkspaceManagerService],
   providers: [WorkspaceManagerService],
