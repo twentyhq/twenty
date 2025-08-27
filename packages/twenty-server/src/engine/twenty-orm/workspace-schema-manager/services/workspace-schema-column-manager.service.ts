@@ -1,5 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
+import { FieldMetadataColumnType } from 'src/engine/metadata-modules/workspace-migration/types/field-metadata-column-type.type';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { buildSqlColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util';
 import { sanitizeDefaultValue } from 'src/engine/twenty-orm/workspace-schema-manager/utils/sanitize-default-value.util';
@@ -82,16 +83,22 @@ export class WorkspaceSchemaColumnManagerService {
     tableName,
     columnName,
     defaultValue,
+    fieldMetadataColumnType,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
     tableName: string;
     columnName: string;
     defaultValue?: string | number | boolean | null;
+    fieldMetadataColumnType?: FieldMetadataColumnType;
   }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeColumnName = removeSqlDDLInjection(columnName);
+    const relatedEnum =
+      fieldMetadataColumnType === 'enum'
+        ? `::${safeSchemaName}."${safeTableName}_${safeColumnName}_enum`
+        : '';
 
     const computeDefaultValueSqlQuery = () => {
       if (defaultValue === undefined) {
@@ -104,11 +111,7 @@ export class WorkspaceSchemaColumnManagerService {
 
       if (Array.isArray(defaultValue)) {
         const arrayValues = defaultValue
-          .map((val) =>
-            typeof val === 'string'
-              ? `'${removeSqlDDLInjection(val)}'::${safeSchemaName}."${safeTableName}_${safeColumnName}_enum"`
-              : val,
-          )
+          .map((val) => `'${removeSqlDDLInjection(val)}'${relatedEnum}`)
           .join(',');
 
         return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ARRAY[${arrayValues}]`;
@@ -117,7 +120,7 @@ export class WorkspaceSchemaColumnManagerService {
       if (typeof defaultValue === 'string') {
         const safeDefaultValue = sanitizeDefaultValue(defaultValue);
 
-        return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ${safeDefaultValue}::${safeSchemaName}."${safeTableName}_${safeColumnName}_enum"`;
+        return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ${safeDefaultValue}${relatedEnum}"`;
       }
 
       return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT '${defaultValue}'`;

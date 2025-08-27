@@ -19,6 +19,7 @@ import { findFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine
 import { findFlatObjectMetadataWithFlatFieldMapsInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-with-flat-field-maps-in-flat-object-metadata-maps-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
+import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
@@ -249,6 +250,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         );
       }
     } else {
+      const  fieldMetadataColumnType = fieldMetadataTypeToColumnType(flatFieldMetadata.type) 
       const serializedNewDefaultValue = unserializeDefaultValue(update.to);
 
       await this.workspaceSchemaManagerService.columnManager.alterColumnDefault(
@@ -258,6 +260,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           tableName,
           columnName: flatFieldMetadata.name,
           defaultValue: serializedNewDefaultValue,
+          fieldMetadataColumnType,
         },
       );
     }

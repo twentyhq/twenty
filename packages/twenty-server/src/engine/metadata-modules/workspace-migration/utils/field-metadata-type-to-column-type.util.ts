@@ -8,7 +8,7 @@ import {
 
 export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
   fieldMetadataType: Type,
-): string => {
+) => {
   /**
    * Composite types are not implemented here, as they are flattened by their composite definitions.
    * See src/metadata/field-metadata/composite-types for more information.
