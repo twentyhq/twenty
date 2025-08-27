@@ -1,6 +1,5 @@
-import { type QueryRunner } from 'typeorm';
+import { ColumnType, type QueryRunner } from 'typeorm';
 
-import { type FieldMetadataColumnType } from 'src/engine/metadata-modules/workspace-migration/types/field-metadata-column-type.type';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { buildSqlColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util';
 import { sanitizeDefaultValue } from 'src/engine/twenty-orm/workspace-schema-manager/utils/sanitize-default-value.util';
@@ -83,20 +82,20 @@ export class WorkspaceSchemaColumnManagerService {
     tableName,
     columnName,
     defaultValue,
-    fieldMetadataColumnType,
+    columnType,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
     tableName: string;
     columnName: string;
     defaultValue?: string | number | boolean | null;
-    fieldMetadataColumnType?: FieldMetadataColumnType;
+    columnType?: ColumnType;
   }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeColumnName = removeSqlDDLInjection(columnName);
     const relatedEnum =
-      fieldMetadataColumnType === 'enum'
+      columnType === 'enum'
         ? `::${safeSchemaName}."${safeTableName}_${safeColumnName}_enum"`
         : '';
 

@@ -106,7 +106,7 @@ const validateMetadataOptionValue = (
     ];
   }
 
-  if (typeof sanitizedValue !== 'string') {
+  if (!isNonEmptyString(sanitizedValue)) {
     return [
       {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,

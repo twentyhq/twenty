@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryRunner } from 'typeorm';
+import { ColumnType, type QueryRunner } from 'typeorm';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
@@ -250,9 +250,9 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         );
       }
     } else {
-      const fieldMetadataColumnType = fieldMetadataTypeToColumnType(
+      const columnType = fieldMetadataTypeToColumnType(
         flatFieldMetadata.type,
-      );
+      ) as ColumnType;
       const serializedNewDefaultValue = unserializeDefaultValue(update.to);
 
       await this.workspaceSchemaManagerService.columnManager.alterColumnDefault(
@@ -262,7 +262,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           tableName,
           columnName: flatFieldMetadata.name,
           defaultValue: serializedNewDefaultValue,
-          fieldMetadataColumnType,
+          columnType,
         },
       );
     }
