@@ -5,7 +5,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import dotenv from 'dotenv';
 import { useMemo, useState } from 'react';
 import { H2Title, IconPlus, IconSearch } from 'twenty-ui/display';

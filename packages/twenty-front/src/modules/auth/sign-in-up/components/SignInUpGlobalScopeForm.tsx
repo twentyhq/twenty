@@ -1,7 +1,7 @@
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { motion } from 'framer-motion';
 import { useState } from 'react';

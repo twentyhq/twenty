@@ -1,7 +1,7 @@
 import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { useMergeRecordsActions } from '@/object-record/record-merge/hooks/useMergeRecordsActions';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 import { IconArrowMerge } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';

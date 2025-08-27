@@ -2,8 +2,8 @@ import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-ty
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { css } from '@linaria/core';
-import { styled } from '@linaria/react';
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import { useState } from 'react';
 import { IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';

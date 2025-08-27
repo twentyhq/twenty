@@ -1,7 +1,7 @@
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 
 const StyledTableHeader = styled(TableHeader)`

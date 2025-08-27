@@ -1,6 +1,6 @@
 import { Select } from '@/ui/input/components/Select';
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { IconCopy, IconDatabase, IconSitemap } from 'twenty-ui/display';

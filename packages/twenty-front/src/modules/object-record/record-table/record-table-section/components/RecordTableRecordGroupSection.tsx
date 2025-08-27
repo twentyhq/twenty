@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useCallback } from 'react';
 
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';

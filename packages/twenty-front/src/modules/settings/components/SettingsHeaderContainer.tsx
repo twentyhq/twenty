@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledSettingsHeaderContainer = styled.div`
   align-items: center;

@@ -1,7 +1,7 @@
 /* @license Enterprise */
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';

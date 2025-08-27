@@ -2,7 +2,7 @@ import { RecordBoardColumnHeaderWrapper } from '@/object-record/record-board/rec
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValue';
 import { ViewType } from '@/views/types/ViewType';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledHeaderContainer = styled.div`
   display: flex;

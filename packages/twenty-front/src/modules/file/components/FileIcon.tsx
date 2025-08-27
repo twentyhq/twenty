@@ -1,7 +1,7 @@
 import { type AttachmentType } from '@/activities/files/types/Attachment';
 import { IconMapping, useFileTypeColors } from '@/file/utils/fileIconMappings';
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledIconContainer = styled.div<{ background: string }>`
   align-items: center;

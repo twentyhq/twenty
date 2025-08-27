@@ -1,5 +1,5 @@
 import { Table } from '@/ui/layout/table/components/Table';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 
 import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRolesTableHeader';

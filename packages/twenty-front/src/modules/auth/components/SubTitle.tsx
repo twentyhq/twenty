@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledSubTitle = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};

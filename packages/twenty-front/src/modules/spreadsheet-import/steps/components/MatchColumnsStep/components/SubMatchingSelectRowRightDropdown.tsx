@@ -11,7 +11,7 @@ import {
 import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { type SelectOption } from 'twenty-ui/input';
 
 const StyledDropdownContainer = styled.div`

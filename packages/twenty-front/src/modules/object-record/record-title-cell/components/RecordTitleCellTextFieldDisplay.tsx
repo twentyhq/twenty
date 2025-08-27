@@ -4,7 +4,7 @@ import { useRecordTitleCell } from '@/object-record/record-title-cell/hooks/useR
 import { type RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { withTheme, type Theme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';

@@ -6,7 +6,7 @@ import { RecordTableCellFieldInput } from '@/object-record/record-table/record-t
 import { RecordTableCellHotkeysEffect } from '@/object-record/record-table/record-table-cell/components/RecordTableCellHotkeysEffect';
 import { recordTableCellEditModePositionComponentState } from '@/object-record/record-table/states/recordTableCellEditModePositionComponentState';
 import { recordTableFocusPositionComponentState } from '@/object-record/record-table/states/recordTableFocusPositionComponentState';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledRecordTableCellHoveredPortal = styled.div`
   height: 100%;

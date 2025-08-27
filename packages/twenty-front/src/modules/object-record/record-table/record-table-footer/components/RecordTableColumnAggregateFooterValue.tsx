@@ -1,5 +1,5 @@
 import { useAggregateRecordsForRecordTableColumnFooter } from '@/object-record/record-table/record-table-footer/hooks/useAggregateRecordsForRecordTableColumnFooter';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';

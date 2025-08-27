@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { AppTooltip, IconLock, TooltipDelay } from 'twenty-ui/display';
 import { MessageChannelVisibility } from '~/generated/graphql';
 

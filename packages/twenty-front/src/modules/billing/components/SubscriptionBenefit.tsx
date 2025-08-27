@@ -1,6 +1,6 @@
-import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
 import React from 'react';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { IconCheck } from 'twenty-ui/display';
 
 const StyledBenefitContainer = styled.div`

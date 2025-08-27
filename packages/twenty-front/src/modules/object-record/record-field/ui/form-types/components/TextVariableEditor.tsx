@@ -1,5 +1,5 @@
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { EditorContent, type Editor } from '@tiptap/react';
 
 const StyledEditor = styled.div<{

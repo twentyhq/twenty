@@ -7,7 +7,7 @@ import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/us
 import { PageFocusId } from '@/types/PageFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 
 const StyledTableContainer = styled.div`

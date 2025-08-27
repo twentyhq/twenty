@@ -11,7 +11,7 @@ import { getDisplayFormatLabel } from '@/settings/data-model/fields/forms/date/u
 import { getDisplayFormatSelectDescription } from '@/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconSlash } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';

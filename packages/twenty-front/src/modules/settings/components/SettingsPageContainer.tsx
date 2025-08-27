@@ -3,7 +3,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollRestoration } from '@/ui/utilities/scroll/hooks/useScrollRestoration';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { type ReactNode, useMemo } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';

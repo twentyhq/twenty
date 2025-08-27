@@ -4,7 +4,7 @@ import { StepNavigationButton } from '@/spreadsheet-import/components/StepNaviga
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { Modal } from '@/ui/layout/modal/components/Modal';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { Loader } from 'twenty-ui/feedback';
 import { formatNumber } from '~/utils/format/number';

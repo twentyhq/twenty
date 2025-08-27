@@ -6,7 +6,7 @@ import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { IconHeartOff } from 'twenty-ui/display';

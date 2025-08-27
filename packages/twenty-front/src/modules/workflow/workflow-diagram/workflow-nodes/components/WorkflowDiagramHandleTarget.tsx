@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
 
 type WorkflowDiagramHandleTargetProps = {

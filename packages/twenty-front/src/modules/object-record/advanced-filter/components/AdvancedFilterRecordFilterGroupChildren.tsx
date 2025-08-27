@@ -2,7 +2,7 @@ import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filt
 import { AdvancedFilterRecordFilterRow } from '@/object-record/advanced-filter/components/AdvancedFilterRecordFilterRow';
 
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div<{ isGrayBackground?: boolean }>`

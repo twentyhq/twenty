@@ -1,5 +1,5 @@
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { type Ref, forwardRef } from 'react';
 
 const StyledInternalBaseDropdownContent = styled.div<{

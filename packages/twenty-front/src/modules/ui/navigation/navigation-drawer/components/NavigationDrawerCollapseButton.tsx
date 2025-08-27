@@ -1,5 +1,5 @@
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 import {
   IconLayoutSidebarLeftCollapse,

@@ -1,9 +1,9 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { type MessageDescriptor } from '@lingui/core';
 import { Trans } from '@lingui/react';
 import { type ReactNode } from 'react';
-import { Radio } from 'twenty-ui/input';
 import { Card, CardContent } from 'twenty-ui/layout';
+import { Radio } from 'twenty-ui/input';
 
 type SettingsAccountsRadioSettingsCardProps<Option extends { value: string }> =
   {

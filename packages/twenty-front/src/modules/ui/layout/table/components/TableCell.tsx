@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 type TableCellProps = {
   align?: 'left' | 'center' | 'right';

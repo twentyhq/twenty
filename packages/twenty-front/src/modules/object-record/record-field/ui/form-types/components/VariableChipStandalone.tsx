@@ -1,5 +1,5 @@
 import { VariableChip } from '@/object-record/record-field/ui/form-types/components/VariableChip';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledContainer = styled.div`
   align-items: center;

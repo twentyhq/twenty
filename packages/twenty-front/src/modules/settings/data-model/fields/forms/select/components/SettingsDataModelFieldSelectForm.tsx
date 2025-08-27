@@ -1,5 +1,5 @@
+import styled from '@emotion/styled';
 import { type DropResult } from '@hello-pangea/dnd';
-import { styled } from '@linaria/react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 

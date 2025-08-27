@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { Modal } from '@/ui/layout/modal/components/Modal';

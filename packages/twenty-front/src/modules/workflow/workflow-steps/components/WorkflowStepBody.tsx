@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledWorkflowStepBody = styled.div`
   background: ${({ theme }) => theme.background.primary};

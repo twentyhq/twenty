@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledBoardCardHeader = styled.div<{
   showCompactView: boolean;

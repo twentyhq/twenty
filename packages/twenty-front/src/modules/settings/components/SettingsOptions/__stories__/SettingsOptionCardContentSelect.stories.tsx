@@ -1,7 +1,7 @@
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import {

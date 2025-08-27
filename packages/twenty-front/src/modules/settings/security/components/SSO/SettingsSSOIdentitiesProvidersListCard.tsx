@@ -11,7 +11,7 @@ import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdent
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { type ApolloError } from '@apollo/client';
 import isPropValid from '@emotion/is-prop-valid';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconKey } from 'twenty-ui/display';

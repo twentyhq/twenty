@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { type IconComponent } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
 import { AnimatedContainer } from 'twenty-ui/utilities';

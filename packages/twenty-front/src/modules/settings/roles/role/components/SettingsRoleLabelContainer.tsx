@@ -2,7 +2,7 @@ import { useRecoilState } from 'recoil';
 
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TitleInput } from '@/ui/input/components/TitleInput';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 
 const StyledHeaderTitle = styled.div`

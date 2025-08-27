@@ -3,7 +3,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { type FunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/types/FunctionInput';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { isObject } from '@sniptt/guards';
 
 const StyledContainer = styled.div`

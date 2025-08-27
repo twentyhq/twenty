@@ -6,7 +6,7 @@ import { type RecordFilterGroup } from '@/object-record/record-filter-group/type
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { capitalize } from 'twenty-shared/utils';
 

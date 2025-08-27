@@ -1,11 +1,11 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useLabPublicFeatureFlags } from '@/settings/lab/hooks/useLabPublicFeatureFlags';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { Card } from 'twenty-ui/layout';
 import { type FeatureFlagKey } from '~/generated/graphql';
+import { Card } from 'twenty-ui/layout';
 
 const StyledCardGrid = styled.div`
   display: grid;

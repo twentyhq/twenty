@@ -3,7 +3,7 @@ import {
   type SettingsRoleObjectPermissionKey,
 } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 type PermissionIconProps = {
   permission: SettingsRoleObjectPermissionKey;

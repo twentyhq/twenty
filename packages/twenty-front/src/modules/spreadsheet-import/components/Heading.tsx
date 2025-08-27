@@ -1,4 +1,5 @@
-import { styled } from '@linaria/react';
+import React from 'react';
+import styled from '@emotion/styled';
 
 export type HeadingProps = {
   title: string;

@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useCallback, useMemo, useState } from 'react';
 
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';

@@ -1,6 +1,6 @@
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
 import { useIsMobile } from 'twenty-ui/utilities';
 

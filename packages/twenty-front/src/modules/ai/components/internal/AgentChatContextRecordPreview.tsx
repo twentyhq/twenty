@@ -5,7 +5,7 @@ import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { MultipleAvatarChip } from 'twenty-ui/components';
 import { IconReload, IconX } from 'twenty-ui/display';

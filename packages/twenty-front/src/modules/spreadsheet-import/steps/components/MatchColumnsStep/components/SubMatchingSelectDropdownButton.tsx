@@ -8,7 +8,7 @@ import {
 import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
 import { getFieldOptions } from '@/spreadsheet-import/utils/getFieldOptions';
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { IconChevronDown } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';

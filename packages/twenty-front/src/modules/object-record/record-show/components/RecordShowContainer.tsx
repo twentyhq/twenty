@@ -10,7 +10,7 @@ import { useRecordShowContainerData } from '@/object-record/record-show/hooks/us
 import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/useRecordShowContainerTabs';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { ShowPageSubContainer } from '@/ui/layout/show-page/components/ShowPageSubContainer';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 const StyledShowPageBannerContainer = styled.div`

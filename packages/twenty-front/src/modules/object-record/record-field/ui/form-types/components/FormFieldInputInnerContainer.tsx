@@ -1,8 +1,8 @@
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { css } from '@linaria/core';
-import { styled } from '@linaria/react';
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import { forwardRef, type HTMLAttributes, type Ref } from 'react';
 
 type FormFieldInputInnerContainerProps = {

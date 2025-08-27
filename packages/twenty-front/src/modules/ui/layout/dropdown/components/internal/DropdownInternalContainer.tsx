@@ -13,12 +13,12 @@ import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contex
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import styled from '@emotion/styled';
 import {
   FloatingPortal,
   type Placement,
   type UseFloatingReturn,
 } from '@floating-ui/react';
-import { styled } from '@linaria/react';
 import { useContext, useEffect } from 'react';
 import { type Keys } from 'react-hotkeys-hook';
 import { useRecoilValue } from 'recoil';

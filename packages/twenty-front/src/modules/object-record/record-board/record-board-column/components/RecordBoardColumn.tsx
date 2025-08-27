@@ -1,5 +1,5 @@
+import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
-import { styled } from '@linaria/react';
 
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';

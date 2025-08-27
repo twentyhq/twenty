@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
-import { IconArrowBackUp, IconUserCircle } from 'twenty-ui/display';
+import styled from '@emotion/styled';
 import { Button } from 'twenty-ui/input';
+import { IconArrowBackUp, IconUserCircle } from 'twenty-ui/display';
 
 const StyledThreadBottomBar = styled.div`
   align-items: center;

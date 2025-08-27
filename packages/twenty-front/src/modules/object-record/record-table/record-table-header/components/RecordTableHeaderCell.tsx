@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useCallback, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 

@@ -1,5 +1,5 @@
 import { DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownMenuItemsContainerMaxHeight';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledExternalContainer = styled.div<{
   maxHeight?: number;

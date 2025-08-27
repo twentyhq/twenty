@@ -4,7 +4,7 @@ import {
   Breadcrumb,
   type BreadcrumbProps,
 } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 type FullScreenContainerProps = {

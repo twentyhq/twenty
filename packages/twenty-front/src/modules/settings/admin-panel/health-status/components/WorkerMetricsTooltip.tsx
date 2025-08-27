@@ -1,5 +1,5 @@
-import { styled } from '@linaria/react';
-import type { LineSeries, Point } from '@nivo/line';
+import styled from '@emotion/styled';
+import type { Point, LineSeries } from '@nivo/line';
 import { type ReactElement } from 'react';
 
 const StyledTooltipContainer = styled.div`

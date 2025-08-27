@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 

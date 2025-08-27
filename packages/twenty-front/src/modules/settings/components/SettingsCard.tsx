@@ -1,10 +1,10 @@
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 import { type ReactNode } from 'react';
-import { Pill } from 'twenty-ui/components';
-import { IconChevronRight } from 'twenty-ui/display';
 import { Card, CardContent } from 'twenty-ui/layout';
+import { IconChevronRight } from 'twenty-ui/display';
+import { Pill } from 'twenty-ui/components';
 
 type SettingsCardProps = {
   description?: string;

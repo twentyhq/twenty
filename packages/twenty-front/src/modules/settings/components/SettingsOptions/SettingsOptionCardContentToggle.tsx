@@ -7,7 +7,7 @@ import {
 } from '@/settings/components/SettingsOptions/SettingsOptionCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useId } from 'react';
 import { type IconComponent } from 'twenty-ui/display';
 import { Toggle } from 'twenty-ui/input';

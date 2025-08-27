@@ -1,9 +1,9 @@
 import { type FetchResult } from '@apollo/client';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
-import { IconReload } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
 import { type SyncRemoteTableSchemaChangesMutation } from '~/generated-metadata/graphql';
+import { Button } from 'twenty-ui/input';
+import { IconReload } from 'twenty-ui/display';
 
 const StyledText = styled.h3`
   color: ${({ theme }) => theme.font.color.tertiary};

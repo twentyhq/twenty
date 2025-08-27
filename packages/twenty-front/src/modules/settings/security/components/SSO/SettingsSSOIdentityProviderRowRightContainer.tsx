@@ -3,7 +3,7 @@
 import { SettingsSecuritySSORowDropdownMenu } from '@/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu';
 import { type SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { getColorBySSOIdentityProviderStatus } from '@/settings/security/utils/getColorBySSOIdentityProviderStatus';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { type UnwrapRecoilValue } from 'recoil';
 import { Status } from 'twenty-ui/display';
 

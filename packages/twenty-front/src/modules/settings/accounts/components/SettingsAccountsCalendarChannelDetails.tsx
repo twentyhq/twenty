@@ -3,12 +3,12 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
-import { H2Title, IconUserPlus } from 'twenty-ui/display';
-import { Card } from 'twenty-ui/layout';
 import { type CalendarChannelVisibility } from '~/generated-metadata/graphql';
+import { t } from '@lingui/core/macro';
+import { Card } from 'twenty-ui/layout';
+import { H2Title, IconUserPlus } from 'twenty-ui/display';
 
 const StyledDetailsContainer = styled.div`
   display: flex;

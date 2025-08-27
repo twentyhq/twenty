@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';

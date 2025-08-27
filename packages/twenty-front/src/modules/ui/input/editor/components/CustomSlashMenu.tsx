@@ -1,5 +1,5 @@
+import styled from '@emotion/styled';
 import { autoUpdate, useFloating } from '@floating-ui/react';
-import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';

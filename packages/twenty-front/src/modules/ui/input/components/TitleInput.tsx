@@ -6,7 +6,7 @@ import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-typ
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 
 type InputProps = {

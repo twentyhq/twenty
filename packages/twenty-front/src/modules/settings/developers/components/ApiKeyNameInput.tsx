@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useCallback, useEffect } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 

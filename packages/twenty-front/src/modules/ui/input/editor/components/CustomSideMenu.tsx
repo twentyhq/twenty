@@ -9,7 +9,7 @@ import {
   SideMenu,
   SideMenuController,
 } from '@blocknote/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { IconColorSwatch, IconPlus, IconTrash } from 'twenty-ui/display';
 
 type CustomSideMenuProps = {

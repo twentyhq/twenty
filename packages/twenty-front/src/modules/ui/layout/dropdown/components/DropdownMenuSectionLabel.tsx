@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledDropdownMenuSectionLabel = styled.div`
   background-color: ${({ theme }) => theme.background.transparent.lighter};

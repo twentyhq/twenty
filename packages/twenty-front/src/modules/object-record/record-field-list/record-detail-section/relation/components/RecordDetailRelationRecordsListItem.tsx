@@ -1,5 +1,5 @@
-import { css } from '@linaria/core';
-import { styled } from '@linaria/react';
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useCallback, useContext } from 'react';
 

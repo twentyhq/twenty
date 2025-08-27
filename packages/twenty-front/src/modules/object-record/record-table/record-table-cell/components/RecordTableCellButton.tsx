@@ -1,8 +1,8 @@
-import { styled } from '@linaria/react';
-import { type IconComponent } from 'twenty-ui/display';
-import { FloatingIconButton } from 'twenty-ui/input';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
+import styled from '@emotion/styled';
 import { AnimatedContainer } from 'twenty-ui/utilities';
+import { FloatingIconButton } from 'twenty-ui/input';
+import { type IconComponent } from 'twenty-ui/display';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 const StyledButtonContainer = styled.div`
   margin: ${({ theme }) => theme.spacing(1)};

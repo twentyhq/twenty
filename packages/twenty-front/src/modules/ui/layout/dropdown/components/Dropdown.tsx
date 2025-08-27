@@ -11,6 +11,7 @@ import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import styled from '@emotion/styled';
 import {
   type Placement,
   autoUpdate,
@@ -19,7 +20,6 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
-import { styled } from '@linaria/react';
 import { type MouseEvent, type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
 import { type Keys } from 'react-hotkeys-hook';

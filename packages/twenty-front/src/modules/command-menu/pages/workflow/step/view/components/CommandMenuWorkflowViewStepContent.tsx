@@ -2,7 +2,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { WorkflowStepDetail } from '@/workflow/workflow-steps/components/WorkflowStepDetail';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`

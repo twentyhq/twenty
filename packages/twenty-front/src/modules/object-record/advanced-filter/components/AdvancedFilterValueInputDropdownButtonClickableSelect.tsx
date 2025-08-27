@@ -5,7 +5,7 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { isDefined } from 'twenty-shared/utils';

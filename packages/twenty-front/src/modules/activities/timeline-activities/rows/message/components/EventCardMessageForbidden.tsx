@@ -1,5 +1,5 @@
 import { EventCardMessageBodyNotShared } from '@/activities/timeline-activities/rows/message/components/EventCardMessageBodyNotShared';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { Trans } from '@lingui/react/macro';
 const StyledEventCardMessageContainer = styled.div`
   display: flex;

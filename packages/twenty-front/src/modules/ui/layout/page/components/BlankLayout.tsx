@@ -1,5 +1,5 @@
 import { css, Global, useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { Outlet } from 'react-router-dom';
 
 const StyledLayout = styled.div`

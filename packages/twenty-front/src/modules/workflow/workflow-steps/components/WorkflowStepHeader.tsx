@@ -1,7 +1,7 @@
 import { useUpdateCommandMenuPageInfo } from '@/command-menu/hooks/useUpdateCommandMenuPageInfo';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useState } from 'react';
 import { type IconComponent } from 'twenty-ui/display';
 

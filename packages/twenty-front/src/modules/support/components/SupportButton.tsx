@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 import { SupportButtonSkeletonLoader } from '@/support/components/SupportButtonSkeletonLoader';
 import { useSupportChat } from '@/support/hooks/useSupportChat';

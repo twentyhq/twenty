@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { OTPInput } from 'input-otp';
 import { Controller, useFormContext } from 'react-hook-form';
 

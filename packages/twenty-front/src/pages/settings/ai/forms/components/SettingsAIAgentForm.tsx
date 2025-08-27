@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';

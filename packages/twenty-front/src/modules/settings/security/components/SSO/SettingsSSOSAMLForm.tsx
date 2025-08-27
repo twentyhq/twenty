@@ -4,7 +4,7 @@ import { parseSAMLMetadataFromXMLFile } from '@/settings/security/utils/parseSAM
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';

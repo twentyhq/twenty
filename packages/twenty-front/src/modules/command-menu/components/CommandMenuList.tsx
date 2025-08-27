@@ -8,7 +8,7 @@ import { SIDE_PANEL_FOCUS_ID } from '@/command-menu/constants/SidePanelFocusId';
 import { hasUserSelectedCommandState } from '@/command-menu/states/hasUserSelectedCommandState';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 

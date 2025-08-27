@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { type Node, type NodeProps } from '@xyflow/react';
 import { Link } from 'react-router-dom';
 

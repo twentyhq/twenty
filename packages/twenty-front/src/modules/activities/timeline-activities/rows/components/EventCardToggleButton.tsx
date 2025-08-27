@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
-import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
+import styled from '@emotion/styled';
 import { IconButton } from 'twenty-ui/input';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui/display';
 
 type EventCardToggleButtonProps = {
   isOpen: boolean;

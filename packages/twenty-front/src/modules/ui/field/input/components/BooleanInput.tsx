@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 
 import { BooleanDisplay } from '@/ui/field/display/components/BooleanDisplay';

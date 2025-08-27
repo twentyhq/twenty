@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { IconChevronDown } from 'twenty-ui/display';
 import { TabButton } from 'twenty-ui/input';

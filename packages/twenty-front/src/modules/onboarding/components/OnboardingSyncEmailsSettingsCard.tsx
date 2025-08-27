@@ -1,7 +1,7 @@
 import { ONBOARDING_SYNC_EMAILS_OPTIONS } from '@/onboarding/constants/OnboardingSyncEmailsOptions';
 import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
 import { SettingsAccountsVisibilityIcon } from '@/settings/accounts/components/SettingsAccountsVisibilityIcon';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
 type OnboardingSyncEmailsSettingsCardProps = {

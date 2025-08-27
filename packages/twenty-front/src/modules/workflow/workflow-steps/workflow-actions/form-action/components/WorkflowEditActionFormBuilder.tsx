@@ -16,8 +16,8 @@ import { useActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-a
 import { useActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/hooks/useActionIconColorOrThrow';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { css, useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';

@@ -7,7 +7,7 @@ import { commandMenuPageInfoState } from '@/command-menu/states/commandMenuPageI
 import { commandMenuPageState } from '@/command-menu/states/commandMenuPageState';
 import { CommandMenuPageComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuPageComponentInstanceContext';
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';

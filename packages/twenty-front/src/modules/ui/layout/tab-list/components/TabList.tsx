@@ -7,7 +7,7 @@ import { type TabWidthsById } from '@/ui/layout/tab-list/types/TabWidthsById';
 import { calculateVisibleTabCount } from '@/ui/layout/tab-list/utils/calculateVisibleTabCount';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TabButton } from 'twenty-ui/input';

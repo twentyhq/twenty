@@ -7,7 +7,7 @@ import { InformationBannerReconnectAccountInsufficientPermissions } from '@/info
 import { useIsSomeMeteredProductCapReached } from '@/workspace/hooks/useIsSomeMeteredProductCapReached';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';

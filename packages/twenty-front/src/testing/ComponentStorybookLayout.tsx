@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledLayout = styled.div<{ width?: number }>`
   border-radius: 5px;

@@ -7,7 +7,7 @@ import {
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledRecordChip = styled(RecordChip)`
   margin: ${({ theme }) => theme.spacing(2)};

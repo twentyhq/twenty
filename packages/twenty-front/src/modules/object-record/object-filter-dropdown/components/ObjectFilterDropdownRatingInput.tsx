@@ -4,7 +4,7 @@ import { RatingInput } from '@/ui/field/input/components/RatingInput';
 
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledRatingInputContainer = styled.div`

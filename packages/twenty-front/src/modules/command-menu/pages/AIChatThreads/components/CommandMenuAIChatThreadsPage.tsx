@@ -1,6 +1,6 @@
 import { AIChatThreadsList } from '@/ai/components/AIChatThreadsList';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 const StyledContainer = styled.div`

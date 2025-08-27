@@ -1,6 +1,6 @@
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { IconRefresh } from 'twenty-ui/display';
 
 const StyledInformationBannerDeletedRecord = styled.div`

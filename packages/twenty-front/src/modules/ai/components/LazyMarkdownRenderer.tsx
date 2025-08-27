@@ -1,8 +1,8 @@
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 
 const MarkdownRenderer = lazy(async () => {
   const [{ default: Markdown }, { default: remarkGfm }] = await Promise.all([

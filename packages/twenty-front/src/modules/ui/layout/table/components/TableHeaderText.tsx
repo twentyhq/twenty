@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledTableHeaderText = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(0.5)};

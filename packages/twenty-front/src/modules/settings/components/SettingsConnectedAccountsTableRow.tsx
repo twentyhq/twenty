@@ -4,7 +4,7 @@ import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/Set
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledNameCell = styled.div`
   align-items: center;

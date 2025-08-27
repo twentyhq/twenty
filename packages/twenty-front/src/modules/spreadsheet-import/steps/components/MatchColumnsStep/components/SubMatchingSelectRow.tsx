@@ -5,7 +5,7 @@ import {
   type SpreadsheetMatchedSelectOptionsColumn,
 } from '@/spreadsheet-import/types/SpreadsheetColumn';
 import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledRowContainer = styled.div`
   align-items: center;

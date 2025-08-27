@@ -1,7 +1,7 @@
 import { AppErrorDisplay } from '@/error-handler/components/internal/AppErrorDisplay';
 import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplayProps';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 type AppFullScreenErrorFallbackProps = AppErrorDisplayProps;
 

@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 // @ts-expect-error // Todo: remove usage of react-data-grid
 import { type Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';

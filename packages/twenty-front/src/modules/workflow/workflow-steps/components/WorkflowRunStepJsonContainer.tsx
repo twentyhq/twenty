@@ -1,5 +1,5 @@
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledWorkflowRunStepJsonContainer = styled(WorkflowStepBody)`
   grid-template-rows: max-content;

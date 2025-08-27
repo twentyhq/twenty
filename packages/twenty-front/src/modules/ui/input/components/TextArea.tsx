@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { type FocusEventHandler, useId } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 

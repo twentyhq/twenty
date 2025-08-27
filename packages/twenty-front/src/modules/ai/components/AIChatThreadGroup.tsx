@@ -2,7 +2,7 @@ import { currentAIChatThreadComponentState } from '@/ai/states/currentAIChatThre
 import { useOpenAskAIPageInCommandMenu } from '@/command-menu/hooks/useOpenAskAIPageInCommandMenu';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { IconSparkles } from 'twenty-ui/display';
 import { type AgentChatThread } from '~/generated-metadata/graphql';

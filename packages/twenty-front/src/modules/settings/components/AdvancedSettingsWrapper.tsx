@@ -1,7 +1,7 @@
 import { AdvancedSettingsContentWrapperWithDot } from '@/settings/components/AdvancedSettingsContentWrapperWithDot';
 import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/AdvancedSettingsAnimationDurations';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 

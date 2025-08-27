@@ -1,5 +1,5 @@
 import { TextArea } from '@/ui/input/components/TextArea';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { IconHistory, IconMessageCirclePlus } from 'twenty-ui/display';
 
 import { DropZone } from '@/activities/files/components/DropZone';

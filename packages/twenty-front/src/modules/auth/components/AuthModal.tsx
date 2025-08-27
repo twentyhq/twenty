@@ -3,7 +3,7 @@ import { AUTH_MODAL_ID } from '@/auth/constants/AuthModalId';
 import { getAuthModalConfig } from '@/auth/utils/getAuthModalConfig';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 

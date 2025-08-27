@@ -17,7 +17,7 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { type View } from '@/views/types/View';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {

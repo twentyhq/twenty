@@ -1,6 +1,6 @@
-import { AIChatTab } from '@/ai/components/AIChatTab';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { styled } from '@linaria/react';
+import { AIChatTab } from '@/ai/components/AIChatTab';
+import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 const StyledContainer = styled.div`

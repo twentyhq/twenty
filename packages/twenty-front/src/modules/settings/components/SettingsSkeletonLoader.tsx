@@ -2,7 +2,7 @@ import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLo
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 const StyledContainer = styled.div`

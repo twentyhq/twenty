@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilState } from 'recoil';
 

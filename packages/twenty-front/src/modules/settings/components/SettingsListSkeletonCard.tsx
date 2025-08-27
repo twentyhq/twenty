@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { Card } from 'twenty-ui/layout';
 
 const StyledCard = styled(Card)`

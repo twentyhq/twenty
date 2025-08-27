@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
 
 import { Select } from '@/ui/input/components/Select';

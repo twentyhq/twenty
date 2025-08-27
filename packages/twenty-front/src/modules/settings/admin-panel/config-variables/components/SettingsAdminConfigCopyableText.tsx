@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { useDebouncedCallback } from 'use-debounce';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';

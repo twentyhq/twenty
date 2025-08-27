@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
 import { Card, CardContent } from 'twenty-ui/layout';
 

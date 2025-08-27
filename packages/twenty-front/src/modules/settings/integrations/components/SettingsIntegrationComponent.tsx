@@ -1,10 +1,10 @@
-import { css } from '@linaria/core';
-import { styled } from '@linaria/react';
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 
 import { type SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Pill } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/input';
 import {
   IconArrowUpRight,
   IconBolt,
@@ -12,7 +12,7 @@ import {
   IconPlus,
   Status,
 } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { Pill } from 'twenty-ui/components';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 interface SettingsIntegrationComponentProps {

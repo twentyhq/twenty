@@ -7,6 +7,7 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import styled from '@emotion/styled';
 import {
   autoUpdate,
   flip,
@@ -14,7 +15,6 @@ import {
   useFloating,
   type MiddlewareState,
 } from '@floating-ui/react';
-import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { createPortal } from 'react-dom';
 

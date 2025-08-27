@@ -1,5 +1,5 @@
 import { ApolloError } from '@apollo/client';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 

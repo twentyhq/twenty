@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 

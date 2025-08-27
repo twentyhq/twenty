@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 const StyledControlContainer = styled.div<{ cursor: string }>`
   align-items: center;

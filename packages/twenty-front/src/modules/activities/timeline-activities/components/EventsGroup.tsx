@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 import { EventRow } from '@/activities/timeline-activities/components/EventRow';
 import { type EventGroup } from '@/activities/timeline-activities/utils/groupEventsByMonth';

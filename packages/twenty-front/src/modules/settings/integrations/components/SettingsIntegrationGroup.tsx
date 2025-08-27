@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
 
 import { SettingsIntegrationComponent } from '@/settings/integrations/components/SettingsIntegrationComponent';

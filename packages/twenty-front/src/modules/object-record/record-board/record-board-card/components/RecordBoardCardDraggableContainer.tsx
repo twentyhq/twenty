@@ -1,5 +1,5 @@
+import styled from '@emotion/styled';
 import { Draggable } from '@hello-pangea/dnd';
-import { styled } from '@linaria/react';
 import { useContext } from 'react';
 
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';

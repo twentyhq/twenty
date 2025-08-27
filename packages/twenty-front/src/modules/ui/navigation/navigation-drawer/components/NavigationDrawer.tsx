@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { type ReactNode, useState } from 'react';
 import { useRecoilValue } from 'recoil';

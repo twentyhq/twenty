@@ -1,5 +1,5 @@
 import isPropValid from '@emotion/is-prop-valid';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 

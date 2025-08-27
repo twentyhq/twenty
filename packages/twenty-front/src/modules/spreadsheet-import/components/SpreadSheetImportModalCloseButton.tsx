@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 import { IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';

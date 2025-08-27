@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { Icon123, useIcons } from 'twenty-ui/display';

@@ -1,9 +1,9 @@
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { IconUsers } from 'twenty-ui/display';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { IconUsers } from 'twenty-ui/display';
 
 const StyledContainer = styled.div`
   width: 480px;

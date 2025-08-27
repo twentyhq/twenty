@@ -10,7 +10,7 @@ import {
 import { parseHttpJsonBodyWithoutVariablesOrThrow } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/parseHttpJsonBodyWithoutVariablesOrThrow';
 import { shouldDisplayRawJsonByDefault } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/shouldDisplayRawJsonByDefault';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
 import { isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { parseJson } from 'twenty-shared/utils';
