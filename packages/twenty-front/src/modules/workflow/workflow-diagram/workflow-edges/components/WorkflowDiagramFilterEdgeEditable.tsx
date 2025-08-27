@@ -205,7 +205,7 @@ export const WorkflowDiagramFilterEdgeEditable = ({
           <WorkflowDiagramEdgeV2VisibilityContainer shouldDisplay>
             <StyledConfiguredFilterContainer>
               <WorkflowStepFilterCounter
-                backgroundColor={unselected.borderColor}
+                backgroundColor={unselected.tagBackground}
                 textColor={theme.font.color.inverted}
                 counter={filterCounter}
               />
