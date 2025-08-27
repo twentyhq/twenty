@@ -77,7 +77,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       const { result, usage } = await this.aiAgentExecutionService.executeAgent(
         {
           agent,
-          context,
           schema: step.settings.outputSchema,
           userPrompt: resolveInput(prompt, context) as string,
         },
