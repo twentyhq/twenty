@@ -26,6 +26,7 @@ import { useRecordBoardDragOperations } from '@/object-record/record-drag/board/
 import { useEndRecordDrag } from '@/object-record/record-drag/shared/hooks/useEndRecordDrag';
 import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 import { useStartRecordDrag } from '@/object-record/record-drag/shared/hooks/useStartRecordDrag';
+import { AIWorkflowSetupModalContainer } from '@/object-record/record-group/components/AIWorkflowSetupModalContainer';
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -223,6 +224,13 @@ export const RecordBoard = () => {
           </StyledBoardContentContainer>
         </StyledContainerContainer>
       </ScrollWrapper>
+      {/* NestboxAI: way to open the modal */}
+      {visibleRecordGroupIds.map((recordGroupId) => (
+        <AIWorkflowSetupModalContainer
+          key={`ai-workflow-modal-${recordGroupId}`}
+          recordGroupId={recordGroupId}
+        />
+      ))}
     </RecordBoardComponentInstanceContext.Provider>
   );
 };

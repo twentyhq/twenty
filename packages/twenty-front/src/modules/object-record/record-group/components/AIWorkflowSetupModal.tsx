@@ -10,11 +10,11 @@ import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingC
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { useListenToSidePanelClosing } from '@/ui/layout/right-drawer/hooks/useListenToSidePanelClosing';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { createPortal } from 'react-dom';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { Button, Toggle } from 'twenty-ui/input';
 import { THEME_COMMON } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { createPortal } from 'react-dom';
 
 import { useCreateAiAgentConfig } from '@/object-record/record-group/hooks/useCreateAiAgentConfig';
 import { useDeleteAiAgentConfig } from '@/object-record/record-group/hooks/useDeleteAiAgentConfig';
@@ -365,7 +365,9 @@ export const AIWorkflowSetupDrawer = ({
     listenerId: 'AI_WORKFLOW_SETUP_DRAWER_LISTENER_ID',
   });
 
-  return createPortal(
+  return (
+    <>
+      {createPortal(
     <AnimatePresence>
       {isOpen && (
         <StyledRightDrawer
@@ -506,5 +508,7 @@ export const AIWorkflowSetupDrawer = ({
       )}
     </AnimatePresence>,
     document.body,
+  )}
+    </>
   );
 };

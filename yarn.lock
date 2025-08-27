@@ -9070,6 +9070,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestbox-ai/agents@npm:^1.0.47":
+  version: 1.0.47
+  resolution: "@nestbox-ai/agents@npm:1.0.47"
+  dependencies:
+    axios: "npm:^1.6.1"
+  checksum: 10c0/6d146bc197f4eb5d3b952dbe48e4dfc33ace5c62742b54b408eb9e136ae488b65969e775b63b418e3814ae75acae3793939d1a0d4611d3dd011153e65d5968cb
+  languageName: node
+  linkType: hard
+
+"@nestbox-ai/instances@npm:^1.0.47":
+  version: 1.0.47
+  resolution: "@nestbox-ai/instances@npm:1.0.47"
+  dependencies:
+    axios: "npm:^1.6.1"
+  checksum: 10c0/d5462c10be23d44f028b75f22a6f9e3dfe6a64bacb2b032c457c8e43bb876d37ea51a7c57e994ad6be743bab0ba5bc143d6b427a19f442da66720a0e6241262b
+  languageName: node
+  linkType: hard
+
 "@nestjs/axios@npm:3.0.2":
   version: 3.0.2
   resolution: "@nestjs/axios@npm:3.0.2"
@@ -51068,6 +51086,8 @@ __metadata:
     "@microsoft/microsoft-graph-client": "npm:3.0.7"
     "@microsoft/microsoft-graph-types": "npm:^2.40.0"
     "@monaco-editor/react": "npm:^4.6.0"
+    "@nestbox-ai/agents": "npm:^1.0.47"
+    "@nestbox-ai/instances": "npm:^1.0.47"
     "@nestjs/axios": "npm:3.0.2"
     "@nestjs/cache-manager": "npm:^2.2.1"
     "@nestjs/cli": "npm:10.3.0"

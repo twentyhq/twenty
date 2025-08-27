@@ -41,6 +41,8 @@
     "@microsoft/microsoft-graph-client": "3.0.7",
     "@microsoft/microsoft-graph-types": "^2.40.0",
     "@monaco-editor/react": "^4.6.0",
+    "@nestbox-ai/agents": "^1.0.47",
+    "@nestbox-ai/instances": "^1.0.47",
     "@nestjs/axios": "3.0.2",
     "@nestjs/cache-manager": "^2.2.1",
     "@nestjs/common": "9.4.3",
