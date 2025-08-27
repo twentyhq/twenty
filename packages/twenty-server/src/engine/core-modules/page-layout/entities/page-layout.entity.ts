@@ -18,7 +18,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 @Entity({ name: 'pageLayout', schema: 'core' })
 @Index('IDX_PAGE_LAYOUT_WORKSPACE_ID', ['workspaceId'])
 @Index('IDX_PAGE_LAYOUT_OBJECT_METADATA_ID', ['objectMetadataId'])
-export class PageLayoutEntity {
+export class PageLayoutEntity implements Required<PageLayoutEntity> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -43,14 +43,14 @@ export class PageLayoutEntity {
   type: PageLayoutType;
 
   @Column({ nullable: true, type: 'uuid' })
-  objectMetadataId?: string;
+  objectMetadataId: string | null;
 
   @ManyToOne(() => ObjectMetadataEntity, {
     onDelete: 'CASCADE',
     nullable: true,
   })
   @JoinColumn({ name: 'objectMetadataId' })
-  objectMetadata?: Relation<ObjectMetadataEntity>;
+  objectMetadata: Relation<ObjectMetadataEntity> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
@@ -59,5 +59,5 @@ export class PageLayoutEntity {
   updatedAt: Date;
 
   @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt?: Date;
+  deletedAt: Date | null;
 }
