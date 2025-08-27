@@ -2,7 +2,6 @@ import { ColumnType, type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { buildSqlColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util';
-import { sanitizeDefaultValue } from 'src/engine/twenty-orm/workspace-schema-manager/utils/sanitize-default-value.util';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
 
 export class WorkspaceSchemaColumnManagerService {
@@ -82,7 +81,6 @@ export class WorkspaceSchemaColumnManagerService {
     tableName,
     columnName,
     defaultValue,
-    columnType,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
@@ -94,10 +92,6 @@ export class WorkspaceSchemaColumnManagerService {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeColumnName = removeSqlDDLInjection(columnName);
-    const relatedEnum =
-      columnType === 'enum'
-        ? `::${safeSchemaName}."${safeTableName}_${safeColumnName}_enum"`
-        : '';
 
     const computeDefaultValueSqlQuery = () => {
       if (defaultValue === undefined) {
@@ -106,20 +100,6 @@ export class WorkspaceSchemaColumnManagerService {
 
       if (defaultValue === null) {
         return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT NULL`;
-      }
-
-      if (Array.isArray(defaultValue)) {
-        const arrayValues = defaultValue
-          .map((val) => `'${removeSqlDDLInjection(val)}'${relatedEnum}`)
-          .join(',');
-
-        return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ARRAY[${arrayValues}]`;
-      }
-
-      if (typeof defaultValue === 'string') {
-        const safeDefaultValue = sanitizeDefaultValue(defaultValue);
-
-        return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ${safeDefaultValue}${relatedEnum}`;
       }
 
       return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT '${defaultValue}'`;

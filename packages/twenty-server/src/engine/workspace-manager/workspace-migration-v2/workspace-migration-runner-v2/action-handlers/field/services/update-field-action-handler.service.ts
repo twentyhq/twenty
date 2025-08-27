@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { ColumnType, type QueryRunner } from 'typeorm';
+import { type QueryRunner } from 'typeorm';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
@@ -19,7 +19,6 @@ import { findFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine
 import { findFlatObjectMetadataWithFlatFieldMapsInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-with-flat-field-maps-in-flat-object-metadata-maps-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
-import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
@@ -233,7 +232,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           property,
         );
         // @ts-expect-error - TODO: fix this
-        let compositeDefaultValue = update.to?.[property.name];
+        let compositeDefaultValue = update.to?.[property.name]; // not valid should be serialized
 
         const serializedNewDefaultValue = unserializeDefaultValue(
           compositeDefaultValue,
@@ -250,9 +249,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         );
       }
     } else {
-      const columnType = fieldMetadataTypeToColumnType(
-        flatFieldMetadata.type,
-      ) as ColumnType;
       const serializedNewDefaultValue = unserializeDefaultValue(update.to);
 
       await this.workspaceSchemaManagerService.columnManager.alterColumnDefault(
@@ -262,7 +258,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           tableName,
           columnName: flatFieldMetadata.name,
           defaultValue: serializedNewDefaultValue,
-          columnType,
         },
       );
     }
