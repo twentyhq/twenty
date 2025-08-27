@@ -1,6 +1,6 @@
 /// <reference types='vitest' />
-import linaria from '@linaria/vite';
 import react from '@vitejs/plugin-react-swc';
+import wyw from '@wyw-in-js/vite';
 import * as path from 'path';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
@@ -68,7 +68,6 @@ export default defineConfig(({ command }) => {
     cacheDir: '../../node_modules/.vite/packages/twenty-ui',
     assetsInclude: ['src/**/*.svg'],
     plugins: [
-      linaria(),
       react({
         jsxImportSource: '@emotion/react',
         plugins: [['@swc/plugin-emotion', {}]],
@@ -79,6 +78,12 @@ export default defineConfig(({ command }) => {
       svgr(),
       dts(dtsConfig),
       checker(checkersConfig),
+      wyw({
+        include: ['**/*.tsx'],
+        babelOptions: {
+          presets: ['@babel/preset-typescript', '@babel/preset-react'],
+        },
+      }),
     ],
 
     // Configuration for building your library.

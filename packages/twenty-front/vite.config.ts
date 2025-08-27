@@ -152,6 +152,7 @@ export default defineConfig(({ command, mode }) => {
           '**/EmailsDisplay.tsx',
           '**/PhonesDisplay.tsx',
           '**/MultiSelectDisplay.tsx',
+          '**/twenty-ui/**',
         ],
         babelOptions: {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],

@@ -1,8 +1,10 @@
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { motion } from 'framer-motion';
+import { motion, type HTMLMotionProps } from 'framer-motion';
 
-const StyledCardContent = styled(motion.div as any)<{ divider?: boolean }>`
+const StyledCardContent = styled(motion.div as any)<
+  HTMLMotionProps<'div'> & { divider?: boolean }
+>`
   background-color: var(--color-background-secondary);
   padding: var(--spacing-4);
 
