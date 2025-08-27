@@ -49,8 +49,8 @@ jobs:
           key: ${{ env.STORYBOOK_BUILD_CACHE_KEY }}
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
-      # - name: Front / Build storybook
-      #   run: npx nx storybook:build twenty-front
+      - name: Front / Build storybook
+        run: npx nx storybook:build twenty-front
       - name: Save storybook build cache
         uses: ./.github/workflows/actions/save-cache
         with:
