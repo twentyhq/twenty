@@ -1,8 +1,8 @@
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import { type FieldRatingValue } from '@/object-record/record-field/ui/types/FieldRatingValue';
 import { RatingInput } from '@/ui/field/input/components/RatingInput';
 import { useContext } from 'react';
-import { type FieldRatingValue } from 'twenty-ui/fields';
 import { useRatingField } from '../../hooks/useRatingField';
 
 export const RatingFieldInput = () => {

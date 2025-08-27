@@ -5,7 +5,7 @@ import { ExpandableList } from '@/ui/layout/expandable-list/components/Expandabl
 
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { isDefined } from 'twenty-shared/utils';
-import { BasePhonesDisplay } from 'twenty-ui/fields';
+import { CellItemListContainer } from 'twenty-ui/input';
 import { RoundedLink } from 'twenty-ui/navigation';
 import { logError } from '~/utils/logError';
 
@@ -85,7 +85,7 @@ export const PhonesDisplay = ({
       })}
     </ExpandableList>
   ) : (
-    <BasePhonesDisplay>
+    <CellItemListContainer>
       {phones.map(({ number, callingCode }, index) => {
         const { parsedPhone, invalidPhone } =
           parsePhoneNumberOrReturnInvalidValue(callingCode + number);
@@ -101,7 +101,7 @@ export const PhonesDisplay = ({
           />
         );
       })}
-    </BasePhonesDisplay>
+    </CellItemListContainer>
   );
 };
 

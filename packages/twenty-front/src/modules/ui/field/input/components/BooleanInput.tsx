@@ -1,6 +1,6 @@
+import { BooleanDisplay } from '@/object-record/record-field/ui/meta-types/display/components/BooleanDisplay';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
-import { BooleanDisplay } from 'twenty-ui/fields';
 
 const StyledEditableBooleanFieldContainer = styled.div<{ readonly?: boolean }>`
   align-items: center;

@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { isDefined } from 'twenty-shared/utils';
-import { BaseEmailsDisplay } from 'twenty-ui/fields';
+import { CellItemListContainer } from 'twenty-ui/input';
 import { RoundedLink } from 'twenty-ui/navigation';
 
 type EmailsDisplayProps = {
@@ -28,10 +28,10 @@ export const EmailsDisplay = ({ value, isFocused }: EmailsDisplayProps) => {
       ))}
     </ExpandableList>
   ) : (
-    <BaseEmailsDisplay>
+    <CellItemListContainer>
       {emails.map((email, index) => (
         <RoundedLink key={index} label={email} href={`mailto:${email}`} />
       ))}
-    </BaseEmailsDisplay>
+    </CellItemListContainer>
   );
 };

@@ -1,5 +1,6 @@
 import { useClearField } from '@/object-record/record-field/ui/hooks/useClearField';
-import { BaseRatingInput, type FieldRatingValue } from 'twenty-ui/fields';
+import { BaseRatingInput } from '@/object-record/record-field/ui/meta-types/input/components/BaseRatingInput';
+import { type FieldRatingValue } from '@/object-record/record-field/ui/types/FieldRatingValue';
 
 type RatingInputProps = {
   onChange?: (newValue: FieldRatingValue) => void;

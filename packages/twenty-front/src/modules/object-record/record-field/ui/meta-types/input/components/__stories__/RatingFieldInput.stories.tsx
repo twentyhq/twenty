@@ -11,7 +11,8 @@ import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { type FieldRatingValue } from 'twenty-ui/fields';
+
+import { type FieldRatingValue } from '@/object-record/record-field/ui/types/FieldRatingValue';
 import { useRatingField } from '../../../hooks/useRatingField';
 import { RatingFieldInput } from '../RatingFieldInput';
 

@@ -19,7 +19,7 @@ import {
   type FieldUUidValue,
   type PhoneRecord,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { type FieldRatingValue } from 'twenty-ui/fields';
+import { type FieldRatingValue } from '@/object-record/record-field/ui/types/FieldRatingValue';
 
 export type FieldTextDraftValue = string;
 export type FieldNumberDraftValue = number;

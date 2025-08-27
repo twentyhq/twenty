@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { type FieldRatingValue } from 'twenty-ui/fields';
+import { type FieldRatingValue } from '@/object-record/record-field/ui/types/FieldRatingValue';
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldRating } from '../../types/guards/isFieldRating';

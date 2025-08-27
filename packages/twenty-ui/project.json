@@ -24,8 +24,6 @@
         "{projectRoot}/display/dist",
         "{projectRoot}/feedback/package.json",
         "{projectRoot}/feedback/dist",
-        "{projectRoot}/fields/package.json",
-        "{projectRoot}/fields/dist",
         "{projectRoot}/input/package.json",
         "{projectRoot}/input/dist",
         "{projectRoot}/json-visualizer/package.json",

@@ -1,21 +1,13 @@
-import { styled } from '@linaria/react';
-import { IconTwentyStarFilled } from '@ui/display';
-import { RATING_VALUES } from '@ui/fields/constants/RatingValues';
-import { type FieldRatingValue } from '@ui/fields/types/FieldRatingValue';
-import { THEME_COMMON, ThemeContext } from '@ui/theme';
+import { StyledContainer } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenuStyles';
+import { RATING_VALUES } from '@/object-record/record-field/ui/constants/RatingValues';
+import { type FieldRatingValue } from '@/object-record/record-field/ui/types/FieldRatingValue';
 import { useContext, useState } from 'react';
+import {
+  ColorableIconContainer,
+  IconTwentyStarFilled,
+} from 'twenty-ui/display';
 
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-`;
-
-const StyledRatingIconContainer = styled.div<{
-  color: string;
-}>`
-  color: ${({ color }) => color};
-  display: inline-flex;
-`;
+import { THEME_COMMON, ThemeContext } from 'twenty-ui/theme';
 
 type BaseRatingInputProps = {
   onChange?: (newValue: FieldRatingValue) => void;
@@ -67,7 +59,7 @@ export const BaseRatingInput = ({
         const isActive = index <= selectedIndex;
 
         return (
-          <StyledRatingIconContainer
+          <ColorableIconContainer
             key={index}
             color={isActive ? activeColor : inactiveColor}
             onClick={() => handleClick(value)}
@@ -75,7 +67,7 @@ export const BaseRatingInput = ({
             onMouseLeave={readonly ? undefined : () => setHoveredValue(null)}
           >
             <IconTwentyStarFilled size={iconSizeMd} />
-          </StyledRatingIconContainer>
+          </ColorableIconContainer>
         );
       })}
     </StyledContainer>

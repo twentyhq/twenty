@@ -52,7 +52,6 @@
     "components",
     "display",
     "feedback",
-    "fields",
     "input",
     "json-visualizer",
     "layout",
@@ -96,11 +95,6 @@
       "types": "./dist/feedback/index.d.ts",
       "import": "./dist/feedback.mjs",
       "require": "./dist/feedback.cjs"
-    },
-    "./fields": {
-      "types": "./dist/fields/index.d.ts",
-      "import": "./dist/fields.mjs",
-      "require": "./dist/fields.cjs"
     },
     "./input": {
       "types": "./dist/input/index.d.ts",
@@ -159,9 +153,6 @@
       ],
       "feedback": [
         "dist/feedback/index.d.ts"
-      ],
-      "fields": [
-        "dist/fields/index.d.ts"
       ],
       "input": [
         "dist/input/index.d.ts"

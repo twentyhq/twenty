@@ -11,6 +11,7 @@ import {
   type FieldTextValue,
   type FieldUUidValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type FieldRatingValue } from '@/object-record/record-field/ui/types/FieldRatingValue';
 import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
 import { type SettingsFieldTypeCategoryType } from '@/settings/data-model/types/SettingsFieldTypeCategoryType';
 import { type SettingsNonCompositeFieldType } from '@/settings/data-model/types/SettingsNonCompositeFieldType';
@@ -29,7 +30,7 @@ import {
   IllustrationIconUid,
   type IconComponent,
 } from 'twenty-ui/display';
-import { type FieldRatingValue } from 'twenty-ui/fields';
+
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 DEFAULT_DATE_VALUE.setFullYear(DEFAULT_DATE_VALUE.getFullYear() + 2);

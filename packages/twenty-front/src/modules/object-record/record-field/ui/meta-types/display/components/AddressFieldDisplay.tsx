@@ -1,5 +1,6 @@
+import { TextDisplay } from '@/object-record/record-field/ui/meta-types/display/components/TextDisplay';
 import { useAddressFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useAddressFieldDisplay';
-import { TextDisplay } from 'twenty-ui/fields';
+
 import { formatAddressDisplay } from '~/utils/formatAddressDisplay';
 
 export const AddressFieldDisplay = () => {

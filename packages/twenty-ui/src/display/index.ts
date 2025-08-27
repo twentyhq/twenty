@@ -26,6 +26,7 @@ export type {
   ColorSampleProps,
 } from './color/components/ColorSample';
 export { ColorSample } from './color/components/ColorSample';
+export { ColorableIconContainer } from './icon/components/ColorableIconContainer';
 export { IconAddressBook } from './icon/components/IconAddressBook';
 export { IconGmail } from './icon/components/IconGmail';
 export { IconGoogle } from './icon/components/IconGoogle';

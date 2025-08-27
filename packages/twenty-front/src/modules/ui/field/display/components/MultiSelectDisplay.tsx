@@ -1,7 +1,6 @@
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { Tag } from 'twenty-ui/components';
-import { BaseMultiSelectDisplay } from 'twenty-ui/fields';
-import { type SelectOption } from 'twenty-ui/input';
+import { CellItemListContainer, type SelectOption } from 'twenty-ui/input';
 
 export const MultiSelectDisplay = ({
   values,
@@ -17,7 +16,7 @@ export const MultiSelectDisplay = ({
   if (!selectedOptions) return null;
 
   return (
-    <BaseMultiSelectDisplay>
+    <CellItemListContainer>
       {selectedOptions.map((selectedOption, index) => (
         <Tag
           preventShrink
@@ -27,6 +26,6 @@ export const MultiSelectDisplay = ({
           Icon={selectedOption.Icon ?? undefined}
         />
       ))}
-    </BaseMultiSelectDisplay>
+    </CellItemListContainer>
   );
 };
