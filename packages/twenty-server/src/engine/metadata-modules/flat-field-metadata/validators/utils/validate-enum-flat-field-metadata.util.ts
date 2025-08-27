@@ -62,8 +62,9 @@ const validateMetadataOptionLabel = (
     return [
       {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: t`Option label must be a string`,
+        message: t`Option label must be a string of at least one character`,
         userFriendlyMessage: t`Option label format not supported`,
+        value: sanitizedLabel,
       },
     ];
   }
@@ -110,7 +111,7 @@ const validateMetadataOptionValue = (
     return [
       {
         code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: t`Option value must be a string`,
+        message: t`Option value must be a string of at least one character`,
         userFriendlyMessage: t`Option value format not supported`,
       },
     ];

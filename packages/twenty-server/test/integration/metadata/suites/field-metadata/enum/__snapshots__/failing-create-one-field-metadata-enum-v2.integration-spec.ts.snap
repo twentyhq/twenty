@@ -486,12 +486,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option label "" is beneath 1 character",
-                "value": "",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Label must not be empty",
+                "message": "Option label must be a string of at least one character",
+                "userFriendlyMessage": "Option label format not supported",
                 "value": "",
               },
             ],
@@ -528,13 +524,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option value "" is beneath 1 character",
-                "value": "",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Value must be in UPPER_CASE and follow snake_case """,
-                "value": "",
+                "message": "Option value must be a string of at least one character",
+                "userFriendlyMessage": "Option value format not supported",
               },
             ],
             "id": Any<String>,
@@ -809,8 +800,9 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option label must be a string",
+                "message": "Option label must be a string of at least one character",
                 "userFriendlyMessage": "Option label format not supported",
+                "value": 22222,
               },
             ],
             "id": Any<String>,
@@ -846,7 +838,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option value must be a string",
+                "message": "Option value must be a string of at least one character",
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
@@ -1116,12 +1108,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option label "" is beneath 1 character",
-                "value": "",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Label must not be empty",
+                "message": "Option label must be a string of at least one character",
+                "userFriendlyMessage": "Option label format not supported",
                 "value": "",
               },
             ],
@@ -1158,13 +1146,8 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option value "" is beneath 1 character",
-                "value": "",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Value must be in UPPER_CASE and follow snake_case """,
-                "value": "",
+                "message": "Option value must be a string of at least one character",
+                "userFriendlyMessage": "Option value format not supported",
               },
             ],
             "id": Any<String>,
@@ -1948,12 +1931,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option label "" is beneath 1 character",
-                "value": "",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Label must not be empty",
+                "message": "Option label must be a string of at least one character",
+                "userFriendlyMessage": "Option label format not supported",
                 "value": "",
               },
             ],
@@ -1990,13 +1969,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option value "" is beneath 1 character",
-                "value": "",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Value must be in UPPER_CASE and follow snake_case """,
-                "value": "",
+                "message": "Option value must be a string of at least one character",
+                "userFriendlyMessage": "Option value format not supported",
               },
             ],
             "id": Any<String>,
@@ -2181,8 +2155,9 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option label must be a string",
+                "message": "Option label must be a string of at least one character",
                 "userFriendlyMessage": "Option label format not supported",
+                "value": 22222,
               },
             ],
             "id": Any<String>,
@@ -2218,7 +2193,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option value must be a string",
+                "message": "Option value must be a string of at least one character",
                 "userFriendlyMessage": "Option value format not supported",
               },
             ],
@@ -2488,12 +2463,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option label "" is beneath 1 character",
-                "value": "",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Label must not be empty",
+                "message": "Option label must be a string of at least one character",
+                "userFriendlyMessage": "Option label format not supported",
                 "value": "",
               },
             ],
@@ -2530,13 +2501,8 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
             "errors": [
               {
                 "code": "INVALID_FIELD_INPUT",
-                "message": "Option value "" is beneath 1 character",
-                "value": "",
-              },
-              {
-                "code": "INVALID_FIELD_INPUT",
-                "message": "Value must be in UPPER_CASE and follow snake_case """,
-                "value": "",
+                "message": "Option value must be a string of at least one character",
+                "userFriendlyMessage": "Option value format not supported",
               },
             ],
             "id": Any<String>,
