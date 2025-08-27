@@ -69,7 +69,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
         },
         onError: (error) => {
           enqueueErrorSnackBar({
-            apolloError: error instanceof ApolloError ? error : undefined,
+            message: error ? error.message : "An unexpected error occurred",
           });
         },
       });
