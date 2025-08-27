@@ -11,6 +11,7 @@ import {
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { WorkspaceSyncAgentService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-agent.service';
 import { WorkspaceSyncFieldMetadataRelationService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata-relation.service';
 import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
@@ -38,6 +39,7 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceSyncObjectMetadataIdentifiersService: WorkspaceSyncObjectMetadataIdentifiersService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly workspaceSyncRoleService: WorkspaceSyncRoleService,
+    private readonly workspaceSyncAgentService: WorkspaceSyncAgentService,
   ) {}
 
   /**
@@ -170,6 +172,17 @@ export class WorkspaceSyncMetadataService {
 
       this.logger.log(
         `Workspace role migrations took ${workspaceRoleMigrationsEnd - workspaceRoleMigrationsStart}ms`,
+      );
+
+      // 7 - Sync standard agents
+      const workspaceAgentMigrationsStart = performance.now();
+
+      await this.workspaceSyncAgentService.synchronize(context, manager);
+
+      const workspaceAgentMigrationsEnd = performance.now();
+
+      this.logger.log(
+        `Workspace agent migrations took ${workspaceAgentMigrationsEnd - workspaceAgentMigrationsStart}ms`,
       );
 
       const workspaceMigrationsSaveStart = performance.now();

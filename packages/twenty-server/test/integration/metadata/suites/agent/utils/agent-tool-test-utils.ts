@@ -5,11 +5,12 @@ import { type Repository } from 'typeorm';
 
 import { ToolAdapterService } from 'src/engine/core-modules/ai/services/tool-adapter.service';
 import { ToolService } from 'src/engine/core-modules/ai/services/tool.service';
+import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool/services/tool-registry.service';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/send-email-tool/send-email-tool';
 import { AgentHandoffExecutorService } from 'src/engine/metadata-modules/agent/agent-handoff-executor.service';
 import { AgentHandoffService } from 'src/engine/metadata-modules/agent/agent-handoff.service';
-import { AgentToolService } from 'src/engine/metadata-modules/agent/agent-tool.service';
+import { AgentToolGeneratorService } from 'src/engine/metadata-modules/agent/agent-tool-generator.service';
 import { type AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { AgentService } from 'src/engine/metadata-modules/agent/agent.service';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -19,14 +20,14 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
-import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
-import { RecordInputTransformerService } from 'src/engine/core-modules/record-transformer/services/record-input-transformer.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
+import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
+import { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
+import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
 
 export interface AgentToolTestContext {
   module: TestingModule;
-  agentToolService: AgentToolService;
+  agentToolService: AgentToolGeneratorService;
   agentService: AgentService;
   objectMetadataService: ObjectMetadataService;
   roleRepository: Repository<RoleEntity>;
@@ -48,7 +49,7 @@ export const createAgentToolTestModule =
 
     const module = await Test.createTestingModule({
       providers: [
-        AgentToolService,
+        AgentToolGeneratorService,
         {
           provide: AgentService,
           useValue: {
@@ -126,6 +127,7 @@ export const createAgentToolTestModule =
           provide: PermissionsService,
           useValue: {
             hasToolPermission: jest.fn(),
+            checkRolePermissions: jest.fn().mockReturnValue(true),
           },
         },
         {
@@ -142,10 +144,18 @@ export const createAgentToolTestModule =
             executeHandoff: jest.fn().mockResolvedValue({ success: true }),
           },
         },
+        {
+          provide: WorkflowToolWorkspaceService,
+          useValue: {
+            generateWorkflowTools: jest.fn().mockResolvedValue({}),
+          },
+        },
       ],
     }).compile();
 
-    const agentToolService = module.get<AgentToolService>(AgentToolService);
+    const agentToolService = module.get<AgentToolGeneratorService>(
+      AgentToolGeneratorService,
+    );
     const agentService = module.get<AgentService>(AgentService);
     const objectMetadataService = module.get<ObjectMetadataService>(
       ObjectMetadataService,
