@@ -1,10 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Command, Option } from 'nest-commander';
-import { Repository } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 import Dagre from '@dagrejs/dagre';
+import { Command, Option } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandOptions,
@@ -13,11 +13,11 @@ import {
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 type Node = {
   id: string;
@@ -44,7 +44,7 @@ export type AddPositionsToWorkflowVersionsAndWorkflowRunsOptions =
 })
 export class AddPositionsToWorkflowVersionsAndWorkflowRuns extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
