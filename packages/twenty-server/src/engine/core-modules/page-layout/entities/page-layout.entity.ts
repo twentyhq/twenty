@@ -16,8 +16,10 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 @Entity({ name: 'pageLayout', schema: 'core' })
-@Index('IDX_PAGE_LAYOUT_WORKSPACE_ID', ['workspaceId'])
-@Index('IDX_PAGE_LAYOUT_OBJECT_METADATA_ID', ['objectMetadataId'])
+@Index('IDX_PAGE_LAYOUT_WORKSPACE_ID_OBJECT_METADATA_ID', [
+  'workspaceId',
+  'objectMetadataId',
+])
 export class PageLayoutEntity implements Required<PageLayoutEntity> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
