@@ -16,7 +16,7 @@ import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/co
 import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabelWithCounterPart';
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
-import { css, useTheme } from '@emotion/react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
@@ -26,70 +26,9 @@ import { IconCheck, IconX, useIcons } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { WorkflowDiagramHandleTarget } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTarget';
 import { WorkflowDiagramHandleSource } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleSource';
-import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
-import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
-
-const StyledNodeContainer = styled(WorkflowNodeContainer)<{
-  runStatus?: WorkflowRunStepStatus;
-}>`
-  &:hover {
-    background: linear-gradient(
-        0deg,
-        ${({ theme }) => theme.background.transparent.lighter} 0%,
-        ${({ theme }) => theme.background.transparent.lighter} 100%
-      ),
-      ${({ theme }) => theme.background.secondary};
-  }
-
-  ${({ theme, runStatus }) => {
-    const colors = getWorkflowDiagramColors({ theme, runStatus });
-
-    return css`
-      border-color: ${colors.unselected.borderColor};
-      background: ${colors.unselected.background};
-
-      .selected & {
-        background-color: ${colors.selected.background};
-        border: 1px solid ${colors.selected.borderColor};
-      }
-    `;
-  }}
-`;
 
 const StyledNodeLabelWithCounterPart = styled(WorkflowNodeLabelWithCounterPart)`
   column-gap: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledNodeLabel = styled(WorkflowNodeLabel)<{
-  runStatus?: WorkflowRunStepStatus;
-}>`
-  ${({ theme, runStatus }) => {
-    const colors = getWorkflowDiagramColors({ theme, runStatus });
-
-    return css`
-      color: ${colors.unselected.color};
-
-      .selected & {
-        color: ${colors.selected.color};
-      }
-    `;
-  }}
-`;
-
-const StyledNodeTitle = styled(WorkflowNodeTitle)<{
-  runStatus?: WorkflowRunStepStatus;
-}>`
-  ${({ theme, runStatus }) => {
-    const colors = getWorkflowDiagramColors({ theme, runStatus });
-
-    return css`
-      color: ${colors.unselected.titleColor};
-
-      .selected & {
-        color: ${colors.selected.titleColor};
-      }
-    `;
-  }}
 `;
 
 const StyledNodeCounter = styled.div`
@@ -165,7 +104,7 @@ export const WorkflowRunDiagramStepNode = ({
 
   return (
     <>
-      <StyledNodeContainer
+      <WorkflowNodeContainer
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
         runStatus={data.runStatus}
         onClick={handleClick}
@@ -177,9 +116,9 @@ export const WorkflowRunDiagramStepNode = ({
 
         <WorkflowNodeRightPart>
           <StyledNodeLabelWithCounterPart>
-            <StyledNodeLabel runStatus={data.runStatus}>
+            <WorkflowNodeLabel runStatus={data.runStatus}>
               {capitalize(data.nodeType)}
-            </StyledNodeLabel>
+            </WorkflowNodeLabel>
 
             {data.runStatus === StepStatus.SUCCESS && (
               <StyledNodeCounter>
@@ -205,11 +144,11 @@ export const WorkflowRunDiagramStepNode = ({
             )}
           </StyledNodeLabelWithCounterPart>
 
-          <StyledNodeTitle runStatus={data.runStatus}>
+          <WorkflowNodeTitle runStatus={data.runStatus}>
             {data.name}
-          </StyledNodeTitle>
+          </WorkflowNodeTitle>
         </WorkflowNodeRightPart>
-      </StyledNodeContainer>
+      </WorkflowNodeContainer>
 
       <WorkflowDiagramHandleSource
         runStatus={data.runStatus}
