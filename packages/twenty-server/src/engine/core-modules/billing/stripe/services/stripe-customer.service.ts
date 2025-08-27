@@ -49,7 +49,7 @@ export class StripeCustomerService {
   async createStripeCustomer(
     userEmail: string,
     workspaceId: string,
-    customerName: string | undefined
+    customerName: string | undefined,
   ) {
     const customer = await this.stripe.customers.create({
       name: customerName,
