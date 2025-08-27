@@ -1,13 +1,13 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class CreatePageLayoutTabEntity1756297431497
+export class CreatePageLayoutTabEntity1756300002120
   implements MigrationInterface
 {
-  name = 'CreatePageLayoutTabEntity1756297431497';
+  name = 'CreatePageLayoutTabEntity1756300002120';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE "core"."pageLayoutTab" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "title" character varying NOT NULL, "position" integer NOT NULL, "pageLayoutId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_f1327f6ea950cdc59fe17569c5c" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "core"."pageLayoutTab" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "title" character varying NOT NULL, "position" integer NOT NULL DEFAULT '0', "pageLayoutId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP WITH TIME ZONE, CONSTRAINT "PK_f1327f6ea950cdc59fe17569c5c" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE INDEX "IDX_PAGE_LAYOUT_TAB_PAGE_LAYOUT_ID" ON "core"."pageLayoutTab" ("pageLayoutId") `,
