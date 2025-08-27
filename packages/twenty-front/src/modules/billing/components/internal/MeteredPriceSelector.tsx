@@ -12,7 +12,6 @@ import {
   type BillingPriceOutput,
   type BillingSubscriptionItem,
 } from '~/generated/graphql';
-import { isDefined } from 'twenty-shared/utils';
 
 export const MeteredPriceSelector = ({
   meteredBillingPrices,
