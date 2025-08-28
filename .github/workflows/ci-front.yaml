@@ -57,8 +57,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [2]
-        # storybook_scope: [modules, pages, performance]
+        shard: [1, 2, 3, 4]
+        storybook_scope: [modules, pages, performance]
     env:
       SHARD_COUNTER: 4
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
@@ -81,12 +81,12 @@ jobs:
         run: npx nx storybook:serve-and-test:static twenty-front --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }} --checkCoverage=false
       - name: Rename coverage file
         run: mv packages/twenty-front/coverage/storybook/coverage-storybook.json packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
-      # - name: Upload coverage artifact
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     retention-days: 1
-      #     name: coverage-artifacts-${{ github.run_id }}-${{ matrix.shard }}
-      #     path: packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 1
+          name: coverage-artifacts-${{ github.run_id }}-${{ matrix.shard }}
+          path: packages/twenty-front/coverage/storybook/coverage-shard-${{matrix.shard}}.json
   # merge-reports-and-check-coverage:
   #   timeout-minutes: 30
   #   runs-on: depot-ubuntu-24.04-8
