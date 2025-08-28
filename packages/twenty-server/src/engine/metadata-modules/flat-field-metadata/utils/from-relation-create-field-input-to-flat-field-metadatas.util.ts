@@ -13,6 +13,7 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { RelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/relation-field-metadata-type.type';
 import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload-or-throw.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -55,7 +56,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
   createFieldInput,
   workspaceId,
 }: FromRelationCreateFieldInputToFlatFieldMetadataArgs): Promise<
-  FieldInputTranspilationResult<FlatFieldMetadata[]>
+  FieldInputTranspilationResult<FlatFieldMetadata<RelationFieldMetadataType>[]>
 > => {
   const rawCreationPayload = createFieldInput.relationCreationPayload;
 
@@ -67,6 +68,20 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
         message: `Relation creation payload is required`,
         userFriendlyMessage: t`Relation creation payload is required`,
         value: rawCreationPayload,
+      },
+    };
+  }
+
+  if (
+    createFieldInput.type !== FieldMetadataType.RELATION &&
+    createFieldInput.type !== FieldMetadataType.MORPH_RELATION
+  ) {
+    return {
+      status: 'fail',
+      error: {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: `Received invalida create field input in relation/morph_relation util, should never occur`,
+        value: createFieldInput.type,
       },
     };
   }
@@ -120,7 +135,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
   const targetRelationTargetFieldMetadataId = v4();
   const sourceRelationTargetFieldMetadataId = v4();
   const sourceFlatFieldMetadata: Omit<
-    FlatFieldMetadata<FieldMetadataType.RELATION>,
+    FlatFieldMetadata<RelationFieldMetadataType>,
     'flatRelationTargetFieldMetadata'
   > = {
     ...getDefaultFlatFieldMetadata({
@@ -129,7 +144,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
       fieldMetadataId: sourceRelationTargetFieldMetadataId,
     }),
     icon: createFieldInput.icon ?? 'IconRelationOneToMany',
-    type: FieldMetadataType.RELATION,
+    type: createFieldInput.type,
     defaultValue: null,
     settings: sourceFlatFieldMetadataSettings,
     options: null,
@@ -181,6 +196,6 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
         flatRelationTargetFieldMetadata: targetFlatFieldMetadata,
       },
       targetFlatFieldMetadata,
-    ] satisfies FlatFieldMetadata<FieldMetadataType.RELATION>[],
+    ] satisfies FlatFieldMetadata<RelationFieldMetadataType>[],
   };
 };
