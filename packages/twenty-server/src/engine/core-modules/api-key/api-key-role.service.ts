@@ -145,6 +145,13 @@ export class ApiKeyRoleService {
       );
     }
 
+    if (!role.canBeAssignedToApiKeys) {
+      throw new ApiKeyException(
+        `Role "${role.label}" cannot be assigned to API keys`,
+        ApiKeyExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS,
+      );
+    }
+
     const existingRoleTarget = await this.roleTargetsRepository.findOne({
       where: {
         apiKeyId,

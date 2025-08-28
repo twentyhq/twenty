@@ -98,6 +98,13 @@ export class AgentRoleService {
       );
     }
 
+    if (!role.canBeAssignedToAgents) {
+      throw new AgentException(
+        `Role "${role.label}" cannot be assigned to agents`,
+        AgentExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS,
+      );
+    }
+
     const existingRoleTarget = await this.roleTargetsRepository.findOne({
       where: {
         agentId,
