@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type RelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/relation-field-metadata-type.type';
+import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { generateRelationOrMorphRelationFlatFieldMetadataPairUtil } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-relation-or-morph-relation-flat-field-metadata-pair.util';
@@ -59,6 +60,10 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
         ...createFieldInput,
         relationCreationPayload,
       },
+      sourceFlatObjectMetadataJoinColumnName:
+        computeRelationFieldJoinColumnName({
+          name: createFieldInput.name,
+        }),
       sourceFlatObjectMetadata,
       targetFlatObjectMetadata,
       workspaceId,

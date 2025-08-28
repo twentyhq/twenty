@@ -69,19 +69,18 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
     const { relationCreationPayload, targetFlatObjectMetadata } =
       relationValidationResult.result;
 
-    const sourceFlatFieldMetadataName = computeMorphRelationFieldJoinColumnName(
-      {
+    const sourceFlatObjectMetadataJoinColumnName =
+      computeMorphRelationFieldJoinColumnName({
         name: createFieldInput.name,
         targetObjectMetadataNameSingular: targetFlatObjectMetadata.nameSingular,
-      },
-    );
+      });
     const flatFieldMetadatas =
       generateRelationOrMorphRelationFlatFieldMetadataPairUtil({
         createFieldInput: {
           ...createFieldInput,
           relationCreationPayload,
-          name: sourceFlatFieldMetadataName,
         },
+        sourceFlatObjectMetadataJoinColumnName,
         sourceFlatObjectMetadata,
         targetFlatObjectMetadata,
         workspaceId,

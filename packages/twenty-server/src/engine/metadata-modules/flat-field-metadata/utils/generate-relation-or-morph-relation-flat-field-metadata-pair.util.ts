@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type RelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/relation-field-metadata-type.type';
+import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -11,17 +12,17 @@ import { computeMetadataNameFromLabel } from 'src/engine/metadata-modules/utils/
 
 type ComputeFieldMetadataRelationSettingsForRelationTypeArgs = {
   relationType: RelationType;
-  fieldMetadataName: string;
+  joinColumnName: string;
 };
 const computeFieldMetadataRelationSettingsForRelationType = ({
-  fieldMetadataName,
   relationType,
+  joinColumnName,
 }: ComputeFieldMetadataRelationSettingsForRelationTypeArgs) => {
   if (relationType === RelationType.MANY_TO_ONE) {
     return {
       relationType: RelationType.MANY_TO_ONE,
       onDelete: RelationOnDeleteAction.SET_NULL,
-      joinColumnName: `${fieldMetadataName}Id`, // NOT GOOD ?
+      joinColumnName,
     };
   }
 
@@ -33,6 +34,7 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
 type GenerateRelationOrMorphRelationFlatFieldMetadataPairUtilArgs = {
   targetFlatObjectMetadata: FlatObjectMetadata;
   sourceFlatObjectMetadata: FlatObjectMetadata;
+  sourceFlatObjectMetadataJoinColumnName: string;
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'> &
     Required<
       Pick<CreateFieldInput, 'relationCreationPayload' | 'type' | 'name'>
@@ -44,12 +46,13 @@ export const generateRelationOrMorphRelationFlatFieldMetadataPairUtil = ({
   sourceFlatObjectMetadata,
   targetFlatObjectMetadata,
   workspaceId,
+  sourceFlatObjectMetadataJoinColumnName,
 }: GenerateRelationOrMorphRelationFlatFieldMetadataPairUtilArgs): FlatFieldMetadata<RelationFieldMetadataType>[] => {
   const { relationCreationPayload } = createFieldInput;
 
   const sourceFlatFieldMetadataSettings =
     computeFieldMetadataRelationSettingsForRelationType({
-      fieldMetadataName: createFieldInput.name,
+      joinColumnName: sourceFlatObjectMetadataJoinColumnName,
       relationType: relationCreationPayload.type,
     });
   const targetRelationTargetFieldMetadataId = v4();
@@ -86,7 +89,9 @@ export const generateRelationOrMorphRelationFlatFieldMetadataPairUtil = ({
   };
   const targetFlatFieldMetadataSettings =
     computeFieldMetadataRelationSettingsForRelationType({
-      fieldMetadataName: targetCreateFieldInput.name,
+      joinColumnName: computeRelationFieldJoinColumnName({
+        name: targetCreateFieldInput.name,
+      }),
       relationType:
         relationCreationPayload.type === RelationType.ONE_TO_MANY
           ? RelationType.MANY_TO_ONE
