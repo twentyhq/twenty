@@ -18,6 +18,7 @@ import { fromMorphRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engin
 import { fromRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
 
 type FromCreateFieldInputToFlatObjectMetadataArgs = {
   rawCreateFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
@@ -46,10 +47,10 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
       rawCreateFieldInput,
       ['description', 'icon', 'label', 'name', 'objectMetadataId', 'type'],
     );
-  const parentFlatObjectMetadata =
+  const parentFlatObjectMetadataWithFlatFieldMaps =
     existingFlatObjectMetadataMaps.byId[createFieldInput.objectMetadataId];
 
-  if (!isDefined(parentFlatObjectMetadata)) {
+  if (!isDefined(parentFlatObjectMetadataWithFlatFieldMaps)) {
     return {
       status: 'fail',
       error: {
@@ -59,6 +60,11 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
       },
     };
   }
+
+  const parentFlatObjectMetadata =
+    fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata(
+      parentFlatObjectMetadataWithFlatFieldMaps,
+    );
 
   const fieldMetadataId = v4();
   const commonFlatFieldMetadata = getDefaultFlatFieldMetadata({
