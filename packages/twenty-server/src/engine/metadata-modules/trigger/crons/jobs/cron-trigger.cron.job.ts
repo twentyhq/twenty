@@ -67,7 +67,7 @@ export class CronTriggerCronJob {
           ServerlessFunctionTriggerJob.name,
           {
             serverlessFunctionId: cronTrigger.serverlessFunction.id,
-            workspaceId: activeWorkspace.id,
+            workspaceId: cronTrigger.workspaceId,
             payload: {},
           },
           { retryLimit: 3 },
