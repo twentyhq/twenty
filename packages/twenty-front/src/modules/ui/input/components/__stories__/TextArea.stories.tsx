@@ -2,8 +2,8 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { useState } from 'react';
 
 import { expect, userEvent, within } from '@storybook/test';
-import { TextArea, type TextAreaProps } from '../TextArea';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { TextArea, type TextAreaProps } from '../TextArea';
 
 type RenderProps = TextAreaProps;
 
@@ -44,7 +44,7 @@ export const WithLabel: Story = {
   play: async () => {
     const canvas = within(document.body);
 
-    const label = await canvas.findByText('My Textarea');
+    const label = await canvas.findByText('My Textareassss');
 
     expect(label).toBeVisible();
 

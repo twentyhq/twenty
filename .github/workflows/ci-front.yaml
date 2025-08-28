@@ -81,6 +81,7 @@ jobs:
         uses: ./.github/workflows/actions/restore-cache
         with:
           key: ${{ env.STORYBOOK_BUILD_CACHE_KEY }}
+          additional-paths: .nx
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
