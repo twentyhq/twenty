@@ -2,14 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { capitalize, computeMorphRelationFieldJoinColumnName, isDefined } from 'twenty-shared/utils';
 import { type QueryRunner, Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { computeMorphRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-join-column-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   ObjectMetadataException,
