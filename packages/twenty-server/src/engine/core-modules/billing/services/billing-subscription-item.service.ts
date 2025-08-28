@@ -20,7 +20,7 @@ export class BillingSubscriptionItemService {
   constructor(
     @InjectRepository(BillingSubscriptionItem)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
-    @InjectRepository(BillingPrice, 'core')
+    @InjectRepository(BillingPrice)
     private readonly billingPriceRepository: Repository<BillingPrice>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly stripeSubscriptionService: StripeSubscriptionService,
