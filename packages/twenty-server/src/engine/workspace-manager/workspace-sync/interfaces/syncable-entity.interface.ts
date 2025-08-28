@@ -1,6 +1,6 @@
 import { Column, Index } from 'typeorm';
 
-@Index('IDX_UNIQUE_IDENTIFIER', ['workspaceId', 'universalIdentifier'], {
+@Index(['workspaceId', 'universalIdentifier'], {
   unique: true,
 })
 export abstract class SyncableEntity {
