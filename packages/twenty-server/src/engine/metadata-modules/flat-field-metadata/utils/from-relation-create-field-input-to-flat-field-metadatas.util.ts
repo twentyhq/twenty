@@ -49,7 +49,7 @@ type FromRelationCreateFieldInputToFlatFieldMetadataArgs = {
   sourceParentFlatObjectMetadata: FlatObjectMetadata;
   workspaceId: string;
 };
-export const fromRelationCreateFieldInputToFlatFieldMetadata = async ({
+export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
   existingFlatObjectMetadataMaps,
   sourceParentFlatObjectMetadata,
   createFieldInput,
