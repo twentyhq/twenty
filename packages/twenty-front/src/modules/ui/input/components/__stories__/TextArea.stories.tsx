@@ -44,7 +44,7 @@ export const WithLabel: Story = {
   play: async () => {
     const canvas = within(document.body);
 
-    const label = await canvas.findByText('My Textareassss');
+    const label = await canvas.findByText('My Textarea');
 
     expect(label).toBeVisible();
 
