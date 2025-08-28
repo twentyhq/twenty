@@ -8,7 +8,7 @@ import { type RelationFieldMetadataType } from 'src/engine/metadata-modules/fiel
 import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { generateRelationOrMorphRelationFlatFieldMetadataPairUtil } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-relation-or-morph-relation-flat-field-metadata-pair.util';
+import { generateRelationOrMorphRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-relation-or-morph-relation-flat-field-metadata-pair.util';
 import { validateRelationCreationPayload } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -55,7 +55,7 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
     relationValidationResult.result;
 
   const flatFieldMetadatas =
-    generateRelationOrMorphRelationFlatFieldMetadataPairUtil({
+    generateRelationOrMorphRelationFlatFieldMetadataPair({
       createFieldInput: {
         ...createFieldInput,
         relationCreationPayload,

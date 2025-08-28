@@ -31,7 +31,7 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
   };
 };
 
-type GenerateRelationOrMorphRelationFlatFieldMetadataPairUtilArgs = {
+type GenerateRelationOrMorphRelationFlatFieldMetadataPairArgs = {
   targetFlatObjectMetadata: FlatObjectMetadata;
   sourceFlatObjectMetadata: FlatObjectMetadata;
   sourceFlatObjectMetadataJoinColumnName: string;
@@ -41,13 +41,13 @@ type GenerateRelationOrMorphRelationFlatFieldMetadataPairUtilArgs = {
     > & { type: RelationFieldMetadataType };
   workspaceId: string;
 };
-export const generateRelationOrMorphRelationFlatFieldMetadataPairUtil = ({
+export const generateRelationOrMorphRelationFlatFieldMetadataPair = ({
   createFieldInput,
   sourceFlatObjectMetadata,
   targetFlatObjectMetadata,
   workspaceId,
   sourceFlatObjectMetadataJoinColumnName,
-}: GenerateRelationOrMorphRelationFlatFieldMetadataPairUtilArgs): FlatFieldMetadata<RelationFieldMetadataType>[] => {
+}: GenerateRelationOrMorphRelationFlatFieldMetadataPairArgs): FlatFieldMetadata<RelationFieldMetadataType>[] => {
   const { relationCreationPayload } = createFieldInput;
 
   const sourceFlatFieldMetadataSettings =
