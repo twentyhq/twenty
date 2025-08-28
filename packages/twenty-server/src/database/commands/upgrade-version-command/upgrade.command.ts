@@ -31,17 +31,14 @@ import { RemoveWorkflowRunsWithoutState } from 'src/database/commands/upgrade-ve
 import { AddNextStepIdsToWorkflowRunsTrigger } from 'src/database/commands/upgrade-version-command/1-3/1-3-add-next-step-ids-to-workflow-runs-trigger.command';
 import { AssignRolesToExistingApiKeysCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-assign-roles-to-existing-api-keys.command';
 import { UpdateTimestampColumnTypeInWorkspaceSchemaCommand } from 'src/database/commands/upgrade-version-command/1-3/1-3-update-timestamp-column-type-in-workspace-schema.command';
-
-import { PopulateMessageFolderFieldsCommand } from 'src/database/commands/upgrade-version-command/1-4/1-4-populate-message-folder-fields.command';
-
+import { AddPositionsToWorkflowVersionsAndWorkflowRuns } from 'src/database/commands/upgrade-version-command/1-5/1-5-add-positions-to-workflow-versions-and-workflow-runs.command';
+import { PopulateMessageFolderFieldsCommand } from 'src/database/commands/upgrade-version-command/1-5/1-5-populate-message-folder-fields.command';
 import { RemoveFavoriteViewRelation } from 'src/database/commands/upgrade-version-command/1-5/1-5-remove-favorite-view-relation.command';
-
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
-import { AddPositionsToWorkflowVersionsAndWorkflowRuns } from 'src/database/commands/upgrade-version-command/1-5/1-5-add-positions-to-workflow-versions-and-workflow-runs.command';
 
 const execPromise = promisify(exec);
 
@@ -168,13 +165,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     protected readonly addNextStepIdsToWorkflowRunsTrigger: AddNextStepIdsToWorkflowRunsTrigger,
     protected readonly updateTimestampColumnTypeInWorkspaceSchemaCommand: UpdateTimestampColumnTypeInWorkspaceSchemaCommand,
 
-    // 1.4 Commands
-    protected readonly populateMessageFolderFieldsCommand: PopulateMessageFolderFieldsCommand,
-
     // 1.5 Commands
     protected readonly removeFavoriteViewRelation: RemoveFavoriteViewRelation,
     protected readonly addPositionsToWorkflowVersionsAndWorkflowRuns: AddPositionsToWorkflowVersionsAndWorkflowRuns,
-
+    protected readonly populateMessageFolderFieldsCommand: PopulateMessageFolderFieldsCommand,
   ) {
     super(
       workspaceRepository,

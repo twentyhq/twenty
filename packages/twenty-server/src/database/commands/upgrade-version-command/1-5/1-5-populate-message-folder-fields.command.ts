@@ -28,7 +28,7 @@ type MessageFolder = Pick<
 })
 export class PopulateMessageFolderFieldsCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly syncMessageFoldersService: SyncMessageFoldersService,
