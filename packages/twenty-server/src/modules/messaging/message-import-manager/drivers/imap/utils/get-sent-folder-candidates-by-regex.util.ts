@@ -6,7 +6,7 @@ import { getStandardFolderByRegex } from 'src/modules/messaging/message-import-m
 export function getImapSentFolderCandidatesByRegex(
   list: ListResponse[],
 ): string[] {
-  const regexCandidateFolders = [];
+  const regexCandidateFolders: string[] = [];
 
   for (const folder of list) {
     const standardFolder = getStandardFolderByRegex(folder.path);
