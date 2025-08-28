@@ -1,4 +1,3 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
@@ -11,7 +10,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata-or-throw.util';
-import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-flat-field-metadata.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
 
@@ -42,16 +41,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
     );
   }
 
-  if (
-    isFlatFieldMetadataEntityOfType(
-      flatFieldMetadataToDelete,
-      FieldMetadataType.RELATION,
-    ) ||
-    isFlatFieldMetadataEntityOfType(
-      flatFieldMetadataToDelete,
-      FieldMetadataType.MORPH_RELATION,
-    )
-  ) {
+  if (isRelationFlatFieldMetadata(flatFieldMetadataToDelete)) {
     const relationTargetFlatFieldMetadata =
       findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
