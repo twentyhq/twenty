@@ -393,6 +393,7 @@ export {
   IconWebhook,
   IconWorld,
   IconX,
+  IconCalendarRepeat,
 } from './icon/components/TablerIcons';
 export { useIcons } from './icon/hooks/useIcons';
 export { IconsProvider } from './icon/providers/IconsProvider';

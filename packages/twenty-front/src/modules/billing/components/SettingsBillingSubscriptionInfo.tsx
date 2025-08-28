@@ -26,6 +26,7 @@ import {
   IconCircleX,
   IconTag,
   IconUsers,
+  IconCalendarRepeat,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -42,6 +43,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { useEndSubscriptionTrialPeriod } from '@/billing/hooks/useEndSubscriptionTrialPeriod';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { beautifyExactDate } from '~/utils/date-utils';
 
 const SWITCH_BILLING_INTERVAL_MODAL_ID = 'switch-billing-interval-modal';
 
@@ -122,6 +124,9 @@ export const SettingsBillingSubscriptionInfo = () => {
 
   const formattedPrices = formatMonthlyPrices(baseProductPrices);
 
+  const renewDate =
+    currentWorkspace?.currentBillingSubscription?.currentPeriodEnd;
+
   const yearlyPrice =
     formattedPrices?.[
       currentWorkspace?.currentBillingSubscription?.metadata[
@@ -199,6 +204,13 @@ export const SettingsBillingSubscriptionInfo = () => {
           Icon={IconCalendarEvent}
           value={intervalLabel}
         />
+        {renewDate && (
+          <SubscriptionInfoRowContainer
+            label={t`Renew date`}
+            Icon={IconCalendarRepeat}
+            value={beautifyExactDate(renewDate)}
+          />
+        )}
         <SubscriptionInfoRowContainer
           label={t`Seats`}
           Icon={IconUsers}
