@@ -1,10 +1,12 @@
 import styled from '@emotion/styled';
 import { ResponsiveBar, type BarDatum, type ComputedDatum } from '@nivo/bar';
-import { useState } from 'react';
+import { isString } from '@sniptt/guards';
+import { useId, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useTheme } from '@emotion/react';
 import { type GraphColor } from '../types/GraphColor';
+import { type GraphColorScheme } from '../types/GraphColorScheme';
 import { createGradientDef } from '../utils/createGradientDef';
 import { createGraphColorRegistry } from '../utils/createGraphColorRegistry';
 import { getColorScheme } from '../utils/getColorScheme';
@@ -15,7 +17,12 @@ import {
 import { GraphWidgetLegend } from './GraphWidgetLegend';
 import { GraphWidgetTooltip } from './GraphWidgetTooltip';
 
-type SeriesKey = string | { key: string; color?: GraphColor };
+type SeriesKeyString = string;
+type SeriesKeyObject = { key: string; color?: GraphColor };
+type SeriesKey = SeriesKeyString | SeriesKeyObject;
+
+const isSeriesKeyObject = (key: SeriesKey): key is SeriesKeyObject =>
+  !isString(key);
 
 type GraphWidgetBarChartProps = {
   data: BarDatum[];
@@ -24,6 +31,7 @@ type GraphWidgetBarChartProps = {
   showLegend?: boolean;
   showGrid?: boolean;
   showValues?: boolean;
+  showGradient?: boolean;
   xAxisLabel?: string;
   yAxisLabel?: string;
   tooltipHref?: string;
@@ -77,6 +85,7 @@ export const GraphWidgetBarChart = ({
   customFormatter,
 }: GraphWidgetBarChartProps) => {
   const theme = useTheme();
+  const instanceId = useId();
   const [hoveredBar, setHoveredBar] = useState<{
     key: string;
     indexValue: string | number;
@@ -92,44 +101,50 @@ export const GraphWidgetBarChart = ({
     customFormatter,
   };
 
-  const barConfigs: Array<{
-    key: string;
-    indexValue: string | number;
-    gradientId: string;
-    colorScheme: ReturnType<typeof getColorScheme>;
-    isHovered: boolean;
-  }> = [];
+  const barConfigs = useMemo(() => {
+    const configs: Array<{
+      key: string;
+      indexValue: string | number;
+      gradientId: string;
+      colorScheme: GraphColorScheme;
+      isHovered: boolean;
+    }> = [];
 
-  data.forEach((dataPoint) => {
-    const indexValue = dataPoint[indexBy];
-    keys.forEach((keyItem, keyIndex) => {
-      const key = typeof keyItem === 'string' ? keyItem : keyItem.key;
-      const color = typeof keyItem === 'object' ? keyItem.color : undefined;
-      const colorScheme = getColorScheme(colorRegistry, color, keyIndex);
-      const isHovered =
-        hoveredBar?.key === key && hoveredBar?.indexValue === indexValue;
-      const gradientId = `gradient-${id}-${key}-${indexValue}`;
+    data.forEach((dataPoint, dataIndex) => {
+      const indexValue = dataPoint[indexBy];
+      keys.forEach((keyItem, keyIndex) => {
+        const key = isString(keyItem) ? keyItem : keyItem.key;
+        const color = isSeriesKeyObject(keyItem) ? keyItem.color : undefined;
+        const colorScheme = getColorScheme(colorRegistry, color, keyIndex);
+        const isHovered =
+          hoveredBar?.key === key && hoveredBar?.indexValue === indexValue;
+        const gradientId = `gradient-${id}-${instanceId}-${key}-${dataIndex}-${keyIndex}`;
 
-      barConfigs.push({
-        key,
-        indexValue,
-        gradientId,
-        colorScheme,
-        isHovered,
+        configs.push({
+          key,
+          indexValue,
+          gradientId,
+          colorScheme,
+          isHovered,
+        });
       });
     });
-  });
 
-  const enrichedKeys = keys.map((keyItem, index) => {
-    const key = typeof keyItem === 'string' ? keyItem : keyItem.key;
-    const color = typeof keyItem === 'object' ? keyItem.color : undefined;
-    const colorScheme = getColorScheme(colorRegistry, color, index);
-    return {
-      key,
-      colorScheme,
-      label: seriesLabels?.[key] || key,
-    };
-  });
+    return configs;
+  }, [data, indexBy, keys, colorRegistry, hoveredBar, id, instanceId]);
+
+  const enrichedKeys = useMemo(() => {
+    return keys.map((keyItem, index) => {
+      const key = isString(keyItem) ? keyItem : keyItem.key;
+      const color = isSeriesKeyObject(keyItem) ? keyItem.color : undefined;
+      const colorScheme = getColorScheme(colorRegistry, color, index);
+      return {
+        key,
+        colorScheme,
+        label: seriesLabels?.[key] || key,
+      };
+    });
+  }, [keys, colorRegistry, seriesLabels]);
 
   const defs = barConfigs.map((bar) =>
     createGradientDef(
@@ -137,13 +152,17 @@ export const GraphWidgetBarChart = ({
       bar.gradientId,
       bar.isHovered,
       layout === 'horizontal' ? 0 : 90,
+      true,
     ),
   );
 
   const getBarColor = (datum: ComputedDatum<BarDatum>) => {
     const bar = barConfigs.find(
       (b) => b.key === datum.id && b.indexValue === datum.indexValue,
-    )!;
+    );
+    if (!bar) {
+      return theme.border.color.light;
+    }
     return `url(#${bar.gradientId})`;
   };
 
@@ -220,7 +239,7 @@ export const GraphWidgetBarChart = ({
       <StyledChartContainer $isClickable={isDefined(tooltipHref)}>
         <ResponsiveBar
           data={data}
-          keys={keys.map((k) => (typeof k === 'string' ? k : k.key))}
+          keys={keys.map((k) => (isString(k) ? k : k.key))}
           indexBy={indexBy}
           margin={{ top: 20, right: 20, bottom: 60, left: 70 }}
           padding={0.3}
@@ -230,13 +249,6 @@ export const GraphWidgetBarChart = ({
           indexScale={{ type: 'band', round: true }}
           colors={getBarColor}
           defs={defs}
-          fill={keys.map((keyItem) => {
-            const key = typeof keyItem === 'string' ? keyItem : keyItem.key;
-            return {
-              match: { id: key },
-              id: barConfigs.find((b) => b.key === key)!.gradientId,
-            };
-          })}
           axisTop={null}
           axisRight={null}
           axisBottom={axisBottomConfig}
@@ -253,7 +265,7 @@ export const GraphWidgetBarChart = ({
           tooltip={(props) => renderTooltip(props)}
           onClick={handleBarClick}
           onMouseEnter={(datum) => {
-            if (typeof datum.id === 'string' && isDefined(datum.indexValue)) {
+            if (isString(datum.id) && isDefined(datum.indexValue)) {
               setHoveredBar({
                 key: datum.id,
                 indexValue: datum.indexValue,
