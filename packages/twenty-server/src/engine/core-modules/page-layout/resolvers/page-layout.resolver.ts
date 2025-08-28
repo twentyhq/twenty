@@ -1,0 +1,121 @@
+import { UseFilters, UseGuards } from '@nestjs/common';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
+
+import { isDefined } from 'twenty-shared/utils';
+
+import { CreatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout.input';
+import { UpdatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout.input';
+import { PageLayoutTabDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout-tab.dto';
+import { PageLayoutDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout.dto';
+import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
+import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
+import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/core-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+
+@Resolver(() => PageLayoutDTO)
+@UseFilters(PageLayoutGraphqlApiExceptionFilter)
+@UseGuards(WorkspaceAuthGuard)
+export class PageLayoutResolver {
+  constructor(
+    private readonly pageLayoutService: PageLayoutService,
+    private readonly pageLayoutTabService: PageLayoutTabService,
+  ) {}
+
+  @Query(() => [PageLayoutDTO])
+  async getPageLayouts(
+    @AuthWorkspace() workspace: Workspace,
+    @Args('objectMetadataId', { type: () => String, nullable: true })
+    objectMetadataId?: string,
+  ): Promise<PageLayoutDTO[]> {
+    if (objectMetadataId) {
+      return this.pageLayoutService.findByObjectMetadataId(
+        workspace.id,
+        objectMetadataId,
+      );
+    }
+
+    return this.pageLayoutService.findByWorkspaceId(workspace.id);
+  }
+
+  @Query(() => PageLayoutDTO, { nullable: true })
+  async getPageLayout(
+    @Args('id', { type: () => String }) id: string,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<PageLayoutDTO | null> {
+    return this.pageLayoutService.findById(id, workspace.id);
+  }
+
+  @Mutation(() => PageLayoutDTO)
+  async createPageLayout(
+    @Args('input') input: CreatePageLayoutInput,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<PageLayoutDTO> {
+    return this.pageLayoutService.create({
+      ...input,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @Mutation(() => PageLayoutDTO)
+  async updatePageLayout(
+    @Args('id', { type: () => String }) id: string,
+    @Args('input') input: UpdatePageLayoutInput,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<PageLayoutDTO> {
+    return this.pageLayoutService.update(id, workspace.id, input);
+  }
+
+  @Mutation(() => Boolean)
+  async deletePageLayout(
+    @Args('id', { type: () => String }) id: string,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<boolean> {
+    const deletedPageLayout = await this.pageLayoutService.delete(
+      id,
+      workspace.id,
+    );
+
+    return isDefined(deletedPageLayout);
+  }
+
+  @Mutation(() => Boolean)
+  async destroyPageLayout(
+    @Args('id', { type: () => String }) id: string,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<boolean> {
+    const deletedPageLayout = await this.pageLayoutService.destroy(
+      id,
+      workspace.id,
+    );
+
+    return isDefined(deletedPageLayout);
+  }
+
+  @Mutation(() => PageLayoutDTO)
+  async restorePageLayout(
+    @Args('id', { type: () => String }) id: string,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<PageLayoutDTO> {
+    return this.pageLayoutService.restore(id, workspace.id);
+  }
+
+  @ResolveField(() => [PageLayoutTabDTO])
+  async tabs(
+    @Parent() pageLayout: PageLayoutDTO,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    return this.pageLayoutTabService.findByPageLayoutId(
+      workspace.id,
+      pageLayout.id,
+    );
+  }
+}
