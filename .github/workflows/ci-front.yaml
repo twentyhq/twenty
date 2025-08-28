@@ -72,7 +72,7 @@ jobs:
       - name: Install Playwright
         run: cd packages/twenty-front && npx playwright install
       - name: Restore storybook build cache
-        uses: ./.github/workflows/actions/restore-cache-2
+        uses: ./.github/workflows/actions/restore-cache
         with:
           key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION }}
       - name: Front / Write .env
