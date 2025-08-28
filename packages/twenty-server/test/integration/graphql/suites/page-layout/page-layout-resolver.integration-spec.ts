@@ -27,7 +27,6 @@ import {
 
 describe('Page Layout Resolver', () => {
   let testObjectMetadataId: string;
-  let createdPageLayoutIds: string[] = [];
 
   beforeAll(async () => {
     const {
@@ -55,30 +54,11 @@ describe('Page Layout Resolver', () => {
 
   beforeEach(async () => {
     await cleanupPageLayoutRecordsWithGraphQL();
-    createdPageLayoutIds = [];
   });
 
   afterEach(async () => {
     await cleanupPageLayoutRecordsWithGraphQL();
   });
-
-  const createTestPageLayout = async (
-    data: {
-      name: string;
-      type?: PageLayoutType;
-      objectMetadataId?: string;
-    } = { name: 'Test Page Layout' },
-  ) => {
-    const pageLayout = await createTestPageLayoutWithGraphQL({
-      name: data.name,
-      type: data.type || PageLayoutType.RECORD_PAGE,
-      objectMetadataId: data.objectMetadataId || testObjectMetadataId,
-    });
-
-    createdPageLayoutIds.push(pageLayout.id);
-
-    return pageLayout;
-  };
 
   describe('getPageLayouts', () => {
     it('should return empty array when no page layouts exist', async () => {
@@ -92,7 +72,7 @@ describe('Page Layout Resolver', () => {
     it('should return all page layouts for workspace when no objectMetadataId provided', async () => {
       const pageLayoutName = 'Test Page Layout for Workspace';
 
-      await createTestPageLayout({
+      await createTestPageLayoutWithGraphQL({
         name: pageLayoutName,
         objectMetadataId: testObjectMetadataId,
       });
@@ -128,11 +108,11 @@ describe('Page Layout Resolver', () => {
       });
 
       await Promise.all([
-        createTestPageLayout({
+        createTestPageLayoutWithGraphQL({
           name: object1PageLayoutName,
           objectMetadataId: testObjectMetadataId,
         }),
-        createTestPageLayout({
+        createTestPageLayoutWithGraphQL({
           name: object2PageLayoutName,
           objectMetadataId: objectMetadata2Id,
         }),
@@ -170,7 +150,7 @@ describe('Page Layout Resolver', () => {
     it('should return page layout when it exists', async () => {
       const pageLayoutName = 'Test Page Layout for Get';
 
-      const pageLayout = await createTestPageLayout({
+      const pageLayout = await createTestPageLayoutWithGraphQL({
         name: pageLayoutName,
         objectMetadataId: testObjectMetadataId,
       });
@@ -207,8 +187,6 @@ describe('Page Layout Resolver', () => {
 
       const createdPageLayout = response.body.data.createPageLayout;
 
-      createdPageLayoutIds.push(createdPageLayout.id);
-
       expect(createdPageLayout).toMatchObject({
         id: expect.any(String),
         workspaceId: expect.any(String),
@@ -232,8 +210,6 @@ describe('Page Layout Resolver', () => {
       assertGraphQLSuccessfulResponse(response);
 
       const createdPageLayout = response.body.data.createPageLayout;
-
-      createdPageLayoutIds.push(createdPageLayout.id);
 
       expect(createdPageLayout).toMatchObject({
         id: expect.any(String),
@@ -261,8 +237,6 @@ describe('Page Layout Resolver', () => {
 
       const createdPageLayout = response.body.data.createPageLayout;
 
-      createdPageLayoutIds.push(createdPageLayout.id);
-
       expect(createdPageLayout).toMatchObject({
         id: expect.any(String),
         workspaceId: expect.any(String),
@@ -278,7 +252,7 @@ describe('Page Layout Resolver', () => {
 
   describe('updatePageLayout', () => {
     it('should update an existing page layout', async () => {
-      const pageLayout = await createTestPageLayout({
+      const pageLayout = await createTestPageLayoutWithGraphQL({
         name: 'Original Page Layout',
         type: PageLayoutType.RECORD_PAGE,
       });
@@ -306,7 +280,7 @@ describe('Page Layout Resolver', () => {
     });
 
     it('should update only provided fields', async () => {
-      const pageLayout = await createTestPageLayout({
+      const pageLayout = await createTestPageLayoutWithGraphQL({
         name: 'Original Page Layout',
         type: PageLayoutType.RECORD_PAGE,
       });
@@ -352,7 +326,7 @@ describe('Page Layout Resolver', () => {
 
   describe('deletePageLayout', () => {
     it('should delete an existing page layout (soft delete)', async () => {
-      const pageLayout = await createTestPageLayout({
+      const pageLayout = await createTestPageLayoutWithGraphQL({
         name: 'Page Layout to Delete',
       });
 
@@ -392,7 +366,7 @@ describe('Page Layout Resolver', () => {
 
   describe('destroyPageLayout', () => {
     it('should destroy an existing page layout (hard delete)', async () => {
-      const pageLayout = await createTestPageLayout({
+      const pageLayout = await createTestPageLayoutWithGraphQL({
         name: 'Page Layout to Destroy',
       });
 
@@ -403,10 +377,6 @@ describe('Page Layout Resolver', () => {
 
       assertGraphQLSuccessfulResponse(destroyResponse);
       expect(destroyResponse.body.data.destroyPageLayout).toBe(true);
-
-      createdPageLayoutIds = createdPageLayoutIds.filter(
-        (id) => id !== pageLayout.id,
-      );
     });
 
     it('should throw an error when destroying non-existent page layout', async () => {
@@ -428,7 +398,7 @@ describe('Page Layout Resolver', () => {
 
   describe('restorePageLayout', () => {
     it('should restore a soft deleted page layout', async () => {
-      const pageLayout = await createTestPageLayout({
+      const pageLayout = await createTestPageLayoutWithGraphQL({
         name: 'Page Layout to Restore',
         type: PageLayoutType.RECORD_INDEX,
       });
@@ -482,7 +452,7 @@ describe('Page Layout Resolver', () => {
 
   describe('tabs resolver field', () => {
     it('should resolve tabs field for page layout', async () => {
-      const pageLayout = await createTestPageLayout({
+      const pageLayout = await createTestPageLayoutWithGraphQL({
         name: 'Page Layout with Tabs',
       });
 
