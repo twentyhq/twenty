@@ -23,7 +23,7 @@ jobs:
         packages/twenty-ui/**
         packages/twenty-shared/**
   front-sb-build:
-    needs: [changed-files-check]
+    needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
@@ -77,7 +77,7 @@ jobs:
       - name: Install Playwright
         run: cd packages/twenty-front && npx playwright install
       - name: Restore storybook build cache
-        uses: ./.github/workflows/actions/restore-cache
+        uses: ./.github/workflows/actions/restore-cache2
         with:
           key: ${{ env.STORYBOOK_BUILD_CACHE_KEY }}
       - name: Front / Write .env
