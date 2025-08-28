@@ -32,6 +32,13 @@ type BarChartSeries = {
   color?: GraphColor;
 };
 
+type BarConfig = {
+  key: string;
+  indexValue: string | number;
+  gradientId: string;
+  colorScheme: GraphColorScheme;
+};
+
 type GraphWidgetBarChartProps = {
   data: BarChartDataItem[];
   indexBy: string;
@@ -71,6 +78,79 @@ const StyledChartContainer = styled.div<{ $isClickable?: boolean }>`
   `}
 `;
 
+const getAxisBottomConfig = (
+  layout: 'vertical' | 'horizontal',
+  xAxisLabel?: string,
+  yAxisLabel?: string,
+  formatOptions?: GraphValueFormatOptions,
+) => {
+  return layout === 'vertical'
+    ? {
+        tickSize: 0,
+        tickPadding: 5,
+        tickRotation: 0,
+        legend: xAxisLabel,
+        legendPosition: 'middle' as const,
+        legendOffset: 40,
+      }
+    : {
+        tickSize: 0,
+        tickPadding: 5,
+        tickRotation: 0,
+        legend: yAxisLabel,
+        legendPosition: 'middle' as const,
+        legendOffset: 40,
+        format: (value: number) => formatGraphValue(value, formatOptions || {}),
+      };
+};
+
+const getAxisLeftConfig = (
+  layout: 'vertical' | 'horizontal',
+  xAxisLabel?: string,
+  yAxisLabel?: string,
+  formatOptions?: GraphValueFormatOptions,
+) => {
+  return layout === 'vertical'
+    ? {
+        tickSize: 0,
+        tickPadding: 5,
+        tickRotation: 0,
+        legend: yAxisLabel,
+        legendPosition: 'middle' as const,
+        legendOffset: -50,
+        format: (value: number) => formatGraphValue(value, formatOptions || {}),
+      }
+    : {
+        tickSize: 0,
+        tickPadding: 5,
+        tickRotation: 0,
+        legend: xAxisLabel,
+        legendPosition: 'middle' as const,
+        legendOffset: -50,
+      };
+};
+
+const calculateBarEndLineCoordinates = (
+  bar: ComputedBarDatum<BarChartDataItem>,
+  layout: 'vertical' | 'horizontal',
+) => {
+  if (layout === 'vertical') {
+    return {
+      x1: bar.x,
+      x2: bar.x + bar.width,
+      y1: bar.y,
+      y2: bar.y,
+    };
+  } else {
+    return {
+      x1: bar.x + bar.width,
+      x2: bar.x + bar.width,
+      y1: bar.y,
+      y2: bar.y + bar.height,
+    };
+  }
+};
+
 export const GraphWidgetBarChart = ({
   data,
   indexBy,
@@ -108,44 +188,37 @@ export const GraphWidgetBarChart = ({
     customFormatter,
   };
 
-  const barConfigs = useMemo(() => {
-    const configs: Array<{
-      key: string;
-      indexValue: string | number;
-      gradientId: string;
-      colorScheme: GraphColorScheme;
-      isHovered: boolean;
-    }> = [];
+  const seriesConfigMap = useMemo(() => {
+    const map = new Map<string, BarChartSeries>();
+    series?.forEach((s) => map.set(s.key, s));
+    return map;
+  }, [series]);
 
-    data.forEach((dataPoint, dataIndex) => {
+  const barConfigs = useMemo((): BarConfig[] => {
+    return data.flatMap((dataPoint, dataIndex) => {
       const indexValue = dataPoint[indexBy];
-      keys.forEach((key, keyIndex) => {
-        const seriesConfig = series?.find((s) => s.key === key);
+      return keys.map((key, keyIndex): BarConfig => {
+        const seriesConfig = seriesConfigMap.get(key);
         const colorScheme = getColorScheme(
           colorRegistry,
           seriesConfig?.color,
           keyIndex,
         );
-        const isHovered =
-          hoveredBar?.key === key && hoveredBar?.indexValue === indexValue;
         const gradientId = `gradient-${id}-${instanceId}-${key}-${dataIndex}-${keyIndex}`;
 
-        configs.push({
+        return {
           key,
           indexValue,
           gradientId,
           colorScheme,
-          isHovered,
-        });
+        };
       });
     });
-
-    return configs;
-  }, [data, indexBy, keys, colorRegistry, hoveredBar, id, instanceId, series]);
+  }, [data, indexBy, keys, colorRegistry, id, instanceId, seriesConfigMap]);
 
   const enrichedKeys = useMemo(() => {
     return keys.map((key, index) => {
-      const seriesConfig = series?.find((s) => s.key === key);
+      const seriesConfig = seriesConfigMap.get(key);
       const colorScheme = getColorScheme(
         colorRegistry,
         seriesConfig?.color,
@@ -157,17 +230,19 @@ export const GraphWidgetBarChart = ({
         label: seriesConfig?.label || seriesLabels?.[key] || key,
       };
     });
-  }, [keys, colorRegistry, series, seriesLabels]);
+  }, [keys, colorRegistry, seriesConfigMap, seriesLabels]);
 
-  const defs = barConfigs.map((bar) =>
-    createGradientDef(
+  const defs = barConfigs.map((bar) => {
+    const isHovered =
+      hoveredBar?.key === bar.key && hoveredBar?.indexValue === bar.indexValue;
+    return createGradientDef(
       bar.colorScheme,
       bar.gradientId,
-      bar.isHovered,
+      isHovered,
       layout === 'horizontal' ? 0 : 90,
       true,
-    ),
-  );
+    );
+  });
 
   const getBarColor = (datum: ComputedDatum<BarDatum>) => {
     const bar = barConfigs.find(
@@ -209,45 +284,18 @@ export const GraphWidgetBarChart = ({
     );
   };
 
-  const axisBottomConfig =
-    layout === 'vertical'
-      ? {
-          tickSize: 0,
-          tickPadding: 5,
-          tickRotation: 0,
-          legend: xAxisLabel,
-          legendPosition: 'middle' as const,
-          legendOffset: 40,
-        }
-      : {
-          tickSize: 0,
-          tickPadding: 5,
-          tickRotation: 0,
-          legend: yAxisLabel,
-          legendPosition: 'middle' as const,
-          legendOffset: 40,
-          format: (value: number) => formatGraphValue(value, formatOptions),
-        };
-
-  const axisLeftConfig =
-    layout === 'vertical'
-      ? {
-          tickSize: 0,
-          tickPadding: 5,
-          tickRotation: 0,
-          legend: yAxisLabel,
-          legendPosition: 'middle' as const,
-          legendOffset: -50,
-          format: (value: number) => formatGraphValue(value, formatOptions),
-        }
-      : {
-          tickSize: 0,
-          tickPadding: 5,
-          tickRotation: 0,
-          legend: xAxisLabel,
-          legendPosition: 'middle' as const,
-          legendOffset: -50,
-        };
+  const axisBottomConfig = getAxisBottomConfig(
+    layout,
+    xAxisLabel,
+    yAxisLabel,
+    formatOptions,
+  );
+  const axisLeftConfig = getAxisLeftConfig(
+    layout,
+    xAxisLabel,
+    yAxisLabel,
+    formatOptions,
+  );
 
   const hasClickableItems = data.some((item) => isDefined(item.to));
 
@@ -266,20 +314,10 @@ export const GraphWidgetBarChart = ({
             return null;
           }
           const lineColor = enrichedKey.colorScheme.solid;
-
-          let x1, y1, x2, y2;
-
-          if (layout === 'vertical') {
-            x1 = bar.x;
-            x2 = bar.x + bar.width;
-            y1 = bar.y;
-            y2 = bar.y;
-          } else {
-            x1 = bar.x + bar.width;
-            x2 = bar.x + bar.width;
-            y1 = bar.y;
-            y2 = bar.y + bar.height;
-          }
+          const { x1, y1, x2, y2 } = calculateBarEndLineCoordinates(
+            bar,
+            layout,
+          );
 
           return (
             <line
