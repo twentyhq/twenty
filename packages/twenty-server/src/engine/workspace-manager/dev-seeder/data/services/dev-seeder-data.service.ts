@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+
+import { DataSource } from 'typeorm';
 
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
   CALENDAR_CHANNEL_DATA_SEED_COLUMNS,
   CALENDAR_CHANNEL_DATA_SEEDS,
@@ -196,7 +198,8 @@ const RECORD_SEEDS_CONFIGS = [
 @Injectable()
 export class DevSeederDataService {
   constructor(
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly timelineActivitySeederService: TimelineActivitySeederService,
   ) {}
@@ -208,17 +211,10 @@ export class DevSeederDataService {
     schemaName: string;
     workspaceId: string;
   }) {
-    const mainDataSource =
-      await this.workspaceDataSourceService.connectToMainDataSource();
-
-    if (!mainDataSource) {
-      throw new Error('Could not connect to main data source');
-    }
-
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-    await mainDataSource.transaction(
+    await this.coreDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {
         for (const recordSeedsConfig of RECORD_SEEDS_CONFIGS) {
           const objectMetadata = objectMetadataItems.find(

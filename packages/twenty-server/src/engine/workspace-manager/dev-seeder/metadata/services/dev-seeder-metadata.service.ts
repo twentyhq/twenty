@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
-import { isDefined } from 'class-validator';
+import { DataSource } from 'typeorm';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -26,7 +26,8 @@ export class DevSeederMetadataService {
   constructor(
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
-    private readonly typeORMService: TypeORMService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   private readonly workspaceConfigs: Record<
@@ -152,15 +153,13 @@ export class DevSeederMetadataService {
   }
 
   private async seedCoreViews(workspaceId: string): Promise<void> {
-    const mainDataSource = this.typeORMService.getMainDataSource();
-
-    if (!isDefined(mainDataSource)) {
-      throw new Error('Could not connect to main data source');
-    }
-
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-    await prefillCoreViews(mainDataSource, workspaceId, createdObjectMetadata);
+    await prefillCoreViews(
+      this.coreDataSource,
+      workspaceId,
+      createdObjectMetadata,
+    );
   }
 }
