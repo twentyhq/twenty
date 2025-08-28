@@ -66,6 +66,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
       ),
     ),
   ];
+
   if (allRelationType.length > 1) {
     return {
       status: 'fail',
@@ -83,6 +84,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
   const allRelatedObjectMetadataIdsSet = [
     ...new Set(allRelatedObjectMetadataIds),
   ];
+
   if (
     allRelatedObjectMetadataIds.length !== allRelatedObjectMetadataIdsSet.length
   ) {

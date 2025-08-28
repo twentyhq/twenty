@@ -1,13 +1,13 @@
 import { t } from '@lingui/core/macro';
 import { type RelationCreationPayload } from 'twenty-shared/types';
 import {
-    isDefined,
-    trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
+  isDefined,
+  trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
 import {
-    FieldMetadataException,
-    FieldMetadataExceptionCode,
+  FieldMetadataException,
+  FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload-or-throw.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
