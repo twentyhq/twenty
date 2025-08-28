@@ -46,6 +46,7 @@
   },
   "files": [
     "dist",
+    "assets",
     "accessibility",
     "assets",
     "components",
