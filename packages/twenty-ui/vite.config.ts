@@ -151,5 +151,6 @@ export default defineConfig(({ command }) => {
         ],
       },
     },
+    logLevel: 'error',
   };
 });
