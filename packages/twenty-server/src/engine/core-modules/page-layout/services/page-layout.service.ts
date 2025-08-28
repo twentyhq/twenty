@@ -129,7 +129,13 @@ export class PageLayoutService {
   }
 
   async destroy(id: string, workspaceId: string): Promise<boolean> {
-    const pageLayout = await this.findById(id, workspaceId);
+    const pageLayout = await this.pageLayoutRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+      withDeleted: true,
+    });
 
     if (!isDefined(pageLayout)) {
       throw new PageLayoutException(
@@ -147,7 +153,13 @@ export class PageLayoutService {
   }
 
   async restore(id: string, workspaceId: string): Promise<PageLayoutEntity> {
-    const pageLayout = await this.findById(id, workspaceId);
+    const pageLayout = await this.pageLayoutRepository.findOne({
+      where: {
+        id,
+        workspaceId,
+      },
+      withDeleted: true,
+    });
 
     if (!isDefined(pageLayout)) {
       throw new PageLayoutException(
@@ -159,8 +171,17 @@ export class PageLayoutService {
       );
     }
 
+    if (!isDefined(pageLayout.deletedAt)) {
+      throw new PageLayoutException(
+        'Page layout is not deleted and cannot be restored',
+        PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
+      );
+    }
+
     await this.pageLayoutRepository.restore(id);
 
-    return pageLayout;
+    const restoredPageLayout = await this.findById(id, workspaceId);
+
+    return restoredPageLayout!;
   }
 }

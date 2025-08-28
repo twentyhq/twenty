@@ -11,16 +11,7 @@ export enum PageLayoutExceptionMessageKey {
   NAME_REQUIRED = 'NAME_REQUIRED',
 }
 
-export class PageLayoutException extends CustomException {
-  code: PageLayoutExceptionCode;
-  constructor(
-    message: string,
-    code: PageLayoutExceptionCode,
-    metadata?: Record<string, unknown>,
-  ) {
-    super(message, code, metadata);
-  }
-}
+export class PageLayoutException extends CustomException<PageLayoutExceptionCode> {}
 
 export const generatePageLayoutExceptionMessage = (
   key: PageLayoutExceptionMessageKey,
