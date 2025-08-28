@@ -55,7 +55,7 @@ describe('Generate Column Definitions', () => {
         isArray: false,
         isNullable: true,
         isUnique: false,
-        default: null,
+        default: 'NULL',
       });
     });
 
@@ -98,7 +98,7 @@ describe('Generate Column Definitions', () => {
         isArray: true,
         isNullable: true,
         isUnique: false,
-        default: null,
+        default: 'NULL',
       });
     });
   });
@@ -188,7 +188,7 @@ describe('Generate Column Definitions', () => {
       columns.forEach((column) => {
         expect(column.isNullable).toBe(true);
         expect(column.isUnique).toBe(false);
-        expect(column.default).toBe(null);
+        expect(column.default).toBe('NULL');
       });
     });
 
@@ -199,7 +199,7 @@ describe('Generate Column Definitions', () => {
         type: FieldMetadataType.CURRENCY,
         name: 'price',
         defaultValue: {
-          amountMicros: '100000000',
+          amountMicros: "'100000000'",
           currencyCode: "'USD'",
         },
       });
@@ -220,7 +220,7 @@ describe('Generate Column Definitions', () => {
         type: 'numeric',
         isNullable: true,
         isUnique: false,
-        default: '100000000',
+        default: "'100000000'::numeric",
       });
 
       expect(columns[1]).toMatchObject({
@@ -228,7 +228,7 @@ describe('Generate Column Definitions', () => {
         type: 'text',
         isNullable: true,
         isUnique: false,
-        default: 'USD',
+        default: "'USD'::text",
       });
     });
   });
@@ -254,7 +254,7 @@ describe('Generate Column Definitions', () => {
           type: 'text',
           isNullable: true,
           isUnique: false,
-          default: null,
+          default: 'NULL',
           isArray: false,
         },
       ]);
@@ -280,7 +280,7 @@ describe('Generate Column Definitions', () => {
           type: 'boolean',
           isNullable: true,
           isUnique: false,
-          default: true,
+          default: "'true'::boolean",
           isArray: false,
         },
       ]);
@@ -307,7 +307,7 @@ describe('Generate Column Definitions', () => {
           type: 'text',
           isNullable: true,
           isUnique: false,
-          default: null,
+          default: 'NULL',
           isArray: false,
         },
       ]);
@@ -332,7 +332,7 @@ describe('Generate Column Definitions', () => {
           type: 'uuid',
           isNullable: true,
           isUnique: false,
-          default: null,
+          default: 'NULL',
           isArray: false,
         },
       ]);

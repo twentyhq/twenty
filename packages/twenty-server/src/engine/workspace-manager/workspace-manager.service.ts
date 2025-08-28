@@ -17,6 +17,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 import { standardObjectsPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
@@ -47,6 +48,7 @@ export class WorkspaceManagerService {
     @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly agentService: AgentService,
+    protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   public async init({
@@ -123,18 +125,16 @@ export class WorkspaceManagerService {
     workspaceId: string,
     featureFlags: Record<string, boolean>,
   ) {
-    const mainDataSource =
-      await this.workspaceDataSourceService.connectToMainDataSource();
-
-    if (!mainDataSource) {
-      throw new Error('Could not connect to main data source');
-    }
+    const workspaceDataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
+        workspaceId,
+      });
 
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
     await standardObjectsPrefillData(
-      mainDataSource,
+      workspaceDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
       featureFlags,
@@ -144,7 +144,7 @@ export class WorkspaceManagerService {
       this.logger.log(`Prefilling core views for workspace ${workspaceId}`);
 
       await prefillCoreViews(
-        mainDataSource,
+        workspaceDataSource,
         workspaceId,
         createdObjectMetadata,
         featureFlags,

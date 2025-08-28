@@ -4,17 +4,18 @@ import {
   LISTING_NAME_PLURAL,
   LISTING_NAME_SINGULAR,
 } from 'test/integration/metadata/suites/object-metadata/constants/test-object-names.constant';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 describe('updateOne', () => {
-  describe('FieldMetadataService name/label sync', () => {
+  describe('successful fieldMetadataService name/label sync', () => {
     let listingObjectId = '';
     let testFieldId = '';
 
     beforeEach(async () => {
       const { data } = await createOneObjectMetadata({
+        expectToFail: false,
         input: {
           labelSingular: LISTING_NAME_SINGULAR,
           labelPlural: LISTING_NAME_PLURAL,
@@ -28,6 +29,7 @@ describe('updateOne', () => {
       listingObjectId = data.createOneObject.id;
 
       const { data: createdFieldMetadata } = await createOneFieldMetadata({
+        expectToFail: false,
         input: {
           objectMetadataId: listingObjectId,
           type: FieldMetadataType.TEXT,
@@ -41,6 +43,7 @@ describe('updateOne', () => {
     });
     afterEach(async () => {
       await deleteOneObjectMetadata({
+        expectToFail: false,
         input: { idToDelete: listingObjectId },
       });
     });
@@ -90,6 +93,46 @@ describe('updateOne', () => {
       // Assert
       expect(data.updateOneField.name).toBe('differentName');
     });
+  });
+
+  describe('failing update', () => {
+    let listingObjectId = '';
+    let testFieldId = '';
+
+    beforeAll(async () => {
+      const { data } = await createOneObjectMetadata({
+        expectToFail: false,
+        input: {
+          labelSingular: LISTING_NAME_SINGULAR,
+          labelPlural: LISTING_NAME_PLURAL,
+          nameSingular: LISTING_NAME_SINGULAR,
+          namePlural: LISTING_NAME_PLURAL,
+          icon: 'IconBuildingSkyscraper',
+          isLabelSyncedWithName: true,
+        },
+      });
+
+      listingObjectId = data.createOneObject.id;
+
+      const { data: createdFieldMetadata } = await createOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          objectMetadataId: listingObjectId,
+          type: FieldMetadataType.TEXT,
+          name: 'testName',
+          label: 'Test name',
+          isLabelSyncedWithName: true,
+        },
+      });
+
+      testFieldId = createdFieldMetadata.createOneField.id;
+    });
+    afterAll(async () => {
+      await deleteOneObjectMetadata({
+        expectToFail: false,
+        input: { idToDelete: listingObjectId },
+      });
+    });
 
     it('should not update a field name if it is not synced correctly with label and labelSync is true', async () => {
       // Arrange
@@ -113,6 +156,29 @@ describe('updateOne', () => {
       // Assert
       expect(errors[0].message).toBe(
         'Name is not synced with label. Expected name: "testName", got newName',
+      );
+    });
+
+    it('should throw if the field name is not available because of other field with the same name', async () => {
+      await createOneFieldMetadata({
+        input: {
+          objectMetadataId: listingObjectId,
+          type: FieldMetadataType.TEXT,
+          name: 'otherTestName',
+          label: 'Test name',
+        },
+      });
+
+      const { errors } = await updateOneFieldMetadata({
+        input: {
+          idToUpdate: testFieldId,
+          updatePayload: { name: 'testName' },
+        },
+      });
+
+      // Assert
+      expect(errors[0].message).toBe(
+        'Name "testName" is not available, check that it is not duplicating another field\'s name.',
       );
     });
   });
