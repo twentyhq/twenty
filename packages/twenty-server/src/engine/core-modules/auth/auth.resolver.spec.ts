@@ -38,11 +38,11 @@ describe('AuthResolver', () => {
       providers: [
         AuthResolver,
         {
-          provide: getRepositoryToken(AppToken, 'core'),
+          provide: getRepositoryToken(AppToken),
           useValue: {},
         },
         {
-          provide: getRepositoryToken(User, 'core'),
+          provide: getRepositoryToken(User),
           useValue: {},
         },
         {

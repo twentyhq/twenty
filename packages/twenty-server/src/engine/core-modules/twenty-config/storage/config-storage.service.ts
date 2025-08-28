@@ -28,7 +28,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
   private readonly logger = new Logger(ConfigStorageService.name);
 
   constructor(
-    @InjectRepository(KeyValuePair, 'core')
+    @InjectRepository(KeyValuePair)
     private readonly keyValuePairRepository: Repository<KeyValuePair>,
     private readonly configValueConverter: ConfigValueConverterService,
     private readonly environmentConfigDriver: EnvironmentConfigDriver,

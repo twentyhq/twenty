@@ -12,10 +12,11 @@ import { AddPositionsToWorkflowVersionsAndWorkflowRuns } from 'src/database/comm
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [Workspace, FieldMetadataEntity, ObjectMetadataEntity],
-      'core',
-    ),
+    TypeOrmModule.forFeature([
+      Workspace,
+      FieldMetadataEntity,
+      ObjectMetadataEntity,
+    ]),
     WorkspaceDataSourceModule,
     WorkspaceSchemaManagerModule,
     WorkspaceMetadataVersionModule,

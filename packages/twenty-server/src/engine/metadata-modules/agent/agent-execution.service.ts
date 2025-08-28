@@ -61,10 +61,9 @@ export class AgentExecutionService {
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly agentToolGeneratorService: AgentToolGeneratorService,
-
-    @InjectRepository(AgentEntity, 'core')
+    @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
-    @InjectRepository(FileEntity, 'core')
+    @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
   ) {}
 

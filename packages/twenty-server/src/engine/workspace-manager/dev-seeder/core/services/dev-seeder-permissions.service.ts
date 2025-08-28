@@ -29,9 +29,9 @@ export class DevSeederPermissionsService {
     private readonly roleService: RoleService,
     private readonly userRoleService: UserRoleService,
     private readonly objectPermissionService: ObjectPermissionService,
-    @InjectRepository(ObjectMetadataEntity, 'core')
+    @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly typeORMService: TypeORMService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,

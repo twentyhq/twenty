@@ -1,8 +1,7 @@
-import { type QueryRunner } from 'typeorm';
+import { type ColumnType, type QueryRunner } from 'typeorm';
 
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { buildSqlColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/utils/build-sql-column-definition.util';
-import { sanitizeDefaultValue } from 'src/engine/twenty-orm/workspace-schema-manager/utils/sanitize-default-value.util';
 import { removeSqlDDLInjection } from 'src/engine/workspace-manager/workspace-migration-runner/utils/remove-sql-injection.util';
 
 export class WorkspaceSchemaColumnManagerService {
@@ -88,23 +87,25 @@ export class WorkspaceSchemaColumnManagerService {
     tableName: string;
     columnName: string;
     defaultValue?: string | number | boolean | null;
+    columnType?: ColumnType;
   }): Promise<void> {
     const safeSchemaName = removeSqlDDLInjection(schemaName);
     const safeTableName = removeSqlDDLInjection(tableName);
     const safeColumnName = removeSqlDDLInjection(columnName);
-    let sql: string;
 
-    if (defaultValue !== undefined) {
-      if (typeof defaultValue === 'string') {
-        const safeDefaultValue = sanitizeDefaultValue(defaultValue);
-
-        sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ${safeDefaultValue}`;
-      } else {
-        sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ${defaultValue}`;
+    const computeDefaultValueSqlQuery = () => {
+      if (defaultValue === undefined) {
+        return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" DROP DEFAULT`;
       }
-    } else {
-      sql = `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" DROP DEFAULT`;
-    }
+
+      if (defaultValue === null) {
+        return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT NULL`;
+      }
+
+      return `ALTER TABLE "${safeSchemaName}"."${safeTableName}" ALTER COLUMN "${safeColumnName}" SET DEFAULT ${defaultValue}`;
+    };
+
+    const sql = computeDefaultValueSqlQuery();
 
     await queryRunner.query(sql);
   }

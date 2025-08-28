@@ -27,7 +27,7 @@ import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
 @Module({
   imports: [
     UpgradeVersionCommandModule,
-    TypeOrmModule.forFeature([Workspace], 'core'),
+    TypeOrmModule.forFeature([Workspace]),
     // Cron command dependencies
     MessagingImportManagerModule,
     CalendarEventImportManagerModule,

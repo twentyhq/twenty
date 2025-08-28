@@ -17,7 +17,7 @@ export class AgentToolGeneratorService {
   private readonly logger = new Logger(AgentToolGeneratorService.name);
 
   constructor(
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
     private readonly toolAdapterService: ToolAdapterService,
     private readonly toolService: ToolService,
