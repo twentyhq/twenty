@@ -1,7 +1,8 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -13,8 +14,11 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  DataSourceException,
+  DataSourceExceptionCode,
+} from 'src/engine/metadata-modules/data-source/data-source.exception';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
   MessagingFolderSyncJob,
   type MessagingFolderSyncJobData,
@@ -25,13 +29,14 @@ export const MESSAGING_FOLDER_SYNC_CRON_PATTERN = '*/30 * * * *';
 @Processor(MessageQueue.cronQueue)
 export class MessagingFolderSyncCronJob {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly featureFlagService: FeatureFlagService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   @Process(MessagingFolderSyncCronJob.name)
@@ -45,9 +50,6 @@ export class MessagingFolderSyncCronJob {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
     });
-
-    const mainDataSource =
-      await this.workspaceDataSourceService.connectToMainDataSource();
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
@@ -63,7 +65,7 @@ export class MessagingFolderSyncCronJob {
 
         const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
-        const messageChannels = await mainDataSource.query(
+        const messageChannels = await this.coreDataSource.query(
           `SELECT * FROM ${schemaName}."messageChannel" WHERE "isSyncEnabled" = true`,
         );
 
@@ -77,11 +79,32 @@ export class MessagingFolderSyncCronJob {
           );
         }
       } catch (error) {
-        this.exceptionHandlerService.captureExceptions([error], {
-          workspace: {
+        if (
+          error.code === '42P01' &&
+          error.message.includes('messageChannel" does not exist')
+        ) {
+          const refetchedWorkspace = await this.workspaceRepository.findOneBy({
             id: activeWorkspace.id,
-          },
-        });
+          });
+
+          if (isDefined(refetchedWorkspace)) {
+            this.exceptionHandlerService.captureExceptions([error], {
+              workspace: {
+                id: activeWorkspace.id,
+              },
+            });
+            throw new DataSourceException(
+              'Workspace schema not found while the workspace is still active',
+              DataSourceExceptionCode.DATA_SOURCE_NOT_FOUND,
+            );
+          }
+        } else {
+          this.exceptionHandlerService.captureExceptions([error], {
+            workspace: {
+              id: activeWorkspace.id,
+            },
+          });
+        }
       }
     }
   }

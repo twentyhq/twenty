@@ -43,6 +43,9 @@ export class MicrosoftGetAllFoldersService {
           this.logger.error(
             `Connected account ${connectedAccount.id}: Error fetching folders: ${error.message}`,
           );
+          this.microsoftHandleErrorService.handleMicrosoftGetMessageListError(
+            error,
+          );
 
           return { value: [] };
         });
