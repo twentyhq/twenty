@@ -4,15 +4,15 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
-  WORKFLOW_CRON_TRIGGER_CRON_PATTERN,
-  WorkflowCronTriggerCronJob,
-} from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/workflow-cron-trigger-cron.job';
-
+  CRON_TRIGGER_CRON_PATTERN,
+  CronTriggerCronJob,
+} from 'src/engine/metadata-modules/trigger/crons/jobs/cron-trigger.cron.job';
 @Command({
-  name: 'cron:workflow:automated-cron-trigger',
-  description: 'Starts a cron job to trigger cron triggered workflows',
+  name: 'cron:trigger:start-cron-trigger',
+  description:
+    'Starts a cron job to trigger cron triggered serverless functions',
 })
-export class WorkflowCronTriggerCronCommand extends CommandRunner {
+export class CronTriggerCronCommand extends CommandRunner {
   constructor(
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -22,11 +22,11 @@ export class WorkflowCronTriggerCronCommand extends CommandRunner {
 
   async run(): Promise<void> {
     await this.messageQueueService.addCron<undefined>({
-      jobName: WorkflowCronTriggerCronJob.name,
+      jobName: CronTriggerCronJob.name,
       data: undefined,
       options: {
         repeat: {
-          pattern: WORKFLOW_CRON_TRIGGER_CRON_PATTERN,
+          pattern: CRON_TRIGGER_CRON_PATTERN,
         },
       },
     });
