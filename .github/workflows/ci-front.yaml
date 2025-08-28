@@ -11,8 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  STORYBOOK_BUILD_CACHE_KEY: storybook-build-depot-ubuntu-24.04-8-runner
-
+  STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION: storybook-build-depot-ubuntu-24.04-8-runner
+  STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION: v3-storybook-build-depot-ubuntu-24.04-8-runner-${{ github.ref_name }}-${{ github.sha }}
 jobs:
   changed-files-check:
     uses: ./.github/workflows/changed-files.yaml
@@ -42,11 +42,6 @@ jobs:
         uses: ./.github/workflows/actions/yarn-install
       - name: Diagnostic disk space issue
         run: df -h
-      # - name: Restore storybook build cache
-      #   id: restore-storybook-build-cache
-      #   uses: ./.github/workflows/actions/restore-cache
-      #   with:
-      #     key: ${{ env.STORYBOOK_BUILD_CACHE_KEY }}
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Front / Build storybook
@@ -54,7 +49,7 @@ jobs:
       - name: Save storybook build cache
         uses: ./.github/workflows/actions/save-cache
         with:
-          key: v3-${{ env.STORYBOOK_BUILD_CACHE_KEY }}-${{ github.ref_name }}-${{ github.sha }}
+          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION }}
   front-sb-test:
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
@@ -79,11 +74,9 @@ jobs:
       - name: Restore storybook build cache
         uses: ./.github/workflows/actions/restore-cache-2
         with:
-          key: v3-${{ env.STORYBOOK_BUILD_CACHE_KEY }}-${{ github.ref_name }}-${{ github.sha }}
+          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION }}
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
-      # - name: Front / Build storybook
-      #   run: npx nx storybook:build twenty-front
       - name: Run storybook tests
         run: npx nx storybook:serve-and-test:static twenty-front --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }} --checkCoverage=false
       - name: Rename coverage file
