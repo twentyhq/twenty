@@ -27,7 +27,7 @@ const jestConfig = {
     */
     '/^@/(.*)$/': './src/$1',
     '\\.(jpg|jpeg|png|gif|webp|svg|svg\\?react)$':
-      '<rootDir>/__mocks__/imageMock.js',
+      '<rootDir>/__mocks__/imageMockShared.js',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],

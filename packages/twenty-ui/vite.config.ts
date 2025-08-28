@@ -95,7 +95,6 @@ export default defineConfig(({ command }) => {
         },
       }),
     ],
-
     // Configuration for building your library.
     // See: https://vitejs.dev/guide/build.html#library-mode
     build: {
@@ -142,5 +141,6 @@ export default defineConfig(({ command }) => {
         ],
       },
     },
+    logLevel: 'error',
   };
 });
