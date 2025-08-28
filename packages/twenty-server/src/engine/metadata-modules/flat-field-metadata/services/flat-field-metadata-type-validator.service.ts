@@ -150,12 +150,14 @@ export class FlatFieldMetadataTypeValidatorService {
       ];
 
     if (!isDefined(fieldMetadataTypeValidator)) {
+      const fieldType = flatFieldMetadataToValidate.type;
+
       return [
         {
           code: FieldMetadataExceptionCode.UNCOVERED_FIELD_METADATA_TYPE_VALIDATION,
-          message: `Unsupported field metadata type ${flatFieldMetadataToValidate.type}`,
-          value: flatFieldMetadataToValidate.type,
-          userFriendlyMessage: t`Unsupported field metadata type ${flatFieldMetadataToValidate.type}`,
+          message: `Unsupported field metadata type ${fieldType}`,
+          value: fieldType,
+          userFriendlyMessage: t`Unsupported field metadata type ${fieldType}`,
         },
       ];
     }

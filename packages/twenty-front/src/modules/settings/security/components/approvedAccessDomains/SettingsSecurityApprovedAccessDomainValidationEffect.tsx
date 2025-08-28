@@ -1,11 +1,11 @@
+import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { isDefined } from 'twenty-shared/utils';
 import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { useValidateApprovedAccessDomainMutation } from '~/generated-metadata/graphql';
-import { approvedAccessDomainsState } from '@/settings/security/states/ApprovedAccessDomainsState';
 
 export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
   const [validateApprovedAccessDomainMutation] =
@@ -45,11 +45,10 @@ export const SettingsSecurityApprovedAccessDomainValidationEffect = () => {
           });
         },
         onError: (error) => {
-          const message = error?.message
-            ? error.message
-            : 'Error validating approved access domain';
           enqueueErrorSnackBar({
-            message: t`${message}`,
+            message: error?.message
+              ? error.message
+              : t`Error validating approved access domain`,
             options: {
               dedupeKey: 'approved-access-domain-validation-error-dedupe-key',
             },
