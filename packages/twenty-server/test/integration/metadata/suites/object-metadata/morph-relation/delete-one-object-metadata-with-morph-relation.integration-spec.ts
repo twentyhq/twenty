@@ -1,9 +1,9 @@
 import { findManyFieldsMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -18,7 +18,7 @@ describe('Delete Object metadata with morph relation should succeed', () => {
       data: {
         createOneObject: { id: aId },
       },
-    } = await forceCreateOneObjectMetadata({
+    } = await createOneObjectMetadata({
       input: {
         nameSingular: 'opportunityForDelete',
         namePlural: 'opportunitiesForDelete',
@@ -33,7 +33,7 @@ describe('Delete Object metadata with morph relation should succeed', () => {
       data: {
         createOneObject: { id: bId },
       },
-    } = await forceCreateOneObjectMetadata({
+    } = await createOneObjectMetadata({
       input: {
         nameSingular: 'personForDelete',
         namePlural: 'peopleForDelete',
@@ -48,7 +48,7 @@ describe('Delete Object metadata with morph relation should succeed', () => {
       data: {
         createOneObject: { id: cId },
       },
-    } = await forceCreateOneObjectMetadata({
+    } = await createOneObjectMetadata({
       input: {
         nameSingular: 'companyForDelete',
         namePlural: 'companiesForDelete',

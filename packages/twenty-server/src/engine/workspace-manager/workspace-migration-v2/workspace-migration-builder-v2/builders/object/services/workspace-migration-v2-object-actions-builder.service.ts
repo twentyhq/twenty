@@ -31,7 +31,7 @@ export type CreatedDeletedUpdatedObjectMetadataInputMatrix = FromTo<
     FlatObjectMetadata
   > & {
     buildOptions: WorkspaceMigrationV2BuilderOptions;
-    fromFlatObjectMetadataMaps: FlatObjectMetadataMaps; // should be renamed to from
+    fromFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   };
 
 @Injectable()
