@@ -3,6 +3,7 @@ import {
   extractAndSanitizeObjectStringFields,
   isDefined,
 } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-standard-overrides-properties.constant';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -132,14 +133,18 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
 
   const updatedFlatFieldMetadata = fieldMetadataEditableProperties.reduce(
     (acc, property) => {
-      const isPropertyUpdated =
-        updatedEditableFieldProperties[property] !== undefined;
+      let newValue = updatedEditableFieldProperties[property];
+
+      if (property === 'options' && isDefined(newValue)) {
+        newValue = updatedEditableFieldProperties[property]?.map((option) => ({
+          id: v4(),
+          ...option,
+        }));
+      }
 
       return {
         ...acc,
-        ...(isPropertyUpdated
-          ? { [property]: updatedEditableFieldProperties[property] }
-          : {}),
+        ...(newValue !== undefined ? { [property]: newValue } : {}),
       };
     },
     relatedFlatFieldMetadata,

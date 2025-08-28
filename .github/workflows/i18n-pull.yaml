@@ -99,7 +99,8 @@ jobs:
 
       - name: Compile translations
         id: compile_translations
-        if: inputs.force_pull || steps.compile_translations_strict.outcome == 'failure'
+        # Because we have set English as a fallback locale, this condition does not work anymore
+        # if: inputs.force_pull || steps.compile_translations_strict.outcome == 'failure'
         run: |
           npx nx run twenty-server:lingui:compile
           npx nx run twenty-emails:lingui:compile 
