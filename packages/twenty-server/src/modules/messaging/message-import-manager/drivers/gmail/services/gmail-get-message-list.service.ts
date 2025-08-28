@@ -48,7 +48,7 @@ export class GmailGetMessageListService {
     let hasMoreMessages = true;
 
     const messageExternalIds: string[] = [];
-    const excludedCategories = this.comptuteExcludedCategories(messageFolders);
+    const excludedCategories = this.computeExcludedCategories(messageFolders);
 
     while (hasMoreMessages) {
       const messageList = await gmailClient.users.messages
@@ -185,7 +185,7 @@ export class GmailGetMessageListService {
     ];
   }
 
-  private comptuteExcludedCategories(
+  private computeExcludedCategories(
     messageFolders: Pick<MessageFolderWorkspaceEntity, 'name' | 'externalId'>[],
   ) {
     const includedDefaultCategories = messageFolders
@@ -207,7 +207,7 @@ export class GmailGetMessageListService {
   ): Promise<string[]> {
     const emailIds: string[] = [];
 
-    const excludedCategories = this.comptuteExcludedCategories(messageFolders);
+    const excludedCategories = this.computeExcludedCategories(messageFolders);
 
     for (const category of excludedCategories) {
       const { history } = await this.gmailGetHistoryService.getHistory(
