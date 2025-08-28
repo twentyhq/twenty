@@ -37,14 +37,14 @@ export enum MKT_CUSTOMER_LIFECYCLE_STAGE {
 }
 
 export enum MKT_CUSTOMER_TAGS {
-  NEW = 'NEW',
-  RETURNING = 'RETURNING',
-  LOYAL = 'LOYAL',
   VIP = 'VIP',
-  CHURNED = 'CHURNED',
-  RETENTION = 'RETENTION',
-  TECHNICAL = 'TECHNICAL',
-  OTHER = 'OTHER',
+  HIGH_VALUE = 'HIGH_VALUE',
+  POTENTIAL_CHURN = 'POTENTIAL_CHURN',
+  SUPPORT_INTENSIVE = 'SUPPORT_INTENSIVE',
+  REFERRAL_SOURCE = 'REFERRAL_SOURCE',
+  QUICK_PAYER = 'QUICK_PAYER',
+  NEGOTIATOR = 'NEGOTIATOR',
+  ENTERPRISE_PROSPECT = 'ENTERPRISE_PROSPECT',
 }
 
 export const MKT_CUSTOMER_TYPE_OPTIONS: FieldMetadataComplexOption[] = [
@@ -201,51 +201,51 @@ export const MKT_CUSTOMER_LIFECYCLE_STAGE_OPTIONS: FieldMetadataComplexOption[] 
 
 export const MKT_CUSTOMER_TAGS_OPTIONS: FieldMetadataComplexOption[] = [
   {
-    value: MKT_CUSTOMER_TAGS.NEW,
-    label: 'New',
+    value: MKT_CUSTOMER_TAGS.VIP,
+    label: 'VIP',
     color: 'blue',
     position: 1,
   },
   {
-    value: MKT_CUSTOMER_TAGS.RETURNING,
-    label: 'Returning',
+    value: MKT_CUSTOMER_TAGS.HIGH_VALUE,
+    label: 'High Value',
     color: 'green',
     position: 2,
   },
   {
-    value: MKT_CUSTOMER_TAGS.LOYAL,
-    label: 'Loyal',
-    color: 'purple',
+    value: MKT_CUSTOMER_TAGS.POTENTIAL_CHURN,
+    label: 'Potential Churn',
+    color: 'red',
     position: 3,
   },
   {
-    value: MKT_CUSTOMER_TAGS.VIP,
-    label: 'VIP',
-    color: 'pink',
+    value: MKT_CUSTOMER_TAGS.SUPPORT_INTENSIVE,
+    label: 'Support Intensive',
+    color: 'orange',
     position: 4,
   },
   {
-    value: MKT_CUSTOMER_TAGS.CHURNED,
-    label: 'Churned',
-    color: 'red',
+    value: MKT_CUSTOMER_TAGS.REFERRAL_SOURCE,
+    label: 'Referral Source',
+    color: 'green',
     position: 5,
   },
   {
-    value: MKT_CUSTOMER_TAGS.RETENTION,
-    label: 'Retention',
-    color: 'orange',
+    value: MKT_CUSTOMER_TAGS.QUICK_PAYER,
+    label: 'Quick Payer',
+    color: 'purple',
     position: 6,
   },
   {
-    value: MKT_CUSTOMER_TAGS.TECHNICAL,
-    label: 'Technical',
-    color: 'green',
+    value: MKT_CUSTOMER_TAGS.NEGOTIATOR,
+    label: 'Negotiator',
+    color: 'pink',
     position: 7,
   },
   {
-    value: MKT_CUSTOMER_TAGS.OTHER,
-    label: 'Other',
-    color: 'gray',
+    value: MKT_CUSTOMER_TAGS.ENTERPRISE_PROSPECT,
+    label: 'Enterprise Prospect',
+    color: 'red',
     position: 8,
   },
 ];

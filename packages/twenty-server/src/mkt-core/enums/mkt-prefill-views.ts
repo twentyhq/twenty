@@ -12,24 +12,28 @@ import { mktVariantAttributesAllView } from 'src/mkt-core/dev-seeder/prefill-dat
 import { mktCombosAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-combo-all.view';
 import { mktComboVariantsAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-combo-variant-all.view';
 import { mktCustomersAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-customer-all.view';
+import { mktCustomerTagsAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-customer-tag-all.view';
+import { mktDataAccessPoliciesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-data-access-policy-all.view';
 import { mktDepartmentsAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-department-all.view';
+import { mktDepartmentHierarchiesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-department-hierarchy-all.view';
 import { mktEmploymentStatusesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-employment-status-all.view';
 import { mktInvoicesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-invoice-all.view';
 import { mktKpisAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-kpi-all.view';
 import { mktOrganizationLevelsAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-organization-level-all.view';
+import { mktPermissionAuditsAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-permission-audit-all.view';
 import { mktResellersAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-reseller-all.view';
 import { mktResellerTiersAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-reseller-tier-all.view';
 import { mktResellerTierHistoriesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-reseller-tier-history-all.view';
 import { mktStaffStatusHistoryAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-staff-status-history-all.view';
+import { mktTagsAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-tag-all.view';
 import { mktTemplatesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-template-all.view';
 import { mktTemporaryPermissionsAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-temporary-permission-all.view';
-import { mktDepartmentHierarchiesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-department-hierarchy-all.view';
-import { mktDataAccessPoliciesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-data-access-policy-all.view';
-import { mktPermissionAuditsAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-permission-audit-all.view';
 
 export const MKT_ALL_VIEWS = [
   // customer views
   mktCustomersAllView,
+  mktTagsAllView,
+  mktCustomerTagsAllView,
   // product views
   mktProductsAllView,
   mktAttributesAllView,

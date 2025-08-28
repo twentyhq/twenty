@@ -2,7 +2,10 @@ import { prefillMktAttributes } from 'src/mkt-core/dev-seeder/prefill-data/prefi
 import { prefillMktComboVariants } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-combo-variants';
 import { prefillMktCombos } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-combos';
 import { prefillMktContracts } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-contracts';
+import { prefillMktCustomerTags } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-customer-tags';
 import { prefillMktCustomers } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-customers';
+import { prefillMktDataAccessPolicies } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-data-access-policies';
+import { prefillMktDepartmentHierarchies } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-department-hierarchies';
 import { prefillMktDepartments } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-departments';
 import { prefillMktEmploymentStatuses } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-employment-statuses';
 import { prefillMktInvoices } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-invoices';
@@ -14,23 +17,24 @@ import { prefillMktOrders } from 'src/mkt-core/dev-seeder/prefill-data/prefill-m
 import { prefillMktOrganizationLevels } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-organization-levels';
 import { prefillMktPaymentMethods } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-payment-methods';
 import { prefillMktPayments } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-payments';
+import { prefillMktPermissionAudits } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-permission-audits';
 import { prefillMktProducts } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-products';
 import { prefillMktResellerTierHistories } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-reseller-tier-histories';
 import { prefillMktResellerTiers } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-reseller-tiers';
 import { prefillMktResellers } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-resellers';
 import { prefillMktStaffStatusHistories } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-staff-status-histories';
+import { prefillMktTags } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-tags';
 import { prefillMktTemplates } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-templates';
 import { prefillMktTemporaryPermissions } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-temporary-permissions';
 import { prefillMktValues } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-values';
 import { prefillMktVariantAttributes } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-variant-attribute';
 import { prefillMktVariants } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-variants';
-import { prefillMktDepartmentHierarchies } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-department-hierarchies';
-import { prefillMktDataAccessPolicies } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-data-access-policies';
-import { prefillMktPermissionAudits } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-permission-audits';
 
 export const MKT_PREFILLS = [
   // customer prefills
   prefillMktCustomers,
+  prefillMktTags,
+  prefillMktCustomerTags,
   // product prefills
   prefillMktProducts,
   prefillMktAttributes,
