@@ -31,7 +31,6 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
-import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
 import { isFieldRichText } from '@/object-record/record-field/ui/types/guards/isFieldRichText';
 import { isFieldRichTextV2 } from '@/object-record/record-field/ui/types/guards/isFieldRichTextV2';
 import { isFieldRichTextValue } from '@/object-record/record-field/ui/types/guards/isFieldRichTextValue';
@@ -77,11 +76,6 @@ export const usePersistField = ({
       }) => {
         const fieldIsRelationToOneObject =
           isFieldRelationToOneObject(
-            fieldDefinition as FieldDefinition<FieldRelationMetadata>,
-          ) && isFieldRelationToOneValue(valueToPersist);
-
-        const fieldIsMorphRelationManyToOne =
-          isFieldMorphRelationManyToOne(
             fieldDefinition as FieldDefinition<FieldRelationMetadata>,
           ) && isFieldRelationToOneValue(valueToPersist);
 
@@ -157,7 +151,6 @@ export const usePersistField = ({
 
         const isValuePersistable =
           fieldIsRelationToOneObject ||
-          fieldIsMorphRelationManyToOne ||
           fieldIsText ||
           fieldIsBoolean ||
           fieldIsEmails ||
@@ -191,13 +184,6 @@ export const usePersistField = ({
             return;
           }
 
-          if (
-            fieldIsMorphRelationManyToOne &&
-            valueToPersist?.id === currentValue?.id
-          ) {
-            return;
-          }
-
           if (isDeeplyEqual(valueToPersist, currentValue)) {
             return;
           }
@@ -215,11 +201,6 @@ export const usePersistField = ({
                   valueToPersist?.id ?? null,
               },
             });
-            return;
-          }
-
-          if (fieldIsMorphRelationManyToOne) {
-            // todo @guillim: implement the persist for morph relation many to one (optimistic issue)
             return;
           }
 
