@@ -22,11 +22,11 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 })
 export class UpdateTimestampColumnTypeInWorkspaceSchemaCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(FieldMetadataEntity, 'core')
+    @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);

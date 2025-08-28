@@ -12,7 +12,7 @@ export class KeyValuePairService<
   KeyValueTypesMap extends Record<string, any> = Record<string, any>,
 > {
   constructor(
-    @InjectRepository(KeyValuePair, 'core')
+    @InjectRepository(KeyValuePair)
     private readonly keyValuePairRepository: Repository<KeyValuePair>,
   ) {}
 

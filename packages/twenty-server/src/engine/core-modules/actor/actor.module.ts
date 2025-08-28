@@ -8,7 +8,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { CreatedByFromAuthContextService } from './services/created-by-from-auth-context.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([FieldMetadataEntity], 'core')],
+  imports: [TypeOrmModule.forFeature([FieldMetadataEntity])],
   providers: [
     CreatedByCreateManyPreQueryHook,
     CreatedByCreateOnePreQueryHook,

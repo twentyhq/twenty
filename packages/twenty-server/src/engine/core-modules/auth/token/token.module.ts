@@ -19,10 +19,13 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 @Module({
   imports: [
     JwtModule,
-    TypeOrmModule.forFeature(
-      [User, AppToken, Workspace, UserWorkspace, ApiKey],
-      'core',
-    ),
+    TypeOrmModule.forFeature([
+      User,
+      AppToken,
+      Workspace,
+      UserWorkspace,
+      ApiKey,
+    ]),
     TypeORMModule,
     DataSourceModule,
   ],

@@ -20,10 +20,7 @@ import { CleanerWorkspaceService } from 'src/engine/workspace-manager/workspace-
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [Workspace, UserWorkspace, BillingSubscription],
-      'core',
-    ),
+    TypeOrmModule.forFeature([Workspace, UserWorkspace, BillingSubscription]),
     WorkspaceModule,
     DataSourceModule,
     UserVarsModule,

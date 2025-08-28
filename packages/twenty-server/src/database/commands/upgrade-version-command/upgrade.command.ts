@@ -37,6 +37,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
+import { AddPositionsToWorkflowVersionsAndWorkflowRuns } from 'src/database/commands/upgrade-version-command/1-5/1-5-add-positions-to-workflow-versions-and-workflow-runs.command';
 
 const execPromise = promisify(exec);
 
@@ -45,7 +46,7 @@ export class DatabaseMigrationService {
   private logger = new Logger(DatabaseMigrationService.name);
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
@@ -129,7 +130,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
   override allCommands: AllCommands;
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyConfigService: TwentyConfigService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -165,6 +166,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     // 1.5 Commands
     protected readonly removeFavoriteViewRelation: RemoveFavoriteViewRelation,
+    protected readonly addPositionsToWorkflowVersionsAndWorkflowRuns: AddPositionsToWorkflowVersionsAndWorkflowRuns,
   ) {
     super(
       workspaceRepository,
@@ -239,7 +241,10 @@ export class UpgradeCommand extends UpgradeCommandRunner {
     };
 
     const commands_150: VersionCommands = {
-      beforeSyncMetadata: [this.removeFavoriteViewRelation],
+      beforeSyncMetadata: [
+        this.removeFavoriteViewRelation,
+        this.addPositionsToWorkflowVersionsAndWorkflowRuns,
+      ],
       afterSyncMetadata: [],
     };
 
