@@ -6,7 +6,7 @@ import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCac
 import { getRefName } from '@/object-record/cache/utils/getRefName';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useUpdateManyRecordsFromManyObjects } from '@/object-record/hooks/useUpdateManyRecordsFromManyObjects';
+import { useUpdateMultipleRecordsFromManyObjects } from '@/object-record/hooks/useUpdateMultipleRecordsFromManyObjects';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -17,8 +17,8 @@ export const useDetachMorphRelatedRecordFromRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { fieldDefinition } = useContext(FieldContext);
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { updateManyRecordsFromManyObjects } =
-    useUpdateManyRecordsFromManyObjects();
+  const { updateMultipleRecordsFromManyObjects } =
+    useUpdateMultipleRecordsFromManyObjects();
 
   if (!isFieldMorphRelation(fieldDefinition)) {
     throw new Error('Field is not a morph relation');
@@ -115,7 +115,7 @@ export const useDetachMorphRelatedRecordFromRecord = () => {
       },
     ];
 
-    await updateManyRecordsFromManyObjects(updatedManyRecordsArgs);
+    await updateMultipleRecordsFromManyObjects(updatedManyRecordsArgs);
   };
 
   return { updateOneRecordAndDetachMorphRelations };

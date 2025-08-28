@@ -33,7 +33,7 @@ type UpdateManyRecordArgs = {
   recordGqlFields?: Record<string, any>;
 };
 
-export const useUpdateManyRecordsFromManyObjects = () => {
+export const useUpdateMultipleRecordsFromManyObjects = () => {
   const { fieldDefinition } = useContext(FieldContext);
   const apolloCoreClient = useApolloCoreClient();
 
@@ -42,7 +42,7 @@ export const useUpdateManyRecordsFromManyObjects = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const updateManyRecordsFromManyObjects = async (
+  const updateMultipleRecordsFromManyObjects = async (
     updatedManyRecordsArgs: UpdateManyRecordArgs[],
   ) => {
     for (const {
@@ -280,6 +280,6 @@ export const useUpdateManyRecordsFromManyObjects = () => {
   };
 
   return {
-    updateManyRecordsFromManyObjects,
+    updateMultipleRecordsFromManyObjects,
   };
 };

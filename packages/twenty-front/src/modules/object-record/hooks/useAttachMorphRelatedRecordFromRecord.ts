@@ -4,7 +4,7 @@ import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCac
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { computeDepthOneRecordGqlFieldsFromRecord } from '@/object-record/graphql/utils/computeDepthOneRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { useUpdateManyRecordsFromManyObjects } from '@/object-record/hooks/useUpdateManyRecordsFromManyObjects';
+import { useUpdateMultipleRecordsFromManyObjects } from '@/object-record/hooks/useUpdateMultipleRecordsFromManyObjects';
 import { getTargetFieldMetadataName } from '@/object-record/multiple-objects/utils/getTargetFieldMetadataName';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
@@ -16,8 +16,8 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { fieldDefinition } = useContext(FieldContext);
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { updateManyRecordsFromManyObjects } =
-    useUpdateManyRecordsFromManyObjects();
+  const { updateMultipleRecordsFromManyObjects } =
+    useUpdateMultipleRecordsFromManyObjects();
 
   if (!isFieldMorphRelation(fieldDefinition)) {
     throw new Error('Field is not a morph relation');
