@@ -42,11 +42,11 @@ jobs:
         uses: ./.github/workflows/actions/yarn-install
       - name: Diagnostic disk space issue
         run: df -h
-      - name: Restore storybook build cache
-        id: restore-storybook-build-cache
-        uses: ./.github/workflows/actions/restore-cache
-        with:
-          key: ${{ env.STORYBOOK_BUILD_CACHE_KEY }}
+      # - name: Restore storybook build cache
+      #   id: restore-storybook-build-cache
+      #   uses: ./.github/workflows/actions/restore-cache
+      #   with:
+      #     key: ${{ env.STORYBOOK_BUILD_CACHE_KEY }}
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Front / Build storybook
@@ -54,7 +54,7 @@ jobs:
       - name: Save storybook build cache
         uses: ./.github/workflows/actions/save-cache
         with:
-          key: ${{ steps.restore-storybook-build-cache.outputs.cache-primary-key }}
+          key: v3-${{ env.STORYBOOK_BUILD_CACHE_KEY }}-${{ github.ref_name }}
   front-sb-test:
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
