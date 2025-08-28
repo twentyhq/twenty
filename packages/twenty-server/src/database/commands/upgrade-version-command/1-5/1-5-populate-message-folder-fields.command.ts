@@ -53,9 +53,6 @@ export class PopulateMessageFolderFieldsCommand extends ActiveOrSuspendedWorkspa
         this.logger.warn(
           `Workspace ${workspaceId}: Basic update - Processed ${basicUpdateResult.processed}, Updated ${basicUpdateResult.updated}, Failed: ${basicUpdateResult.failed.length}`,
         );
-        throw new Error(
-          `Failed to update ${basicUpdateResult.failed.length} message folders`,
-        );
       }
 
       this.logger.log(
