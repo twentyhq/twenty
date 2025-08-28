@@ -33,7 +33,7 @@ export const validateMorphRelationCreationPayload = async ({
       error: {
         code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
         message: 'Morph relation creation payloads are empty',
-        userFriendlyMessage: t`Morph relation creation payloads are empty`,
+        userFriendlyMessage: t`At least one relation is require`,
       },
     };
   }
@@ -74,7 +74,7 @@ export const validateMorphRelationCreationPayload = async ({
         code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
         message:
           'Morph relation creation payloads must have only relation to the same object metadata',
-        userFriendlyMessage: t`Morph relation creation payloads must have contain relation to the same object metadata`,
+        userFriendlyMessage: t`Morph relation creation payloads must only contain relation to the same object metadata`,
       },
     };
   }
