@@ -6,6 +6,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
+import { CreateMessageFolderService } from 'src/engine/core-modules/auth/services/create-message-folder.service';
 import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { ResetCalendarChannelService } from 'src/engine/core-modules/auth/services/reset-calendar-channel.service';
@@ -140,6 +141,12 @@ describe('GoogleAPIsService', () => {
           provide: CreateMessageChannelService,
           useValue: {
             createMessageChannel: jest.fn(),
+          },
+        },
+        {
+          provide: CreateMessageFolderService,
+          useValue: {
+            createMessageFolders: jest.fn(),
           },
         },
         {
