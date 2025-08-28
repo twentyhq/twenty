@@ -11,7 +11,7 @@ import { type ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects
 @Injectable()
 export class ViewFieldSyncService {
   constructor(
-    @InjectRepository(ViewFieldEntity, 'core')
+    @InjectRepository(ViewFieldEntity)
     private readonly coreViewFieldRepository: Repository<ViewFieldEntity>,
   ) {}
 

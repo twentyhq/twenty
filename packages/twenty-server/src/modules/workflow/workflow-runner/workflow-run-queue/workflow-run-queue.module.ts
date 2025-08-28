@@ -19,7 +19,7 @@ import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-
 @Module({
   imports: [
     CacheStorageModule,
-    TypeOrmModule.forFeature([Workspace], 'core'),
+    TypeOrmModule.forFeature([Workspace]),
     MessageQueueModule,
     WorkspaceDataSourceModule,
     MetricsModule,

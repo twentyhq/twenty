@@ -21,11 +21,8 @@ import { MatchParticipantModule } from 'src/modules/match-participant/match-part
   imports: [
     WorkspaceDataSourceModule,
     WorkspaceModule,
-    TypeOrmModule.forFeature(
-      [ObjectMetadataEntity, FieldMetadataEntity],
-      'core',
-    ),
-    NestjsQueryTypeOrmModule.forFeature([Workspace], 'core'),
+    TypeOrmModule.forFeature([ObjectMetadataEntity, FieldMetadataEntity]),
+    NestjsQueryTypeOrmModule.forFeature([Workspace]),
     ContactCreationManagerModule,
     MatchParticipantModule,
   ],

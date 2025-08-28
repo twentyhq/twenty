@@ -28,7 +28,7 @@ export class MigrateWorkflowRunStatesCommand extends ActiveOrSuspendedWorkspaces
   private chunkSize = DEFAULT_CHUNK_SIZE;
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {

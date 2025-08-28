@@ -11,7 +11,7 @@ import { WebhookController } from './controllers/webhook.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Webhook], 'core'),
+    TypeOrmModule.forFeature([Webhook]),
     AuthModule,
     WorkspaceCacheStorageModule,
   ],

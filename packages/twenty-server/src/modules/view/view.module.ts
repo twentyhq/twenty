@@ -26,18 +26,15 @@ import { ViewService } from 'src/modules/view/services/view.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [
-        ViewEntity,
-        ViewFieldEntity,
-        ViewFilterEntity,
-        ViewFilterGroupEntity,
-        ViewGroupEntity,
-        ViewSortEntity,
-      ],
-      'core',
-    ),
-    TypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
+    TypeOrmModule.forFeature([
+      ViewEntity,
+      ViewFieldEntity,
+      ViewFilterEntity,
+      ViewFilterGroupEntity,
+      ViewGroupEntity,
+      ViewSortEntity,
+    ]),
+    TypeOrmModule.forFeature([ObjectMetadataEntity]),
     FeatureFlagModule,
   ],
 

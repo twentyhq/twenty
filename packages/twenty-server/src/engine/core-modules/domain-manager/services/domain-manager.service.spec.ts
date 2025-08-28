@@ -67,7 +67,7 @@ describe('DomainManagerService', () => {
       providers: [
         DomainManagerService,
         {
-          provide: getRepositoryToken(Workspace, 'core'),
+          provide: getRepositoryToken(Workspace),
           useClass: Repository,
         },
         {

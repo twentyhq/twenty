@@ -29,11 +29,11 @@ describe('EmailVerificationTokenService', () => {
       providers: [
         EmailVerificationTokenService,
         {
-          provide: getRepositoryToken(AppToken, 'core'),
+          provide: getRepositoryToken(AppToken),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(User, 'core'),
+          provide: getRepositoryToken(User),
           useValue: {
             findOne: jest.fn(),
           },
@@ -51,11 +51,9 @@ describe('EmailVerificationTokenService', () => {
       EmailVerificationTokenService,
     );
     appTokenRepository = module.get<Repository<AppToken>>(
-      getRepositoryToken(AppToken, 'core'),
+      getRepositoryToken(AppToken),
     );
-    userRepository = module.get<Repository<User>>(
-      getRepositoryToken(User, 'core'),
-    );
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
   });
 

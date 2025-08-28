@@ -59,7 +59,7 @@ describe('McpService', () => {
           useValue: mockUserRoleService,
         },
         {
-          provide: getRepositoryToken(RoleEntity, 'core'),
+          provide: getRepositoryToken(RoleEntity),
           useValue: {
             find: jest.fn().mockResolvedValue([mockAdminRole]),
           },

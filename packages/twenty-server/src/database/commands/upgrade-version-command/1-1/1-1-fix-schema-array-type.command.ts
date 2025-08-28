@@ -23,12 +23,12 @@ import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace
 })
 export class FixSchemaArrayTypeCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly databaseStructureService: DatabaseStructureService,
     private readonly typeORMService: TypeORMService,
-    @InjectRepository(FieldMetadataEntity, 'core')
+    @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);

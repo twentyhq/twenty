@@ -24,10 +24,10 @@ import { createForeignKeyDeterministicUuid } from 'src/engine/workspace-manager/
 @Injectable()
 export class RemoteTableRelationsService {
   constructor(
-    @InjectRepository(ObjectMetadataEntity, 'core')
+    @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
 
-    @InjectRepository(FieldMetadataEntity, 'core')
+    @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
   ) {}
