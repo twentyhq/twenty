@@ -1,16 +1,17 @@
 import { t } from '@lingui/core/macro';
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import {
-  FailedFieldInputTranspilation,
-  FieldInputTranspilationResult,
-  SuccessfulFieldInputTranspilation,
+  type FailedFieldInputTranspilation,
+  type FieldInputTranspilationResult,
+  type SuccessfulFieldInputTranspilation,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util';
-import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { isDefined } from 'twenty-shared/utils';
+import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type FromMorphRelationCreateFieldInputToFlatFieldMetadatasArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
@@ -47,6 +48,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
     success: [],
     failed: [],
   };
+
   for (const relationCreationPayload of rawMorphCreationPayload) {
     const transpilationResult =
       await fromRelationCreateFieldInputToFlatFieldMetadatas({
