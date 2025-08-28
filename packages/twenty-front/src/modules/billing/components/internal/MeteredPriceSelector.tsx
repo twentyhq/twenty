@@ -34,8 +34,10 @@ export const MeteredPriceSelector = ({
   );
 
   const options = meteredBillingPrices.map((meteredBillingPrice) => {
+    const nickname = meteredBillingPrice.nickname;
+    const price = formatNumber(meteredBillingPrice?.amount / 100, 2);
     return {
-      label: t`${meteredBillingPrice.nickname} - ${formatNumber(meteredBillingPrice?.amount / 100, 2)}$`,
+      label: t`${nickname} - ${price}$`,
       value: meteredBillingPrice.stripePriceId,
     };
   });

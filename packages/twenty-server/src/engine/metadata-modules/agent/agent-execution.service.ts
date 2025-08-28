@@ -7,8 +7,6 @@ import {
   type CoreMessage,
   type CoreUserMessage,
   type FilePart,
-  generateObject,
-  generateText,
   type ImagePart,
   streamText,
   ToolSet,
@@ -30,16 +28,14 @@ import { AgentHandoffToolService } from 'src/engine/metadata-modules/agent/agent
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/agent/constants/agent-config.const';
 import { AGENT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/agent/constants/agent-system-prompts.const';
 import { type RecordIdsByObjectMetadataNameSingularType } from 'src/engine/metadata-modules/agent/types/recordIdsByObjectMetadataNameSingular.type';
-import { convertOutputSchemaToZod } from 'src/engine/metadata-modules/agent/utils/convert-output-schema-to-zod';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 
 import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentEntity } from './agent.entity';
 import { AgentException, AgentExceptionCode } from './agent.exception';
-import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 
 export interface AgentExecutionResult {
   result: object;
