@@ -492,45 +492,6 @@ export const Currency: Story = {
   ),
 };
 
-export const Negative: Story = {
-  args: {
-    data: [
-      { month: 'Jan', profit: 5000, loss: -3000, to: '/pl/january' },
-      { month: 'Feb', profit: 7000, loss: -2000, to: '/pl/february' },
-      { month: 'Mar', profit: 3000, loss: -4500, to: '/pl/march' },
-      { month: 'Apr', profit: 8000, loss: -1500, to: '/pl/april' },
-      { month: 'May', profit: 6000, loss: -2500, to: '/pl/may' },
-    ],
-    indexBy: 'month',
-    keys: ['profit', 'loss'],
-    seriesLabels: {
-      profit: 'Profit',
-      loss: 'Loss',
-    },
-    displayType: 'currency',
-    prefix: '$',
-    showLegend: true,
-    showGrid: true,
-    xAxisLabel: 'Month',
-    yAxisLabel: 'Amount ($)',
-    id: 'bar-chart-negative',
-  },
-  render: (args) => (
-    <Container>
-      <GraphWidgetBarChart
-        data={args.data}
-        indexBy={args.indexBy}
-        keys={args.keys}
-        showLegend={args.showLegend}
-        showGrid={args.showGrid}
-        xAxisLabel={args.xAxisLabel}
-        yAxisLabel={args.yAxisLabel}
-        id={args.id}
-      />
-    </Container>
-  ),
-};
-
 export const Catalog: Story = {
   decorators: [CatalogDecorator],
   parameters: {
