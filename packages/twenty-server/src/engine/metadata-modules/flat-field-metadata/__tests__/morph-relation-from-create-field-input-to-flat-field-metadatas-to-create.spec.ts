@@ -1,6 +1,6 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { type EachTestingContext } from 'twenty-shared/testing';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -27,18 +27,18 @@ const existingFlatObjectMetadataMaps = [
   });
 }, FLAT_OBJECT_METADATA_MAPS_MOCKS);
 
+type TestCase = EachTestingContext<{
+  input: {
+    rawCreateFieldInput: CreateFieldInput &
+      Required<Pick<CreateFieldInput, 'morphRelationsCreationPayload'>>;
+    workspaceId: string;
+    existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+  };
+  expected: 'success' | 'fail';
+}>;
+
 describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test suite', () => {
   const mockWorkspaceId = 'mock-workspace-id';
-
-  type TestCase = EachTestingContext<{
-    input: {
-      rawCreateFieldInput: CreateFieldInput &
-        Required<Pick<CreateFieldInput, 'morphRelationsCreationPayload'>>;
-      workspaceId: string;
-      existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-    };
-    expected: 'success' | 'fail';
-  }>;
 
   describe('Success cases', () => {
     const successTestCases: TestCase[] = [
