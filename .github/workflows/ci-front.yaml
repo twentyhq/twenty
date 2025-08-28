@@ -55,6 +55,7 @@ jobs:
         uses: ./.github/workflows/actions/save-cache
         with:
           key: ${{ steps.restore-storybook-build-cache.outputs.cache-primary-key }}
+          additional-paths: .nx
   front-sb-test:
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
