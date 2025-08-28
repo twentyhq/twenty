@@ -23,10 +23,11 @@ import { TwoFactorAuthenticationMethod } from './entities/two-factor-authenticat
     MetricsModule,
     TokenModule,
     JwtModule,
-    TypeOrmModule.forFeature(
-      [User, TwoFactorAuthenticationMethod, UserWorkspace],
-      'core',
-    ),
+    TypeOrmModule.forFeature([
+      User,
+      TwoFactorAuthenticationMethod,
+      UserWorkspace,
+    ]),
     UserModule,
   ],
   providers: [

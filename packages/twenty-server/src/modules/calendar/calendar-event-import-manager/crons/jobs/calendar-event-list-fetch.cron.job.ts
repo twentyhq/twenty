@@ -26,7 +26,7 @@ export const CALENDAR_EVENT_LIST_FETCH_CRON_PATTERN = '*/5 * * * *';
 })
 export class CalendarEventListFetchCronJob {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,

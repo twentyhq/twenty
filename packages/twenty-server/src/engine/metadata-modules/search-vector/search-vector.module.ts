@@ -10,10 +10,10 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
 
 @Module({
   imports: [
-    NestjsQueryTypeOrmModule.forFeature(
-      [ObjectMetadataEntity, FieldMetadataEntity],
-      'core',
-    ),
+    NestjsQueryTypeOrmModule.forFeature([
+      ObjectMetadataEntity,
+      FieldMetadataEntity,
+    ]),
     IndexMetadataModule,
     WorkspaceMigrationModule,
   ],

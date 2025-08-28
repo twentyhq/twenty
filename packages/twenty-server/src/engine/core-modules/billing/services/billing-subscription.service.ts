@@ -41,14 +41,14 @@ export class BillingSubscriptionService {
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly billingPlanService: BillingPlanService,
     private readonly billingProductService: BillingProductService,
-    @InjectRepository(BillingEntitlement, 'core')
+    @InjectRepository(BillingEntitlement)
     private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
-    @InjectRepository(BillingSubscription, 'core')
+    @InjectRepository(BillingSubscription)
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     private readonly stripeCustomerService: StripeCustomerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
-    @InjectRepository(BillingSubscriptionItem, 'core')
+    @InjectRepository(BillingSubscriptionItem)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
   ) {}
 

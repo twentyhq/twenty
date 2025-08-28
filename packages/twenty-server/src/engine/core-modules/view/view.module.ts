@@ -31,17 +31,14 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [
-        ViewEntity,
-        ViewFieldEntity,
-        ViewFilterEntity,
-        ViewFilterGroupEntity,
-        ViewGroupEntity,
-        ViewSortEntity,
-      ],
-      'core',
-    ),
+    TypeOrmModule.forFeature([
+      ViewEntity,
+      ViewFieldEntity,
+      ViewFilterEntity,
+      ViewFilterGroupEntity,
+      ViewGroupEntity,
+      ViewSortEntity,
+    ]),
     I18nModule,
     WorkspaceCacheStorageModule,
     WorkspaceMetadataCacheModule,

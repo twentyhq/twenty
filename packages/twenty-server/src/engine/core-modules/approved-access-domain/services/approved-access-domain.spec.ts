@@ -28,7 +28,7 @@ describe('ApprovedAccessDomainService', () => {
       providers: [
         ApprovedAccessDomainService,
         {
-          provide: getRepositoryToken(ApprovedAccessDomain, 'core'),
+          provide: getRepositoryToken(ApprovedAccessDomain),
           useValue: {
             delete: jest.fn(),
             findOneBy: jest.fn(),
@@ -61,7 +61,7 @@ describe('ApprovedAccessDomainService', () => {
       ApprovedAccessDomainService,
     );
     approvedAccessDomainRepository = module.get(
-      getRepositoryToken(ApprovedAccessDomain, 'core'),
+      getRepositoryToken(ApprovedAccessDomain),
     );
     emailService = module.get<EmailService>(EmailService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);

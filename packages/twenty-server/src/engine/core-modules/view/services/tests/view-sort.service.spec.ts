@@ -34,7 +34,7 @@ describe('ViewSortService', () => {
       providers: [
         ViewSortService,
         {
-          provide: getRepositoryToken(ViewSortEntity, 'core'),
+          provide: getRepositoryToken(ViewSortEntity),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -49,7 +49,7 @@ describe('ViewSortService', () => {
 
     viewSortService = module.get<ViewSortService>(ViewSortService);
     viewSortRepository = module.get<Repository<ViewSortEntity>>(
-      getRepositoryToken(ViewSortEntity, 'core'),
+      getRepositoryToken(ViewSortEntity),
     );
   });
 

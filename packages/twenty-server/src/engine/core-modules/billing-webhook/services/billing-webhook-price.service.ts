@@ -23,11 +23,11 @@ export class BillingWebhookPriceService {
   protected readonly logger = new Logger(BillingWebhookPriceService.name);
   constructor(
     private readonly stripeBillingMeterService: StripeBillingMeterService,
-    @InjectRepository(BillingPrice, 'core')
+    @InjectRepository(BillingPrice)
     private readonly billingPriceRepository: Repository<BillingPrice>,
-    @InjectRepository(BillingMeter, 'core')
+    @InjectRepository(BillingMeter)
     private readonly billingMeterRepository: Repository<BillingMeter>,
-    @InjectRepository(BillingProduct, 'core')
+    @InjectRepository(BillingProduct)
     private readonly billingProductRepository: Repository<BillingProduct>,
   ) {}
 

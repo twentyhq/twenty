@@ -24,7 +24,7 @@ export const CALENDAR_EVENTS_IMPORT_CRON_PATTERN = '*/1 * * * *';
 })
 export class CalendarEventsImportCronJob {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,

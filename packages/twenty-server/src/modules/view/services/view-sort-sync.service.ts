@@ -12,7 +12,7 @@ import { type ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/
 @Injectable()
 export class ViewSortSyncService {
   constructor(
-    @InjectRepository(ViewSortEntity, 'core')
+    @InjectRepository(ViewSortEntity)
     private readonly coreViewSortRepository: Repository<ViewSortEntity>,
   ) {}
 

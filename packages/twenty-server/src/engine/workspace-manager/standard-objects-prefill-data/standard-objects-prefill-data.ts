@@ -13,6 +13,7 @@ export const standardObjectsPrefillData = async (
   mainDataSource: DataSource,
   schemaName: string,
   objectMetadataItems: ObjectMetadataEntity[],
+  featureFlags?: Record<string, boolean>,
 ) => {
   mainDataSource.transaction(async (entityManager: WorkspaceEntityManager) => {
     await prefillCompanies(entityManager, schemaName);
@@ -25,6 +26,7 @@ export const standardObjectsPrefillData = async (
       entityManager,
       schemaName,
       objectMetadataItems,
+      featureFlags,
     );
 
     await prefillWorkspaceFavorites(

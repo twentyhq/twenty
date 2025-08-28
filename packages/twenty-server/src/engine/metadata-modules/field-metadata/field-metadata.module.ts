@@ -48,10 +48,10 @@ import { FieldMetadataService } from './services/field-metadata.service';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature(
-          [FieldMetadataEntity, ObjectMetadataEntity],
-          'core',
-        ),
+        NestjsQueryTypeOrmModule.forFeature([
+          FieldMetadataEntity,
+          ObjectMetadataEntity,
+        ]),
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,
         WorkspaceMetadataVersionModule,

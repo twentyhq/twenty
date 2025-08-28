@@ -21,7 +21,7 @@ export const CALENDAR_ONGOING_STALE_CRON_PATTERN = '0 * * * *';
 @Processor(MessageQueue.cronQueue)
 export class CalendarOngoingStaleCronJob {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,

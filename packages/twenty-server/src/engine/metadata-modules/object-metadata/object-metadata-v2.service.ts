@@ -37,7 +37,7 @@ export class ObjectMetadataServiceV2 {
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly objectMetadataRelatedRecordsService: ObjectMetadataRelatedRecordsService,
-    @InjectRepository(ViewEntity, 'core')
+    @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
   ) {}
 

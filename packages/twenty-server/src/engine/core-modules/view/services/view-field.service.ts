@@ -16,7 +16,7 @@ import {
 @Injectable()
 export class ViewFieldService {
   constructor(
-    @InjectRepository(ViewFieldEntity, 'core')
+    @InjectRepository(ViewFieldEntity)
     private readonly viewFieldRepository: Repository<ViewFieldEntity>,
   ) {}
 

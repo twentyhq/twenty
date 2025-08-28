@@ -16,7 +16,7 @@ import {
 @Injectable()
 export class ViewService {
   constructor(
-    @InjectRepository(ViewEntity, 'core')
+    @InjectRepository(ViewEntity)
     private readonly viewRepository: Repository<ViewEntity>,
   ) {}
 

@@ -18,7 +18,7 @@ import { billingValidator } from 'src/engine/core-modules/billing/billing.valida
 @Injectable()
 export class BillingSubscriptionItemService {
   constructor(
-    @InjectRepository(BillingSubscriptionItem, 'core')
+    @InjectRepository(BillingSubscriptionItem)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
     @InjectRepository(BillingPrice, 'core')
     private readonly billingPriceRepository: Repository<BillingPrice>,
