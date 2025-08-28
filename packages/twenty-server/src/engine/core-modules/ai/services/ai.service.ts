@@ -24,14 +24,17 @@ export class AiService {
     return registeredModel.model;
   }
 
-  streamText(
-    messages: CoreMessage[],
+  streamText({
+    messages,
+    options,
+  }: {
+    messages: CoreMessage[];
     options: {
       temperature?: number;
       maxTokens?: number;
       model: LanguageModelV1;
-    },
-  ) {
+    };
+  }) {
     return streamText({
       model: options.model,
       messages,

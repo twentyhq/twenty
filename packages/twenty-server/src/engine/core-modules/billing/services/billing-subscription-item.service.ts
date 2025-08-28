@@ -69,6 +69,7 @@ export class BillingSubscriptionItemService {
       throw new BillingException(
         `Cannot find price with id ${newPriceId}`,
         BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+        { userFriendlyMessage: 'Price not found' },
       );
     }
 
