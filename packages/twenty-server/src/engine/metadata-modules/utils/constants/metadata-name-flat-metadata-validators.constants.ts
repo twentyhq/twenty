@@ -9,28 +9,29 @@ import {
 import { RESERVED_METADATA_NAME_KEYWORDS } from 'src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword';
 import { STARTS_WITH_LOWER_CASE_AND_CONTAINS_ONLY_CAPS_AND_LOWER_LETTERS_AND_NUMBER_STRING_REGEX } from 'src/engine/metadata-modules/utils/validate-metadata-name-start-with-lowercase-letter-and-contain-digits-nor-letters.utils';
 
-export const METADATA_NAME_VALIDATORS: FlatMetadataValidator<string>[] = [
-  {
-    message: t`Name is too long`,
-    validator: (name) => exceedsDatabaseIdentifierMaximumLength(name),
-  },
-  {
-    message: t`Name is too short`,
-    validator: (name) => beneathDatabaseIdentifierMinimumLength(name),
-  },
-  {
-    message: t`Name should be in camelCase`,
-    validator: (name) => name !== camelCase(name),
-  },
-  {
-    message: t`Name is not valid: it must start with lowercase letter and contain only alphanumeric letters`,
-    validator: (name) =>
-      !name.match(
-        STARTS_WITH_LOWER_CASE_AND_CONTAINS_ONLY_CAPS_AND_LOWER_LETTERS_AND_NUMBER_STRING_REGEX,
-      ),
-  },
-  {
-    message: t`The name is not available`,
-    validator: (name) => RESERVED_METADATA_NAME_KEYWORDS.includes(name),
-  },
-];
+export const getMetadataNameValidators =
+  (): FlatMetadataValidator<string>[] => [
+    {
+      message: t`Name is too long`,
+      validator: (name) => exceedsDatabaseIdentifierMaximumLength(name),
+    },
+    {
+      message: t`Name is too short`,
+      validator: (name) => beneathDatabaseIdentifierMinimumLength(name),
+    },
+    {
+      message: t`Name should be in camelCase`,
+      validator: (name) => name !== camelCase(name),
+    },
+    {
+      message: t`Name is not valid: it must start with lowercase letter and contain only alphanumeric letters`,
+      validator: (name) =>
+        !name.match(
+          STARTS_WITH_LOWER_CASE_AND_CONTAINS_ONLY_CAPS_AND_LOWER_LETTERS_AND_NUMBER_STRING_REGEX,
+        ),
+    },
+    {
+      message: t`The name is not available`,
+      validator: (name) => RESERVED_METADATA_NAME_KEYWORDS.includes(name),
+    },
+  ];
