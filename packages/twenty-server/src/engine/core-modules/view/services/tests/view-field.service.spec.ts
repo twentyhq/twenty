@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
-import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
 import {
   ViewFieldException,
   ViewFieldExceptionCode,
@@ -15,7 +15,7 @@ import { ViewFieldService } from 'src/engine/core-modules/view/services/view-fie
 
 describe('ViewFieldService', () => {
   let viewFieldService: ViewFieldService;
-  let viewFieldRepository: Repository<ViewFieldEntity>;
+  let viewFieldRepository: Repository<ViewField>;
 
   const mockViewField = {
     id: 'view-field-id',
@@ -28,14 +28,14 @@ describe('ViewFieldService', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
-  } as ViewFieldEntity;
+  } as ViewField;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ViewFieldService,
         {
-          provide: getRepositoryToken(ViewFieldEntity),
+          provide: getRepositoryToken(ViewField, 'core'),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -49,8 +49,8 @@ describe('ViewFieldService', () => {
     }).compile();
 
     viewFieldService = module.get<ViewFieldService>(ViewFieldService);
-    viewFieldRepository = module.get<Repository<ViewFieldEntity>>(
-      getRepositoryToken(ViewFieldEntity),
+    viewFieldRepository = module.get<Repository<ViewField>>(
+      getRepositoryToken(ViewField, 'core'),
     );
   });
 

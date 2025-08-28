@@ -3,7 +3,6 @@ import { RecoilRoot } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { textfieldDefinition } from '@/object-record/record-field/ui/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
@@ -36,30 +35,26 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
         viewBarId="viewBarId"
         objectNameSingular={CoreObjectNameSingular.Person}
       >
-        <RecordComponentInstanceContextsWrapper
-          componentInstanceId={recordTableId}
+        <FieldContext.Provider
+          value={{
+            fieldDefinition: textfieldDefinition,
+            recordId: 'recordId',
+            isLabelIdentifier: false,
+            isRecordFieldReadOnly: false,
+          }}
         >
-          <FieldContext.Provider
-            value={{
-              fieldDefinition: textfieldDefinition,
-              recordId: 'recordId',
-              isLabelIdentifier: false,
-              isRecordFieldReadOnly: false,
-            }}
-          >
-            <RecordTableRowContextProvider value={recordTableRowContextValue}>
-              <RecordTableRowDraggableContextProvider
-                value={recordTableRowDraggableContextValue}
+          <RecordTableRowContextProvider value={recordTableRowContextValue}>
+            <RecordTableRowDraggableContextProvider
+              value={recordTableRowDraggableContextValue}
+            >
+              <RecordTableCellContext.Provider
+                value={{ ...recordTableCellContextValue }}
               >
-                <RecordTableCellContext.Provider
-                  value={{ ...recordTableCellContextValue }}
-                >
-                  {children}
-                </RecordTableCellContext.Provider>
-              </RecordTableRowDraggableContextProvider>
-            </RecordTableRowContextProvider>
-          </FieldContext.Provider>
-        </RecordComponentInstanceContextsWrapper>
+                {children}
+              </RecordTableCellContext.Provider>
+            </RecordTableRowDraggableContextProvider>
+          </RecordTableRowContextProvider>
+        </FieldContext.Provider>
       </RecordTableContextProvider>
     </RecordTableComponentInstance>
   </RecoilRoot>

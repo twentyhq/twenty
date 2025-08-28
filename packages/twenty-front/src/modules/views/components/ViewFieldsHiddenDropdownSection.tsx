@@ -1,7 +1,7 @@
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
+import { useObjectOptionsForTable } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForTable';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
-import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -15,8 +15,10 @@ export const ViewFieldsHiddenDropdownSection = () => {
     ObjectOptionsDropdownContext,
   );
 
-  const { changeRecordFieldVisibility } =
-    useChangeRecordFieldVisibility(recordIndexId);
+  const { handleColumnVisibilityChange } = useObjectOptionsForTable(
+    recordIndexId,
+    objectMetadataItem.id,
+  );
 
   const { handleBoardFieldVisibilityChange } = useObjectOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -27,7 +29,7 @@ export const ViewFieldsHiddenDropdownSection = () => {
   const handleChangeFieldVisibility =
     viewType === ViewType.Kanban
       ? handleBoardFieldVisibilityChange
-      : changeRecordFieldVisibility;
+      : handleColumnVisibilityChange;
 
   const currentRecordFields = useRecoilComponentValue(
     currentRecordFieldsComponentState,

@@ -27,7 +27,7 @@ describe('CloudflareController - customHostnameWebhooks', () => {
       controllers: [CloudflareController],
       providers: [
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(Workspace, 'core'),
           useValue: {
             findOneBy: jest.fn(),
             save: jest.fn(),
@@ -73,7 +73,7 @@ describe('CloudflareController - customHostnameWebhooks', () => {
     }).compile();
 
     controller = module.get<CloudflareController>(CloudflareController);
-    WorkspaceRepository = module.get(getRepositoryToken(Workspace));
+    WorkspaceRepository = module.get(getRepositoryToken(Workspace, 'core'));
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     domainManagerService =
       module.get<DomainManagerService>(DomainManagerService);

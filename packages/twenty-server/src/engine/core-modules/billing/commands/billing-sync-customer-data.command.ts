@@ -21,10 +21,10 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 })
 export class BillingSyncCustomerDataCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly stripeSubscriptionService: StripeSubscriptionService,
-    @InjectRepository(BillingCustomer)
+    @InjectRepository(BillingCustomer, 'core')
     protected readonly billingCustomerRepository: Repository<BillingCustomer>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {

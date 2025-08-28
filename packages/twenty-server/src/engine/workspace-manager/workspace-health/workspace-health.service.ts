@@ -26,7 +26,7 @@ export class WorkspaceHealthService {
   private readonly logger = new Logger(WorkspaceHealthService.name);
 
   constructor(
-    @InjectDataSource()
+    @InjectDataSource('core')
     private readonly coreDataSource: DataSource,
     private readonly dataSourceService: DataSourceService,
     private readonly objectMetadataService: ObjectMetadataService,

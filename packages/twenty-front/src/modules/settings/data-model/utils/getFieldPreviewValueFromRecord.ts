@@ -11,7 +11,6 @@ export const getFieldPreviewValueFromRecord = ({
 }) => {
   const recordFieldValue = record[fieldMetadataItem.name];
 
-  // todo @guillim : adjust this to handle morph relations
   // Relation fields (to many)
   if (
     fieldMetadataItem.type === FieldMetadataType.RELATION &&

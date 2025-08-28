@@ -20,7 +20,7 @@ export const MESSAGING_MESSAGE_CHANNEL_SYNC_STATUS_MONITORING_CRON_PATTERN =
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessageChannelSyncStatusMonitoringCronJob {
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly messagingMonitoringService: MessagingMonitoringService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,

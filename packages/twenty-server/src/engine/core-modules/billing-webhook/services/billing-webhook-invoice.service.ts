@@ -14,7 +14,7 @@ const SUBSCRIPTION_CYCLE_BILLING_REASON = 'subscription_cycle';
 export class BillingWebhookInvoiceService {
   protected readonly logger = new Logger(BillingWebhookInvoiceService.name);
   constructor(
-    @InjectRepository(BillingSubscriptionItem)
+    @InjectRepository(BillingSubscriptionItem, 'core')
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
   ) {}
 

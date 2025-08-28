@@ -7,7 +7,7 @@ import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { mockedApiKeys } from '~/testing/mock-data/api-keys';
 import {
-  getCompaniesRecordConnectionMock,
+  getCompaniesMock,
   getCompanyDuplicateMock,
 } from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
@@ -37,7 +37,7 @@ import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 
 const peopleMock = getPeopleRecordConnectionMock();
-const companiesMock = getCompaniesRecordConnectionMock();
+const companiesMock = getCompaniesMock();
 const duplicateCompanyMock = getCompanyDuplicateMock();
 
 export const metadataGraphql = graphql.link(

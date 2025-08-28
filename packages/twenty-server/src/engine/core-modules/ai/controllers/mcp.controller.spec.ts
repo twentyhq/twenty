@@ -6,7 +6,6 @@ import { type Workspace } from 'src/engine/core-modules/workspace/workspace.enti
 import { MCP_SERVER_METADATA } from 'src/engine/core-modules/ai/constants/mcp.const';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
-import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 
 import { McpController } from './mcp.controller';
 
@@ -33,12 +32,6 @@ describe('McpController', () => {
         {
           provide: WorkspaceCacheStorageService,
           useValue: jest.fn(),
-        },
-        {
-          provide: HttpExceptionHandlerService,
-          useValue: {
-            handleError: jest.fn(),
-          },
         },
       ],
     }).compile();

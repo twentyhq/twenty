@@ -29,7 +29,7 @@ export const MESSAGING_MESSAGES_IMPORT_CRON_PATTERN = '*/1 * * * *';
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessagesImportCronJob {
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,

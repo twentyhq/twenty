@@ -8,7 +8,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace]),
+    TypeOrmModule.forFeature([Workspace], 'core'),
     WorkspaceCacheStorageModule,
     WorkspaceMetadataCacheModule,
   ],

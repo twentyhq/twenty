@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
-import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 import {
   ViewSortException,
@@ -16,7 +16,7 @@ import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort
 
 describe('ViewSortService', () => {
   let viewSortService: ViewSortService;
-  let viewSortRepository: Repository<ViewSortEntity>;
+  let viewSortRepository: Repository<ViewSort>;
 
   const mockViewSort = {
     id: 'view-sort-id',
@@ -27,14 +27,14 @@ describe('ViewSortService', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
-  } as ViewSortEntity;
+  } as ViewSort;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ViewSortService,
         {
-          provide: getRepositoryToken(ViewSortEntity),
+          provide: getRepositoryToken(ViewSort, 'core'),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -48,8 +48,8 @@ describe('ViewSortService', () => {
     }).compile();
 
     viewSortService = module.get<ViewSortService>(ViewSortService);
-    viewSortRepository = module.get<Repository<ViewSortEntity>>(
-      getRepositoryToken(ViewSortEntity),
+    viewSortRepository = module.get<Repository<ViewSort>>(
+      getRepositoryToken(ViewSort, 'core'),
     );
   });
 

@@ -74,7 +74,7 @@ describe('TwoFactorAuthenticationService', () => {
       providers: [
         TwoFactorAuthenticationService,
         {
-          provide: getRepositoryToken(TwoFactorAuthenticationMethod),
+          provide: getRepositoryToken(TwoFactorAuthenticationMethod, 'core'),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
@@ -99,7 +99,9 @@ describe('TwoFactorAuthenticationService', () => {
     service = module.get<TwoFactorAuthenticationService>(
       TwoFactorAuthenticationService,
     );
-    repository = module.get(getRepositoryToken(TwoFactorAuthenticationMethod));
+    repository = module.get(
+      getRepositoryToken(TwoFactorAuthenticationMethod, 'core'),
+    );
     userWorkspaceService =
       module.get<UserWorkspaceService>(UserWorkspaceService);
     simpleSecretEncryptionUtil = module.get<SimpleSecretEncryptionUtil>(

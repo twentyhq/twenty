@@ -1,6 +1,7 @@
-import { TEST_NOT_EXISTING_VIEW_ID } from 'test/integration/constants/test-view-ids.constants';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import {
+  TEST_NOT_EXISTING_VIEW_ID,
+  TEST_OBJECT_METADATA_1_ID,
+} from 'test/integration/constants/test-view-ids.constants';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   assertRestApiErrorResponse,
@@ -25,32 +26,6 @@ import {
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 
 describe('View REST API', () => {
-  let testObjectMetadataId: string;
-
-  beforeAll(async () => {
-    const {
-      data: {
-        createOneObject: { id: objectMetadataId },
-      },
-    } = await createOneObjectMetadata({
-      input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
-        icon: 'Icon123',
-      },
-    });
-
-    testObjectMetadataId = objectMetadataId;
-  });
-
-  afterAll(async () => {
-    await deleteOneObjectMetadata({
-      input: { idToDelete: testObjectMetadataId },
-    });
-  });
-
   beforeEach(async () => {
     await cleanupViewRecords();
   });
@@ -74,7 +49,7 @@ describe('View REST API', () => {
     it('should return views filtered by objectMetadataId', async () => {
       const response = await makeRestAPIRequest({
         method: 'get',
-        path: `/metadata/views?objectMetadataId=${testObjectMetadataId}`,
+        path: `/metadata/views?objectMetadataId=${TEST_OBJECT_METADATA_1_ID}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
@@ -98,12 +73,11 @@ describe('View REST API', () => {
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-        objectMetadataId: testObjectMetadataId,
       });
 
       assertViewStructure(view, {
         name: viewName,
-        objectMetadataId: testObjectMetadataId,
+        objectMetadataId: TEST_OBJECT_METADATA_1_ID,
         icon: 'IconTable',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
@@ -123,7 +97,6 @@ describe('View REST API', () => {
         position: 1,
         isCompact: true,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-        objectMetadataId: testObjectMetadataId,
       });
 
       assertViewStructure(kanbanView, {
@@ -131,7 +104,6 @@ describe('View REST API', () => {
         type: ViewType.KANBAN,
         isCompact: true,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-        objectMetadataId: testObjectMetadataId,
       });
 
       await deleteTestViewWithRestApi(kanbanView.id);
@@ -149,7 +121,6 @@ describe('View REST API', () => {
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-        objectMetadataId: testObjectMetadataId,
       });
 
       const response = await makeRestAPIRequest({
@@ -162,7 +133,7 @@ describe('View REST API', () => {
       assertViewStructure(response.body, {
         id: view.id,
         name: viewName,
-        objectMetadataId: testObjectMetadataId,
+        objectMetadataId: TEST_OBJECT_METADATA_1_ID,
       });
     });
 
@@ -189,7 +160,6 @@ describe('View REST API', () => {
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-        objectMetadataId: testObjectMetadataId,
       });
 
       const updatedName = generateRecordName('Updated View');
@@ -214,7 +184,7 @@ describe('View REST API', () => {
         type: ViewType.KANBAN,
         isCompact: true,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-        objectMetadataId: testObjectMetadataId,
+        objectMetadataId: TEST_OBJECT_METADATA_1_ID,
       });
     });
 
@@ -253,7 +223,6 @@ describe('View REST API', () => {
         position: 0,
         isCompact: false,
         openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-        objectMetadataId: testObjectMetadataId,
       });
 
       const deleteResponse = await makeRestAPIRequest({

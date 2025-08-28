@@ -4,10 +4,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 export type GenerateEmptyFieldValueArgs = {
-  fieldMetadataItem: Pick<
-    FieldMetadataItem,
-    'type' | 'settings' | 'defaultValue'
-  >;
+  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'relation'>;
   shouldComputeFunctionDefaultValue?: boolean;
 };
 // TODO strictly type each fieldValue following their FieldMetadataType
@@ -65,13 +62,11 @@ export const generateEmptyFieldValue = ({
       return null;
     }
     case FieldMetadataType.BOOLEAN: {
-      return fieldMetadataItem?.defaultValue ?? true;
+      return true;
     }
     case FieldMetadataType.RELATION:
     case FieldMetadataType.MORPH_RELATION: {
-      if (
-        fieldMetadataItem.settings?.relationType === RelationType.MANY_TO_ONE
-      ) {
+      if (fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE) {
         return null;
       }
 

@@ -14,7 +14,7 @@ import { WorkflowVersionEdgeModule } from 'src/modules/workflow/workflow-builder
     WorkflowVersionModule,
     WorkflowVersionStepModule,
     WorkflowVersionEdgeModule,
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
+    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
   ],
   exports: [
     WorkflowSchemaModule,

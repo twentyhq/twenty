@@ -39,11 +39,11 @@ describe('RefreshTokenService', () => {
           },
         },
         {
-          provide: getRepositoryToken(AppToken),
+          provide: getRepositoryToken(AppToken, 'core'),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(User, 'core'),
           useClass: Repository,
         },
       ],
@@ -53,9 +53,11 @@ describe('RefreshTokenService', () => {
     jwtWrapperService = module.get<JwtWrapperService>(JwtWrapperService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     appTokenRepository = module.get<Repository<AppToken>>(
-      getRepositoryToken(AppToken),
+      getRepositoryToken(AppToken, 'core'),
     );
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    userRepository = module.get<Repository<User>>(
+      getRepositoryToken(User, 'core'),
+    );
   });
 
   it('should be defined', () => {

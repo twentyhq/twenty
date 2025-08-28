@@ -14,7 +14,6 @@ import { detectTimeFormat } from '@/localization/utils/detectTimeFormat';
 import { detectTimeZone } from '@/localization/utils/detectTimeZone';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDateFormatFromWorkspaceDateFormat';
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
-import { coreViewsState } from '@/views/states/coreViewState';
 import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
@@ -39,7 +38,6 @@ export const useLoadCurrentUser = () => {
   );
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
-  const setCoreViews = useSetRecoilState(coreViewsState);
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
@@ -130,10 +128,6 @@ export const useLoadCurrentUser = () => {
       });
     }
 
-    if (isDefined(workspace) && isDefined(workspace.views)) {
-      setCoreViews(workspace.views);
-    }
-
     return {
       user,
       workspaceMember,
@@ -143,7 +137,6 @@ export const useLoadCurrentUser = () => {
     getCurrentUser,
     isOnAWorkspace,
     setAvailableWorkspaces,
-    setCoreViews,
     setCurrentUser,
     setCurrentUserWorkspace,
     setCurrentWorkspace,

@@ -21,10 +21,10 @@ import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/
 })
 export class AddEnqueuedStatusToWorkflowRunCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(FieldMetadataEntity)
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {

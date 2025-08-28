@@ -4,13 +4,13 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-
-import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
-import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { useSetAvailableTableColumns } from '@/object-record/record-table/hooks/useSetAvailableTableColumns';
+import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTableColumns';
 import { SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS } from '@/sign-in-background-mock/constants/SignInBackgroundMockColumnDefinitions';
+import { SIGN_IN_BACKGROUND_MOCK_VIEW_FIELDS } from '@/sign-in-background-mock/constants/SignInBackgroundMockViewFields';
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useInitViewBar } from '@/views/hooks/useInitViewBar';
+import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 
 type SignInBackgroundMockContainerEffectProps = {
   objectNamePlural: string;
@@ -31,10 +31,10 @@ export const SignInBackgroundMockContainerEffect = ({
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const setCurrentRecordFields = useSetRecoilComponentState(
-    currentRecordFieldsComponentState,
-    recordTableId,
-  );
+  const { setAvailableTableColumns } =
+    useSetAvailableTableColumns(recordTableId);
+
+  const { setTableColumns } = useSetTableColumns();
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
@@ -52,20 +52,16 @@ export const SignInBackgroundMockContainerEffect = ({
 
     setAvailableFieldDefinitions?.(SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS);
 
-    const recordFields = SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS.filter(
-      (fieldDefinition) => fieldDefinition.fieldMetadataId !== '',
-    ).map(
-      (columnDefinitionMock) =>
-        ({
-          fieldMetadataItemId: columnDefinitionMock.fieldMetadataId,
-          id: columnDefinitionMock.fieldMetadataId,
-          isVisible: columnDefinitionMock.isVisible,
-          position: columnDefinitionMock.position,
-          size: columnDefinitionMock.size,
-        }) satisfies RecordField as RecordField,
-    );
+    setAvailableTableColumns(SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS);
 
-    setCurrentRecordFields(recordFields);
+    setTableColumns(
+      mapViewFieldsToColumnDefinitions({
+        viewFields: SIGN_IN_BACKGROUND_MOCK_VIEW_FIELDS,
+        columnDefinitions: SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS,
+      }),
+      recordTableId,
+      objectMetadataItem.id,
+    );
 
     if (contextStoreCurrentObjectMetadataItemId !== objectMetadataItem.id) {
       setContextStoreCurrentObjectMetadataItemId(objectMetadataItem.id);
@@ -74,10 +70,11 @@ export const SignInBackgroundMockContainerEffect = ({
     setViewObjectMetadataId,
     setAvailableFieldDefinitions,
     objectMetadataItem,
+    setAvailableTableColumns,
+    setTableColumns,
     recordTableId,
     setContextStoreCurrentObjectMetadataItemId,
     contextStoreCurrentObjectMetadataItemId,
-    setCurrentRecordFields,
   ]);
 
   return <></>;

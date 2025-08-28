@@ -64,7 +64,7 @@ export class ObjectMetadataRelatedRecordsService {
     await viewFieldRepository.insert(viewFields);
   }
 
-  public async createViewWorkspaceFavorite(
+  private async createViewWorkspaceFavorite(
     workspaceId: string,
     viewId: string,
   ): Promise<void> {

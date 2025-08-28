@@ -1,7 +1,6 @@
 import { type WorkflowFilterAction } from '@/workflow/types/Workflow';
 import { type Meta, type StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
-import { StepLogicalOperator, ViewFilterOperand } from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
@@ -43,7 +42,9 @@ const CONFIGURED_ACTION: WorkflowFilterAction = {
       stepFilterGroups: [
         {
           id: 'filter-group-1',
-          logicalOperator: StepLogicalOperator.AND,
+          parentStepFilterGroupId: null,
+          logicalOperator: 'AND',
+          stepFilterGroupChildren: [],
         },
       ],
       stepFilters: [
@@ -51,9 +52,10 @@ const CONFIGURED_ACTION: WorkflowFilterAction = {
           id: 'filter-1',
           stepFilterGroupId: 'filter-group-1',
           stepOutputKey: 'company.name',
-          operand: ViewFilterOperand.Contains,
+          displayValue: 'Company Name',
+          operandType: 'LITERAL',
+          operand: 'contains',
           value: 'Acme',
-          type: 'string',
         },
       ],
     },

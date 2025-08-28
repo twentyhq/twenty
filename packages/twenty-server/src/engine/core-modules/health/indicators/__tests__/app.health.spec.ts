@@ -39,7 +39,7 @@ describe('AppHealthIndicator', () => {
       providers: [
         AppHealthIndicator,
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(Workspace, 'core'),
           useValue: workspaceRepository,
         },
         {

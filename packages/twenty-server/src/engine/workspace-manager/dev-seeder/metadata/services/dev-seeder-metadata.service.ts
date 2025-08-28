@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
-
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -19,14 +16,12 @@ import { ROCKET_CUSTOM_OBJECT_SEED } from 'src/engine/workspace-manager/dev-seed
 import { SURVEY_RESULT_CUSTOM_OBJECT_SEED } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-objects/constants/survey-results-object-seed.constant';
 import { type FieldMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/field-metadata-seed.type';
 import { type ObjectMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/object-metadata-seed.type';
-import { prefillCoreViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-core-views';
 
 @Injectable()
 export class DevSeederMetadataService {
   constructor(
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
-    private readonly typeORMService: TypeORMService,
   ) {}
 
   private readonly workspaceConfigs: Record<
@@ -102,8 +97,6 @@ export class DevSeederMetadataService {
         fieldMetadataSeeds: fieldConfig.seeds,
       });
     }
-
-    await this.seedCoreViews(workspaceId);
   }
 
   private async seedCustomObject({
@@ -149,18 +142,5 @@ export class DevSeederMetadataService {
         workspaceId,
       })),
     );
-  }
-
-  private async seedCoreViews(workspaceId: string): Promise<void> {
-    const mainDataSource = this.typeORMService.getMainDataSource();
-
-    if (!isDefined(mainDataSource)) {
-      throw new Error('Could not connect to main data source');
-    }
-
-    const createdObjectMetadata =
-      await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
-
-    await prefillCoreViews(mainDataSource, workspaceId, createdObjectMetadata);
   }
 }

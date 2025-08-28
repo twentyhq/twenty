@@ -1,40 +1,40 @@
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
+import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellFieldContextGeneric } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextGeneric';
 import { RecordTableCellFieldContextLabelIdentifier } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextLabelIdentifier';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { type ReactNode } from 'react';
+import { useContext, type ReactNode } from 'react';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type RecordTableCellFieldContextWrapperProps = {
   children: ReactNode;
-  recordField: RecordField;
 };
 
 export const RecordTableCellFieldContextWrapper = ({
-  recordField,
   children,
 }: RecordTableCellFieldContextWrapperProps) => {
+  const { columnDefinition } = useContext(RecordTableCellContext);
   const { recordId } = useRecordTableRowContextOrThrow();
-  const { objectMetadataItem, fieldMetadataItemByFieldMetadataItemId } =
-    useRecordTableContextOrThrow();
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const fieldMetadataItem =
-    fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
+  if (isUndefinedOrNull(columnDefinition)) {
+    return null;
+  }
 
   const instanceId = getRecordFieldInputInstanceId({
     recordId,
-    fieldName: fieldMetadataItem.name,
+    fieldName: columnDefinition.metadata.fieldName,
     prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
   });
 
   const isLabelIdentifier = isLabelIdentifierField({
     fieldMetadataItem: {
-      id: recordField.fieldMetadataItemId,
-      name: fieldMetadataItem.name,
+      id: columnDefinition.fieldMetadataId,
+      name: columnDefinition.metadata.fieldName,
     },
     objectMetadataItem,
   });
@@ -46,10 +46,7 @@ export const RecordTableCellFieldContextWrapper = ({
           {children}
         </RecordTableCellFieldContextLabelIdentifier>
       ) : (
-        <RecordTableCellFieldContextGeneric
-          key={instanceId}
-          recordField={recordField}
-        >
+        <RecordTableCellFieldContextGeneric key={instanceId}>
           {children}
         </RecordTableCellFieldContextGeneric>
       )}

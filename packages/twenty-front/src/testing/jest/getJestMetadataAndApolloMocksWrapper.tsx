@@ -4,7 +4,6 @@ import { RecoilRoot, type MutableSnapshot } from 'recoil';
 
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -16,14 +15,12 @@ export const getJestMetadataAndApolloMocksWrapper = ({
   apolloMocks,
   cache,
   onInitializeRecoilSnapshot,
-  objectMetadataItems,
 }: {
   cache?: InMemoryCache;
   apolloMocks?:
     | readonly MockedResponse<Record<string, any>, Record<string, any>>[]
     | undefined;
   onInitializeRecoilSnapshot?: (snapshot: MutableSnapshot) => void;
-  objectMetadataItems?: ObjectMetadataItem[];
 }) => {
   return ({ children }: { children: ReactNode }) => (
     <RecoilRoot initializeState={onInitializeRecoilSnapshot}>
@@ -37,9 +34,7 @@ export const getJestMetadataAndApolloMocksWrapper = ({
             <ViewComponentInstanceContext.Provider
               value={{ instanceId: 'instanceId' }}
             >
-              <JestObjectMetadataItemSetter
-                objectMetadataItems={objectMetadataItems}
-              >
+              <JestObjectMetadataItemSetter>
                 <ContextStoreComponentInstanceContext.Provider
                   value={{ instanceId: 'instanceId' }}
                 >

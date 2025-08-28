@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
-import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
+import { AgentModule } from 'src/engine/metadata-modules/agent/agent.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
@@ -13,12 +13,13 @@ import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workf
 
 @Module({
   imports: [
+    AgentModule,
     WorkflowSchemaModule,
     ServerlessFunctionModule,
     WorkflowRunnerModule,
     WorkflowRunModule,
     WorkflowCommonModule,
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity, AgentEntity]),
+    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
   ],
   providers: [WorkflowVersionStepWorkspaceService],
   exports: [WorkflowVersionStepWorkspaceService],

@@ -15,7 +15,7 @@ import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-t
     WorkflowCommonModule,
     WorkflowRunnerModule,
     AutomatedTriggerModule,
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
+    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
   ],
   providers: [
     WorkflowTriggerWorkspaceService,

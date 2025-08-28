@@ -5,7 +5,7 @@ import { DataSourceEntity } from './data-source.entity';
 import { DataSourceService } from './data-source.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DataSourceEntity])],
+  imports: [TypeOrmModule.forFeature([DataSourceEntity], 'core')],
   providers: [DataSourceService],
   exports: [DataSourceService],
 })

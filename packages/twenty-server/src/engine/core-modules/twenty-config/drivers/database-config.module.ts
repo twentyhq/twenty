@@ -17,7 +17,7 @@ export class DatabaseConfigModule {
     return {
       module: DatabaseConfigModule,
       imports: [
-        TypeOrmModule.forFeature([KeyValuePair]),
+        TypeOrmModule.forFeature([KeyValuePair], 'core'),
         ScheduleModule.forRoot(),
       ],
       providers: [

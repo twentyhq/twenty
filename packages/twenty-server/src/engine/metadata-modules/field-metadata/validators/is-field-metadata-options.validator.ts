@@ -16,7 +16,7 @@ export class IsFieldMetadataOptions {
   private validationErrors: string[] = [];
 
   constructor(
-    @InjectRepository(FieldMetadataEntity)
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {}
 

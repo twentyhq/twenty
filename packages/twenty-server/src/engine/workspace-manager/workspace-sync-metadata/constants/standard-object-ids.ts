@@ -19,7 +19,6 @@ export const STANDARD_OBJECT_IDS = {
   comment: '20202020-435f-4de9-89b5-97e32233bf5f',
   company: '20202020-b374-4779-a561-80086cb2e17f',
   connectedAccount: '20202020-977e-46b2-890b-c3002ddfd5c5',
-  dashboard: '20202020-3840-4b6d-9425-0c5188b05ca8',
   favorite: '20202020-ab56-4e05-92a3-e2414a499860',
   favoriteFolder: '20202020-7cf8-401f-8211-a9587d27fd2d',
   auditLog: '20202020-0566-476a-b4c4-a0f9781bd80a',

@@ -24,12 +24,14 @@ type WorkflowVariablesDropdownAllItemsProps = {
   step: StepOutputSchema;
   onSelect: (value: string) => void;
   onBack: () => void;
+  shouldEnableSelectRelationObject?: boolean;
 };
 
 export const WorkflowVariablesDropdownAllItems = ({
   step,
   onSelect,
   onBack,
+  shouldEnableSelectRelationObject,
 }: WorkflowVariablesDropdownAllItemsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -63,12 +65,25 @@ export const WorkflowVariablesDropdownAllItems = ({
       return;
     }
 
-    onSelect(
-      getVariableTemplateFromPath({
-        stepId: step.id,
-        path: [...currentPath, currentSubStep.object.fieldIdName],
-      }),
-    );
+    const isRelationField = currentSubStep.object.isRelationField ?? false;
+    const isRelationObjectSelectable =
+      shouldEnableSelectRelationObject ?? false;
+
+    if (isRelationField && isRelationObjectSelectable) {
+      onSelect(
+        getVariableTemplateFromPath({
+          stepId: step.id,
+          path: currentPath,
+        }),
+      );
+    } else {
+      onSelect(
+        getVariableTemplateFromPath({
+          stepId: step.id,
+          path: [...currentPath, currentSubStep.object.fieldIdName],
+        }),
+      );
+    }
   };
 
   const displayedSubStepObject = getDisplayedSubStepObject();

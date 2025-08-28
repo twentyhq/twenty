@@ -4,10 +4,10 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { type CreateObjectAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-object-action-v2';
 import { type WorkspaceMigrationActionRunnerArgs } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/types/workspace-migration-action-runner-args.type';
@@ -25,7 +25,6 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
 ) {
   constructor(
     private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super();
   }
@@ -75,26 +74,27 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
     const { action, queryRunner, workspaceId } = context;
     const { flatObjectMetadataWithoutFields, createFieldActions } = action;
 
+    const flatObjectMetadata = flatObjectMetadataWithoutFields;
+
     const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
       workspaceId,
-      flatObjectMetadata: flatObjectMetadataWithoutFields,
+      flatObjectMetadata: flatObjectMetadata,
     });
 
-    const flatFieldMetadatas = createFieldActions.map(
-      (createFieldAction) => createFieldAction.flatFieldMetadata,
-    );
-
-    const columnDefinitions = flatFieldMetadatas.flatMap((flatFieldMetadata) =>
+    const columnDefinitions = createFieldActions.flatMap((createFieldAction) =>
       generateColumnDefinitions({
-        flatFieldMetadata,
-        flatObjectMetadataWithoutFields,
+        flatFieldMetadata: createFieldAction.flatFieldMetadata,
+        flatObjectMetadataWithoutFields: flatObjectMetadataWithoutFields,
       }),
     );
 
-    const enumOrCompositeFlatFieldMetadatas = flatFieldMetadatas.filter(
-      (field) =>
-        isEnumFlatFieldMetadata(field) || isCompositeFlatFieldMetadata(field),
-    );
+    const enumOrCompositeFlatFieldMetadatas = createFieldActions
+      .map((createFieldAction) => createFieldAction.flatFieldMetadata)
+      .filter((field): field is FlatFieldMetadata => field != null)
+      .filter(
+        (field) =>
+          isEnumFlatFieldMetadata(field) || isCompositeFlatFieldMetadata(field),
+      );
 
     const enumOperations = collectEnumOperationsForObject({
       flatFieldMetadatas: enumOrCompositeFlatFieldMetadatas,

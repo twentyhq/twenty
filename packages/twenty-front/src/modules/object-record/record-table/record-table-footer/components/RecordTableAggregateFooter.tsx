@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableAggregateFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooterCell';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { FIRST_TH_WIDTH } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
+import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useScrollWrapperElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperElement';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isUndefined } from '@sniptt/guards';
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
@@ -85,7 +86,9 @@ export const RecordTableAggregateFooter = ({
 }: {
   currentRecordGroupId?: string;
 }) => {
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const visibleTableColumns = useRecoilComponentValue(
+    visibleTableColumnsComponentSelector,
+  );
 
   const { scrollWrapperHTMLElement } = useScrollWrapperElement();
 
@@ -102,13 +105,13 @@ export const RecordTableAggregateFooter = ({
       }
     >
       <StyledTd />
-      {visibleRecordFields.map((recordField, index) => {
+      {visibleTableColumns.map((column, index) => {
         return (
           <RecordTableColumnAggregateFooterCellContext.Provider
-            key={`${recordField.fieldMetadataItemId}${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
+            key={`${column.fieldMetadataId}${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
             value={{
-              viewFieldId: recordField.id || '',
-              fieldMetadataId: recordField.fieldMetadataItemId,
+              viewFieldId: column.viewFieldId || '',
+              fieldMetadataId: column.fieldMetadataId,
             }}
           >
             <RecordTableAggregateFooterCell
@@ -118,7 +121,7 @@ export const RecordTableAggregateFooter = ({
           </RecordTableColumnAggregateFooterCellContext.Provider>
         );
       })}
-      <td colSpan={visibleRecordFields.length - 1} />
+      <td colSpan={visibleTableColumns.length - 1} />
       <td />
       <td />
     </StyledTableRow>

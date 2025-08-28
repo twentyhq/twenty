@@ -16,7 +16,6 @@ import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/works
 import { workspaceSyncMetadataComparators } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators';
 import { workspaceSyncMetadataFactories } from 'src/engine/workspace-manager/workspace-sync-metadata/factories';
 import { WorkspaceMetadataUpdaterService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-metadata-updater.service';
-import { WorkspaceSyncAgentService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-agent.service';
 import { WorkspaceSyncFieldMetadataRelationService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata-relation.service';
 import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
 import { WorkspaceSyncIndexMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-index-metadata.service';
@@ -30,13 +29,12 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     FeatureFlagModule,
     WorkspaceMigrationBuilderModule,
     WorkspaceMigrationRunnerModule,
-    TypeOrmModule.forFeature([
-      FieldMetadataEntity,
-      ObjectMetadataEntity,
-      WorkspaceMigrationEntity,
-    ]),
+    TypeOrmModule.forFeature(
+      [FieldMetadataEntity, ObjectMetadataEntity, WorkspaceMigrationEntity],
+      'core',
+    ),
     DataSourceModule,
-    TypeOrmModule.forFeature([Workspace, FeatureFlag]),
+    TypeOrmModule.forFeature([Workspace, FeatureFlag], 'core'),
     WorkspaceMetadataVersionModule,
   ],
   providers: [
@@ -50,7 +48,6 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     WorkspaceSyncMetadataService,
     WorkspaceSyncIndexMetadataService,
     WorkspaceSyncRoleService,
-    WorkspaceSyncAgentService,
     SyncWorkspaceLoggerService,
     SyncWorkspaceMetadataCommand,
   ],

@@ -66,7 +66,7 @@ describe('WorkflowStatusesUpdate', () => {
           useValue: mockServerlessFunctionService,
         },
         {
-          provide: getRepositoryToken(ObjectMetadataEntity),
+          provide: getRepositoryToken(ObjectMetadataEntity, 'core'),
           useValue: {
             findOneOrFail: jest.fn().mockResolvedValue({
               nameSingular: 'workflow',
@@ -74,7 +74,7 @@ describe('WorkflowStatusesUpdate', () => {
           },
         },
         {
-          provide: getRepositoryToken(ServerlessFunctionEntity),
+          provide: getRepositoryToken(ServerlessFunctionEntity, 'core'),
           useValue: {
             findOneOrFail: jest.fn().mockResolvedValue({
               latestVersion: 'v2',

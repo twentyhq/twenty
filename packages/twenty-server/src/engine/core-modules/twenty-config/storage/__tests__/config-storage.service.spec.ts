@@ -70,7 +70,7 @@ describe('ConfigStorageService', () => {
         },
         ConfigVariables,
         {
-          provide: getRepositoryToken(KeyValuePair),
+          provide: getRepositoryToken(KeyValuePair, 'core'),
           useValue: {
             findOne: jest.fn(),
             find: jest.fn(),
@@ -84,7 +84,7 @@ describe('ConfigStorageService', () => {
 
     service = module.get<ConfigStorageService>(ConfigStorageService);
     keyValuePairRepository = module.get<Repository<KeyValuePair>>(
-      getRepositoryToken(KeyValuePair),
+      getRepositoryToken(KeyValuePair, 'core'),
     );
     configValueConverter = module.get<ConfigValueConverterService>(
       ConfigValueConverterService,

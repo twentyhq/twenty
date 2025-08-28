@@ -1,10 +1,11 @@
 import { createContext } from 'react';
 
-import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 
 export type RecordTableCellContextValue = {
-  recordField: RecordField;
+  columnDefinition: ColumnDefinition<FieldMetadata>;
   cellPosition: TableCellPosition;
 };
 

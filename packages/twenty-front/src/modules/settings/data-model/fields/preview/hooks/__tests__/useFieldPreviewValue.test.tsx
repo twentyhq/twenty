@@ -86,7 +86,7 @@ describe('useFieldPreviewValue', () => {
       () =>
         useFieldPreviewValue({
           fieldMetadataItem,
-          relationObjectNameSingular: relationObjectMetadataItem?.nameSingular,
+          relationObjectMetadataItem,
         }),
       { wrapper: Wrapper },
     );

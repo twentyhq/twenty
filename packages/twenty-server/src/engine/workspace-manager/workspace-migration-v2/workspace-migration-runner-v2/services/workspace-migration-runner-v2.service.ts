@@ -17,7 +17,7 @@ export class WorkspaceMigrationRunnerV2Service {
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
-    @InjectDataSource()
+    @InjectDataSource('core')
     private readonly coreDataSource: DataSource,
     private readonly workspaceMigrationRunnerActionHandlerRegistry: WorkspaceMigrationRunnerActionHandlerRegistryService,
   ) {}

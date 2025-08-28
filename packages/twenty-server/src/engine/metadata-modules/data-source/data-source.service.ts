@@ -13,7 +13,7 @@ import { DataSourceEntity } from './data-source.entity';
 @Injectable()
 export class DataSourceService {
   constructor(
-    @InjectRepository(DataSourceEntity)
+    @InjectRepository(DataSourceEntity, 'core')
     private readonly dataSourceMetadataRepository: Repository<DataSourceEntity>,
   ) {}
 

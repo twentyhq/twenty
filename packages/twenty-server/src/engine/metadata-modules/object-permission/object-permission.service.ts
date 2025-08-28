@@ -20,11 +20,11 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 
 export class ObjectPermissionService {
   constructor(
-    @InjectRepository(ObjectPermissionEntity)
+    @InjectRepository(ObjectPermissionEntity, 'core')
     private readonly objectPermissionRepository: Repository<ObjectPermissionEntity>,
-    @InjectRepository(RoleEntity)
+    @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(ObjectMetadataEntity)
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,

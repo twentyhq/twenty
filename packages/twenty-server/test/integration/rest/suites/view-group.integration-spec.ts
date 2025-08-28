@@ -1,10 +1,8 @@
 import {
+  TEST_FIELD_METADATA_1_ID,
   TEST_NOT_EXISTING_VIEW_GROUP_ID,
   TEST_VIEW_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
-import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   assertRestApiErrorResponse,
@@ -20,76 +18,19 @@ import {
   assertViewGroupStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { type ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
 import {
   generateViewGroupExceptionMessage,
   ViewGroupExceptionMessageKey,
 } from 'src/engine/core-modules/view/exceptions/view-group.exception';
 
 describe('View Group REST API', () => {
-  let testObjectMetadataId: string;
-  let testFieldMetadataId: string;
-
-  beforeAll(async () => {
-    await deleteOneObjectMetadata({
-      input: { idToDelete: testObjectMetadataId },
-    });
-
-    const {
-      data: {
-        createOneObject: { id: objectMetadataId },
-      },
-    } = await createOneObjectMetadata({
-      input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
-        icon: 'Icon123',
-      },
-    });
-
-    testObjectMetadataId = objectMetadataId;
-
-    const createFieldInput = {
-      name: 'testField',
-      label: 'Test Field',
-      type: FieldMetadataType.TEXT,
-      objectMetadataId: testObjectMetadataId,
-      isLabelSyncedWithName: true,
-    };
-
-    const {
-      data: {
-        createOneField: { id: fieldMetadataId },
-      },
-    } = await createOneFieldMetadata({
-      input: createFieldInput,
-      gqlFields: `
-          id
-          name
-          label
-          isLabelSyncedWithName
-        `,
-    });
-
-    testFieldMetadataId = fieldMetadataId;
-  });
-
-  afterAll(async () => {
-    await deleteOneObjectMetadata({
-      input: { idToDelete: testObjectMetadataId },
-    });
-  });
-
   beforeEach(async () => {
     await cleanupViewRecords();
 
     await createTestViewWithRestApi({
       name: generateRecordName('Test View for Groups'),
-      objectMetadataId: testObjectMetadataId,
     });
   });
 
@@ -125,7 +66,6 @@ describe('View Group REST API', () => {
         fieldValue: 'test-field-value',
         isVisible: true,
         position: 0,
-        fieldMetadataId: testFieldMetadataId,
       });
 
       const response = await makeRestAPIRequest({
@@ -155,13 +95,11 @@ describe('View Group REST API', () => {
       const viewGroup1 = await createTestViewGroupWithRestApi({
         fieldValue: 'group-1',
         position: 0,
-        fieldMetadataId: testFieldMetadataId,
       });
 
       const viewGroup2 = await createTestViewGroupWithRestApi({
         fieldValue: 'group-2',
         position: 1,
-        fieldMetadataId: testFieldMetadataId,
       });
 
       const response = await makeRestAPIRequest({
@@ -175,10 +113,10 @@ describe('View Group REST API', () => {
       expect(response.body).toHaveLength(2);
 
       const group1 = response.body.find(
-        (group: ViewGroupEntity) => group.id === viewGroup1.id,
+        (group: ViewGroup) => group.id === viewGroup1.id,
       );
       const group2 = response.body.find(
-        (group: ViewGroupEntity) => group.id === viewGroup2.id,
+        (group: ViewGroup) => group.id === viewGroup2.id,
       );
 
       assertViewGroupStructure(group1, {
@@ -201,7 +139,6 @@ describe('View Group REST API', () => {
       const viewGroup = await createTestViewGroupWithRestApi({
         fieldValue: 'specific-group',
         isVisible: false,
-        fieldMetadataId: testFieldMetadataId,
       });
 
       const response = await makeRestAPIRequest({
@@ -226,7 +163,7 @@ describe('View Group REST API', () => {
     it('should create a new view group', async () => {
       const viewGroupData = {
         viewId: TEST_VIEW_1_ID,
-        fieldMetadataId: testFieldMetadataId,
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         fieldValue: 'new-group-value',
         isVisible: true,
         position: 5,
@@ -253,7 +190,7 @@ describe('View Group REST API', () => {
     it('should create view group with minimal required fields', async () => {
       const viewGroupData = {
         viewId: TEST_VIEW_1_ID,
-        fieldMetadataId: testFieldMetadataId,
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         fieldValue: 'minimal-group',
       };
 
@@ -303,7 +240,6 @@ describe('View Group REST API', () => {
         fieldValue: 'original-value',
         isVisible: true,
         position: 1,
-        fieldMetadataId: testFieldMetadataId,
       });
 
       const updateData = {
@@ -336,7 +272,6 @@ describe('View Group REST API', () => {
         fieldValue: 'original-value',
         isVisible: true,
         position: 1,
-        fieldMetadataId: testFieldMetadataId,
       });
 
       const updateData = {
@@ -388,7 +323,6 @@ describe('View Group REST API', () => {
     it('should delete an existing view group', async () => {
       const viewGroup = await createTestViewGroupWithRestApi({
         fieldValue: 'to-be-deleted',
-        fieldMetadataId: testFieldMetadataId,
       });
 
       const deleteResponse = await makeRestAPIRequest({
@@ -421,7 +355,6 @@ describe('View Group REST API', () => {
     it('should return success even when group is already deleted', async () => {
       const viewGroup = await createTestViewGroupWithRestApi({
         fieldValue: 'double-delete-test',
-        fieldMetadataId: testFieldMetadataId,
       });
 
       const deleteResponse = await makeRestAPIRequest({

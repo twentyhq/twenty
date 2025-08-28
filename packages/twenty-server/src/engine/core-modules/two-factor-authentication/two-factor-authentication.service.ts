@@ -32,7 +32,7 @@ const PENDING_METHOD_REUSE_WINDOW_MS = 60 * 60 * 1000;
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class TwoFactorAuthenticationService {
   constructor(
-    @InjectRepository(TwoFactorAuthenticationMethod)
+    @InjectRepository(TwoFactorAuthenticationMethod, 'core')
     private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethod>,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly simpleSecretEncryptionUtil: SimpleSecretEncryptionUtil,

@@ -9,7 +9,10 @@ import { FavoriteDeletionService } from 'src/modules/favorite/services/favorite-
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ObjectMetadataEntity, FieldMetadataEntity]),
+    TypeOrmModule.forFeature(
+      [ObjectMetadataEntity, FieldMetadataEntity],
+      'core',
+    ),
   ],
   providers: [
     FavoriteDeletionService,

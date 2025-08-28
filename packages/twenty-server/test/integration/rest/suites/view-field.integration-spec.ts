@@ -1,10 +1,8 @@
 import {
+  TEST_FIELD_METADATA_1_ID,
   TEST_NOT_EXISTING_VIEW_FIELD_ID,
   TEST_VIEW_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
-import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   assertRestApiErrorResponse,
@@ -19,7 +17,6 @@ import {
   assertViewFieldStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   generateViewFieldExceptionMessage,
@@ -27,63 +24,11 @@ import {
 } from 'src/engine/core-modules/view/exceptions/view-field.exception';
 
 describe('View Field REST API', () => {
-  let testObjectMetadataId: string;
-  let testFieldMetadataId: string;
-
-  beforeAll(async () => {
-    const {
-      data: {
-        createOneObject: { id: objectMetadataId },
-      },
-    } = await createOneObjectMetadata({
-      input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
-        icon: 'Icon123',
-      },
-    });
-
-    testObjectMetadataId = objectMetadataId;
-
-    const createFieldInput = {
-      name: 'testField',
-      label: 'Test Field',
-      type: FieldMetadataType.TEXT,
-      objectMetadataId: testObjectMetadataId,
-      isLabelSyncedWithName: true,
-    };
-
-    const {
-      data: {
-        createOneField: { id: fieldMetadataId },
-      },
-    } = await createOneFieldMetadata({
-      input: createFieldInput,
-      gqlFields: `
-          id
-          name
-          label
-          isLabelSyncedWithName
-        `,
-    });
-
-    testFieldMetadataId = fieldMetadataId;
-  });
-
-  afterAll(async () => {
-    await deleteOneObjectMetadata({
-      input: { idToDelete: testObjectMetadataId },
-    });
-  });
-
   beforeEach(async () => {
     await cleanupViewRecords();
 
     await createTestViewWithRestApi({
       name: 'Test View for Fields',
-      objectMetadataId: testObjectMetadataId,
     });
   });
 
@@ -119,7 +64,6 @@ describe('View Field REST API', () => {
         position: 0,
         isVisible: true,
         size: 150,
-        fieldMetadataId: testFieldMetadataId,
       });
 
       const response = await makeRestAPIRequest({
@@ -136,7 +80,7 @@ describe('View Field REST API', () => {
 
       assertViewFieldStructure(returnedViewField, {
         id: viewField.id,
-        fieldMetadataId: testFieldMetadataId,
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         viewId: TEST_VIEW_1_ID,
         position: 0,
         isVisible: true,
@@ -153,11 +97,10 @@ describe('View Field REST API', () => {
         position: 1,
         isVisible: true,
         size: 200,
-        fieldMetadataId: testFieldMetadataId,
       });
 
       assertViewFieldStructure(viewField, {
-        fieldMetadataId: testFieldMetadataId,
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         viewId: TEST_VIEW_1_ID,
         position: 1,
         isVisible: true,
@@ -172,11 +115,10 @@ describe('View Field REST API', () => {
         position: 2,
         isVisible: false,
         size: 100,
-        fieldMetadataId: testFieldMetadataId,
       });
 
       assertViewFieldStructure(hiddenField, {
-        fieldMetadataId: testFieldMetadataId,
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         viewId: TEST_VIEW_1_ID,
         position: 2,
         isVisible: false,
@@ -193,7 +135,6 @@ describe('View Field REST API', () => {
         position: 0,
         isVisible: true,
         size: 150,
-        fieldMetadataId: testFieldMetadataId,
       });
 
       const response = await makeRestAPIRequest({
@@ -205,7 +146,7 @@ describe('View Field REST API', () => {
       assertRestApiSuccessfulResponse(response);
       assertViewFieldStructure(response.body, {
         id: viewField.id,
-        fieldMetadataId: testFieldMetadataId,
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         viewId: TEST_VIEW_1_ID,
       });
 
@@ -230,7 +171,6 @@ describe('View Field REST API', () => {
         position: 0,
         isVisible: true,
         size: 150,
-        fieldMetadataId: testFieldMetadataId,
       });
 
       const updateData = {
@@ -252,7 +192,7 @@ describe('View Field REST API', () => {
         position: 5,
         isVisible: false,
         size: 300,
-        fieldMetadataId: testFieldMetadataId,
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         viewId: TEST_VIEW_1_ID,
       });
 
@@ -290,7 +230,6 @@ describe('View Field REST API', () => {
         position: 0,
         isVisible: true,
         size: 150,
-        fieldMetadataId: testFieldMetadataId,
       });
 
       const deleteResponse = await makeRestAPIRequest({

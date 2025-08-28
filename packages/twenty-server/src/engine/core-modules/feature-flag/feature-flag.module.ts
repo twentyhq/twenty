@@ -13,7 +13,7 @@ import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/wor
   imports: [
     TypeORMModule,
     NestjsQueryGraphQLModule.forFeature({
-      imports: [NestjsQueryTypeOrmModule.forFeature([FeatureFlag])],
+      imports: [NestjsQueryTypeOrmModule.forFeature([FeatureFlag], 'core')],
       services: [],
       resolvers: [],
     }),

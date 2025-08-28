@@ -34,7 +34,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 @Injectable()
 export class IndexMetadataService {
   constructor(
-    @InjectRepository(IndexMetadataEntity)
+    @InjectRepository(IndexMetadataEntity, 'core')
     private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
   ) {}

@@ -1,11 +1,11 @@
 import gql from 'graphql-tag';
 import { VIEW_FILTER_GQL_FIELDS } from 'test/integration/constants/view-gql-fields.constants';
 
-import { type ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { type ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
 
 type CreateViewFilterOperationFactoryParams = {
   gqlFields?: string;
-  data?: Partial<ViewFilterEntity>;
+  data?: Partial<ViewFilter>;
 };
 
 export const createViewFilterOperationFactory = ({

@@ -11,7 +11,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DomainManagerResolver } from 'src/engine/core-modules/domain-manager/domain-manager.resolver';
 
 @Module({
-  imports: [AuditModule, TypeOrmModule.forFeature([Workspace])],
+  imports: [AuditModule, TypeOrmModule.forFeature([Workspace], 'core')],
   providers: [
     DomainManagerResolver,
     DomainManagerService,

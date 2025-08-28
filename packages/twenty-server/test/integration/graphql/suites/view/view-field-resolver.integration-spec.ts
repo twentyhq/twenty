@@ -1,4 +1,7 @@
-import { TEST_NOT_EXISTING_VIEW_FIELD_ID } from 'test/integration/constants/test-view-ids.constants';
+import {
+  TEST_FIELD_METADATA_1_ID,
+  TEST_NOT_EXISTING_VIEW_FIELD_ID,
+} from 'test/integration/constants/test-view-ids.constants';
 import { createViewFieldOperationFactory } from 'test/integration/graphql/utils/create-view-field-operation-factory.util';
 import { deleteViewFieldOperationFactory } from 'test/integration/graphql/utils/delete-view-field-operation-factory.util';
 import { destroyViewFieldOperationFactory } from 'test/integration/graphql/utils/destroy-view-field-operation-factory.util';
@@ -14,14 +17,10 @@ import {
   updateViewFieldData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
-import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import {
   assertViewFieldStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
@@ -31,63 +30,12 @@ import {
 
 describe('View Field Resolver', () => {
   let testViewId: string;
-  let testObjectMetadataId: string;
-  let testFieldMetadataId: string;
-
-  beforeAll(async () => {
-    const {
-      data: {
-        createOneObject: { id: objectMetadataId },
-      },
-    } = await createOneObjectMetadata({
-      input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
-        icon: 'Icon123',
-      },
-    });
-
-    testObjectMetadataId = objectMetadataId;
-
-    const createFieldInput = {
-      name: 'testField',
-      label: 'Test Field',
-      type: FieldMetadataType.TEXT,
-      objectMetadataId: testObjectMetadataId,
-      isLabelSyncedWithName: true,
-    };
-
-    const {
-      data: {
-        createOneField: { id: fieldMetadataId },
-      },
-    } = await createOneFieldMetadata({
-      input: createFieldInput,
-      gqlFields: `
-          id
-          name
-          label
-          isLabelSyncedWithName
-        `,
-    });
-
-    testFieldMetadataId = fieldMetadataId;
-  });
-
-  afterAll(async () => {
-    await deleteOneObjectMetadata({
-      input: { idToDelete: testObjectMetadataId },
-    });
-  });
 
   beforeEach(async () => {
     await cleanupViewRecords();
 
     const view = await createTestViewWithGraphQL({
       name: 'Test View for Fields',
-      objectMetadataId: testObjectMetadataId,
     });
 
     testViewId = view.id;
@@ -111,7 +59,6 @@ describe('View Field Resolver', () => {
         position: 0,
         isVisible: true,
         size: 150,
-        fieldMetadataId: testFieldMetadataId,
       });
       const createOperation = createViewFieldOperationFactory({
         data: fieldData,
@@ -127,7 +74,7 @@ describe('View Field Resolver', () => {
       assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewFields).toHaveLength(1);
       assertViewFieldStructure(response.body.data.getCoreViewFields[0], {
-        fieldMetadataId: testFieldMetadataId,
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         position: 0,
         isVisible: true,
         size: 150,
@@ -142,7 +89,6 @@ describe('View Field Resolver', () => {
         position: 1,
         isVisible: true,
         size: 200,
-        fieldMetadataId: testFieldMetadataId,
       });
 
       const operation = createViewFieldOperationFactory({ data: fieldData });
@@ -150,7 +96,7 @@ describe('View Field Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
       assertViewFieldStructure(response.body.data.createCoreViewField, {
-        fieldMetadataId: testFieldMetadataId,
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         position: 1,
         isVisible: true,
         size: 200,
@@ -160,7 +106,7 @@ describe('View Field Resolver', () => {
 
     it('should create a hidden view field', async () => {
       const fieldData = {
-        fieldMetadataId: testFieldMetadataId,
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         position: 2,
         isVisible: false,
         size: 100,
@@ -172,7 +118,7 @@ describe('View Field Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
       assertViewFieldStructure(response.body.data.createCoreViewField, {
-        fieldMetadataId: testFieldMetadataId,
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         position: 2,
         isVisible: false,
         size: 100,
@@ -187,7 +133,6 @@ describe('View Field Resolver', () => {
         position: 0,
         isVisible: true,
         size: 150,
-        fieldMetadataId: testFieldMetadataId,
       });
       const createOperation = createViewFieldOperationFactory({
         data: fieldData,
@@ -234,9 +179,7 @@ describe('View Field Resolver', () => {
 
   describe('deleteCoreViewField', () => {
     it('should delete an existing view field', async () => {
-      const fieldData = createViewFieldData(testViewId, {
-        fieldMetadataId: testFieldMetadataId,
-      });
+      const fieldData = createViewFieldData(testViewId);
       const createOperation = createViewFieldOperationFactory({
         data: fieldData,
       });
@@ -271,9 +214,7 @@ describe('View Field Resolver', () => {
 
   describe('destroyCoreViewField', () => {
     it('should destroy an existing view field', async () => {
-      const fieldData = createViewFieldData(testViewId, {
-        fieldMetadataId: testFieldMetadataId,
-      });
+      const fieldData = createViewFieldData(testViewId);
       const createOperation = createViewFieldOperationFactory({
         data: fieldData,
       });

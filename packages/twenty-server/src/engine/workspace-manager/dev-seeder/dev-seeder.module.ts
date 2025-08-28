@@ -35,7 +35,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     ApiKeyModule,
     FeatureFlagModule,
     WorkspaceSyncMetadataModule,
-    TypeOrmModule.forFeature([Workspace, ObjectMetadataEntity]),
+    TypeOrmModule.forFeature([Workspace, ObjectMetadataEntity], 'core'),
     ObjectPermissionModule,
     WorkspacePermissionsCacheModule,
   ],

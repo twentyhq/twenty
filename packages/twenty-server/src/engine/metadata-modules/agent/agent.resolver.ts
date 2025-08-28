@@ -29,7 +29,7 @@ import { UpdateAgentInput } from './dtos/update-agent.input';
 @Resolver()
 export class AgentResolver {
   constructor(
-    @InjectRepository(AgentEntity)
+    @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
     private readonly agentService: AgentService,
     private readonly agentHandoffService: AgentHandoffService,

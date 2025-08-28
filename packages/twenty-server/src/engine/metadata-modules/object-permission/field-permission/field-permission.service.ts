@@ -28,11 +28,11 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 @Injectable()
 export class FieldPermissionService {
   constructor(
-    @InjectRepository(RoleEntity)
+    @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(FieldMetadataEntity)
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(FieldPermissionEntity)
+    @InjectRepository(FieldPermissionEntity, 'core')
     private readonly fieldPermissionsRepository: Repository<FieldPermissionEntity>,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,

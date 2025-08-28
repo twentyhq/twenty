@@ -14,11 +14,11 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 @Injectable()
 export class AgentRoleService {
   constructor(
-    @InjectRepository(AgentEntity)
+    @InjectRepository(AgentEntity, 'core')
     private readonly agentRepository: Repository<AgentEntity>,
-    @InjectRepository(RoleEntity)
+    @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetsEntity)
+    @InjectRepository(RoleTargetsEntity, 'core')
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
   ) {}
 

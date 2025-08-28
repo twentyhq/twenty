@@ -3,23 +3,19 @@ import { renderHook } from '@testing-library/react';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
-import { coreViewsState } from '@/views/states/coreViewState';
-import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type View } from '@/views/types/View';
 import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { ViewType } from '@/views/types/ViewType';
 import { mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator } from '@/views/utils/mapViewFilterGroupLogicalOperatorToRecordFilterGroupLogicalOperator';
 import { act } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type CoreViewFilterGroup } from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import {
-  mockedCoreViewsData,
-  mockedViewsData,
-} from '~/testing/mock-data/views';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const mockObjectMetadataItemNameSingular = 'company';
@@ -44,28 +40,26 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
     positionInViewFilterGroup: 0,
   };
 
-  const allCompaniesView = mockedViewsData[0];
-  const allCompaniesCoreView = mockedCoreViewsData[0];
-
-  const mockCoreViewFilterGroup: Omit<CoreViewFilterGroup, 'workspaceId'> = {
-    __typename: 'CoreViewFilterGroup',
-    id: 'filter-group-1',
-    viewId: allCompaniesCoreView.id,
-    logicalOperator: ViewFilterGroupLogicalOperator.AND,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    positionInViewFilterGroup: 0,
-  };
-
-  const mockView = {
-    ...allCompaniesView,
+  const mockView: View = {
+    id: 'view-1',
+    name: 'Test View',
+    objectMetadataId: mockObjectMetadataItem.id,
+    viewFilters: [],
     viewFilterGroups: [mockViewFilterGroup],
-  } satisfies View;
-
-  const mockCoreView = {
-    ...allCompaniesCoreView,
-    viewFilterGroups: [mockCoreViewFilterGroup],
-  } satisfies CoreViewWithRelations;
+    type: ViewType.Table,
+    key: null,
+    isCompact: false,
+    openRecordIn: ViewOpenRecordInType.SIDE_PANEL,
+    viewFields: [],
+    viewGroups: [],
+    viewSorts: [],
+    kanbanFieldMetadataId: '',
+    kanbanAggregateOperation: AggregateOperations.COUNT,
+    icon: '',
+    kanbanAggregateOperationFieldMetadataId: '',
+    position: 0,
+    __typename: 'View',
+  };
 
   it('should apply view filter groups from current view', () => {
     const { result } = renderHook(
@@ -91,7 +85,6 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
             mockObjectMetadataItemNameSingular,
           onInitializeRecoilSnapshot: (snapshot) => {
             snapshot.set(prefetchViewsState, [mockView]);
-            snapshot.set(coreViewsState, [mockCoreView]);
           },
         }),
       },
@@ -149,7 +142,6 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
             );
 
             snapshot.set(prefetchViewsState, []);
-            snapshot.set(coreViewsState, []);
           },
         }),
       },
@@ -193,9 +185,6 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
 
             snapshot.set(prefetchViewsState, [
               { ...mockView, viewFilterGroups: [] },
-            ]);
-            snapshot.set(coreViewsState, [
-              { ...mockCoreView, viewFilterGroups: [] },
             ]);
           },
         }),

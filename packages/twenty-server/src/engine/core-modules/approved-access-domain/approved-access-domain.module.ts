@@ -10,7 +10,7 @@ import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-do
 @Module({
   imports: [
     DomainManagerModule,
-    NestjsQueryTypeOrmModule.forFeature([ApprovedAccessDomain]),
+    NestjsQueryTypeOrmModule.forFeature([ApprovedAccessDomain], 'core'),
   ],
   exports: [ApprovedAccessDomainService],
   providers: [ApprovedAccessDomainService, ApprovedAccessDomainResolver],

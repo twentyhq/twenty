@@ -1,12 +1,12 @@
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { Separator } from '@/settings/components/Separator';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { canBeUnique } from '@/settings/data-model/fields/forms/utils/canBeUnique.util';
 import { t } from '@lingui/core/macro';
-import { type FieldMetadataType } from 'twenty-shared/types';
 import { IconKey } from 'twenty-ui/display';
 import { Toggle } from 'twenty-ui/input';
 
@@ -15,42 +15,31 @@ type SettingsDataModelFieldIsUniqueFormValues = {
 };
 
 type SettingsDataModelFieldIsUniqueFormProps = {
-  objectNameSingular: string;
-  fieldType: FieldMetadataType;
-  existingFieldMetadataId: string;
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'icon' | 'label' | 'type' | 'isCustom' | 'settings' | 'isUnique'
+  > &
+    Partial<{ id: string }>;
+  objectMetadataItem: Pick<ObjectMetadataItem, 'indexMetadatas'>;
 };
 
 export const SettingsDataModelFieldIsUniqueForm = ({
-  fieldType,
-  existingFieldMetadataId,
-  objectNameSingular,
+  fieldMetadataItem,
+  objectMetadataItem,
 }: SettingsDataModelFieldIsUniqueFormProps) => {
   const { control } =
     useFormContext<SettingsDataModelFieldIsUniqueFormValues>();
-
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-
-  const { fieldMetadataItem } = useFieldMetadataItemById(
-    existingFieldMetadataId,
-  );
 
   const hasStandardUniqueIndex = objectMetadataItem.indexMetadatas.some(
     (index) =>
       index.isUnique &&
       !index.isCustom &&
       index.indexFieldMetadatas?.some(
-        (field) => field.fieldMetadataId === existingFieldMetadataId,
+        (field) => field.fieldMetadataId === fieldMetadataItem.id,
       ),
   );
 
-  if (
-    !canBeUnique({
-      type: fieldType,
-      isCustom: fieldMetadataItem?.isCustom ?? true,
-    })
-  ) {
+  if (!canBeUnique(fieldMetadataItem)) {
     return null;
   }
 

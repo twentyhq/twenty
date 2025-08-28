@@ -10,6 +10,7 @@ import { SettingsDataModelFieldDescriptionForm } from '@/settings/data-model/fie
 import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
+import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -47,7 +48,7 @@ export const SettingsObjectNewFieldConfigure = () => {
   const { objectNamePlural = '' } = useParams();
   const [searchParams] = useSearchParams();
   const fieldType =
-    (searchParams.get('fieldType') as FieldMetadataType) ||
+    (searchParams.get('fieldType') as SettingsFieldType) ||
     FieldMetadataType.TEXT;
   const { enqueueErrorSnackBar } = useSnackBar();
 
@@ -239,9 +240,13 @@ export const SettingsObjectNewFieldConfigure = () => {
               description={t`Customize field settings`}
             />
             <SettingsDataModelFieldSettingsFormCard
-              fieldType={fieldType}
-              existingFieldMetadataId={''}
-              objectNameSingular={activeObjectMetadataItem.nameSingular}
+              fieldMetadataItem={{
+                icon: formConfig.watch('icon'),
+                label: formConfig.watch('label') || 'New Field',
+                settings: formConfig.watch('settings') || null,
+                type: fieldType as FieldMetadataType,
+              }}
+              objectMetadataItem={activeObjectMetadataItem}
             />
           </Section>
           <Section>

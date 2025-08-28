@@ -73,7 +73,7 @@ const buildUpgradeCommandModule = async ({
     providers: [
       commandRunner,
       {
-        provide: getRepositoryToken(Workspace),
+        provide: getRepositoryToken(Workspace, 'core'),
         useValue: {
           findOneByOrFail: jest
             .fn()
@@ -167,7 +167,7 @@ describe('UpgradeCommandRunner', () => {
     jest.spyOn(upgradeCommandRunner, 'runOnWorkspace');
 
     workspaceRepository = module.get<Repository<Workspace>>(
-      getRepositoryToken(Workspace),
+      getRepositoryToken(Workspace, 'core'),
     );
     syncWorkspaceMetadataCommand = module.get(SyncWorkspaceMetadataCommand);
     twentyORMGlobalManagerSpy = module.get<TwentyORMGlobalManager>(

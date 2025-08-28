@@ -42,7 +42,7 @@ describe('CustomDomainService', () => {
           },
         },
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(Workspace, 'core'),
           useValue: {
             save: jest.fn(),
           },

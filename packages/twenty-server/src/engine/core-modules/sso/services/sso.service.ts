@@ -29,7 +29,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 export class SSOService {
   private readonly featureLookUpKey = BillingEntitlementKey.SSO;
   constructor(
-    @InjectRepository(WorkspaceSSOIdentityProvider)
+    @InjectRepository(WorkspaceSSOIdentityProvider, 'core')
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly billingService: BillingService,

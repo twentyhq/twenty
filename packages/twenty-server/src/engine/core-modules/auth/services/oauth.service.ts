@@ -21,9 +21,9 @@
 // @Injectable()
 // export class OAuthService {
 //   constructor(
-//     @InjectRepository(User)
+//     @InjectRepository(User, 'core')
 //     private readonly userRepository: Repository<User>,
-//     @InjectRepository(AppToken)
+//     @InjectRepository(AppToken, 'core')
 //     private readonly appTokenRepository: Repository<AppToken>,
 //     private readonly accessTokenService: AccessTokenService,
 //     private readonly refreshTokenService: RefreshTokenService,

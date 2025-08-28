@@ -54,19 +54,19 @@ describe('AccessTokenService', () => {
           },
         },
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(User, 'core'),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(AppToken),
+          provide: getRepositoryToken(AppToken, 'core'),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(Workspace, 'core'),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(UserWorkspace),
+          provide: getRepositoryToken(UserWorkspace, 'core'),
           useClass: Repository,
         },
         {
@@ -85,15 +85,17 @@ describe('AccessTokenService', () => {
     service = module.get<AccessTokenService>(AccessTokenService);
     jwtWrapperService = module.get<JwtWrapperService>(JwtWrapperService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    userRepository = module.get<Repository<User>>(
+      getRepositoryToken(User, 'core'),
+    );
     workspaceRepository = module.get<Repository<Workspace>>(
-      getRepositoryToken(Workspace),
+      getRepositoryToken(Workspace, 'core'),
     );
     twentyORMGlobalManager = module.get<TwentyORMGlobalManager>(
       TwentyORMGlobalManager,
     );
     userWorkspaceRepository = module.get<Repository<UserWorkspace>>(
-      getRepositoryToken(UserWorkspace),
+      getRepositoryToken(UserWorkspace, 'core'),
     );
   });
 

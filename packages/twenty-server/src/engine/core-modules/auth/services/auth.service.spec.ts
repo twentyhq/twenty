@@ -47,19 +47,19 @@ describe('AuthService', () => {
       providers: [
         AuthService,
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(Workspace, 'core'),
           useValue: {
             findOne: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(User, 'core'),
           useValue: {
             findOne: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(AppToken),
+          provide: getRepositoryToken(AppToken, 'core'),
           useValue: {
             createQueryBuilder: jest.fn().mockReturnValue({
               leftJoin: jest.fn().mockReturnThis(),
@@ -146,9 +146,11 @@ describe('AuthService', () => {
     userWorkspaceService =
       module.get<UserWorkspaceService>(UserWorkspaceService);
     workspaceRepository = module.get<Repository<Workspace>>(
-      getRepositoryToken(Workspace),
+      getRepositoryToken(Workspace, 'core'),
     );
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    userRepository = module.get<Repository<User>>(
+      getRepositoryToken(User, 'core'),
+    );
   });
 
   beforeEach(() => {

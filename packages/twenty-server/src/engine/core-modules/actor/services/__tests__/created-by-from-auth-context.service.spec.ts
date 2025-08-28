@@ -51,7 +51,7 @@ describe('CreatedByFromAuthContextService', () => {
           useValue: twentyORMGlobalManager,
         },
         {
-          provide: getRepositoryToken(FieldMetadataEntity),
+          provide: getRepositoryToken(FieldMetadataEntity, 'core'),
           useValue: {
             findOne: jest.fn().mockResolvedValue(true),
           },

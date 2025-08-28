@@ -30,13 +30,13 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(User)
+    @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectRepository(UserWorkspace)
+    @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
-    @InjectRepository(ApiKey)
+    @InjectRepository(ApiKey, 'core')
     private readonly apiKeyRepository: Repository<ApiKey>,
   ) {
     const jwtFromRequestFunction = jwtWrapperService.extractJwtFromRequest();

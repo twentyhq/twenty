@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { type ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
 import { convertViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/utils/convert-view-filter-workspace-value-to-core-value';
@@ -14,13 +14,13 @@ import { convertViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/uti
 @Injectable()
 export class ViewFilterSyncService {
   constructor(
-    @InjectRepository(ViewFilterEntity)
-    private readonly coreViewFilterRepository: Repository<ViewFilterEntity>,
+    @InjectRepository(ViewFilter, 'core')
+    private readonly coreViewFilterRepository: Repository<ViewFilter>,
   ) {}
 
   private parseUpdateDataFromDiff(
     diff: Partial<ObjectRecordDiff<ViewFilterWorkspaceEntity>>,
-  ): Partial<ViewFilterEntity> {
+  ): Partial<ViewFilter> {
     const updateData: Record<string, unknown> = {};
 
     for (const key of Object.keys(diff)) {
@@ -45,7 +45,7 @@ export class ViewFilterSyncService {
       }
     }
 
-    return updateData as Partial<ViewFilterEntity>;
+    return updateData as Partial<ViewFilter>;
   }
 
   public async createCoreViewFilter(
@@ -56,7 +56,7 @@ export class ViewFilterSyncService {
       return;
     }
 
-    const coreViewFilter: Partial<ViewFilterEntity> = {
+    const coreViewFilter: Partial<ViewFilter> = {
       id: workspaceViewFilter.id,
       fieldMetadataId: workspaceViewFilter.fieldMetadataId,
       viewId: workspaceViewFilter.viewId,

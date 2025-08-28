@@ -11,7 +11,7 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([KeyValuePair]),
+        NestjsQueryTypeOrmModule.forFeature([KeyValuePair], 'core'),
         TypeORMModule,
       ],
     }),

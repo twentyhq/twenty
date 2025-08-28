@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
 import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
-import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { type ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/utils/view-graphql-api-exception.filter';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -23,7 +23,7 @@ export class ViewFieldResolver {
   async getCoreViewFields(
     @Args('viewId', { type: () => String }) viewId: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ViewFieldEntity[]> {
+  ): Promise<ViewField[]> {
     return this.viewFieldService.findByViewId(workspace.id, viewId);
   }
 
@@ -31,7 +31,7 @@ export class ViewFieldResolver {
   async getCoreViewField(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ViewFieldEntity | null> {
+  ): Promise<ViewField | null> {
     return this.viewFieldService.findById(id, workspace.id);
   }
 
@@ -40,7 +40,7 @@ export class ViewFieldResolver {
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewFieldInput,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ViewFieldEntity> {
+  ): Promise<ViewField> {
     return this.viewFieldService.update(id, workspace.id, input);
   }
 
@@ -48,7 +48,7 @@ export class ViewFieldResolver {
   async createCoreViewField(
     @Args('input') input: CreateViewFieldInput,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ViewFieldEntity> {
+  ): Promise<ViewField> {
     return this.viewFieldService.create({
       ...input,
       workspaceId: workspace.id,

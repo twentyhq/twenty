@@ -70,7 +70,7 @@ export const RecordTableActionRow = ({
 }: RecordTableActionRowProps) => {
   const theme = useTheme();
 
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const { visibleTableColumns } = useRecordTableContextOrThrow();
 
   return (
     <StyledRecordTableDraggableTr onClick={onClick}>
@@ -85,7 +85,7 @@ export const RecordTableActionRow = ({
       <StyledRecordTableTdTextContainer className="disable-shadow">
         <StyledText>{text}</StyledText>
       </StyledRecordTableTdTextContainer>
-      <td colSpan={visibleRecordFields.length - 1} aria-hidden />
+      <td colSpan={visibleTableColumns.length - 1} aria-hidden />
       <td aria-hidden />
       <td aria-hidden />
     </StyledRecordTableDraggableTr>

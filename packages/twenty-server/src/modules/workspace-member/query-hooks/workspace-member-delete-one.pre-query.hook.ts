@@ -25,7 +25,7 @@ export class WorkspaceMemberDeleteOnePreQueryHook
 {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    @InjectRepository(UserWorkspace)
+    @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly workspaceMemberPreQueryHookService: WorkspaceMemberPreQueryHookService,
   ) {}

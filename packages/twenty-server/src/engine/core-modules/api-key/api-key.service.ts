@@ -16,11 +16,11 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 @Injectable()
 export class ApiKeyService {
   constructor(
-    @InjectRepository(ApiKey)
+    @InjectRepository(ApiKey, 'core')
     private readonly apiKeyRepository: Repository<ApiKey>,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
-    @InjectDataSource()
+    @InjectDataSource('core')
     private readonly dataSource: DataSource,
   ) {}
 

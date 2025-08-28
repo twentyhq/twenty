@@ -80,18 +80,15 @@ const StyledTableHead = styled.thead`
 `;
 
 export const RecordTableHeader = () => {
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const { visibleTableColumns } = useRecordTableContextOrThrow();
 
   return (
     <StyledTableHead id="record-table-header" data-select-disable>
       <tr>
         <RecordTableHeaderDragDropColumn />
         <RecordTableHeaderCheckboxColumn />
-        {visibleRecordFields.map((recordField) => (
-          <RecordTableHeaderCell
-            key={recordField.fieldMetadataItemId}
-            recordField={recordField}
-          />
+        {visibleTableColumns.map((column) => (
+          <RecordTableHeaderCell key={column.fieldMetadataId} column={column} />
         ))}
         <RecordTableHeaderLastColumn />
       </tr>

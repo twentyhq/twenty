@@ -137,6 +137,7 @@ export const WorkflowStepFilterAddFilterRuleSelect = ({
           </DropdownMenuItemsContainer>
         </DropdownContent>
       }
+      dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"
     />
   );

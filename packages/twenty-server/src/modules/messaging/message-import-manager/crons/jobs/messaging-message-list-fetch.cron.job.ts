@@ -24,7 +24,7 @@ export const MESSAGING_MESSAGE_LIST_FETCH_CRON_PATTERN = '*/2 * * * *';
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessageListFetchCronJob {
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,

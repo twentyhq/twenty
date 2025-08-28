@@ -1,18 +1,20 @@
 import styled from '@emotion/styled';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
-
-import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
+import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
+import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -21,10 +23,9 @@ import { useRecoilComponentFamilyValue } from '@/ui/utilities/state/component-st
 import { useRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useSaveRecordFields } from '@/views/hooks/useSaveRecordFields';
-import { throwIfNotDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 const COLUMN_MIN_WIDTH = 104;
 
@@ -108,13 +109,13 @@ const StyledHeaderIcon = styled.div`
 `;
 
 type RecordTableHeaderCellProps = {
-  recordField: RecordField;
+  column: ColumnDefinition<FieldMetadata>;
 };
 
 export const RecordTableHeaderCell = ({
-  recordField,
+  column,
 }: RecordTableHeaderCellProps) => {
-  const { objectMetadataItem, objectPermissions } =
+  const { objectMetadataItem, objectPermissions, recordTableId } =
     useRecordTableContextOrThrow();
 
   const resizeFieldOffsetState = useRecoilComponentCallbackState(
@@ -125,6 +126,13 @@ export const RecordTableHeaderCell = ({
     resizeFieldOffsetComponentState,
   );
 
+  const tableColumns = useRecoilComponentValue(tableColumnsComponentState);
+  const tableColumnsByKey = useMemo(
+    () =>
+      mapArrayToObject(tableColumns, ({ fieldMetadataId }) => fieldMetadataId),
+    [tableColumns],
+  );
+
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
     number | null
   >(null);
@@ -132,7 +140,9 @@ export const RecordTableHeaderCell = ({
     string | null
   >(null);
 
-  const { saveRecordFields } = useSaveRecordFields();
+  const { handleColumnsChange } = useTableColumns({
+    recordTableId,
+  });
 
   const { updateRecordField } = useUpdateRecordField();
 
@@ -156,8 +166,6 @@ export const RecordTableHeaderCell = ({
   const handleResizeHandlerEnd = useRecoilCallback(
     ({ snapshot, set }) =>
       async () => {
-        throwIfNotDefined(recordField, 'recordField');
-
         if (!resizedFieldMetadataItemId) return;
 
         const resizeFieldOffset = getSnapshotValue(
@@ -166,30 +174,44 @@ export const RecordTableHeaderCell = ({
         );
 
         const nextWidth = Math.round(
-          Math.max(recordField.size + resizeFieldOffset, COLUMN_MIN_WIDTH),
+          Math.max(
+            tableColumnsByKey[resizedFieldMetadataItemId].size +
+              resizeFieldOffset,
+            COLUMN_MIN_WIDTH,
+          ),
         );
 
         set(resizeFieldOffsetState, 0);
         setInitialPointerPositionX(null);
         setResizedFieldMetadataItemId(null);
 
-        if (nextWidth !== recordField.size) {
-          const updatedRecordField = updateRecordField(
-            resizedFieldMetadataItemId,
-            {
-              size: nextWidth,
-            },
+        if (nextWidth !== tableColumnsByKey[resizedFieldMetadataItemId].size) {
+          const nextColumns = tableColumns.map((column) =>
+            column.fieldMetadataId === resizedFieldMetadataItemId
+              ? { ...column, size: nextWidth }
+              : column,
           );
 
-          saveRecordFields([updatedRecordField]);
+          updateRecordField(resizedFieldMetadataItemId, {
+            size: nextWidth,
+          });
+
+          await handleColumnsChange({
+            columns: nextColumns,
+            objectMetadataId: objectMetadataItem.id,
+            recordTableId,
+          });
         }
       },
     [
-      recordField,
-      saveRecordFields,
       resizedFieldMetadataItemId,
       resizeFieldOffsetState,
+      tableColumnsByKey,
       setResizedFieldMetadataItemId,
+      tableColumns,
+      handleColumnsChange,
+      objectMetadataItem,
+      recordTableId,
       updateRecordField,
     ],
   );
@@ -207,13 +229,8 @@ export const RecordTableHeaderCell = ({
 
   const isMobile = useIsMobile();
 
-  const { labelIdentifierFieldMetadataItem } = useRecordTableContextOrThrow();
-
-  const isLabelIdentifier =
-    recordField.fieldMetadataItemId === labelIdentifierFieldMetadataItem?.id;
-
   const disableColumnResize =
-    isLabelIdentifier && isMobile && !isRecordTableScrolledLeft;
+    column.isLabelIdentifier && isMobile && !isRecordTableScrolledLeft;
 
   const { createNewIndexRecord } = useCreateNewIndexRecord({
     objectMetadataItem,
@@ -244,13 +261,11 @@ export const RecordTableHeaderCell = ({
 
   return (
     <StyledColumnHeaderCell
-      key={recordField.fieldMetadataItemId}
-      isResizing={
-        resizedFieldMetadataItemId === recordField.fieldMetadataItemId
-      }
+      key={column.fieldMetadataId}
+      isResizing={resizedFieldMetadataItemId === column.fieldMetadataId}
       columnWidth={Math.max(
-        (recordField?.size ?? 0) +
-          (resizedFieldMetadataItemId === recordField.fieldMetadataItemId
+        tableColumnsByKey[column.fieldMetadataId].size +
+          (resizedFieldMetadataItemId === column.fieldMetadataId
             ? resizeFieldOffset
             : 0) +
           24,
@@ -262,11 +277,11 @@ export const RecordTableHeaderCell = ({
     >
       <StyledColumnHeadContainer>
         <RecordTableColumnHeadWithDropdown
-          recordField={recordField}
+          column={column}
           objectMetadataId={objectMetadataItem.id}
         />
         {(useIsMobile() || iconVisibility) &&
-          !!isLabelIdentifier &&
+          !!column.isLabelIdentifier &&
           !isReadOnly &&
           hasObjectUpdatePermissions && (
             <StyledHeaderIcon>
@@ -284,7 +299,7 @@ export const RecordTableHeaderCell = ({
           className="cursor-col-resize"
           role="separator"
           onPointerDown={() => {
-            setResizedFieldMetadataItemId(recordField.fieldMetadataItemId);
+            setResizedFieldMetadataItemId(column.fieldMetadataId);
           }}
         />
       )}

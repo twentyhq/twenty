@@ -12,7 +12,7 @@ import { ImapSmtpCalDavAPIService } from 'src/modules/connected-account/services
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ObjectMetadataEntity]),
+    TypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
     MessageQueueModule,
     WorkspaceEventEmitterModule,
     TwentyConfigModule,

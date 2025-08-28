@@ -10,7 +10,7 @@ import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/se
 @Module({
   imports: [
     WorkspaceDataSourceModule,
-    TypeOrmModule.forFeature([FeatureFlag]),
+    TypeOrmModule.forFeature([FeatureFlag], 'core'),
     ConnectedAccountModule,
     MetricsModule,
   ],

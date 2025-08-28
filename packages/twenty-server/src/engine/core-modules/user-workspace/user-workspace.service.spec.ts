@@ -46,7 +46,7 @@ describe('UserWorkspaceService', () => {
       providers: [
         UserWorkspaceService,
         {
-          provide: getRepositoryToken(UserWorkspace),
+          provide: getRepositoryToken(UserWorkspace, 'core'),
           useValue: {
             create: jest.fn(),
             save: jest.fn(),
@@ -58,13 +58,13 @@ describe('UserWorkspaceService', () => {
           },
         },
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(User, 'core'),
           useValue: {
             findOne: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(ObjectMetadataEntity),
+          provide: getRepositoryToken(ObjectMetadataEntity, 'core'),
           useValue: {
             findOneOrFail: jest.fn(),
           },
@@ -140,8 +140,10 @@ describe('UserWorkspaceService', () => {
 
     service = module.get<UserWorkspaceService>(UserWorkspaceService);
     fileService = module.get<FileService>(FileService);
-    userWorkspaceRepository = module.get(getRepositoryToken(UserWorkspace));
-    userRepository = module.get(getRepositoryToken(User));
+    userWorkspaceRepository = module.get(
+      getRepositoryToken(UserWorkspace, 'core'),
+    );
+    userRepository = module.get(getRepositoryToken(User, 'core'));
     typeORMService = module.get<TypeORMService>(TypeORMService);
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
       WorkspaceInvitationService,

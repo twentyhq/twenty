@@ -3,6 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
@@ -45,8 +46,8 @@ export type SettingsDataModelFieldRelationFormValues = z.infer<
 >;
 
 type SettingsDataModelFieldRelationFormProps = {
-  existingFieldMetadataId: string;
-  objectMetadataItem?: ObjectMetadataItem;
+  fieldMetadataItem: Pick<FieldMetadataItem, 'type'>;
+  objectMetadataItem: ObjectMetadataItem;
 };
 
 export const StyledContainer = styled.div`
@@ -82,7 +83,7 @@ export const RELATION_TYPE_OPTIONS = Object.entries(RELATION_TYPES).map(
 );
 
 export const SettingsDataModelFieldRelationForm = ({
-  existingFieldMetadataId,
+  fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldRelationFormProps) => {
   const { t } = useLingui();
@@ -99,7 +100,7 @@ export const SettingsDataModelFieldRelationForm = ({
     initialRelationObjectMetadataItem,
     initialRelationType,
   } = useRelationSettingsFormInitialValues({
-    existingFieldMetadataId,
+    fieldMetadataItem,
     objectMetadataItem,
   });
 

@@ -49,6 +49,7 @@ const settings: WorkflowFormActionSettings = {
           value: 'A company',
           isLeaf: true,
           fieldIdName: 'id',
+          nameSingular: 'company',
           objectMetadataId: '123e4567-e89b-12d3-a456-426614174000',
         },
         _outputSchemaType: 'RECORD',

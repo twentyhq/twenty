@@ -182,39 +182,4 @@ export class AiModelRegistryService {
   refreshRegistry(): void {
     this.buildModelRegistry();
   }
-
-  async resolveModelForAgent(agent: { modelId: string } | null) {
-    const aiModel = this.getEffectiveModelConfig(agent?.modelId ?? 'auto');
-
-    await this.validateApiKey(aiModel.provider);
-    const registeredModel = this.getModel(aiModel.modelId);
-
-    if (!registeredModel) {
-      throw new Error(`Model ${aiModel.modelId} not found in registry`);
-    }
-
-    return registeredModel;
-  }
-
-  async validateApiKey(provider: ModelProvider): Promise<void> {
-    let apiKey: string | undefined;
-
-    switch (provider) {
-      case ModelProvider.OPENAI:
-        apiKey = this.twentyConfigService.get('OPENAI_API_KEY');
-        break;
-      case ModelProvider.ANTHROPIC:
-        apiKey = this.twentyConfigService.get('ANTHROPIC_API_KEY');
-        break;
-      case ModelProvider.OPENAI_COMPATIBLE:
-        apiKey = this.twentyConfigService.get('OPENAI_COMPATIBLE_API_KEY');
-        break;
-      default:
-        return;
-    }
-
-    if (!apiKey) {
-      throw new Error(`${provider.toUpperCase()} API key not configured`);
-    }
-  }
 }

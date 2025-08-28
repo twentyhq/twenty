@@ -5,19 +5,19 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { type ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 
 @Injectable()
 export class ViewGroupSyncService {
   constructor(
-    @InjectRepository(ViewGroupEntity)
-    private readonly coreViewGroupRepository: Repository<ViewGroupEntity>,
+    @InjectRepository(ViewGroup, 'core')
+    private readonly coreViewGroupRepository: Repository<ViewGroup>,
   ) {}
 
   private parseUpdateDataFromDiff(
     diff: Partial<ObjectRecordDiff<ViewGroupWorkspaceEntity>>,
-  ): Partial<ViewGroupEntity> {
+  ): Partial<ViewGroup> {
     const updateData: Record<string, unknown> = {};
 
     for (const key of Object.keys(diff)) {
@@ -28,7 +28,7 @@ export class ViewGroupSyncService {
       }
     }
 
-    return updateData as Partial<ViewGroupEntity>;
+    return updateData as Partial<ViewGroup>;
   }
 
   public async createCoreViewGroup(
@@ -39,7 +39,7 @@ export class ViewGroupSyncService {
       return;
     }
 
-    const coreViewGroup: Partial<ViewGroupEntity> = {
+    const coreViewGroup: Partial<ViewGroup> = {
       id: workspaceViewGroup.id,
       fieldMetadataId: workspaceViewGroup.fieldMetadataId,
       viewId: workspaceViewGroup.viewId,

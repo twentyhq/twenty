@@ -1,48 +1,41 @@
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
-import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/ui/types/guards/isFieldRelationFromManyObjects';
 import { isFieldRelationToOneObject } from '@/object-record/record-field/ui/types/guards/isFieldRelationToOneObject';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
+import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableRowContextOrThrow } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useContext, type ReactNode } from 'react';
 
 type RecordTableCellFieldContextGenericProps = {
-  recordField: RecordField;
   children: ReactNode;
 };
 
 export const RecordTableCellFieldContextGeneric = ({
-  recordField,
   children,
 }: RecordTableCellFieldContextGenericProps) => {
   const { recordId, isRecordReadOnly } = useRecordTableRowContextOrThrow();
 
-  const {
-    objectMetadataItem,
-    objectPermissions,
-    fieldDefinitionByFieldMetadataItemId,
-  } = useRecordTableContextOrThrow();
+  const { objectMetadataItem, objectPermissions } =
+    useRecordTableContextOrThrow();
   const { indexIdentifierUrl, objectPermissionsByObjectMetadataId } =
     useRecordIndexContextOrThrow();
-
-  const fieldDefinition =
-    fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
+  const { columnDefinition } = useContext(RecordTableCellContext);
 
   const updateRecord = useContext(RecordUpdateContext);
 
   let hasObjectReadPermissions = objectPermissions.canReadObjectRecords;
-  // todo @guillim : adjust this to handle morph relations permissions display
+
   if (
-    isFieldRelationToOneObject(fieldDefinition) ||
-    isFieldRelationFromManyObjects(fieldDefinition)
+    isFieldRelationToOneObject(columnDefinition) ||
+    isFieldRelationFromManyObjects(columnDefinition)
   ) {
     const relationObjectMetadataId =
-      fieldDefinition.metadata.relationObjectMetadataId;
+      columnDefinition.metadata.relationObjectMetadataId;
 
     const relationObjectPermissions = getObjectPermissionsForObject(
       objectPermissionsByObjectMetadataId,
@@ -56,13 +49,13 @@ export const RecordTableCellFieldContextGeneric = ({
     <FieldContext.Provider
       value={{
         recordId,
-        fieldDefinition: fieldDefinition,
+        fieldDefinition: columnDefinition,
         useUpdateRecord: () => [updateRecord, {}],
         labelIdentifierLink: indexIdentifierUrl(recordId),
         isLabelIdentifier: isLabelIdentifierField({
           fieldMetadataItem: {
-            id: fieldDefinition.fieldMetadataId,
-            name: fieldDefinition.metadata.fieldName,
+            id: columnDefinition.fieldMetadataId,
+            name: columnDefinition.metadata.fieldName,
           },
           objectMetadataItem,
         }),
@@ -71,8 +64,8 @@ export const RecordTableCellFieldContextGeneric = ({
           isRecordReadOnly: isRecordReadOnly ?? false,
           objectPermissions,
           fieldMetadataItem: {
-            id: fieldDefinition.fieldMetadataId,
-            isUIReadOnly: fieldDefinition.metadata.isUIReadOnly ?? false,
+            id: columnDefinition.fieldMetadataId,
+            isUIReadOnly: columnDefinition.metadata.isUIReadOnly ?? false,
           },
         }),
         isForbidden: !hasObjectReadPermissions,

@@ -20,7 +20,7 @@ export const WORKFLOW_HANDLE_STALED_RUNS_CRON_PATTERN = '0 * * * *';
 @Processor(MessageQueue.cronQueue)
 export class WorkflowHandleStaledRunsJob {
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,

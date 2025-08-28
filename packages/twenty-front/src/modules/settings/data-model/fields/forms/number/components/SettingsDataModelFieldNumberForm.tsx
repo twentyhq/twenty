@@ -1,7 +1,7 @@
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { numberFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/numberFieldDefaultValueSchema';
 import { Separator } from '@/settings/components/Separator';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
@@ -22,19 +22,18 @@ export type SettingsDataModelFieldNumberFormValues = z.infer<
 
 type SettingsDataModelFieldNumberFormProps = {
   disabled?: boolean;
-  existingFieldMetadataId: string;
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
+  >;
 };
 
 export const SettingsDataModelFieldNumberForm = ({
   disabled,
-  existingFieldMetadataId,
+  fieldMetadataItem,
 }: SettingsDataModelFieldNumberFormProps) => {
   const { t } = useLingui();
   const { control } = useFormContext<SettingsDataModelFieldNumberFormValues>();
-
-  const { fieldMetadataItem } = useFieldMetadataItemById(
-    existingFieldMetadataId,
-  );
 
   return (
     <Controller

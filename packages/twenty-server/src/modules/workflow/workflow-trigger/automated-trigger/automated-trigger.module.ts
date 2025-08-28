@@ -11,7 +11,7 @@ import { DatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trig
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace]),
+    TypeOrmModule.forFeature([Workspace], 'core'),
     WorkflowCommonModule,
     WorkspaceDataSourceModule,
   ],

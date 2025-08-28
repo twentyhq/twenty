@@ -10,16 +10,10 @@ import { type ViewSort } from '@/views/types/ViewSort';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 
-import { coreViewsState } from '@/views/states/coreViewState';
-import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type View } from '@/views/types/View';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewSortDirection, type CoreViewSort } from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import {
-  mockedCoreViewsData,
-  mockedViewsData,
-} from '~/testing/mock-data/views';
+import { mockedViewsData } from '~/testing/mock-data/views';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { useApplyCurrentViewSortsToCurrentRecordSorts } from '../useApplyCurrentViewSortsToCurrentRecordSorts';
 
@@ -52,27 +46,11 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
   };
 
   const allCompaniesView = mockedViewsData[0];
-  const allCompaniesCoreView = mockedCoreViewsData[0];
-
-  const mockCoreViewSort: Omit<CoreViewSort, 'workspaceId'> = {
-    __typename: 'CoreViewSort',
-    id: 'sort-1',
-    fieldMetadataId: mockFieldMetadataItem.id,
-    direction: ViewSortDirection.ASC,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    viewId: allCompaniesCoreView.id,
-  };
 
   const mockView = {
     ...allCompaniesView,
     viewSorts: [mockViewSort],
   } satisfies View;
-
-  const mockCoreView = {
-    ...allCompaniesCoreView,
-    viewSorts: [mockCoreViewSort],
-  } satisfies CoreViewWithRelations;
 
   it('should apply sorts from current view', () => {
     const { result } = renderHook(
@@ -98,7 +76,6 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
           contextStoreCurrentViewId: mockView.id,
           onInitializeRecoilSnapshot: (snapshot) => {
             snapshot.set(prefetchViewsState, [mockView]);
-            snapshot.set(coreViewsState, [mockCoreView]);
           },
         }),
       },

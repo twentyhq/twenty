@@ -17,7 +17,7 @@ import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/sta
 })
 export class RemoveWorkflowRunsWithoutState extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {

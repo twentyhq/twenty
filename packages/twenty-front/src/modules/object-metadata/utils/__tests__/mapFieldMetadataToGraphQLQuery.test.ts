@@ -229,5 +229,3 @@ idealCustomerProfile
     );
   });
 });
-
-// todo @guillim add a test for the morph relation

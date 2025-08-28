@@ -14,8 +14,11 @@ import { CreateContactService } from 'src/modules/contact-creation-manager/servi
 @Module({
   imports: [
     WorkspaceDataSourceModule,
-    TypeOrmModule.forFeature([FeatureFlag]),
-    TypeOrmModule.forFeature([ObjectMetadataEntity, FieldMetadataEntity]),
+    TypeOrmModule.forFeature([FeatureFlag], 'core'),
+    TypeOrmModule.forFeature(
+      [ObjectMetadataEntity, FieldMetadataEntity],
+      'core',
+    ),
   ],
   providers: [
     CreateCompanyService,

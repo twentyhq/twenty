@@ -16,13 +16,13 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([IndexMetadataEntity]),
+    TypeOrmModule.forFeature([IndexMetadataEntity], 'core'),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([
-          IndexMetadataEntity,
-          IndexFieldMetadataEntity,
-        ]),
+        NestjsQueryTypeOrmModule.forFeature(
+          [IndexMetadataEntity, IndexFieldMetadataEntity],
+          'core',
+        ),
         WorkspaceMigrationModule,
       ],
       services: [IndexMetadataService],

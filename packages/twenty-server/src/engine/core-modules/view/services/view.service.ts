@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
+import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import {
   ViewException,
   ViewExceptionCode,
@@ -16,11 +16,11 @@ import {
 @Injectable()
 export class ViewService {
   constructor(
-    @InjectRepository(ViewEntity)
-    private readonly viewRepository: Repository<ViewEntity>,
+    @InjectRepository(View, 'core')
+    private readonly viewRepository: Repository<View>,
   ) {}
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewEntity[]> {
+  async findByWorkspaceId(workspaceId: string): Promise<View[]> {
     return this.viewRepository.find({
       where: {
         workspaceId,
@@ -41,7 +41,7 @@ export class ViewService {
   async findByObjectMetadataId(
     workspaceId: string,
     objectMetadataId: string,
-  ): Promise<ViewEntity[]> {
+  ): Promise<View[]> {
     return this.viewRepository.find({
       where: {
         workspaceId,
@@ -60,7 +60,7 @@ export class ViewService {
     });
   }
 
-  async findById(id: string, workspaceId: string): Promise<ViewEntity | null> {
+  async findById(id: string, workspaceId: string): Promise<View | null> {
     const view = await this.viewRepository.findOne({
       where: {
         id,
@@ -80,7 +80,7 @@ export class ViewService {
     return view || null;
   }
 
-  async create(viewData: Partial<ViewEntity>): Promise<ViewEntity> {
+  async create(viewData: Partial<View>): Promise<View> {
     if (!isDefined(viewData.workspaceId)) {
       throw new ViewException(
         generateViewExceptionMessage(
@@ -120,8 +120,8 @@ export class ViewService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: Partial<ViewEntity>,
-  ): Promise<ViewEntity> {
+    updateData: Partial<View>,
+  ): Promise<View> {
     const existingView = await this.findById(id, workspaceId);
 
     if (!isDefined(existingView)) {
@@ -142,7 +142,7 @@ export class ViewService {
     return { ...existingView, ...updatedView };
   }
 
-  async delete(id: string, workspaceId: string): Promise<ViewEntity> {
+  async delete(id: string, workspaceId: string): Promise<View> {
     const view = await this.findById(id, workspaceId);
 
     if (!isDefined(view)) {

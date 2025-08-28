@@ -10,7 +10,7 @@ import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
-      imports: [NestjsQueryTypeOrmModule.forFeature([AppToken])],
+      imports: [NestjsQueryTypeOrmModule.forFeature([AppToken], 'core')],
       services: [AppTokenService],
       resolvers: appTokenAutoResolverOpts,
     }),

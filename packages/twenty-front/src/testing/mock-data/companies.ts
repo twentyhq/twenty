@@ -1,5 +1,3 @@
-import { type Company } from '@/companies/types/Company';
-import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -734,20 +732,11 @@ export const companiesQueryResult = {
   },
 };
 
-const allMockedCompanyRecords = getRecordsFromRecordConnection({
-  recordConnection: companiesQueryResult.companies,
-}) as ObjectRecord[];
-
+const allMockedCompanyRecords = companiesQueryResult.companies.edges.map(
+  (edge) => edge.node,
+);
 export const getCompaniesMock = () => {
-  return [...allMockedCompanyRecords] as Company[];
-};
-
-export const getCompaniesRecordConnectionMock = () => {
-  const companiesMock = companiesQueryResult.companies.edges.map(
-    (edge) => edge.node,
-  );
-
-  return companiesMock;
+  return [...allMockedCompanyRecords];
 };
 
 export const getMockCompanyObjectMetadataItem = () => {
@@ -755,10 +744,9 @@ export const getMockCompanyObjectMetadataItem = () => {
 
   return companyObjectMetadataItem;
 };
-
 export const getCompanyDuplicateMock = () => {
   return {
-    ...allMockedCompanyRecords[0],
+    ...companiesQueryResult.companies.edges[0].node,
     id: '8b40856a-2ec9-4c03-8bc0-c032c89e1824',
   };
 };

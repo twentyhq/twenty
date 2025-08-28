@@ -1,9 +1,9 @@
-import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
-import { type ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
-import { type ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
-import { type ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
-import { type ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
-import { type ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
+import { type ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { type ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { type ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { type ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { type ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { type View } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 
 export const cleanupViewRecords = async (): Promise<void> => {
@@ -12,8 +12,8 @@ export const cleanupViewRecords = async (): Promise<void> => {
 };
 
 export const assertViewStructure = (
-  view: ViewEntity,
-  expectedFields?: Partial<ViewEntity>,
+  view: View,
+  expectedFields?: Partial<View>,
 ) => {
   expect(view).toBeDefined();
   expect(view.id).toBeDefined();
@@ -29,8 +29,8 @@ export const assertViewStructure = (
 };
 
 export const assertViewFieldStructure = (
-  viewField: ViewFieldEntity,
-  expectedFields?: Partial<ViewFieldEntity>,
+  viewField: ViewField,
+  expectedFields?: Partial<ViewField>,
 ) => {
   expect(viewField).toBeDefined();
   expect(viewField.id).toBeDefined();
@@ -46,8 +46,8 @@ export const assertViewFieldStructure = (
 };
 
 export const assertViewSortStructure = (
-  viewSort: ViewSortEntity,
-  expectedFields?: Partial<ViewSortEntity>,
+  viewSort: ViewSort,
+  expectedFields?: Partial<ViewSort>,
 ) => {
   expect(viewSort).toBeDefined();
   expect(viewSort.id).toBeDefined();
@@ -62,8 +62,8 @@ export const assertViewSortStructure = (
 };
 
 export const assertViewFilterStructure = (
-  viewFilter: ViewFilterEntity,
-  expectedFields?: Partial<ViewFilterEntity>,
+  viewFilter: ViewFilter,
+  expectedFields?: Partial<ViewFilter>,
 ) => {
   expect(viewFilter).toBeDefined();
   expect(viewFilter.id).toBeDefined();
@@ -78,8 +78,8 @@ export const assertViewFilterStructure = (
 };
 
 export const assertViewGroupStructure = (
-  viewGroup: ViewGroupEntity,
-  expectedFields?: Partial<ViewGroupEntity>,
+  viewGroup: ViewGroup,
+  expectedFields?: Partial<ViewGroup>,
 ) => {
   expect(viewGroup).toBeDefined();
   expect(viewGroup.id).toBeDefined();
@@ -95,8 +95,8 @@ export const assertViewGroupStructure = (
 };
 
 export const assertViewFilterGroupStructure = (
-  viewFilterGroup: ViewFilterGroupEntity,
-  expectedFields?: Partial<ViewFilterGroupEntity>,
+  viewFilterGroup: ViewFilterGroup,
+  expectedFields?: Partial<ViewFilterGroup>,
   validLogicalOperators: string[] = [
     ViewFilterGroupLogicalOperator.AND,
     ViewFilterGroupLogicalOperator.OR,

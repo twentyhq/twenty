@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
-import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
 import {
   ViewGroupException,
   ViewGroupExceptionCode,
@@ -16,11 +16,11 @@ import {
 @Injectable()
 export class ViewGroupService {
   constructor(
-    @InjectRepository(ViewGroupEntity)
-    private readonly viewGroupRepository: Repository<ViewGroupEntity>,
+    @InjectRepository(ViewGroup, 'core')
+    private readonly viewGroupRepository: Repository<ViewGroup>,
   ) {}
 
-  async findByWorkspaceId(workspaceId: string): Promise<ViewGroupEntity[]> {
+  async findByWorkspaceId(workspaceId: string): Promise<ViewGroup[]> {
     return this.viewGroupRepository.find({
       where: {
         workspaceId,
@@ -34,7 +34,7 @@ export class ViewGroupService {
   async findByViewId(
     workspaceId: string,
     viewId: string,
-  ): Promise<ViewGroupEntity[]> {
+  ): Promise<ViewGroup[]> {
     return this.viewGroupRepository.find({
       where: {
         workspaceId,
@@ -46,10 +46,7 @@ export class ViewGroupService {
     });
   }
 
-  async findById(
-    id: string,
-    workspaceId: string,
-  ): Promise<ViewGroupEntity | null> {
+  async findById(id: string, workspaceId: string): Promise<ViewGroup | null> {
     const viewGroup = await this.viewGroupRepository.findOne({
       where: {
         id,
@@ -62,9 +59,7 @@ export class ViewGroupService {
     return viewGroup || null;
   }
 
-  async create(
-    viewGroupData: Partial<ViewGroupEntity>,
-  ): Promise<ViewGroupEntity> {
+  async create(viewGroupData: Partial<ViewGroup>): Promise<ViewGroup> {
     if (!isDefined(viewGroupData.workspaceId)) {
       throw new ViewGroupException(
         generateViewGroupExceptionMessage(
@@ -115,8 +110,8 @@ export class ViewGroupService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: Partial<ViewGroupEntity>,
-  ): Promise<ViewGroupEntity> {
+    updateData: Partial<ViewGroup>,
+  ): Promise<ViewGroup> {
     const existingViewGroup = await this.findById(id, workspaceId);
 
     if (!isDefined(existingViewGroup)) {
@@ -137,7 +132,7 @@ export class ViewGroupService {
     return { ...existingViewGroup, ...updatedViewGroup };
   }
 
-  async delete(id: string, workspaceId: string): Promise<ViewGroupEntity> {
+  async delete(id: string, workspaceId: string): Promise<ViewGroup> {
     const viewGroup = await this.findById(id, workspaceId);
 
     if (!isDefined(viewGroup)) {

@@ -18,7 +18,7 @@ export class WorkspaceFeatureFlagsMapCacheService {
 
   constructor(
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
-    @InjectRepository(FeatureFlag)
+    @InjectRepository(FeatureFlag, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlag>,
   ) {}
 

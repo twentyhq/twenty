@@ -22,7 +22,7 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly transientTokenService: TransientTokenService,
     private readonly guardRedirectService: GuardRedirectService,
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly domainManagerService: DomainManagerService,
   ) {

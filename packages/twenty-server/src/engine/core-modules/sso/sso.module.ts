@@ -17,12 +17,10 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 @Module({
   imports: [
-    NestjsQueryTypeOrmModule.forFeature([
-      WorkspaceSSOIdentityProvider,
-      User,
-      AppToken,
-      FeatureFlag,
-    ]),
+    NestjsQueryTypeOrmModule.forFeature(
+      [WorkspaceSSOIdentityProvider, User, AppToken, FeatureFlag],
+      'core',
+    ),
     BillingModule,
     DomainManagerModule,
     GuardRedirectModule,

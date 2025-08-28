@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
-import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
 import {
   ViewFilterGroupException,
@@ -16,7 +16,7 @@ import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/vi
 
 describe('ViewFilterGroupService', () => {
   let viewFilterGroupService: ViewFilterGroupService;
-  let viewFilterGroupRepository: Repository<ViewFilterGroupEntity>;
+  let viewFilterGroupRepository: Repository<ViewFilterGroup>;
 
   const mockViewFilterGroup = {
     id: 'view-filter-group-id',
@@ -27,14 +27,14 @@ describe('ViewFilterGroupService', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
-  } as ViewFilterGroupEntity;
+  } as ViewFilterGroup;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ViewFilterGroupService,
         {
-          provide: getRepositoryToken(ViewFilterGroupEntity),
+          provide: getRepositoryToken(ViewFilterGroup, 'core'),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -50,8 +50,8 @@ describe('ViewFilterGroupService', () => {
     viewFilterGroupService = module.get<ViewFilterGroupService>(
       ViewFilterGroupService,
     );
-    viewFilterGroupRepository = module.get<Repository<ViewFilterGroupEntity>>(
-      getRepositoryToken(ViewFilterGroupEntity),
+    viewFilterGroupRepository = module.get<Repository<ViewFilterGroup>>(
+      getRepositoryToken(ViewFilterGroup, 'core'),
     );
   });
 

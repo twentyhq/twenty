@@ -1,13 +1,16 @@
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCellCheckbox } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
 import { RecordTableCellGrip } from '@/object-record/record-table/record-table-cell/components/RecordTableCellGrip';
 import { RecordTableCellLoading } from '@/object-record/record-table/record-table-cell/components/RecordTableCellLoading';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
+import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 export const RecordTableBodyLoading = () => {
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const visibleTableColumns = useRecoilComponentValue(
+    visibleTableColumnsComponentSelector,
+  );
 
   return (
     <tbody>
@@ -38,8 +41,8 @@ export const RecordTableBodyLoading = () => {
             >
               <RecordTableCellGrip />
               <RecordTableCellCheckbox />
-              {visibleRecordFields.map((recordField) => (
-                <RecordTableCellLoading key={recordField.fieldMetadataItemId} />
+              {visibleTableColumns.map((column) => (
+                <RecordTableCellLoading key={column.fieldMetadataId} />
               ))}
             </RecordTableTr>
           </RecordTableRowDraggableContextProvider>

@@ -31,19 +31,19 @@ describe('ResetPasswordService', () => {
       providers: [
         ResetPasswordService,
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(User, 'core'),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(Workspace, 'core'),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(AppToken),
+          provide: getRepositoryToken(AppToken, 'core'),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(Workspace, 'core'),
           useClass: Repository,
         },
         {
@@ -71,12 +71,14 @@ describe('ResetPasswordService', () => {
     }).compile();
 
     service = module.get<ResetPasswordService>(ResetPasswordService);
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    userRepository = module.get<Repository<User>>(
+      getRepositoryToken(User, 'core'),
+    );
     workspaceRepository = module.get<Repository<Workspace>>(
-      getRepositoryToken(Workspace),
+      getRepositoryToken(Workspace, 'core'),
     );
     appTokenRepository = module.get<Repository<AppToken>>(
-      getRepositoryToken(AppToken),
+      getRepositoryToken(AppToken, 'core'),
     );
     emailService = module.get<EmailService>(EmailService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);

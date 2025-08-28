@@ -22,10 +22,10 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 })
 export class FixCreatedByDefaultValueCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(ObjectMetadataEntity)
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);

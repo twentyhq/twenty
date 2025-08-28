@@ -20,7 +20,7 @@ import { SyncWorkspaceMetadataCommand } from './sync-workspace-metadata.command'
     DataSourceModule,
     WorkspaceDataSourceModule,
     FeatureFlagModule,
-    TypeOrmModule.forFeature([Workspace]),
+    TypeOrmModule.forFeature([Workspace], 'core'),
     SyncWorkspaceLoggerModule,
   ],
   providers: [SyncWorkspaceMetadataCommand],

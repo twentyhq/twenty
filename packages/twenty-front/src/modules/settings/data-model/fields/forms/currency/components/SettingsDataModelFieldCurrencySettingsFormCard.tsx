@@ -1,48 +1,60 @@
+import styled from '@emotion/styled';
 import { useFormContext } from 'react-hook-form';
 
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import {
   SettingsDataModelFieldCurrencyForm,
   type SettingsDataModelFieldCurrencyFormValues,
 } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
-import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
+import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
+import {
+  SettingsDataModelFieldPreviewCard,
+  type SettingsDataModelFieldPreviewCardProps,
+} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 
 type SettingsDataModelFieldCurrencySettingsFormCardProps = {
   disabled?: boolean;
-  existingFieldMetadataId: string;
-  objectNameSingular: string;
-};
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
+  >;
+} & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
+
+const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
+  display: grid;
+  flex: 1 1 100%;
+`;
 
 export const SettingsDataModelFieldCurrencySettingsFormCard = ({
   disabled,
-  existingFieldMetadataId,
-  objectNameSingular,
+  fieldMetadataItem,
+  objectMetadataItem,
 }: SettingsDataModelFieldCurrencySettingsFormCardProps) => {
-  const { watch } = useFormContext<
-    SettingsDataModelFieldCurrencyFormValues &
-      SettingsDataModelFieldEditFormValues
-  >();
+  const { initialDefaultValue, initialSettingsValue } =
+    useCurrencySettingsFormInitialValues({
+      fieldMetadataItem,
+    });
+
+  const { watch: watchFormValue } =
+    useFormContext<SettingsDataModelFieldCurrencyFormValues>();
 
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <SettingsDataModelFieldPreviewWidget
+        <StyledFieldPreviewCard
           fieldMetadataItem={{
-            type: FieldMetadataType.CURRENCY,
-            label: watch('label'),
-            icon: watch('icon'),
-            defaultValue: watch('defaultValue'),
-            settings: watch('settings'),
+            ...fieldMetadataItem,
+            defaultValue: watchFormValue('defaultValue', initialDefaultValue),
+            settings: watchFormValue('settings', initialSettingsValue),
           }}
-          objectNameSingular={objectNameSingular}
+          objectMetadataItem={objectMetadataItem}
         />
       }
       form={
         <SettingsDataModelFieldCurrencyForm
           disabled={disabled}
-          existingFieldMetadataId={existingFieldMetadataId}
+          fieldMetadataItem={fieldMetadataItem}
         />
       }
     />

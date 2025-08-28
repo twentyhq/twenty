@@ -1,4 +1,8 @@
-import { TEST_NOT_EXISTING_VIEW_ID } from 'test/integration/constants/test-view-ids.constants';
+import {
+  TEST_NOT_EXISTING_VIEW_ID,
+  TEST_OBJECT_METADATA_1_ID,
+  TEST_OBJECT_METADATA_2_ID,
+} from 'test/integration/constants/test-view-ids.constants';
 import { createViewOperationFactory } from 'test/integration/graphql/utils/create-view-operation-factory.util';
 import { deleteViewOperationFactory } from 'test/integration/graphql/utils/delete-view-operation-factory.util';
 import { destroyViewOperationFactory } from 'test/integration/graphql/utils/destroy-view-operation-factory.util';
@@ -15,8 +19,6 @@ import {
   updateViewData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import {
   assertViewStructure,
   cleanupViewRecords,
@@ -31,32 +33,6 @@ import {
 } from 'src/engine/core-modules/view/exceptions/view.exception';
 
 describe('View Resolver', () => {
-  let testObjectMetadataId: string;
-
-  beforeAll(async () => {
-    const {
-      data: {
-        createOneObject: { id: objectMetadataId },
-      },
-    } = await createOneObjectMetadata({
-      input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
-        icon: 'Icon123',
-      },
-    });
-
-    testObjectMetadataId = objectMetadataId;
-  });
-
-  afterAll(async () => {
-    await deleteOneObjectMetadata({
-      input: { idToDelete: testObjectMetadataId },
-    });
-  });
-
   beforeEach(async () => {
     await cleanupViewRecords();
   });
@@ -79,12 +55,10 @@ describe('View Resolver', () => {
 
       await createTestViewWithGraphQL({
         name: viewName,
-        objectMetadataId: testObjectMetadataId,
       });
 
       const viewData = createViewData({
         name: viewName,
-        objectMetadataId: testObjectMetadataId,
       });
 
       const operation = findViewsOperationFactory();
@@ -99,33 +73,19 @@ describe('View Resolver', () => {
       const object1ViewName = 'View for Object 1';
       const object2ViewName = 'View for Object 2';
 
-      const {
-        data: {
-          createOneObject: { id: objectMetadata2Id },
-        },
-      } = await createOneObjectMetadata({
-        input: {
-          nameSingular: 'myTestObject2',
-          namePlural: 'myTestObjects2',
-          labelSingular: 'My Test Object 2',
-          labelPlural: 'My Test Objects 2',
-          icon: 'Icon123',
-        },
-      });
-
       await Promise.all([
         createTestViewWithGraphQL({
           name: object1ViewName,
-          objectMetadataId: testObjectMetadataId,
+          objectMetadataId: TEST_OBJECT_METADATA_1_ID,
         }),
         createTestViewWithGraphQL({
           name: object2ViewName,
-          objectMetadataId: objectMetadata2Id,
+          objectMetadataId: TEST_OBJECT_METADATA_2_ID,
         }),
       ]);
 
       const operation = findViewsOperationFactory({
-        objectMetadataId: testObjectMetadataId,
+        objectMetadataId: TEST_OBJECT_METADATA_1_ID,
       });
       const response = await makeGraphqlAPIRequest(operation);
 
@@ -133,10 +93,6 @@ describe('View Resolver', () => {
       expect(response.body.data.getCoreViews).toHaveLength(1);
       expect(response.body.data.getCoreViews[0]).toMatchObject({
         name: object1ViewName,
-      });
-
-      await deleteOneObjectMetadata({
-        input: { idToDelete: objectMetadata2Id },
       });
     });
   });
@@ -157,7 +113,6 @@ describe('View Resolver', () => {
 
       const view = await createTestViewWithGraphQL({
         name: viewName,
-        objectMetadataId: testObjectMetadataId,
       });
 
       const operation = findViewOperationFactory({ viewId: view.id });
@@ -167,7 +122,7 @@ describe('View Resolver', () => {
       assertViewStructure(response.body.data.getCoreView, {
         id: view.id,
         name: viewName,
-        objectMetadataId: testObjectMetadataId,
+        objectMetadataId: TEST_OBJECT_METADATA_1_ID,
       });
     });
   });
@@ -176,7 +131,7 @@ describe('View Resolver', () => {
     it('should create a new view with all properties', async () => {
       const input = {
         name: 'Kanban View',
-        objectMetadataId: testObjectMetadataId,
+        objectMetadataId: TEST_OBJECT_METADATA_1_ID,
         icon: 'IconDeal',
         type: ViewType.KANBAN,
         key: null,
@@ -204,7 +159,7 @@ describe('View Resolver', () => {
     it('should create a view with minimum required fields', async () => {
       const input = {
         name: 'Minimal View',
-        objectMetadataId: testObjectMetadataId,
+        objectMetadataId: TEST_OBJECT_METADATA_1_ID,
         icon: 'IconList',
       };
 
@@ -231,14 +186,12 @@ describe('View Resolver', () => {
         name: 'Original View',
         type: ViewType.TABLE,
         isCompact: false,
-        objectMetadataId: testObjectMetadataId,
       });
 
       const updateInput = updateViewData({
         name: 'Updated View',
         type: ViewType.KANBAN,
         isCompact: true,
-        objectMetadataId: testObjectMetadataId,
       });
 
       const operation = updateViewOperationFactory({
@@ -276,7 +229,6 @@ describe('View Resolver', () => {
     it('should delete an existing view', async () => {
       const view = await createTestViewWithGraphQL({
         name: 'View to Delete',
-        objectMetadataId: testObjectMetadataId,
       });
 
       const deleteOperation = deleteViewOperationFactory({ viewId: view.id });
@@ -312,7 +264,6 @@ describe('View Resolver', () => {
     it('should destroy an existing view', async () => {
       const view = await createTestViewWithGraphQL({
         name: 'View to Destroy',
-        objectMetadataId: testObjectMetadataId,
       });
 
       const destroyOperation = destroyViewOperationFactory({ viewId: view.id });

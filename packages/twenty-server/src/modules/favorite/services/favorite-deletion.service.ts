@@ -13,10 +13,10 @@ import { type FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-obje
 @Injectable()
 export class FavoriteDeletionService {
   constructor(
-    @InjectRepository(ObjectMetadataEntity)
+    @InjectRepository(ObjectMetadataEntity, 'core')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
 
-    @InjectRepository(FieldMetadataEntity)
+    @InjectRepository(FieldMetadataEntity, 'core')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}

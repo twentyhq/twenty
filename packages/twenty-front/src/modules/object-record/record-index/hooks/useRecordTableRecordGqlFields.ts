@@ -3,23 +3,17 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { generateDepthOneWithoutRelationsRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneWithoutRelationsRecordGqlFields';
-import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 export const useRecordTableRecordGqlFields = ({
   objectMetadataItem,
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const visibleRecordFields = useRecoilComponentValue(
-    visibleRecordFieldsComponentSelector,
+  const visibleTableColumns = useRecoilComponentValue(
+    visibleTableColumnsComponentSelector,
   );
-
-  const { fieldMetadataItemByFieldMetadataItemId } =
-    useRecordTableContextOrThrow();
 
   const { objectMetadataItem: noteTargetObjectMetadataItem } =
     useObjectMetadataItem({
@@ -36,42 +30,11 @@ export const useRecordTableRecordGqlFields = ({
       objectMetadataItem,
     });
 
-  const gqlFieldsList = Object.fromEntries(
-    visibleRecordFields.flatMap((recordField) => {
-      const fieldMetadataItem =
-        fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
-
-      const isMorphRelation =
-        fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION;
-
-      if (!isMorphRelation) {
-        return [[fieldMetadataItem.name, true]];
-      }
-
-      if (
-        !isDefined(fieldMetadataItem) ||
-        !isDefined(fieldMetadataItem.morphRelations)
-      ) {
-        throw new Error(
-          `Field ${fieldMetadataItem.name} is missing, please refresh the page. If the problem persists, please contact support.`,
-        );
-      }
-
-      return fieldMetadataItem.morphRelations.map((morphRelation) => [
-        computeMorphRelationFieldName({
-          fieldName: fieldMetadataItem.name,
-          relationDirection: morphRelation.type,
-          nameSingular: morphRelation.targetObjectMetadata.nameSingular,
-          namePlural: morphRelation.targetObjectMetadata.namePlural,
-        }),
-        true,
-      ]);
-    }),
-  );
-
   const recordGqlFields: Record<string, any> = {
     ...allDepthOneWithoutRelationsRecordGqlFields,
-    ...gqlFieldsList,
+    ...Object.fromEntries(
+      visibleTableColumns.map((column) => [column.metadata.fieldName, true]),
+    ),
     noteTargets: generateDepthOneRecordGqlFields({
       objectMetadataItem: noteTargetObjectMetadataItem,
     }),

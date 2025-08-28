@@ -1,6 +1,7 @@
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldCurrencyFormat } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { currencyFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/currencyFieldDefaultValueSchema';
 import { currencyFieldSettingsSchema } from '@/object-record/record-field/ui/validation-schemas/currencyFieldSettingsSchema';
@@ -23,12 +24,15 @@ export type SettingsDataModelFieldCurrencyFormValues = z.infer<
 
 type SettingsDataModelFieldCurrencyFormProps = {
   disabled?: boolean;
-  existingFieldMetadataId: string;
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
+  >;
 };
 
 export const SettingsDataModelFieldCurrencyForm = ({
   disabled,
-  existingFieldMetadataId,
+  fieldMetadataItem,
 }: SettingsDataModelFieldCurrencyFormProps) => {
   const { t } = useLingui();
   const {
@@ -36,7 +40,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
     initialCurrencyCodeValue,
     initialSettingsValue,
   } = useCurrencySettingsFormInitialValues({
-    existingFieldMetadataId,
+    fieldMetadataItem,
   });
   const { control } =
     useFormContext<SettingsDataModelFieldCurrencyFormValues>();

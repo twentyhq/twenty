@@ -18,7 +18,7 @@ import { WorkerHealthIndicator } from './indicators/worker.health';
     TerminusModule,
     RedisClientModule,
     WorkspaceMigrationModule,
-    TypeOrmModule.forFeature([Workspace]),
+    TypeOrmModule.forFeature([Workspace], 'core'),
     MetricsModule,
   ],
   controllers: [HealthController],

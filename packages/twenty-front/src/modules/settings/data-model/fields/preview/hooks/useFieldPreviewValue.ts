@@ -1,5 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRelationFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useRelationFieldPreviewValue';
 import { getAddressFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getAddressFieldPreviewValue';
 import { getCurrencyFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getCurrencyFieldPreviewValue';
@@ -7,31 +8,33 @@ import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils
 import { getMultiSelectFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getMultiSelectFieldPreviewValue';
 import { getPhonesFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getPhonesFieldPreviewValue';
 import { getSelectFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getSelectFieldPreviewValue';
-import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type UseFieldPreviewParams = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'type' | 'options' | 'defaultValue' | 'settings'
+    'type' | 'options' | 'defaultValue' | 'relation'
   >;
-  relationObjectNameSingular?: string;
+  relationObjectMetadataItem?: ObjectMetadataItem;
   skip?: boolean;
 };
 
 export const useFieldPreviewValue = ({
   fieldMetadataItem,
-  relationObjectNameSingular,
+  relationObjectMetadataItem,
   skip,
 }: UseFieldPreviewParams) => {
   const relationFieldPreviewValue = useRelationFieldPreviewValue({
-    relationObjectNameSingular:
-      relationObjectNameSingular ?? CoreObjectNameSingular.Company,
+    relationObjectMetadataItem: relationObjectMetadataItem ?? {
+      fields: [],
+      labelSingular: '',
+      labelIdentifierFieldMetadataId: '20202020-1000-4629-87e5-9a1fae1cc2fd',
+      nameSingular: CoreObjectNameSingular.Company,
+    },
     skip:
       skip ||
-      (fieldMetadataItem.type !== FieldMetadataType.RELATION &&
-        fieldMetadataItem.type !== FieldMetadataType.MORPH_RELATION) ||
-      !isDefined(relationObjectNameSingular),
+      fieldMetadataItem.type !== FieldMetadataType.RELATION ||
+      !relationObjectMetadataItem,
   });
 
   if (skip === true) return null;
@@ -39,10 +42,8 @@ export const useFieldPreviewValue = ({
   switch (fieldMetadataItem.type) {
     case FieldMetadataType.CURRENCY:
       return getCurrencyFieldPreviewValue({ fieldMetadataItem });
-    case FieldMetadataType.MORPH_RELATION:
     case FieldMetadataType.RELATION:
-      return fieldMetadataItem.settings?.relationType ===
-        RelationType.MANY_TO_ONE
+      return fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE
         ? relationFieldPreviewValue
         : [relationFieldPreviewValue];
     case FieldMetadataType.SELECT:
@@ -55,9 +56,7 @@ export const useFieldPreviewValue = ({
       return getPhonesFieldPreviewValue({ fieldMetadataItem });
     default:
       return getFieldPreviewValue({
-        fieldType: fieldMetadataItem.type,
-        fieldSettings: fieldMetadataItem.settings,
-        defaultValue: fieldMetadataItem.defaultValue,
+        fieldMetadataItem,
       });
   }
 };

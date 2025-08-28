@@ -42,7 +42,7 @@ describe('WorkspaceService', () => {
       providers: [
         WorkspaceService,
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(Workspace, 'core'),
           useValue: {
             findOne: jest.fn(),
             softDelete: jest.fn(),
@@ -50,7 +50,7 @@ describe('WorkspaceService', () => {
           },
         },
         {
-          provide: getRepositoryToken(UserWorkspace),
+          provide: getRepositoryToken(UserWorkspace, 'core'),
           useValue: {
             find: jest.fn(),
             softDelete: jest.fn(),
@@ -58,7 +58,7 @@ describe('WorkspaceService', () => {
           },
         },
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(User, 'core'),
           useValue: {
             softDelete: jest.fn(),
           },
@@ -116,11 +116,13 @@ describe('WorkspaceService', () => {
 
     service = module.get<WorkspaceService>(WorkspaceService);
     userWorkspaceRepository = module.get<Repository<UserWorkspace>>(
-      getRepositoryToken(UserWorkspace),
+      getRepositoryToken(UserWorkspace, 'core'),
     );
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    userRepository = module.get<Repository<User>>(
+      getRepositoryToken(User, 'core'),
+    );
     workspaceRepository = module.get<Repository<Workspace>>(
-      getRepositoryToken(Workspace),
+      getRepositoryToken(Workspace, 'core'),
     );
     workspaceCacheStorageService = module.get<WorkspaceCacheStorageService>(
       WorkspaceCacheStorageService,

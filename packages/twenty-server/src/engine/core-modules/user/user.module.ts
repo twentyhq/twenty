@@ -32,18 +32,18 @@ import { UserService } from './services/user.service';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([User]),
+        NestjsQueryTypeOrmModule.forFeature([User], 'core'),
         TypeORMModule,
         FileModule,
       ],
       resolvers: userAutoResolverOpts,
     }),
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
+    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
     DataSourceModule,
     FileUploadModule,
     WorkspaceModule,
     OnboardingModule,
-    TypeOrmModule.forFeature([KeyValuePair, UserWorkspace]),
+    TypeOrmModule.forFeature([KeyValuePair, UserWorkspace], 'core'),
     UserVarsModule,
     UserWorkspaceModule,
     AuditModule,

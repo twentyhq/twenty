@@ -15,7 +15,10 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Module({
   imports: [
     WorkflowCommonModule,
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity, Workspace]),
+    NestjsQueryTypeOrmModule.forFeature(
+      [ObjectMetadataEntity, Workspace],
+      'core',
+    ),
     RecordPositionModule,
     CacheLockModule,
     MetricsModule,

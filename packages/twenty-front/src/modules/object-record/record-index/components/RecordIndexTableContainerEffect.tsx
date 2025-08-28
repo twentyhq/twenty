@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useSetAvailableTableColumns } from '@/object-record/record-table/hooks/useSetAvailableTableColumns';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -11,7 +12,10 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RecordIndexTableContainerEffect = () => {
-  const { objectNameSingular } = useRecordIndexContextOrThrow();
+  const { recordIndexId, objectNameSingular } = useRecordIndexContextOrThrow();
+
+  const { setAvailableTableColumns } =
+    useSetAvailableTableColumns(recordIndexId);
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -19,6 +23,10 @@ export const RecordIndexTableContainerEffect = () => {
 
   const { columnDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+
+  useEffect(() => {
+    setAvailableTableColumns(columnDefinitions);
+  }, [columnDefinitions, setAvailableTableColumns]);
 
   const { currentView } = useGetCurrentViewOnly();
 

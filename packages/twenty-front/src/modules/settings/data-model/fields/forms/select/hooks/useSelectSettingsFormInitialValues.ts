@@ -2,8 +2,10 @@ import { useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { v4 } from 'uuid';
 
-import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
-import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import {
+  type FieldMetadataItem,
+  type FieldMetadataItemOption,
+} from '@/object-metadata/types/FieldMetadataItem';
 import { type SettingsDataModelFieldSelectFormValues } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
 
@@ -15,15 +17,11 @@ const DEFAULT_OPTION: FieldMetadataItemOption = {
   value: computeOptionValueFromLabel('Option 1'),
 };
 
-type UseSelectSettingsFormInitialValuesProps = {
-  fieldMetadataId: string;
-};
-
 export const useSelectSettingsFormInitialValues = ({
-  fieldMetadataId,
-}: UseSelectSettingsFormInitialValuesProps) => {
-  const { fieldMetadataItem } = useFieldMetadataItemById(fieldMetadataId);
-
+  fieldMetadataItem,
+}: {
+  fieldMetadataItem?: Pick<FieldMetadataItem, 'defaultValue' | 'options'>;
+}) => {
   const initialDefaultValue =
     (fieldMetadataItem?.defaultValue as SettingsDataModelFieldSelectFormValues['defaultValue']) ??
     null;

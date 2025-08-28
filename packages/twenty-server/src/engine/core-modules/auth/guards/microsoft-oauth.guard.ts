@@ -12,7 +12,7 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
   constructor(
     private readonly guardRedirectService: GuardRedirectService,
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly domainManagerService: DomainManagerService,
   ) {

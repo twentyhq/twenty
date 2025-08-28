@@ -38,7 +38,7 @@ export class MicrosoftAPIsAuthController {
     private readonly domainManagerService: DomainManagerService,
     private readonly onboardingService: OnboardingService,
     private readonly guardRedirectService: GuardRedirectService,
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 

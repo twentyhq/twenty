@@ -1,6 +1,8 @@
+import styled from '@emotion/styled';
 import omit from 'lodash.omit';
 import { z } from 'zod';
 
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { settingsDataModelFieldAddressFormSchema } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm';
@@ -28,10 +30,11 @@ import {
   settingsDataModelFieldSelectFormSchema,
 } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
 import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectSettingsFormCard';
-import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
-import { useFormContext } from 'react-hook-form';
+import {
+  SettingsDataModelFieldPreviewCard,
+  type SettingsDataModelFieldPreviewCardProps,
+} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
 const isUniqueFieldFormSchema = z.object({
   isUnique: z.boolean().nullable().default(false),
@@ -133,10 +136,16 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
 );
 
 type SettingsDataModelFieldSettingsFormCardProps = {
-  existingFieldMetadataId: string;
-  fieldType: FieldMetadataType;
-  objectNameSingular: string;
-};
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'icon' | 'label' | 'type' | 'isCustom' | 'settings'
+  > &
+    Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
+} & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
+
+const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
+  flex: 1 1 100%;
+`;
 
 const previewableTypes = [
   FieldMetadataType.ARRAY,
@@ -161,110 +170,105 @@ const previewableTypes = [
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({
-  existingFieldMetadataId,
-  fieldType,
-  objectNameSingular,
+  fieldMetadataItem,
+  objectMetadataItem,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
-  const { watch } = useFormContext<SettingsDataModelFieldEditFormValues>();
-
-  if (!previewableTypes.includes(fieldType)) {
+  if (!previewableTypes.includes(fieldMetadataItem.type)) {
     return null;
   }
 
-  if (fieldType === FieldMetadataType.BOOLEAN) {
+  if (fieldMetadataItem.type === FieldMetadataType.BOOLEAN) {
     return (
       <SettingsDataModelFieldBooleanSettingsFormCard
-        existingFieldMetadataId={existingFieldMetadataId}
-        objectNameSingular={objectNameSingular}
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
       />
     );
   }
 
-  if (fieldType === FieldMetadataType.CURRENCY) {
+  if (fieldMetadataItem.type === FieldMetadataType.CURRENCY) {
     return (
       <SettingsDataModelFieldCurrencySettingsFormCard
-        existingFieldMetadataId={existingFieldMetadataId}
-        objectNameSingular={objectNameSingular}
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
       />
     );
   }
 
   if (
-    fieldType === FieldMetadataType.DATE ||
-    fieldType === FieldMetadataType.DATE_TIME
+    fieldMetadataItem.type === FieldMetadataType.DATE ||
+    fieldMetadataItem.type === FieldMetadataType.DATE_TIME
   ) {
     return (
       <SettingsDataModelFieldDateSettingsFormCard
-        existingFieldMetadataId={existingFieldMetadataId}
-        fieldType={fieldType}
-        objectNameSingular={objectNameSingular}
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
       />
     );
   }
 
-  if (fieldType === FieldMetadataType.RELATION) {
+  if (fieldMetadataItem.type === FieldMetadataType.RELATION) {
     return (
       <SettingsDataModelFieldRelationSettingsFormCard
-        existingFieldMetadataId={existingFieldMetadataId}
-        objectNameSingular={objectNameSingular}
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
       />
     );
   }
 
-  if (fieldType === FieldMetadataType.MORPH_RELATION) {
+  if (fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION) {
     return (
       <SettingsDataModelFieldMorphRelationFormCard
-        existingFieldMetadataId={existingFieldMetadataId}
-        objectNameSingular={objectNameSingular}
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
       />
     );
   }
 
-  if (fieldType === FieldMetadataType.NUMBER) {
+  if (fieldMetadataItem.type === FieldMetadataType.NUMBER) {
     return (
       <SettingsDataModelFieldNumberSettingsFormCard
-        existingFieldMetadataId={existingFieldMetadataId}
-        objectNameSingular={objectNameSingular}
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
       />
     );
   }
 
-  if (fieldType === FieldMetadataType.TEXT) {
+  if (fieldMetadataItem.type === FieldMetadataType.TEXT) {
     return (
       <SettingsDataModelFieldTextSettingsFormCard
-        existingFieldMetadataId={existingFieldMetadataId}
-        objectNameSingular={objectNameSingular}
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
       />
     );
   }
 
-  if (fieldType === FieldMetadataType.ADDRESS) {
+  if (fieldMetadataItem.type === FieldMetadataType.ADDRESS) {
     return (
       <SettingsDataModelFieldAddressSettingsFormCard
-        existingFieldMetadataId={existingFieldMetadataId}
-        objectNameSingular={objectNameSingular}
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
       />
     );
   }
 
-  if (fieldType === FieldMetadataType.PHONES) {
+  if (fieldMetadataItem.type === FieldMetadataType.PHONES) {
     return (
       <SettingsDataModelFieldPhonesSettingsFormCard
-        existingFieldMetadataId={existingFieldMetadataId}
-        objectNameSingular={objectNameSingular}
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
       />
     );
   }
 
   if (
-    fieldType === FieldMetadataType.SELECT ||
-    fieldType === FieldMetadataType.MULTI_SELECT
+    fieldMetadataItem.type === FieldMetadataType.SELECT ||
+    fieldMetadataItem.type === FieldMetadataType.MULTI_SELECT
   ) {
     return (
       <SettingsDataModelFieldSelectSettingsFormCard
-        existingFieldMetadataId={existingFieldMetadataId}
-        fieldType={fieldType}
-        objectNameSingular={objectNameSingular}
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
       />
     );
   }
@@ -272,22 +276,15 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <SettingsDataModelFieldPreviewWidget
-          fieldMetadataItem={{
-            type: fieldType,
-            label: watch('label'),
-            icon: watch('icon'),
-            defaultValue: watch('defaultValue'),
-            settings: watch('settings'),
-          }}
-          objectNameSingular={objectNameSingular}
+        <StyledFieldPreviewCard
+          fieldMetadataItem={fieldMetadataItem}
+          objectMetadataItem={objectMetadataItem}
         />
       }
       form={
         <SettingsDataModelFieldIsUniqueForm
-          fieldType={fieldType}
-          existingFieldMetadataId={existingFieldMetadataId}
-          objectNameSingular={objectNameSingular}
+          fieldMetadataItem={fieldMetadataItem}
+          objectMetadataItem={objectMetadataItem}
         />
       }
     />

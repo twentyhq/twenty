@@ -1,47 +1,59 @@
+import styled from '@emotion/styled';
+
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
 import { SettingsDataModelFieldNumberForm } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
-import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
+import {
+  SettingsDataModelFieldPreviewCard,
+  type SettingsDataModelFieldPreviewCardProps,
+} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { useFormContext } from 'react-hook-form';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 type SettingsDataModelFieldNumberSettingsFormCardProps = {
   disabled?: boolean;
-  existingFieldMetadataId: string;
-  objectNameSingular: string;
-};
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'icon' | 'label' | 'type' | 'isCustom' | 'settings' | 'isUnique'
+  > &
+    Partial<{ id: string }>;
+} & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
+
+const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
+  display: grid;
+  flex: 1 1 100%;
+`;
 
 export const SettingsDataModelFieldNumberSettingsFormCard = ({
   disabled,
-  existingFieldMetadataId,
-  objectNameSingular,
+  fieldMetadataItem,
+  objectMetadataItem,
 }: SettingsDataModelFieldNumberSettingsFormCardProps) => {
   const { watch } = useFormContext();
 
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <SettingsDataModelFieldPreviewWidget
+        <StyledFieldPreviewCard
           fieldMetadataItem={{
             icon: watch('icon'),
             label: watch('label') || 'New Field',
             settings: watch('settings') || null,
-            type: FieldMetadataType.NUMBER,
+            type: fieldMetadataItem.type,
           }}
-          objectNameSingular={objectNameSingular}
+          objectMetadataItem={objectMetadataItem}
         />
       }
       form={
         <>
           <SettingsDataModelFieldNumberForm
             disabled={disabled}
-            existingFieldMetadataId={existingFieldMetadataId}
+            fieldMetadataItem={fieldMetadataItem}
           />
 
           <SettingsDataModelFieldIsUniqueForm
-            fieldType={FieldMetadataType.NUMBER}
-            existingFieldMetadataId={existingFieldMetadataId}
-            objectNameSingular={objectNameSingular}
+            fieldMetadataItem={fieldMetadataItem}
+            objectMetadataItem={objectMetadataItem}
           />
         </>
       }

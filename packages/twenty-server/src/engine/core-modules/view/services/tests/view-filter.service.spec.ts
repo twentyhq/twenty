@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
-import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import {
   ViewFilterException,
@@ -16,7 +16,7 @@ import { ViewFilterService } from 'src/engine/core-modules/view/services/view-fi
 
 describe('ViewFilterService', () => {
   let viewFilterService: ViewFilterService;
-  let viewFilterRepository: Repository<ViewFilterEntity>;
+  let viewFilterRepository: Repository<ViewFilter>;
 
   const mockViewFilter = {
     id: 'view-filter-id',
@@ -29,14 +29,14 @@ describe('ViewFilterService', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
-  } as ViewFilterEntity;
+  } as ViewFilter;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ViewFilterService,
         {
-          provide: getRepositoryToken(ViewFilterEntity),
+          provide: getRepositoryToken(ViewFilter, 'core'),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -50,8 +50,8 @@ describe('ViewFilterService', () => {
     }).compile();
 
     viewFilterService = module.get<ViewFilterService>(ViewFilterService);
-    viewFilterRepository = module.get<Repository<ViewFilterEntity>>(
-      getRepositoryToken(ViewFilterEntity),
+    viewFilterRepository = module.get<Repository<ViewFilter>>(
+      getRepositoryToken(ViewFilter, 'core'),
     );
   });
 

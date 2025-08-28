@@ -27,19 +27,19 @@ import { ADMIN_ROLE } from 'src/engine/workspace-manager/workspace-sync-metadata
 })
 export class AssignRolesToExistingApiKeysCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(ApiKey)
+    @InjectRepository(ApiKey, 'core')
     private readonly apiKeyRepository: Repository<ApiKey>,
-    @InjectRepository(RoleEntity)
+    @InjectRepository(RoleEntity, 'core')
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetsEntity)
+    @InjectRepository(RoleTargetsEntity, 'core')
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly featureFlagService: FeatureFlagService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectDataSource()
+    @InjectDataSource('core')
     private readonly dataSource: DataSource,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);

@@ -1,3 +1,4 @@
+import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   CreateDateColumn,
@@ -11,24 +12,19 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 @Entity({ name: 'viewGroup', schema: 'core' })
 @Index('IDX_VIEW_GROUP_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
-export class ViewGroupEntity {
+export class ViewGroup {
+  @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: false, type: 'uuid' })
   fieldMetadataId: string;
-
-  @ManyToOne(() => FieldMetadataEntity, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'fieldMetadataId' })
-  fieldMetadata: Relation<FieldMetadataEntity>;
 
   @Column({ nullable: false, default: true })
   isVisible: boolean;
@@ -60,9 +56,9 @@ export class ViewGroupEntity {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
 
-  @ManyToOne(() => ViewEntity, (view) => view.viewGroups, {
+  @ManyToOne(() => View, (view) => view.viewGroups, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'viewId' })
-  view: Relation<ViewEntity>;
+  view: Relation<View>;
 }

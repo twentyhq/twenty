@@ -26,7 +26,7 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
 @Global()
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RoleEntity]),
+    TypeOrmModule.forFeature([RoleEntity], 'core'),
     TokenModule,
     FeatureFlagModule,
     RecordTransformerModule,

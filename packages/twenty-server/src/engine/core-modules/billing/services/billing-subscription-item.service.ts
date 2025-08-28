@@ -16,7 +16,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 @Injectable()
 export class BillingSubscriptionItemService {
   constructor(
-    @InjectRepository(BillingSubscriptionItem)
+    @InjectRepository(BillingSubscriptionItem, 'core')
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}

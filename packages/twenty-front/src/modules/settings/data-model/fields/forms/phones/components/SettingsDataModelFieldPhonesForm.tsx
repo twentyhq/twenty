@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { phonesSchema as phonesFieldDefaultValueSchema } from '@/object-record/record-field/ui/types/guards/isFieldPhonesValue';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { countryCodeToCallingCode } from '@/settings/data-model/fields/preview/utils/getPhonesFieldPreviewValue';
@@ -20,14 +20,17 @@ import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFro
 type SettingsDataModelFieldPhonesFormProps = {
   disabled?: boolean;
   defaultCountryCode?: string;
-  existingFieldMetadataId: string;
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
+  >;
 };
 
 export const settingsDataModelFieldPhonesFormSchema = z.object({
   defaultValue: phonesFieldDefaultValueSchema,
 });
 
-export type SettingsDataModelFieldPhonesFormValues = z.infer<
+export type SettingsDataModelFieldTextFormValues = z.infer<
   typeof settingsDataModelFieldPhonesFormSchema
 >;
 
@@ -35,14 +38,10 @@ export type CountryCodeOrEmpty = CountryCode | '';
 
 export const SettingsDataModelFieldPhonesForm = ({
   disabled,
-  existingFieldMetadataId,
+  fieldMetadataItem,
 }: SettingsDataModelFieldPhonesFormProps) => {
   const { t } = useLingui();
-  const { control } = useFormContext<SettingsDataModelFieldPhonesFormValues>();
-
-  const { fieldMetadataItem } = useFieldMetadataItemById(
-    existingFieldMetadataId,
-  );
+  const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
 
   const countries = [
     { label: t`No country`, value: '', Icon: IconCircleOff },

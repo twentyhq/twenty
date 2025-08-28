@@ -22,7 +22,7 @@ export class WorkspaceMemberUpdateOnePreQueryHook
 {
   constructor(
     private readonly workspaceMemberPreQueryHookService: WorkspaceMemberPreQueryHookService,
-    @InjectRepository(UserWorkspace)
+    @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {}
 

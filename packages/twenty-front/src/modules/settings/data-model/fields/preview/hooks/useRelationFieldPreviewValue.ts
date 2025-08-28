@@ -1,15 +1,22 @@
+import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { usePreviewRecord } from '@/settings/data-model/fields/preview/hooks/usePreviewRecord';
 
 type UseRelationFieldPreviewParams = {
-  relationObjectNameSingular: string;
+  relationObjectMetadataItem: Pick<
+    ObjectMetadataItem,
+    | 'fields'
+    | 'labelIdentifierFieldMetadataId'
+    | 'labelSingular'
+    | 'nameSingular'
+  >;
   skip?: boolean;
 };
 
 export const useRelationFieldPreviewValue = ({
-  relationObjectNameSingular,
+  relationObjectMetadataItem,
   skip,
 }: UseRelationFieldPreviewParams) =>
   usePreviewRecord({
-    objectNameSingular: relationObjectNameSingular,
+    objectMetadataItem: relationObjectMetadataItem,
     skip,
   });

@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
+import { View } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
@@ -14,13 +14,13 @@ import { type ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view
 @Injectable()
 export class ViewSyncService {
   constructor(
-    @InjectRepository(ViewEntity)
-    private readonly coreViewRepository: Repository<ViewEntity>,
+    @InjectRepository(View, 'core')
+    private readonly coreViewRepository: Repository<View>,
   ) {}
 
   private parseUpdateDataFromDiff(
     diff: Partial<ObjectRecordDiff<ViewWorkspaceEntity>>,
-  ): Partial<ViewEntity> {
+  ): Partial<View> {
     const updateData: Record<string, unknown> = {};
 
     for (const key of Object.keys(diff)) {
@@ -50,7 +50,7 @@ export class ViewSyncService {
       }
     }
 
-    return updateData as Partial<ViewEntity>;
+    return updateData as Partial<View>;
   }
 
   public async createCoreView(
@@ -64,7 +64,7 @@ export class ViewSyncService {
       viewName = 'All {objectLabelPlural}';
     }
 
-    const coreView: Partial<ViewEntity> = {
+    const coreView: Partial<View> = {
       id: workspaceView.id,
       name: viewName,
       objectMetadataId: workspaceView.objectMetadataId,

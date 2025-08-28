@@ -15,8 +15,6 @@ import {
   updateViewFilterGroupData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import {
   assertViewFilterGroupStructure,
   cleanupViewRecords,
@@ -32,38 +30,11 @@ import {
 describe('View Filter Group Resolver', () => {
   let testViewId: string;
 
-  let testObjectMetadataId: string;
-
-  beforeAll(async () => {
-    const {
-      data: {
-        createOneObject: { id: objectMetadataId },
-      },
-    } = await createOneObjectMetadata({
-      input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
-        icon: 'Icon123',
-      },
-    });
-
-    testObjectMetadataId = objectMetadataId;
-  });
-
-  afterAll(async () => {
-    await deleteOneObjectMetadata({
-      input: { idToDelete: testObjectMetadataId },
-    });
-  });
-
   beforeEach(async () => {
     await cleanupViewRecords();
 
     const view = await createTestViewWithGraphQL({
       name: 'Test View for Filter Groups',
-      objectMetadataId: testObjectMetadataId,
     });
 
     testViewId = view.id;

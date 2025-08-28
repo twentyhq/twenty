@@ -28,7 +28,7 @@ export class CleanWorkspaceDeletionWarningUserVarsJob {
   constructor(
     private readonly userService: UserService,
     private readonly userVarsService: UserVarsService,
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 

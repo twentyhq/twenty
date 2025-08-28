@@ -18,7 +18,7 @@ describe('AuthSsoService', () => {
       providers: [
         AuthSsoService,
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(Workspace, 'core'),
           useValue: {
             findOne: jest.fn(),
           },
@@ -34,7 +34,7 @@ describe('AuthSsoService', () => {
 
     authSsoService = module.get<AuthSsoService>(AuthSsoService);
     workspaceRepository = module.get<Repository<Workspace>>(
-      getRepositoryToken(Workspace),
+      getRepositoryToken(Workspace, 'core'),
     );
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
   });

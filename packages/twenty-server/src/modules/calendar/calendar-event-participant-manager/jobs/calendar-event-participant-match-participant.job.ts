@@ -25,7 +25,7 @@ export type CalendarEventParticipantMatchParticipantJobData = {
 })
 export class CalendarEventParticipantMatchParticipantJob {
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly matchParticipantService: MatchParticipantService<CalendarEventParticipantWorkspaceEntity>,
   ) {}

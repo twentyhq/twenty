@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { SettingsDataModelCardTitle } from '@/settings/data-model/components/SettingsDataModelCardTitle';
-import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
+import { SettingsDataModelFieldPreviewCard } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { SettingsDataModelObjectIdentifiersForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
 import { Trans } from '@lingui/react/macro';
@@ -13,6 +13,10 @@ import { Card, CardContent } from 'twenty-ui/layout';
 type SettingsDataModelObjectSettingsFormCardProps = {
   objectMetadataItem: ObjectMetadataItem;
 };
+
+const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
+  width: 100%;
+`;
 
 const StyledTopCardContent = styled(CardContent)`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -46,8 +50,8 @@ export const SettingsDataModelObjectSettingsFormCard = ({
           <Trans>Preview</Trans>
         </SettingsDataModelCardTitle>
         {labelIdentifierFieldMetadataItem ? (
-          <SettingsDataModelFieldPreviewWidget
-            objectNameSingular={objectMetadataItem.nameSingular}
+          <StyledFieldPreviewCard
+            objectMetadataItem={objectMetadataItem}
             fieldMetadataItem={labelIdentifierFieldMetadataItem}
             withFieldLabel={false}
           />

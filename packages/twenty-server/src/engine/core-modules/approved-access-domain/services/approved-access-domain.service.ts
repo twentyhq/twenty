@@ -24,7 +24,7 @@ import { isWorkDomain } from 'src/utils/is-work-email';
 @Injectable()
 export class ApprovedAccessDomainService {
   constructor(
-    @InjectRepository(ApprovedAccessDomainEntity)
+    @InjectRepository(ApprovedAccessDomainEntity, 'core')
     private readonly approvedAccessDomainRepository: Repository<ApprovedAccessDomainEntity>,
     private readonly emailService: EmailService,
     private readonly twentyConfigService: TwentyConfigService,

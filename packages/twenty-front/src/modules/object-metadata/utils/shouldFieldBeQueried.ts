@@ -1,8 +1,8 @@
 import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isDefined } from 'twenty-shared/utils';
 import { type FieldMetadataItem } from '../types/FieldMetadataItem';
@@ -18,18 +18,13 @@ export const shouldFieldBeQueried = ({
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
 }): any => {
   const isJoinColumn: boolean =
-    (isFieldRelation(fieldMetadata) || isFieldMorphRelation(fieldMetadata)) &&
+    isFieldRelation(fieldMetadata) &&
     fieldMetadata.settings.joinColumnName === gqlField;
 
   if (
     isUndefinedOrNull(recordGqlFields) &&
-    !isFieldRelation(fieldMetadata) &&
-    !isFieldMorphRelation(fieldMetadata)
+    (fieldMetadata.type !== FieldMetadataType.RELATION || isJoinColumn)
   ) {
-    return true;
-  }
-
-  if (isUndefinedOrNull(recordGqlFields) && isJoinColumn) {
     return true;
   }
 

@@ -16,7 +16,7 @@ export class DatabaseHealthIndicator {
   private stateManager = new HealthStateManager();
 
   constructor(
-    @InjectDataSource()
+    @InjectDataSource('core')
     private readonly dataSource: DataSource,
     private readonly healthIndicatorService: HealthIndicatorService,
   ) {}

@@ -24,8 +24,11 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([User, UserWorkspace, Workspace]),
-        NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
+        NestjsQueryTypeOrmModule.forFeature(
+          [User, UserWorkspace, Workspace],
+          'core',
+        ),
+        NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
         TypeORMModule,
         DataSourceModule,
         WorkspaceDataSourceModule,

@@ -18,7 +18,7 @@
     "@keystatic/core": "^0.5.45",
     "@keystatic/next": "^5.0.3",
     "@markdoc/markdoc": "^0.5.1",
-    "@nivo/calendar": "^0.99.0",
+    "@nivo/calendar": "^0.87.0",
     "date-fns": "^2.30.0",
     "drizzle-kit": "^0.20.14",
     "facepaint": "^1.2.1",

@@ -1,53 +1,51 @@
+import styled from '@emotion/styled';
+
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 
 import { SettingsDataModelFieldIsUniqueForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm';
+import { SettingsDataModelFieldPhonesForm } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';
 import {
-  SettingsDataModelFieldPhonesForm,
-  type SettingsDataModelFieldPhonesFormValues,
-} from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';
-import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
-import { useFormContext } from 'react-hook-form';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
+  SettingsDataModelFieldPreviewCard,
+  type SettingsDataModelFieldPreviewCardProps,
+} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 
 type SettingsDataModelFieldPhonesSettingsFormCardProps = {
   disabled?: boolean;
-  existingFieldMetadataId: string;
-  objectNameSingular: string;
-};
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'icon' | 'label' | 'type' | 'isCustom' | 'settings'
+  > &
+    Partial<{ id: string }>;
+} & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
+
+const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
+  flex: 1 1 100%;
+`;
 
 export const SettingsDataModelFieldPhonesSettingsFormCard = ({
   disabled,
-  existingFieldMetadataId,
-  objectNameSingular,
+  fieldMetadataItem,
+  objectMetadataItem,
 }: SettingsDataModelFieldPhonesSettingsFormCardProps) => {
-  const { watch } = useFormContext<
-    SettingsDataModelFieldPhonesFormValues &
-      SettingsDataModelFieldEditFormValues
-  >();
-
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <SettingsDataModelFieldPreviewWidget
-          fieldMetadataItem={{
-            type: FieldMetadataType.PHONES,
-            label: watch('label'),
-            icon: watch('icon'),
-          }}
-          objectNameSingular={objectNameSingular}
+        <StyledFieldPreviewCard
+          fieldMetadataItem={fieldMetadataItem}
+          objectMetadataItem={objectMetadataItem}
         />
       }
       form={
         <>
           <SettingsDataModelFieldPhonesForm
             disabled={disabled}
-            existingFieldMetadataId={existingFieldMetadataId}
+            fieldMetadataItem={fieldMetadataItem}
           />
           <SettingsDataModelFieldIsUniqueForm
-            fieldType={FieldMetadataType.PHONES}
-            existingFieldMetadataId={existingFieldMetadataId}
-            objectNameSingular={objectNameSingular}
+            fieldMetadataItem={fieldMetadataItem}
+            objectMetadataItem={objectMetadataItem}
           />
         </>
       }

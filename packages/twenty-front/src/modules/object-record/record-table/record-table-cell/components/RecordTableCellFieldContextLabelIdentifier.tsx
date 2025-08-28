@@ -27,10 +27,8 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
   const { indexIdentifierUrl, objectPermissionsByObjectMetadataId } =
     useRecordIndexContextOrThrow();
   const { recordId, isRecordReadOnly } = useRecordTableRowContextOrThrow();
-  const { fieldDefinitionByFieldMetadataItemId } =
-    useRecordTableContextOrThrow();
 
-  const { recordField } = useContext(RecordTableCellContext);
+  const { columnDefinition } = useContext(RecordTableCellContext);
   const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
   const { rowIndex } = useRecordTableRowContextOrThrow();
   const { activateRecordTableRow } = useActiveRecordTableRow(recordTableId);
@@ -61,14 +59,11 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
       ? 'CLICK'
       : 'MOUSE_DOWN';
 
-  const fieldDefinition =
-    fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
-
   return (
     <FieldContext.Provider
       value={{
         recordId,
-        fieldDefinition,
+        fieldDefinition: columnDefinition,
         useUpdateRecord: () => [updateRecord, {}],
         labelIdentifierLink: indexIdentifierUrl(recordId),
         isLabelIdentifier: true,
@@ -78,11 +73,11 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
           isRecordReadOnly: isRecordReadOnly ?? false,
           objectPermissions,
           fieldMetadataItem: {
-            id: recordField.fieldMetadataItemId,
-            isUIReadOnly: fieldDefinition.metadata.isUIReadOnly ?? false,
+            id: columnDefinition.fieldMetadataId,
+            isUIReadOnly: columnDefinition.metadata.isUIReadOnly ?? false,
           },
         }),
-        maxWidth: recordField.size,
+        maxWidth: columnDefinition.size,
         onRecordChipClick: () => {
           activateRecordTableRow(rowIndex);
           unfocusRecordTableRow();

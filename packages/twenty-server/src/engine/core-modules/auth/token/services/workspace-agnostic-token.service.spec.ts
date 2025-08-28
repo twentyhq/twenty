@@ -36,7 +36,7 @@ describe('WorkspaceAgnosticToken', () => {
           },
         },
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(User, 'core'),
           useValue: {
             findOne: jest.fn(),
           },
@@ -49,7 +49,9 @@ describe('WorkspaceAgnosticToken', () => {
     );
     jwtWrapperService = module.get<JwtWrapperService>(JwtWrapperService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    userRepository = module.get<Repository<User>>(
+      getRepositoryToken(User, 'core'),
+    );
   });
 
   it('should be defined', () => {

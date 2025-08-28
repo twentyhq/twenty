@@ -35,15 +35,15 @@ describe('WorkspaceInvitationService', () => {
       providers: [
         WorkspaceInvitationService,
         {
-          provide: getRepositoryToken(AppToken),
+          provide: getRepositoryToken(AppToken, 'core'),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(UserWorkspace),
+          provide: getRepositoryToken(UserWorkspace, 'core'),
           useClass: Repository,
         },
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(Workspace, 'core'),
           useClass: Repository,
         },
         {
@@ -90,10 +90,10 @@ describe('WorkspaceInvitationService', () => {
       WorkspaceInvitationService,
     );
     appTokenRepository = module.get<Repository<AppToken>>(
-      getRepositoryToken(AppToken),
+      getRepositoryToken(AppToken, 'core'),
     );
     userWorkspaceRepository = module.get<Repository<UserWorkspace>>(
-      getRepositoryToken(UserWorkspace),
+      getRepositoryToken(UserWorkspace, 'core'),
     );
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     emailService = module.get<EmailService>(EmailService);

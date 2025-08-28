@@ -83,7 +83,7 @@ describe('ApiKeyService', () => {
       providers: [
         ApiKeyService,
         {
-          provide: getRepositoryToken(ApiKey),
+          provide: getRepositoryToken(ApiKey, 'core'),
           useValue: mockApiKeyRepository,
         },
         {
@@ -91,7 +91,7 @@ describe('ApiKeyService', () => {
           useValue: mockJwtWrapperService,
         },
         {
-          provide: getRepositoryToken(RoleTargetsEntity),
+          provide: getRepositoryToken(RoleTargetsEntity, 'core'),
           useValue: mockRoleTargetsRepository,
         },
         {
@@ -99,7 +99,7 @@ describe('ApiKeyService', () => {
           useValue: mockApiKeyRoleService,
         },
         {
-          provide: getDataSourceToken(),
+          provide: getDataSourceToken('core'),
           useValue: mockDataSource,
         },
       ],

@@ -21,26 +21,15 @@ initialize({
       return;
     }
 
-    if (request.url.startsWith('http://localhost:3000/files/')) {
+    if (request.url.startsWith('http://localhost:3000/files/data:image')) {
       return;
     }
 
-    try {
-      const requestBody = await request.json();
-
-      // eslint-disable-next-line no-console
-      console.warn(`Unhandled ${request.method} request to ${request.url} 
-        with payload ${JSON.stringify(requestBody)}\n
-        This request should be mocked with MSW`);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(`Cannot parse msw request body : ${error}`);
-    }
-
+    const requestBody = await request.json();
     // eslint-disable-next-line no-console
-    console.warn(
-      `Unhandled ${request.method} request to ${request.url} \n  This request should be mocked with MSW`,
-    );
+    console.warn(`Unhandled ${request.method} request to ${request.url} 
+      with payload ${JSON.stringify(requestBody)}\n
+      This request should be mocked with MSW`);
   },
   quiet: true,
 });

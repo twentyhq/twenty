@@ -58,7 +58,7 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IS_CORE_VIEW_ENABLED,
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
       {
         key: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
@@ -72,11 +72,6 @@ export const seedFeatureFlags = async (
       },
       {
         key: FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },

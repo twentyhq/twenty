@@ -2,14 +2,16 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { StyledContainer } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenuStyles';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsMorphRelationMultiSelect } from '@/settings/components/SettingsMorphRelationMultiSelect';
 import { FIELD_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/FieldNameMaximumLength';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { useMorphRelationSettingsFormDefaultValuesOnDestination } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormDefaultValuesOnDestination';
 import { useMorphRelationSettingsFormInitialTargetMetadatas } from '@/settings/data-model/fields/forms/morph-relation/hooks/useMorphRelationSettingsFormInitialTargetMetadatas';
 import { fieldMetadataItemDisableFieldEdition } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemDisableFieldEdition';
+import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
 
-import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
+import { fieldMetadataItemInitialRelationType } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemInitialRelationType';
 import {
   RELATION_TYPE_OPTIONS,
   StyledInputsContainer,
@@ -21,8 +23,7 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { RelationType } from '~/generated-metadata/graphql';
+import { type RelationType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldMorphRelationFormSchema = z.object({
   morphRelationObjectMetadataIds: z.array(z.string().uuid()).min(2),
@@ -38,36 +39,33 @@ export type SettingsDataModelFieldMorphRelationFormValues = z.infer<
 >;
 
 type SettingsDataModelFieldMorphRelationFormProps = {
-  existingFieldMetadataId: string;
+  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'morphRelations'>;
 };
 
 export const SettingsDataModelFieldMorphRelationForm = ({
-  existingFieldMetadataId,
+  fieldMetadataItem,
 }: SettingsDataModelFieldMorphRelationFormProps) => {
   const { t } = useLingui();
   const { control } =
     useFormContext<SettingsDataModelFieldMorphRelationFormValues>();
 
-  const { fieldMetadataItem: existingFieldMetadataItem } =
-    useFieldMetadataItemById(existingFieldMetadataId);
+  const morphRelationPreviouslyCreated =
+    fieldMetadataItemHasMorphRelations(fieldMetadataItem);
 
-  const disableRelationEdition = isDefined(existingFieldMetadataItem);
-  const disableFieldEdition = isDefined(existingFieldMetadataItem)
-    ? fieldMetadataItemDisableFieldEdition(existingFieldMetadataItem)
-    : false;
-
+  const disableRelationEdition = !!morphRelationPreviouslyCreated;
+  const disableFieldEdition =
+    fieldMetadataItemDisableFieldEdition(fieldMetadataItem);
   const initialRelationObjectMetadataItems =
     useMorphRelationSettingsFormInitialTargetMetadatas({
-      fieldMetadataItem: existingFieldMetadataItem,
+      fieldMetadataItem,
     });
 
   const initialRelationType =
-    existingFieldMetadataItem?.settings?.relationType ??
-    RelationType.ONE_TO_MANY;
+    fieldMetadataItemInitialRelationType(fieldMetadataItem);
 
   const { label: defaultLabelOnDestination, icon: defaultIconOnDestination } =
     useMorphRelationSettingsFormDefaultValuesOnDestination({
-      fieldMetadataItem: existingFieldMetadataItem,
+      fieldMetadataItem,
       objectMetadataItem: initialRelationObjectMetadataItems[0],
       relationType: initialRelationType,
     });

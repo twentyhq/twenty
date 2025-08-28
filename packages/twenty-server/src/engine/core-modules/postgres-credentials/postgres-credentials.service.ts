@@ -17,7 +17,7 @@ import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-contex
 
 export class PostgresCredentialsService {
   constructor(
-    @InjectRepository(PostgresCredentials)
+    @InjectRepository(PostgresCredentials, 'core')
     private readonly postgresCredentialsRepository: Repository<PostgresCredentials>,
     private readonly jwtWrapperService: JwtWrapperService,
   ) {}

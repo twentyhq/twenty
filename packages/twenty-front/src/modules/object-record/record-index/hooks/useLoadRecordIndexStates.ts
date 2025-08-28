@@ -11,10 +11,12 @@ import { recordIndexKanbanAggregateOperationState } from '@/object-record/record
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { recordIndexOpenRecordInState } from '@/object-record/record-index/states/recordIndexOpenRecordInState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
+import { useSetTableColumns } from '@/object-record/record-table/hooks/useSetTableColumns';
 import { viewFieldAggregateOperationState } from '@/object-record/record-table/record-table-footer/states/viewFieldAggregateOperationState';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
+import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { type View } from '@/views/types/View';
 import { type ViewField } from '@/views/types/ViewField';
@@ -43,9 +45,15 @@ export const useLoadRecordIndexStates = () => {
   );
   const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
 
+  const { setTableColumns } = useSetTableColumns();
+
   const onViewFieldsChange = useRecoilCallback(
     ({ set, snapshot }) =>
-      (viewFields: ViewField[], objectMetadataItem: ObjectMetadataItem) => {
+      (
+        viewFields: ViewField[],
+        objectMetadataItem: ObjectMetadataItem,
+        recordIndexId: string,
+      ) => {
         const activeFieldMetadataItems = objectMetadataItem.fields.filter(
           ({ isActive, isSystem }) => isActive && !isSystem,
         );
@@ -100,6 +108,12 @@ export const useLoadRecordIndexStates = () => {
           columnDefinitions,
         });
 
+        setTableColumns(
+          newFieldDefinitions,
+          recordIndexId,
+          objectMetadataItem.id,
+        );
+
         const existingRecordIndexFieldDefinitions = snapshot
           .getLoadable(recordIndexFieldDefinitionsState)
           .getValue();
@@ -147,12 +161,17 @@ export const useLoadRecordIndexStates = () => {
           }
         }
       },
-    [],
+    [setTableColumns],
   );
 
   const loadRecordIndexStates = useRecoilCallback(
     ({ snapshot }) =>
       async (view: View, objectMetadataItem: ObjectMetadataItem) => {
+        const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
+          objectMetadataItem.namePlural,
+          view.id,
+        );
+
         const filterableFieldMetadataItems = snapshot
           .getLoadable(
             availableFieldMetadataItemsForFilterFamilySelector({
@@ -161,7 +180,7 @@ export const useLoadRecordIndexStates = () => {
           )
           .getValue();
 
-        onViewFieldsChange(view.viewFields, objectMetadataItem);
+        onViewFieldsChange(view.viewFields, objectMetadataItem, recordIndexId);
 
         setRecordGroupsFromViewGroups(
           view.id,

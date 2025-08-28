@@ -15,7 +15,7 @@ export const CHECK_CUSTOM_DOMAIN_VALID_RECORDS_CRON_PATTERN = '0 * * * *';
 @Processor(MessageQueue.cronQueue)
 export class CheckCustomDomainValidRecordsCronJob {
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly customDomainService: CustomDomainService,
   ) {}

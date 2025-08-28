@@ -19,8 +19,6 @@ import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDa
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
 import { AppPath } from '@/types/AppPath';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale.util';
-import { coreViewsState } from '@/views/states/coreViewState';
-import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
 import { useEffect } from 'react';
@@ -34,7 +32,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const UserProviderEffect = () => {
@@ -61,20 +58,6 @@ export const UserProviderEffect = () => {
               localeCatalog: localeCatalog || enUS,
             });
           });
-        }
-      },
-    [],
-  );
-
-  const setCoreViews = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (coreViews: CoreViewWithRelations[]) => {
-        const existingCoreViews = snapshot
-          .getLoadable(coreViewsState)
-          .getValue();
-
-        if (!isDeeplyEqual(existingCoreViews, coreViews)) {
-          set(coreViewsState, coreViews);
         }
       },
     [],
@@ -125,10 +108,6 @@ export const UserProviderEffect = () => {
             ObjectPermissions & { objectMetadataId: string }
           >) ?? [],
       });
-    }
-
-    if (isDefined(queryData.currentUser?.currentWorkspace?.views)) {
-      setCoreViews(queryData.currentUser.currentWorkspace.views);
     }
 
     const {
@@ -202,8 +181,7 @@ export const UserProviderEffect = () => {
     setDateTimeFormat,
     setCurrentWorkspaceMembersWithDeleted,
     updateLocaleCatalog,
-    setCoreViews,
   ]);
 
-  return null;
+  return <></>;
 };

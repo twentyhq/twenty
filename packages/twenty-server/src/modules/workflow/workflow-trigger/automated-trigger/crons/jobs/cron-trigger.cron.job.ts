@@ -28,7 +28,7 @@ export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
 export class CronTriggerCronJob {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,

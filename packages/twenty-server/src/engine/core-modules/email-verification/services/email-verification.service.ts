@@ -29,7 +29,7 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 @Injectable()
 export class EmailVerificationService {
   constructor(
-    @InjectRepository(AppToken)
+    @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly domainManagerService: DomainManagerService,
     private readonly emailService: EmailService,

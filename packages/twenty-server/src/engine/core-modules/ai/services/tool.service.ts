@@ -11,7 +11,7 @@ import {
   generateSoftDeleteToolSchema,
   getRecordInputSchema,
 } from 'src/engine/metadata-modules/agent/utils/agent-tool-schema.utils';
-import { isWorkflowRunObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-run-object.util';
+import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/agent/utils/is-workflow-related-object.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
@@ -48,7 +48,7 @@ export class ToolService {
       });
 
     const filteredObjectMetadata = allObjectMetadata.filter(
-      (objectMetadata) => !isWorkflowRunObject(objectMetadata),
+      (objectMetadata) => !isWorkflowRelatedObject(objectMetadata),
     );
 
     filteredObjectMetadata.forEach((objectMetadata) => {

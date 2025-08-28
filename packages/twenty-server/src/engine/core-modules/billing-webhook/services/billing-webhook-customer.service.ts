@@ -17,7 +17,7 @@ import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billin
 export class BillingWebhookCustomerService {
   protected readonly logger = new Logger(BillingWebhookCustomerService.name);
   constructor(
-    @InjectRepository(BillingCustomer)
+    @InjectRepository(BillingCustomer, 'core')
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
   ) {}
 

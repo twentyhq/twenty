@@ -36,7 +36,7 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
 
 @Module({
   imports: [
-    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity]),
+    NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
     ServerlessFunctionModule,
     RecordPositionModule,
     WorkspaceCacheStorageModule,

@@ -5,19 +5,19 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { type ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 
 @Injectable()
 export class ViewFieldSyncService {
   constructor(
-    @InjectRepository(ViewFieldEntity)
-    private readonly coreViewFieldRepository: Repository<ViewFieldEntity>,
+    @InjectRepository(ViewField, 'core')
+    private readonly coreViewFieldRepository: Repository<ViewField>,
   ) {}
 
   private parseUpdateDataFromDiff(
     diff: Partial<ObjectRecordDiff<ViewFieldWorkspaceEntity>>,
-  ): Partial<ViewFieldEntity> {
+  ): Partial<ViewField> {
     const updateData: Record<string, unknown> = {};
 
     for (const key of Object.keys(diff)) {
@@ -28,14 +28,14 @@ export class ViewFieldSyncService {
       }
     }
 
-    return updateData as Partial<ViewFieldEntity>;
+    return updateData as Partial<ViewField>;
   }
 
   public async createCoreViewField(
     workspaceId: string,
     workspaceViewField: ViewFieldWorkspaceEntity,
   ): Promise<void> {
-    const coreViewField: Partial<ViewFieldEntity> = {
+    const coreViewField: Partial<ViewField> = {
       id: workspaceViewField.id,
       fieldMetadataId: workspaceViewField.fieldMetadataId,
       viewId: workspaceViewField.viewId,

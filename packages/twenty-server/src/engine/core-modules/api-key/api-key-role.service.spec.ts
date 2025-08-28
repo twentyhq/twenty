@@ -113,23 +113,23 @@ describe('ApiKeyRoleService', () => {
       providers: [
         ApiKeyRoleService,
         {
-          provide: getRepositoryToken(RoleTargetsEntity),
+          provide: getRepositoryToken(RoleTargetsEntity, 'core'),
           useValue: mockRoleTargetsRepository,
         },
         {
-          provide: getRepositoryToken(RoleEntity),
+          provide: getRepositoryToken(RoleEntity, 'core'),
           useValue: mockRoleRepository,
         },
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(Workspace, 'core'),
           useValue: mockWorkspaceRepository,
         },
         {
-          provide: getRepositoryToken(ApiKey),
+          provide: getRepositoryToken(ApiKey, 'core'),
           useValue: mockApiKeyRepository,
         },
         {
-          provide: getDataSourceToken(),
+          provide: getDataSourceToken('core'),
           useValue: mockDataSource,
         },
         {

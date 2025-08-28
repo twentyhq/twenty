@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react';
 
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { type WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
 import { fn } from '@storybook/test';
 import '@xyflow/react/dist/style.css';
 import { RecoilRoot } from 'recoil';
@@ -120,6 +121,7 @@ export const Catalog: CatalogStory<
   args: {
     id: 'story-node',
     data: ALL_STEPS[0],
+    variant: 'default',
     selected: false,
     onDelete: fn(),
   },
@@ -137,6 +139,18 @@ export const Catalog: CatalogStory<
           name: 'step type',
           values: ALL_STEPS,
           props: (data: WorkflowDiagramStepNodeData) => ({ data }),
+        },
+        {
+          name: 'variant',
+          values: [
+            'empty',
+            'default',
+            'running',
+            'success',
+            'failure',
+            'not-executed',
+          ] satisfies WorkflowDiagramNodeVariant[],
+          props: (variant: WorkflowDiagramNodeVariant) => ({ variant }),
         },
         {
           name: 'selected',

@@ -10,7 +10,7 @@ import { WebhookException, WebhookExceptionCode } from './webhook.exception';
 @Injectable()
 export class WebhookService {
   constructor(
-    @InjectRepository(Webhook)
+    @InjectRepository(Webhook, 'core')
     private readonly webhookRepository: Repository<Webhook>,
   ) {}
 

@@ -1,6 +1,5 @@
 import { HealthIndicatorService } from '@nestjs/terminus';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getDataSourceToken } from '@nestjs/typeorm';
 
 import { type DataSource } from 'typeorm';
 
@@ -33,7 +32,7 @@ describe('DatabaseHealthIndicator', () => {
       providers: [
         DatabaseHealthIndicator,
         {
-          provide: getDataSourceToken(),
+          provide: 'coreDataSource',
           useValue: dataSource,
         },
         {

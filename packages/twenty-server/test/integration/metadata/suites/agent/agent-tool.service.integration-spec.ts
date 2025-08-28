@@ -10,7 +10,7 @@ import {
   setupRepositoryMock,
 } from './utils/agent-tool-test-utils';
 
-describe('AgentToolGeneratorService Integration', () => {
+describe('AgentToolService Integration', () => {
   let context: AgentToolTestContext;
 
   beforeEach(async () => {
@@ -132,7 +132,21 @@ describe('AgentToolGeneratorService Integration', () => {
       expect(Object.keys(tools)).toContain('http_request');
     });
 
-    it('should filter out workflow-run objects', async () => {
+    it('should return empty tools when role does not exist', async () => {
+      jest
+        .spyOn(context.agentService, 'findOneAgent')
+        .mockResolvedValue(context.testAgent as any);
+      jest.spyOn(context.roleRepository, 'findOne').mockResolvedValue(null);
+
+      const tools = await context.agentToolService.generateToolsForAgent(
+        context.testAgentId,
+        context.testWorkspaceId,
+      );
+
+      expect(tools).toEqual({});
+    });
+
+    it('should filter out workflow-related objects', async () => {
       const workflowObject = {
         ...context.testObjectMetadata,
         nameSingular: 'workflow',
@@ -173,7 +187,7 @@ describe('AgentToolGeneratorService Integration', () => {
         context.testWorkspaceId,
       );
 
-      expect(Object.keys(tools)).toHaveLength(7);
+      expect(Object.keys(tools)).toHaveLength(1);
     });
   });
 

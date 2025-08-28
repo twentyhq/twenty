@@ -24,7 +24,7 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly transientTokenService: TransientTokenService,
     private readonly guardRedirectService: GuardRedirectService,
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly domainManagerService: DomainManagerService,
   ) {

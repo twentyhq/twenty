@@ -49,9 +49,9 @@ export class RemoteTableService {
   private readonly logger = new Logger(RemoteTableService.name);
 
   constructor(
-    @InjectRepository(RemoteTableEntity)
+    @InjectRepository(RemoteTableEntity, 'core')
     private readonly remoteTableRepository: Repository<RemoteTableEntity>,
-    @InjectRepository(RemoteServerEntity)
+    @InjectRepository(RemoteServerEntity, 'core')
     private readonly remoteServerRepository: Repository<
       RemoteServerEntity<RemoteServerType>
     >,

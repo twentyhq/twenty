@@ -1,6 +1,6 @@
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
-import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { visibleAndReadableRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleAndReadableRecordFieldsComponentSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { computeNewPositionOfRecordWithPosition } from '@/object-record/utils/computeNewPositionOfRecordWithPosition';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
@@ -8,7 +8,7 @@ import { useRecoilCallback } from 'recoil';
 
 export const useReorderVisibleRecordFields = (recordTableId: string) => {
   const visibleRecordFieldsCallbackState = useRecoilComponentCallbackState(
-    visibleRecordFieldsComponentSelector,
+    visibleAndReadableRecordFieldsComponentSelector,
     recordTableId,
   );
 

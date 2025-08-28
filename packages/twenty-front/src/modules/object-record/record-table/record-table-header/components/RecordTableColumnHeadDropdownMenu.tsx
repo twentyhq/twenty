@@ -1,20 +1,17 @@
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
-import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metadata/states/isFieldMetadataItemFilterableAndSortableSelector';
-import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
-import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
-import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTableColumn';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
+import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useToggleScrollWrapper } from '@/ui/utilities/scroll/hooks/useToggleScrollWrapper';
+import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -23,9 +20,11 @@ import {
   IconSortDescending,
 } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { useTableColumns } from '../../hooks/useTableColumns';
+import { type ColumnDefinition } from '../../types/ColumnDefinition';
 
 export type RecordTableColumnHeadDropdownMenuProps = {
-  recordField: RecordField;
+  column: ColumnDefinition<FieldMetadata>;
   objectMetadataId: string;
 };
 
@@ -34,7 +33,7 @@ const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
 `;
 
 export const RecordTableColumnHeadDropdownMenu = ({
-  recordField,
+  column,
   objectMetadataId,
 }: RecordTableColumnHeadDropdownMenuProps) => {
   const { t } = useLingui();
@@ -42,37 +41,25 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const { toggleScrollXWrapper, toggleScrollYWrapper } =
     useToggleScrollWrapper();
 
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
-
-  const isLabelIdentifier = useRecoilValue(
-    isFieldMetadataItemLabelIdentifierSelector({
-      fieldMetadataItemId: recordField.fieldMetadataItemId,
-    }),
+  const visibleTableColumns = useRecoilComponentValue(
+    visibleTableColumnsComponentSelector,
   );
 
-  const secondVisibleRecordField = visibleRecordFields[1];
-  const canMove = isLabelIdentifier !== true;
+  const secondVisibleColumn = visibleTableColumns[1];
+  const canMove = column.isLabelIdentifier !== true;
   const canMoveLeft =
-    recordField.fieldMetadataItemId !==
-      secondVisibleRecordField?.fieldMetadataItemId && canMove;
+    column.fieldMetadataId !== secondVisibleColumn?.fieldMetadataId && canMove;
 
-  const lastVisibleRecordField =
-    visibleRecordFields[visibleRecordFields.length - 1];
-
+  const lastVisibleColumn = visibleTableColumns[visibleTableColumns.length - 1];
   const canMoveRight =
-    recordField.fieldMetadataItemId !==
-      lastVisibleRecordField?.fieldMetadataItemId && canMove;
+    column.fieldMetadataId !== lastVisibleColumn?.fieldMetadataId && canMove;
 
   const { recordTableId } = useRecordTableContextOrThrow();
 
-  const { moveTableColumn } = useMoveTableColumn({
-    recordTableId,
-  });
+  const { handleColumnVisibilityChange, handleMoveTableColumn } =
+    useTableColumns({ recordTableId });
 
-  const { changeRecordFieldVisibility } =
-    useChangeRecordFieldVisibility(recordTableId);
-
-  const dropdownId = recordField.fieldMetadataItemId + '-header';
+  const dropdownId = column.fieldMetadataId + '-header';
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -84,10 +71,9 @@ export const RecordTableColumnHeadDropdownMenu = ({
 
   const handleColumnMoveLeft = () => {
     closeDropdownAndToggleScroll();
-
     if (!canMoveLeft) return;
 
-    moveTableColumn('left', recordField.fieldMetadataItemId);
+    handleMoveTableColumn('left', column);
   };
 
   const handleColumnMoveRight = () => {
@@ -95,13 +81,13 @@ export const RecordTableColumnHeadDropdownMenu = ({
 
     if (!canMoveRight) return;
 
-    moveTableColumn('right', recordField.fieldMetadataItemId);
+    handleMoveTableColumn('right', column);
   };
 
   const handleColumnVisibility = () => {
     closeDropdownAndToggleScroll();
-    changeRecordFieldVisibility({
-      fieldMetadataId: recordField.fieldMetadataItemId,
+    handleColumnVisibilityChange({
+      ...column,
       isVisible: false,
     });
   };
@@ -113,7 +99,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const handleSortClick = () => {
     closeDropdownAndToggleScroll();
 
-    handleToggleColumnSort(recordField.fieldMetadataItemId);
+    handleToggleColumnSort(column.fieldMetadataId);
   };
 
   const { openRecordFilterChipFromTableHeader } =
@@ -122,18 +108,14 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const handleFilterClick = () => {
     closeDropdownAndToggleScroll();
 
-    openRecordFilterChipFromTableHeader(recordField.fieldMetadataItemId);
+    openRecordFilterChipFromTableHeader(column.fieldMetadataId);
   };
 
-  const { isFilterable, isSortable } = useRecoilValue(
-    isFieldMetadataItemFilterableAndSortableSelector({
-      fieldMetadataItemId: recordField.fieldMetadataItemId,
-    }),
-  );
-
+  const isSortable = column.isSortable === true;
+  const isFilterable = column.isFilterable === true;
   const showSeparator =
-    (isFilterable || isSortable) && isLabelIdentifier !== true;
-  const canHide = isLabelIdentifier !== true;
+    (isFilterable || isSortable) && column.isLabelIdentifier !== true;
+  const canHide = column.isLabelIdentifier !== true;
 
   return (
     <DropdownContent>

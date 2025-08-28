@@ -39,6 +39,7 @@ export const WorkflowVariablesDropdown = ({
   shouldDisplayRecordFields,
   shouldDisplayRecordObjects,
   fieldTypesToExclude,
+  shouldEnableSelectRelationObject,
   multiline,
   clickableComponent,
 }: {
@@ -47,6 +48,7 @@ export const WorkflowVariablesDropdown = ({
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
   fieldTypesToExclude?: InputSchemaPropertyType[];
+  shouldEnableSelectRelationObject?: boolean;
   disabled?: boolean;
   multiline?: boolean;
   clickableComponent?: React.ReactNode;
@@ -132,6 +134,7 @@ export const WorkflowVariablesDropdown = ({
             step={selectedStep}
             onSelect={handleSubItemSelect}
             onBack={handleBack}
+            shouldEnableSelectRelationObject={shouldEnableSelectRelationObject}
           />
         ) : (
           <WorkflowVariablesDropdownFieldItems

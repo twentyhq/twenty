@@ -19,7 +19,7 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RoleEntity]),
+    TypeOrmModule.forFeature([RoleEntity], 'core'),
     AiModule,
     TokenModule,
     WorkspaceCacheStorageModule,

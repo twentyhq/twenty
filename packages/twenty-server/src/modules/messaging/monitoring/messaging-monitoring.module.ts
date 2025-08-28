@@ -13,8 +13,8 @@ import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/ser
   imports: [
     AuditModule,
     MessagingCommonModule,
-    TypeOrmModule.forFeature([Workspace]),
-    TypeOrmModule.forFeature([DataSourceEntity]),
+    TypeOrmModule.forFeature([Workspace], 'core'),
+    TypeOrmModule.forFeature([DataSourceEntity], 'core'),
   ],
   providers: [
     MessagingMessageChannelSyncStatusMonitoringCronCommand,

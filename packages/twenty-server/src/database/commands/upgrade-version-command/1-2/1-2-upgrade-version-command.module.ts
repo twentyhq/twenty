@@ -11,11 +11,10 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      Workspace,
-      FieldMetadataEntity,
-      ObjectMetadataEntity,
-    ]),
+    TypeOrmModule.forFeature(
+      [Workspace, FieldMetadataEntity, ObjectMetadataEntity],
+      'core',
+    ),
     WorkspaceDataSourceModule,
   ],
   providers: [

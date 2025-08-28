@@ -7,7 +7,7 @@ import { PostgresCredentialsResolver } from 'src/engine/core-modules/postgres-cr
 import { PostgresCredentialsService } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.service';
 
 @Module({
-  imports: [JwtModule, TypeOrmModule.forFeature([PostgresCredentials])],
+  imports: [JwtModule, TypeOrmModule.forFeature([PostgresCredentials], 'core')],
   providers: [
     PostgresCredentialsResolver,
     PostgresCredentialsService,

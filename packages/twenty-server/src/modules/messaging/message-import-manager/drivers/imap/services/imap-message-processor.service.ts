@@ -4,9 +4,10 @@ import { type FetchMessageObject, type ImapFlow } from 'imapflow';
 import { type ParsedMail, simpleParser } from 'mailparser';
 
 import { ImapHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-handle-error.service';
+import { type MessageLocation } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-locator.service';
 
 export type MessageFetchResult = {
-  uid: number;
+  messageId: string;
   parsed: ParsedMail | null;
   processingTimeMs?: number;
 };
@@ -19,20 +20,71 @@ export class ImapMessageProcessorService {
     private readonly imapHandleErrorService: ImapHandleErrorService,
   ) {}
 
-  async processMessagesByUidsInFolder(
-    uids: number[],
-    folder: string,
+  async processMessagesByIds(
+    messageIds: string[],
+    messageLocations: Map<string, MessageLocation>,
     client: ImapFlow,
   ): Promise<MessageFetchResult[]> {
-    if (!uids.length) {
+    if (!messageIds.length) {
       return [];
     }
+
+    const results: MessageFetchResult[] = [];
+
+    const messagesByFolder = new Map<string, MessageLocation[]>();
+    const notFoundIds: string[] = [];
+
+    for (const messageId of messageIds) {
+      const location = messageLocations.get(messageId);
+
+      if (location) {
+        const locations = messagesByFolder.get(location.folder) || [];
+
+        locations.push(location);
+        messagesByFolder.set(location.folder, locations);
+      } else {
+        notFoundIds.push(messageId);
+      }
+    }
+
+    const fetchPromises = Array.from(messagesByFolder.entries()).map(
+      ([folder, locations]) =>
+        this.fetchMessagesFromFolder(locations, client, folder),
+    );
+
+    const folderResults = await Promise.allSettled(fetchPromises);
+
+    for (const result of folderResults) {
+      if (result.status === 'fulfilled') {
+        results.push(...result.value);
+      } else {
+        this.logger.error(`Folder batch fetch failed: ${result.reason}`);
+      }
+    }
+
+    for (const messageId of notFoundIds) {
+      results.push({
+        messageId,
+        parsed: null,
+        processingTimeMs: 0,
+      });
+    }
+
+    return results;
+  }
+
+  private async fetchMessagesFromFolder(
+    messageLocations: MessageLocation[],
+    client: ImapFlow,
+    folder: string,
+  ): Promise<MessageFetchResult[]> {
+    if (!messageLocations.length) return [];
 
     try {
       const lock = await client.getMailboxLock(folder);
 
       try {
-        return await this.fetchMessages(uids, client);
+        return await this.fetchMessagesWithUids(messageLocations, client);
       } finally {
         lock.release();
       }
@@ -41,30 +93,28 @@ export class ImapMessageProcessorService {
         `Failed to fetch messages from folder ${folder}: ${error.message}`,
       );
 
-      return uids.map((uid) =>
-        this.createErrorResult(uid, error as Error, Date.now()),
+      return messageLocations.map((location) =>
+        this.createErrorResult(location.messageId, error as Error, Date.now()),
       );
     }
   }
 
-  private async fetchMessages(
-    uids: number[],
+  private async fetchMessagesWithUids(
+    messageLocations: MessageLocation[],
     client: ImapFlow,
   ): Promise<MessageFetchResult[]> {
     const startTime = Date.now();
     const results: MessageFetchResult[] = [];
 
     try {
+      const uids = messageLocations.map((loc) => loc.uid.toString());
       const uidSet = uids.join(',');
 
-      const fetchResults = client.fetch(
-        uidSet,
-        {
-          uid: true,
-          source: true,
-        },
-        { uid: true },
-      );
+      const fetchResults = client.fetch(uidSet, {
+        uid: true,
+        source: true,
+        envelope: true,
+      });
 
       const messagesData = new Map<number, FetchMessageObject>();
 
@@ -72,12 +122,12 @@ export class ImapMessageProcessorService {
         messagesData.set(message.uid, message);
       }
 
-      for (const uid of uids) {
-        const messageData = messagesData.get(uid);
+      for (const location of messageLocations) {
+        const messageData = messagesData.get(location.uid);
 
         if (messageData) {
           const result = await this.processMessageData(
-            uid,
+            location.messageId,
             messageData,
             startTime,
           );
@@ -85,7 +135,7 @@ export class ImapMessageProcessorService {
           results.push(result);
         } else {
           results.push({
-            uid,
+            messageId: location.messageId,
             parsed: null,
             processingTimeMs: Date.now() - startTime,
           });
@@ -94,8 +144,8 @@ export class ImapMessageProcessorService {
     } catch (error) {
       this.logger.error(`Batch fetch failed: ${error.message}`);
 
-      return uids.map((uid) =>
-        this.createErrorResult(uid, error as Error, startTime),
+      return messageLocations.map((location) =>
+        this.createErrorResult(location.messageId, error as Error, startTime),
       );
     }
 
@@ -103,7 +153,7 @@ export class ImapMessageProcessorService {
   }
 
   private async processMessageData(
-    uid: number,
+    messageId: string,
     messageData: FetchMessageObject,
     startTime: number,
   ): Promise<MessageFetchResult> {
@@ -111,73 +161,77 @@ export class ImapMessageProcessorService {
       const rawContent = messageData.source?.toString() || '';
 
       if (!rawContent) {
-        this.logger.debug(`No source content for message UID ${uid}`);
+        this.logger.debug(`No source content for message ${messageId}`);
 
         return {
-          uid,
+          messageId,
           parsed: null,
           processingTimeMs: Date.now() - startTime,
         };
       }
 
-      const parsed = await this.parseMessage(rawContent, uid);
+      const parsed = await this.parseMessage(rawContent, messageId);
       const processingTime = Date.now() - startTime;
 
-      this.logger.debug(`Processed message UID ${uid} in ${processingTime}ms`);
+      this.logger.debug(
+        `Processed message ${messageId} in ${processingTime}ms`,
+      );
 
       return {
-        uid,
+        messageId,
         parsed,
         processingTimeMs: processingTime,
       };
     } catch (error) {
-      return this.createErrorResult(uid, error as Error, startTime);
+      return this.createErrorResult(messageId, error as Error, startTime);
     }
   }
 
   private async parseMessage(
     rawContent: string,
-    uid: number,
+    messageId: string,
   ): Promise<ParsedMail> {
     try {
       return await simpleParser(rawContent);
     } catch (error) {
-      this.logger.error(`Failed to parse message UID ${uid}: ${error.message}`);
+      this.logger.error(
+        `Failed to parse message ${messageId}: ${error.message}`,
+      );
       throw error;
     }
   }
 
   createErrorResult(
-    uid: number,
+    messageId: string,
     error: Error,
     startTime: number,
   ): MessageFetchResult {
     const processingTime = Date.now() - startTime;
 
-    this.logger.error(`Failed to fetch message UID ${uid}: ${error.message}`);
+    this.logger.error(`Failed to fetch message ${messageId}: ${error.message}`);
+
+    this.imapHandleErrorService.handleImapMessagesImportError(error, messageId);
 
     return {
-      uid,
+      messageId,
       parsed: null,
       processingTimeMs: processingTime,
     };
   }
 
-  createErrorResults(
-    uids: number[],
-    folder: string,
-    error: Error,
-  ): MessageFetchResult[] {
-    return uids.map((uid) => {
-      this.logger.error(`Failed to fetch message UID ${uid}: ${error.message}`);
+  createErrorResults(messageIds: string[], error: Error): MessageFetchResult[] {
+    return messageIds.map((messageId) => {
+      this.logger.error(
+        `Failed to fetch message ${messageId}: ${error.message}`,
+      );
 
       this.imapHandleErrorService.handleImapMessagesImportError(
         error,
-        `${folder}:${uid}`,
+        messageId,
       );
 
       return {
-        uid,
+        messageId,
         parsed: null,
       };
     });

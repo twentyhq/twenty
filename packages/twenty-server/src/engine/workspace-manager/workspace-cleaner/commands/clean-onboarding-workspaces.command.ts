@@ -20,7 +20,7 @@ export class CleanOnboardingWorkspacesCommand extends MigrationCommandRunner {
 
   constructor(
     private readonly cleanerWorkspaceService: CleanerWorkspaceService,
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
   ) {
     super();

@@ -3,7 +3,10 @@ import { type DropResult } from '@hello-pangea/dnd';
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
-import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import {
+  type FieldMetadataItem,
+  type FieldMetadataItemOption,
+} from '@/object-metadata/types/FieldMetadataItem';
 import { selectOptionsSchema } from '@/object-metadata/validation-schemas/selectOptionsSchema';
 import { multiSelectFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/multiSelectFieldDefaultValueSchema';
 import { selectFieldDefaultValueSchema } from '@/object-record/record-field/ui/validation-schemas/selectFieldDefaultValueSchema';
@@ -43,8 +46,10 @@ export type SettingsDataModelFieldSelectFormValues = z.infer<
 >;
 
 type SettingsDataModelFieldSelectFormProps = {
-  fieldType: FieldMetadataType.SELECT | FieldMetadataType.MULTI_SELECT;
-  existingFieldMetadataId: string;
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'defaultValue' | 'options' | 'type'
+  >;
 };
 
 const StyledContainer = styled(CardContent)`
@@ -107,13 +112,10 @@ const StyledButton = styled(LightButton)`
 `;
 
 export const SettingsDataModelFieldSelectForm = ({
-  existingFieldMetadataId,
-  fieldType,
+  fieldMetadataItem,
 }: SettingsDataModelFieldSelectFormProps) => {
   const { initialDefaultValue, initialOptions } =
-    useSelectSettingsFormInitialValues({
-      fieldMetadataId: existingFieldMetadataId,
-    });
+    useSelectSettingsFormInitialValues({ fieldMetadataItem });
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
 
   const {
@@ -142,7 +144,7 @@ export const SettingsDataModelFieldSelectForm = ({
     optionValue: FieldMetadataItemOption['value'],
   ) =>
     isSelectOptionDefaultValue(optionValue, {
-      type: fieldType,
+      type: fieldMetadataItem.type,
       defaultValue: watchFormValue('defaultValue'),
     });
 
@@ -151,7 +153,7 @@ export const SettingsDataModelFieldSelectForm = ({
   ) => {
     if (isOptionDefaultValue(optionValue)) return;
 
-    if (fieldType === FieldMetadataType.SELECT) {
+    if (fieldMetadataItem.type === FieldMetadataType.SELECT) {
       setFormValue('defaultValue', applySimpleQuotesToString(optionValue), {
         shouldDirty: true,
       });
@@ -161,7 +163,7 @@ export const SettingsDataModelFieldSelectForm = ({
     const previousDefaultValue = getValues('defaultValue');
 
     if (
-      fieldType === FieldMetadataType.MULTI_SELECT &&
+      fieldMetadataItem.type === FieldMetadataType.MULTI_SELECT &&
       (Array.isArray(previousDefaultValue) || previousDefaultValue === null)
     ) {
       setFormValue(
@@ -180,7 +182,7 @@ export const SettingsDataModelFieldSelectForm = ({
   ) => {
     if (!isOptionDefaultValue(optionValue)) return;
 
-    if (fieldType === FieldMetadataType.SELECT) {
+    if (fieldMetadataItem.type === FieldMetadataType.SELECT) {
       setFormValue('defaultValue', null, { shouldDirty: true });
       return;
     }
@@ -188,7 +190,7 @@ export const SettingsDataModelFieldSelectForm = ({
     const previousDefaultValue = getValues('defaultValue');
 
     if (
-      fieldType === FieldMetadataType.MULTI_SELECT &&
+      fieldMetadataItem.type === FieldMetadataType.MULTI_SELECT &&
       (Array.isArray(previousDefaultValue) || previousDefaultValue === null)
     ) {
       const nextDefaultValue = previousDefaultValue?.filter(

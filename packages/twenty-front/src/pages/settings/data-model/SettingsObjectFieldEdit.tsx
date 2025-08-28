@@ -37,7 +37,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 //TODO: fix this type
-export type SettingsDataModelFieldEditFormValues = z.infer<
+type SettingsDataModelFieldEditFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
 > &
   any;
@@ -91,7 +91,6 @@ export const SettingsObjectFieldEdit = () => {
   }, [navigateApp, objectMetadataItem, fieldMetadataItem]);
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
-
   const canSave = isDirty && isValid && !isSubmitting;
 
   if (!isDefined(objectMetadataItem) || !isDefined(fieldMetadataItem)) {
@@ -237,9 +236,8 @@ export const SettingsObjectFieldEdit = () => {
                         />
                       )}
                       <SettingsDataModelFieldSettingsFormCard
-                        fieldType={fieldMetadataItem.type}
-                        existingFieldMetadataId={fieldMetadataItem.id}
-                        objectNameSingular={objectMetadataItem.nameSingular}
+                        fieldMetadataItem={fieldMetadataItem}
+                        objectMetadataItem={objectMetadataItem}
                       />
                     </Section>
                   </>

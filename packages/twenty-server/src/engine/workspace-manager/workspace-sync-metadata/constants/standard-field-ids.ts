@@ -536,11 +536,6 @@ export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
   searchVector: '70e56537-18ef-4811-b1c7-0a444006b815',
 } as const;
 
-export const DASHBOARD_STANDARD_FIELD_IDS = {
-  title: '20202020-20ee-4091-95dc-44b57eda3a89',
-  pageLayoutId: '20202020-bb53-4648-aa36-1d9d54e6f7f2',
-} as const;
-
 export const STANDARD_OBJECT_FIELD_IDS = {
   activityTarget: ACTIVITY_TARGET_STANDARD_FIELD_IDS,
   activity: ACTIVITY_STANDARD_FIELD_IDS,
@@ -555,7 +550,6 @@ export const STANDARD_OBJECT_FIELD_IDS = {
   comment: COMMENT_STANDARD_FIELD_IDS,
   company: COMPANY_STANDARD_FIELD_IDS,
   connectedAccount: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS,
-  dashboard: DASHBOARD_STANDARD_FIELD_IDS,
   favorite: FAVORITE_STANDARD_FIELD_IDS,
   auditLog: AUDIT_LOGS_STANDARD_FIELD_IDS,
   messageChannelMessageAssociation:

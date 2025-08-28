@@ -4,15 +4,11 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
-import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
-import { convertViewFilterOperandFromCore } from '@/views/utils/convertViewFilterOperandFromCore';
-import { type ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type CoreViewFilter } from '~/generated/graphql';
 import { type ViewFilter } from '../types/ViewFilter';
 
 export const mapViewFiltersToFilters = (
-  viewFilters: ViewFilter[] | CoreViewFilter[],
+  viewFilters: ViewFilter[],
   availableFieldMetadataItems: FieldMetadataItem[],
 ): RecordFilter[] => {
   return viewFilters
@@ -35,25 +31,17 @@ export const mapViewFiltersToFilters = (
         ? 'Search'
         : availableFieldMetadataItem.label;
 
-      const operand =
-        viewFilter.__typename === 'CoreViewFilter'
-          ? convertViewFilterOperandFromCore(viewFilter.operand)
-          : (viewFilter.operand as ViewFilterOperand);
-
       return {
         id: viewFilter.id,
         fieldMetadataId: viewFilter.fieldMetadataId,
         value: viewFilter.value,
-        displayValue:
-          'displayValue' in viewFilter
-            ? viewFilter.displayValue
-            : viewFilter.value,
-        operand,
+        displayValue: viewFilter.displayValue,
+        operand: viewFilter.operand,
         recordFilterGroupId: viewFilter.viewFilterGroupId,
         positionInRecordFilterGroup: viewFilter.positionInViewFilterGroup,
         label,
         type: filterType,
-        subFieldName: viewFilter.subFieldName as CompositeFieldSubFieldName,
+        subFieldName: viewFilter.subFieldName,
       } satisfies RecordFilter;
     })
     .filter(isDefined);

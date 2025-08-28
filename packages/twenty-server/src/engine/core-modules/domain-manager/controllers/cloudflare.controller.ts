@@ -31,7 +31,7 @@ import { handleException } from 'src/engine/utils/global-exception-handler.util'
 @UseFilters(AuthRestApiExceptionFilter)
 export class CloudflareController {
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly domainManagerService: DomainManagerService,
     private readonly customDomainService: CustomDomainService,

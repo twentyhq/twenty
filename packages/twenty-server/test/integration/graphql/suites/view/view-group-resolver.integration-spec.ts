@@ -1,4 +1,7 @@
-import { TEST_NOT_EXISTING_VIEW_GROUP_ID } from 'test/integration/constants/test-view-ids.constants';
+import {
+  TEST_FIELD_METADATA_1_ID,
+  TEST_NOT_EXISTING_VIEW_GROUP_ID,
+} from 'test/integration/constants/test-view-ids.constants';
 import { createViewGroupOperationFactory } from 'test/integration/graphql/utils/create-view-group-operation-factory.util';
 import { deleteViewGroupOperationFactory } from 'test/integration/graphql/utils/delete-view-group-operation-factory.util';
 import { destroyViewGroupOperationFactory } from 'test/integration/graphql/utils/destroy-view-group-operation-factory.util';
@@ -14,14 +17,10 @@ import {
   updateViewGroupData,
 } from 'test/integration/graphql/utils/view-data-factory.util';
 import { createTestViewWithGraphQL } from 'test/integration/graphql/utils/view-graphql.util';
-import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import {
   assertViewGroupStructure,
   cleanupViewRecords,
 } from 'test/integration/utils/view-test.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
@@ -31,55 +30,12 @@ import {
 
 describe('View Group Resolver', () => {
   let testViewId: string;
-  let testObjectMetadataId: string;
-  let testFieldMetadataId: string;
-
-  beforeAll(async () => {
-    const {
-      data: {
-        createOneObject: { id: objectMetadataId },
-      },
-    } = await createOneObjectMetadata({
-      input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
-        icon: 'Icon123',
-      },
-    });
-
-    testObjectMetadataId = objectMetadataId;
-
-    const {
-      data: {
-        createOneField: { id: fieldMetadataId },
-      },
-    } = await createOneFieldMetadata({
-      input: {
-        name: 'testField',
-        label: 'Test Field',
-        type: FieldMetadataType.TEXT,
-        objectMetadataId: testObjectMetadataId,
-        isLabelSyncedWithName: true,
-      },
-    });
-
-    testFieldMetadataId = fieldMetadataId;
-  });
-
-  afterAll(async () => {
-    await deleteOneObjectMetadata({
-      input: { idToDelete: testObjectMetadataId },
-    });
-  });
 
   beforeEach(async () => {
     await cleanupViewRecords();
 
     const view = await createTestViewWithGraphQL({
       name: 'Test View for Groups',
-      objectMetadataId: testObjectMetadataId,
     });
 
     testViewId = view.id;
@@ -103,7 +59,6 @@ describe('View Group Resolver', () => {
         isVisible: true,
         fieldValue: 'active',
         position: 0,
-        fieldMetadataId: testFieldMetadataId,
       });
       const createOperation = createViewGroupOperationFactory({
         data: groupData,
@@ -119,7 +74,7 @@ describe('View Group Resolver', () => {
       assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getCoreViewGroups).toHaveLength(1);
       assertViewGroupStructure(response.body.data.getCoreViewGroups[0], {
-        fieldMetadataId: testFieldMetadataId,
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         isVisible: true,
         fieldValue: 'active',
         position: 0,
@@ -134,7 +89,6 @@ describe('View Group Resolver', () => {
         isVisible: false,
         fieldValue: 'inactive',
         position: 1,
-        fieldMetadataId: testFieldMetadataId,
       });
 
       const operation = createViewGroupOperationFactory({
@@ -144,7 +98,7 @@ describe('View Group Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
       assertViewGroupStructure(response.body.data.createCoreViewGroup, {
-        fieldMetadataId: testFieldMetadataId,
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         isVisible: false,
         fieldValue: 'inactive',
         position: 1,
@@ -157,7 +111,6 @@ describe('View Group Resolver', () => {
         isVisible: true,
         fieldValue: '',
         position: 2,
-        fieldMetadataId: testFieldMetadataId,
       });
 
       const operation = createViewGroupOperationFactory({
@@ -167,7 +120,7 @@ describe('View Group Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
       assertViewGroupStructure(response.body.data.createCoreViewGroup, {
-        fieldMetadataId: testFieldMetadataId,
+        fieldMetadataId: TEST_FIELD_METADATA_1_ID,
         isVisible: true,
         fieldValue: '',
         position: 2,
@@ -181,7 +134,6 @@ describe('View Group Resolver', () => {
         isVisible: true,
         fieldValue: 'original',
         position: 0,
-        fieldMetadataId: testFieldMetadataId,
       });
       const createOperation = createViewGroupOperationFactory({
         data: groupData,
@@ -193,7 +145,6 @@ describe('View Group Resolver', () => {
         isVisible: false,
         fieldValue: 'updated',
         position: 5,
-        fieldMetadataId: testFieldMetadataId,
       });
       const updateOperation = updateViewGroupOperationFactory({
         viewGroupId: viewGroup.id,
@@ -233,7 +184,6 @@ describe('View Group Resolver', () => {
         isVisible: true,
         fieldValue: 'to delete',
         position: 0,
-        fieldMetadataId: testFieldMetadataId,
       });
       const createOperation = createViewGroupOperationFactory({
         data: groupData,
@@ -273,7 +223,6 @@ describe('View Group Resolver', () => {
         isVisible: true,
         fieldValue: 'to destroy',
         position: 0,
-        fieldMetadataId: testFieldMetadataId,
       });
       const createOperation = createViewGroupOperationFactory({
         data: groupData,

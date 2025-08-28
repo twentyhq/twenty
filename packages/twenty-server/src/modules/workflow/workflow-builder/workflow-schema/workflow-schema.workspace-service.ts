@@ -117,7 +117,6 @@ export class WorkflowSchemaWorkspaceService {
     const recordOutputSchema = await this.computeRecordOutputSchema({
       objectType,
       workspaceId,
-      maxDepth: 0,
     });
 
     return {
@@ -139,11 +138,9 @@ export class WorkflowSchemaWorkspaceService {
   private async computeRecordOutputSchema({
     objectType,
     workspaceId,
-    maxDepth = 1,
   }: {
     objectType: string;
     workspaceId: string;
-    maxDepth?: number;
   }): Promise<OutputSchema> {
     const objectMetadataInfo =
       await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
@@ -151,7 +148,7 @@ export class WorkflowSchemaWorkspaceService {
         workspaceId,
       );
 
-    return generateFakeObjectRecord({ objectMetadataInfo, maxDepth });
+    return generateFakeObjectRecord({ objectMetadataInfo });
   }
 
   private computeSendEmailActionOutputSchema(): OutputSchema {

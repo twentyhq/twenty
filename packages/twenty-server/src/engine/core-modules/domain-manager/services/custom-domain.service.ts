@@ -28,7 +28,7 @@ export class CustomDomainService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
     private readonly auditService: AuditService,
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
   ) {
     if (this.twentyConfigService.get('CLOUDFLARE_API_KEY')) {

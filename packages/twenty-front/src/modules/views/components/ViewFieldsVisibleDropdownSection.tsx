@@ -3,10 +3,9 @@ import { type DropResult, type ResponderProvided } from '@hello-pangea/dnd';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
-import { useProcessOptionDropdownDragEnd } from '@/object-record/object-options-dropdown/hooks/useProcessOptionDropdownDragEnd';
+import { useObjectOptionsForTable } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForTable';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
-import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
-import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { visibleAndReadableRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleAndReadableRecordFieldsComponentSelector';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -23,8 +22,8 @@ export const ViewFieldsVisibleDropdownSection = () => {
     ObjectOptionsDropdownContext,
   );
 
-  const { processOptionDropdownDragEnd } =
-    useProcessOptionDropdownDragEnd(recordIndexId);
+  const { handleReorderColumns, handleColumnVisibilityChange } =
+    useObjectOptionsForTable(recordIndexId, objectMetadataItem.id);
 
   const { handleReorderBoardFields, handleBoardFieldVisibilityChange } =
     useObjectOptionsForBoard({
@@ -39,15 +38,12 @@ export const ViewFieldsVisibleDropdownSection = () => {
   const handleReorderFields =
     viewType === ViewType.Kanban
       ? handleReorderBoardFields
-      : processOptionDropdownDragEnd;
-
-  const { changeRecordFieldVisibility } =
-    useChangeRecordFieldVisibility(recordIndexId);
+      : handleReorderColumns;
 
   const handleChangeFieldVisibility =
     viewType === ViewType.Kanban
       ? handleBoardFieldVisibilityChange
-      : changeRecordFieldVisibility;
+      : handleColumnVisibilityChange;
 
   const handleDragEnd = (result: DropResult, provided: ResponderProvided) => {
     handleReorderFields(result, provided);
@@ -59,7 +55,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
   const visibleRecordFields = useRecoilComponentValue(
-    visibleRecordFieldsComponentSelector,
+    visibleAndReadableRecordFieldsComponentSelector,
   );
 
   const nonDraggableRecordField = visibleRecordFields.find(

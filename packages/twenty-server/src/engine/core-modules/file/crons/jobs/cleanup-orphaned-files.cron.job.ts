@@ -16,9 +16,9 @@ export const CLEANUP_ORPHANED_FILES_CRON_PATTERN = '0 2 * * *';
 @Processor(MessageQueue.cronQueue)
 export class CleanupOrphanedFilesCronJob {
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(FileEntity)
+    @InjectRepository(FileEntity, 'core')
     private readonly fileRepository: Repository<FileEntity>,
     private readonly fileMetadataService: FileMetadataService,
   ) {}

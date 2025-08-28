@@ -11,7 +11,7 @@ import { viewPickerModeComponentState } from '@/views/view-picker/states/viewPic
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 export const useCreateViewFromCurrentState = () => {
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
@@ -73,11 +73,14 @@ export const useCreateViewFromCurrentState = () => {
         const shouldCopyFiltersAndSortsAndAggregate =
           viewPickerMode === 'create-from-current';
 
+        const id = v4();
+
         set(viewPickerIsPersistingCallbackState, true);
         set(viewPickerIsDirtyCallbackState, false);
 
-        const createdViewId = await createViewFromCurrentView(
+        await createViewFromCurrentView(
           {
+            id,
             name,
             icon: iconKey,
             type,
@@ -86,10 +89,8 @@ export const useCreateViewFromCurrentState = () => {
           shouldCopyFiltersAndSortsAndAggregate,
         );
 
-        if (isDefined(createdViewId)) {
-          closeAndResetViewPicker();
-          changeView(createdViewId);
-        }
+        closeAndResetViewPicker();
+        changeView(id);
       },
     [
       closeAndResetViewPicker,

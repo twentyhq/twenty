@@ -20,7 +20,7 @@ describe('SSOService', () => {
       providers: [
         SSOService,
         {
-          provide: getRepositoryToken(WorkspaceSSOIdentityProvider),
+          provide: getRepositoryToken(WorkspaceSSOIdentityProvider, 'core'),
           useClass: Repository,
         },
         {
@@ -46,7 +46,7 @@ describe('SSOService', () => {
 
     service = module.get<SSOService>(SSOService);
     repository = module.get<Repository<WorkspaceSSOIdentityProvider>>(
-      getRepositoryToken(WorkspaceSSOIdentityProvider),
+      getRepositoryToken(WorkspaceSSOIdentityProvider, 'core'),
     );
     billingService = module.get<BillingService>(BillingService);
   });

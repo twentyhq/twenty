@@ -138,7 +138,6 @@ export const SettingsDataModelObjectPreview = ({
         selected++;
         return selected <= 3 ? (
           <SettingsDataModelObjectPreviewItem
-            key={`${objectMetadataItem.labelSingular}-${index}`}
             objectMetadataItem={objectMetadataItem}
             pluralizeLabel={pluralizeLabel}
             index={index}

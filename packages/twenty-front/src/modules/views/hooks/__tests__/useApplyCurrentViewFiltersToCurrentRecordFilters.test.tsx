@@ -4,24 +4,17 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { coreViewsState } from '@/views/states/coreViewState';
-import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { type View } from '@/views/types/View';
 import { type ViewFilter } from '@/views/types/ViewFilter';
+import { ViewOpenRecordInType } from '@/views/types/ViewOpenRecordInType';
+import { ViewType } from '@/views/types/ViewType';
 import { act } from 'react';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type CoreViewFilter,
-  ViewFilterOperand as CoreViewFilterOperand,
-} from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndActionMenuWrapper';
-import {
-  mockedCoreViewsData,
-  mockedViewsData,
-} from '~/testing/mock-data/views';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '../useApplyCurrentViewFiltersToCurrentRecordFilters';
 
@@ -38,9 +31,6 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
     );
   }
 
-  const allCompaniesView = mockedViewsData[0];
-  const allCompaniesCoreView = mockedCoreViewsData[0];
-
   const mockFieldMetadataItem = mockObjectMetadataItem.fields[0];
 
   const mockViewFilter: ViewFilter = {
@@ -49,47 +39,30 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
     fieldMetadataId: mockFieldMetadataItem.id,
     operand: ViewFilterOperand.Contains,
     value: 'test',
-    displayValue: 'test',
+    displayValue: mockFieldMetadataItem.label,
     viewFilterGroupId: 'group-1',
     positionInViewFilterGroup: 0,
-    subFieldName: null,
   };
 
-  const mockCoreViewFilter: Omit<CoreViewFilter, 'workspaceId'> = {
-    __typename: 'CoreViewFilter',
-    id: 'filter-1',
-    fieldMetadataId: mockFieldMetadataItem.id,
-    operand: CoreViewFilterOperand.CONTAINS,
-    value: 'test',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    viewId: allCompaniesCoreView.id,
-    positionInViewFilterGroup: 0,
-    viewFilterGroupId: 'group-1',
-    subFieldName: null,
-  };
-
-  const mockView = {
-    ...allCompaniesView,
+  const mockView: View = {
+    id: 'view-1',
+    name: 'Test View',
+    objectMetadataId: mockObjectMetadataItem.id,
     viewFilters: [mockViewFilter],
-  } satisfies View;
-
-  const mockCoreView = {
-    ...allCompaniesCoreView,
-    viewFilters: [mockCoreViewFilter],
-  } satisfies CoreViewWithRelations;
-
-  const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
-    apolloMocks: [],
-    componentInstanceId: 'instanceId',
-    contextStoreCurrentObjectMetadataNameSingular:
-      mockObjectMetadataItemNameSingular,
-    contextStoreCurrentViewId: mockView.id,
-    onInitializeRecoilSnapshot: (snapshot) => {
-      snapshot.set(prefetchViewsState, [mockView]);
-      snapshot.set(coreViewsState, [mockCoreView]);
-    },
-  });
+    type: ViewType.Table,
+    key: null,
+    isCompact: false,
+    openRecordIn: ViewOpenRecordInType.SIDE_PANEL,
+    viewFields: [],
+    viewGroups: [],
+    viewSorts: [],
+    kanbanFieldMetadataId: '',
+    kanbanAggregateOperation: AggregateOperations.COUNT,
+    icon: '',
+    kanbanAggregateOperationFieldMetadataId: '',
+    position: 0,
+    __typename: 'View',
+  };
 
   it('should apply filters from current view', () => {
     const { result } = renderHook(
@@ -107,7 +80,16 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         };
       },
       {
-        wrapper,
+        wrapper: getJestMetadataAndApolloMocksAndActionMenuWrapper({
+          apolloMocks: [],
+          componentInstanceId: 'instanceId',
+          contextStoreCurrentObjectMetadataNameSingular:
+            mockObjectMetadataItemNameSingular,
+          contextStoreCurrentViewId: mockView.id,
+          onInitializeRecoilSnapshot: (snapshot) => {
+            snapshot.set(prefetchViewsState, [mockView]);
+          },
+        }),
       },
     );
 
@@ -126,7 +108,6 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
         positionInRecordFilterGroup: mockViewFilter.positionInViewFilterGroup,
         label: mockFieldMetadataItem.label,
         type: getFilterTypeFromFieldType(mockFieldMetadataItem.type),
-        subFieldName: null,
       } satisfies RecordFilter,
     ]);
   });
@@ -160,7 +141,6 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
               mockView.id,
             );
             snapshot.set(prefetchViewsState, []);
-            snapshot.set(coreViewsState, []);
           },
         }),
       },
@@ -203,9 +183,6 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
             );
             snapshot.set(prefetchViewsState, [
               { ...mockView, viewFilters: [] },
-            ]);
-            snapshot.set(coreViewsState, [
-              { ...mockCoreView, viewFilters: [] },
             ]);
           },
         }),

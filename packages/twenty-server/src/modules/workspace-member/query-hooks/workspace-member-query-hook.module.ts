@@ -33,7 +33,7 @@ import { WorkspaceMemberUpdateOnePreQueryHook } from 'src/modules/workspace-memb
   imports: [
     FeatureFlagModule,
     PermissionsModule,
-    TypeOrmModule.forFeature([UserWorkspace]),
+    TypeOrmModule.forFeature([UserWorkspace], 'core'),
   ],
 })
 export class WorkspaceMemberQueryHookModule {}

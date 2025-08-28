@@ -13,12 +13,11 @@ import { WorkspacePermissionsCacheService } from './workspace-permissions-cache.
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace]),
-    TypeOrmModule.forFeature([
-      ObjectMetadataEntity,
-      RoleEntity,
-      RoleTargetsEntity,
-    ]),
+    TypeOrmModule.forFeature([Workspace], 'core'),
+    TypeOrmModule.forFeature(
+      [ObjectMetadataEntity, RoleEntity, RoleTargetsEntity],
+      'core',
+    ),
     WorkspaceCacheStorageModule,
     WorkspaceFeatureFlagsMapCacheModule,
   ],

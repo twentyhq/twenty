@@ -1,6 +1,7 @@
 import { Separator } from '@/settings/components/Separator';
 import { Controller, useFormContext } from 'react-hook-form';
 
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
   addressSchema as addressFieldDefaultValueSchema,
   addressSettingsSchema,
@@ -29,7 +30,10 @@ import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFro
 type SettingsDataModelFieldAddressFormProps = {
   disabled?: boolean;
   defaultCountry?: string;
-  existingFieldMetadataId: string;
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
+  >;
 };
 
 export const settingsDataModelFieldAddressFormSchema = z.object({
@@ -43,7 +47,7 @@ export type SettingsDataModelFieldTextFormValues = z.infer<
 
 export const SettingsDataModelFieldAddressForm = ({
   disabled,
-  existingFieldMetadataId,
+  fieldMetadataItem,
 }: SettingsDataModelFieldAddressFormProps) => {
   const { t } = useLingui();
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
@@ -62,23 +66,33 @@ export const SettingsDataModelFieldAddressForm = ({
           Flag({ width: props.size, height: props.size }),
       })),
   ];
-  const {
-    initialDisplaySubFields,
-    initialDefaultValue,
-    resetDefaultValueField,
-  } = useAddressSettingsFormInitialValues({ existingFieldMetadataId });
+  const { initialDisplaySubFields, resetDefaultValueField } =
+    useAddressSettingsFormInitialValues({ fieldMetadataItem });
 
   const { closeDropdown } = useCloseDropdown();
   const reset = () => {
     resetDefaultValueField();
     closeDropdown('addressSubFieldsId');
   };
+  const defaultDefaultValue = {
+    addressStreet1: "''",
+    addressStreet2: null,
+    addressCity: null,
+    addressState: null,
+    addressPostcode: null,
+    addressCountry: null,
+    addressLat: null,
+    addressLng: null,
+  };
 
   return (
     <>
       <Controller
         name="defaultValue"
-        defaultValue={initialDefaultValue}
+        defaultValue={{
+          ...defaultDefaultValue,
+          ...fieldMetadataItem?.defaultValue,
+        }}
         control={control}
         render={({ field: { onChange, value } }) => {
           const defaultCountry = value?.addressCountry || '';

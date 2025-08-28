@@ -64,6 +64,7 @@ const StyledSearchInput = styled(SettingsTextInput)`
 
 export const SettingsObjectNewFieldSelector = ({
   excludedFieldTypes = [],
+  fieldMetadataItem,
   objectNamePlural,
 }: SettingsObjectNewFieldSelectorProps) => {
   const theme = useTheme();
@@ -79,15 +80,13 @@ export const SettingsObjectNewFieldSelector = ({
   );
 
   const { resetDefaultValueField: resetBooleanDefaultValueField } =
-    useBooleanSettingsFormInitialValues({ existingFieldMetadataId: 'new' });
+    useBooleanSettingsFormInitialValues({ fieldMetadataItem });
 
   const { resetDefaultValueField: resetCurrencyDefaultValueField } =
-    useCurrencySettingsFormInitialValues({ existingFieldMetadataId: 'new' });
+    useCurrencySettingsFormInitialValues({ fieldMetadataItem });
 
   const { resetDefaultValueField: resetSelectDefaultValueField } =
-    useSelectSettingsFormInitialValues({
-      fieldMetadataId: 'new',
-    });
+    useSelectSettingsFormInitialValues({ fieldMetadataItem });
 
   const resetDefaultValueField = (nextValue: SettingsFieldType) => {
     switch (nextValue) {

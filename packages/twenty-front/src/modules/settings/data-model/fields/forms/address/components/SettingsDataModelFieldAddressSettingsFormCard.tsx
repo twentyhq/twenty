@@ -1,46 +1,62 @@
+import styled from '@emotion/styled';
+
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import {
   SettingsDataModelFieldAddressForm,
   type SettingsDataModelFieldTextFormValues,
 } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm';
-import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
+import { useAddressSettingsFormInitialValues } from '@/settings/data-model/fields/forms/address/hooks/useAddressSettingsFormInitialValues';
+import {
+  SettingsDataModelFieldPreviewCard,
+  type SettingsDataModelFieldPreviewCardProps,
+} from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
 import { useFormContext } from 'react-hook-form';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { type SettingsDataModelFieldEditFormValues } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 
 type SettingsDataModelFieldAddressSettingsFormCardProps = {
   disabled?: boolean;
-  existingFieldMetadataId: string;
-  objectNameSingular: string;
-};
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
+  >;
+} & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
+
+const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
+  flex: 1 1 100%;
+`;
 
 export const SettingsDataModelFieldAddressSettingsFormCard = ({
   disabled,
-  existingFieldMetadataId,
-  objectNameSingular,
+  fieldMetadataItem,
+  objectMetadataItem,
 }: SettingsDataModelFieldAddressSettingsFormCardProps) => {
-  const { watch } = useFormContext<
-    SettingsDataModelFieldTextFormValues & SettingsDataModelFieldEditFormValues
-  >();
+  const { initialDisplaySubFields } = useAddressSettingsFormInitialValues({
+    fieldMetadataItem,
+  });
+  const { watch: watchFormValue } =
+    useFormContext<SettingsDataModelFieldTextFormValues>();
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <SettingsDataModelFieldPreviewWidget
+        <StyledFieldPreviewCard
           fieldMetadataItem={{
-            icon: watch('icon'),
-            label: watch('label'),
-            type: FieldMetadataType.ADDRESS,
+            ...fieldMetadataItem,
             settings: {
-              subFields: watch('settings.subFields'),
+              ...fieldMetadataItem.settings,
+              subFields: watchFormValue(
+                'settings.subFields',
+                initialDisplaySubFields,
+              ),
             },
           }}
-          objectNameSingular={objectNameSingular}
+          objectMetadataItem={objectMetadataItem}
         />
       }
       form={
         <SettingsDataModelFieldAddressForm
           disabled={disabled}
-          existingFieldMetadataId={existingFieldMetadataId}
+          fieldMetadataItem={fieldMetadataItem}
         />
       }
     />

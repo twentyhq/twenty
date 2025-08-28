@@ -3,8 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isNumber } from 'class-validator';
 import { ListResponse, type ImapFlow } from 'imapflow';
 
-import { getImapSentFolderCandidatesByRegex } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-sent-folder-candidates-by-regex.util';
-
 /**
  * Service to find sent folder using IMAP special-use flags
  *
@@ -91,7 +89,7 @@ export class ImapFindSentFolderService {
     client: ImapFlow,
     list: ListResponse[],
   ): Promise<string | null> {
-    const regexCandidateFolders = getImapSentFolderCandidatesByRegex(list);
+    const regexCandidateFolders = this.getSentFolderCandidatesByRegex(list);
 
     for (const folder of regexCandidateFolders) {
       const messageCount = await this.getFolderMessageCount(client, folder);
@@ -112,6 +110,28 @@ export class ImapFindSentFolderService {
     }
 
     return null;
+  }
+
+  private getSentFolderCandidatesByRegex(list: ListResponse[]): string[] {
+    // Comprehensive regex pattern for legacy IMAP servers
+    // Source: https://imapsync.lamiral.info/FAQ.d/FAQ.Folders_Mapping.txt
+    // Based on imapsync's regextrans2 examples (originally "Sent|Sent Messages|Gesendet")
+    // Extended with additional common localizations for broader provider/language support
+    const sentFolderPattern =
+      /^(.*\/)?(sent|sent[\s_-]?(items|mail|messages|elements)?|envoy[éê]s?|[ée]l[ée]ments[\s_-]?envoy[éê]s|gesendet|gesendete[\s_-]?elemente|enviados?|elementos[\s_-]?enviados|itens[\s_-]?enviados|posta[\s_-]?inviata|inviati|보낸편지함|\[gmail\]\/sent[\s_-]?mail)$/i;
+
+    const regexCandidateFolders = [];
+
+    for (const folder of list) {
+      if (sentFolderPattern.test(folder.path)) {
+        this.logger.debug(
+          `Found potential sent folder via pattern match: ${folder.path}`,
+        );
+        regexCandidateFolders.push(folder.path);
+      }
+    }
+
+    return regexCandidateFolders;
   }
 
   private async getFolderMessageCount(

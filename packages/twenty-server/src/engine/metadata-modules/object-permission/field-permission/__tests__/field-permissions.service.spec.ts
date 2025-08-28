@@ -77,13 +77,13 @@ describe('FieldPermissionService', () => {
       providers: [
         FieldPermissionService,
         {
-          provide: getRepositoryToken(RoleEntity),
+          provide: getRepositoryToken(RoleEntity, 'core'),
           useValue: {
             findOne: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(FieldPermissionEntity),
+          provide: getRepositoryToken(FieldPermissionEntity, 'core'),
           useValue: {
             find: jest.fn(),
             upsert: jest.fn(),
@@ -104,7 +104,7 @@ describe('FieldPermissionService', () => {
           },
         },
         {
-          provide: getRepositoryToken(FieldMetadataEntity),
+          provide: getRepositoryToken(FieldMetadataEntity, 'core'),
           useValue: {
             find: jest.fn(),
           },
@@ -114,11 +114,11 @@ describe('FieldPermissionService', () => {
 
     service = module.get<FieldPermissionService>(FieldPermissionService);
     fieldPermissionsRepository = module.get(
-      getRepositoryToken(FieldPermissionEntity),
+      getRepositoryToken(FieldPermissionEntity, 'core'),
     );
-    roleRepository = module.get(getRepositoryToken(RoleEntity));
+    roleRepository = module.get(getRepositoryToken(RoleEntity, 'core'));
     fieldMetadataRepository = module.get(
-      getRepositoryToken(FieldMetadataEntity),
+      getRepositoryToken(FieldMetadataEntity, 'core'),
     );
     workspacePermissionsCacheService = module.get(
       WorkspacePermissionsCacheService,

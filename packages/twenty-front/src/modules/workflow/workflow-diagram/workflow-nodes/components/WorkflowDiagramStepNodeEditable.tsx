@@ -47,6 +47,7 @@ export const WorkflowDiagramStepNodeEditable = ({
     <WorkflowDiagramStepNodeEditableContent
       id={id}
       data={data}
+      variant="default"
       selected={selected ?? false}
       onClick={() => {
         if (!isInRightDrawer) {

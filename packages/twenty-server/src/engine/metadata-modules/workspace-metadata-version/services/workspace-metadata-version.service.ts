@@ -16,7 +16,7 @@ export class WorkspaceMetadataVersionService {
   logger = new Logger(WorkspaceMetadataCacheService.name);
 
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
   ) {}
