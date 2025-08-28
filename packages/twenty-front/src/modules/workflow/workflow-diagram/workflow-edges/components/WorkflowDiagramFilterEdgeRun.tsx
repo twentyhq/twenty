@@ -1,18 +1,19 @@
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2Container';
-import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2VisibilityContainer';
-import { WorkflowRunDiagramBaseEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowRunDiagramBaseEdge';
-import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
+import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 import { useOpenWorkflowRunFilterInCommandMenu } from '@/workflow/workflow-diagram/hooks/useOpenWorkflowRunFilterInCommandMenu';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import {
   type WorkflowDiagramEdge,
   type WorkflowDiagramEdgeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { type WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
-import { getNodeVariantFromStepRunStatus } from '@/workflow/workflow-diagram/utils/getNodeVariantFromStepRunStatus';
-import { getWorkflowDiagramNodeSelectedColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramNodeSelectedColors';
-import { css } from '@emotion/react';
+import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
+import { WorkflowDiagramEdgeV2Container } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2Container';
+import { WorkflowDiagramEdgeV2VisibilityContainer } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeV2VisibilityContainer';
+import { WorkflowRunDiagramBaseEdge } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowRunDiagramBaseEdge';
+import { WORKFLOW_DIAGRAM_EDGE_OPTIONS_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowDiagramEdgeOptionsClickOutsideId';
+import { WorkflowStepFilterCounter } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterCounter';
+import { useFilterCounter } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useFilterCounter';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -38,16 +39,16 @@ const assertFilterEdgeDataOrThrow: (
 
 const StyledIconButtonGroup = styled(IconButtonGroup)<{
   selected?: boolean;
-  variant: WorkflowDiagramNodeVariant;
+  runStatus?: WorkflowRunStepStatus;
 }>`
   pointer-events: all;
 
-  ${({ selected, variant, theme }) => {
+  ${({ selected, runStatus, theme }) => {
     if (!selected) return '';
-    const colors = getWorkflowDiagramNodeSelectedColors(variant, theme);
+    const colors = getWorkflowDiagramColors({ runStatus, theme });
     return css`
-      background-color: ${colors.background};
-      border: 1px solid ${colors.borderColor};
+      background-color: ${colors.selected.background};
+      border: 1px solid ${colors.selected.borderColor};
     `;
   }}
 `;
@@ -67,6 +68,8 @@ export const WorkflowDiagramFilterEdgeRun = ({
   markerEnd,
 }: WorkflowDiagramFilterEdgeRunProps) => {
   assertFilterEdgeDataOrThrow(data);
+
+  const theme = useTheme();
 
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -97,6 +100,12 @@ export const WorkflowDiagramFilterEdgeRun = ({
     });
   };
 
+  const { filterCounter } = useFilterCounter({ stepId: data.stepId });
+  const { selected } = getWorkflowDiagramColors({
+    theme,
+    runStatus: data.runStatus,
+  });
+
   return (
     <>
       <WorkflowRunDiagramBaseEdge
@@ -113,6 +122,11 @@ export const WorkflowDiagramFilterEdgeRun = ({
         >
           <WorkflowDiagramEdgeV2VisibilityContainer shouldDisplay>
             <StyledConfiguredFilterContainer>
+              <WorkflowStepFilterCounter
+                backgroundColor={selected.tagBackground}
+                textColor={selected.color}
+                counter={filterCounter}
+              />
               <StyledIconButtonGroup
                 className="nodrag nopan"
                 iconButtons={[
@@ -122,7 +136,7 @@ export const WorkflowDiagramFilterEdgeRun = ({
                   },
                 ]}
                 selected={isFilterNodeSelected}
-                variant={getNodeVariantFromStepRunStatus(data.runStatus)}
+                runStatus={data.runStatus}
               />
             </StyledConfiguredFilterContainer>
           </WorkflowDiagramEdgeV2VisibilityContainer>

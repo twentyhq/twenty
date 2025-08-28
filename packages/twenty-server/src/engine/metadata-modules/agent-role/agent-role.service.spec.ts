@@ -30,21 +30,21 @@ describe('AgentRoleService', () => {
       providers: [
         AgentRoleService,
         {
-          provide: getRepositoryToken(AgentEntity, 'core'),
+          provide: getRepositoryToken(AgentEntity),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(RoleEntity, 'core'),
+          provide: getRepositoryToken(RoleEntity),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(RoleTargetsEntity, 'core'),
+          provide: getRepositoryToken(RoleTargetsEntity),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
@@ -57,13 +57,13 @@ describe('AgentRoleService', () => {
 
     service = module.get<AgentRoleService>(AgentRoleService);
     agentRepository = module.get<Repository<AgentEntity>>(
-      getRepositoryToken(AgentEntity, 'core'),
+      getRepositoryToken(AgentEntity),
     );
     roleRepository = module.get<Repository<RoleEntity>>(
-      getRepositoryToken(RoleEntity, 'core'),
+      getRepositoryToken(RoleEntity),
     );
     roleTargetsRepository = module.get<Repository<RoleTargetsEntity>>(
-      getRepositoryToken(RoleTargetsEntity, 'core'),
+      getRepositoryToken(RoleTargetsEntity),
     );
 
     // Setup test data

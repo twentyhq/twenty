@@ -22,6 +22,7 @@ describe('deleteOne', () => {
 
     beforeEach(async () => {
       const { data } = await createOneObjectMetadata({
+        expectToFail: false,
         input: {
           nameSingular: LISTING_NAME_SINGULAR,
           namePlural: LISTING_NAME_PLURAL,
@@ -33,6 +34,7 @@ describe('deleteOne', () => {
 
       listingObjectId = data.createOneObject.id;
       const { data: createdFieldData } = await createOneFieldMetadata({
+        expectToFail: false,
         input: {
           name: 'house',
           type: FieldMetadataType.TEXT,
@@ -69,6 +71,7 @@ describe('deleteOne', () => {
     });
     afterEach(async () => {
       await deleteOneObjectMetadata({
+        expectToFail: false,
         input: { idToDelete: listingObjectId },
       });
     });

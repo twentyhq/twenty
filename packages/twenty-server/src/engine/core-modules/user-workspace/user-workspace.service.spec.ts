@@ -5,7 +5,6 @@ import { type DataSource, type Repository } from 'typeorm';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { type ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
@@ -33,7 +32,6 @@ describe('UserWorkspaceService', () => {
   let service: UserWorkspaceService;
   let userWorkspaceRepository: Repository<UserWorkspace>;
   let userRepository: Repository<User>;
-  let typeORMService: TypeORMService;
   let workspaceInvitationService: WorkspaceInvitationService;
   let approvedAccessDomainService: ApprovedAccessDomainService;
   let twentyORMGlobalManager: TwentyORMGlobalManager;
@@ -46,7 +44,7 @@ describe('UserWorkspaceService', () => {
       providers: [
         UserWorkspaceService,
         {
-          provide: getRepositoryToken(UserWorkspace, 'core'),
+          provide: getRepositoryToken(UserWorkspace),
           useValue: {
             create: jest.fn(),
             save: jest.fn(),
@@ -58,13 +56,13 @@ describe('UserWorkspaceService', () => {
           },
         },
         {
-          provide: getRepositoryToken(User, 'core'),
+          provide: getRepositoryToken(User),
           useValue: {
             findOne: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(ObjectMetadataEntity, 'core'),
+          provide: getRepositoryToken(ObjectMetadataEntity),
           useValue: {
             findOneOrFail: jest.fn(),
           },
@@ -73,12 +71,6 @@ describe('UserWorkspaceService', () => {
           provide: DataSourceService,
           useValue: {
             getLastDataSourceMetadataFromWorkspaceIdOrFail: jest.fn(),
-          },
-        },
-        {
-          provide: TypeORMService,
-          useValue: {
-            getMainDataSource: jest.fn(),
           },
         },
         {
@@ -140,11 +132,8 @@ describe('UserWorkspaceService', () => {
 
     service = module.get<UserWorkspaceService>(UserWorkspaceService);
     fileService = module.get<FileService>(FileService);
-    userWorkspaceRepository = module.get(
-      getRepositoryToken(UserWorkspace, 'core'),
-    );
-    userRepository = module.get(getRepositoryToken(User, 'core'));
-    typeORMService = module.get<TypeORMService>(TypeORMService);
+    userWorkspaceRepository = module.get(getRepositoryToken(UserWorkspace));
+    userRepository = module.get(getRepositoryToken(User));
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
       WorkspaceInvitationService,
     );
@@ -348,9 +337,6 @@ describe('UserWorkspaceService', () => {
         find: jest.fn().mockResolvedValue(workspaceMember),
       };
 
-      jest
-        .spyOn(typeORMService, 'getMainDataSource')
-        .mockReturnValue(mainDataSource);
       jest
         .spyOn(mainDataSource, 'query')
         .mockResolvedValueOnce(undefined)

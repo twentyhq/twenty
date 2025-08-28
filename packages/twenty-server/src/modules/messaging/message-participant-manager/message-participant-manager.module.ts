@@ -20,10 +20,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [FeatureFlag, Workspace, ObjectMetadataEntity],
-      'core',
-    ),
+    TypeOrmModule.forFeature([FeatureFlag, Workspace, ObjectMetadataEntity]),
     AuditModule,
     ContactCreationManagerModule,
     WorkspaceDataSourceModule,

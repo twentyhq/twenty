@@ -6,15 +6,16 @@ import { type FieldOutputSchema } from 'src/modules/workflow/workflow-builder/wo
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-object-record';
 import { generateFakeRecordField } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/generate-fake-record-field';
 import { shouldGenerateFieldFakeValue } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/should-generate-field-fake-value';
-
-const MAXIMUM_DEPTH = 1;
+import { camelToTitleCase } from 'src/utils/camel-to-title-case';
 
 export const generateObjectRecordFields = ({
   objectMetadataInfo,
   depth = 0,
+  maxDepth = 1,
 }: {
   objectMetadataInfo: ObjectMetadataInfo;
   depth?: number;
+  maxDepth?: number;
 }): Record<string, FieldOutputSchema> => {
   const objectMetadata = objectMetadataInfo.objectMetadataItemWithFieldsMaps;
 
@@ -35,10 +36,11 @@ export const generateObjectRecordFields = ({
         return acc;
       }
 
-      if (
-        depth < MAXIMUM_DEPTH &&
-        isDefined(field.relationTargetObjectMetadataId)
-      ) {
+      if (!isDefined(field.relationTargetObjectMetadataId)) {
+        return acc;
+      }
+
+      if (depth < maxDepth) {
         const relationTargetObjectMetadata =
           objectMetadataInfo.objectMetadataMaps.byId[
             field.relationTargetObjectMetadataId
@@ -62,6 +64,16 @@ export const generateObjectRecordFields = ({
             depth: depth + 1,
           }),
         };
+      } else if (depth === maxDepth) {
+        const relationIdFieldName = `${field.name}Id`;
+        const relationIdFieldLabel = camelToTitleCase(relationIdFieldName);
+
+        acc[relationIdFieldName] = generateFakeRecordField({
+          type: FieldMetadataType.UUID,
+          label: relationIdFieldLabel,
+          icon: field.icon ?? undefined,
+          fieldMetadataId: field.id,
+        });
       }
 
       return acc;

@@ -93,18 +93,14 @@ export class FieldMetadataResolver {
         workspaceId,
       );
 
-    if (isWorkspaceMigrationV2Enabled) {
-      try {
+    try {
+      if (isWorkspaceMigrationV2Enabled) {
         return await this.fieldMetadataServiceV2.updateOne({
           updateFieldInput: { ...input.update, id: input.id },
           workspaceId,
         });
-      } catch (error) {
-        fieldMetadataGraphqlApiExceptionHandler(error);
       }
-    }
 
-    try {
       const updatedInput = (await this.beforeUpdateOneField.run(input, {
         workspaceId,
         locale: context.req.locale,

@@ -23,11 +23,11 @@ const TRIAL_PERIOD_ALERT_TITLE = 'TRIAL_PERIOD_ALERT'; // to set in Stripe confi
 export class BillingWebhookAlertService {
   protected readonly logger = new Logger(BillingWebhookAlertService.name);
   constructor(
-    @InjectRepository(BillingSubscription, 'core')
+    @InjectRepository(BillingSubscription)
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
-    @InjectRepository(BillingProduct, 'core')
+    @InjectRepository(BillingProduct)
     private readonly billingProductRepository: Repository<BillingProduct>,
-    @InjectRepository(BillingSubscriptionItem, 'core')
+    @InjectRepository(BillingSubscriptionItem)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
   ) {}
 

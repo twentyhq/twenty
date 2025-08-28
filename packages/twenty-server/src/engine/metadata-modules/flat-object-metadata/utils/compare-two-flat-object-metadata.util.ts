@@ -1,7 +1,7 @@
 import omit from 'lodash.omit';
 import diff from 'microdiff';
 import { type FromTo } from 'twenty-shared/types';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, parseJson } from 'twenty-shared/utils';
 
 import { FLAT_OBJECT_METADATA_JSONB_PROPERTIES } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-jsonb-properties.constant';
 import { FLAT_OBJECT_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-properties-to-compare.constant';
@@ -63,8 +63,8 @@ export const compareTwoFlatObjectMetadata = ({
 
         if (isJsonb) {
           return {
-            from: isDefined(oldValue) ? JSON.parse(oldValue) : oldValue,
-            to: isDefined(value) ? JSON.parse(value) : value,
+            from: parseJson(oldValue),
+            to: parseJson(value),
             property,
           };
         }

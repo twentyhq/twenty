@@ -19,6 +19,7 @@ import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
@@ -40,45 +41,45 @@ describe('WorkspaceManagerService', () => {
         WorkspaceMigrationService,
         DataSourceService,
         {
-          provide: getRepositoryToken(Workspace, 'core'),
+          provide: getRepositoryToken(Workspace),
           useValue: {},
         },
         {
-          provide: getRepositoryToken(UserWorkspace, 'core'),
+          provide: getRepositoryToken(UserWorkspace),
           useValue: {},
         },
         {
-          provide: getRepositoryToken(FieldMetadataEntity, 'core'),
+          provide: getRepositoryToken(FieldMetadataEntity),
           useValue: {
             delete: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(ObjectMetadataEntity, 'core'),
+          provide: getRepositoryToken(ObjectMetadataEntity),
           useValue: {
             delete: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(WorkspaceMigrationEntity, 'core'),
+          provide: getRepositoryToken(WorkspaceMigrationEntity),
           useValue: {
             delete: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(DataSourceEntity, 'core'),
+          provide: getRepositoryToken(DataSourceEntity),
           useValue: {
             delete: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(RoleTargetsEntity, 'core'),
+          provide: getRepositoryToken(RoleTargetsEntity),
           useValue: {
             delete: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(RoleEntity, 'core'),
+          provide: getRepositoryToken(RoleEntity),
           useValue: {
             delete: jest.fn(),
           },
@@ -124,6 +125,14 @@ describe('WorkspaceManagerService', () => {
               .mockResolvedValue({ id: 'mock-agent-id' }),
           },
         },
+        {
+          provide: TwentyORMGlobalManager,
+          useValue: {
+            getDataSourceForWorkspace: jest.fn().mockResolvedValue({
+              transaction: jest.fn(),
+            }),
+          },
+        },
       ],
     }).compile();
 
@@ -133,21 +142,21 @@ describe('WorkspaceManagerService', () => {
     );
     workspaceMigrationRepository = module.get<
       Repository<WorkspaceMigrationEntity>
-    >(getRepositoryToken(WorkspaceMigrationEntity, 'core'));
+    >(getRepositoryToken(WorkspaceMigrationEntity));
     dataSourceRepository = module.get<Repository<DataSourceEntity>>(
-      getRepositoryToken(DataSourceEntity, 'core'),
+      getRepositoryToken(DataSourceEntity),
     );
     workspaceFieldMetadataRepository = module.get<
       Repository<FieldMetadataEntity>
-    >(getRepositoryToken(FieldMetadataEntity, 'core'));
+    >(getRepositoryToken(FieldMetadataEntity));
     workspaceDataSourceService = module.get<WorkspaceDataSourceService>(
       WorkspaceDataSourceService,
     );
     roleTargetsRepository = module.get<Repository<RoleTargetsEntity>>(
-      getRepositoryToken(RoleTargetsEntity, 'core'),
+      getRepositoryToken(RoleTargetsEntity),
     );
     roleRepository = module.get<Repository<RoleEntity>>(
-      getRepositoryToken(RoleEntity, 'core'),
+      getRepositoryToken(RoleEntity),
     );
   });
 

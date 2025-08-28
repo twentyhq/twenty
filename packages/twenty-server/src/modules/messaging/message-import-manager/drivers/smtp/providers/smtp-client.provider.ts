@@ -22,7 +22,7 @@ export class SmtpClientProvider {
       host: smtpParams.host,
       port: smtpParams.port,
       auth: {
-        user: connectedAccount.handle,
+        user: smtpParams.username ?? connectedAccount.handle,
         pass: smtpParams.password,
       },
       tls: {
