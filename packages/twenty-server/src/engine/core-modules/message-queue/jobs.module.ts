@@ -33,10 +33,12 @@ import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { WebhookJobModule } from 'src/engine/core-modules/webhook/jobs/webhook-job.module';
 import { WorkflowModule } from 'src/modules/workflow/workflow.module';
+import { TriggerModule } from 'src/engine/metadata-modules/trigger/trigger.module';
+import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace, BillingSubscription], 'core'),
+    TypeOrmModule.forFeature([Workspace, BillingSubscription]),
     DataSourceModule,
     ObjectMetadataModule,
     TypeORMModule,
@@ -60,6 +62,8 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     WorkspaceCleanerModule,
     SubscriptionsModule,
     AuditJobModule,
+    TriggerModule,
+    ServerlessFunctionModule,
   ],
   providers: [
     CleanSuspendedWorkspacesJob,

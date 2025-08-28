@@ -36,7 +36,6 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
 import { ViewModule } from 'src/modules/view/view.module';
-import { WorkspaceMigrationBuilderExceptionV2Interceptor } from 'src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2.interceptor';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
@@ -48,10 +47,10 @@ import { FieldMetadataService } from './services/field-metadata.service';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature(
-          [FieldMetadataEntity, ObjectMetadataEntity],
-          'core',
-        ),
+        NestjsQueryTypeOrmModule.forFeature([
+          FieldMetadataEntity,
+          ObjectMetadataEntity,
+        ]),
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,
         WorkspaceMetadataVersionModule,
@@ -101,10 +100,7 @@ import { FieldMetadataService } from './services/field-metadata.service';
           },
           delete: { disabled: true },
           guards: [WorkspaceAuthGuard],
-          interceptors: [
-            WorkspaceMigrationBuilderExceptionV2Interceptor,
-            FieldMetadataGraphqlApiExceptionInterceptor,
-          ],
+          interceptors: [FieldMetadataGraphqlApiExceptionInterceptor],
         },
       ],
     }),

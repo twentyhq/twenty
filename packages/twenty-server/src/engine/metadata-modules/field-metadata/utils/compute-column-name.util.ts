@@ -61,7 +61,5 @@ export function computeCompositeColumnName<T extends FieldMetadataType>(
     );
   }
 
-  return `${fieldMetadataOrFieldName.name}${pascalCase(
-    compositeProperty.name,
-  )}`;
+  return generateName(fieldMetadataOrFieldName.name);
 }

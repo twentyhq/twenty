@@ -68,7 +68,7 @@ describe('filterOutputSchema', () => {
     });
   });
 
-  describe('shouldDisplayRecordObjects only (false, true)', () => {
+  describe('shouldDisplayRecordObjects and related fields only (false, true)', () => {
     describe('record schema', () => {
       it('should keep record schema with object and filter compatible fields', () => {
         const inputSchema = createRecordSchema('person', {
@@ -78,9 +78,11 @@ describe('filterOutputSchema', () => {
             isLeaf: false,
             value: createRecordSchema('employee'),
           },
+          domain: { isLeaf: true, type: FieldMetadataType.TEXT },
         });
 
         const expectedSchema = createRecordSchema('person', {
+          id: { isLeaf: true, type: FieldMetadataType.UUID },
           name: { isLeaf: true, value: 'string' },
           employee: {
             isLeaf: false,

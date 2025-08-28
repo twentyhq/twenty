@@ -26,7 +26,7 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     HttpModule,
     ObjectMetadataRepositoryModule.forFeature([BlocklistWorkspaceEntity]),
     MessagingCommonModule,
-    TypeOrmModule.forFeature([FeatureFlag], 'core'),
+    TypeOrmModule.forFeature([FeatureFlag]),
     EmailAliasManagerModule,
     FeatureFlagModule,
     WorkspaceDataSourceModule,

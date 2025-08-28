@@ -50,10 +50,11 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingIMAPDriverModule,
     MessagingSmtpDriverModule,
     MessagingCommonModule,
-    TypeOrmModule.forFeature(
-      [Workspace, DataSourceEntity, ObjectMetadataEntity],
-      'core',
-    ),
+    TypeOrmModule.forFeature([
+      Workspace,
+      DataSourceEntity,
+      ObjectMetadataEntity,
+    ]),
     EmailAliasManagerModule,
     FeatureFlagModule,
     MessageParticipantManagerModule,

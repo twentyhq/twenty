@@ -12,10 +12,7 @@ import { WorkflowVersionStatusListener } from 'src/modules/workflow/workflow-sta
   imports: [
     ServerlessFunctionModule,
     WorkspaceEventEmitterModule,
-    TypeOrmModule.forFeature(
-      [ObjectMetadataEntity, ServerlessFunctionEntity],
-      'core',
-    ),
+    TypeOrmModule.forFeature([ObjectMetadataEntity, ServerlessFunctionEntity]),
   ],
   providers: [WorkflowStatusesUpdateJob, WorkflowVersionStatusListener],
 })

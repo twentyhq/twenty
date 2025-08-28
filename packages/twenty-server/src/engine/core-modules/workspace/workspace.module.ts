@@ -35,7 +35,7 @@ import { WorkspaceService } from './services/workspace.service';
 @Module({
   imports: [
     TypeORMModule,
-    TypeOrmModule.forFeature([BillingSubscription], 'core'),
+    TypeOrmModule.forFeature([BillingSubscription]),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         BillingModule,
@@ -43,10 +43,7 @@ import { WorkspaceService } from './services/workspace.service';
         TokenModule,
         FileUploadModule,
         WorkspaceMetadataCacheModule,
-        NestjsQueryTypeOrmModule.forFeature(
-          [User, Workspace, UserWorkspace],
-          'core',
-        ),
+        NestjsQueryTypeOrmModule.forFeature([User, Workspace, UserWorkspace]),
         UserWorkspaceModule,
         WorkspaceManagerModule,
         FeatureFlagModule,

@@ -13,10 +13,10 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 @Module({
   imports: [
     JwtModule,
-    TypeOrmModule.forFeature([RemoteServerEntity], 'core'),
+    TypeOrmModule.forFeature([RemoteServerEntity]),
     RemoteTableModule,
     WorkspaceDataSourceModule,
-    TypeOrmModule.forFeature([FeatureFlag], 'core'),
+    TypeOrmModule.forFeature([FeatureFlag]),
   ],
   providers: [
     RemoteServerService,

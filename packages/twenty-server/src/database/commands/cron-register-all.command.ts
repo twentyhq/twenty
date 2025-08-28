@@ -15,6 +15,7 @@ import { WorkflowCleanWorkflowRunsCommand } from 'src/modules/workflow/workflow-
 import { WorkflowHandleStaledRunsCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-handle-staled-runs.cron.command';
 import { WorkflowRunEnqueueCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-run-enqueue.cron.command';
 import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
+import { CronTriggerCronCommand } from 'src/engine/metadata-modules/trigger/crons/commands/cron-trigger.cron.command';
 
 @Command({
   name: 'cron:register:all',
@@ -37,6 +38,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly workflowRunEnqueueCronCommand: WorkflowRunEnqueueCronCommand,
     private readonly workflowHandleStaledRunsCronCommand: WorkflowHandleStaledRunsCronCommand,
     private readonly workflowCleanWorkflowRunsCronCommand: WorkflowCleanWorkflowRunsCommand,
+    private readonly cronTriggerCronCommand: CronTriggerCronCommand,
   ) {
     super();
   }
@@ -96,6 +98,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'WorkflowCleanWorkflowRuns',
         command: this.workflowCleanWorkflowRunsCronCommand,
+      },
+      {
+        name: 'CronTrigger',
+        command: this.cronTriggerCronCommand,
       },
     ];
 

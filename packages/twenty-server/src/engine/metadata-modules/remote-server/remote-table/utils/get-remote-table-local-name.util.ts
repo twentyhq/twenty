@@ -17,11 +17,10 @@ type RemoteTableLocalName = {
 const isNameAvailable = async (
   tableName: string,
   workspaceSchemaName: string,
-  workspaceDataSource: DataSource,
+  coreDataSource: DataSource,
 ) => {
-  // TO DO workspaceDataSource.query method is not allowed, this will throw
   const numberOfTablesWithSameName = +(
-    await workspaceDataSource.query(
+    await coreDataSource.query(
       `SELECT count(table_name) FROM information_schema.tables WHERE table_name LIKE '${tableName}' AND table_schema IN ('core', '${workspaceSchemaName}')`,
     )
   )[0].count;
@@ -32,13 +31,13 @@ const isNameAvailable = async (
 export const getRemoteTableLocalName = async (
   distantTableName: string,
   workspaceSchemaName: string,
-  workspaceDataSource: DataSource,
+  coreDataSource: DataSource,
 ): Promise<RemoteTableLocalName> => {
   const baseName = singular(camelCase(distantTableName));
   const isBaseNameValid = await isNameAvailable(
     baseName,
     workspaceSchemaName,
-    workspaceDataSource,
+    coreDataSource,
   );
 
   if (isBaseNameValid) {
@@ -50,7 +49,7 @@ export const getRemoteTableLocalName = async (
     const isNameWithSuffixValid = await isNameAvailable(
       name,
       workspaceSchemaName,
-      workspaceDataSource,
+      coreDataSource,
     );
 
     if (isNameWithSuffixValid) {

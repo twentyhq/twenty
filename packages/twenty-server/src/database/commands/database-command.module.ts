@@ -22,13 +22,15 @@ import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/folder-s
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
+import { TriggerModule } from 'src/engine/metadata-modules/trigger/trigger.module';
 
 import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
 
 @Module({
   imports: [
     UpgradeVersionCommandModule,
-    TypeOrmModule.forFeature([Workspace], 'core'),
+    TypeOrmModule.forFeature([Workspace]),
+    // Cron command dependencies
     MessagingImportManagerModule,
     MessagingFolderSyncManagerModule,
     CalendarEventImportManagerModule,
@@ -46,6 +48,7 @@ import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
     WorkspaceCacheStorageModule,
     ApiKeyModule,
     FeatureFlagModule,
+    TriggerModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,

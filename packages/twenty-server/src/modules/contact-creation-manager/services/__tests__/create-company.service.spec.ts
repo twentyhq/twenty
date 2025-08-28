@@ -103,7 +103,7 @@ describe('CreateCompanyService', () => {
           },
         },
         {
-          provide: getRepositoryToken(ObjectMetadataEntity, 'core'),
+          provide: getRepositoryToken(ObjectMetadataEntity),
           useValue: {
             findOne: jest.fn().mockResolvedValue({
               id: 'mock-object-metadata-id',

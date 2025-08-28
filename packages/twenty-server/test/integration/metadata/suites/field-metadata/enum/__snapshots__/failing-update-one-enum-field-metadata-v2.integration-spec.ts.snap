@@ -1,0 +1,2720 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with an invalid default value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value for multi-select must be an array got invalid",
+                "userFriendlyMessage": "Multi-select field default value must be an array",
+                "value": "invalid",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with an unknown default value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value for multi-select must be an array got 'OPTION_424242'",
+                "userFriendlyMessage": "Multi-select field default value must be an array",
+                "value": "'OPTION_424242'",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with comma in option label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Label must not contain a comma",
+                "value": "Option ,1",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with duplicated option ids 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Duplicated option id",
+                "value": [
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 1",
+                    "position": 1,
+                    "value": "OPTION_1",
+                  },
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 2",
+                    "position": 2,
+                    "value": "OPTION_2",
+                  },
+                ],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with duplicated option positions 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Duplicated option position",
+                "value": [
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 1",
+                    "position": 1,
+                    "value": "OPTION_1",
+                  },
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 2",
+                    "position": 1,
+                    "value": "OPTION_2",
+                  },
+                ],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with duplicated option values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Duplicated option value",
+                "value": [
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 1",
+                    "position": 0,
+                    "value": "OPTION_1",
+                  },
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 1",
+                    "position": 1,
+                    "value": "OPTION_1",
+                  },
+                ],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with duplicated trimmed option values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Duplicated option value",
+                "value": [
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 1",
+                    "position": 1,
+                    "value": "OPTION_1",
+                  },
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 2",
+                    "position": 2,
+                    "value": "OPTION_1",
+                  },
+                ],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with empty multi-select default values array 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "If defined default value must contain at least one value",
+                "value": [],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with empty options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Options are required for enum fields",
+                "userFriendlyMessage": "Options are required for enum fields",
+                "value": [],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with empty string defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value should be as quoted string",
+                "value": "",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "" must be one of the option values",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with empty string id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with empty string label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label must be a string of at least one character",
+                "userFriendlyMessage": "Option label format not supported",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with empty string value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value must be a string of at least one character",
+                "userFriendlyMessage": "Option value format not supported",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with invalid multi-select default value format 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value should be as quoted string",
+                "value": "invalid",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "invalid" must be one of the option values",
+                "value": "invalid",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value should be as quoted string",
+                "value": "format",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "format" must be one of the option values",
+                "value": "format",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with invalid option id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": "not a uuid",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with invalid option value format 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
+                "value": "Option 1 and some other things, /",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with non stringified array default value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value for multi-select must be an array got Option_1",
+                "userFriendlyMessage": "Multi-select field default value must be an array",
+                "value": "Option_1",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with not a string defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value for select must be a string got 22222",
+                "userFriendlyMessage": "Default value must be a string",
+                "value": 22222,
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with not a string id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": 22222,
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with not a string label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label must be a string of at least one character",
+                "userFriendlyMessage": "Option label format not supported",
+                "value": 22222,
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with not a string value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value must be a string of at least one character",
+                "userFriendlyMessage": "Option value format not supported",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with null id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is required",
+                "value": null,
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": null,
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with null label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label is required",
+                "userFriendlyMessage": "Option label is required",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with null value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value is required",
+                "userFriendlyMessage": "Option value is required",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with only white spaces defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value should be as quoted string",
+                "value": "",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "" must be one of the option values",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with only white spaces id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with only white spaces label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label must be a string of at least one character",
+                "userFriendlyMessage": "Option label format not supported",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with only white spaces value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value must be a string of at least one character",
+                "userFriendlyMessage": "Option value format not supported",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with too long defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value should be as quoted string",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" must be one of the option values",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with too long id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with too long label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label exceeds 63 characters",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with too long value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value exceeds 63 characters",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Value must be in UPPER_CASE and follow snake_case "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with undefined option label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label is required",
+                "userFriendlyMessage": "Option label is required",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with undefined option value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value is required",
+                "userFriendlyMessage": "Option value is required",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with unknown default value and no options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "'OPTION_42'" must be one of the option values",
+                "value": "'OPTION_42'",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata MULTI_SELECT tests suite v2 Update should fail with unknown multi-select default values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "'UNKNOWN_OPTION'" must be one of the option values",
+                "value": "'UNKNOWN_OPTION'",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with an invalid default value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value should be as quoted string",
+                "value": "invalid",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "invalid" must be one of the option values",
+                "value": "invalid",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with an unknown default value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "'OPTION_424242'" must be one of the option values",
+                "value": "'OPTION_424242'",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with comma in option label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Label must not contain a comma",
+                "value": "Option ,1",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with duplicated option ids 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Duplicated option id",
+                "value": [
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 1",
+                    "position": 1,
+                    "value": "OPTION_1",
+                  },
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 2",
+                    "position": 2,
+                    "value": "OPTION_2",
+                  },
+                ],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with duplicated option positions 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Duplicated option position",
+                "value": [
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 1",
+                    "position": 1,
+                    "value": "OPTION_1",
+                  },
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 2",
+                    "position": 1,
+                    "value": "OPTION_2",
+                  },
+                ],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with duplicated option values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Duplicated option value",
+                "value": [
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 1",
+                    "position": 0,
+                    "value": "OPTION_1",
+                  },
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 1",
+                    "position": 1,
+                    "value": "OPTION_1",
+                  },
+                ],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with duplicated trimmed option values 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Duplicated option value",
+                "value": [
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 1",
+                    "position": 1,
+                    "value": "OPTION_1",
+                  },
+                  {
+                    "color": "green",
+                    "id": Any<String>,
+                    "label": "Option 2",
+                    "position": 2,
+                    "value": "OPTION_1",
+                  },
+                ],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with empty options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Options are required for enum fields",
+                "userFriendlyMessage": "Options are required for enum fields",
+                "value": [],
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with empty string defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value should be as quoted string",
+                "value": "",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "" must be one of the option values",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with empty string id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with empty string label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label must be a string of at least one character",
+                "userFriendlyMessage": "Option label format not supported",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with empty string value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value must be a string of at least one character",
+                "userFriendlyMessage": "Option value format not supported",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with invalid option id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": "not a uuid",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with invalid option value format 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Value must be in UPPER_CASE and follow snake_case "Option 1 and some other things, /"",
+                "value": "Option 1 and some other things, /",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with not a string defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value for select must be a string got 22222",
+                "userFriendlyMessage": "Default value must be a string",
+                "value": 22222,
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with not a string id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": 22222,
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with not a string label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label must be a string of at least one character",
+                "userFriendlyMessage": "Option label format not supported",
+                "value": 22222,
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with not a string value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value must be a string of at least one character",
+                "userFriendlyMessage": "Option value format not supported",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with null id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is required",
+                "value": null,
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": null,
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with null label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label is required",
+                "userFriendlyMessage": "Option label is required",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with null value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value is required",
+                "userFriendlyMessage": "Option value is required",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with only white spaces defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value should be as quoted string",
+                "value": "",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "" must be one of the option values",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with only white spaces id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with only white spaces label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label must be a string of at least one character",
+                "userFriendlyMessage": "Option label format not supported",
+                "value": "",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with only white spaces value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value must be a string of at least one character",
+                "userFriendlyMessage": "Option value format not supported",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with too long defaultValue 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value should be as quoted string",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" must be one of the option values",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with too long id 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option id is invalid",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with too long label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label exceeds 63 characters",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with too long value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value exceeds 63 characters",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Value must be in UPPER_CASE and follow snake_case "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"",
+                "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with undefined option label 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option label is required",
+                "userFriendlyMessage": "Option label is required",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with undefined option value 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Option value is required",
+                "userFriendlyMessage": "Option value is required",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;
+
+exports[`Failing update field metadata SELECT tests suite v2 Update should fail with unknown default value and no options 1`] = `
+[
+  {
+    "extensions": {
+      "code": "BAD_USER_INPUT",
+      "errors": {
+        "fieldMetadata": [
+          {
+            "errors": [
+              {
+                "code": "INVALID_FIELD_INPUT",
+                "message": "Default value "'OPTION_42'" must be one of the option values",
+                "value": "'OPTION_42'",
+              },
+            ],
+            "id": Any<String>,
+            "name": "testField",
+            "objectMetadataId": Any<String>,
+            "operation": "update_field",
+          },
+        ],
+        "objectMetadata": [],
+      },
+      "message": "Validation failed for 0 object(s) and 1 field(s)",
+      "summary": {
+        "invalidFields": 1,
+        "invalidObjects": 0,
+        "totalErrors": 1,
+      },
+      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+    },
+    "message": "Multiple validation errors occurred while updating field",
+    "name": "GraphQLError",
+  },
+]
+`;

@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 
 import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -20,11 +20,11 @@ export const validateFlatObjectMetadataLabel = ({
   const validators: FlatMetadataValidator<string>[] = [
     {
       validator: (label) => beneathDatabaseIdentifierMinimumLength(label),
-      message: t`Object label is too short`,
+      message: msg`Object label is too short`,
     },
     {
       validator: (label) => exceedsDatabaseIdentifierMaximumLength(label),
-      message: t`Object label is too long`,
+      message: msg`Object label is too long`,
     },
   ];
 
@@ -43,8 +43,8 @@ export const validateFlatObjectMetadataLabel = ({
   if (labelsAreIdentical) {
     errors.push({
       code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-      userFriendlyMessage: `The singular and plural labels cannot be the same for an object`,
-      message: t`The singular and plural labels cannot be the same for an object`,
+      message: `The singular and plural labels cannot be the same for an object`,
+      userFriendlyMessage: t`The singular and plural labels cannot be the same for an object`,
       value: labelSingular,
     });
   }

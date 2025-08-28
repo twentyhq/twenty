@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Repository } from 'typeorm';
 
-import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
 import {
   ViewGroupException,
   ViewGroupExceptionCode,
@@ -15,7 +15,7 @@ import { ViewGroupService } from 'src/engine/core-modules/view/services/view-gro
 
 describe('ViewGroupService', () => {
   let viewGroupService: ViewGroupService;
-  let viewGroupRepository: Repository<ViewGroup>;
+  let viewGroupRepository: Repository<ViewGroupEntity>;
 
   const mockViewGroup = {
     id: 'view-group-id',
@@ -28,14 +28,14 @@ describe('ViewGroupService', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     deletedAt: null,
-  } as ViewGroup;
+  } as ViewGroupEntity;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ViewGroupService,
         {
-          provide: getRepositoryToken(ViewGroup, 'core'),
+          provide: getRepositoryToken(ViewGroupEntity),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -49,8 +49,8 @@ describe('ViewGroupService', () => {
     }).compile();
 
     viewGroupService = module.get<ViewGroupService>(ViewGroupService);
-    viewGroupRepository = module.get<Repository<ViewGroup>>(
-      getRepositoryToken(ViewGroup, 'core'),
+    viewGroupRepository = module.get<Repository<ViewGroupEntity>>(
+      getRepositoryToken(ViewGroupEntity),
     );
   });
 

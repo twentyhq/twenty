@@ -1,19 +1,18 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
-import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
-import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
-import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { WorkflowDropdownStepOutputItems } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowDropdownStepOutputItems';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
-import { getViewFilterOperands } from '@/workflow/workflow-steps/workflow-actions/filter-action/utils/getStepFilterOperands';
-import { WorkflowVariablesDropdown } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdown';
+import { WorkflowVariablesDropdownWorkflowStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownWorkflowStepItems';
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
+import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
+
+import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
-import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
+import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useContext, useState } from 'react';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
@@ -34,139 +33,76 @@ export const WorkflowStepFilterFieldSelect = ({
   stepFilter,
 }: WorkflowStepFilterFieldSelectProps) => {
   const { readonly } = useContext(WorkflowStepFilterContext);
-  const shouldDisplayRecordFields = true;
-  const shouldDisplayRecordObjects = true;
-
-  const { upsertStepFilterSettings } = useUpsertStepFilterSettings();
-
   const { t } = useLingui();
-  const workflowVersionId = useWorkflowVersionIdOrThrow();
+  const theme = useTheme();
+  const { closeDropdown } = useCloseDropdown();
+  const { getIcon } = useIcons();
+
+  const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
+    shouldDisplayRecordFields: true,
+    shouldDisplayRecordObjects: true,
+    fieldTypesToExclude: NON_SELECTABLE_FIELD_TYPES,
+  });
+  const noAvailableVariables = availableVariablesInWorkflowStep.length === 0;
+
+  const initialStep =
+    availableVariablesInWorkflowStep.length === 1
+      ? availableVariablesInWorkflowStep[0]
+      : undefined;
+
+  const [selectedStep, setSelectedStep] = useState<
+    StepOutputSchema | undefined
+  >(initialStep);
 
   const stepId = extractRawVariableNamePart({
     rawVariableName: stepFilter.stepOutputKey,
     part: 'stepId',
   });
 
-  const stepsOutputSchema = useRecoilValue(
-    stepsOutputSchemaFamilySelector({
-      workflowVersionId,
-      stepIds: [stepId],
-    }),
-  );
-
-  const { getIcon } = useIcons();
+  const { variableLabel } = useSearchVariable({
+    stepId,
+    rawVariableName: stepFilter.stepOutputKey,
+    isFullRecord: stepFilter.isFullRecord ?? false,
+  });
 
   const {
     fieldMetadataItem: filterFieldMetadataItem,
     objectMetadataItem: filterObjectMetadataItem,
   } = useFieldMetadataItemById(stepFilter.fieldMetadataId ?? '');
 
-  const { getFieldMetadataItemByIdOrThrow } =
-    useGetFieldMetadataItemByIdOrThrow();
+  const dropdownId = `step-filter-field-${stepFilter.id}`;
 
-  const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
-    shouldDisplayRecordFields,
-    shouldDisplayRecordObjects,
-  });
+  const handleStepSelect = (stepId: string) => {
+    setSelectedStep(
+      availableVariablesInWorkflowStep.find((step) => step.id === stepId),
+    );
+  };
 
-  const noAvailableVariables = availableVariablesInWorkflowStep.length === 0;
+  const handleSubItemSelect = () => {
+    setSelectedStep(initialStep);
+    closeDropdown(dropdownId);
+  };
 
-  const handleChange = useRecoilCallback(
-    ({ snapshot }) =>
-      (variableName: string) => {
-        const stepId = extractRawVariableNamePart({
-          rawVariableName: variableName,
-          part: 'stepId',
-        });
-        const [currentStepOutputSchema] = snapshot
-          .getLoadable(
-            stepsOutputSchemaFamilySelector({
-              workflowVersionId,
-              stepIds: [stepId],
-            }),
-          )
-          .getValue();
-
-        const {
-          variableLabel,
-          variableType,
-          fieldMetadataId,
-          compositeFieldSubFieldName,
-        } = searchVariableThroughOutputSchema({
-          stepOutputSchema: currentStepOutputSchema,
-          rawVariableName: variableName,
-          isFullRecord: false,
-        });
-
-        const {
-          fieldMetadataItem: filterFieldMetadataItem,
-          objectMetadataItem: filterObjectMetadataItem,
-        } = isDefined(fieldMetadataId)
-          ? getFieldMetadataItemByIdOrThrow(fieldMetadataId)
-          : { fieldMetadataItem: undefined, objectMetadataItem: undefined };
-
-        const filterType = isDefined(fieldMetadataId)
-          ? (filterFieldMetadataItem?.type ?? 'unknown')
-          : variableType;
-
-        const isFullRecord =
-          filterFieldMetadataItem?.name === 'id' &&
-          isDefined(filterObjectMetadataItem?.labelSingular);
-
-        upsertStepFilterSettings({
-          stepFilterToUpsert: {
-            ...stepFilter,
-            stepOutputKey: variableName,
-            displayValue: isFullRecord
-              ? filterObjectMetadataItem.labelSingular
-              : (variableLabel ?? ''),
-            type: filterType ?? 'unknown',
-            value: '',
-            fieldMetadataId,
-            compositeFieldSubFieldName,
-            operand: getViewFilterOperands({
-              filterType,
-              subFieldName: compositeFieldSubFieldName,
-            })?.[0],
-          },
-        });
-      },
-    [
-      workflowVersionId,
-      getFieldMetadataItemByIdOrThrow,
-      upsertStepFilterSettings,
-      stepFilter,
-    ],
-  );
-
-  if (!isDefined(stepId)) {
-    return null;
-  }
-
-  const isFullRecord =
-    filterFieldMetadataItem?.name === 'id' &&
-    isDefined(filterObjectMetadataItem?.labelSingular);
-
-  const { variableLabel } = searchVariableThroughOutputSchema({
-    stepOutputSchema: stepsOutputSchema?.[0],
-    rawVariableName: stepFilter.stepOutputKey,
-    isFullRecord,
-  });
+  const handleBack = () => {
+    setSelectedStep(undefined);
+  };
 
   const isSelectedFieldNotFound = !isDefined(variableLabel);
   const label = isSelectedFieldNotFound
     ? t`Select a field from a previous step`
     : variableLabel;
 
-  const icon = isFullRecord
+  const icon = stepFilter.isFullRecord
     ? getIcon(filterObjectMetadataItem?.icon)
     : filterFieldMetadataItem?.icon
       ? getIcon(filterFieldMetadataItem.icon)
       : undefined;
 
-  const dropdownId = `step-filter-field-${stepFilter.id}`;
+  if (readonly || noAvailableVariables) {
+    const disabledLabel = noAvailableVariables
+      ? t`No available fields to select`
+      : label;
 
-  if (noAvailableVariables) {
     return (
       <Dropdown
         dropdownId={dropdownId}
@@ -174,25 +110,7 @@ export const WorkflowStepFilterFieldSelect = ({
           <SelectControl
             selectedOption={{
               value: stepFilter.stepOutputKey,
-              label: t`No available fields to select`,
-            }}
-            isDisabled={true}
-          />
-        }
-        dropdownComponents={[]}
-      />
-    );
-  }
-
-  if (readonly === true) {
-    return (
-      <Dropdown
-        dropdownId={dropdownId}
-        clickableComponent={
-          <SelectControl
-            selectedOption={{
-              value: stepFilter.stepOutputKey,
-              label,
+              label: disabledLabel,
               Icon: icon,
             }}
             isDisabled={true}
@@ -204,25 +122,40 @@ export const WorkflowStepFilterFieldSelect = ({
   }
 
   return (
-    <>
-      <WorkflowVariablesDropdown
-        instanceId={dropdownId}
-        onVariableSelect={handleChange}
-        clickableComponent={
-          <SelectControl
-            selectedOption={{
-              label,
-              value: stepFilter.stepOutputKey,
-              Icon: icon,
-            }}
-            textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
+    <Dropdown
+      dropdownId={dropdownId}
+      clickableComponent={
+        <SelectControl
+          selectedOption={{
+            label,
+            value: stepFilter.stepOutputKey,
+            Icon: icon,
+          }}
+          textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
+          isDisabled={readonly}
+        />
+      }
+      dropdownComponents={
+        !isDefined(selectedStep) ? (
+          <WorkflowVariablesDropdownWorkflowStepItems
+            dropdownId={dropdownId}
+            steps={availableVariablesInWorkflowStep}
+            onSelect={handleStepSelect}
           />
-        }
-        shouldDisplayRecordFields={shouldDisplayRecordFields}
-        shouldDisplayRecordObjects={shouldDisplayRecordObjects}
-        shouldEnableSelectRelationObject={true}
-        fieldTypesToExclude={NON_SELECTABLE_FIELD_TYPES}
-      />
-    </>
+        ) : (
+          <WorkflowDropdownStepOutputItems
+            stepFilter={stepFilter}
+            step={selectedStep}
+            onSelect={handleSubItemSelect}
+            onBack={handleBack}
+          />
+        )
+      }
+      dropdownPlacement="bottom-end"
+      dropdownOffset={{
+        x: parseInt(theme.spacing(0.5), 10),
+        y: parseInt(theme.spacing(1), 10),
+      }}
+    />
   );
 };

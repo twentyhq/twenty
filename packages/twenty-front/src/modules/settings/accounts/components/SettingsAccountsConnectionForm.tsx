@@ -203,6 +203,22 @@ export const SettingsAccountsConnectionForm = ({
           />
 
           <Controller
+            name="SMTP.username"
+            control={control}
+            render={({ field, fieldState }) => (
+              <SettingsTextInput
+                instanceId="smtp-username-connection-form"
+                label={t`SMTP Username`}
+                placeholder={t`john.doe`}
+                type="text"
+                value={field.value || ''}
+                onChange={field.onChange}
+                error={fieldState.error?.message}
+              />
+            )}
+          />
+
+          <Controller
             name="SMTP.password"
             control={control}
             render={({ field, fieldState }) => (
