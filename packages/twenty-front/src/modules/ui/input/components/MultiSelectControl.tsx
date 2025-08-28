@@ -1,16 +1,15 @@
 import {
-  type SelectControlProps,
-  StyledControlContainer,
-  StyledSelectControlIconChevronDown,
+    type SelectControlProps,
+    StyledControlContainer,
+    StyledSelectControlIconChevronDown,
 } from '@/ui/input/components/SelectControl';
 import { useTheme } from '@emotion/react';
-import { t } from '@lingui/core/macro';
 import pluralize from 'pluralize';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type IconComponent,
-  OverflowingTextWithTooltip,
+    type IconComponent,
+    OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 
 type MultiSelectOptionType = {
@@ -64,7 +63,7 @@ export const MultiSelectControl = ({
       ) : null}
       {isDefined(fixedText) ? (
         <OverflowingTextWithTooltip
-          text={t`${selectedOptionsCount} ${
+          text={`${selectedOptionsCount} ${
             selectedOptionsCount <= 1 ? fixedText : pluralize(fixedText)
           }`}
         />

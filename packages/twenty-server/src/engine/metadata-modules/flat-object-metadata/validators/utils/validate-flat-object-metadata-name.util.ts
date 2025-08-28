@@ -5,7 +5,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type ObjectMetadataMinimalInformation } from 'src/engine/metadata-modules/flat-object-metadata/types/object-metadata-minimal-information.type';
 import { runFlatObjectMetadataValidators } from 'src/engine/metadata-modules/flat-object-metadata/utils/run-flat-object-metadata-validators.util';
 import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { METADATA_NAME_VALIDATORS } from 'src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants';
+import { getMetadataNameValidators } from 'src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants';
 
 export const validateFlatObjectMetadataNames = ({
   namePlural,
@@ -18,7 +18,7 @@ export const validateFlatObjectMetadataNames = ({
     ...[nameSingular, namePlural].flatMap((name) =>
       runFlatObjectMetadataValidators({
         elementToValidate: name,
-        validators: METADATA_NAME_VALIDATORS,
+        validators: getMetadataNameValidators(),
       }),
     ),
   );

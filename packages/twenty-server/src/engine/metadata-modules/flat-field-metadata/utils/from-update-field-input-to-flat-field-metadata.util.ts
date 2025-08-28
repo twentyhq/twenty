@@ -99,12 +99,13 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     );
 
     if (invalidUpdatedProperties.length > 0) {
+      const invalidProperties = invalidUpdatedProperties.join(', ');
       return {
         status: 'fail',
         error: {
           code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-          message: `Cannot update standard field metadata properties: ${invalidUpdatedProperties.join(', ')}`,
-          userFriendlyMessage: t`Cannot update standard field properties: ${invalidUpdatedProperties.join(', ')}`,
+          message: `Cannot update standard field metadata properties: ${invalidProperties}`,
+          userFriendlyMessage: t`Cannot update standard field properties: ${invalidProperties}`,
         },
       };
     }
