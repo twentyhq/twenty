@@ -37,7 +37,10 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
   const rawMorphCreationPayload =
     createFieldInput.morphRelationsCreationPayload;
 
-  if (!isDefined(rawMorphCreationPayload)) {
+  if (
+    !isDefined(rawMorphCreationPayload) ||
+    rawMorphCreationPayload.length === 0
+  ) {
     return {
       status: 'fail',
       error: {

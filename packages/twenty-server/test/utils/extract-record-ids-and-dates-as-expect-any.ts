@@ -27,6 +27,7 @@ export const extractRecordIdsAndDatesAsExpectAny = (
 
     if (
       key.endsWith('Id') ||
+      key === 'uniqueIdentifier' || 
       key === 'id' ||
       key === 'updatedAt' ||
       key === 'deletedAt' ||
