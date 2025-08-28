@@ -22,10 +22,11 @@ export class ServerlessFunctionTriggerJob {
 
   @Process(ServerlessFunctionTriggerJob.name)
   async handle(data: ServerlessFunctionTriggerJobData) {
-    await this.serverlessFunctionService.executeOneServerlessFunction(
+    this.serverlessFunctionService.executeOneServerlessFunction(
       data.serverlessFunctionId,
       data.workspaceId,
       data.payload || {},
+      'draft',
     );
   }
 }

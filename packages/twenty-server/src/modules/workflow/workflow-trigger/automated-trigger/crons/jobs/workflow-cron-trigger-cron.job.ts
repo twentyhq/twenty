@@ -21,10 +21,10 @@ import {
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
 import { shouldRunNow } from 'src/utils/should-run-now.utils';
 
-export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
+export const WORKFLOW_CRON_TRIGGER_CRON_PATTERN = '* * * * *';
 
 @Processor(MessageQueue.cronQueue)
-export class CronTriggerCronJob {
+export class WorkflowCronTriggerCronJob {
   constructor(
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
@@ -35,8 +35,11 @@ export class CronTriggerCronJob {
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
-  @Process(CronTriggerCronJob.name)
-  @SentryCronMonitor(CronTriggerCronJob.name, CRON_TRIGGER_CRON_PATTERN)
+  @Process(WorkflowCronTriggerCronJob.name)
+  @SentryCronMonitor(
+    WorkflowCronTriggerCronJob.name,
+    WORKFLOW_CRON_TRIGGER_CRON_PATTERN,
+  )
   async handle() {
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {

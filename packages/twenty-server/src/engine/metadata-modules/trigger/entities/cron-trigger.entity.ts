@@ -17,8 +17,8 @@ export type CronTriggerSettings = {
   pattern: string;
 };
 
-@Entity({ name: 'triggerCron', schema: 'core' })
-@Index('IDX_TRIGGER_CRON_WORKSPACE_ID', ['workspaceId'])
+@Entity({ name: 'cronTrigger', schema: 'core' })
+@Index('IDX_CRON_TRIGGER_WORKSPACE_ID', ['workspaceId'])
 export class CronTrigger {
   @PrimaryGeneratedColumn('uuid')
   id: string;

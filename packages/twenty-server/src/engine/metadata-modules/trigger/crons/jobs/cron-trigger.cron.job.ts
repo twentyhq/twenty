@@ -25,9 +25,9 @@ export class CronTriggerCronJob {
   constructor(
     @InjectMessageQueue(MessageQueue.serverlessFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(CronTrigger, 'core')
+    @InjectRepository(CronTrigger)
     private readonly cronTriggerRepository: Repository<CronTrigger>,
   ) {}
 
@@ -49,7 +49,7 @@ export class CronTriggerCronJob {
           workspaceId: activeWorkspace.id,
         },
         select: ['settings'],
-        relations: ['serverlessFunction.id'],
+        relations: ['serverlessFunction'],
       });
 
       for (const cronTrigger of cronTriggers) {
