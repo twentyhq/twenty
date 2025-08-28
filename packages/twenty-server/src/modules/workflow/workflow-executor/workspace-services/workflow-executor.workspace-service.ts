@@ -106,6 +106,7 @@ export class WorkflowExecutorWorkspaceService {
       await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
         stepId,
         stepInfo: {
+          ...stepInfos[stepId],
           status: StepStatus.RUNNING,
         },
         workflowRunId,
@@ -117,6 +118,10 @@ export class WorkflowExecutorWorkspaceService {
           currentStepId: stepId,
           steps,
           context: getWorkflowRunContext(stepInfos),
+          runInfo: {
+            workflowRunId,
+            workspaceId,
+          },
         });
       } catch (error) {
         actionOutput = {
