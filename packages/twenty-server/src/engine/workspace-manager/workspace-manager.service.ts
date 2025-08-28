@@ -33,18 +33,18 @@ export class WorkspaceManagerService {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
-    @InjectRepository(FieldMetadataEntity, 'core')
+    @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(UserWorkspace, 'core')
+    @InjectRepository(UserWorkspace)
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly roleService: RoleService,
     private readonly userRoleService: UserRoleService,
     private readonly featureFlagService: FeatureFlagService,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetsEntity, 'core')
+    @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly agentService: AgentService,
   ) {}
@@ -137,6 +137,7 @@ export class WorkspaceManagerService {
       mainDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
+      featureFlags,
     );
 
     if (featureFlags[FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED]) {
@@ -146,6 +147,7 @@ export class WorkspaceManagerService {
         mainDataSource,
         workspaceId,
         createdObjectMetadata,
+        featureFlags,
       );
     }
   }

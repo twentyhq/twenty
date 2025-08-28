@@ -42,7 +42,7 @@ describe('BeforeUpdateOneObject', () => {
           },
         },
         {
-          provide: getRepositoryToken(FieldMetadataEntity, 'core'),
+          provide: getRepositoryToken(FieldMetadataEntity),
           useValue: {
             findBy: jest.fn(),
           },
@@ -57,7 +57,7 @@ describe('BeforeUpdateOneObject', () => {
       ObjectMetadataService,
     );
     fieldMetadataRepository = module.get<Repository<FieldMetadataEntity>>(
-      getRepositoryToken(FieldMetadataEntity, 'core'),
+      getRepositoryToken(FieldMetadataEntity),
     );
   });
 

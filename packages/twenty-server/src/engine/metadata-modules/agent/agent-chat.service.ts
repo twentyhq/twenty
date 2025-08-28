@@ -19,11 +19,11 @@ import { AgentTitleGenerationService } from './agent-title-generation.service';
 @Injectable()
 export class AgentChatService {
   constructor(
-    @InjectRepository(AgentChatThreadEntity, 'core')
+    @InjectRepository(AgentChatThreadEntity)
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
-    @InjectRepository(AgentChatMessageEntity, 'core')
+    @InjectRepository(AgentChatMessageEntity)
     private readonly messageRepository: Repository<AgentChatMessageEntity>,
-    @InjectRepository(FileEntity, 'core')
+    @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly titleGenerationService: AgentTitleGenerationService,
   ) {}

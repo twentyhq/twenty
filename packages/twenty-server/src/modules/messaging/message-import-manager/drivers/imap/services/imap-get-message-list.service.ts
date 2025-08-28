@@ -1,12 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { FetchQueryObject, type ImapFlow } from 'imapflow';
+import { type ImapFlow } from 'imapflow';
 
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapFindSentFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-sent-folder.service';
 import { ImapHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-handle-error.service';
+import { ImapIncrementalSyncService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-incremental-sync.service';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/imap/types/folders';
+import { createSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/create-sync-cursor.util';
+import { extractMailboxState } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-mailbox-state.util';
+import {
+  ImapSyncCursor,
+  parseSyncCursor,
+} from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-sync-cursor.util';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
   type GetMessageListsResponse,
@@ -20,6 +27,7 @@ export class ImapGetMessageListService {
   constructor(
     private readonly imapClientProvider: ImapClientProvider,
     private readonly imapFindSentFolderService: ImapFindSentFolderService,
+    private readonly imapIncrementalSyncService: ImapIncrementalSyncService,
     private readonly imapHandleErrorService: ImapHandleErrorService,
   ) {}
 
@@ -38,7 +46,9 @@ export class ImapGetMessageListService {
         const folderName = await this.getFolderName(client, folder.name);
 
         if (!folderName) {
-          this.logger.warn(`No folder name found for folder: ${folder.name}`);
+          this.logger.warn(
+            `No IMAP folder found for message folder: ${folder.name}`,
+          );
           continue;
         }
 
@@ -96,24 +106,26 @@ export class ImapGetMessageListService {
     folder: string,
     messageFolder: Pick<MessageFolderWorkspaceEntity, 'syncCursor'>,
   ): Promise<GetOneMessageListResponse> {
-    const messages = await this.getMessagesFromFolder(
-      client,
-      folder,
-      messageFolder.syncCursor,
+    const { messages, messageExternalUidsToDelete, syncCursor } =
+      await this.getMessagesFromFolder(
+        client,
+        folder,
+        messageFolder.syncCursor,
+      );
+
+    messages.sort((a, b) => b.uid - a.uid);
+
+    const messageExternalIds = messages.map(
+      (message) => `${folder}:${message.uid.toString()}`,
     );
-
-    messages.sort((a, b) => parseInt(b.uid) - parseInt(a.uid));
-
-    const messageExternalIds = messages.map((message) => message.id);
-
-    const nextSyncCursor =
-      messages.length > 0 ? messages[0].uid : messageFolder.syncCursor || '';
 
     return {
       messageExternalIds,
-      nextSyncCursor,
+      nextSyncCursor: JSON.stringify(syncCursor),
       previousSyncCursor: messageFolder.syncCursor || '',
-      messageExternalIdsToDelete: [],
+      messageExternalIdsToDelete: messageExternalUidsToDelete.map((uid) =>
+        uid.toString(),
+      ),
       folderId: undefined,
     };
   }
@@ -146,63 +158,52 @@ export class ImapGetMessageListService {
     client: ImapFlow,
     folder: string,
     cursor?: string,
-  ): Promise<{ id: string; uid: string }[]> {
+  ): Promise<{
+    messages: { uid: number }[];
+    messageExternalUidsToDelete: number[];
+    syncCursor: ImapSyncCursor;
+  }> {
     let lock;
 
     try {
       lock = await client.getMailboxLock(folder);
+      const mailbox = client.mailbox!;
 
-      const supportsUidPlus = client.capabilities.has('UIDPLUS');
-      let sequence = '1:*';
-
-      if (cursor && supportsUidPlus) {
-        const cursorUid = parseInt(cursor);
-
-        if (!isNaN(cursorUid)) {
-          sequence = `${cursorUid + 1}:*`;
-        }
+      if (typeof mailbox === 'boolean') {
+        throw new Error(`Invalid mailbox state for folder ${folder}`);
       }
 
-      const messages: { id: string; uid: string }[] = [];
+      const mailboxState = extractMailboxState(mailbox);
+      const previousCursor = parseSyncCursor(cursor);
 
-      this.logger.log(
-        `Fetching from folder: ${folder} with sequence: ${sequence} (UIDPLUS: ${supportsUidPlus})`,
+      const { messages, messageExternalUidsToDelete } =
+        await this.imapIncrementalSyncService.syncMessages(
+          client,
+          previousCursor,
+          mailboxState,
+          folder,
+        );
+
+      const newSyncCursor = createSyncCursor(
+        messages,
+        previousCursor,
+        mailboxState,
       );
 
-      const fetchOptions: FetchQueryObject = {
-        envelope: true,
+      return {
+        messages,
+        messageExternalUidsToDelete,
+        syncCursor: newSyncCursor,
       };
-
-      if (supportsUidPlus) {
-        fetchOptions.uid = true;
-      }
-
-      for await (const message of client.fetch(sequence, fetchOptions)) {
-        if (message.envelope?.messageId) {
-          messages.push({
-            id: message.envelope.messageId,
-            uid:
-              supportsUidPlus && message.uid
-                ? message.uid.toString()
-                : message.seq?.toString() || '0',
-          });
-        }
-      }
-
-      this.logger.log(`Found ${messages.length} messages in folder: ${folder}`);
-
-      return messages;
-    } catch (error) {
+    } catch (err) {
       this.logger.error(
-        `Error fetching from folder ${folder}: ${error.message}`,
-        error.stack,
+        `Error fetching from folder ${folder}: ${err.message}`,
+        err.stack,
       );
 
-      return [];
+      throw err;
     } finally {
-      if (lock) {
-        lock.release();
-      }
+      if (lock) lock.release();
     }
   }
 }

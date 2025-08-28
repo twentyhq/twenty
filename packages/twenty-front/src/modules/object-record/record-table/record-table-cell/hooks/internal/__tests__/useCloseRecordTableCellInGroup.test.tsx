@@ -3,6 +3,7 @@ import { RecoilRoot } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { textfieldDefinition } from '@/object-record/record-field/ui/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
@@ -29,34 +30,36 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
       snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
     }}
   >
-    <RecordTableComponentInstance recordTableId={recordTableId}>
-      <RecordTableContextProvider
-        recordTableId={recordTableId}
-        viewBarId="viewBarId"
-        objectNameSingular={CoreObjectNameSingular.Person}
-      >
-        <FieldContext.Provider
-          value={{
-            fieldDefinition: textfieldDefinition,
-            recordId: 'recordId',
-            isLabelIdentifier: false,
-            isRecordFieldReadOnly: false,
-          }}
+    <RecordComponentInstanceContextsWrapper componentInstanceId={recordTableId}>
+      <RecordTableComponentInstance recordTableId={recordTableId}>
+        <RecordTableContextProvider
+          recordTableId={recordTableId}
+          viewBarId="viewBarId"
+          objectNameSingular={CoreObjectNameSingular.Person}
         >
-          <RecordTableRowContextProvider value={recordTableRowContextValue}>
-            <RecordTableRowDraggableContextProvider
-              value={recordTableRowDraggableContextValue}
-            >
-              <RecordTableCellContext.Provider
-                value={{ ...recordTableCellContextValue }}
+          <FieldContext.Provider
+            value={{
+              fieldDefinition: textfieldDefinition,
+              recordId: 'recordId',
+              isLabelIdentifier: false,
+              isRecordFieldReadOnly: false,
+            }}
+          >
+            <RecordTableRowContextProvider value={recordTableRowContextValue}>
+              <RecordTableRowDraggableContextProvider
+                value={recordTableRowDraggableContextValue}
               >
-                {children}
-              </RecordTableCellContext.Provider>
-            </RecordTableRowDraggableContextProvider>
-          </RecordTableRowContextProvider>
-        </FieldContext.Provider>
-      </RecordTableContextProvider>
-    </RecordTableComponentInstance>
+                <RecordTableCellContext.Provider
+                  value={{ ...recordTableCellContextValue }}
+                >
+                  {children}
+                </RecordTableCellContext.Provider>
+              </RecordTableRowDraggableContextProvider>
+            </RecordTableRowContextProvider>
+          </FieldContext.Provider>
+        </RecordTableContextProvider>
+      </RecordTableComponentInstance>
+    </RecordComponentInstanceContextsWrapper>
   </RecoilRoot>
 );
 

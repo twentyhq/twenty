@@ -27,9 +27,9 @@ export class RefreshTokenService {
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly twentyConfigService: TwentyConfigService,
-    @InjectRepository(AppToken, 'core')
+    @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
-    @InjectRepository(User, 'core')
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
 

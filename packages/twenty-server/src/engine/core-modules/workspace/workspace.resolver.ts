@@ -97,7 +97,7 @@ export class WorkspaceResolver {
     private readonly roleService: RoleService,
     private readonly agentService: AgentService,
     private readonly viewService: ViewService,
-    @InjectRepository(BillingSubscription, 'core')
+    @InjectRepository(BillingSubscription)
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
 

@@ -17,7 +17,7 @@ export class AppHealthIndicator {
 
   constructor(
     private readonly healthIndicatorService: HealthIndicatorService,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
   ) {}

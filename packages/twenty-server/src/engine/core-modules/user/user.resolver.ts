@@ -73,14 +73,14 @@ const getHMACKey = (email?: string, key?: string | null) => {
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class UserResolver {
   constructor(
-    @InjectRepository(User, 'core')
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly userService: UserService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileUploadService: FileUploadService,
     private readonly onboardingService: OnboardingService,
     private readonly userVarService: UserVarsService,
-    @InjectRepository(UserWorkspace, 'core')
+    @InjectRepository(UserWorkspace)
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly userRoleService: UserRoleService,
     private readonly permissionsService: PermissionsService,

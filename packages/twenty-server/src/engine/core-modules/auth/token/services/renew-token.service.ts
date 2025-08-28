@@ -18,7 +18,7 @@ import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-contex
 @Injectable()
 export class RenewTokenService {
   constructor(
-    @InjectRepository(AppToken, 'core')
+    @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly accessTokenService: AccessTokenService,
     private readonly workspaceAgnosticTokenService: WorkspaceAgnosticTokenService,

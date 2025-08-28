@@ -31,7 +31,7 @@ import { type WorkflowCreateRecordActionInput } from 'src/modules/workflow/workf
 export class CreateRecordWorkflowAction implements WorkflowAction {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(ObjectMetadataEntity, 'core')
+    @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly scopedWorkspaceContextFactory: ScopedWorkspaceContextFactory,
     private readonly recordPositionService: RecordPositionService,

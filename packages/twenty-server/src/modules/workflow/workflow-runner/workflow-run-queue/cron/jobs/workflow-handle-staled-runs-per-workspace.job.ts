@@ -1,4 +1,4 @@
-import { LessThan } from 'typeorm';
+import { IsNull, LessThan, Or } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -37,7 +37,7 @@ export class WorkflowHandleStaledRunsPerWorkspaceJob {
     const staledWorkflowRuns = await workflowRunRepository.find({
       where: {
         status: WorkflowRunStatus.ENQUEUED,
-        enqueuedAt: LessThan(oneHourAgo),
+        enqueuedAt: Or(LessThan(oneHourAgo), IsNull()),
       },
     });
 
