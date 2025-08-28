@@ -26,9 +26,9 @@ type GraphWidgetPieChartProps = {
     value: number;
     label?: string;
     color?: GraphColor;
+    to?: string;
   }>;
   showLegend?: boolean;
-  tooltipHref?: string;
   id: string;
 } & GraphValueFormatOptions;
 
@@ -58,7 +58,6 @@ const StyledChartContainer = styled.div<{ $isClickable?: boolean }>`
 export const GraphWidgetPieChart = ({
   data,
   showLegend = true,
-  tooltipHref,
   id,
   displayType,
   decimals,
@@ -116,9 +115,12 @@ export const GraphWidgetPieChart = ({
     id: item.gradientId,
   }));
 
-  const handleSliceClick = () => {
-    if (isDefined(tooltipHref)) {
-      window.location.href = tooltipHref;
+  const handleSliceClick = (
+    datum: ComputedDatum<{ id: string; value: number; label?: string }>,
+  ) => {
+    const clickedItem = data.find((d) => d.id === datum.id);
+    if (isDefined(clickedItem?.to)) {
+      window.location.href = clickedItem.to;
     }
   };
 
@@ -128,6 +130,7 @@ export const GraphWidgetPieChart = ({
     const item = enrichedData.find((d) => d.id === datum.id);
     if (!item) return null;
 
+    const dataItem = data.find((d) => d.id === datum.id);
     const formattedValue = formatGraphValue(item.value, formatOptions);
     const formattedWithPercentage = `${formattedValue} (${item.percentage.toFixed(1)}%)`;
 
@@ -140,7 +143,7 @@ export const GraphWidgetPieChart = ({
             dotColor: item.colorScheme.solid,
           },
         ]}
-        showClickHint={isDefined(tooltipHref)}
+        showClickHint={isDefined(dataItem?.to)}
       />
     );
   };
@@ -188,9 +191,11 @@ export const GraphWidgetPieChart = ({
     );
   };
 
+  const hasClickableItems = data.some((item) => isDefined(item.to));
+
   return (
     <StyledContainer id={id}>
-      <StyledChartContainer $isClickable={isDefined(tooltipHref)}>
+      <StyledChartContainer $isClickable={hasClickableItems}>
         <ResponsivePie
           data={data}
           innerRadius={0.8}

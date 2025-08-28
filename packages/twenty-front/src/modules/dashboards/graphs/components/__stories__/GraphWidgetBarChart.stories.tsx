@@ -20,6 +20,9 @@ const meta: Meta<typeof GraphWidgetBarChart> = {
     keys: {
       control: 'object',
     },
+    series: {
+      control: 'object',
+    },
     displayType: {
       control: 'select',
       options: ['percentage', 'number', 'shortNumber', 'currency', 'custom'],
@@ -46,9 +49,6 @@ const meta: Meta<typeof GraphWidgetBarChart> = {
       control: 'text',
     },
     yAxisLabel: {
-      control: 'text',
-    },
-    tooltipHref: {
       control: 'text',
     },
     id: {
@@ -78,11 +78,41 @@ const Container = ({ children }: { children: React.ReactNode }) => (
 export const Default: Story = {
   args: {
     data: [
-      { month: 'Jan', sales: 120, leads: 45, conversions: 12 },
-      { month: 'Feb', sales: 150, leads: 52, conversions: 15 },
-      { month: 'Mar', sales: 180, leads: 48, conversions: 18 },
-      { month: 'Apr', sales: 140, leads: 60, conversions: 14 },
-      { month: 'May', sales: 200, leads: 55, conversions: 20 },
+      {
+        month: 'Jan',
+        sales: 120,
+        leads: 45,
+        conversions: 12,
+        to: '/metrics/january',
+      },
+      {
+        month: 'Feb',
+        sales: 150,
+        leads: 52,
+        conversions: 15,
+        to: '/metrics/february',
+      },
+      {
+        month: 'Mar',
+        sales: 180,
+        leads: 48,
+        conversions: 18,
+        to: '/metrics/march',
+      },
+      {
+        month: 'Apr',
+        sales: 140,
+        leads: 60,
+        conversions: 14,
+        to: '/metrics/april',
+      },
+      {
+        month: 'May',
+        sales: 200,
+        leads: 55,
+        conversions: 20,
+        to: '/metrics/may',
+      },
     ],
     indexBy: 'month',
     keys: ['sales', 'leads', 'conversions'],
@@ -90,7 +120,6 @@ export const Default: Story = {
     showGrid: true,
     xAxisLabel: 'Month',
     yAxisLabel: 'Count',
-    tooltipHref: 'https://example.com/metrics',
     id: 'bar-chart-default',
   },
   render: (args) => (
@@ -103,7 +132,6 @@ export const Default: Story = {
         showGrid={args.showGrid}
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
-        tooltipHref={args.tooltipHref}
         id={args.id}
       />
     </Container>
@@ -113,10 +141,34 @@ export const Default: Story = {
 export const Revenue: Story = {
   args: {
     data: [
-      { quarter: 'Q1', revenue: 420000, costs: 280000, profit: 140000 },
-      { quarter: 'Q2', revenue: 480000, costs: 320000, profit: 160000 },
-      { quarter: 'Q3', revenue: 520000, costs: 340000, profit: 180000 },
-      { quarter: 'Q4', revenue: 580000, costs: 360000, profit: 220000 },
+      {
+        quarter: 'Q1',
+        revenue: 420000,
+        costs: 280000,
+        profit: 140000,
+        to: '/financials/q1',
+      },
+      {
+        quarter: 'Q2',
+        revenue: 480000,
+        costs: 320000,
+        profit: 160000,
+        to: '/financials/q2',
+      },
+      {
+        quarter: 'Q3',
+        revenue: 520000,
+        costs: 340000,
+        profit: 180000,
+        to: '/financials/q3',
+      },
+      {
+        quarter: 'Q4',
+        revenue: 580000,
+        costs: 360000,
+        profit: 220000,
+        to: '/financials/q4',
+      },
     ],
     indexBy: 'quarter',
     keys: ['revenue', 'costs', 'profit'],
@@ -131,7 +183,6 @@ export const Revenue: Story = {
     showGrid: true,
     xAxisLabel: 'Quarter',
     yAxisLabel: 'Amount ($)',
-    tooltipHref: 'https://example.com/financials',
     id: 'bar-chart-revenue',
   },
   render: (args) => (
@@ -144,7 +195,6 @@ export const Revenue: Story = {
         showGrid={args.showGrid}
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
-        tooltipHref={args.tooltipHref}
         id={args.id}
       />
     </Container>
@@ -154,10 +204,34 @@ export const Revenue: Story = {
 export const Stacked: Story = {
   args: {
     data: [
-      { category: 'Website', desktop: 65, mobile: 35, tablet: 15 },
-      { category: 'App', desktop: 25, mobile: 85, tablet: 30 },
-      { category: 'Email', desktop: 45, mobile: 40, tablet: 20 },
-      { category: 'Social', desktop: 30, mobile: 75, tablet: 25 },
+      {
+        category: 'Website',
+        desktop: 65,
+        mobile: 35,
+        tablet: 15,
+        to: '/analytics/website',
+      },
+      {
+        category: 'App',
+        desktop: 25,
+        mobile: 85,
+        tablet: 30,
+        to: '/analytics/app',
+      },
+      {
+        category: 'Email',
+        desktop: 45,
+        mobile: 40,
+        tablet: 20,
+        to: '/analytics/email',
+      },
+      {
+        category: 'Social',
+        desktop: 30,
+        mobile: 75,
+        tablet: 25,
+        to: '/analytics/social',
+      },
     ],
     indexBy: 'category',
     keys: ['desktop', 'mobile', 'tablet'],
@@ -171,7 +245,6 @@ export const Stacked: Story = {
     showGrid: true,
     xAxisLabel: 'Channel',
     yAxisLabel: 'Users',
-    tooltipHref: 'https://example.com/analytics',
     id: 'bar-chart-stacked',
   },
   render: (args) => (
@@ -184,7 +257,6 @@ export const Stacked: Story = {
         showGrid={args.showGrid}
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
-        tooltipHref={args.tooltipHref}
         id={args.id}
       />
     </Container>
@@ -194,11 +266,11 @@ export const Stacked: Story = {
 export const Horizontal: Story = {
   args: {
     data: [
-      { product: 'Product A', score: 85 },
-      { product: 'Product B', score: 72 },
-      { product: 'Product C', score: 90 },
-      { product: 'Product D', score: 65 },
-      { product: 'Product E', score: 78 },
+      { product: 'Product A', score: 85, to: '/products/a' },
+      { product: 'Product B', score: 72, to: '/products/b' },
+      { product: 'Product C', score: 90, to: '/products/c' },
+      { product: 'Product D', score: 65, to: '/products/d' },
+      { product: 'Product E', score: 78, to: '/products/e' },
     ],
     indexBy: 'product',
     keys: ['score'],
@@ -208,7 +280,6 @@ export const Horizontal: Story = {
     xAxisLabel: 'Score',
     yAxisLabel: 'Product',
     suffix: '%',
-    tooltipHref: 'https://example.com/products',
     id: 'bar-chart-horizontal',
   },
   render: (args) => (
@@ -223,7 +294,6 @@ export const Horizontal: Story = {
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
         suffix={args.suffix}
-        tooltipHref={args.tooltipHref}
         id={args.id}
       />
     </Container>
@@ -233,10 +303,20 @@ export const Horizontal: Story = {
 export const WithValues: Story = {
   args: {
     data: [
-      { team: 'Sales', performance: 92, target: 100 },
-      { team: 'Marketing', performance: 78, target: 85 },
-      { team: 'Support', performance: 88, target: 90 },
-      { team: 'Development', performance: 95, target: 95 },
+      { team: 'Sales', performance: 92, target: 100, to: '/teams/sales' },
+      {
+        team: 'Marketing',
+        performance: 78,
+        target: 85,
+        to: '/teams/marketing',
+      },
+      { team: 'Support', performance: 88, target: 90, to: '/teams/support' },
+      {
+        team: 'Development',
+        performance: 95,
+        target: 95,
+        to: '/teams/development',
+      },
     ],
     indexBy: 'team',
     keys: ['performance', 'target'],
@@ -250,7 +330,6 @@ export const WithValues: Story = {
     xAxisLabel: 'Team',
     yAxisLabel: 'Score',
     suffix: '%',
-    tooltipHref: 'https://example.com/teams',
     id: 'bar-chart-with-values',
   },
   render: (args) => (
@@ -263,7 +342,6 @@ export const WithValues: Story = {
         showGrid={args.showGrid}
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
-        tooltipHref={args.tooltipHref}
         id={args.id}
       />
     </Container>
@@ -273,28 +351,53 @@ export const WithValues: Story = {
 export const WithCustomColors: Story = {
   args: {
     data: [
-      { month: 'Jan', sales: 120, leads: 45, conversions: 12 },
-      { month: 'Feb', sales: 150, leads: 52, conversions: 15 },
-      { month: 'Mar', sales: 180, leads: 48, conversions: 18 },
-      { month: 'Apr', sales: 140, leads: 60, conversions: 14 },
-      { month: 'May', sales: 200, leads: 55, conversions: 20 },
+      {
+        month: 'Jan',
+        sales: 120,
+        leads: 45,
+        conversions: 12,
+        to: '/reports/jan',
+      },
+      {
+        month: 'Feb',
+        sales: 150,
+        leads: 52,
+        conversions: 15,
+        to: '/reports/feb',
+      },
+      {
+        month: 'Mar',
+        sales: 180,
+        leads: 48,
+        conversions: 18,
+        to: '/reports/mar',
+      },
+      {
+        month: 'Apr',
+        sales: 140,
+        leads: 60,
+        conversions: 14,
+        to: '/reports/apr',
+      },
+      {
+        month: 'May',
+        sales: 200,
+        leads: 55,
+        conversions: 20,
+        to: '/reports/may',
+      },
     ],
     indexBy: 'month',
-    keys: [
-      { key: 'sales', color: 'orange' },
-      { key: 'leads', color: 'turquoise' },
-      { key: 'conversions', color: 'pink' },
+    keys: ['sales', 'leads', 'conversions'],
+    series: [
+      { key: 'sales', label: 'Total Sales', color: 'orange' },
+      { key: 'leads', label: 'New Leads', color: 'turquoise' },
+      { key: 'conversions', label: 'Conversions', color: 'pink' },
     ],
-    seriesLabels: {
-      sales: 'Sales',
-      leads: 'Leads',
-      conversions: 'Conversions',
-    },
     showLegend: true,
     showGrid: true,
     xAxisLabel: 'Month',
     yAxisLabel: 'Count',
-    tooltipHref: 'https://example.com/metrics',
     id: 'bar-chart-custom-colors',
   },
   render: (args) => (
@@ -303,12 +406,11 @@ export const WithCustomColors: Story = {
         data={args.data}
         indexBy={args.indexBy}
         keys={args.keys}
-        seriesLabels={args.seriesLabels}
+        series={args.series}
         showLegend={args.showLegend}
         showGrid={args.showGrid}
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
-        tooltipHref={args.tooltipHref}
         id={args.id}
       />
     </Container>
@@ -318,11 +420,11 @@ export const WithCustomColors: Story = {
 export const SingleSeries: Story = {
   args: {
     data: [
-      { day: 'Mon', visitors: 1200 },
-      { day: 'Tue', visitors: 1450 },
-      { day: 'Wed', visitors: 1800 },
-      { day: 'Thu', visitors: 1650 },
-      { day: 'Fri', visitors: 2000 },
+      { day: 'Mon', visitors: 1200, to: '/traffic/monday' },
+      { day: 'Tue', visitors: 1450, to: '/traffic/tuesday' },
+      { day: 'Wed', visitors: 1800, to: '/traffic/wednesday' },
+      { day: 'Thu', visitors: 1650, to: '/traffic/thursday' },
+      { day: 'Fri', visitors: 2000, to: '/traffic/friday' },
       { day: 'Sat', visitors: 1100 },
       { day: 'Sun', visitors: 900 },
     ],
@@ -333,7 +435,6 @@ export const SingleSeries: Story = {
     xAxisLabel: 'Day of Week',
     yAxisLabel: 'Visitors',
     displayType: 'shortNumber',
-    tooltipHref: 'https://example.com/traffic',
     id: 'bar-chart-single',
   },
   render: (args) => (
@@ -346,7 +447,6 @@ export const SingleSeries: Story = {
         showGrid={args.showGrid}
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
-        tooltipHref={args.tooltipHref}
         id={args.id}
       />
     </Container>
@@ -356,10 +456,10 @@ export const SingleSeries: Story = {
 export const Currency: Story = {
   args: {
     data: [
-      { region: 'North', sales: 45000.5, budget: 50000 },
-      { region: 'South', sales: 38000.75, budget: 40000 },
-      { region: 'East', sales: 52000.25, budget: 48000 },
-      { region: 'West', sales: 41000, budget: 45000 },
+      { region: 'North', sales: 45000.5, budget: 50000, to: '/regions/north' },
+      { region: 'South', sales: 38000.75, budget: 40000, to: '/regions/south' },
+      { region: 'East', sales: 52000.25, budget: 48000, to: '/regions/east' },
+      { region: 'West', sales: 41000, budget: 45000, to: '/regions/west' },
     ],
     indexBy: 'region',
     keys: ['sales', 'budget'],
@@ -374,7 +474,6 @@ export const Currency: Story = {
     showGrid: true,
     xAxisLabel: 'Region',
     yAxisLabel: 'Amount',
-    tooltipHref: 'https://example.com/regional-sales',
     id: 'bar-chart-currency',
   },
   render: (args) => (
@@ -387,7 +486,6 @@ export const Currency: Story = {
         showGrid={args.showGrid}
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
-        tooltipHref={args.tooltipHref}
         id={args.id}
       />
     </Container>
@@ -397,11 +495,11 @@ export const Currency: Story = {
 export const Negative: Story = {
   args: {
     data: [
-      { month: 'Jan', profit: 5000, loss: -3000 },
-      { month: 'Feb', profit: 7000, loss: -2000 },
-      { month: 'Mar', profit: 3000, loss: -4500 },
-      { month: 'Apr', profit: 8000, loss: -1500 },
-      { month: 'May', profit: 6000, loss: -2500 },
+      { month: 'Jan', profit: 5000, loss: -3000, to: '/pl/january' },
+      { month: 'Feb', profit: 7000, loss: -2000, to: '/pl/february' },
+      { month: 'Mar', profit: 3000, loss: -4500, to: '/pl/march' },
+      { month: 'Apr', profit: 8000, loss: -1500, to: '/pl/april' },
+      { month: 'May', profit: 6000, loss: -2500, to: '/pl/may' },
     ],
     indexBy: 'month',
     keys: ['profit', 'loss'],
@@ -415,7 +513,6 @@ export const Negative: Story = {
     showGrid: true,
     xAxisLabel: 'Month',
     yAxisLabel: 'Amount ($)',
-    tooltipHref: 'https://example.com/profit-loss',
     id: 'bar-chart-negative',
   },
   render: (args) => (
@@ -428,7 +525,6 @@ export const Negative: Story = {
         showGrid={args.showGrid}
         xAxisLabel={args.xAxisLabel}
         yAxisLabel={args.yAxisLabel}
-        tooltipHref={args.tooltipHref}
         id={args.id}
       />
     </Container>

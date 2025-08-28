@@ -4,7 +4,7 @@ import {
   type RadialBarCustomLayerProps,
   ResponsiveRadialBar,
 } from '@nivo/radial-bar';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
 import { type GraphColor } from '../types/GraphColor';
@@ -18,15 +18,19 @@ import {
 import { GraphWidgetLegend } from './GraphWidgetLegend';
 import { GraphWidgetTooltip } from './GraphWidgetTooltip';
 
-type GraphWidgetGaugeChartProps = {
+type GaugeChartData = {
   value: number;
   min: number;
   max: number;
   color?: GraphColor;
+  to?: string;
+  label?: string;
+};
+
+type GraphWidgetGaugeChartProps = {
+  data: GaugeChartData;
   showValue?: boolean;
   showLegend?: boolean;
-  legendLabel: string;
-  tooltipHref?: string;
   id: string;
 } & GraphValueFormatOptions;
 
@@ -61,14 +65,9 @@ const StyledH1Title = styled(H1Title)`
 `;
 
 export const GraphWidgetGaugeChart = ({
-  value,
-  min,
-  max,
-  color = 'blue',
+  data,
   showValue = true,
   showLegend = true,
-  legendLabel,
-  tooltipHref,
   id,
   displayType,
   decimals,
@@ -76,7 +75,9 @@ export const GraphWidgetGaugeChart = ({
   suffix,
   customFormatter,
 }: GraphWidgetGaugeChartProps) => {
+  const { value, min, max, color = 'blue', to, label = 'Value' } = data;
   const theme = useTheme();
+  const instanceId = useId();
   const [isHovered, setIsHovered] = useState(false);
 
   const colorRegistry = createGraphColorRegistry(theme);
@@ -95,7 +96,7 @@ export const GraphWidgetGaugeChart = ({
   const normalizedValue = max === min ? 0 : ((value - min) / (max - min)) * 100;
   const clampedNormalizedValue = Math.max(0, Math.min(100, normalizedValue));
 
-  const data = [
+  const chartData = [
     {
       id: 'gauge',
       data: [
@@ -105,7 +106,7 @@ export const GraphWidgetGaugeChart = ({
     },
   ];
 
-  const gradientId = `gaugeGradient-${id}`;
+  const gradientId = `gaugeGradient-${id}-${instanceId}`;
   const gaugeAngle = -90 + (clampedNormalizedValue / 100) * 90;
   const gradientDef = createGradientDef(
     colorScheme,
@@ -116,8 +117,8 @@ export const GraphWidgetGaugeChart = ({
   const defs = [gradientDef];
 
   const handleClick = () => {
-    if (isDefined(tooltipHref)) {
-      window.location.href = tooltipHref;
+    if (isDefined(to)) {
+      window.location.href = to;
     }
   };
 
@@ -128,12 +129,12 @@ export const GraphWidgetGaugeChart = ({
       <GraphWidgetTooltip
         items={[
           {
-            label: legendLabel,
+            label: label,
             formattedValue: formattedWithPercentage,
             dotColor: colorScheme.solid,
           },
         ]}
-        showClickHint={isDefined(tooltipHref)}
+        showClickHint={isDefined(to)}
       />
     );
   };
@@ -176,9 +177,9 @@ export const GraphWidgetGaugeChart = ({
 
   return (
     <StyledContainer>
-      <StyledChartContainer $isClickable={isDefined(tooltipHref)}>
+      <StyledChartContainer $isClickable={isDefined(to)}>
         <ResponsiveRadialBar
-          data={data}
+          data={chartData}
           startAngle={-90}
           endAngle={90}
           innerRadius={0.7}
@@ -218,7 +219,7 @@ export const GraphWidgetGaugeChart = ({
         items={[
           {
             id: 'gauge',
-            label: legendLabel,
+            label: label,
             formattedValue: formattedValue,
             color: colorScheme.solid,
           },
