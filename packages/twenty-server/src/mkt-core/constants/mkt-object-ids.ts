@@ -47,4 +47,6 @@ export const MKT_OBJECT_IDS = {
   mktPermissionAudit: 'f4a5b6c7-d8e9-0123-4567-89abcdef0123',
   // customers
   mktCustomer: '2c720af2-4412-4317-8a48-0acdaf66bc90',
+  mktTag: '6d18dfa8-60f7-4057-8b3c-c0a5d7e7c35f',
+  mktCustomerTag: '854cfe1c-9c77-4b71-8248-b5818037a474',
 };

@@ -23,6 +23,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { MKT_CUSTOMER_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
+import { MktCustomerTagWorkspaceEntity } from 'src/mkt-core/customer-tag/mkt-customer-tag.workspace-entity';
 import {
   MKT_CUSTOMER_LIFECYCLE_STAGE,
   MKT_CUSTOMER_LIFECYCLE_STAGE_OPTIONS,
@@ -77,6 +78,17 @@ export class MktCustomerWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   type: MKT_CUSTOMER_TYPE;
+
+  @WorkspaceField({
+    standardId: MKT_CUSTOMER_FIELD_IDS.tags,
+    type: FieldMetadataType.MULTI_SELECT,
+    label: msg`Tags`,
+    description: msg`Customer tags`,
+    icon: 'IconTag',
+    options: MKT_CUSTOMER_TAGS_OPTIONS,
+  })
+  @WorkspaceIsNullable()
+  tags: MKT_CUSTOMER_TAGS[];
 
   @WorkspaceField({
     standardId: MKT_CUSTOMER_FIELD_IDS.email,
@@ -201,17 +213,6 @@ export class MktCustomerWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   engagementScore: number;
 
-  @WorkspaceField({
-    standardId: MKT_CUSTOMER_FIELD_IDS.tags,
-    type: FieldMetadataType.MULTI_SELECT,
-    label: msg`Tags`,
-    description: msg`Customer tags`,
-    icon: 'IconTags',
-    options: MKT_CUSTOMER_TAGS_OPTIONS,
-  })
-  @WorkspaceIsNullable()
-  tags: MKT_CUSTOMER_TAGS[];
-
   // common fields & relations
   @WorkspaceField({
     standardId: MKT_CUSTOMER_FIELD_IDS.position,
@@ -244,6 +245,19 @@ export class MktCustomerWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   mktLicenses: Relation<MktLicenseWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: MKT_CUSTOMER_FIELD_IDS.mktCustomerTags,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`Customer Tags`,
+    description: msg`Customer tags of the customer`,
+    icon: 'IconTag',
+    inverseSideTarget: () => MktCustomerTagWorkspaceEntity,
+    inverseSideFieldKey: 'mktCustomer',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  mktCustomerTags: Relation<MktCustomerTagWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: MKT_CUSTOMER_FIELD_IDS.accountOwner,
