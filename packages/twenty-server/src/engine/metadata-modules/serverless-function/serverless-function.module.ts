@@ -12,18 +12,23 @@ import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.mod
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionResolver } from 'src/engine/metadata-modules/serverless-function/serverless-function.resolver';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { ServerlessFunctionTriggerJob } from 'src/engine/metadata-modules/serverless-function/jobs/serverless-function-trigger.job';
 
 @Module({
   imports: [
     FileUploadModule,
-    NestjsQueryTypeOrmModule.forFeature([ServerlessFunctionEntity], 'core'),
-    TypeOrmModule.forFeature([FeatureFlag], 'core'),
+    NestjsQueryTypeOrmModule.forFeature([ServerlessFunctionEntity]),
+    TypeOrmModule.forFeature([FeatureFlag]),
     FileModule,
     ThrottlerModule,
     AuditModule,
     FeatureFlagModule,
   ],
-  providers: [ServerlessFunctionService, ServerlessFunctionResolver],
+  providers: [
+    ServerlessFunctionService,
+    ServerlessFunctionTriggerJob,
+    ServerlessFunctionResolver,
+  ],
   exports: [ServerlessFunctionService],
 })
 export class ServerlessFunctionModule {}

@@ -1,6 +1,12 @@
 import styled from '@emotion/styled';
+import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramColors';
+import { css } from '@emotion/react';
+import type { WorkflowRunStepStatus } from '@/workflow/types/Workflow';
 
-const StyledNodeTitle = styled.div`
+const StyledNodeTitle = styled.div<{
+  highlight?: boolean;
+  runStatus?: WorkflowRunStepStatus;
+}>`
   box-sizing: border-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
@@ -10,6 +16,24 @@ const StyledNodeTitle = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   overflow: hidden;
   text-overflow: ellipsis;
+
+  ${({ theme, highlight, runStatus }) => {
+    const colors = getWorkflowDiagramColors({ theme, runStatus });
+
+    if (true === highlight) {
+      return css`
+        color: ${colors.selected.titleColor};
+      `;
+    }
+
+    return css`
+      color: ${colors.unselected.titleColor};
+
+      .selected & {
+        color: ${colors.selected.titleColor};
+      }
+    `;
+  }}
 `;
 
 export { StyledNodeTitle as WorkflowNodeTitle };

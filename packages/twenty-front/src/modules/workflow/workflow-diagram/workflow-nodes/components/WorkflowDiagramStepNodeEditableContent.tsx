@@ -1,10 +1,8 @@
 import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
-import { useEdgeState } from '@/workflow/workflow-diagram/hooks/useEdgeState';
+import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
 import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { type WorkflowDiagramNodeVariant } from '@/workflow/workflow-diagram/types/WorkflowDiagramNodeVariant';
-import { WorkflowDiagramHandleEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleEditable';
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeIcon';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeIconContainer';
@@ -13,11 +11,13 @@ import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/wo
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import styled from '@emotion/styled';
-import { Position } from '@xyflow/react';
 import { useState } from 'react';
 import { capitalize } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
+import { useConnectionState } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useConnectionState';
+import { WorkflowDiagramHandleTarget } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTarget';
+import { WorkflowDiagramHandleSource } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleSource';
 
 const StyledAddStepButtonContainer = styled.div<{
   shouldDisplay: boolean;
@@ -31,37 +31,6 @@ const StyledAddStepButtonContainer = styled.div<{
   left: 50%;
   bottom: 0;
   transform: translateX(-50%) translateY(100%);
-`;
-
-const StyledNodeContainer = styled(WorkflowNodeContainer)`
-  border-color: ${({ theme }) => theme.border.color.strong};
-  background: ${({ theme }) => theme.background.secondary};
-
-  &:hover {
-    background: linear-gradient(
-        0deg,
-        ${({ theme }) => theme.background.transparent.lighter} 0%,
-        ${({ theme }) => theme.background.transparent.lighter} 100%
-      ),
-      ${({ theme }) => theme.background.secondary};
-  }
-
-  .selected & {
-    border-color: ${({ theme }) => theme.color.blue};
-    background: ${({ theme }) => theme.adaptiveColors.blue1};
-  }
-`;
-
-const StyledNodeLabel = styled(WorkflowNodeLabel)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-
-  .selected & {
-    color: ${({ theme }) => theme.tag.text.blue};
-  }
-`;
-
-const StyledNodeTitle = styled(WorkflowNodeTitle)`
-  color: ${({ theme }) => theme.font.color.primary};
 `;
 
 const StyledDeleteButtonContainer = styled.div`
@@ -83,7 +52,6 @@ export const WorkflowDiagramStepNodeEditableContent = ({
 }: {
   id: string;
   data: WorkflowDiagramStepNodeData;
-  variant: WorkflowDiagramNodeVariant;
   selected: boolean;
   onDelete: () => void;
   onClick?: () => void;
@@ -100,40 +68,31 @@ export const WorkflowDiagramStepNodeEditableContent = ({
 
   const { isNodeCreationStarted } = useStartNodeCreation();
 
-  const { getNodeHandlesSelectedState, getNodeHandlesHoveredState } =
-    useEdgeState();
+  const { isConnectable, isSourceConnected, isInProgressConnection } =
+    useConnectionState(data.nodeType);
 
-  const handlesSelectedState = getNodeHandlesSelectedState(id);
-
-  const handlesHoveredState = getNodeHandlesHoveredState(id);
+  const { isSourceSelected, isSourceHovered } = useEdgeState();
 
   return (
     <>
-      {data.nodeType !== 'trigger' && (
-        <WorkflowDiagramHandleEditable
-          type="target"
-          position={Position.Top}
-          selected={handlesSelectedState.targetHandle}
-          hovered={handlesHoveredState.targetHandle}
-        />
-      )}
-
-      <StyledNodeContainer
+      <WorkflowNodeContainer
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
         onClick={onClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        isConnectable={isConnectable(id)}
       >
+        <WorkflowDiagramHandleTarget isConnectable={isConnectable(id)} />
         <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />
         </WorkflowNodeIconContainer>
 
         <WorkflowNodeRightPart>
           <WorkflowNodeLabelWithCounterPart>
-            <StyledNodeLabel>{capitalize(data.nodeType)}</StyledNodeLabel>
+            <WorkflowNodeLabel>{capitalize(data.nodeType)}</WorkflowNodeLabel>
           </WorkflowNodeLabelWithCounterPart>
 
-          <StyledNodeTitle>{data.name}</StyledNodeTitle>
+          <WorkflowNodeTitle highlight>{data.name}</WorkflowNodeTitle>
         </WorkflowNodeRightPart>
 
         {selected && (
@@ -145,9 +104,9 @@ export const WorkflowDiagramStepNodeEditableContent = ({
             />
           </StyledDeleteButtonContainer>
         )}
-      </StyledNodeContainer>
+      </WorkflowNodeContainer>
 
-      {!data.hasNextStepIds && (
+      {!data.hasNextStepIds && !isInProgressConnection && (
         <StyledAddStepButtonContainer
           shouldDisplay={
             isHovered ||
@@ -161,11 +120,14 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         </StyledAddStepButtonContainer>
       )}
 
-      <WorkflowDiagramHandleEditable
-        type="source"
-        position={Position.Bottom}
-        selected={handlesSelectedState.sourceHandle || selected}
-        hovered={handlesHoveredState.sourceHandle}
+      <WorkflowDiagramHandleSource
+        selected={
+          isSourceSelected(id) ||
+          selected ||
+          isSourceConnected(id) ||
+          (isConnectable(id) && isHovered)
+        }
+        hovered={isSourceHovered(id) || isHovered}
       />
     </>
   );

@@ -16,9 +16,9 @@ import { AgentException, AgentExceptionCode } from './agent.exception';
 @Injectable()
 export class AgentService {
   constructor(
-    @InjectRepository(AgentEntity, 'core')
+    @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
-    @InjectRepository(RoleTargetsEntity, 'core')
+    @InjectRepository(RoleTargetsEntity)
     private readonly roleTargetsRepository: Repository<RoleTargetsEntity>,
     private readonly agentRoleService: AgentRoleService,
   ) {}

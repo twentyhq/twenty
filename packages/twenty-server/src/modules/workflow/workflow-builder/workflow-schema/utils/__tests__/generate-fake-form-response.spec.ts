@@ -116,7 +116,6 @@ describe('generateFakeFormResponse', () => {
             icon: 'test-company-icon',
             isLeaf: true,
             label: 'Company',
-            nameSingular: 'company',
             objectMetadataId: '20202020-c03c-45d6-a4b0-04afe1357c5c',
             value: 'A company',
           },

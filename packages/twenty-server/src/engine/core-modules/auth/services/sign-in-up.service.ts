@@ -43,9 +43,9 @@ import { isWorkEmail } from 'src/utils/is-work-email';
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class SignInUpService {
   constructor(
-    @InjectRepository(User, 'core')
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly userWorkspaceService: UserWorkspaceService,

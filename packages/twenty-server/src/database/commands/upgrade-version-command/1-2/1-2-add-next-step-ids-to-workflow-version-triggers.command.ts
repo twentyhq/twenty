@@ -19,7 +19,7 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/work
 })
 export class AddNextStepIdsToWorkflowVersionTriggers extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {

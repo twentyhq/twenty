@@ -5,7 +5,7 @@ import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/components/WorkflowDiagramCustomMarkers';
+import { WorkflowDiagramCustomMarkers } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramCustomMarkers';
 import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
 import { useRightDrawerState } from '@/workflow/workflow-diagram/hooks/useRightDrawerState';
 import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
@@ -54,7 +54,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
 import { THEME_COMMON } from 'twenty-ui/theme';
 import { FeatureFlagKey } from '~/generated/graphql';
-import { useEdgeState } from '@/workflow/workflow-diagram/hooks/useEdgeState';
+import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
+import { WorkflowDiagramConnection } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramConnection';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -192,6 +193,7 @@ export const WorkflowDiagramCanvasBase = ({
       if (isWorkflowBranchEnabled) {
         return workflowDiagram;
       }
+
       return getOrganizedDiagram(workflowDiagram);
     }
     return { nodes: [], edges: [] };
@@ -496,6 +498,8 @@ export const WorkflowDiagramCanvasBase = ({
         nodesConnectable={isWorkflowBranchEnabled ? nodesConnectable : false}
         paneClickDistance={10} // Fix small unwanted user dragging does not select node
         preventScrolling={false}
+        connectionLineComponent={WorkflowDiagramConnection}
+        connectionRadius={0}
       >
         <Background color={theme.border.color.medium} size={2} />
 

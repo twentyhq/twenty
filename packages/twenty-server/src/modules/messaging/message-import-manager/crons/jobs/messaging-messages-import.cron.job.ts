@@ -1,8 +1,8 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -17,7 +17,6 @@ import {
   DataSourceExceptionCode,
 } from 'src/engine/metadata-modules/data-source/data-source.exception';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessagingMessagesImportJob,
@@ -29,12 +28,13 @@ export const MESSAGING_MESSAGES_IMPORT_CRON_PATTERN = '*/1 * * * *';
 @Processor(MessageQueue.cronQueue)
 export class MessagingMessagesImportCronJob {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   @Process(MessagingMessagesImportCronJob.name)
@@ -49,14 +49,11 @@ export class MessagingMessagesImportCronJob {
       },
     });
 
-    const mainDataSource =
-      await this.workspaceDataSourceService.connectToMainDataSource();
-
     for (const activeWorkspace of activeWorkspaces) {
       try {
         const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
-        const messageChannels = await mainDataSource.query(
+        const messageChannels = await this.coreDataSource.query(
           `SELECT * FROM ${schemaName}."messageChannel" WHERE "isSyncEnabled" = true AND "syncStage" = '${MessageChannelSyncStage.MESSAGES_IMPORT_PENDING}'`,
         );
 

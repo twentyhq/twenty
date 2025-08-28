@@ -28,7 +28,7 @@ import { OAuth2ClientProvider } from 'src/modules/messaging/message-import-manag
     TwentyConfigModule,
     ObjectMetadataRepositoryModule.forFeature([BlocklistWorkspaceEntity]),
     MessagingCommonModule,
-    TypeOrmModule.forFeature([FeatureFlag], 'core'),
+    TypeOrmModule.forFeature([FeatureFlag]),
     OAuth2ClientManagerModule,
     EmailAliasManagerModule,
     FeatureFlagModule,

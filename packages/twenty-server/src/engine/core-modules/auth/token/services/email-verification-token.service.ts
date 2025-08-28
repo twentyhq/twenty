@@ -23,9 +23,9 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 @Injectable()
 export class EmailVerificationTokenService {
   constructor(
-    @InjectRepository(AppToken, 'core')
+    @InjectRepository(AppToken)
     private readonly appTokenRepository: Repository<AppToken>,
-    @InjectRepository(User, 'core')
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}

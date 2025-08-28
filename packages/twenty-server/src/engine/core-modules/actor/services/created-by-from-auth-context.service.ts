@@ -21,7 +21,7 @@ export class CreatedByFromAuthContextService {
   private readonly logger = new Logger(CreatedByFromAuthContextService.name);
 
   constructor(
-    @InjectRepository(FieldMetadataEntity, 'core')
+    @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}

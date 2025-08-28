@@ -49,7 +49,7 @@ describe('AdminPanelService', () => {
       providers: [
         AdminPanelService,
         {
-          provide: getRepositoryToken(User, 'core'),
+          provide: getRepositoryToken(User),
           useValue: {
             findOne: UserFindOneMock,
           },

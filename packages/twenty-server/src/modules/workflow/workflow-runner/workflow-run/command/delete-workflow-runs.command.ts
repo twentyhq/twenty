@@ -19,7 +19,7 @@ export class DeleteWorkflowRunsCommand extends ActiveOrSuspendedWorkspacesMigrat
   private createdBeforeDate: string | undefined;
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {

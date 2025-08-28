@@ -43,12 +43,12 @@ export class CleanerWorkspaceService {
     private readonly userVarsService: UserVarsService,
     private readonly userService: UserService,
     private readonly emailService: EmailService,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(BillingSubscription, 'core')
+    @InjectRepository(BillingSubscription)
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(UserWorkspace, 'core')
+    @InjectRepository(UserWorkspace)
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
   ) {
     this.inactiveDaysBeforeSoftDelete = this.twentyConfigService.get(

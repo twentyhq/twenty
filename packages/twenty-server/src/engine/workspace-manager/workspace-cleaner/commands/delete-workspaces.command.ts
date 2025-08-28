@@ -21,7 +21,7 @@ export class DeleteWorkspacesCommand extends CommandRunner {
   private readonly logger = new Logger(DeleteWorkspacesCommand.name);
 
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly dataSourceService: DataSourceService,
   ) {

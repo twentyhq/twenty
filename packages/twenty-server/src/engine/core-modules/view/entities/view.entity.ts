@@ -1,4 +1,3 @@
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   CreateDateColumn,
@@ -13,25 +12,26 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
+
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
-import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
-import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
-import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
-import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
 import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 @Entity({ name: 'view', schema: 'core' })
 @Index('IDX_VIEW_WORKSPACE_ID_OBJECT_METADATA_ID', [
   'workspaceId',
   'objectMetadataId',
 ])
-export class View {
-  @IDField(() => UUIDScalarType)
+export class ViewEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -40,6 +40,12 @@ export class View {
 
   @Column({ nullable: false, type: 'uuid' })
   objectMetadataId: string;
+
+  @ManyToOne(() => ObjectMetadataEntity, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'objectMetadataId' })
+  objectMetadata: Relation<ObjectMetadataEntity>;
 
   @Column({
     type: 'enum',
@@ -109,18 +115,21 @@ export class View {
   @JoinColumn({ name: 'workspaceId' })
   workspace: Relation<Workspace>;
 
-  @OneToMany(() => ViewField, (viewField) => viewField.view)
-  viewFields: Relation<ViewField[]>;
+  @OneToMany(() => ViewFieldEntity, (viewField) => viewField.view)
+  viewFields: Relation<ViewFieldEntity[]>;
 
-  @OneToMany(() => ViewFilter, (viewFilter) => viewFilter.view)
-  viewFilters: Relation<ViewFilter[]>;
+  @OneToMany(() => ViewFilterEntity, (viewFilter) => viewFilter.view)
+  viewFilters: Relation<ViewFilterEntity[]>;
 
-  @OneToMany(() => ViewSort, (viewSort) => viewSort.view)
-  viewSorts: Relation<ViewSort[]>;
+  @OneToMany(() => ViewSortEntity, (viewSort) => viewSort.view)
+  viewSorts: Relation<ViewSortEntity[]>;
 
-  @OneToMany(() => ViewGroup, (viewGroup) => viewGroup.view)
-  viewGroups: Relation<ViewGroup[]>;
+  @OneToMany(() => ViewGroupEntity, (viewGroup) => viewGroup.view)
+  viewGroups: Relation<ViewGroupEntity[]>;
 
-  @OneToMany(() => ViewFilterGroup, (viewFilterGroup) => viewFilterGroup.view)
-  viewFilterGroups: Relation<ViewFilterGroup[]>;
+  @OneToMany(
+    () => ViewFilterGroupEntity,
+    (viewFilterGroup) => viewFilterGroup.view,
+  )
+  viewFilterGroups: Relation<ViewFilterGroupEntity[]>;
 }

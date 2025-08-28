@@ -10,12 +10,12 @@ import {
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
-import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
-import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
-import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
-import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
-import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { type ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enums/view-filter-group-logical-operator';
 import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
@@ -39,11 +39,11 @@ import { convertViewFilterWorkspaceValueToCoreValue } from 'src/modules/view/uti
 })
 export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly featureFlagService: FeatureFlagService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectDataSource('core')
+    @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
@@ -208,7 +208,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     queryRunner: QueryRunner,
     dryRun: boolean,
   ): Promise<void> {
-    const viewRepository = queryRunner.manager.getRepository(View);
+    const viewRepository = queryRunner.manager.getRepository(ViewEntity);
     const existingViews = await viewRepository.find({
       where: { workspaceId },
       select: ['id'],
@@ -253,7 +253,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       viewName = 'All {objectLabelPlural}';
     }
 
-    const coreView: Partial<View> = {
+    const coreView: Partial<ViewEntity> = {
       id: workspaceView.id,
       name: viewName,
       objectMetadataId: workspaceView.objectMetadataId,
@@ -282,7 +282,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       anyFieldFilterValue: workspaceView.anyFieldFilterValue,
     };
 
-    const repository = queryRunner.manager.getRepository(View);
+    const repository = queryRunner.manager.getRepository(ViewEntity);
 
     await repository.insert(coreView);
   }
@@ -293,7 +293,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     queryRunner: QueryRunner,
   ): Promise<void> {
     for (const field of workspaceViewFields) {
-      const coreViewField: Partial<ViewField> = {
+      const coreViewField: Partial<ViewFieldEntity> = {
         id: field.id,
         fieldMetadataId: field.fieldMetadataId,
         viewId: field.viewId,
@@ -306,7 +306,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         deletedAt: field.deletedAt ? new Date(field.deletedAt) : null,
       };
 
-      const repository = queryRunner.manager.getRepository(ViewField);
+      const repository = queryRunner.manager.getRepository(ViewFieldEntity);
 
       await repository.insert(coreViewField);
     }
@@ -325,7 +325,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         continue;
       }
 
-      const coreViewFilter: Partial<ViewFilter> = {
+      const coreViewFilter: Partial<ViewFilterEntity> = {
         id: filter.id,
         fieldMetadataId: filter.fieldMetadataId,
         viewId: filter.viewId,
@@ -340,7 +340,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         deletedAt: filter.deletedAt ? new Date(filter.deletedAt) : null,
       };
 
-      const repository = queryRunner.manager.getRepository(ViewFilter);
+      const repository = queryRunner.manager.getRepository(ViewFilterEntity);
 
       await repository.insert(coreViewFilter);
     }
@@ -361,7 +361,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
 
       const direction = sort.direction.toUpperCase() as ViewSortDirection;
 
-      const coreViewSort: Partial<ViewSort> = {
+      const coreViewSort: Partial<ViewSortEntity> = {
         id: sort.id,
         fieldMetadataId: sort.fieldMetadataId,
         viewId: sort.viewId,
@@ -372,7 +372,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         deletedAt: sort.deletedAt ? new Date(sort.deletedAt) : null,
       };
 
-      const repository = queryRunner.manager.getRepository(ViewSort);
+      const repository = queryRunner.manager.getRepository(ViewSortEntity);
 
       await repository.insert(coreViewSort);
     }
@@ -391,7 +391,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         continue;
       }
 
-      const coreViewGroup: Partial<ViewGroup> = {
+      const coreViewGroup: Partial<ViewGroupEntity> = {
         id: group.id,
         fieldMetadataId: group.fieldMetadataId,
         viewId: group.viewId,
@@ -404,7 +404,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         deletedAt: group.deletedAt ? new Date(group.deletedAt) : null,
       };
 
-      const repository = queryRunner.manager.getRepository(ViewGroup);
+      const repository = queryRunner.manager.getRepository(ViewGroupEntity);
 
       await repository.insert(coreViewGroup);
     }
@@ -416,7 +416,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     queryRunner: QueryRunner,
   ): Promise<void> {
     for (const filterGroup of workspaceViewFilterGroups) {
-      const coreViewFilterGroup: Partial<ViewFilterGroup> = {
+      const coreViewFilterGroup: Partial<ViewFilterGroupEntity> = {
         id: filterGroup.id,
         viewId: filterGroup.viewId,
         logicalOperator:
@@ -431,7 +431,9 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
           : null,
       };
 
-      const repository = queryRunner.manager.getRepository(ViewFilterGroup);
+      const repository = queryRunner.manager.getRepository(
+        ViewFilterGroupEntity,
+      );
 
       await repository.insert(coreViewFilterGroup);
     }

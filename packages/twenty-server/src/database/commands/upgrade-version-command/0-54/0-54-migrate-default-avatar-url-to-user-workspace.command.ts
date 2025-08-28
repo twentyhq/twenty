@@ -18,9 +18,9 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 })
 export class MigrateDefaultAvatarUrlToUserWorkspaceCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(UserWorkspace, 'core')
+    @InjectRepository(UserWorkspace)
     protected readonly userWorkspaceRepository: Repository<UserWorkspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {

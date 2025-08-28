@@ -27,7 +27,7 @@ export class PermissionsService {
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly featureFlagService: FeatureFlagService,
-    @InjectRepository(RoleEntity, 'core')
+    @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
   ) {}
 
@@ -208,7 +208,7 @@ export class PermissionsService {
     );
   }
 
-  private checkRolePermissions(
+  public checkRolePermissions(
     role: RoleEntity,
     setting: PermissionFlagType,
   ): boolean {

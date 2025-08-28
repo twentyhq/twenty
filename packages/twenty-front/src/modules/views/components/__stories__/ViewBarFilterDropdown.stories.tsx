@@ -4,11 +4,9 @@ import { type TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { ViewBarFilterDropdown } from '@/views/components/ViewBarFilterDropdown';
@@ -16,6 +14,8 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
+import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { within } from '@storybook/test';
@@ -45,8 +45,8 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
       )!;
       const instanceId = companyObjectMetadataItem.id;
 
-      const setTableColumns = useSetRecoilComponentState(
-        tableColumnsComponentState,
+      const setCurrentRecordFields = useSetRecoilComponentState(
+        currentRecordFieldsComponentState,
         instanceId,
       );
 
@@ -68,14 +68,16 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
 
       const columns = companyObjectMetadataItem.fields.map(
         (fieldMetadataItem, index) =>
-          formatFieldMetadataItemAsColumnDefinition({
-            field: fieldMetadataItem,
-            objectMetadataItem: companyObjectMetadataItem,
+          ({
+            id: fieldMetadataItem.id,
+            fieldMetadataItemId: fieldMetadataItem.id,
+            isVisible: true,
             position: index,
-          }),
+            size: 100,
+          }) satisfies RecordField,
       );
 
-      setTableColumns(columns);
+      setCurrentRecordFields(columns);
 
       return (
         <RecordIndexContextProvider
