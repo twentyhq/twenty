@@ -72,7 +72,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
       status: 'fail',
       error: {
         code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        message: 'Morh relation input transpilation failed',
+        message: 'Morph relation input transpilation failed',
         userFriendlyMessage: t`Invalid morph relation input`,
         value: transpilationsReport.failed
           .map((failedTranspilation) => failedTranspilation.error.value)
