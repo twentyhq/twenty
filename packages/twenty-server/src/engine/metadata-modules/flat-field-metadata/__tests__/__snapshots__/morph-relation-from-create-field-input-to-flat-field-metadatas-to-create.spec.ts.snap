@@ -33,7 +33,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
   "error": {
     "code": "FIELD_METADATA_RELATION_MALFORMED",
     "message": "Morph relation creation payloads must have only relation to the same object metadata",
-    "userFriendlyMessage": "Morph relation creation payloads must have contain relation to the same object metadata",
+    "userFriendlyMessage": "Morph relation creation payloads must only contain relation to the same object metadata",
   },
   "status": "fail",
 }
@@ -44,7 +44,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
   "error": {
     "code": "FIELD_METADATA_RELATION_MALFORMED",
     "message": "Morph relation creation payloads are empty",
-    "userFriendlyMessage": "Morph relation creation payloads are empty",
+    "userFriendlyMessage": "At least one relation is require",
   },
   "status": "fail",
 }
