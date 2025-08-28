@@ -69,7 +69,7 @@ const FOLDER_REGEX_PATTERNS: Record<StandardFolder, string[]> = {
     'itens[\\s_-]?rascunho',
     // IT
     'bozze',
-    'bozze[\s_-]?salvate',
+    'bozze[\\s_-]?salvate',
     // KO
     '임시보관함',
     '초안',
