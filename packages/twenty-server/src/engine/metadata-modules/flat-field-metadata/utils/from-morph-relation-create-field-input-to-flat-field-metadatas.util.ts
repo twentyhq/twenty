@@ -56,6 +56,24 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
     failed: [],
   };
 
+  const allRelationType = [
+    ...new Set(
+      rawMorphCreationPayload.map(
+        (relationCreationPayload) => relationCreationPayload.type,
+      ),
+    ),
+  ];
+  if (allRelationType.length > 1) {
+    return {
+      status: 'fail',
+      error: {
+        code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+        message: 'Morph relation relations must have the same relation type',
+        userFriendlyMessage: t`Morph relation relations must have the same relation type`,
+      },
+    };
+  }
+
   for (const rawRelationCreationPayload of rawMorphCreationPayload) {
     const relationValidationResult = await validateRelationCreationPayload({
       existingFlatObjectMetadataMaps,
