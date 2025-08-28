@@ -45,12 +45,31 @@ const validateMetadataOptionId = (sanitizedId?: string) => {
   });
 };
 
-const validateMetadataOptionLabel = (sanitizedLabel: string) => {
+const validateMetadataOptionLabel = (
+  sanitizedLabel: string,
+): FlatFieldMetadataValidationError[] => {
+  if (!isDefined(sanitizedLabel)) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: t`Option label is required`,
+        userFriendlyMessage: t`Option label is required`,
+      },
+    ];
+  }
+
+  if (!isNonEmptyString(sanitizedLabel)) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: t`Option label must be a string of at least one character`,
+        userFriendlyMessage: t`Option label format not supported`,
+        value: sanitizedLabel,
+      },
+    ];
+  }
+
   const validators: FlatMetadataValidator<string>[] = [
-    {
-      validator: (label) => !isDefined(label),
-      message: t`Option label is required`,
-    },
     {
       validator: exceedsDatabaseIdentifierMaximumLength,
       message: t`Option label exceeds 63 characters`,
@@ -75,12 +94,30 @@ const validateMetadataOptionLabel = (sanitizedLabel: string) => {
   });
 };
 
-const validateMetadataOptionValue = (sanitizedValue: string) => {
+const validateMetadataOptionValue = (
+  sanitizedValue: string,
+): FlatFieldMetadataValidationError[] => {
+  if (!isDefined(sanitizedValue)) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: t`Option value is required`,
+        userFriendlyMessage: t`Option value is required`,
+      },
+    ];
+  }
+
+  if (!isNonEmptyString(sanitizedValue)) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: t`Option value must be a string of at least one character`,
+        userFriendlyMessage: t`Option value format not supported`,
+      },
+    ];
+  }
+
   const validators: FlatMetadataValidator<string>[] = [
-    {
-      validator: (value) => !isDefined(value),
-      message: t`Option value is required`,
-    },
     {
       validator: exceedsDatabaseIdentifierMaximumLength,
       message: t`Option value exceeds 63 characters`,

@@ -1,14 +1,13 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -27,7 +26,8 @@ export class FixSchemaArrayTypeCommand extends ActiveOrSuspendedWorkspacesMigrat
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly databaseStructureService: DatabaseStructureService,
-    private readonly typeORMService: TypeORMService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {
@@ -82,9 +82,7 @@ export class FixSchemaArrayTypeCommand extends ActiveOrSuspendedWorkspacesMigrat
         `Altering column ${schemaName}.${tableName}.${columnName} to type text[] (was ${dbColumn.dataType})`,
       );
       if (!options.dryRun) {
-        const queryRunner = this.typeORMService
-          .getMainDataSource()
-          .createQueryRunner();
+        const queryRunner = this.coreDataSource.createQueryRunner();
 
         await queryRunner.connect();
         try {
