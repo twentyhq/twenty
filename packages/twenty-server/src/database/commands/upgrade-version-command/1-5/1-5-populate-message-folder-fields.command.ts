@@ -22,7 +22,7 @@ type MessageFolder = Pick<
 >;
 
 @Command({
-  name: 'upgrade:1-4:populate-message-folder-fields',
+  name: 'upgrade:1-5:populate-message-folder-fields',
   description:
     'Populate isSynced, isSentFolder, and externalId fields for existing message folders. ' +
     'First populates basic fields for existing hardcoded folders, then runs sync service ' +
