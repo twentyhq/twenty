@@ -47,6 +47,15 @@ export const triggerAttachRelationOptimisticEffect = ({
         }
 
         if (fieldValueIsObjectRecordConnectionWithRefs) {
+          const recordAlreadyExists = targetRecordFieldValue.edges.some(
+            (edge: RecordGqlRefEdge) =>
+              edge.node.__ref === sourceRecordReference.__ref,
+          );
+
+          if (recordAlreadyExists) {
+            return targetRecordFieldValue;
+          }
+
           const nextEdges: RecordGqlRefEdge[] = [
             ...targetRecordFieldValue.edges,
             {
