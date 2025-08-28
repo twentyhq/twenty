@@ -1,5 +1,9 @@
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { type FieldMetadataType } from 'twenty-shared/types';
+import {
+  computeMorphRelationFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -9,20 +13,23 @@ import {
   type SuccessfulFieldInputTranspilation,
 } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { fromRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util';
+import { generateRelationOrMorphRelationFlatFieldMetadataPairUtil } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-relation-or-morph-relation-flat-field-metadata-pair.util';
+import { validateRelationCreationPayload } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type FromMorphRelationCreateFieldInputToFlatFieldMetadatasArgs = {
-  createFieldInput: Omit<CreateFieldInput, 'workspaceId'>;
+  createFieldInput: Omit<CreateFieldInput, 'workspaceId'> & {
+    type: FieldMetadataType.MORPH_RELATION;
+  };
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-  sourceParentFlatObjectMetadata: FlatObjectMetadata;
+  sourceFlatObjectMetadata: FlatObjectMetadata;
   workspaceId: string;
 };
 export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
   createFieldInput,
   existingFlatObjectMetadataMaps,
-  sourceParentFlatObjectMetadata,
+  sourceFlatObjectMetadata,
   workspaceId,
 }: FromMorphRelationCreateFieldInputToFlatFieldMetadatasArgs): Promise<
   FieldInputTranspilationResult<FlatFieldMetadata[]>
@@ -49,22 +56,41 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
     failed: [],
   };
 
-  for (const relationCreationPayload of rawMorphCreationPayload) {
-    const transpilationResult =
-      await fromRelationCreateFieldInputToFlatFieldMetadatas({
+  for (const rawRelationCreationPayload of rawMorphCreationPayload) {
+    const relationValidationResult = await validateRelationCreationPayload({
+      existingFlatObjectMetadataMaps,
+      relationCreationPayload: rawRelationCreationPayload,
+    });
+
+    if (relationValidationResult.status === 'fail') {
+      transpilationsReport.failed.push(relationValidationResult);
+      continue;
+    }
+    const { relationCreationPayload, targetFlatObjectMetadata } =
+      relationValidationResult.result;
+
+    const sourceFlatFieldMetadataName = computeMorphRelationFieldJoinColumnName(
+      {
+        name: createFieldInput.name,
+        targetObjectMetadataNameSingular: targetFlatObjectMetadata.nameSingular,
+      },
+    );
+    const flatFieldMetadatas =
+      generateRelationOrMorphRelationFlatFieldMetadataPairUtil({
         createFieldInput: {
           ...createFieldInput,
-          morphRelationsCreationPayload: undefined,
           relationCreationPayload,
+          name: sourceFlatFieldMetadataName,
         },
-        existingFlatObjectMetadataMaps,
-        sourceParentFlatObjectMetadata,
+        sourceFlatObjectMetadata,
+        targetFlatObjectMetadata,
         workspaceId,
       });
 
-    transpilationResult.status === 'fail'
-      ? transpilationsReport.failed.push(transpilationResult)
-      : transpilationsReport.success.push(transpilationResult);
+    transpilationsReport.success.push({
+      status: 'success',
+      result: flatFieldMetadatas,
+    });
   }
 
   if (transpilationsReport.failed.length > 0) {

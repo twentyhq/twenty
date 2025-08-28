@@ -70,17 +70,23 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
   switch (createFieldInput.type) {
     case FieldMetadataType.MORPH_RELATION: {
       return await fromMorphRelationCreateFieldInputToFlatFieldMetadatas({
-        createFieldInput,
+        createFieldInput: {
+          ...createFieldInput,
+          type: createFieldInput.type,
+        },
         existingFlatObjectMetadataMaps,
-        sourceParentFlatObjectMetadata: parentFlatObjectMetadata,
+        sourceFlatObjectMetadata: parentFlatObjectMetadata,
         workspaceId,
       });
     }
     case FieldMetadataType.RELATION: {
       return await fromRelationCreateFieldInputToFlatFieldMetadatas({
         existingFlatObjectMetadataMaps,
-        sourceParentFlatObjectMetadata: parentFlatObjectMetadata,
-        createFieldInput,
+        sourceFlatObjectMetadata: parentFlatObjectMetadata,
+        createFieldInput: {
+          ...createFieldInput,
+          type: createFieldInput.type,
+        },
         workspaceId,
       });
     }

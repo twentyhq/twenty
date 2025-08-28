@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import omit from 'lodash.omit';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeMorphRelationFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -15,7 +18,6 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
-import { computeMorphRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-join-column-name.util';
 import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -81,6 +83,7 @@ export class FieldMetadataMorphRelationService {
             fieldMetadataInput: fieldMetadataForCreate,
             relationCreationPayload: relation,
             joinColumnName: computeMorphRelationFieldJoinColumnName({
+              // need to use this
               name: fieldMetadataForCreate.name,
               targetObjectMetadataNameSingular:
                 targetObjectMetadata.nameSingular,
