@@ -35,25 +35,29 @@ export const generateViewSortExceptionMessage = (
 
   switch (key) {
     case ViewSortExceptionMessageKey.WORKSPACE_ID_REQUIRED:
-      message = `WorkspaceId is required`;
+      message = t`WorkspaceId is required`;
       break;
     case ViewSortExceptionMessageKey.VIEW_ID_REQUIRED:
-      message = `ViewId is required`;
+      message = t`ViewId is required`;
       break;
     case ViewSortExceptionMessageKey.VIEW_SORT_NOT_FOUND:
-      message = `View sort${id ? ` (id: ${id})` : ''} not found`;
+      message = id
+        ? t`View sort (id: ${id}) not found`
+        : t`View sort not found`;
       break;
     case ViewSortExceptionMessageKey.INVALID_VIEW_SORT_DATA:
-      message = `Invalid view sort data${id ? ` for view sort id: ${id}` : ''}`;
+      message = id
+        ? t`Invalid view sort data for view sort id: ${id}`
+        : t`Invalid view sort data`;
       break;
     case ViewSortExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
-      message = `FieldMetadataId is required`;
+      message = t`FieldMetadataId is required`;
       break;
     default:
       assertUnreachable(key);
   }
 
-  return t`${message}`;
+  return message;
 };
 
 export const generateViewSortUserFriendlyExceptionMessage = (

@@ -20,6 +20,9 @@ export default [
   // Base JavaScript configuration
   js.configs.recommended,
 
+  // Lingui recommended rules
+  linguiPlugin.configs['flat/recommended'],
+
   // Global ignores
   {
     ignores: [
@@ -49,8 +52,6 @@ export default [
       '@stylistic': stylisticPlugin,
     },
     rules: {
-      // Lingui rules
-      'lingui/no-single-variables-to-translate': 'off',
       'prettier/prettier': 'error',
       
       // General rules

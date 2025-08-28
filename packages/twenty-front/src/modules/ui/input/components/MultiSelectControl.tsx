@@ -4,7 +4,6 @@ import {
   StyledSelectControlIconChevronDown,
 } from '@/ui/input/components/SelectControl';
 import { useTheme } from '@emotion/react';
-import { t } from '@lingui/core/macro';
 import pluralize from 'pluralize';
 import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -64,7 +63,7 @@ export const MultiSelectControl = ({
       ) : null}
       {isDefined(fixedText) ? (
         <OverflowingTextWithTooltip
-          text={t`${selectedOptionsCount} ${
+          text={`${selectedOptionsCount} ${
             selectedOptionsCount <= 1 ? fixedText : pluralize(fixedText)
           }`}
         />
