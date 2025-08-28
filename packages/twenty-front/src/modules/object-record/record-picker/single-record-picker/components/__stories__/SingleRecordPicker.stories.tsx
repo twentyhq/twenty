@@ -32,7 +32,7 @@ const meta: Meta<typeof SingleRecordPicker> = {
     SnackBarDecorator,
   ],
   args: {
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    objectNameSingulars: [CoreObjectNameSingular.WorkspaceMember],
     componentInstanceId: 'single-record-picker',
   },
   argTypes: {

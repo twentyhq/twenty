@@ -22,7 +22,7 @@ import { IconPlus } from 'twenty-ui/display';
 export type SingleRecordPickerMenuItemsWithSearchProps = {
   excludedRecordIds?: string[];
   onCreate?: ((searchInput?: string) => void) | (() => void);
-  objectNameSingular: string;
+  objectNameSingulars: string[];
   recordPickerInstanceId?: string;
   layoutDirection?: RecordPickerLayoutDirection;
   focusId: string;
@@ -42,7 +42,7 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
   onCancel,
   onCreate,
   onRecordSelected,
-  objectNameSingular,
+  objectNameSingulars,
   layoutDirection = 'search-bar-on-top',
   focusId,
 }: SingleRecordPickerMenuItemsWithSearchProps) => {
@@ -58,12 +58,12 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
   );
 
   const { records } = useSingleRecordPickerRecords({
-    objectNameSingular,
+    objectNameSingular: objectNameSingulars[0],
     excludedRecordIds,
   });
 
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
+    objectNameSingular: objectNameSingulars[0],
   });
 
   const objectPermissions = useObjectPermissionsForObject(

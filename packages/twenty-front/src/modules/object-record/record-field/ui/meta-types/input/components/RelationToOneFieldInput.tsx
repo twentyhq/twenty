@@ -83,9 +83,9 @@ export const RelationToOneFieldInput = () => {
       onCancel={onCancel}
       onCreate={handleCreateNew}
       onRecordSelected={handleRecordSelected}
-      objectNameSingular={
-        fieldDefinition.metadata.relationObjectMetadataNameSingular
-      }
+      objectNameSingulars={[
+        fieldDefinition.metadata.relationObjectMetadataNameSingular,
+      ]}
       recordPickerInstanceId={instanceId}
       layoutDirection={
         layoutDirection === 'downward'

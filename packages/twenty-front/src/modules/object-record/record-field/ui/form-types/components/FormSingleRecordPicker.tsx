@@ -62,7 +62,7 @@ export type FormSingleRecordPickerProps = {
   label?: string;
   defaultValue?: RecordId | Variable;
   onChange: (value: RecordId | Variable | null) => void;
-  objectNameSingular: string;
+  objectNameSingulars: string[];
   disabled?: boolean;
   testId?: string;
   VariablePicker?: VariablePickerComponent;
@@ -71,7 +71,7 @@ export type FormSingleRecordPickerProps = {
 export const FormSingleRecordPicker = ({
   label,
   defaultValue,
-  objectNameSingular,
+  objectNameSingulars,
   onChange,
   disabled,
   testId,
@@ -95,7 +95,7 @@ export const FormSingleRecordPicker = ({
       isDefined(defaultValue) && !isStandaloneVariableString(defaultValue)
         ? defaultValue
         : '',
-    objectNameSingular,
+    objectNameSingular: objectNameSingulars[0],
     withSoftDeleted: true,
     skip: !isDefined(defaultValue) || !isValidUuid(defaultValue),
   });
@@ -168,7 +168,7 @@ export const FormSingleRecordPicker = ({
             <FormSingleRecordFieldChip
               draftValue={draftValue}
               selectedRecord={selectedRecord}
-              objectNameSingular={objectNameSingular}
+              objectNameSingular={objectNameSingulars[0]}
               onRemove={handleUnlinkVariable}
               disabled={disabled}
             />
@@ -190,7 +190,7 @@ export const FormSingleRecordPicker = ({
                 <FormSingleRecordFieldChip
                   draftValue={draftValue}
                   selectedRecord={selectedRecord}
-                  objectNameSingular={objectNameSingular}
+                  objectNameSingular={objectNameSingulars[0]}
                   onRemove={handleUnlinkVariable}
                   disabled={disabled}
                 />
@@ -207,10 +207,10 @@ export const FormSingleRecordPicker = ({
                 focusId={dropdownId}
                 componentInstanceId={dropdownId}
                 EmptyIcon={IconForbid}
-                emptyLabel={'No ' + objectNameSingular}
+                emptyLabel={'No ' + objectNameSingulars.join(' or ')}
                 onCancel={() => closeDropdown(dropdownId)}
                 onRecordSelected={handleRecordSelected}
-                objectNameSingular={objectNameSingular}
+                objectNameSingulars={objectNameSingulars}
                 recordPickerInstanceId={dropdownId}
                 dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
               />
