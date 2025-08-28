@@ -9,9 +9,11 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { useUpdateMultipleRecordsFromManyObjects } from '@/object-record/hooks/useUpdateMultipleRecordsFromManyObjects';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useRecoilCallback } from 'recoil';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 export const useDetachMorphRelatedRecordFromRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -37,86 +39,138 @@ export const useDetachMorphRelatedRecordFromRecord = () => {
   }
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const updateOneRecordAndDetachMorphRelations = async ({
-    recordId,
-    relatedRecordId,
-    objectNameSingulars,
-  }: {
-    recordId: string;
-    relatedRecordId: string;
-    objectNameSingulars: string[];
-  }) => {
-    const relatedObjectMetadataItems = objectMetadataItems.filter(
-      (objectMetadataItem) =>
-        objectNameSingulars.includes(objectMetadataItem.nameSingular),
-    );
-
-    const relatedObjectMetadataItemsWithCachedRecord =
-      relatedObjectMetadataItems
-        .map((objectMetadataItem) => {
-          const cachedRelatedRecord = getRecordFromCache<ObjectRecord>({
-            objectMetadataItem,
-            recordId: relatedRecordId,
-            cache: apolloCoreClient.cache,
-            objectMetadataItems,
-            objectPermissionsByObjectMetadataId,
-          });
-          return {
-            cachedRelatedRecord,
-            objectMetadataItem,
-          };
-        })
-        .find((item) => isDefined(item.cachedRelatedRecord));
-
-    if (!relatedObjectMetadataItemsWithCachedRecord) {
-      throw new Error('Could not find cached related record');
-    }
-
-    const { objectMetadataItem: relatedObjectMetadataItem } =
-      relatedObjectMetadataItemsWithCachedRecord;
-
-    modifyRecordFromCache({
-      objectMetadataItem,
-      cache: apolloCoreClient.cache,
-      fieldModifiers: {
-        [fieldDefinition.metadata.fieldName]: (
-          fieldNameOnRecordObjectConnection,
-          { readField },
-        ) => {
-          const edges = readField<{ node: Reference }[]>(
-            'edges',
-            fieldNameOnRecordObjectConnection,
-          );
-
-          if (!edges) return fieldNameOnRecordObjectConnection;
-
-          return {
-            ...fieldNameOnRecordObjectConnection,
-            edges: edges.filter(
-              (edge) =>
-                !(
-                  edge.node.__ref ===
-                  getRefName(
-                    relatedObjectMetadataItem.nameSingular,
-                    relatedRecordId,
-                  )
-                ),
-            ),
-          };
-        },
-      },
-      recordId,
-    });
-    const updatedManyRecordsArgs = [
-      {
-        idToUpdate: relatedRecordId,
+  const updateOneRecordAndDetachMorphRelations = useRecoilCallback(
+    ({ set, snapshot }) =>
+      async ({
+        recordId,
+        relatedRecordId,
         objectNameSingulars,
-        relatedRecordId: null,
-      },
-    ];
+      }: {
+        recordId: string;
+        relatedRecordId: string;
+        objectNameSingulars: string[];
+      }) => {
+        const relatedObjectMetadataItems = objectMetadataItems.filter(
+          (objectMetadataItem) =>
+            objectNameSingulars.includes(objectMetadataItem.nameSingular),
+        );
 
-    await updateMultipleRecordsFromManyObjects(updatedManyRecordsArgs);
-  };
+        const parentRecord = snapshot
+          .getLoadable(recordStoreFamilyState(recordId))
+          .getValue();
+
+        if (isDefined(parentRecord)) {
+          relatedObjectMetadataItems.forEach((relatedObjectMetadataItem) => {
+            const computedFieldName = computeMorphRelationFieldName({
+              fieldName: fieldDefinition.metadata.fieldName,
+              relationDirection: fieldDefinition.metadata.relationType,
+              nameSingular: relatedObjectMetadataItem.nameSingular,
+              namePlural: relatedObjectMetadataItem.namePlural,
+            });
+
+            const currentMorphFieldValue = parentRecord[
+              computedFieldName
+            ] as ObjectRecord[];
+
+            const objectRecordFromCache = getRecordFromCache({
+              objectMetadataItem: relatedObjectMetadataItem,
+              recordId: relatedRecordId,
+              cache: apolloCoreClient.cache,
+              objectMetadataItems,
+              objectPermissionsByObjectMetadataId,
+            });
+
+            if (!isDefined(objectRecordFromCache)) {
+              return;
+            }
+
+            if (Array.isArray(currentMorphFieldValue)) {
+              set(recordStoreFamilyState(recordId), {
+                ...parentRecord,
+                [computedFieldName]: currentMorphFieldValue.filter(
+                  (record) => record.id !== relatedRecordId,
+                ),
+              });
+            }
+          });
+        }
+
+        const relatedObjectMetadataItemsWithCachedRecord =
+          relatedObjectMetadataItems
+            .map((objectMetadataItem) => {
+              const cachedRelatedRecord = getRecordFromCache<ObjectRecord>({
+                objectMetadataItem,
+                recordId: relatedRecordId,
+                cache: apolloCoreClient.cache,
+                objectMetadataItems,
+                objectPermissionsByObjectMetadataId,
+              });
+              return {
+                cachedRelatedRecord,
+                objectMetadataItem,
+              };
+            })
+            .find((item) => isDefined(item.cachedRelatedRecord));
+
+        if (!relatedObjectMetadataItemsWithCachedRecord) {
+          throw new Error('Could not find cached related record');
+        }
+
+        const { objectMetadataItem: relatedObjectMetadataItem } =
+          relatedObjectMetadataItemsWithCachedRecord;
+
+        modifyRecordFromCache({
+          objectMetadataItem,
+          cache: apolloCoreClient.cache,
+          fieldModifiers: {
+            [fieldDefinition.metadata.fieldName]: (
+              fieldNameOnRecordObjectConnection,
+              { readField },
+            ) => {
+              const edges = readField<{ node: Reference }[]>(
+                'edges',
+                fieldNameOnRecordObjectConnection,
+              );
+
+              if (!edges) return fieldNameOnRecordObjectConnection;
+
+              return {
+                ...fieldNameOnRecordObjectConnection,
+                edges: edges.filter(
+                  (edge) =>
+                    !(
+                      edge.node.__ref ===
+                      getRefName(
+                        relatedObjectMetadataItem.nameSingular,
+                        relatedRecordId,
+                      )
+                    ),
+                ),
+              };
+            },
+          },
+          recordId,
+        });
+
+        const updatedManyRecordsArgs = [
+          {
+            idToUpdate: relatedRecordId,
+            objectNameSingulars,
+            relatedRecordId: null,
+          },
+        ];
+
+        await updateMultipleRecordsFromManyObjects(updatedManyRecordsArgs);
+      },
+    [
+      fieldDefinition,
+      objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
+      updateMultipleRecordsFromManyObjects,
+      apolloCoreClient.cache,
+      objectMetadataItem,
+    ],
+  );
 
   return { updateOneRecordAndDetachMorphRelations };
 };

@@ -8,9 +8,11 @@ import { useUpdateMultipleRecordsFromManyObjects } from '@/object-record/hooks/u
 import { getTargetFieldMetadataName } from '@/object-record/multiple-objects/utils/getTargetFieldMetadataName';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { useRecoilCallback } from 'recoil';
+import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 export const useAttachMorphRelatedRecordFromRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -36,103 +38,156 @@ export const useAttachMorphRelatedRecordFromRecord = () => {
   }
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const updateOneRecordAndAttachMorphRelations = async ({
-    recordId,
-    relatedRecordId,
-    objectNameSingulars,
-  }: {
-    recordId: string;
-    relatedRecordId: string;
-    objectNameSingulars: string[];
-  }) => {
-    const relatedObjectMetadataItems = objectMetadataItems.filter(
-      (objectMetadataItem) =>
-        objectNameSingulars.includes(objectMetadataItem.nameSingular),
-    );
 
-    const relatedObjectMetadataItemsWithCachedRecord =
-      relatedObjectMetadataItems
-        .map((objectMetadataItem) => {
-          const cachedRelatedRecord = getRecordFromCache<ObjectRecord>({
+  const updateOneRecordAndAttachMorphRelations = useRecoilCallback(
+    ({ set, snapshot }) =>
+      async ({
+        recordId,
+        relatedRecordId,
+        objectNameSingulars,
+      }: {
+        recordId: string;
+        relatedRecordId: string;
+        objectNameSingulars: string[];
+      }) => {
+        const relatedObjectMetadataItems = objectMetadataItems.filter(
+          (objectMetadataItem) =>
+            objectNameSingulars.includes(objectMetadataItem.nameSingular),
+        );
+
+        const parentRecord = snapshot
+          .getLoadable(recordStoreFamilyState(recordId))
+          .getValue();
+
+        if (isDefined(parentRecord)) {
+          relatedObjectMetadataItems.forEach((relatedObjectMetadataItem) => {
+            const computedFieldName = computeMorphRelationFieldName({
+              fieldName: fieldDefinition.metadata.fieldName,
+              relationDirection: fieldDefinition.metadata.relationType,
+              nameSingular: relatedObjectMetadataItem.nameSingular,
+              namePlural: relatedObjectMetadataItem.namePlural,
+            });
+
+            const currentMorphFieldValue = parentRecord[computedFieldName];
+
+            const objectRecordFromCache = getRecordFromCache({
+              objectMetadataItem: relatedObjectMetadataItem,
+              recordId: relatedRecordId,
+              cache: apolloCoreClient.cache,
+              objectMetadataItems,
+              objectPermissionsByObjectMetadataId,
+            });
+
+            if (!isDefined(objectRecordFromCache)) {
+              return;
+            }
+
+            set(recordStoreFamilyState(recordId), {
+              ...parentRecord,
+              [computedFieldName]: [
+                ...currentMorphFieldValue,
+                objectRecordFromCache,
+              ],
+            });
+          });
+        }
+
+        const relatedObjectMetadataItemsWithCachedRecord =
+          relatedObjectMetadataItems
+            .map((objectMetadataItem) => {
+              const cachedRelatedRecord = getRecordFromCache<ObjectRecord>({
+                objectMetadataItem,
+                recordId: relatedRecordId,
+                cache: apolloCoreClient.cache,
+                objectMetadataItems,
+                objectPermissionsByObjectMetadataId,
+              });
+              return {
+                cachedRelatedRecord,
+                objectMetadataItem,
+              };
+            })
+            .find((item) => isDefined(item.cachedRelatedRecord));
+
+        if (!relatedObjectMetadataItemsWithCachedRecord) {
+          throw new Error('Could not find cached related record');
+        }
+
+        const {
+          objectMetadataItem: relatedObjectMetadataItem,
+          cachedRelatedRecord,
+        } = relatedObjectMetadataItemsWithCachedRecord;
+
+        if (
+          !isDefined(cachedRelatedRecord) ||
+          !isDefined(cachedRelatedRecord.id)
+        ) {
+          throw new Error('Could not find cached related record');
+        }
+
+        const fieldOnRelatedObject = getTargetFieldMetadataName({
+          fieldDefinition,
+          objectNameSingular: relatedObjectMetadataItem.nameSingular,
+        });
+        if (!isDefined(fieldOnRelatedObject)) {
+          throw new Error('Could not find field on related object');
+        }
+
+        const previousRecordId =
+          cachedRelatedRecord?.[`${fieldOnRelatedObject}Id`];
+
+        if (isDefined(previousRecordId)) {
+          const previousRecord = getRecordFromCache<ObjectRecord>({
             objectMetadataItem,
-            recordId: relatedRecordId,
+            recordId: previousRecordId,
             cache: apolloCoreClient.cache,
             objectMetadataItems,
             objectPermissionsByObjectMetadataId,
           });
-          return {
-            cachedRelatedRecord,
-            objectMetadataItem,
+
+          const previousRecordWithRelation = {
+            ...cachedRelatedRecord,
+            [fieldOnRelatedObject]: previousRecord,
           };
-        })
-        .find((item) => isDefined(item.cachedRelatedRecord));
 
-    if (!relatedObjectMetadataItemsWithCachedRecord) {
-      throw new Error('Could not find cached related record');
-    }
+          const gqlFields = computeDepthOneRecordGqlFieldsFromRecord({
+            objectMetadataItem: relatedObjectMetadataItem,
+            record: previousRecordWithRelation,
+          });
 
-    const {
-      objectMetadataItem: relatedObjectMetadataItem,
-      cachedRelatedRecord,
-    } = relatedObjectMetadataItemsWithCachedRecord;
+          updateRecordFromCache({
+            objectMetadataItems,
+            objectMetadataItem: relatedObjectMetadataItem,
+            cache: apolloCoreClient.cache,
+            record: {
+              ...cachedRelatedRecord,
+              [fieldOnRelatedObject]: previousRecord,
+            },
+            recordGqlFields: gqlFields,
+            objectPermissionsByObjectMetadataId,
+          });
+        }
 
-    if (!isDefined(cachedRelatedRecord) || !isDefined(cachedRelatedRecord.id)) {
-      throw new Error('Could not find cached related record');
-    }
+        const updatedManyRecordsArgs = [
+          {
+            idToUpdate: relatedRecordId,
+            objectNameSingulars,
+            relatedRecordId: recordId,
+            // recordGqlFields: gqlFields,
+          },
+        ];
 
-    const fieldOnRelatedObject = getTargetFieldMetadataName({
-      fieldDefinition,
-      objectNameSingular: relatedObjectMetadataItem.nameSingular,
-    });
-    if (!isDefined(fieldOnRelatedObject)) {
-      throw new Error('Could not find field on related object');
-    }
-
-    const previousRecordId = cachedRelatedRecord?.[`${fieldOnRelatedObject}Id`];
-
-    if (isDefined(previousRecordId)) {
-      const previousRecord = getRecordFromCache<ObjectRecord>({
-        objectMetadataItem,
-        recordId: previousRecordId,
-        cache: apolloCoreClient.cache,
-        objectMetadataItems,
-        objectPermissionsByObjectMetadataId,
-      });
-
-      const previousRecordWithRelation = {
-        ...cachedRelatedRecord,
-        [fieldOnRelatedObject]: previousRecord,
-      };
-
-      const gqlFields = computeDepthOneRecordGqlFieldsFromRecord({
-        objectMetadataItem: relatedObjectMetadataItem,
-        record: previousRecordWithRelation,
-      });
-
-      updateRecordFromCache({
-        objectMetadataItems,
-        objectMetadataItem: relatedObjectMetadataItem,
-        cache: apolloCoreClient.cache,
-        record: {
-          ...cachedRelatedRecord,
-          [fieldOnRelatedObject]: previousRecord,
-        },
-        recordGqlFields: gqlFields,
-        objectPermissionsByObjectMetadataId,
-      });
-    }
-
-    const updatedManyRecordsArgs = [
-      {
-        idToUpdate: relatedRecordId,
-        objectNameSingulars,
-        relatedRecordId: recordId,
-        // recordGqlFields: gqlFields,
+        await updateMultipleRecordsFromManyObjects(updatedManyRecordsArgs);
       },
-    ];
-
-    await updateManyRecordsFromManyObjects(updatedManyRecordsArgs);
-  };
+    [
+      fieldDefinition,
+      objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
+      updateMultipleRecordsFromManyObjects,
+      apolloCoreClient.cache,
+      objectMetadataItem,
+    ],
+  );
 
   return { updateOneRecordAndAttachMorphRelations };
 };
