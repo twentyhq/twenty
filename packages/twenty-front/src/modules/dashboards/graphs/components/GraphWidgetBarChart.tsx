@@ -40,7 +40,6 @@ type GraphWidgetBarChartProps = {
   showLegend?: boolean;
   showGrid?: boolean;
   showValues?: boolean;
-  showGradient?: boolean;
   xAxisLabel?: string;
   yAxisLabel?: string;
   id: string;
