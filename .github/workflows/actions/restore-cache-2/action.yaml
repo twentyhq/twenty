@@ -17,7 +17,7 @@ runs:
       uses: actions/cache/restore@v4
       id: restore-cache
       with:
-        key:  ${{ inputs.key }}
+        key: ${{ inputs.key }}
         path: |
           .cache
           .nx
