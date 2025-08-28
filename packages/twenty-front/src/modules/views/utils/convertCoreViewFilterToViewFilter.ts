@@ -4,7 +4,16 @@ import { type CoreViewFilter } from '~/generated/graphql';
 import { convertViewFilterOperandFromCore } from '../utils/convertViewFilterOperandFromCore';
 
 export const convertCoreViewFilterToViewFilter = (
-  coreViewFilter: Omit<CoreViewFilter, 'workspaceId'>,
+  coreViewFilter: Pick<
+    CoreViewFilter,
+    | 'id'
+    | 'fieldMetadataId'
+    | 'operand'
+    | 'value'
+    | 'viewFilterGroupId'
+    | 'positionInViewFilterGroup'
+    | 'subFieldName'
+  >,
 ): ViewFilter => {
   return {
     __typename: 'ViewFilter',
