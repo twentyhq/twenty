@@ -31,7 +31,7 @@ export class CallDatabaseEventTriggerJobsJob {
         where: {
           workspaceId: workspaceEventBatch.workspaceId,
         },
-        select: ['settings'],
+        select: ['id', 'settings', 'workspaceId'],
         relations: ['serverlessFunction'],
       });
 
