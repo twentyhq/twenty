@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize, computeMorphRelationFieldJoinColumnName, isDefined } from 'twenty-shared/utils';
+import {
+  capitalize,
+  computeMorphRelationFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type QueryRunner, Repository } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
 
