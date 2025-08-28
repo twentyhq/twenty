@@ -68,8 +68,8 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
       to: toFlatFieldMetadata,
     } of updatedFlatFieldMetadatas) {
       const updates = compareTwoFlatFieldMetadata({
-        from: fromFlatFieldMetadata,
-        to: toFlatFieldMetadata,
+        fromFlatFieldMetadata,
+        toFlatFieldMetadata,
       });
 
       if (updates.length === 0) {
