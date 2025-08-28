@@ -74,6 +74,26 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
     };
   }
 
+  const allRelatedObjectMetadataIds = rawMorphCreationPayload.map(
+    (relationCreationPayload) => relationCreationPayload.targetObjectMetadataId,
+  );
+  const allRelatedObjectMetadataIdsSet = [
+    ...new Set(allRelatedObjectMetadataIds),
+  ];
+  if (
+    allRelatedObjectMetadataIds.length !== allRelatedObjectMetadataIdsSet.length
+  ) {
+    return {
+      status: 'fail',
+      error: {
+        code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+        message:
+          'Morph relation relations must have only relation to the same object metadata',
+        userFriendlyMessage: t`Morph relation relations must have only relation to the same object metadata`,
+      },
+    };
+  }
+
   for (const rawRelationCreationPayload of rawMorphCreationPayload) {
     const relationValidationResult = await validateRelationCreationPayload({
       existingFlatObjectMetadataMaps,
