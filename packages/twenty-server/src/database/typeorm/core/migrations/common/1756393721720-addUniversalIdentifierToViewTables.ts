@@ -1,28 +1,28 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddUniversalIdentifierToViewTables1756393450633
+export class AddUniversalIdentifierToViewTables1756393721720
   implements MigrationInterface
 {
-  name = 'AddUniversalIdentifierToViewTables1756393450633';
+  name = 'AddUniversalIdentifierToViewTables1756393721720';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."viewFilter" ADD "universalIdentifier" text`,
+      `ALTER TABLE "core"."viewFilter" ADD "universalIdentifier" uuid`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."viewFilterGroup" ADD "universalIdentifier" text`,
+      `ALTER TABLE "core"."viewFilterGroup" ADD "universalIdentifier" uuid`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."viewGroup" ADD "universalIdentifier" text`,
+      `ALTER TABLE "core"."viewGroup" ADD "universalIdentifier" uuid`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."viewSort" ADD "universalIdentifier" text`,
+      `ALTER TABLE "core"."viewSort" ADD "universalIdentifier" uuid`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."view" ADD "universalIdentifier" text`,
+      `ALTER TABLE "core"."view" ADD "universalIdentifier" uuid`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."viewField" ADD "universalIdentifier" text`,
+      `ALTER TABLE "core"."viewField" ADD "universalIdentifier" uuid`,
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_cd4588bfc9ad73345b3953a039" ON "core"."viewFilter" ("workspaceId", "universalIdentifier") `,

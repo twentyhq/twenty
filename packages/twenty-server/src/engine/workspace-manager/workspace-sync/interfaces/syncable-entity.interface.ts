@@ -4,6 +4,6 @@ import { Column, Index } from 'typeorm';
   unique: true,
 })
 export abstract class SyncableEntity {
-  @Column({ nullable: true, type: 'text', default: null })
+  @Column({ nullable: true, type: 'uuid' })
   universalIdentifier?: string | null;
 }
