@@ -83,7 +83,6 @@ export class FieldMetadataMorphRelationService {
             fieldMetadataInput: fieldMetadataForCreate,
             relationCreationPayload: relation,
             joinColumnName: computeMorphRelationFieldJoinColumnName({
-              // need to use this
               name: fieldMetadataForCreate.name,
               targetObjectMetadataNameSingular:
                 targetObjectMetadata.nameSingular,

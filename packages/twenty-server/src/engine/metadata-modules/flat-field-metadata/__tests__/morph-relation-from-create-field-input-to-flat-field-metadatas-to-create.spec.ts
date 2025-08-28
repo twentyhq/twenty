@@ -159,7 +159,7 @@ describe('fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test s
                 {
                   type: RelationType.MANY_TO_ONE,
                   targetObjectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
-                  targetFieldLabel: 'Pet',
+                  targetFieldLabel: 'Company',
                   targetFieldIcon: 'IconPet',
                 },
               ],
