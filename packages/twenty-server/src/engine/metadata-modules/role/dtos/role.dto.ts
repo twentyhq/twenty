@@ -29,6 +29,15 @@ export class RoleDTO {
   @Field({ nullable: false })
   isEditable: boolean;
 
+  @Field({ nullable: false })
+  canBeAssignedToUsers: boolean;
+
+  @Field({ nullable: false })
+  canBeAssignedToAgents: boolean;
+
+  @Field({ nullable: false })
+  canBeAssignedToApiKeys: boolean;
+
   @HideField()
   roleTargets: Relation<RoleTargetsEntity[]>;
 

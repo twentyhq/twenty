@@ -47,6 +47,9 @@ export const SettingsRoleCreateEffect = ({
       canUpdateAllObjectRecords: true,
       canSoftDeleteAllObjectRecords: true,
       canDestroyAllObjectRecords: true,
+      canBeAssignedToUsers: true,
+      canBeAssignedToAgents: true,
+      canBeAssignedToApiKeys: true,
       isEditable: true,
       workspaceMembers: [],
     };

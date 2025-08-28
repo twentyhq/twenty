@@ -231,6 +231,9 @@ export class RoleService {
       canUpdateAllObjectRecords: false,
       canSoftDeleteAllObjectRecords: false,
       canDestroyAllObjectRecords: false,
+      canBeAssignedToUsers: true,
+      canBeAssignedToAgents: false,
+      canBeAssignedToApiKeys: false,
       isEditable: false,
       workspaceId,
     });

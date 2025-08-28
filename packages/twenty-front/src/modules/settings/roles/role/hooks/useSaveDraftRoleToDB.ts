@@ -125,6 +125,9 @@ export const useSaveDraftRoleToDB = ({
               settingsDraftRole.canSoftDeleteAllObjectRecords,
             canDestroyAllObjectRecords:
               settingsDraftRole.canDestroyAllObjectRecords,
+            canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers,
+            canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
+            canBeAssignedToApiKeys: settingsDraftRole.canBeAssignedToApiKeys,
           } satisfies Partial<Role>,
         },
         refetchQueries: [getOperationName(GET_ROLES) ?? ''],
