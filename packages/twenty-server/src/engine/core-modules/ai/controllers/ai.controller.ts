@@ -65,10 +65,13 @@ export class AiController {
       // TODO: Add support for custom models
       const model = this.aiService.getModel(undefined);
 
-      const result = this.aiService.streamText(messages, {
-        temperature,
-        maxTokens,
-        model,
+      const result = this.aiService.streamText({
+        messages,
+        options: {
+          temperature,
+          maxTokens,
+          model,
+        },
       });
 
       result.usage.then((usage) => {

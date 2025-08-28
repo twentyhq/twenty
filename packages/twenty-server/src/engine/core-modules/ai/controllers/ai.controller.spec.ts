@@ -16,15 +16,15 @@ describe('AiController', () => {
     const mockAiService = {
       streamText: jest.fn(),
       getModel: jest.fn(),
-    } as Partial<jest.Mocked<AiService>>;
+    };
 
     const mockFeatureFlagService = {
       isFeatureEnabled: jest.fn().mockResolvedValue(true),
-    } as Partial<jest.Mocked<FeatureFlagService>>;
+    };
 
     const mockAIBillingService = {
       calculateAndBillUsage: jest.fn(),
-    } as Partial<jest.Mocked<AIBillingService>>;
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AiController],
