@@ -21,6 +21,7 @@ import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { FlatFieldMetadataPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-field-metadata-property-update.type';
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { serializeDefaultValueV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/serialize-default-value-v2.util';
 import {
@@ -44,7 +45,7 @@ type UpdateFieldPropertyUpdateHandlerArgs<
   schemaName: string;
   tableName: string;
   flatFieldMetadata: FlatFieldMetadata;
-  update: Extract<UpdateFieldAction['updates'][number], { property: T }>;
+  update: FlatFieldMetadataPropertyUpdate<T>;
 };
 
 @Injectable()

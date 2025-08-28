@@ -47,13 +47,13 @@ export const serializeDefaultValueV2 = ({
     return serializedTypeDefaultValue;
   }
 
-  const sanitizeAndAddCastPrefix = (defaultValue: string) =>
-    `'${removeSqlDDLInjection(defaultValue)}'` + castPrefix;
-
-  const castPrefix =
+  const castSuffix =
     columnType === 'enum'
       ? `::${safeSchemaName}."${safeTableName}_${safeColumnName}_enum"`
       : `::${columnType}`;
+
+  const sanitizeAndAddCastPrefix = (defaultValue: string) =>
+    `'${removeSqlDDLInjection(defaultValue)}'` + castSuffix;
 
   switch (typeof defaultValue) {
     case 'string': {
@@ -80,7 +80,7 @@ export const serializeDefaultValueV2 = ({
           .map((val) => `'${removeSqlDDLInjection(val)}'`)
           .join(',');
 
-        return `ARRAY[${arrayValues}]${castPrefix}[]`;
+        return `ARRAY[${arrayValues}]${castSuffix}[]`;
       }
 
       return sanitizeAndAddCastPrefix(`'${JSON.stringify(defaultValue)}'`); // Won't work :thinking: at all will remove every brackets and so on

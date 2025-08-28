@@ -31,7 +31,7 @@ export const buildSqlColumnDefinition = (
   }
 
   if (isDefined(column.default) && column.type !== 'tsvector') {
-    parts.push(`DEFAULT ${column.default}`); // Should we handle "" or not here ?
+    parts.push(`DEFAULT ${column.default}`);
   }
 
   return parts.join(' ');

@@ -1,8 +1,7 @@
-import { type FromTo } from 'twenty-shared/types';
 
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-properties-to-compare.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatFieldMetadataPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-field-metadata-property-update.type';
 
 export type CreateFieldAction = {
   type: 'create_field';
@@ -16,9 +15,7 @@ export type UpdateFieldAction = {
   objectMetadataId: string;
   updates: Array<
     {
-      [P in FlatFieldMetadataPropertiesToCompare]: {
-        property: P;
-      } & FromTo<FieldMetadataEntity[P]>;
+      [P in FlatFieldMetadataPropertiesToCompare]: FlatFieldMetadataPropertyUpdate<P>;
     }[FlatFieldMetadataPropertiesToCompare]
   >;
 };
