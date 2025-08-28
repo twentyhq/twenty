@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { MessagingFolderSyncCronCommand } from 'src/modules/messaging/folder-sync-manager/crons/commands/messaging-folder-sync.cron.command';
 import { MessagingFolderSyncCronJob } from 'src/modules/messaging/folder-sync-manager/crons/jobs/messaging-folder-sync.cron.job';
@@ -16,7 +17,8 @@ import { MessagingMicrosoftDriverModule } from 'src/modules/messaging/message-im
   imports: [
     FeatureFlagModule,
     WorkspaceDataSourceModule,
-    TypeOrmModule.forFeature([Workspace], 'core'),
+    DataSourceModule,
+    TypeOrmModule.forFeature([Workspace]),
     MessagingGmailDriverModule,
     MessagingMicrosoftDriverModule,
     MessagingIMAPDriverModule,
