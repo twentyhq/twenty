@@ -374,7 +374,7 @@ describe('getStandardFolderByRegex', () => {
     });
   });
 
-  describe('SPAM folder detection', () => {
+  describe('JUNK/SPAM folder detection', () => {
     it('matches English variants', () => {
       const englishVariants = [
         'Spam',
@@ -437,79 +437,6 @@ describe('getStandardFolderByRegex', () => {
 
     it('matches Russian variants', () => {
       const russianVariants = ['Спам', 'Нежелательные', 'Мусор'];
-
-      testFolderMatches(russianVariants, StandardFolder.JUNK);
-    });
-
-    it('matches Gmail special folder', () => {
-      const gmailVariants = ['[Gmail]/Spam', '[Gmail]\\Spam'];
-
-      testFolderMatches(gmailVariants, StandardFolder.JUNK);
-    });
-  });
-
-  describe('JUNK folder detection', () => {
-    it('matches English variants', () => {
-      const englishVariants = [
-        'Junk Mail',
-        'Junk Messages',
-        'Bulk Mail',
-        'Spam',
-      ];
-
-      testFolderMatches(englishVariants, StandardFolder.JUNK);
-    });
-
-    it('matches French variants', () => {
-      const frenchVariants = ['Indésirables', 'Courrier indésirable'];
-
-      testFolderMatches(frenchVariants, StandardFolder.JUNK);
-    });
-
-    it('matches German variants', () => {
-      const germanVariants = ['Junk Mail', 'Unerwünscht', 'Spam'];
-
-      testFolderMatches(germanVariants, StandardFolder.JUNK);
-    });
-
-    it('matches Spanish variants', () => {
-      const spanishVariants = ['Correo basura', 'No deseado', 'Spam'];
-
-      testFolderMatches(spanishVariants, StandardFolder.JUNK);
-    });
-
-    it('matches Portuguese variants', () => {
-      const portugueseVariants = ['Lixo eletrônico', 'Indesejados', 'Spam'];
-
-      testFolderMatches(portugueseVariants, StandardFolder.JUNK);
-    });
-
-    it('matches Italian variants', () => {
-      const italianVariants = ['Posta indesiderata', 'Indesiderata', 'Spam'];
-
-      testFolderMatches(italianVariants, StandardFolder.JUNK);
-    });
-
-    it('matches Korean variants', () => {
-      const koreanVariants = ['정크메일', '스팸'];
-
-      testFolderMatches(koreanVariants, StandardFolder.JUNK);
-    });
-
-    it('matches Japanese variants', () => {
-      const japaneseVariants = ['迷惑メール', 'スパム'];
-
-      testFolderMatches(japaneseVariants, StandardFolder.JUNK);
-    });
-
-    it('matches Polish variants', () => {
-      const polishVariants = ['Niechciane', 'Śmieci', 'Spam'];
-
-      testFolderMatches(polishVariants, StandardFolder.JUNK);
-    });
-
-    it('matches Russian variants', () => {
-      const russianVariants = ['Нежелательные', 'Мусор', 'Спам'];
 
       testFolderMatches(russianVariants, StandardFolder.JUNK);
     });
