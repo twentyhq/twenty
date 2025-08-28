@@ -1,12 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react';
-import { ComponentDecorator } from '@ui/testing';
 import { IconBuildingSkyscraper, IconUser } from '@ui/display';
+import { ComponentDecorator, RecoilRootDecorator } from '@ui/testing';
 import { AvatarChip } from '../AvatarChip';
 
 const meta: Meta<typeof AvatarChip> = {
   title: 'UI/Components/AvatarChip',
   component: AvatarChip,
-  decorators: [ComponentDecorator],
+  decorators: [ComponentDecorator, RecoilRootDecorator],
 };
 
 export default meta;
