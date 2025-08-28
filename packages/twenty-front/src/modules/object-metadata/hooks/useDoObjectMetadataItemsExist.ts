@@ -1,15 +1,14 @@
 import { useRecoilValue } from 'recoil';
 
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { objectMetadataItemsBySingularNameSelector } from '@/object-metadata/states/objectMetadataItemsBySingularNameSelector';
 
 import { isDefined } from 'twenty-shared/utils';
 
-export const useObjectMetadataItemsAreDefined = (
+export const useDoObjectMetadataItemsExist = (
   objectNameSingulars: string[],
 ) => {
-  // Single hook call that gets all items at once
   const objectMetadataItems = useRecoilValue(
-    objectMetadataItemsSelector(objectNameSingulars),
+    objectMetadataItemsBySingularNameSelector(objectNameSingulars),
   );
 
   return objectMetadataItems.every((objectMetadataItem) =>

@@ -1,7 +1,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useObjectMetadataItemsAreDefined } from '@/object-metadata/hooks/useObjectMetadataItemsAreDefined';
+import { useDoObjectMetadataItemsExist } from '@/object-metadata/hooks/useDoObjectMetadataItemsExist';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { type WatchQueryFetchPolicy } from '@apollo/client';
 import { useMemo } from 'react';
@@ -33,7 +33,7 @@ export const useObjectRecordSearchRecords = ({
   fetchPolicy,
 }: UseSearchRecordsParams) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const areDefined = useObjectMetadataItemsAreDefined(objectNameSingulars);
+  const areDefined = useDoObjectMetadataItemsExist(objectNameSingulars);
 
   const { enqueueErrorSnackBar } = useSnackBar();
   const apolloCoreClient = useApolloCoreClient();
