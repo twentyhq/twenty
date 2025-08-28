@@ -15,7 +15,7 @@ import { FileService } from './file.service';
 @Injectable()
 export class FileMetadataService {
   constructor(
-    @InjectRepository(FileEntity, 'core')
+    @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly fileService: FileService,
     private readonly fileUploadService: FileUploadService,

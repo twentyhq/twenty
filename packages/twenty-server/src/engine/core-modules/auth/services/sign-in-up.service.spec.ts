@@ -52,14 +52,14 @@ describe('SignInUpService', () => {
       providers: [
         SignInUpService,
         {
-          provide: getRepositoryToken(User, 'core'),
+          provide: getRepositoryToken(User),
           useValue: {
             create: jest.fn(),
             save: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(Workspace, 'core'),
+          provide: getRepositoryToken(Workspace),
           useValue: {
             save: jest.fn(),
             create: jest.fn(),
@@ -147,8 +147,8 @@ describe('SignInUpService', () => {
     }).compile();
 
     service = module.get<SignInUpService>(SignInUpService);
-    UserRepository = module.get(getRepositoryToken(User, 'core'));
-    WorkspaceRepository = module.get(getRepositoryToken(Workspace, 'core'));
+    UserRepository = module.get(getRepositoryToken(User));
+    WorkspaceRepository = module.get(getRepositoryToken(Workspace));
     workspaceInvitationService = module.get<WorkspaceInvitationService>(
       WorkspaceInvitationService,
     );

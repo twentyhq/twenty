@@ -18,9 +18,9 @@ import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/bil
 @Injectable()
 export class BillingWebhookEntitlementService {
   constructor(
-    @InjectRepository(BillingCustomer, 'core')
+    @InjectRepository(BillingCustomer)
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
-    @InjectRepository(BillingEntitlement, 'core')
+    @InjectRepository(BillingEntitlement)
     private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
   ) {}
 

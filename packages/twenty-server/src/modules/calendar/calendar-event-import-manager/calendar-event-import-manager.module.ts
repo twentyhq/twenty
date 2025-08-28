@@ -37,10 +37,7 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
   imports: [
     ObjectMetadataRepositoryModule.forFeature([BlocklistWorkspaceEntity]),
     CalendarEventParticipantManagerModule,
-    TypeOrmModule.forFeature(
-      [FeatureFlag, Workspace, DataSourceEntity],
-      'core',
-    ),
+    TypeOrmModule.forFeature([FeatureFlag, Workspace, DataSourceEntity]),
     WorkspaceDataSourceModule,
     CalendarEventCleanerModule,
     GoogleCalendarDriverModule,

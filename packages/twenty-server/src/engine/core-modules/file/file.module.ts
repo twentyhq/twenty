@@ -22,7 +22,7 @@ import { FileService } from './services/file.service';
 @Module({
   imports: [
     JwtModule,
-    TypeOrmModule.forFeature([FileEntity, Workspace], 'core'),
+    TypeOrmModule.forFeature([FileEntity, Workspace]),
     HttpModule,
   ],
   providers: [

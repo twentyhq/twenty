@@ -1,8 +1,8 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
+import { DataSource, Repository } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -10,9 +10,8 @@ import {
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Command({
   name: 'upgrade:1-3:add-next-step-ids-to-workflow-runs-trigger',
@@ -20,9 +19,10 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 })
 export class AddNextStepIdsToWorkflowRunsTrigger extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
@@ -31,12 +31,9 @@ export class AddNextStepIdsToWorkflowRunsTrigger extends ActiveOrSuspendedWorksp
   override async runOnWorkspace({
     workspaceId,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const mainDataSource =
-      await this.workspaceDataSourceService.connectToMainDataSource();
-
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
-    const workflowRuns = await mainDataSource.query(
+    const workflowRuns = await this.coreDataSource.query(
       `SELECT id, state FROM ${schemaName}."workflowRun"`,
     );
 
@@ -63,7 +60,7 @@ export class AddNextStepIdsToWorkflowRunsTrigger extends ActiveOrSuspendedWorksp
           },
         };
 
-        await mainDataSource.query(
+        await this.coreDataSource.query(
           `UPDATE ${schemaName}."workflowRun" SET state = $1::jsonb WHERE id = $2;`,
           [updatedState, workflowRun.id],
         );

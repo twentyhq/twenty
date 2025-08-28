@@ -25,12 +25,12 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 })
 export class BillingAddWorkflowSubscriptionItemCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(BillingSubscription, 'core')
+    @InjectRepository(BillingSubscription)
     protected readonly billingSubscriptionRepository: Repository<BillingSubscription>,
-    @InjectRepository(BillingProduct, 'core')
+    @InjectRepository(BillingProduct)
     protected readonly billingProductRepository: Repository<BillingProduct>,
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
     private readonly stripeSubscriptionService: StripeSubscriptionService,

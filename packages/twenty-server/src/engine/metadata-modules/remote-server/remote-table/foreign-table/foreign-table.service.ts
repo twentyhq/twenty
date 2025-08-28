@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+
+import { DataSource } from 'typeorm';
 
 import {
   type RemoteServerEntity,
@@ -31,18 +34,17 @@ export class ForeignTableService {
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   public async fetchForeignTableNamesWithinWorkspace(
     _workspaceId: string,
     foreignDataWrapperId: string,
   ): Promise<string[]> {
-    const mainDataSource =
-      await this.workspaceDataSourceService.connectToMainDataSource();
-
     return (
       (
-        await mainDataSource.query(
+        await this.coreDataSource.query(
           `SELECT foreign_table_name, foreign_server_name FROM information_schema.foreign_tables WHERE foreign_server_name = $1`,
           [foreignDataWrapperId],
         )

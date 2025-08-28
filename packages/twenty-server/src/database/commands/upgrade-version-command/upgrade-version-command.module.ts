@@ -16,7 +16,7 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Workspace], 'core'),
+    TypeOrmModule.forFeature([Workspace]),
     V0_54_UpgradeVersionCommandModule,
     V0_55_UpgradeVersionCommandModule,
     V1_1_UpgradeVersionCommandModule,

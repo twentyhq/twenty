@@ -11,10 +11,11 @@ import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [PageLayoutEntity, PageLayoutTabEntity, PageLayoutWidgetEntity],
-      'core',
-    ),
+    TypeOrmModule.forFeature([
+      PageLayoutEntity,
+      PageLayoutTabEntity,
+      PageLayoutWidgetEntity,
+    ]),
   ],
   controllers: [PageLayoutController],
   providers: [PageLayoutService, PageLayoutTabService, PageLayoutResolver],

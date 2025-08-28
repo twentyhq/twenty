@@ -23,7 +23,7 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     WorkspaceQueryBuilderModule,
     WorkspaceDataSourceModule,
     WorkspaceQueryHookModule,
-    TypeOrmModule.forFeature([FeatureFlag], 'core'),
+    TypeOrmModule.forFeature([FeatureFlag]),
     AuditModule,
     TelemetryModule,
     FileModule,

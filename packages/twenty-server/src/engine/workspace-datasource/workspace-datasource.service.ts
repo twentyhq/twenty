@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type DataSource, type EntityManager } from 'typeorm';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   PermissionsException,
@@ -14,25 +14,9 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 export class WorkspaceDataSourceService {
   constructor(
     private readonly dataSourceService: DataSourceService,
-    private readonly typeormService: TypeORMService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
-
-  /**
-   *
-   * Connect to the workspace data source
-   *
-   * @param workspaceId
-   * @returns
-   */
-  public async connectToMainDataSource(): Promise<DataSource> {
-    const dataSource = this.typeormService.getMainDataSource();
-
-    if (!dataSource) {
-      throw new Error(`Could not connect to workspace data source`);
-    }
-
-    return dataSource;
-  }
 
   public async checkSchemaExists(workspaceId: string) {
     const dataSource =
@@ -53,7 +37,13 @@ export class WorkspaceDataSourceService {
   public async createWorkspaceDBSchema(workspaceId: string): Promise<string> {
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
-    return await this.typeormService.createSchema(schemaName);
+    const queryRunner = this.coreDataSource.createQueryRunner();
+
+    await queryRunner.createSchema(schemaName, true);
+
+    await queryRunner.release();
+
+    return schemaName;
   }
 
   /**
@@ -66,7 +56,11 @@ export class WorkspaceDataSourceService {
   public async deleteWorkspaceDBSchema(workspaceId: string): Promise<void> {
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
-    return await this.typeormService.deleteSchema(schemaName);
+    const queryRunner = this.coreDataSource.createQueryRunner();
+
+    await queryRunner.dropSchema(schemaName, true);
+
+    await queryRunner.release();
   }
 
   public async executeRawQuery(

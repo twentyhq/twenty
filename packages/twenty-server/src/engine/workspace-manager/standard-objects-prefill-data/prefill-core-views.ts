@@ -3,6 +3,7 @@ import { type ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared
 import { type DataSource, type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
@@ -13,6 +14,7 @@ import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
+import { dashboardsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesTableByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view';
@@ -27,9 +29,10 @@ import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.wor
 import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
 
 export const prefillCoreViews = async (
-  dataSource: DataSource,
+  coreDataSource: DataSource,
   workspaceId: string,
   objectMetadataItems: ObjectMetadataEntity[],
+  featureFlags?: Record<string, boolean>,
 ): Promise<ViewEntity[]> => {
   const views = [
     companiesAllView(objectMetadataItems, true),
@@ -45,7 +48,11 @@ export const prefillCoreViews = async (
     workflowRunsAllView(objectMetadataItems, true),
   ];
 
-  const queryRunner = dataSource.createQueryRunner();
+  if (featureFlags?.[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED]) {
+    views.push(dashboardsAllView(objectMetadataItems, true));
+  }
+
+  const queryRunner = coreDataSource.createQueryRunner();
 
   await queryRunner.connect();
 

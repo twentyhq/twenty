@@ -44,7 +44,7 @@ describe('ViewService', () => {
       providers: [
         ViewService,
         {
-          provide: getRepositoryToken(ViewEntity, 'core'),
+          provide: getRepositoryToken(ViewEntity),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -59,7 +59,7 @@ describe('ViewService', () => {
 
     viewService = module.get<ViewService>(ViewService);
     viewRepository = module.get<Repository<ViewEntity>>(
-      getRepositoryToken(ViewEntity, 'core'),
+      getRepositoryToken(ViewEntity),
     );
   });
 

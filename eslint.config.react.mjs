@@ -17,6 +17,9 @@ export default [
   // Base JavaScript configuration
   js.configs.recommended,
 
+  // Lingui recommended rules
+  linguiPlugin.configs['flat/recommended'],
+
   // Base configuration for all files
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
@@ -38,9 +41,6 @@ export default [
       },
     },
     rules: {
-      // Lingui rules
-      'lingui/no-single-variables-to-translate': 'off',
-      
       // General rules
       'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
       'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
@@ -294,7 +294,7 @@ export default [
 
   // JSON files
   {
-    files: ['*.json'],
+    files: ['**/*.json'],
     languageOptions: {
       parser: jsoncParser,
     },

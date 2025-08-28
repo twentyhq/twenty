@@ -21,7 +21,7 @@ import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/doma
   imports: [
     DomainManagerModule,
     StripeSDKModule,
-    TypeOrmModule.forFeature([BillingCustomer], 'core'),
+    TypeOrmModule.forFeature([BillingCustomer]),
   ],
   providers: [
     StripeSubscriptionItemService,

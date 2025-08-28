@@ -21,7 +21,7 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 })
 export class CleanNotFoundFilesCommand extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly fileStorageService: FileStorageService,
