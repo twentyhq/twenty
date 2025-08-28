@@ -1,5 +1,11 @@
 import styled from '@emotion/styled';
-import { ResponsiveBar, type BarDatum, type ComputedDatum } from '@nivo/bar';
+import {
+  ResponsiveBar,
+  type BarCustomLayerProps,
+  type BarDatum,
+  type ComputedBarDatum,
+  type ComputedDatum,
+} from '@nivo/bar';
 import { useId, useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -115,7 +121,6 @@ export const GraphWidgetBarChart = ({
     data.forEach((dataPoint, dataIndex) => {
       const indexValue = dataPoint[indexBy];
       keys.forEach((key, keyIndex) => {
-        // Find series config for this key if it exists
         const seriesConfig = series?.find((s) => s.key === key);
         const colorScheme = getColorScheme(
           colorRegistry,
@@ -247,6 +252,52 @@ export const GraphWidgetBarChart = ({
 
   const hasClickableItems = data.some((item) => isDefined(item.to));
 
+  const renderBarEndLines = (props: BarCustomLayerProps<BarChartDataItem>) => {
+    const { bars } = props;
+
+    if (!bars || bars.length === 0) {
+      return null;
+    }
+
+    return (
+      <g>
+        {bars.map((bar: ComputedBarDatum<BarChartDataItem>, index: number) => {
+          const enrichedKey = enrichedKeys.find((k) => k.key === bar.data.id);
+          if (!enrichedKey) {
+            return null;
+          }
+          const lineColor = enrichedKey.colorScheme.solid;
+
+          let x1, y1, x2, y2;
+
+          if (layout === 'vertical') {
+            x1 = bar.x;
+            x2 = bar.x + bar.width;
+            y1 = bar.y;
+            y2 = bar.y;
+          } else {
+            x1 = bar.x + bar.width;
+            x2 = bar.x + bar.width;
+            y1 = bar.y;
+            y2 = bar.y + bar.height;
+          }
+
+          return (
+            <line
+              key={`${bar.data.id}-${bar.data.indexValue}-endline-${index}`}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
+              stroke={lineColor}
+              strokeWidth={1}
+            />
+          );
+        })}
+      </g>
+    );
+  };
+
   return (
     <StyledContainer id={id}>
       <StyledChartContainer $isClickable={hasClickableItems}>
@@ -262,6 +313,14 @@ export const GraphWidgetBarChart = ({
           indexScale={{ type: 'band', round: true }}
           colors={getBarColor}
           defs={defs}
+          layers={[
+            'grid',
+            'axes',
+            'bars',
+            renderBarEndLines,
+            'markers',
+            'legends',
+          ]}
           axisTop={null}
           axisRight={null}
           axisBottom={axisBottomConfig}
@@ -326,8 +385,6 @@ export const GraphWidgetBarChart = ({
               },
             },
           }}
-          animate={true}
-          motionConfig="gentle"
         />
       </StyledChartContainer>
       <GraphWidgetLegend
