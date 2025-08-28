@@ -72,7 +72,7 @@ export const generateRelationOrMorphRelationFlatFieldMetadataPairUtil = ({
     defaultValue: null,
     settings: sourceFlatFieldMetadataSettings,
     options: null,
-    relationTargetFieldMetadataId: targetRelationTargetFieldMetadataId, // Note: this won't work until we enable deferred transaction
+    relationTargetFieldMetadataId: targetRelationTargetFieldMetadataId,
     relationTargetObjectMetadataId: targetFlatObjectMetadata.id,
     flatRelationTargetObjectMetadata: targetFlatObjectMetadata,
   };
