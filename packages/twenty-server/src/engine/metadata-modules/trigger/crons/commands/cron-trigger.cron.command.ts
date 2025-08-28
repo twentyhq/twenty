@@ -8,7 +8,7 @@ import {
   CronTriggerCronJob,
 } from 'src/engine/metadata-modules/trigger/crons/jobs/cron-trigger.cron.job';
 @Command({
-  name: 'cron:start-cron-trigger',
+  name: 'cron:trigger:start-cron-trigger',
   description:
     'Starts a cron job to trigger cron triggered serverless functions',
 })
