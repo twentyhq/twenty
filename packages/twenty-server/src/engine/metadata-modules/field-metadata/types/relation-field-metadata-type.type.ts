@@ -1,12 +1,8 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-const relationFieldTypes = [
+export const RELATION_FIELD_TYPES = [
   FieldMetadataType.RELATION,
   FieldMetadataType.MORPH_RELATION,
 ] as const;
 
-export type RelationFieldMetadataType = (typeof relationFieldTypes)[number];
-
-export const RELATION_FIELD_TYPES: FieldMetadataType[] = [
-  ...relationFieldTypes,
-];
+export type RelationFieldMetadataType = (typeof RELATION_FIELD_TYPES)[number];

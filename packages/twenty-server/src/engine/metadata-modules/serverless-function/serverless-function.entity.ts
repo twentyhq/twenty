@@ -7,9 +7,12 @@ import {
   Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { InputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
+import { CronTrigger } from 'src/engine/metadata-modules/trigger/entities/cron-trigger.entity';
+import { DatabaseEventTrigger } from 'src/engine/metadata-modules/trigger/entities/database-event-trigger.entity';
 
 const DEFAULT_SERVERLESS_TIMEOUT_SECONDS = 300; // 5 minutes
 
@@ -51,6 +54,24 @@ export class ServerlessFunctionEntity {
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
+
+  @OneToMany(
+    () => CronTrigger,
+    (cronTrigger) => cronTrigger.serverlessFunction,
+    {
+      cascade: true,
+    },
+  )
+  cronTriggers: CronTrigger[];
+
+  @OneToMany(
+    () => DatabaseEventTrigger,
+    (databaseEventTrigger) => databaseEventTrigger.serverlessFunction,
+    {
+      cascade: true,
+    },
+  )
+  databaseEventTriggers: DatabaseEventTrigger[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

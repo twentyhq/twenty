@@ -23,7 +23,6 @@ import { BillingPriceTiersMode } from 'src/engine/core-modules/billing/enums/bil
 import { BillingPriceType } from 'src/engine/core-modules/billing/enums/billing-price-type.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
-import { BillingPriceMetadata } from 'src/engine/core-modules/billing/types/billing-price-metadata.type';
 
 @Entity({ name: 'billingPrice', schema: 'core' })
 export class BillingPrice {
@@ -118,9 +117,6 @@ export class BillingPrice {
     nullable: true,
   })
   interval: SubscriptionInterval | null;
-
-  @Column({ nullable: false, type: 'jsonb', default: {} })
-  metadata: BillingPriceMetadata;
 
   @ManyToOne(
     () => BillingProduct,

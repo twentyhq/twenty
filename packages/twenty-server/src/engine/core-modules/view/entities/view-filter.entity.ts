@@ -11,6 +11,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
+
 import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
@@ -21,7 +23,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 @Entity({ name: 'viewFilter', schema: 'core' })
 @Index('IDX_VIEW_FILTER_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
 @Index('IDX_VIEW_FILTER_FIELD_METADATA_ID', ['fieldMetadataId'])
-export class ViewFilterEntity {
+export class ViewFilterEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

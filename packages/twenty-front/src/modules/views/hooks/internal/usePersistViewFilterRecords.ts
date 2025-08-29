@@ -106,7 +106,7 @@ export const usePersistViewFilterRecords = () => {
           apolloCoreClient.mutate({
             mutation: updateOneRecordMutation,
             variables: {
-              idToUpdate: viewFilter.id,
+              id: viewFilter.id,
               input: {
                 value: viewFilter.value,
                 displayValue: viewFilter.displayValue,
@@ -155,7 +155,7 @@ export const usePersistViewFilterRecords = () => {
           apolloCoreClient.mutate({
             mutation: destroyOneRecordMutation,
             variables: {
-              idToDestroy: viewFilterId,
+              id: viewFilterId,
             },
             update: (cache, { data }) => {
               const record = data?.['destroyViewFilter'];
@@ -197,6 +197,7 @@ export const usePersistViewFilterRecords = () => {
             mutation: CREATE_CORE_VIEW_FILTER,
             variables: {
               input: {
+                id: viewFilter.id,
                 fieldMetadataId: viewFilter.fieldMetadataId,
                 viewId: view.id,
                 value: viewFilter.value,
@@ -238,7 +239,7 @@ export const usePersistViewFilterRecords = () => {
           apolloClient.mutate({
             mutation: UPDATE_CORE_VIEW_FILTER,
             variables: {
-              idToUpdate: viewFilter.id,
+              id: viewFilter.id,
               input: {
                 value: viewFilter.value,
                 operand: convertViewFilterOperandToCore(viewFilter.operand),
@@ -280,7 +281,7 @@ export const usePersistViewFilterRecords = () => {
           apolloClient.mutate({
             mutation: DESTROY_CORE_VIEW_FILTER,
             variables: {
-              idToDestroy: viewFilterId,
+              id: viewFilterId,
             },
             update: (cache, { data }) => {
               const record = data?.['destroyCoreViewFilter'];

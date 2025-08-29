@@ -1,4 +1,4 @@
-import { shouldRunNow } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/utils/should-run-now.utils';
+import { shouldRunNow } from 'src/utils/should-run-now.utils';
 
 const getNowDate = (hour: string) => {
   return new Date(`2025-01-01T${hour}.100Z`);
