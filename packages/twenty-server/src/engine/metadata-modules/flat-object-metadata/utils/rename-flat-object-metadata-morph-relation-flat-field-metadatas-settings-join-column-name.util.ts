@@ -1,19 +1,25 @@
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { getFlatObjectMetadataMorphRelationFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-object-metadata-morph-relation-flat-field-metadatas.util';
+import { getFlatObjectMetadataManyToOneTargetMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-object-metadata-morph-relation-flat-field-metadatas.util';
 import { FromTo } from 'twenty-shared/types';
 import { computeMorphRelationFieldJoinColumnName } from 'twenty-shared/utils';
 
-type TmpArgs = FromTo<FlatObjectMetadata, 'flatObjectMetadata'>;
-export const renameFlatObjectMetadataMorphRelationFlatFieldMetadatasSettingsJoinColumnName =
-  ({ fromFlatObjectMetadata, toFlatObjectMetadata }: TmpArgs) => {
+type TmpArgs = FromTo<FlatObjectMetadata, 'flatObjectMetadata'> & {
+  existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+};
+export const renameFlatObjectMetadataManyToOneMorphRelationTargetFlatFieldMetadatasSettingsJoinColumnName =
+  ({
+    fromFlatObjectMetadata,
+    toFlatObjectMetadata,
+    existingFlatObjectMetadataMaps,
+  }: TmpArgs): FlatFieldMetadata[] => {
     const manyToOneMorphRelationFlatFieldMetadatas =
-      getFlatObjectMetadataMorphRelationFlatFieldMetadatas({
-        flatObjectMetadata: fromFlatObjectMetadata,
-      }).filter(
-        (morphRelationFlatFieldMetadata) =>
-          morphRelationFlatFieldMetadata.settings.relationType ===
-          RelationType.MANY_TO_ONE,
+      getFlatObjectMetadataManyToOneTargetMorphRelationFlatFieldMetadatasOrThrow(
+        {
+          flatObjectMetadata: fromFlatObjectMetadata,
+          existingFlatObjectMetadataMaps,
+        },
       );
 
     const updatedFlatFieldMetadatas =

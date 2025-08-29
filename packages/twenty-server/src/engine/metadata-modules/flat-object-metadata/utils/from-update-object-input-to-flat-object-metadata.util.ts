@@ -10,6 +10,7 @@ import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metad
 import { FLAT_OBJECT_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-properties-to-compare.constant';
 import { type FlatObjectMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-properties-to-compare.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { renameFlatObjectMetadataManyToOneMorphRelationTargetFlatFieldMetadatasSettingsJoinColumnName } from 'src/engine/metadata-modules/flat-object-metadata/utils/rename-flat-object-metadata-morph-relation-flat-field-metadatas-settings-join-column-name.util';
 import { OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-standard-overrides-properties.constant';
 import { type UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
@@ -34,13 +35,15 @@ const objectMetadataEditableProperties =
     > => property !== 'standardOverrides',
   );
 
+type UpdatedFlatObjectAndOtherObjectFieldMetadatas = {
+  flatObjectMetadata: FlatObjectMetadata;
+  otherObjectFlatFieldMetadatas: FlatFieldMetadata[];
+};
+
 export const fromUpdateObjectInputToFlatObjectMetadata = ({
   existingFlatObjectMetadataMaps,
   updateObjectInput: rawUpdateObjectInput,
-}: FromUpdateObjectInputToFlatObjectMetadataArgs): {
-  updatedFlatObjectMetadata: FlatObjectMetadata;
-  updatedOtherObjectFlatFieldMetadatas: FlatFieldMetadata[];
-} => {
+}: FromUpdateObjectInputToFlatObjectMetadataArgs): UpdatedFlatObjectAndOtherObjectFieldMetadatas => {
   const { id: objectMetadataIdToUpdate } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawUpdateObjectInput,
@@ -97,32 +100,62 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
         };
       }, flatObjectMetadataToUpdate);
 
-    return updatedStandardFlatObjectdMetadata;
+    return {
+      flatObjectMetadata: updatedStandardFlatObjectdMetadata,
+      otherObjectFlatFieldMetadatas: [],
+    };
   }
 
-  const updatedProperties: FlatObjectMetadataPropertiesToCompare[] = [];
-  const updatedFlatObjectMetadata = objectMetadataEditableProperties.reduce(
-    (acc, property) => {
+  const initialAccumulator: UpdatedFlatObjectAndOtherObjectFieldMetadatas = {
+    flatObjectMetadata: flatObjectMetadataToUpdate,
+    otherObjectFlatFieldMetadatas: [],
+  };
+  return objectMetadataEditableProperties.reduce<UpdatedFlatObjectAndOtherObjectFieldMetadatas>(
+    (
+      {
+        flatObjectMetadata,
+        otherObjectFlatFieldMetadatas,
+      },
+      property,
+    ) => {
       const updatedPropertyValue = updatedEditableObjectProperties[property];
       const isPropertyUpdated =
         updatedPropertyValue !== undefined &&
-        acc[property] !== updatedPropertyValue;
+        flatObjectMetadata[property] !== updatedPropertyValue;
 
-      if (isPropertyUpdated) {
-        updatedProperties.push(property);
+      if (!isPropertyUpdated) {
         return {
-          ...acc,
-          [property]: updatedPropertyValue,
+          flatObjectMetadata,
+          otherObjectFlatFieldMetadatas,
         };
       }
 
-      return acc;
-    },
-    flatObjectMetadataToUpdate,
-  );
+      const updatedFlatObjectMetadata = {
+        ...flatObjectMetadata,
+        [property]: updatedPropertyValue,
+      };
+      const newUpdatedOtherObjectFlatFieldMetadatas =
+        property === 'nameSingular'
+          ? renameFlatObjectMetadataManyToOneMorphRelationTargetFlatFieldMetadatasSettingsJoinColumnName(
+              {
+                existingFlatObjectMetadataMaps,
+                fromFlatObjectMetadata: updatedFlatObjectMetadata,
+                toFlatObjectMetadata: updatedFlatObjectMetadata,
+              },
+            )
+          : [];
 
-  return {
-    updatedFlatObjectMetadata,
-    updatedOtherObjectFlatFieldMetadatas: [],
-  };
+      return {
+        flatObjectMetadata: {
+          ...updatedFlatObjectMetadata,
+          [property]: updatedPropertyValue,
+        },
+        otherObjectFlatFieldMetadatas: [
+          ...otherObjectFlatFieldMetadatas,
+          ...newUpdatedOtherObjectFlatFieldMetadatas,
+        ],
+      };
+    },
+    initialAccumulator,
+  );
 };
