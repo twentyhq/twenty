@@ -22,7 +22,7 @@ import { isFunctionDefaultValue } from 'src/engine/metadata-modules/field-metada
 import { serializeFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-function-default-value.util';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 
 @Injectable()
 export class DatabaseStructureService {
@@ -207,7 +207,7 @@ export class DatabaseStructureService {
         return false;
       }
 
-      if (isRelationFieldMetadataType(type)) {
+      if (isMorphOrRelationFieldMetadataType(type)) {
         return false;
       }
 

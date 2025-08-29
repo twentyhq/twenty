@@ -50972,6 +50972,7 @@ __metadata:
     "@babel/preset-env": "npm:7.26.9"
     "@blocknote/server-util": "npm:^0.31.1"
     "@clickhouse/client": "npm:^1.11.0"
+    "@dagrejs/dagre": "npm:^1.1.2"
     "@envelop/core": "npm:4.0.3"
     "@envelop/on-resolve": "npm:4.1.0"
     "@esbuild-plugins/node-modules-polyfill": "npm:^0.2.2"

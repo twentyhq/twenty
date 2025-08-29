@@ -66,6 +66,10 @@ export class DevSeederService {
       workspaceId,
     });
 
+    await this.devSeederMetadataService.seedRelations({
+      workspaceId,
+    });
+
     await this.devSeederPermissionsService.initPermissions(workspaceId);
 
     await this.devSeederDataService.seed({

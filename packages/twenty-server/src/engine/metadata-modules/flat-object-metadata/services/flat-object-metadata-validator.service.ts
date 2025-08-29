@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { FailedFlatFieldMetadataValidation } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
-import { isRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-flat-field-metadata.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { addFlatObjectMetadataToFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-object-metadata-to-flat-object-metadata-maps-or-throw.util';
@@ -14,7 +14,7 @@ import { FailedFlatObjectMetadataValidation } from 'src/engine/metadata-modules/
 import { FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { areFlatObjectMetadataNamesSyncedWithLabels } from 'src/engine/metadata-modules/flat-object-metadata/utils/are-flat-object-metadata-names-synced-with-labels.util';
-import { computeRelationTargetFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/compute-relation-target-flat-object-metadata-maps.util';
+import { computeMorphOrRelationTargetFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/compute-morph-or-relation-target-flat-object-metadata-maps.util';
 import { getDefaultFailedFlatObjectMetadataValidation } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-default-failed-flat-object-metadata-validation.type';
 import { validateFlatObjectMetadataIdentifiers } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util';
 import { validateFlatObjectMetadataLabel } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util';
@@ -201,9 +201,9 @@ export class FlatObjectMetadataValidatorService {
 
     for (const flatFieldMetadataToValidate of flatObjectMetadataToValidate.flatFieldMetadatas) {
       const relationTargetFlatObjectMetadataMaps =
-        isRelationFlatFieldMetadata(flatFieldMetadataToValidate) &&
+        isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToValidate) &&
         isDefined(otherFlatObjectMetadataMapsToValidate)
-          ? computeRelationTargetFlatObjectMetadataMaps({
+          ? computeMorphOrRelationTargetFlatObjectMetadataMaps({
               flatFieldMetadata: flatFieldMetadataToValidate,
               flatObjectMetadataMaps: otherFlatObjectMetadataMapsToValidate,
             })
