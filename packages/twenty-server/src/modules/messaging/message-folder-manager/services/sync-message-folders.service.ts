@@ -2,17 +2,18 @@ import { Injectable } from '@nestjs/common';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { GmailGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/gmail/gmail-get-all-folders.service';
 import { ImapGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/imap/imap-get-all-folders.service';
 import { MicrosoftGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/microsoft/microsoft-get-all-folders.service';
+import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
 
 type SyncMessageFoldersInput = {
   workspaceId: string;
@@ -84,17 +85,11 @@ export class SyncMessageFoldersService {
       );
 
     for (const folder of folders) {
-      const existingFolder = await messageFolderRepository.findOne(
-        {
-          where: {
-            messageChannelId,
-            externalId: isDefined(folder.externalId)
-              ? folder.externalId
-              : IsNull(),
-          },
-        },
-        manager,
-      );
+      const existingFolder = await this.findExistingFolder({
+        messageChannelId,
+        folder,
+        messageFolderRepository,
+      });
 
       if (existingFolder) {
         await messageFolderRepository.update(
@@ -103,6 +98,7 @@ export class SyncMessageFoldersService {
             name: folder.name,
             isSynced: folder.isSynced,
             isSentFolder: folder.isSentFolder,
+            externalId: folder.externalId,
           },
           manager,
         );
@@ -145,5 +141,49 @@ export class SyncMessageFoldersService {
           `Provider ${messageChannel.connectedAccount.provider} is not supported`,
         );
     }
+  }
+
+  private async findExistingFolder({
+    messageChannelId,
+    folder,
+    messageFolderRepository,
+  }: {
+    messageChannelId: string;
+    folder: MessageFolder;
+    messageFolderRepository: WorkspaceRepository<MessageFolderWorkspaceEntity>;
+  }): Promise<MessageFolderWorkspaceEntity | null> {
+    if (isDefined(folder.externalId)) {
+      const existingFolder = await messageFolderRepository.findOne({
+        where: {
+          messageChannelId,
+          externalId: folder.externalId,
+        },
+      });
+
+      if (existingFolder) {
+        return existingFolder;
+      }
+    }
+
+    const legacyFolderName = this.getLegacyFolderName(folder);
+
+    return await messageFolderRepository.findOne({
+      where: {
+        messageChannelId,
+        name: legacyFolderName,
+      },
+    });
+  }
+
+  private getLegacyFolderName(folder: MessageFolder): string {
+    if (folder.isSynced && !folder.isSentFolder) {
+      return MessageFolderName.INBOX;
+    }
+
+    if (folder.isSynced && folder.isSentFolder) {
+      return MessageFolderName.SENT_ITEMS;
+    }
+
+    return folder.name;
   }
 }
