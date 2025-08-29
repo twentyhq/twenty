@@ -93,29 +93,10 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             if (availableFieldsForKanban.length === 0) {
               throw new Error('No fields for kanban - should not happen');
             }
-            const previouslySelectedKanbanField = availableFieldsForKanban.find(
-              (fieldsForKanban) =>
-                fieldsForKanban.id ===
-                currentView.viewGroups[0].fieldMetadataId,
-            );
 
-            const kanbanField = isDefined(previouslySelectedKanbanField)
-              ? previouslySelectedKanbanField
-              : availableFieldsForKanban[0];
-
-            if (!isDefined(previouslySelectedKanbanField)) {
-              updateCurrentViewParams.kanbanFieldMetadataId =
-                currentView.viewGroups[0].fieldMetadataId;
-            }
-
-            const hasViewGroups = currentView.viewGroups.some(
-              (viewGroup: ViewGroup) =>
-                viewGroup.fieldMetadataId === kanbanField.id,
-            );
-
-            if (!hasViewGroups) {
+            if (currentView.viewGroups.length === 0) {
               const viewGroups = await createViewGroupAssociatedWithKanbanField(
-                kanbanField.id,
+                availableFieldsForKanban[0].id,
                 currentView.id,
               );
               loadRecordIndexStates(
