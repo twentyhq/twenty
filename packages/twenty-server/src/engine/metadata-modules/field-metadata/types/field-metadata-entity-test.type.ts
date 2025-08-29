@@ -174,7 +174,7 @@ type SettingsAssertions = [
   Expect<
     HasAllProperties<
       MorphRelationFieldMetadata,
-      { settings: FieldMetadataRelationSettings | null }
+      { settings: FieldMetadataRelationSettings }
     >
   >,
 

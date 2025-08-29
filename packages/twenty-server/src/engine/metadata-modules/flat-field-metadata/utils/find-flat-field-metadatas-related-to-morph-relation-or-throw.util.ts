@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type RelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/relation-field-metadata-type.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata-or-throw.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
@@ -17,7 +18,7 @@ export type FindFlatFieldMetadatasRelatedToMorphRelationOrThrowArgs = {
 export const findFlatFieldMetadatasRelatedToMorphRelationOrThrow = ({
   flatObjectMetadataMaps,
   flatFieldMetadata: morphRelationFlatFieldMetadata,
-}: FindFlatFieldMetadatasRelatedToMorphRelationOrThrowArgs): FlatFieldMetadata[] => {
+}: FindFlatFieldMetadatasRelatedToMorphRelationOrThrowArgs): FlatFieldMetadata<RelationFieldMetadataType>[] => {
   const flatObjectMetadataWithFlatFieldMaps =
     flatObjectMetadataMaps.byId[
       morphRelationFlatFieldMetadata.objectMetadataId
