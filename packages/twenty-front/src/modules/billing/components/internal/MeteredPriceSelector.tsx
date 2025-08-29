@@ -11,8 +11,10 @@ import { formatNumber } from '~/utils/format/number';
 import {
   type BillingPriceOutput,
   type BillingSubscriptionItem,
+  SubscriptionInterval,
 } from '~/generated/graphql';
 import { findOrThrow } from '~/utils/array/findOrThrow';
+import { getIntervalLabel } from '@/billing/utils/subscriptionFlags';
 
 const compareByAmountAsc = (a: BillingPriceOutput, b: BillingPriceOutput) =>
   a.amount - b.amount;
@@ -72,11 +74,16 @@ export const MeteredPriceSelector = ({
     }
   };
 
+  const recurringInterval = getIntervalLabel(
+    currentMeteredBillingPrice?.recurringInterval ===
+      SubscriptionInterval.Month,
+  );
+
   return (
     <>
       <H2Title
         title={t`Credit Plan`}
-        description={t`Number of new credits allocated every ${currentMeteredBillingPrice?.recurringInterval?.toLowerCase()}`}
+        description={t`Number of new credits allocated every ${recurringInterval}`}
       />
       <Select
         dropdownId={'settings-billing-metered-price'}
@@ -85,9 +92,7 @@ export const MeteredPriceSelector = ({
         onChange={handleChange}
         disabled={isUpdating || isTrialing}
         description={
-          isTrialing
-            ? t`You are currently in a trial period. To change the number of credits, please end the trial period first.`
-            : undefined
+          isTrialing ? t`Please start your subscription first` : undefined
         }
       />
     </>

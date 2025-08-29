@@ -43,7 +43,7 @@ export class StripeCheckoutService {
     withTrialPeriod,
   }: {
     user: User;
-    workspace: Workspace;
+    workspace: Pick<Workspace, 'id' | 'displayName'>;
     stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
     successUrl?: string;
     cancelUrl?: string;
@@ -98,7 +98,7 @@ export class StripeCheckoutService {
     withTrialPeriod,
   }: {
     user: User;
-    workspace: Workspace;
+    workspace: Pick<Workspace, 'id' | 'displayName'>;
     stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
     stripeCustomerId?: string;
     plan?: BillingPlanKey;

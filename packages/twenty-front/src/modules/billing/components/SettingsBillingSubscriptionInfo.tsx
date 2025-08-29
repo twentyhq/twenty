@@ -111,7 +111,7 @@ export const SettingsBillingSubscriptionInfo = () => {
     </>
   ) : undefined;
 
-  const intervalLabel = capitalize(getIntervalLabel(isMonthlyPlan));
+  const intervalLabel = capitalize(getIntervalLabel(isMonthlyPlan, true));
 
   const seats =
     currentWorkspace?.currentBillingSubscription?.billingSubscriptionItems?.find(
@@ -239,7 +239,7 @@ export const SettingsBillingSubscriptionInfo = () => {
         {isTrialPeriod && hasPermissionToEndTrialPeriod && (
           <Button
             Icon={IconCircleX}
-            title={t`End Trial`}
+            title={t`Subscribe Now`}
             variant="secondary"
             onClick={() => openModal(END_TRIAL_PERIOD_MODAL_ID)}
             disabled={isEndTrialPeriodLoading}
@@ -268,8 +268,8 @@ export const SettingsBillingSubscriptionInfo = () => {
       />
       <ConfirmationModal
         modalId={END_TRIAL_PERIOD_MODAL_ID}
-        title={t`End trial period?`}
-        subtitle={t`Your trial will end immediately and billing will be activated for your workspace. This action cannot be undone.`}
+        title={t`Start Your Subscription`}
+        subtitle={t`We will activate your paid plan. Do you want to proceed?`}
         onConfirmClick={endTrialPeriod}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent={'blue'}
