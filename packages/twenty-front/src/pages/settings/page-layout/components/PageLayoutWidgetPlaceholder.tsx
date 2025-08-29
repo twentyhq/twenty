@@ -3,9 +3,11 @@ import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
 import { IconGripVertical, IconX } from 'twenty-ui/display';
 
-const StyledPlaceholderContainer = styled.div`
+const StyledPlaceholderContainer = styled.div<{ $isEmpty?: boolean }>`
   background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border: 1px solid
+    ${({ theme, $isEmpty }) =>
+      $isEmpty ? theme.border.color.light : theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-sizing: border-box;
   display: flex;
@@ -13,6 +15,17 @@ const StyledPlaceholderContainer = styled.div`
   height: 100%;
   position: relative;
   width: 100%;
+  ${({ $isEmpty, theme }) =>
+    $isEmpty &&
+    `
+    border-style: dashed;
+    cursor: pointer;
+
+    &:hover {
+      background: ${theme.background.tertiary};
+      border-color: ${theme.border.color.medium};
+    }
+  `}
 `;
 
 const StyledHeader = styled.div`
@@ -58,18 +71,52 @@ const StyledContent = styled.div`
   justify-content: center;
 `;
 
+const StyledEmptyState = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledEmptyText = styled.span`
+  font-size: ${({ theme }) => theme.font.size.sm};
+`;
+
 type PageLayoutWidgetPlaceholderProps = {
   title?: string;
   onRemove?: () => void;
   children?: ReactNode;
+  isEmpty?: boolean;
 };
 
 export const PageLayoutWidgetPlaceholder = ({
   title = 'Graph Title',
   onRemove,
   children,
+  isEmpty = false,
 }: PageLayoutWidgetPlaceholderProps) => {
   const theme = useTheme();
+
+  if (isEmpty) {
+    return (
+      <StyledPlaceholderContainer $isEmpty={true}>
+        <StyledHeader>
+          <StyledDragHandle className="drag-handle">
+            <IconGripVertical size={16} color={theme.border.color.light} />
+          </StyledDragHandle>
+          <StyledTitle>Add Widget</StyledTitle>
+        </StyledHeader>
+        <StyledContent>
+          <StyledEmptyState>
+            <StyledEmptyText>Click to add a widget</StyledEmptyText>
+          </StyledEmptyState>
+        </StyledContent>
+      </StyledPlaceholderContainer>
+    );
+  }
+
   return (
     <StyledPlaceholderContainer>
       <StyledHeader>
