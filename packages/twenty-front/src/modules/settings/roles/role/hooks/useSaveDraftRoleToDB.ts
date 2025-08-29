@@ -30,6 +30,9 @@ const ROLE_BASIC_KEYS: Array<keyof Role> = [
   'canUpdateAllObjectRecords',
   'canSoftDeleteAllObjectRecords',
   'canDestroyAllObjectRecords',
+  'canBeAssignedToUsers',
+  'canBeAssignedToAgents',
+  'canBeAssignedToApiKeys',
 ];
 
 export const useSaveDraftRoleToDB = ({
@@ -241,6 +244,10 @@ export const useSaveDraftRoleToDB = ({
                   settingsDraftRole.canSoftDeleteAllObjectRecords,
                 canDestroyAllObjectRecords:
                   settingsDraftRole.canDestroyAllObjectRecords,
+                canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers,
+                canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
+                canBeAssignedToApiKeys:
+                  settingsDraftRole.canBeAssignedToApiKeys,
               },
             },
           },
