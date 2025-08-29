@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   getWorkflowRunContext,
@@ -24,6 +25,9 @@ import {
 import { canExecuteStep } from 'src/modules/workflow/workflow-executor/utils/can-execute-step.util';
 import { workflowShouldFail } from 'src/modules/workflow/workflow-executor/utils/workflow-should-fail.util';
 import { workflowShouldKeepRunning } from 'src/modules/workflow/workflow-executor/utils/workflow-should-keep-running.util';
+import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
+import { WorkflowIteratorResult } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-result.type';
+import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Injectable()
@@ -134,60 +138,33 @@ export class WorkflowExecutorWorkspaceService {
       };
     }
 
-    const isPendingEvent = actionOutput.pendingEvent;
-
-    const isSuccess = isDefined(actionOutput.result);
-
     const isError = isDefined(actionOutput.error);
-
-    const isStopped = actionOutput.shouldEndWorkflowRun;
 
     if (!isError) {
       this.sendWorkflowNodeRunEvent(workspaceId);
     }
 
-    let stepInfo: WorkflowRunStepInfo;
-
-    if (isPendingEvent) {
-      stepInfo = {
-        status: StepStatus.PENDING,
-      };
-    } else if (isStopped) {
-      stepInfo = {
-        status: StepStatus.STOPPED,
-        result: actionOutput?.result,
-      };
-    } else if (isSuccess) {
-      stepInfo = {
-        status: StepStatus.SUCCESS,
-        result: actionOutput?.result,
-      };
-    } else {
-      stepInfo = {
-        status: StepStatus.FAILED,
-        error: actionOutput?.error,
-      };
-    }
-
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
+    const { shouldProcessNextSteps } = await this.processStepExecutionResult({
+      actionOutput,
       stepId,
-      stepInfo,
       workflowRunId,
       workspaceId,
     });
 
-    if (
-      isSuccess &&
-      !isStopped &&
-      isDefined(stepToExecute.nextStepIds) &&
-      stepToExecute.nextStepIds.length > 0
-    ) {
-      await this.executeFromSteps({
-        stepIds: stepToExecute.nextStepIds,
-        workflowRunId,
-        workspaceId,
-        shouldComputeWorkflowRunStatus: false,
+    if (shouldProcessNextSteps) {
+      const nextStepIdsToExecute = await this.getNextStepIdsToExecute({
+        executedStep: stepToExecute,
+        executedStepResult: actionOutput,
       });
+
+      if (isDefined(nextStepIdsToExecute) && nextStepIdsToExecute.length > 0) {
+        await this.executeFromSteps({
+          stepIds: nextStepIdsToExecute,
+          workflowRunId,
+          workspaceId,
+          shouldComputeWorkflowRunStatus: false,
+        });
+      }
     }
   }
 
@@ -251,5 +228,84 @@ export class WorkflowExecutorWorkspaceService {
         BillingProductKey.WORKFLOW_NODE_EXECUTION,
       ))
     );
+  }
+
+  private async getNextStepIdsToExecute({
+    executedStep,
+    executedStepResult,
+  }: {
+    executedStep: WorkflowAction;
+    executedStepResult: WorkflowActionOutput;
+  }) {
+    const isIteratorStep = isWorkflowIteratorAction(executedStep);
+
+    if (isIteratorStep) {
+      const iteratorStepResult =
+        executedStepResult.result as WorkflowIteratorResult;
+
+      if (!iteratorStepResult.hasProcessedAllItems) {
+        return isString(executedStep.settings.input.initialLoopStepIds)
+          ? JSON.parse(executedStep.settings.input.initialLoopStepIds)
+          : executedStep.settings.input.initialLoopStepIds;
+      }
+    }
+
+    return executedStep.nextStepIds;
+  }
+
+  private async processStepExecutionResult({
+    actionOutput,
+    stepId,
+    workflowRunId,
+    workspaceId,
+  }: {
+    actionOutput: WorkflowActionOutput;
+    stepId: string;
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<{ shouldProcessNextSteps: boolean }> {
+    const isPendingEvent = actionOutput.pendingEvent;
+    const isSuccess = isDefined(actionOutput.result);
+    const isStopped = actionOutput.shouldEndWorkflowRun;
+    const isNotFinished = actionOutput.shouldRemainRunning;
+
+    let stepInfo: WorkflowRunStepInfo;
+
+    if (isPendingEvent) {
+      stepInfo = {
+        status: StepStatus.PENDING,
+      };
+    } else if (isStopped) {
+      stepInfo = {
+        status: StepStatus.STOPPED,
+        result: actionOutput?.result,
+      };
+    } else if (isNotFinished) {
+      stepInfo = {
+        status: StepStatus.RUNNING,
+        result: actionOutput?.result,
+      };
+    } else if (isSuccess) {
+      stepInfo = {
+        status: StepStatus.SUCCESS,
+        result: actionOutput?.result,
+      };
+    } else {
+      stepInfo = {
+        status: StepStatus.FAILED,
+        error: actionOutput?.error,
+      };
+    }
+
+    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
+      stepId,
+      stepInfo,
+      workflowRunId,
+      workspaceId,
+    });
+
+    return {
+      shouldProcessNextSteps: isSuccess && !isStopped,
+    };
   }
 }

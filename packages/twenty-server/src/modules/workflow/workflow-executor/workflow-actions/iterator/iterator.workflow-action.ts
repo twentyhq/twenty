@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isString } from '@sniptt/guards';
 import { isDefined, resolveInput } from 'twenty-shared/utils';
@@ -15,20 +15,13 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/utils/get-all-step-ids-in-loop.util';
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
 import { type WorkflowIteratorActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
+import { WorkflowIteratorResult } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-result.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-
-type WorkflowIteratorStepResult = {
-  itemsProcessed: number;
-  currentItem: unknown;
-};
 
 @Injectable()
 export class IteratorWorkflowAction implements WorkflowActionInterface {
   constructor(
-    @Inject(forwardRef(() => WorkflowExecutorWorkspaceService))
-    private readonly workflowExecutorWorkspaceService: CircularDep<WorkflowExecutorWorkspaceService>,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
   ) {}
 
@@ -72,14 +65,13 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
       );
     }
 
-    if (
-      !Array.isArray(parsedInitialLoopStepIds) ||
-      parsedInitialLoopStepIds.length === 0
-    ) {
+    if (parsedInitialLoopStepIds.length === 0 || parsedItems.length === 0) {
       return {
         result: {
           itemsProcessed: 0,
-        },
+          nextItemToProcess: undefined,
+          hasProcessedAllItems: true,
+        } satisfies WorkflowIteratorResult,
       };
     }
 
@@ -91,64 +83,36 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
 
     const stepInfos = workflowRun.state.stepInfos;
     const existingIteratorStepResult = stepInfos[iteratorStepId]
-      ?.result as WorkflowIteratorStepResult;
+      ?.result as WorkflowIteratorResult;
 
-    const hasProcessedAllItems =
-      parsedItems.length === 0 ||
-      existingIteratorStepResult?.itemsProcessed === parsedItems.length;
+    const itemsProcessed = isDefined(existingIteratorStepResult)
+      ? existingIteratorStepResult.itemsProcessed + 1
+      : 0;
 
-    if (hasProcessedAllItems) {
-      return {
-        result: {
-          itemsProcessed: parsedItems.length,
-        },
-      };
-    }
+    const hasProcessedAllItems = itemsProcessed === parsedItems.length;
 
-    const nextIteratorStepInfoResult = isDefined(existingIteratorStepResult)
-      ? {
-          itemsProcessed: existingIteratorStepResult.itemsProcessed + 1,
-          currentItem: parsedItems[existingIteratorStepResult.itemsProcessed],
-        }
-      : {
-          itemsProcessed: 1,
-          currentItem: parsedItems[0],
-        };
+    const nextIteratorStepInfoResult: WorkflowIteratorResult = {
+      itemsProcessed,
+      nextItemToProcess:
+        itemsProcessed < parsedItems.length
+          ? parsedItems[itemsProcessed]
+          : undefined,
+      hasProcessedAllItems,
+    };
 
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-      stepId: iteratorStepId,
-      stepInfo: {
-        result: nextIteratorStepInfoResult,
-        status: StepStatus.RUNNING,
-      },
-      workflowRunId: runInfo.workflowRunId,
-      workspaceId: runInfo.workspaceId,
-    });
-
-    await this.resetStepsInLoop({
-      iteratorStepId,
-      initialLoopStepIds: parsedInitialLoopStepIds,
-      workflowRunId: runInfo.workflowRunId,
-      workspaceId: runInfo.workspaceId,
-      steps,
-    });
-
-    try {
-      await this.workflowExecutorWorkspaceService.executeFromSteps({
-        stepIds: parsedInitialLoopStepIds,
+    if (!hasProcessedAllItems) {
+      await this.resetStepsInLoop({
+        iteratorStepId,
+        initialLoopStepIds: parsedInitialLoopStepIds,
         workflowRunId: runInfo.workflowRunId,
         workspaceId: runInfo.workspaceId,
+        steps,
       });
-    } catch (error) {
-      return {
-        error: error instanceof Error ? error.message : 'Unknown error',
-      } as WorkflowActionOutput;
     }
 
     return {
-      result: {
-        itemsProcessed: parsedItems.length,
-      },
+      result: nextIteratorStepInfoResult,
+      shouldRemainRunning: !hasProcessedAllItems,
     };
   }
 

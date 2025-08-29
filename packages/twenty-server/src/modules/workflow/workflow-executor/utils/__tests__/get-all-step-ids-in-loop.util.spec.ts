@@ -86,6 +86,23 @@ describe('getAllStepIdsInLoop', () => {
       expect(result).toEqual(['step2', 'step3', 'step5', 'step4']);
     });
 
+    it('should handle loop with branching paths that converge to the iterator', () => {
+      const steps: WorkflowAction[] = [
+        createIteratorMockStep('iterator1', ['step2'], []),
+        createCodeMockStep('step2', ['step3', 'step4']),
+        createCodeMockStep('step3', ['iterator1']),
+        createCodeMockStep('step4', ['iterator1']),
+      ];
+
+      const result = getAllStepIdsInLoop({
+        iteratorStepId: 'iterator1',
+        initialLoopStepIds: ['step2'],
+        steps,
+      });
+
+      expect(result).toEqual(['step2', 'step3', 'step4']);
+    });
+
     it('should handle multiple entry points to the loop', () => {
       const steps: WorkflowAction[] = [
         createIteratorMockStep('iterator1', ['step2', 'step3'], []),

@@ -78,7 +78,7 @@ export class WorkflowSchemaWorkspaceService {
         });
       case WorkflowActionType.ITERATOR: {
         return {
-          currentItem: {
+          nextItemToProcess: {
             isLeaf: true,
             type: 'unknown',
             value: generateFakeValue('unknown'),
