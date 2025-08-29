@@ -29,6 +29,7 @@ export const useComputeRecordRelationFilterLabelValue = ({
   if (!isDefined(recordFilter.fieldMetadataId)) {
     throw new Error('fieldMetadataItemUsedInFilterDropdown is not defined');
   }
+
   const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow({
     fieldMetadataId: recordFilter.fieldMetadataId,
     objectMetadataItems,
@@ -38,6 +39,17 @@ export const useComputeRecordRelationFilterLabelValue = ({
     getRelationObjectMetadataNameSingular({
       field: fieldMetadataItem,
     });
+
+  const relationObjectMetadataItem = objectMetadataItems.find(
+    (objectMetadataItem) =>
+      objectMetadataItem.nameSingular === relationObjectMetadataNameSingular,
+  );
+
+  if (!isDefined(relationObjectMetadataItem)) {
+    throw new Error('relationObjectMetadataItem is not defined');
+  }
+
+  const relationObjectLabelPlural = relationObjectMetadataItem.labelPlural;
 
   const { isCurrentWorkspaceMemberSelected } = jsonRelationFilterValueSchema
     .catch({
@@ -53,26 +65,37 @@ export const useComputeRecordRelationFilterLabelValue = ({
     })
     .parse(recordFilter.value);
 
-  const { selectedRecords } = useRecordsForSelect({
+  const { selectedRecords, loading } = useRecordsForSelect({
     searchFilterText: '',
     selectedIds: selectedRecordIds,
     objectNameSingular: relationObjectMetadataNameSingular ?? '',
     limit: 10,
   });
 
+  if (loading) {
+    return { labelValue: t`Loading...` };
+  }
+
   const labelValueItems = [
     ...(isCurrentWorkspaceMemberSelected ? [t`Me`] : []),
     ...selectedRecords.map((record) => record.name),
   ];
 
+  const filterDisplayValue =
+    labelValueItems.length > MAX_RECORDS_TO_DISPLAY
+      ? `${labelValueItems.length} ${relationObjectLabelPlural.toLowerCase()}`
+      : labelValueItems.join(', ');
+
   if (labelValueItems.length > 0) {
     return {
       labelValue: getRecordFilterLabelValue({
         ...recordFilter,
-        displayValue: labelValueItems.join(', '),
+        displayValue: filterDisplayValue,
       }),
     };
   }
 
-  return { labelValue: getRecordFilterLabelValue(recordFilter) };
+  return {
+    labelValue: getRecordFilterLabelValue(recordFilter),
+  };
 };
