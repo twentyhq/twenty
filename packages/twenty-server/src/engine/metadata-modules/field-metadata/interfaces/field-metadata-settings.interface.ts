@@ -60,7 +60,7 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.TEXT]: FieldMetadataTextSettings | null;
   [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
   [FieldMetadataType.ADDRESS]: FieldMetadataAddressSettings | null;
-  [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings | null; // TODO Should not be null
+  [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings; // TODO Should not be null
   [FieldMetadataType.TS_VECTOR]: FieldMetadataTsVectorSettings | null;
 };
 

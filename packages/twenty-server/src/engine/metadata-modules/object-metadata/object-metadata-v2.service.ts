@@ -60,7 +60,7 @@ export class ObjectMetadataServiceV2 {
         existingFlatObjectMetadataMaps,
         updateObjectInput,
       });
-
+    
     const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       objectMetadataIds: [optimisticallyUpdatedFlatObjectMetadata.id],

@@ -4,6 +4,7 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
 import { FLAT_OBJECT_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-properties-to-compare.constant';
@@ -36,7 +37,10 @@ const objectMetadataEditableProperties =
 export const fromUpdateObjectInputToFlatObjectMetadata = ({
   existingFlatObjectMetadataMaps,
   updateObjectInput: rawUpdateObjectInput,
-}: FromUpdateObjectInputToFlatObjectMetadataArgs): FlatObjectMetadata => {
+}: FromUpdateObjectInputToFlatObjectMetadataArgs): {
+  updatedFlatObjectMetadata: FlatObjectMetadata;
+  updatedOtherObjectFlatFieldMetadatas: FlatFieldMetadata[];
+} => {
   const { id: objectMetadataIdToUpdate } =
     trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties(
       rawUpdateObjectInput,
@@ -96,20 +100,29 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
     return updatedStandardFlatObjectdMetadata;
   }
 
+  const updatedProperties: FlatObjectMetadataPropertiesToCompare[] = [];
   const updatedFlatObjectMetadata = objectMetadataEditableProperties.reduce(
     (acc, property) => {
+      const updatedPropertyValue = updatedEditableObjectProperties[property];
       const isPropertyUpdated =
-        updatedEditableObjectProperties[property] !== undefined;
+        updatedPropertyValue !== undefined &&
+        acc[property] !== updatedPropertyValue;
 
-      return {
-        ...acc,
-        ...(isPropertyUpdated
-          ? { [property]: updatedEditableObjectProperties[property] }
-          : {}),
-      };
+      if (isPropertyUpdated) {
+        updatedProperties.push(property);
+        return {
+          ...acc,
+          [property]: updatedPropertyValue,
+        };
+      }
+
+      return acc;
     },
     flatObjectMetadataToUpdate,
   );
 
-  return updatedFlatObjectMetadata;
+  return {
+    updatedFlatObjectMetadata,
+    updatedOtherObjectFlatFieldMetadatas: [],
+  };
 };
