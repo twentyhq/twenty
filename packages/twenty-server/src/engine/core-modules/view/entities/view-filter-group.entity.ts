@@ -36,8 +36,8 @@ export class ViewFilterGroupEntity extends SyncableEntity {
   })
   logicalOperator: ViewFilterGroupLogicalOperator;
 
-  @Column({ nullable: true, type: 'int' })
-  positionInViewFilterGroup?: number | null;
+  @Column({ nullable: true, type: 'double precision' })
+  positionInViewFilterGroup: number | null;
 
   @Column({ nullable: false, type: 'uuid' })
   viewId: string;
