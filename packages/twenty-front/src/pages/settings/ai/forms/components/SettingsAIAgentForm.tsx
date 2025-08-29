@@ -51,10 +51,18 @@ export const SettingsAIAgentForm = ({
   const { data: rolesData } = useGetRolesQuery();
 
   const rolesOptions =
-    rolesData?.getRoles?.map((role) => ({
-      label: role.label,
-      value: role.id,
-    })) || [];
+    rolesData?.getRoles?.reduce<Array<{ label: string; value: string }>>(
+      (acc, role) => {
+        if (role.canBeAssignedToAgents === true) {
+          acc.push({
+            label: role.label,
+            value: role.id,
+          });
+        }
+        return acc;
+      },
+      [],
+    ) || [];
 
   const noModelsAvailable = modelOptions.length === 0;
 
