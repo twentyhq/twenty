@@ -2,7 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  DeleteDateColumn,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -44,7 +43,4 @@ export class DatabaseEventTrigger extends SyncableEntity {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
-
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt?: Date;
 }
