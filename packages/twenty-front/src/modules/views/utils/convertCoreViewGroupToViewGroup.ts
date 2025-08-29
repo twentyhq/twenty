@@ -2,7 +2,10 @@ import { type ViewGroup } from '@/views/types/ViewGroup';
 import { type CoreViewGroup } from '~/generated/graphql';
 
 export const convertCoreViewGroupToViewGroup = (
-  coreViewGroup: Omit<CoreViewGroup, 'workspaceId'>,
+  coreViewGroup: Pick<
+    CoreViewGroup,
+    'id' | 'fieldMetadataId' | 'isVisible' | 'fieldValue' | 'position'
+  >,
 ): ViewGroup => {
   return {
     __typename: 'ViewGroup',

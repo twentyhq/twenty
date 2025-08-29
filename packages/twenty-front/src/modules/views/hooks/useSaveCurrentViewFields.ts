@@ -33,7 +33,7 @@ export const useSaveCurrentViewFields = () => {
 
         set(isPersistingViewFieldsState, true);
 
-        const view = await getViewFromPrefetchState(currentViewId);
+        const view = getViewFromPrefetchState(currentViewId);
 
         if (isUndefinedOrNull(view)) {
           return;

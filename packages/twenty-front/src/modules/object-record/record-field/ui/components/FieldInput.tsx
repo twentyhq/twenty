@@ -15,6 +15,7 @@ import { isFieldRelationFromManyObjects } from '@/object-record/record-field/ui/
 
 import { ArrayFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldInput';
 import { MorphRelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MorphRelationManyToOneFieldInput';
+import { MorphRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MorphRelationOneToManyFieldInput';
 import { RichTextFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/RichTextFieldInput';
 import { isFieldAddress } from '@/object-record/record-field/ui/types/guards/isFieldAddress';
 import { isFieldArray } from '@/object-record/record-field/ui/types/guards/isFieldArray';
@@ -26,6 +27,7 @@ import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFi
 import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
 import { isFieldLinks } from '@/object-record/record-field/ui/types/guards/isFieldLinks';
 import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
+import { isFieldMorphRelationOneToMany } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationOneToMany';
 import { isFieldMultiSelect } from '@/object-record/record-field/ui/types/guards/isFieldMultiSelect';
 import { isFieldNumber } from '@/object-record/record-field/ui/types/guards/isFieldNumber';
 import { isFieldRating } from '@/object-record/record-field/ui/types/guards/isFieldRating';
@@ -54,6 +56,8 @@ export const FieldInput = () => {
         <RelationFromManyFieldInput />
       ) : isFieldMorphRelationManyToOne(fieldDefinition) ? (
         <MorphRelationManyToOneFieldInput />
+      ) : isFieldMorphRelationOneToMany(fieldDefinition) ? (
+        <MorphRelationOneToManyFieldInput />
       ) : isFieldPhones(fieldDefinition) ? (
         <PhonesFieldInput />
       ) : isFieldText(fieldDefinition) ? (

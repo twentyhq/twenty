@@ -6,7 +6,6 @@ import { DataSource } from 'typeorm';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
-import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import {
   CALENDAR_CHANNEL_DATA_SEED_COLUMNS,
   CALENDAR_CHANNEL_DATA_SEEDS,
@@ -88,9 +87,7 @@ import {
   WORKSPACE_MEMBER_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
-import { prefillViews } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-views';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
-import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 
 const RECORD_SEEDS_CONFIGS = [
   {
@@ -242,28 +239,7 @@ export class DevSeederDataService {
           workspaceId,
         });
 
-        const viewDefinitionsWithId = await prefillViews(
-          entityManager,
-          schemaName,
-          objectMetadataItems.filter((item) => !item.isCustom),
-        );
-
         await prefillWorkflows(entityManager, schemaName, objectMetadataItems);
-
-        await prefillWorkspaceFavorites(
-          viewDefinitionsWithId
-            .filter(
-              (view) =>
-                view.key === 'INDEX' &&
-                shouldSeedWorkspaceFavorite(
-                  view.objectMetadataId,
-                  objectMetadataItems,
-                ),
-            )
-            .map((view) => view.id),
-          entityManager,
-          schemaName,
-        );
       },
     );
   }
