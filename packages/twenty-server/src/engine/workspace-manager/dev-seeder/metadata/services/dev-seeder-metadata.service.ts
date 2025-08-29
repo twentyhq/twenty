@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource, In } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
@@ -30,6 +31,7 @@ export class DevSeederMetadataService {
   constructor(
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
+    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {}
@@ -193,8 +195,6 @@ export class DevSeederMetadataService {
         relation,
       });
     }
-
-    await this.seedCoreViews(workspaceId);
   }
 
   private async seedCustomRelation({
@@ -207,29 +207,16 @@ export class DevSeederMetadataService {
       seeds: (FieldMetadataSeed & { targetObjectMetadataNames: string[] })[];
     };
   }): Promise<void> {
-    const targetObjectMetadata =
-      await this.objectMetadataService.findManyWithinWorkspace(workspaceId, {
-        where: {
-          nameSingular: In(relation.seeds[0].targetObjectMetadataNames),
+    const { objectMetadataMaps } =
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+        {
+          workspaceId,
         },
-      });
-    const objectMetadata =
-      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
-        where: {
-          nameSingular: relation.objectName,
-        },
-      });
-
-    if (!isDefined(objectMetadata)) {
-      throw new Error(
-        'ObjectMetadata for relations creation payload is not defined',
       );
-    }
 
     const relationFieldInputs = this.createFieldInputs({
       relation,
-      targetObjectMetadata,
-      objectMetadata,
+      objectMetadataMaps,
       workspaceId,
     });
 
@@ -238,19 +225,24 @@ export class DevSeederMetadataService {
 
   private createFieldInputs({
     relation,
-    targetObjectMetadata,
-    objectMetadata,
+    objectMetadataMaps,
     workspaceId,
   }: {
     relation: {
       objectName: string;
       seeds: (FieldMetadataSeed & { targetObjectMetadataNames: string[] })[];
     };
-    targetObjectMetadata: ObjectMetadataEntity[];
-    objectMetadata: ObjectMetadataEntity;
+    objectMetadataMaps: ObjectMetadataMaps;
     workspaceId: string;
   }): CreateFieldInput[] {
-    const objectMetadataId = objectMetadata.id;
+    const objectMetadataId =
+      objectMetadataMaps.idByNameSingular[relation.objectName];
+
+    if (!isDefined(objectMetadataId)) {
+      throw new Error(
+        `Object metadata id not found for: ${relation.objectName}`,
+      );
+    }
 
     const relationFieldInputs = relation.seeds.map((seed) => ({
       type: seed.type,
@@ -260,19 +252,17 @@ export class DevSeederMetadataService {
       workspaceId,
       morphRelationsCreationPayload: seed.targetObjectMetadataNames.map(
         (targetObjectMetadataName) => {
-          const targetObjectMetadataId = targetObjectMetadata.find(
-            (targetObjectMetadata) =>
-              targetObjectMetadata.nameSingular === targetObjectMetadataName,
-          )?.id;
+          const targetObjectMetadataId =
+            objectMetadataMaps.idByNameSingular[targetObjectMetadataName];
 
-          if (!isDefined(seed.morphRelationsCreationPayload)) {
-            throw new Error('Morph relations creation payload is not defined');
-          }
-
-          if (!targetObjectMetadataId) {
+          if (!isDefined(targetObjectMetadataId)) {
             throw new Error(
               `Target object metadata id not found for: ${targetObjectMetadataName}`,
             );
+          }
+
+          if (!isDefined(seed.morphRelationsCreationPayload)) {
+            throw new Error('Morph relations creation payload is not defined');
           }
 
           return {
