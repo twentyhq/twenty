@@ -16,6 +16,7 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { VIEW_BAR_FILTER_DROPDOWN_ID } from '@/views/constants/ViewBarFilterDropdownId';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { within } from '@storybook/test';
@@ -79,6 +80,16 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
 
       setCurrentRecordFields(columns);
 
+      const {
+        fieldDefinitionByFieldMetadataItemId,
+        fieldMetadataItemByFieldMetadataItemId,
+        labelIdentifierFieldMetadataItem,
+        recordFieldByFieldMetadataItemId,
+      } = useRecordIndexFieldMetadataDerivedStates(
+        companyObjectMetadataItem,
+        instanceId,
+      );
+
       return (
         <RecordIndexContextProvider
           value={{
@@ -89,6 +100,10 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
             objectNameSingular: CoreObjectNameSingular.Company,
             objectMetadataItem: companyObjectMetadataItem,
             recordIndexId: instanceId,
+            labelIdentifierFieldMetadataItem,
+            recordFieldByFieldMetadataItemId,
+            fieldDefinitionByFieldMetadataItemId,
+            fieldMetadataItemByFieldMetadataItemId,
           }}
         >
           <RecordComponentInstanceContextsWrapper

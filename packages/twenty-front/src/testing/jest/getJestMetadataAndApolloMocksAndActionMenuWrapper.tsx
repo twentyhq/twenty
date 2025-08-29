@@ -1,7 +1,5 @@
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { type MockedResponse } from '@apollo/client/testing';
 import { type ReactNode } from 'react';
 import { type MutableSnapshot } from 'recoil';
@@ -10,6 +8,7 @@ import {
   JestContextStoreSetter,
   type JestContextStoreSetterMocks,
 } from '~/testing/jest/JestContextStoreSetter';
+import { JestRecordIndexContextProviderWrapper } from '~/testing/jest/JestRecordIndexContextProviderWrapper';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -49,48 +48,34 @@ export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
 
   return ({ children }: { children: ReactNode }) => (
     <Wrapper>
-      <RecordComponentInstanceContextsWrapper
-        componentInstanceId={componentInstanceId}
+      <ContextStoreComponentInstanceContext.Provider
+        value={{ instanceId: componentInstanceId }}
       >
-        <ContextStoreComponentInstanceContext.Provider
-          value={{ instanceId: componentInstanceId }}
+        <ActionMenuComponentInstanceContext.Provider
+          value={{
+            instanceId: componentInstanceId,
+          }}
         >
-          <ActionMenuComponentInstanceContext.Provider
-            value={{
-              instanceId: componentInstanceId,
-            }}
+          <JestRecordIndexContextProviderWrapper
+            objectMetadataItem={mockObjectMetadataItem}
           >
-            <RecordIndexContextProvider
-              value={{
-                objectPermissionsByObjectMetadataId: {},
-                indexIdentifierUrl: () => 'indexIdentifierUrl',
-                onIndexRecordsLoaded: () => {},
-                objectNamePlural: mockObjectMetadataItem.namePlural,
-                objectNameSingular: mockObjectMetadataItem.nameSingular,
-                objectMetadataItem: mockObjectMetadataItem,
-                recordIndexId: 'recordIndexId',
-              }}
+            <JestContextStoreSetter
+              contextStoreCurrentViewId={contextStoreCurrentViewId}
+              contextStoreFilters={contextStoreFilters}
+              contextStoreTargetedRecordsRule={contextStoreTargetedRecordsRule}
+              contextStoreNumberOfSelectedRecords={
+                contextStoreNumberOfSelectedRecords
+              }
+              contextStoreCurrentObjectMetadataNameSingular={
+                contextStoreCurrentObjectMetadataNameSingular
+              }
+              contextStoreCurrentViewType={contextStoreCurrentViewType}
             >
-              <JestContextStoreSetter
-                contextStoreCurrentViewId={contextStoreCurrentViewId}
-                contextStoreFilters={contextStoreFilters}
-                contextStoreTargetedRecordsRule={
-                  contextStoreTargetedRecordsRule
-                }
-                contextStoreNumberOfSelectedRecords={
-                  contextStoreNumberOfSelectedRecords
-                }
-                contextStoreCurrentObjectMetadataNameSingular={
-                  contextStoreCurrentObjectMetadataNameSingular
-                }
-                contextStoreCurrentViewType={contextStoreCurrentViewType}
-              >
-                {children}
-              </JestContextStoreSetter>
-            </RecordIndexContextProvider>
-          </ActionMenuComponentInstanceContext.Provider>
-        </ContextStoreComponentInstanceContext.Provider>
-      </RecordComponentInstanceContextsWrapper>
+              {children}
+            </JestContextStoreSetter>
+          </JestRecordIndexContextProviderWrapper>
+        </ActionMenuComponentInstanceContext.Provider>
+      </ContextStoreComponentInstanceContext.Provider>
     </Wrapper>
   );
 };

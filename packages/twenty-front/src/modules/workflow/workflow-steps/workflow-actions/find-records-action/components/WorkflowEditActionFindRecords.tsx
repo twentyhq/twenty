@@ -11,6 +11,7 @@ import { type RecordFilterGroup } from '@/object-record/record-filter-group/type
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFilters';
@@ -70,6 +71,7 @@ export const WorkflowEditActionFindRecords = ({
     filter: action.settings.input.filter as FindRecordsActionFilter,
   });
   const isFormDisabled = actionOptions.readonly;
+  const instanceId = `workflow-edit-action-record-find-records-${action.id}-${formData.objectNameSingular}`;
 
   const selectedObjectMetadataItem = activeNonSystemObjectMetadataItems.find(
     (item) => item.nameSingular === formData.objectNameSingular,
@@ -79,6 +81,16 @@ export const WorkflowEditActionFindRecords = ({
     selectedObjectMetadataItem?.nameSingular ?? '';
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const {
+    fieldDefinitionByFieldMetadataItemId,
+    fieldMetadataItemByFieldMetadataItemId,
+    labelIdentifierFieldMetadataItem,
+    recordFieldByFieldMetadataItemId,
+  } = useRecordIndexFieldMetadataDerivedStates(
+    selectedObjectMetadataItem,
+    instanceId,
+  );
 
   const saveAction = useDebouncedCallback(
     async (formData: FindRecordsFormData) => {
@@ -118,7 +130,6 @@ export const WorkflowEditActionFindRecords = ({
       action,
       defaultTitle: 'Search Records',
     });
-  const instanceId = `workflow-edit-action-record-find-records-${action.id}-${formData.objectNameSingular}`;
 
   return (
     <>
@@ -174,6 +185,10 @@ export const WorkflowEditActionFindRecords = ({
                 objectMetadataItem: selectedObjectMetadataItem,
                 recordIndexId: instanceId,
                 objectPermissionsByObjectMetadataId,
+                labelIdentifierFieldMetadataItem,
+                recordFieldByFieldMetadataItemId,
+                fieldDefinitionByFieldMetadataItemId,
+                fieldMetadataItemByFieldMetadataItemId,
               }}
             >
               <RecordFilterGroupsComponentInstanceContext.Provider
