@@ -165,6 +165,7 @@ describe('BillingSubscriptionService - switching methods', () => {
             updateSubscription: jest.fn(),
             cancelSubscription: jest.fn(),
             collectLastInvoice: jest.fn(),
+            setYearlyThresholds: jest.fn(),
           },
         },
         {
