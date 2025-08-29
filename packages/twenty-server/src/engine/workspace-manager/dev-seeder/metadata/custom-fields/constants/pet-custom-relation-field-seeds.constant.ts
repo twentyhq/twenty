@@ -7,16 +7,17 @@ export const PET_CUSTOM_RELATION_FIELD_SEEDS: (FieldMetadataSeed & {
 })[] = [
   {
     type: FieldMetadataType.MORPH_RELATION,
-    label: 'Owner',
-    name: 'owner of the Pet (person or company)',
+    label: 'Owner of the Pet (rocket or survey)',
+    name: 'owner',
+    icon: 'IconRelationManyToOne',
     morphRelationsCreationPayload: [
       {
         type: RelationType.MANY_TO_ONE,
         targetObjectMetadataId: 'to-be-resolved-later',
-        targetFieldLabel: 'Owner',
+        targetFieldLabel: 'Owned by',
         targetFieldIcon: 'IconRelationOneToMany',
       },
     ],
-    targetObjectMetadataNames: ['person', 'company'],
+    targetObjectMetadataNames: ['surveyResult', 'rocket'],
   },
 ];

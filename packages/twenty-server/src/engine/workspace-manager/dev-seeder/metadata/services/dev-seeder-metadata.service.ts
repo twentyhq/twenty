@@ -207,17 +207,29 @@ export class DevSeederMetadataService {
       seeds: (FieldMetadataSeed & { targetObjectMetadataNames: string[] })[];
     };
   }): Promise<void> {
-    // frirst we look for all obejctmetadata from targetObjectMetadataNames  in order to retriev their ids
     const targetObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId, {
         where: {
           nameSingular: In(relation.seeds[0].targetObjectMetadataNames),
         },
       });
+    const objectMetadata =
+      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
+        where: {
+          nameSingular: relation.objectName,
+        },
+      });
+
+    if (!isDefined(objectMetadata)) {
+      throw new Error(
+        'ObjectMetadata for relations creation payload is not defined',
+      );
+    }
 
     const relationFieldInputs = this.createFieldInputs({
       relation,
       targetObjectMetadata,
+      objectMetadata,
       workspaceId,
     });
 
@@ -227,6 +239,7 @@ export class DevSeederMetadataService {
   private createFieldInputs({
     relation,
     targetObjectMetadata,
+    objectMetadata,
     workspaceId,
   }: {
     relation: {
@@ -234,13 +247,16 @@ export class DevSeederMetadataService {
       seeds: (FieldMetadataSeed & { targetObjectMetadataNames: string[] })[];
     };
     targetObjectMetadata: ObjectMetadataEntity[];
+    objectMetadata: ObjectMetadataEntity;
     workspaceId: string;
   }): CreateFieldInput[] {
+    const objectMetadataId = objectMetadata.id;
+
     const relationFieldInputs = relation.seeds.map((seed) => ({
       type: seed.type,
       label: seed.label,
       name: seed.name,
-      objectMetadataId: relation.objectName,
+      objectMetadataId,
       workspaceId,
       morphRelationsCreationPayload: seed.targetObjectMetadataNames.map(
         (targetObjectMetadataName) => {
