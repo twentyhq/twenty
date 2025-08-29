@@ -4,7 +4,6 @@ import { t } from '@lingui/core/macro';
 import { H2Title } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { type Role } from '~/generated/graphql';
 
 const StyledCheckboxContainer = styled.div`
   display: flex;
@@ -18,49 +17,37 @@ const StyledCheckboxList = styled.div`
   gap: ${({ theme }) => theme.spacing(1.5)};
 `;
 
-type SettingsRoleApplicabilityProps = {
-  onApplicabilityChange: (
-    key:
-      | 'canBeAssignedToUsers'
-      | 'canBeAssignedToAgents'
-      | 'canBeAssignedToApiKeys',
-    value: boolean,
-  ) => void;
-  isEditable: boolean;
-  role: Role;
+type ApplicabilityOption<T> = {
+  key: keyof T;
+  label: string;
+  description?: string;
 };
 
-const APPLICABILITY_OPTIONS = [
-  {
-    key: 'canBeAssignedToUsers' as const,
-    label: t`Assignable to team members`,
-  },
-  {
-    key: 'canBeAssignedToAgents' as const,
-    label: t`Assignable to automation agents`,
-  },
-  {
-    key: 'canBeAssignedToApiKeys' as const,
-    label: t`Assignable to API integrations`,
-  },
-];
+type SettingsRoleApplicabilityProps<T> = {
+  title?: string;
+  description?: string;
+  options: ApplicabilityOption<T>[];
+  values: T;
+  onApplicabilityChange: (key: keyof T, value: boolean) => void;
+  isEditable: boolean;
+};
 
-export const SettingsRoleApplicability = ({
-  role,
+export const SettingsRoleApplicability = <T extends Record<string, boolean>>({
+  title = t`Applicability`,
+  description = t`Control which types of entities this can be assigned to`,
+  options,
+  values,
   onApplicabilityChange,
   isEditable,
-}: SettingsRoleApplicabilityProps) => {
+}: SettingsRoleApplicabilityProps<T>) => {
   return (
     <Section>
-      <H2Title
-        title={t`Applicability`}
-        description={t`Control which types of entities this role can be assigned to`}
-      />
+      <H2Title title={title} description={description} />
       <StyledCheckboxList>
-        {APPLICABILITY_OPTIONS.map((option) => (
-          <StyledCheckboxContainer key={option.key}>
+        {options.map((option) => (
+          <StyledCheckboxContainer key={String(option.key)}>
             <Checkbox
-              checked={role[option.key] ?? true}
+              checked={values[option.key] ?? true}
               onChange={(event) => {
                 onApplicabilityChange(option.key, event.target.checked);
               }}

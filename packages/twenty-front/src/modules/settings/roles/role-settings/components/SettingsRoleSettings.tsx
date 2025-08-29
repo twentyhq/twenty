@@ -93,7 +93,29 @@ export const SettingsRoleSettings = ({
       </Section>
 
       <SettingsRoleApplicability
-        role={settingsDraftRole}
+        title={t`Applicability`}
+        description={t`Control which types of entities this role can be assigned to`}
+        options={[
+          {
+            key: 'canBeAssignedToUsers',
+            label: t`Assignable to team members`,
+          },
+          {
+            key: 'canBeAssignedToAgents',
+            label: t`Assignable to automation agents`,
+          },
+          {
+            key: 'canBeAssignedToApiKeys',
+            label: t`Assignable to API integrations`,
+          },
+        ]}
+        values={{
+          canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers ?? true,
+          canBeAssignedToAgents:
+            settingsDraftRole.canBeAssignedToAgents ?? true,
+          canBeAssignedToApiKeys:
+            settingsDraftRole.canBeAssignedToApiKeys ?? true,
+        }}
         onApplicabilityChange={(key, value) => {
           setSettingsDraftRole({
             ...settingsDraftRole,
