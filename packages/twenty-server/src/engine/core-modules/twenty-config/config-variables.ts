@@ -168,6 +168,16 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
+    isSensitive: false,
+    description: 'Tenant ID for Microsoft authentication. Leave empty for common tenant/multi-tenant app registrations.',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf((env) => env.AUTH_MICROSOFT_TENANT_ID)
+  @IsOptional()
+  AUTH_MICROSOFT_TENANT_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.MicrosoftAuth,
     isSensitive: true,
     description: 'Client secret for Microsoft authentication',
     type: ConfigVariableType.STRING,

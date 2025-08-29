@@ -25,7 +25,7 @@ export class MicrosoftAPIRefreshAccessTokenService {
 
   async refreshTokens(refreshToken: string): Promise<ConnectedAccountTokens> {
     const response = await axios.post<MicrosoftRefreshTokenResponse>(
-      'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+      `https://login.microsoftonline.com/${this.twentyConfigService.get('AUTH_MICROSOFT_TENANT_ID') || 'common'}/oauth2/v2.0/token`,
       new URLSearchParams({
         client_id: this.twentyConfigService.get('AUTH_MICROSOFT_CLIENT_ID'),
         client_secret: this.twentyConfigService.get(
