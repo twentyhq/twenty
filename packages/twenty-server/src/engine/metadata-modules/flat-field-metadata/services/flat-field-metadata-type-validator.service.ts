@@ -11,7 +11,7 @@ import { ValidateOneFieldMetadataArgs } from 'src/engine/metadata-modules/flat-f
 import { type FlatFieldMetadataTypeValidator } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { validateEnumSelectFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util';
-import { validateRelationOrMorphRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-or-morph-relation-flat-field-metadata.util';
+import { validateMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util';
 @Injectable()
 export class FlatFieldMetadataTypeValidatorService {
   constructor(private readonly featureFlagService: FeatureFlagService) {}
@@ -70,7 +70,7 @@ export class FlatFieldMetadataTypeValidatorService {
           ];
         }
 
-        return validateRelationOrMorphRelationFlatFieldMetadata({
+        return validateMorphOrRelationFlatFieldMetadata({
           existingFlatObjectMetadataMaps,
           flatFieldMetadataToValidate,
           workspaceId,
@@ -123,7 +123,7 @@ export class FlatFieldMetadataTypeValidatorService {
         workspaceId,
         otherFlatObjectMetadataMapsToValidate,
       }) =>
-        validateRelationOrMorphRelationFlatFieldMetadata({
+        validateMorphOrRelationFlatFieldMetadata({
           existingFlatObjectMetadataMaps,
           flatFieldMetadataToValidate,
           workspaceId,

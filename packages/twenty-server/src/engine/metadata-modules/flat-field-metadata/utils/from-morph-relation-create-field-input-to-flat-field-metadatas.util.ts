@@ -7,9 +7,10 @@ import {
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { generateRelationOrMorphRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-relation-or-morph-relation-flat-field-metadata-pair.util';
+import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
 import { validateMorphRelationCreationPayload } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -28,7 +29,9 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
   sourceFlatObjectMetadata,
   workspaceId,
 }: FromMorphRelationCreateFieldInputToFlatFieldMetadatasArgs): Promise<
-  FieldInputTranspilationResult<FlatFieldMetadata[]>
+  FieldInputTranspilationResult<
+    FlatFieldMetadata<MorphOrRelationFieldMetadataType>[]
+  >
 > => {
   const rawMorphCreationPayload =
     createFieldInput.morphRelationsCreationPayload;
@@ -70,7 +73,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
             targetFlatObjectMetadata.nameSingular,
         });
 
-      return generateRelationOrMorphRelationFlatFieldMetadataPair({
+      return generateMorphOrRelationFlatFieldMetadataPair({
         createFieldInput: {
           ...createFieldInput,
           relationCreationPayload,
