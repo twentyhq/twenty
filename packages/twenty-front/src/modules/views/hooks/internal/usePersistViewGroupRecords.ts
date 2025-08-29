@@ -142,7 +142,7 @@ export const usePersistViewGroupRecords = () => {
         apolloClient.mutate<{ updateCoreViewGroup: ViewGroup }>({
           mutation: UPDATE_CORE_VIEW_GROUP,
           variables: {
-            idToUpdate: viewGroup.id,
+            id: viewGroup.id,
             input: {
               isVisible: viewGroup.isVisible,
               position: viewGroup.position,
