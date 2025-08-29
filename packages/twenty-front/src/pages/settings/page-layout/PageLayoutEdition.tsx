@@ -171,7 +171,8 @@ export const PageLayoutEdition = () => {
           margin={[8, 8]}
           isDraggable={true}
           isResizable={true}
-          compactType={null} // to be discussed -- I am not sure
+          draggableHandle=".drag-handle"
+          compactType="vertical" // to be discussed -- I am not sure
           preventCollision={false}
         >
           <div key="widget-1">
@@ -180,31 +181,58 @@ export const PageLayoutEdition = () => {
             </PageLayoutWidgetPlaceholder>
           </div>
           <div key="widget-2">
-            <PageLayoutWidgetPlaceholder title="Sales Pipeline">
+            <PageLayoutWidgetPlaceholder title="Conversion Rate">
               <GraphWidgetGaugeChart
-                value={0.5}
-                min={0}
-                max={1}
+                data={{
+                  value: 0.5,
+                  min: 0,
+                  max: 1,
+                  label: 'Conversion rate',
+                  to: '/metrics/conversion',
+                }}
                 displayType="percentage"
                 showValue={true}
-                legendLabel="Conversion rate"
-                tooltipHref="https://example.com"
                 id="gauge-chart-widget-2"
               />
             </PageLayoutWidgetPlaceholder>
           </div>
           <div key="widget-3">
-            <PageLayoutWidgetPlaceholder title="Sales Pipeline" key="widget-3">
+            <PageLayoutWidgetPlaceholder title="Lead Distribution">
               <GraphWidgetPieChart
                 data={[
-                  { id: 'qualified', value: 35, label: 'Qualified' },
-                  { id: 'contacted', value: 25, label: 'Contacted' },
-                  { id: 'unqualified', value: 20, label: 'Unqualified' },
-                  { id: 'proposal', value: 15, label: 'Proposal' },
-                  { id: 'negotiation', value: 5, label: 'Negotiation' },
+                  {
+                    id: 'qualified',
+                    value: 35,
+                    label: 'Qualified',
+                    to: '/leads/qualified',
+                  },
+                  {
+                    id: 'contacted',
+                    value: 25,
+                    label: 'Contacted',
+                    to: '/leads/contacted',
+                  },
+                  {
+                    id: 'unqualified',
+                    value: 20,
+                    label: 'Unqualified',
+                    to: '/leads/unqualified',
+                  },
+                  {
+                    id: 'proposal',
+                    value: 15,
+                    label: 'Proposal',
+                    to: '/leads/proposal',
+                  },
+                  {
+                    id: 'negotiation',
+                    value: 5,
+                    label: 'Negotiation',
+                    to: '/leads/negotiation',
+                  },
                 ]}
                 showLegend={true}
-                tooltipHref="https://example.com/leads"
+                displayType="percentage"
                 id="pie-chart-widget-3"
               />
             </PageLayoutWidgetPlaceholder>

@@ -22,6 +22,16 @@ const StyledHeader = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledDragHandle = styled.div`
+  cursor: grab;
+  display: flex;
+  align-items: center;
+
+  &:active {
+    cursor: grabbing;
+  }
+`;
+
 const StyledTitle = styled.span`
   color: ${({ theme }) => theme.font.color.secondary};
   flex: 1;
@@ -63,7 +73,9 @@ export const PageLayoutWidgetPlaceholder = ({
   return (
     <StyledPlaceholderContainer>
       <StyledHeader>
-        <IconGripVertical size={16} color={theme.border.color.strong} />
+        <StyledDragHandle className="drag-handle">
+          <IconGripVertical size={16} color={theme.border.color.strong} />
+        </StyledDragHandle>
         <StyledTitle>{title}</StyledTitle>
         {onRemove && (
           <StyledCloseButton onClick={onRemove}>
