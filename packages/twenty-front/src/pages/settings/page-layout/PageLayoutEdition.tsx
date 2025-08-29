@@ -10,6 +10,7 @@ import {
   WidthProvider,
   type Layout,
   type Layouts,
+  type ResponsiveProps,
 } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -29,7 +30,7 @@ const StyledGridContainer = styled.div`
   box-sizing: border-box;
   flex: 1;
   overflow-y: auto;
-  padding: 8px;
+  padding: ${({ theme }) => theme.spacing(2)};
   position: relative;
   width: 100%;
 
@@ -42,14 +43,14 @@ const StyledGridContainer = styled.div`
 
 const StyledGridOverlay = styled.div`
   position: absolute;
-  top: 8px;
-  left: 8px;
-  right: 8px;
-  bottom: 8px;
+  top: ${({ theme }) => theme.spacing(2)};
+  left: ${({ theme }) => theme.spacing(2)};
+  right: ${({ theme }) => theme.spacing(2)};
+  bottom: ${({ theme }) => theme.spacing(2)};
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   grid-auto-rows: 50px;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing(2)};
   pointer-events: none;
   z-index: 0;
 
@@ -68,8 +69,14 @@ const StyledGridCell = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.sm};
 `;
 
-// due to poor support of react 18
-const ResponsiveGridLayout = WidthProvider(Responsive) as any;
+type ExtendedResponsiveProps = ResponsiveProps & {
+  maxCols?: number;
+  preventCollision?: boolean;
+};
+
+const ResponsiveGridLayout = WidthProvider(
+  Responsive,
+) as React.ComponentType<ExtendedResponsiveProps>;
 
 export const PageLayoutEdition = () => {
   const { t } = useLingui();
@@ -122,7 +129,6 @@ export const PageLayoutEdition = () => {
           breakpoints={{ lg: 1024, md: 768, sm: 480 }}
           cols={{ lg: 12, md: 12, sm: 1 }}
           rowHeight={50}
-          maxCols={12}
           containerPadding={[0, 0]}
           margin={[8, 8]}
           isDraggable={true}

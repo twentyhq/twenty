@@ -15,10 +15,11 @@ const StyledPlaceholderContainer = styled.div<{ $isEmpty?: boolean }>`
   height: 100%;
   position: relative;
   width: 100%;
+  padding: ${({ theme }) => theme.spacing(4)};
   ${({ $isEmpty, theme }) =>
     $isEmpty &&
     `
-    border-style: dashed;
+    border-style: solid;
     cursor: pointer;
 
     &:hover {
@@ -32,7 +33,6 @@ const StyledHeader = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledDragHandle = styled.div`
