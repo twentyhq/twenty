@@ -1,7 +1,7 @@
 import { type MessageFolder } from '@/accounts/types/MessageFolder';
-import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/components/SettingsMessageFoldersEmptyStateCard';
-import { SettingsMessageFoldersTableHeader } from '@/settings/accounts/components/SettingsMessageFoldersTableHeader';
-import { SettingsMessageFoldersTableRow } from '@/settings/accounts/components/SettingsMessageFoldersTableRow';
+import { SettingsMessageFoldersEmptyStateCard } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard';
+import { SettingsMessageFoldersTableHeader } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader';
+import { SettingsMessageFoldersTableRow } from '@/settings/accounts/components/message-folders/SettingsMessageFoldersTableRow';
 import { Table } from '@/ui/layout/table/components/Table';
 import styled from '@emotion/styled';
 import { Section } from 'twenty-ui/layout';
