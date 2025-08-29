@@ -10,7 +10,7 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const usePersistFieldForMorphRelationManyToOne = () => {
-  const { fieldDefinition } = useContext(FieldContext);
+  const { fieldDefinition, recordId } = useContext(FieldContext);
 
   if (!isFieldMorphRelationManyToOne(fieldDefinition)) {
     throw new Error('Field is not a morph relation many to one');
@@ -56,11 +56,13 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
           record,
         );
 
+        console.log('recordId', recordId);
+        console.log('record.id', record.id);
         const updatedManyRecordsArgs = [
           {
-            idToUpdate: record.id,
+            idToUpdate: recordId,
             objectNameSingulars,
-            relatedRecordId: null,
+            relatedRecordId: record.id,
           },
         ];
 
@@ -69,6 +71,7 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
     [
       fieldDefinition.metadata.fieldName,
       objectNameSingulars,
+      recordId,
       updateMultipleRecordsFromManyObjects,
     ],
   );

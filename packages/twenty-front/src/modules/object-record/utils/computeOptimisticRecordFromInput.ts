@@ -42,7 +42,8 @@ export const computeOptimisticRecordFromInput = ({
       const potentialJoinColumnNameFieldMetadataItem =
         objectMetadataItem.fields.find(
           (field) =>
-            field.type === FieldMetadataType.RELATION &&
+            (field.type === FieldMetadataType.RELATION ||
+              field.type === FieldMetadataType.MORPH_RELATION) &&
             field.settings?.joinColumnName === recordKey,
         );
 
