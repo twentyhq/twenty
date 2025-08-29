@@ -15,22 +15,22 @@ import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/inte
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
-export type CronTriggerSettings = {
-  pattern: string;
+export type DatabaseEventTriggerSettings = {
+  eventName: string;
 };
 
-@Entity({ name: 'cronTrigger', schema: 'core' })
-@Index('IDX_CRON_TRIGGER_WORKSPACE_ID', ['workspaceId'])
-export class CronTrigger extends SyncableEntity {
+@Entity({ name: 'databaseEventTrigger', schema: 'core' })
+@Index('IDX_DATABASE_EVENT_TRIGGER_WORKSPACE_ID', ['workspaceId'])
+export class DatabaseEventTrigger extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ nullable: false, type: 'jsonb' })
-  settings: CronTriggerSettings;
+  settings: DatabaseEventTriggerSettings;
 
   @ManyToOne(
     () => ServerlessFunctionEntity,
-    (serverlessFunction) => serverlessFunction.cronTriggers,
+    (serverlessFunction) => serverlessFunction.databaseEventTriggers,
     { onDelete: 'CASCADE' },
   )
   @JoinColumn({ name: 'serverlessFunctionId' })
