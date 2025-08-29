@@ -186,7 +186,7 @@ describe('BillingPortalWorkspaceService', () => {
       stripeCheckoutService.createDirectSubscription as jest.Mock
     ).mock.calls[0][0];
 
-    expect(callArgs.workspaceId).toBe(workspace.id);
+    expect(callArgs.workspace.id).toBe(workspace.id);
     expect(callArgs.stripeSubscriptionLineItems).toEqual([
       { price: 'price_base', quantity: 3 },
       { price: 'price_metered_default' },
