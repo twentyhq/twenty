@@ -22,8 +22,7 @@ export const MorphRelationManyToOneFieldInput = () => {
     RecordFieldComponentInstanceContext,
   );
 
-  // todo @guillim
-  const { persistFieldForMorphRelationManyToOne } =
+  const persistFieldForMorphRelationManyToOne =
     usePersistFieldForMorphRelationManyToOne();
 
   const handleRecordSelected = (

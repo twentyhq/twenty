@@ -1,78 +1,74 @@
 import { useRecoilCallback } from 'recoil';
 
-import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { isFieldRelationToOneValue } from '@/object-record/record-field/ui/types/guards/isFieldRelationToOneValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useUpdateMultipleRecordsFromManyObjects } from '@/object-record/hooks/useUpdateMultipleRecordsFromManyObjects';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { isFieldMorphRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelationManyToOne';
-import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { type SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const usePersistFieldForMorphRelationManyToOne = () => {
-  const objectMetadataItems = useObjectMetadataItems();
+  const { fieldDefinition } = useContext(FieldContext);
 
-  // remove the usepersit on the other pr since it's onl for manytoton and we will not use it
-  // replace with useupdatemultiplefrom many from the othe rPR
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
-  });
+  if (!isFieldMorphRelationManyToOne(fieldDefinition)) {
+    throw new Error('Field is not a morph relation many to one');
+  }
+
+  const objectNameSingulars = fieldDefinition.metadata.morphRelations.map(
+    (morphRelation) => morphRelation.targetObjectMetadata.nameSingular,
+  );
+
+  const { updateMultipleRecordsFromManyObjects } =
+    useUpdateMultipleRecordsFromManyObjects();
 
   const persistFieldForMorphRelationManyToOne = useRecoilCallback(
     ({ set, snapshot }) =>
-      ({
-        recordId,
-        fieldDefinition,
-        valueToPersist,
-      }: {
-        recordId: string;
-        fieldDefinition: FieldDefinition<FieldMetadata>;
-        valueToPersist: unknown;
-      }) => {
-        const fieldIsMorphRelationManyToOneObject =
-          isFieldMorphRelationManyToOne(fieldDefinition) &&
-          isFieldRelationToOneValue(valueToPersist);
+      (singleRecordPickerRecord: SingleRecordPickerRecord | null) => {
+        if (!isDefined(singleRecordPickerRecord)) {
+          console.log(
+            'record is null we must unseelct the record (todo @guillim)',
+          );
+          return;
+        }
+        const { record } = singleRecordPickerRecord;
+        // const fieldIsMorphRelationManyToOneObject =
+        //   isFieldMorphRelationManyToOne(fieldDefinition) &&
+        //   isFieldRelationToOneValue(valueToPersist);
 
         const fieldName = fieldDefinition.metadata.fieldName;
 
         const currentValue: any = snapshot
-          .getLoadable(recordStoreFamilySelector({ recordId, fieldName }))
+          .getLoadable(
+            recordStoreFamilySelector({ recordId: record.id, fieldName }),
+          )
           .getValue();
 
-        if (
-          fieldIsMorphRelationManyToOneObject &&
-          valueToPersist?.id === currentValue?.id
-        ) {
-          return;
-        }
+        // if (isDeeplyEqual(valueToPersist, currentValue)) {
+        //   return;
+        // }
 
-        if (isDeeplyEqual(valueToPersist, currentValue)) {
-          return;
-        }
+        set(
+          recordStoreFamilySelector({ recordId: record.id, fieldName }),
+          record,
+        );
 
-        set(recordStoreFamilySelector({ recordId, fieldName }), valueToPersist);
-
-        if (fieldIsRelationToOneObject) {
-          updateOneRecord?.({
-            idToUpdate: recordId,
-            updateOneRecordInput: {
-              [getForeignKeyNameFromRelationFieldName(fieldName)]:
-                valueToPersist?.id ?? null,
-            },
-          });
-          return;
-        }
-
-        updateOneRecord?.({
-          idToUpdate: recordId,
-          updateOneRecordInput: {
-            [fieldName]: valueToPersist,
+        const updatedManyRecordsArgs = [
+          {
+            idToUpdate: record.id,
+            objectNameSingulars,
+            relatedRecordId: null,
           },
-        });
+        ];
+
+        updateMultipleRecordsFromManyObjects?.(updatedManyRecordsArgs);
       },
-    [updateOneRecord],
+    [
+      fieldDefinition.metadata.fieldName,
+      objectNameSingulars,
+      updateMultipleRecordsFromManyObjects,
+    ],
   );
 
   return persistFieldForMorphRelationManyToOne;
