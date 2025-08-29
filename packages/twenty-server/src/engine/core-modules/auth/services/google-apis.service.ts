@@ -10,7 +10,6 @@ import {
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
-import { CreateMessageFolderService } from 'src/engine/core-modules/auth/services/create-message-folder.service';
 import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { ResetCalendarChannelService } from 'src/engine/core-modules/auth/services/reset-calendar-channel.service';
 import { ResetMessageChannelService } from 'src/engine/core-modules/auth/services/reset-message-channel.service';
@@ -54,7 +53,6 @@ export class GoogleAPIsService {
     private readonly resetMessageChannelService: ResetMessageChannelService,
     private readonly resetCalendarChannelService: ResetCalendarChannelService,
     private readonly createMessageChannelService: CreateMessageChannelService,
-    private readonly createMessageFolderService: CreateMessageFolderService,
     private readonly createCalendarChannelService: CreateCalendarChannelService,
     private readonly createConnectedAccountService: CreateConnectedAccountService,
     private readonly updateConnectedAccountOnReconnectService: UpdateConnectedAccountOnReconnectService,
@@ -139,18 +137,11 @@ export class GoogleAPIsService {
             manager,
           });
 
-          const newMessageChannelId =
-            await this.createMessageChannelService.createMessageChannel({
-              workspaceId,
-              connectedAccountId: newOrExistingConnectedAccountId,
-              handle,
-              messageVisibility,
-              manager,
-            });
-
-          await this.createMessageFolderService.createMessageFolders({
+          await this.createMessageChannelService.createMessageChannel({
             workspaceId,
-            messageChannelId: newMessageChannelId,
+            connectedAccountId: newOrExistingConnectedAccountId,
+            handle,
+            messageVisibility,
             manager,
           });
 

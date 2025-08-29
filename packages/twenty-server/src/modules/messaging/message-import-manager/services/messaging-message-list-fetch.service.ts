@@ -13,9 +13,11 @@ import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/se
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import {
   MessageChannelSyncStage,
-  type MessageChannelWorkspaceEntity,
+  MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
+import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
@@ -41,6 +43,7 @@ export class MessagingMessageListFetchService {
     private readonly messagingCursorService: MessagingCursorService,
     private readonly messagingMessagesImportService: MessagingMessagesImportService,
     private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
+    private readonly syncMessageFoldersService: SyncMessageFoldersService,
   ) {}
 
   public async processMessageListFetch(
@@ -74,9 +77,36 @@ export class MessagingMessageListFetchService {
         },
       };
 
+      this.logger.log(
+        `messageChannelId: ${messageChannel.id} Message channel with fresh tokens: ${JSON.stringify(
+          messageChannelWithFreshTokens,
+        )}`,
+      );
+
+      const datasource = await this.twentyORMManager.getDatasource();
+
+      await this.syncMessageFoldersService.syncMessageFolders({
+        workspaceId,
+        messageChannelId: messageChannel.id,
+        manager: datasource.manager,
+      });
+
+      const messageFolderRepository =
+        await this.twentyORMManager.getRepository<MessageFolderWorkspaceEntity>(
+          'messageFolder',
+        );
+
+      const messageFoldersToSync = await messageFolderRepository.find({
+        where: {
+          messageChannelId: messageChannel.id,
+          isSynced: true,
+        },
+      });
+
       const messageLists =
         await this.messagingGetMessageListService.getMessageLists(
           messageChannelWithFreshTokens,
+          messageFoldersToSync,
         );
 
       await this.cacheStorage.del(

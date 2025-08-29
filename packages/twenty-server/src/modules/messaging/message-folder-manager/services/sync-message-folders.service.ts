@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -38,16 +37,6 @@ export class SyncMessageFoldersService {
 
   async syncMessageFolders(input: SyncMessageFoldersInput): Promise<void> {
     const { workspaceId, messageChannelId, manager } = input;
-
-    const isFolderControlEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_MESSAGE_FOLDER_CONTROL_ENABLED,
-        workspaceId,
-      );
-
-    if (!isFolderControlEnabled) {
-      return;
-    }
 
     const messageChannelRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(

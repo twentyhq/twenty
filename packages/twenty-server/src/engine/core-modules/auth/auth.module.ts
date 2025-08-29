@@ -17,7 +17,6 @@ import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.s
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
-import { CreateMessageFolderService } from 'src/engine/core-modules/auth/services/create-message-folder.service';
 import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
@@ -138,17 +137,11 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ResetMessageFolderService,
     CreateMessageChannelService,
     CreateCalendarChannelService,
-    CreateMessageFolderService,
     CreateConnectedAccountService,
     UpdateConnectedAccountOnReconnectService,
     TransientTokenService,
     AuthSsoService,
   ],
-  exports: [
-    AccessTokenService,
-    LoginTokenService,
-    RefreshTokenService,
-    CreateMessageFolderService,
-  ],
+  exports: [AccessTokenService, LoginTokenService, RefreshTokenService],
 })
 export class AuthModule {}
