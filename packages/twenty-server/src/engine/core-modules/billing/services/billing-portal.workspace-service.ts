@@ -67,7 +67,7 @@ export class BillingPortalWorkspaceService {
     const checkoutSession =
       await this.stripeCheckoutService.createCheckoutSession({
         user,
-        workspaceId: workspace.id,
+        workspace,
         stripeSubscriptionLineItems,
         successUrl,
         cancelUrl,
@@ -101,7 +101,7 @@ export class BillingPortalWorkspaceService {
     const subscription =
       await this.stripeCheckoutService.createDirectSubscription({
         user,
-        workspaceId: workspace.id,
+        workspace,
         stripeSubscriptionLineItems,
         stripeCustomerId: customer?.stripeCustomerId,
         plan,

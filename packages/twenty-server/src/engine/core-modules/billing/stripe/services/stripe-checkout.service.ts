@@ -11,6 +11,7 @@ import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/se
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type User } from 'src/engine/core-modules/user/user.entity';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class StripeCheckoutService {
@@ -32,7 +33,7 @@ export class StripeCheckoutService {
 
   async createCheckoutSession({
     user,
-    workspaceId,
+    workspace,
     stripeSubscriptionLineItems,
     successUrl,
     cancelUrl,
@@ -42,7 +43,7 @@ export class StripeCheckoutService {
     withTrialPeriod,
   }: {
     user: User;
-    workspaceId: string;
+    workspace: Pick<Workspace, 'id' | 'displayName'>;
     stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
     successUrl?: string;
     cancelUrl?: string;
@@ -55,7 +56,8 @@ export class StripeCheckoutService {
       const stripeCustomer =
         await this.stripeCustomerService.createStripeCustomer(
           user.email,
-          workspaceId,
+          workspace.id,
+          workspace.displayName,
         );
 
       stripeCustomerId = stripeCustomer.id;
@@ -66,7 +68,7 @@ export class StripeCheckoutService {
       mode: 'subscription',
       subscription_data: {
         metadata: {
-          workspaceId,
+          workspaceId: workspace.id,
           plan,
         },
         ...this.getStripeSubscriptionTrialPeriodConfig(
@@ -88,7 +90,7 @@ export class StripeCheckoutService {
 
   async createDirectSubscription({
     user,
-    workspaceId,
+    workspace,
     stripeSubscriptionLineItems,
     stripeCustomerId,
     plan = BillingPlanKey.PRO,
@@ -96,7 +98,7 @@ export class StripeCheckoutService {
     withTrialPeriod,
   }: {
     user: User;
-    workspaceId: string;
+    workspace: Pick<Workspace, 'id' | 'displayName'>;
     stripeSubscriptionLineItems: Stripe.Checkout.SessionCreateParams.LineItem[];
     stripeCustomerId?: string;
     plan?: BillingPlanKey;
@@ -107,7 +109,8 @@ export class StripeCheckoutService {
       const stripeCustomer =
         await this.stripeCustomerService.createStripeCustomer(
           user.email,
-          workspaceId,
+          workspace.id,
+          workspace.displayName,
         );
 
       stripeCustomerId = stripeCustomer.id;
@@ -124,7 +127,7 @@ export class StripeCheckoutService {
       customer: stripeCustomerId,
       items: subscriptionItems,
       metadata: {
-        workspaceId,
+        workspaceId: workspace.id,
         plan,
       },
       ...this.getStripeSubscriptionTrialPeriodConfig(

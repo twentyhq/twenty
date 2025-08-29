@@ -11,7 +11,10 @@ import { formatNumber } from '~/utils/format/number';
 import {
   type BillingPriceOutput,
   type BillingSubscriptionItem,
+  SubscriptionInterval,
 } from '~/generated/graphql';
+import { findOrThrow } from '~/utils/array/findOrThrow';
+import { getIntervalLabel } from '@/billing/utils/subscriptionFlags';
 
 const compareByAmountAsc = (a: BillingPriceOutput, b: BillingPriceOutput) =>
   a.amount - b.amount;
@@ -28,9 +31,11 @@ const toOption = (meteredBillingPrice: BillingPriceOutput) => {
 export const MeteredPriceSelector = ({
   meteredBillingPrices,
   billingSubscriptionItems,
+  isTrialing = false,
 }: {
   meteredBillingPrices: Array<BillingPriceOutput>;
   billingSubscriptionItems: Array<BillingSubscriptionItem>;
+  isTrialing?: boolean;
 }) => {
   const [currentMeteredBillingPrice, setCurrentMeteredBillingPrice] = useState(
     findMeteredPriceInCurrentWorkspaceSubscriptions(
@@ -57,7 +62,8 @@ export const MeteredPriceSelector = ({
       });
       enqueueSuccessSnackBar({ message: t`Price updated.` });
       setCurrentMeteredBillingPrice(
-        meteredBillingPrices.find(
+        findOrThrow(
+          meteredBillingPrices,
           ({ stripePriceId }) => stripePriceId === priceId,
         ),
       );
@@ -68,16 +74,26 @@ export const MeteredPriceSelector = ({
     }
   };
 
+  const recurringInterval = getIntervalLabel(
+    currentMeteredBillingPrice?.recurringInterval ===
+      SubscriptionInterval.Month,
+  );
+
   return (
     <>
-      <H2Title title={t`Credit Plan`} />
+      <H2Title
+        title={t`Credit Plan`}
+        description={t`Number of new credits allocated every ${recurringInterval}`}
+      />
       <Select
-        label={t`Number of new credits allocated every month`}
         dropdownId={'settings-billing-metered-price'}
         options={options}
         value={currentMeteredBillingPrice?.stripePriceId}
         onChange={handleChange}
-        disabled={isUpdating}
+        disabled={isUpdating || isTrialing}
+        description={
+          isTrialing ? t`Please start your subscription first` : undefined
+        }
       />
     </>
   );
