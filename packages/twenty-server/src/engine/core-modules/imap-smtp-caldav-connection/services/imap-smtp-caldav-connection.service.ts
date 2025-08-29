@@ -94,7 +94,7 @@ export class ImapSmtpCaldavService {
       host: params.host,
       port: params.port,
       auth: {
-        user: handle,
+        user: params.username ?? handle,
         pass: params.password,
       },
       tls: {

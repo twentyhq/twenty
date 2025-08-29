@@ -13,9 +13,9 @@ export default {
    */
   testTimeout: 5 * MINUTES_IN_MS,
   modulePathIgnorePatterns: [
-    "<rootDir>/.nx/cache/*", 
-    "<rootDir>/packages/twenty-server/dist/*", 
-    "<rootDir>/packages/twenty-front/dist/*", 
-    "<rootDir>/packages/twenty-ui/dist/*"
+    '<rootDir>/.nx/cache/*',
+    '<rootDir>/packages/twenty-server/dist/*',
+    '<rootDir>/packages/twenty-front/dist/*',
+    '<rootDir>/packages/twenty-ui/dist/*',
   ],
 };
