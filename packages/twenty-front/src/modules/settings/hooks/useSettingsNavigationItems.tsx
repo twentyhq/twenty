@@ -22,6 +22,7 @@ import {
   IconFunction,
   IconHierarchy2,
   IconKey,
+  IconLayout,
   IconLock,
   IconMail,
   IconRocket,
@@ -66,6 +67,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     false;
   const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
   const isAIEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+  const isPageLayoutEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
+  );
 
   const permissionMap = usePermissionFlagMap();
   return [
@@ -136,6 +140,15 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.Objects,
           Icon: IconHierarchy2,
           isHidden: !permissionMap[PermissionFlagType.DATA_MODEL],
+        },
+        {
+          label: t`Page Layout`,
+          path: SettingsPath.PageLayoutEdition,
+          Icon: IconLayout,
+          isHidden:
+            !isPageLayoutEnabled ||
+            !permissionMap[PermissionFlagType.WORKSPACE],
+          isNew: true,
         },
         {
           label: t`Integrations`,

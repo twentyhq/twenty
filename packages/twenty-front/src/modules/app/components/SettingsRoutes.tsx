@@ -297,6 +297,12 @@ const SettingsObjectFieldEdit = lazy(() =>
   ),
 );
 
+const PageLayoutEdition = lazy(() =>
+  import('~/pages/settings/page-layout/PageLayoutEdition').then((module) => ({
+    default: module.PageLayoutEdition,
+  })),
+);
+
 const SettingsSecurity = lazy(() =>
   import('~/pages/settings/security/SettingsSecurity').then((module) => ({
     default: module.SettingsSecurity,
@@ -605,6 +611,10 @@ export const SettingsRoutes = ({
           />
         </>
       )}
+      <Route
+        path={SettingsPath.PageLayoutEdition}
+        element={<PageLayoutEdition />}
+      />
       <Route
         element={
           <SettingsProtectedRouteWrapper
