@@ -42,11 +42,7 @@ export const canExecuteStep = ({
     return false;
   }
 
-  if (isIteratorStep(step)) {
-    return true;
-  }
-
-  if (stepHasBeenStarted(stepId, stepInfos)) {
+  if (stepHasBeenStarted(stepId, stepInfos) && !isIteratorStep(step)) {
     return false;
   }
 

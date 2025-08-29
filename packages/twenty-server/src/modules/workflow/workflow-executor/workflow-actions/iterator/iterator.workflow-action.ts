@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 
 import { isString } from '@sniptt/guards';
 import { isDefined, resolveInput } from 'twenty-shared/utils';
-import { StepStatus } from 'twenty-shared/workflow';
+import { StepStatus, WorkflowRunStepInfo } from 'twenty-shared/workflow';
 
 import { WorkflowAction as WorkflowActionInterface } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -171,16 +171,21 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
       steps,
     });
 
-    for (const stepId of stepIdsToReset) {
-      await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-        stepId,
-        stepInfo: {
-          status: StepStatus.NOT_STARTED,
-          result: undefined,
+    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
+      stepInfos: stepIdsToReset.reduce(
+        (acc, stepId) => {
+          acc[stepId] = {
+            status: StepStatus.NOT_STARTED,
+            result: undefined,
+            error: undefined,
+          };
+
+          return acc;
         },
-        workflowRunId,
-        workspaceId,
-      });
-    }
+        {} as Record<string, WorkflowRunStepInfo>,
+      ),
+      workflowRunId,
+      workspaceId,
+    });
   }
 }
