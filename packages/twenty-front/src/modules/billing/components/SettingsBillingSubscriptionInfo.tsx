@@ -41,9 +41,9 @@ import {
   useSwitchSubscriptionToEnterprisePlanMutation,
   useSwitchSubscriptionToYearlyIntervalMutation,
 } from '~/generated-metadata/graphql';
+import { beautifyExactDate } from '~/utils/date-utils';
 import { useEndSubscriptionTrialPeriod } from '@/billing/hooks/useEndSubscriptionTrialPeriod';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { beautifyExactDate } from '~/utils/date-utils';
 
 const SWITCH_BILLING_INTERVAL_MODAL_ID = 'switch-billing-interval-modal';
 
@@ -95,9 +95,6 @@ export const SettingsBillingSubscriptionInfo = () => {
   const { endTrialPeriod, isLoading: isEndTrialPeriodLoading } =
     useEndSubscriptionTrialPeriod();
 
-  const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
-    usePermissionFlagMap();
-
   const planDescriptor = isProPlan
     ? { color: 'sky' as const, label: t`Pro` }
     : isEnterprisePlan
@@ -112,6 +109,8 @@ export const SettingsBillingSubscriptionInfo = () => {
   ) : undefined;
 
   const intervalLabel = capitalize(getIntervalLabel(isMonthlyPlan, true));
+  const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
+    usePermissionFlagMap();
 
   const seats =
     currentWorkspace?.currentBillingSubscription?.billingSubscriptionItems?.find(
