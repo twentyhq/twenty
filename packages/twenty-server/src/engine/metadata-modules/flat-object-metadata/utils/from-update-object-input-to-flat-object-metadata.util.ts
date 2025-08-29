@@ -4,7 +4,7 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
 import { FLAT_OBJECT_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-modules/flat-object-metadata/constants/flat-object-metadata-properties-to-compare.constant';
@@ -110,14 +110,9 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
     flatObjectMetadata: flatObjectMetadataToUpdate,
     otherObjectFlatFieldMetadatas: [],
   };
+
   return objectMetadataEditableProperties.reduce<UpdatedFlatObjectAndOtherObjectFieldMetadatas>(
-    (
-      {
-        flatObjectMetadata,
-        otherObjectFlatFieldMetadatas,
-      },
-      property,
-    ) => {
+    ({ flatObjectMetadata, otherObjectFlatFieldMetadatas }, property) => {
       const updatedPropertyValue = updatedEditableObjectProperties[property];
       const isPropertyUpdated =
         updatedPropertyValue !== undefined &&
