@@ -10,7 +10,7 @@ import { type FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/me
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataJsonbProperty } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-jsonb-property.util';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
 
@@ -41,7 +41,7 @@ export const compareTwoFlatFieldMetadata = ({
       // Remove below assertion when we authorize relation edition, see https://github.com/twentyhq/twenty/commit/39f6f3c4bb101272a9014e142a842d0801a3c33b
       const isRelationFieldType =
         isDefined(fieldMetadata.type) &&
-        isRelationFieldMetadataType(fieldMetadata.type);
+        isMorphOrRelationFieldMetadataType(fieldMetadata.type);
 
       if (
         isRelationFieldType &&

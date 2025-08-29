@@ -2,7 +2,7 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { type RelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/relation-field-metadata-type.type';
+import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
@@ -31,23 +31,23 @@ const computeFieldMetadataRelationSettingsForRelationType = ({
   };
 };
 
-type GenerateRelationOrMorphRelationFlatFieldMetadataPairArgs = {
+type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
   targetFlatObjectMetadata: FlatObjectMetadata;
   sourceFlatObjectMetadata: FlatObjectMetadata;
   sourceFlatObjectMetadataJoinColumnName: string;
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'> &
     Required<
       Pick<CreateFieldInput, 'relationCreationPayload' | 'type' | 'name'>
-    > & { type: RelationFieldMetadataType };
+    > & { type: MorphOrRelationFieldMetadataType };
   workspaceId: string;
 };
-export const generateRelationOrMorphRelationFlatFieldMetadataPair = ({
+export const generateMorphOrRelationFlatFieldMetadataPair = ({
   createFieldInput,
   sourceFlatObjectMetadata,
   targetFlatObjectMetadata,
   workspaceId,
   sourceFlatObjectMetadataJoinColumnName,
-}: GenerateRelationOrMorphRelationFlatFieldMetadataPairArgs): FlatFieldMetadata<RelationFieldMetadataType>[] => {
+}: GenerateMorphOrRelationFlatFieldMetadataPairArgs): FlatFieldMetadata<MorphOrRelationFieldMetadataType>[] => {
   const { relationCreationPayload } = createFieldInput;
 
   const sourceFlatFieldMetadataSettings =
@@ -58,7 +58,7 @@ export const generateRelationOrMorphRelationFlatFieldMetadataPair = ({
   const targetRelationTargetFieldMetadataId = v4();
   const sourceRelationTargetFieldMetadataId = v4();
   const sourceFlatFieldMetadata: Omit<
-    FlatFieldMetadata<RelationFieldMetadataType>,
+    FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
     'flatRelationTargetFieldMetadata'
   > = {
     ...getDefaultFlatFieldMetadata({
@@ -120,5 +120,5 @@ export const generateRelationOrMorphRelationFlatFieldMetadataPair = ({
       flatRelationTargetFieldMetadata: targetFlatFieldMetadata,
     },
     targetFlatFieldMetadata,
-  ] satisfies FlatFieldMetadata<RelationFieldMetadataType>[];
+  ] satisfies FlatFieldMetadata<MorphOrRelationFieldMetadataType>[];
 };
