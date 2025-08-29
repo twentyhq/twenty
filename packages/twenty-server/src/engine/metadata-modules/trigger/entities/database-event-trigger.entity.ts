@@ -11,6 +11,8 @@ import {
   Index,
 } from 'typeorm';
 
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
+
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 export type DatabaseEventTriggerSettings = {
@@ -19,7 +21,7 @@ export type DatabaseEventTriggerSettings = {
 
 @Entity({ name: 'databaseEventTrigger', schema: 'core' })
 @Index('IDX_DATABASE_EVENT_TRIGGER_WORKSPACE_ID', ['workspaceId'])
-export class DatabaseEventTrigger {
+export class DatabaseEventTrigger extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
