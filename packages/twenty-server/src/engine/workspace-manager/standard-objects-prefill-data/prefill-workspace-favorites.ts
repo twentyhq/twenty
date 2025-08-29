@@ -1,18 +1,15 @@
+import { type EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
-
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 
 const tableName = 'favorite';
 
 export const prefillWorkspaceFavorites = async (
   viewIds: string[],
-  entityManager: WorkspaceEntityManager,
+  entityManager: EntityManager,
   schemaName: string,
 ) => {
   await entityManager
-    .createQueryBuilder(undefined, undefined, undefined, {
-      shouldBypassPermissionChecks: true,
-    })
+    .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, ['id', 'viewId', 'position'])
     .values(

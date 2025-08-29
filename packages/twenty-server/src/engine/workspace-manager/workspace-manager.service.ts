@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -29,6 +29,8 @@ export class WorkspaceManagerService {
   private readonly logger = new Logger(WorkspaceManagerService.name);
 
   constructor(
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly objectMetadataService: ObjectMetadataService,
@@ -125,16 +127,11 @@ export class WorkspaceManagerService {
     workspaceId: string,
     featureFlags: Record<string, boolean>,
   ) {
-    const workspaceDataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace({
-        workspaceId,
-      });
-
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
     await standardObjectsPrefillData(
-      workspaceDataSource,
+      this.coreDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
       featureFlags,
@@ -143,12 +140,13 @@ export class WorkspaceManagerService {
     if (featureFlags[FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED]) {
       this.logger.log(`Prefilling core views for workspace ${workspaceId}`);
 
-      await prefillCoreViews(
-        workspaceDataSource,
+      await prefillCoreViews({
+        coreDataSource: this.coreDataSource,
         workspaceId,
-        createdObjectMetadata,
+        objectMetadataItems: createdObjectMetadata,
+        schemaName: dataSourceMetadata.schema,
         featureFlags,
-      );
+      });
     }
   }
 
