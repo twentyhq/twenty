@@ -10,6 +10,7 @@ import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
+import { RouteModule } from 'src/engine/metadata-modules/route/route.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
     RemoteServerModule,
     RoleModule,
     PermissionsModule,
+    RouteModule,
   ],
   providers: [],
   exports: [

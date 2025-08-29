@@ -14,7 +14,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/inte
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
-enum HTTPMethod {
+export enum HTTPMethod {
   Get = 'Get',
   Post = 'Post',
   Put = 'Put',
