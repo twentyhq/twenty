@@ -66,7 +66,7 @@ export class ViewEntity extends SyncableEntity {
   @Column({ nullable: false, type: 'text' })
   icon: string;
 
-  @Column({ nullable: false, type: 'int', default: 0 })
+  @Column({ nullable: false, type: 'double precision', default: 0 })
   position: number;
 
   @Column({ nullable: false, default: false, type: 'boolean' })
