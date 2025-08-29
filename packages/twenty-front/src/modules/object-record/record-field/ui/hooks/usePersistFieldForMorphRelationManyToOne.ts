@@ -25,7 +25,9 @@ export const usePersistFieldForMorphRelationManyToOne = () => {
 
   const persistFieldForMorphRelationManyToOne = useRecoilCallback(
     ({ set, snapshot }) =>
-      (singleRecordPickerRecord: SingleRecordPickerRecord | null) => {
+      (
+        singleRecordPickerRecord: SingleRecordPickerRecord | null | undefined,
+      ) => {
         if (!isDefined(singleRecordPickerRecord)) {
           console.log(
             'record is null we must unseelct the record (todo @guillim)',
