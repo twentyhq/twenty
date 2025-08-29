@@ -83,6 +83,10 @@ export const fromCachedFieldMetadataEntityToFlatFieldMetadata = <
       !isCachedFieldMetadataEntityOfType(
         relationTargetCachedFieldMetadata,
         FieldMetadataType.RELATION,
+      ) &&
+      !isCachedFieldMetadataEntityOfType(
+        relationTargetCachedFieldMetadata,
+        FieldMetadataType.MORPH_RELATION,
       )
     ) {
       throw new WorkspaceMetadataCacheException(
