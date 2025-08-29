@@ -10,14 +10,14 @@ import {
 } from 'src/engine/metadata-modules/flat-object-metadata-maps/flat-object-metadata-maps.exception';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 
-export type FindMorphRelationRelatedFlatFieldMetadatasOrThrowArgs = {
+export type FindFlatFieldMetadatasRelatedToMorphRelationOrThrowArgs = {
   flatObjectMetadataMaps: FlatObjectMetadataMaps;
   flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
 };
-export const findMorphRelationRelatedFlatFieldMetadatasOrThrow = ({
+export const findFlatFieldMetadatasRelatedToMorphRelationOrThrow = ({
   flatObjectMetadataMaps,
   flatFieldMetadata: morphRelationFlatFieldMetadata,
-}: FindMorphRelationRelatedFlatFieldMetadatasOrThrowArgs): FlatFieldMetadata[] => {
+}: FindFlatFieldMetadatasRelatedToMorphRelationOrThrowArgs): FlatFieldMetadata[] => {
   const flatObjectMetadata =
     flatObjectMetadataMaps.byId[
       morphRelationFlatFieldMetadata.objectMetadataId

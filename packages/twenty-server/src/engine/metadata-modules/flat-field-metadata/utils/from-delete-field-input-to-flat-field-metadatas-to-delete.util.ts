@@ -1,8 +1,8 @@
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import {
@@ -10,7 +10,7 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { findMorphRelationRelatedFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-morph-relation-flat-field-metadatas-target-flat-field-metadata-or-throw.util';
+import { findFlatFieldMetadatasRelatedToMorphRelationOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-flat-field-metadatas-related-to-morph-relation-or-throw.util';
 import { findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata-or-throw.util';
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
@@ -49,7 +49,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
       FieldMetadataType.MORPH_RELATION,
     )
   ) {
-    return findMorphRelationRelatedFlatFieldMetadatasOrThrow({
+    return findFlatFieldMetadatasRelatedToMorphRelationOrThrow({
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatFieldMetadata: flatFieldMetadataToDelete,
     });
@@ -84,7 +84,7 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
       FieldMetadataType.MORPH_RELATION,
     )
   ) {
-    return findMorphRelationRelatedFlatFieldMetadatasOrThrow({
+    return findFlatFieldMetadatasRelatedToMorphRelationOrThrow({
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       flatFieldMetadata:
         flatFieldMetadataToDelete.flatRelationTargetFieldMetadata,
