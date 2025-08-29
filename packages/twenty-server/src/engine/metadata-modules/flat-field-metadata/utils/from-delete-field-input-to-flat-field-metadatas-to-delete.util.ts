@@ -2,6 +2,7 @@ import {
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import {
@@ -14,7 +15,6 @@ import { findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow } from 'src
 import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 type FromDeleteFieldInputToFlatFieldMetadatasToDeleteArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
