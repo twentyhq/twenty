@@ -7,7 +7,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
-import { SyncMessageFoldersService } from 'src/modules/messaging/folder-sync-manager/services/sync-message-folders.service';
+import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
 
 export type CreateMessageFoldersInput = {

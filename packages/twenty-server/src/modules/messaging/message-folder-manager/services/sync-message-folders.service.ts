@@ -11,9 +11,9 @@ import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manage
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
-import { GmailGetAllFoldersService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-all-folders.service';
-import { ImapGetAllFoldersService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-all-folders.service';
-import { MicrosoftGetAllFoldersService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-all-folders.service';
+import { GmailGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/gmail/gmail-get-all-folders.service';
+import { ImapGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/imap/imap-get-all-folders.service';
+import { MicrosoftGetAllFoldersService } from 'src/modules/messaging/message-folder-manager/drivers/microsoft/microsoft-get-all-folders.service';
 
 type SyncMessageFoldersInput = {
   workspaceId: string;

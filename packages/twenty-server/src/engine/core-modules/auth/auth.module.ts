@@ -59,10 +59,7 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
-import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/folder-sync-manager/messaging-folder-sync-manager.module';
-import { MessagingGmailDriverModule } from 'src/modules/messaging/message-import-manager/drivers/gmail/messaging-gmail-driver.module';
-import { MessagingIMAPDriverModule } from 'src/modules/messaging/message-import-manager/drivers/imap/messaging-imap-driver.module';
-import { MessagingMicrosoftDriverModule } from 'src/modules/messaging/message-import-manager/drivers/microsoft/messaging-microsoft-driver.module';
+import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
 
 import { TwoFactorAuthenticationMethod } from '../two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TwoFactorAuthenticationModule } from '../two-factor-authentication/two-factor-authentication.module';
@@ -100,9 +97,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     OnboardingModule,
     WorkspaceDataSourceModule,
     ConnectedAccountModule,
-    MessagingGmailDriverModule,
-    MessagingMicrosoftDriverModule,
-    MessagingIMAPDriverModule,
     MessagingFolderSyncManagerModule,
     WorkspaceSSOModule,
     FeatureFlagModule,

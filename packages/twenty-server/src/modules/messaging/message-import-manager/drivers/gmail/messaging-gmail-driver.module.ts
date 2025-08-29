@@ -12,14 +12,13 @@ import { EmailAliasManagerModule } from 'src/modules/connected-account/email-ali
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
+import { OAuth2ClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/oauth2-client.provider';
 import { GmailFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-fetch-by-batch.service';
-import { GmailGetAllFoldersService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-all-folders.service';
 import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
 import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
 import { GmailGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-messages.service';
 import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
-import { OAuth2ClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/oauth2-client.provider';
 
 @Module({
   imports: [
@@ -43,15 +42,14 @@ import { OAuth2ClientProvider } from 'src/modules/messaging/message-import-manag
     GmailFetchByBatchService,
     GmailGetMessagesService,
     GmailGetMessageListService,
-    GmailGetAllFoldersService,
     GmailHandleErrorService,
   ],
   exports: [
     GmailGetMessagesService,
     GmailGetMessageListService,
-    GmailGetAllFoldersService,
     GmailClientProvider,
     OAuth2ClientProvider,
+    GmailHandleErrorService,
   ],
 })
 export class MessagingGmailDriverModule {}
