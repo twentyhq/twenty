@@ -7,5 +7,5 @@ import {
 export const isRelationFieldMetadataType = (
   type: FieldMetadataType,
 ): type is RelationFieldMetadataType => {
-  return RELATION_FIELD_TYPES.includes(type);
+  return RELATION_FIELD_TYPES.includes(type as RelationFieldMetadataType);
 };

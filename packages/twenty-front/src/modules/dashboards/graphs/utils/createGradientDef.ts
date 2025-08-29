@@ -6,6 +6,7 @@ export const createGradientDef = (
   id: string,
   isHovered: boolean = false,
   angle?: number,
+  reverseGradient: boolean = false,
 ) => {
   const colors = isHovered
     ? colorScheme.gradient.hover
@@ -20,9 +21,14 @@ export const createGradientDef = (
     id,
     type: 'linearGradient' as const,
     ...coords,
-    colors: [
-      { offset: 0, color: colors[0] },
-      { offset: 100, color: colors[1] },
-    ],
+    colors: reverseGradient
+      ? [
+          { offset: 0, color: colors[1] },
+          { offset: 100, color: colors[0] },
+        ]
+      : [
+          { offset: 0, color: colors[0] },
+          { offset: 100, color: colors[1] },
+        ],
   };
 };

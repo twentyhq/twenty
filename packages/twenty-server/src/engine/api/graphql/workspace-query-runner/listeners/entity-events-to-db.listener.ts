@@ -18,6 +18,7 @@ import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/wo
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
 import { CallWebhookJobsJob } from 'src/engine/core-modules/webhook/jobs/call-webhook-jobs.job';
 import { type ObjectRecordEventForWebhook } from 'src/engine/core-modules/webhook/types/object-record-event-for-webhook.type';
+import { CallDatabaseEventTriggerJobsJob } from 'src/engine/metadata-modules/trigger/jobs/call-database-event-trigger-jobs.job';
 
 @Injectable()
 export class EntityEventsToDbListener {
@@ -28,6 +29,8 @@ export class EntityEventsToDbListener {
     private readonly webhookQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.subscriptionsQueue)
     private readonly subscriptionsQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.triggerQueue)
+    private readonly triggerQueueService: MessageQueueService,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -79,6 +82,11 @@ export class EntityEventsToDbListener {
     await Promise.all([
       this.subscriptionsQueueService.add<WorkspaceEventBatch<T>>(
         SubscriptionsJob.name,
+        batchEvent,
+        { retryLimit: 3 },
+      ),
+      this.triggerQueueService.add<WorkspaceEventBatch<T>>(
+        CallDatabaseEventTriggerJobsJob.name,
         batchEvent,
         { retryLimit: 3 },
       ),

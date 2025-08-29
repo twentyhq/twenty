@@ -180,8 +180,7 @@ export const useLoadRecordIndexStates = () => {
         setRecordIndexViewType(view.type);
         setRecordIndexOpenRecordIn(view.openRecordIn);
         setRecordIndexViewKanbanFieldMetadataIdState(
-          // TODO: replace with viewGroups.fieldMetadataId
-          view.kanbanFieldMetadataId,
+          view.viewGroups?.[0]?.fieldMetadataId,
         );
         const kanbanAggregateOperationFieldMetadataType =
           objectMetadataItem.fields?.find(

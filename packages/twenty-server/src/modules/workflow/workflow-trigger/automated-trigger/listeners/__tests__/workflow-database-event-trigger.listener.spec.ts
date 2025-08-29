@@ -4,13 +4,13 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { DatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/database-event-trigger.listener';
+import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/workflow-database-event-trigger.listener';
 import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
 import { getMockObjectMetadataEntity } from 'src/utils/__test__/get-object-metadata-entity.mock';
 import { getMockObjectMetadataItemWithFieldsMaps } from 'src/utils/__test__/get-object-metadata-item-with-fields-maps.mock';
 
-describe('DatabaseEventTriggerListener', () => {
-  let listener: DatabaseEventTriggerListener;
+describe('WorkflowDatabaseEventTriggerListener', () => {
+  let listener: WorkflowDatabaseEventTriggerListener;
   let twentyORMGlobalManager: jest.Mocked<TwentyORMGlobalManager>;
   let messageQueueService: jest.Mocked<MessageQueueService>;
 
@@ -29,7 +29,7 @@ describe('DatabaseEventTriggerListener', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        DatabaseEventTriggerListener,
+        WorkflowDatabaseEventTriggerListener,
         {
           provide: TwentyORMGlobalManager,
           useValue: twentyORMGlobalManager,
@@ -83,8 +83,8 @@ describe('DatabaseEventTriggerListener', () => {
       ],
     }).compile();
 
-    listener = module.get<DatabaseEventTriggerListener>(
-      DatabaseEventTriggerListener,
+    listener = module.get<WorkflowDatabaseEventTriggerListener>(
+      WorkflowDatabaseEventTriggerListener,
     );
   });
 

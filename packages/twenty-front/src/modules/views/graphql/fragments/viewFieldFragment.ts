@@ -9,7 +9,5 @@ export const VIEW_FIELD_FRAGMENT = gql`
     position
     size
     aggregateOperation
-    createdAt
-    updatedAt
   }
 `;
