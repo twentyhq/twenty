@@ -9,10 +9,12 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { findMorphRelationRelatedFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-morph-relation-flat-field-metadatas-target-flat-field-metadata-or-throw.util';
 import { findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata-or-throw.util';
-import { isRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-flat-field-metadata.util';
+import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 type FromDeleteFieldInputToFlatFieldMetadatasToDeleteArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
@@ -41,7 +43,28 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
     );
   }
 
-  if (isRelationFlatFieldMetadata(flatFieldMetadataToDelete)) {
+  if (
+    isFlatFieldMetadataEntityOfType(
+      flatFieldMetadataToDelete,
+      FieldMetadataType.MORPH_RELATION,
+    )
+  ) {
+    return findMorphRelationRelatedFlatFieldMetadatasOrThrow({
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatFieldMetadata: flatFieldMetadataToDelete,
+    });
+  }
+
+  if (
+    isFlatFieldMetadataEntityOfType(
+      flatFieldMetadataToDelete,
+      FieldMetadataType.RELATION,
+    ) &&
+    isFlatFieldMetadataEntityOfType(
+      flatFieldMetadataToDelete.flatRelationTargetFieldMetadata,
+      FieldMetadataType.RELATION,
+    )
+  ) {
     const relationTargetFlatFieldMetadata =
       findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
@@ -49,6 +72,23 @@ export const fromDeleteFieldInputToFlatFieldMetadatasToDelete = ({
       });
 
     return [flatFieldMetadataToDelete, relationTargetFlatFieldMetadata];
+  }
+
+  if (
+    isFlatFieldMetadataEntityOfType(
+      flatFieldMetadataToDelete,
+      FieldMetadataType.RELATION,
+    ) &&
+    isFlatFieldMetadataEntityOfType(
+      flatFieldMetadataToDelete.flatRelationTargetFieldMetadata,
+      FieldMetadataType.MORPH_RELATION,
+    )
+  ) {
+    return findMorphRelationRelatedFlatFieldMetadatasOrThrow({
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+      flatFieldMetadata:
+        flatFieldMetadataToDelete.flatRelationTargetFieldMetadata,
+    });
   }
 
   return [flatFieldMetadataToDelete];
