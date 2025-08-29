@@ -25,7 +25,7 @@ export const renameFlatObjectMetadataManyToOneMorphRelationTargetFlatFieldMetada
       );
 
     const updatedFlatFieldMetadatas =
-      manyToOneMorphRelationFlatFieldMetadatas.flatMap(
+      manyToOneMorphRelationFlatFieldMetadatas.map(
         (morphRelationFlatFieldMetadata) => {
           const newJoinColumnName = computeMorphRelationFieldJoinColumnName({
             name: morphRelationFlatFieldMetadata.name,

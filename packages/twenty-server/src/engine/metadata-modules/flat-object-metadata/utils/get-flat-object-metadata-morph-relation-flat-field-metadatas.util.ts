@@ -17,7 +17,7 @@ export const getFlatObjectMetadataManyToOneTargetMorphRelationFlatFieldMetadatas
     flatObjectMetadata,
     existingFlatObjectMetadataMaps,
   }: GetFlatObjectMetadataMorphRelationFlatFieldMetadatasArgs) => {
-    const manyToOneMorhRelationTargetFlatFieldMetadataIds =
+    const manyToOneMorphRelationTargetFlatFieldMetadataIds =
       flatObjectMetadata.flatFieldMetadatas
         .filter(
           (
@@ -39,7 +39,7 @@ export const getFlatObjectMetadataManyToOneTargetMorphRelationFlatFieldMetadatas
           objectMetadataId,
         }));
 
-    return manyToOneMorhRelationTargetFlatFieldMetadataIds.map(
+    return manyToOneMorphRelationTargetFlatFieldMetadataIds.map(
       ({ fieldMetadataId, objectMetadataId }) =>
         findFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
           fieldMetadataId,

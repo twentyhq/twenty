@@ -141,10 +141,7 @@ export const fromUpdateObjectInputToFlatObjectMetadata = ({
           : [];
 
       return {
-        flatObjectMetadata: {
-          ...updatedFlatObjectMetadata,
-          [property]: updatedPropertyValue,
-        },
+        flatObjectMetadata: updatedFlatObjectMetadata,
         otherObjectFlatFieldMetadatas: [
           ...otherObjectFlatFieldMetadatas,
           ...newUpdatedOtherObjectFlatFieldMetadatas,
