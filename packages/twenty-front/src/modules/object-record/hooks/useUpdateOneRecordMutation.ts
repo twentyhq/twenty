@@ -1,15 +1,11 @@
-import gql from 'graphql-tag';
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
-import { capitalize } from 'twenty-shared/utils';
+import { generateUpdateOneRecordMutation } from '@/object-record/multiple-objects/utils/generateUpdateOneRecordMutation';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useUpdateOneRecordMutation = ({
@@ -33,31 +29,13 @@ export const useUpdateOneRecordMutation = ({
     return { updateOneRecordMutation: EMPTY_MUTATION };
   }
 
-  const appliedRecordGqlFields =
-    recordGqlFields ??
-    generateDepthOneRecordGqlFields({
-      objectMetadataItem,
-    });
-
-  const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
-
-  const mutationResponseField = getUpdateOneRecordMutationResponseField(
-    objectMetadataItem.nameSingular,
-  );
-
-  const updateOneRecordMutation = gql`
-    mutation UpdateOne${capitalizedObjectName}($idToUpdate: UUID!, $input: ${capitalizedObjectName}UpdateInput!)  {
-      ${mutationResponseField}(id: $idToUpdate, data: $input) ${mapObjectMetadataToGraphQLQuery(
-        {
-          objectMetadataItems,
-          objectMetadataItem,
-          computeReferences,
-          recordGqlFields: appliedRecordGqlFields,
-          objectPermissionsByObjectMetadataId,
-        },
-      )}
-    }
-  `;
+  const updateOneRecordMutation = generateUpdateOneRecordMutation({
+    objectMetadataItem,
+    objectMetadataItems,
+    recordGqlFields,
+    computeReferences,
+    objectPermissionsByObjectMetadataId,
+  });
 
   return {
     updateOneRecordMutation,

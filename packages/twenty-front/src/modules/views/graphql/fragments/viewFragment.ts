@@ -24,8 +24,6 @@ export const VIEW_FRAGMENT = gql`
     openRecordIn
     kanbanAggregateOperation
     kanbanAggregateOperationFieldMetadataId
-    createdAt
-    updatedAt
     anyFieldFilterValue
     viewFields {
       ...ViewFieldFragment

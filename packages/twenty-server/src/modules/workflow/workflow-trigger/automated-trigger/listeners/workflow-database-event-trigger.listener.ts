@@ -29,8 +29,10 @@ import {
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-trigger.job';
 
 @Injectable()
-export class DatabaseEventTriggerListener {
-  private readonly logger = new Logger('DatabaseEventTriggerListener');
+export class WorkflowDatabaseEventTriggerListener {
+  private readonly logger = new Logger(
+    WorkflowDatabaseEventTriggerListener.name,
+  );
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,

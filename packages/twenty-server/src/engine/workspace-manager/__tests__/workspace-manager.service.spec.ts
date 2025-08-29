@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
-import { type Repository } from 'typeorm';
+import { type DataSource, type Repository } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -33,13 +33,22 @@ describe('WorkspaceManagerService', () => {
   let workspaceDataSourceService: WorkspaceDataSourceService;
   let roleTargetsRepository: Repository<RoleTargetsEntity>;
   let roleRepository: Repository<RoleEntity>;
+  let mockDataSource: jest.Mocked<DataSource>;
 
   beforeEach(async () => {
+    mockDataSource = {
+      transaction: jest.fn(),
+    } as any;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkspaceManagerService,
         WorkspaceMigrationService,
         DataSourceService,
+        {
+          provide: getDataSourceToken(),
+          useValue: mockDataSource,
+        },
         {
           provide: getRepositoryToken(Workspace),
           useValue: {},

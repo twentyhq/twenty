@@ -7,7 +7,7 @@ import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-commo
 import { AutomatedTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.workspace-service';
 import { WorkflowCronTriggerCronCommand } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/commands/workflow-cron-trigger.cron.command';
 import { WorkflowCronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/workflow-cron-trigger-cron.job';
-import { DatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/database-event-trigger.listener';
+import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trigger/automated-trigger/listeners/workflow-database-event-trigger.listener';
 
 @Module({
   imports: [
@@ -17,7 +17,7 @@ import { DatabaseEventTriggerListener } from 'src/modules/workflow/workflow-trig
   ],
   providers: [
     AutomatedTriggerWorkspaceService,
-    DatabaseEventTriggerListener,
+    WorkflowDatabaseEventTriggerListener,
     WorkflowCronTriggerCronJob,
     WorkflowCronTriggerCronCommand,
   ],

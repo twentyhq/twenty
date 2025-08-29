@@ -63,11 +63,11 @@ export const useSaveRecordSortsToViewSorts = () => {
         await deleteViewSortRecords(viewSortIdsToDelete);
       },
     [
-      createViewSortRecords,
-      deleteViewSortRecords,
-      updateViewSortRecords,
-      currentRecordSortsCallbackState,
       currentView,
+      currentRecordSortsCallbackState,
+      createViewSortRecords,
+      updateViewSortRecords,
+      deleteViewSortRecords,
     ],
   );
 
