@@ -7,7 +7,5 @@ export const VIEW_FILTER_GROUP_FRAGMENT = gql`
     logicalOperator
     positionInViewFilterGroup
     viewId
-    createdAt
-    updatedAt
   }
 `;

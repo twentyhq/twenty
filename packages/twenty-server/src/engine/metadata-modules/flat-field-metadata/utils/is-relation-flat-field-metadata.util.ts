@@ -8,4 +8,6 @@ import { isFlatFieldMetadataEntityOfTypes } from 'src/engine/metadata-modules/fl
 export const isRelationFlatFieldMetadata = (
   flatFieldMetadata: FlatFieldMetadata,
 ): flatFieldMetadata is FlatFieldMetadata<RelationFieldMetadataType> =>
-  isFlatFieldMetadataEntityOfTypes(flatFieldMetadata, RELATION_FIELD_TYPES);
+  isFlatFieldMetadataEntityOfTypes(flatFieldMetadata, [
+    ...RELATION_FIELD_TYPES,
+  ]);
