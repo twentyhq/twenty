@@ -43930,6 +43930,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"path-to-regexp@npm:^8.2.0":
+  version: 8.2.0
+  resolution: "path-to-regexp@npm:8.2.0"
+  checksum: 10c0/ef7d0a887b603c0a142fad16ccebdcdc42910f0b14830517c724466ad676107476bba2fe9fffd28fd4c141391ccd42ea426f32bb44c2c82ecaefe10c37b90f5a
+  languageName: node
+  linkType: hard
+
 "path-type@npm:^4.0.0":
   version: 4.0.0
   resolution: "path-type@npm:4.0.0"
@@ -51212,6 +51219,7 @@ __metadata:
     passport-google-oauth20: "npm:2.0.0"
     passport-jwt: "npm:4.0.1"
     passport-microsoft: "npm:2.1.0"
+    path-to-regexp: "npm:^8.2.0"
     pg: "npm:8.12.0"
     pg-boss: "npm:9.0.3"
     planer: "npm:1.2.0"
