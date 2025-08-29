@@ -192,6 +192,14 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         );
       }
 
+      if (workspaceView.viewFilterGroups?.length > 0) {
+        await this.migrateViewFilterGroups(
+          workspaceView.viewFilterGroups,
+          workspaceId,
+          queryRunner,
+        );
+      }
+
       if (workspaceView.viewFilters?.length > 0) {
         await this.migrateViewFilters(
           workspaceView.viewFilters,
@@ -211,14 +219,6 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       if (workspaceView.viewGroups?.length > 0) {
         await this.migrateViewGroups(
           workspaceView.viewGroups,
-          workspaceId,
-          queryRunner,
-        );
-      }
-
-      if (workspaceView.viewFilterGroups?.length > 0) {
-        await this.migrateViewFilterGroups(
-          workspaceView.viewFilterGroups,
           workspaceId,
           queryRunner,
         );
