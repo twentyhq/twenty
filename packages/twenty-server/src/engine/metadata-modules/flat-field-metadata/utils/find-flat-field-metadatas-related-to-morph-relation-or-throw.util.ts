@@ -18,20 +18,33 @@ export const findFlatFieldMetadatasRelatedToMorphRelationOrThrow = ({
   flatObjectMetadataMaps,
   flatFieldMetadata: morphRelationFlatFieldMetadata,
 }: FindFlatFieldMetadatasRelatedToMorphRelationOrThrowArgs): FlatFieldMetadata[] => {
-  const flatObjectMetadata =
+  const flatObjectMetadataWithFlatFieldMaps =
     flatObjectMetadataMaps.byId[
       morphRelationFlatFieldMetadata.objectMetadataId
     ];
 
-  if (!isDefined(flatObjectMetadata)) {
+  if (!isDefined(flatObjectMetadataWithFlatFieldMaps)) {
     throw new FlatObjectMetadataMapsException(
-      'object metadata not found',
+      'Morph field relation object metadata not found',
       FlatObjectMetadataMapsExceptionCode.OBJECT_METADATA_NOT_FOUND,
     );
   }
 
-  const allRelatedMorphRelationFlatFieldMetadatas =
-    flatObjectMetadata.flatFieldMetadatas.flatMap((flatFieldMetadata) => {
+  if (
+    !isDefined(
+      flatObjectMetadataWithFlatFieldMaps.fieldsById[
+        morphRelationFlatFieldMetadata.id
+      ],
+    )
+  ) {
+    throw new FlatObjectMetadataMapsException(
+      'Morph relation field not found in related object metadata',
+      FlatObjectMetadataMapsExceptionCode.FIELD_METADATA_NOT_FOUND,
+    );
+  }
+
+  return flatObjectMetadataWithFlatFieldMaps.flatFieldMetadatas.flatMap(
+    (flatFieldMetadata) => {
       if (
         !isFlatFieldMetadataEntityOfType(
           flatFieldMetadata,
@@ -49,7 +62,6 @@ export const findFlatFieldMetadatasRelatedToMorphRelationOrThrow = ({
         });
 
       return [flatFieldMetadata, relationTargetFlatFieldMetadata];
-    });
-
-  return allRelatedMorphRelationFlatFieldMetadatas;
+    },
+  );
 };
