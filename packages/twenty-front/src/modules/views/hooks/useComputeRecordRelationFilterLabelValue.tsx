@@ -1,21 +1,14 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getRelationObjectMetadataNameSingular } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { getFieldMetadataItemByIdOrThrow } from '@/object-metadata/utils/getFieldMetadataItemByIdOrThrow';
+import { MAX_RECORDS_TO_DISPLAY } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { getRecordFilterLabelValue } from '@/views/utils/getRecordFilterLabelValue';
-import { type RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
 import { arrayOfUuidOrVariableSchema } from '@/views/view-filter-value/validation-schemas/arrayOfUuidsOrVariablesSchema';
 import { jsonRelationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-
-export const EMPTY_FILTER_VALUE: string = JSON.stringify({
-  isCurrentWorkspaceMemberSelected: false,
-  selectedRecordIds: [],
-} satisfies RelationFilterValue);
-
-export const MAX_RECORDS_TO_DISPLAY = 3;
 
 type ObjectFilterDropdownRecordSelectProps = {
   recordFilter: RecordFilter;
@@ -40,6 +33,10 @@ export const useComputeRecordRelationFilterLabelValue = ({
       field: fieldMetadataItem,
     });
 
+  if (!isDefined(relationObjectMetadataNameSingular)) {
+    throw new Error('relationObjectMetadataNameSingular is not defined');
+  }
+
   const relationObjectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
       objectMetadataItem.nameSingular === relationObjectMetadataNameSingular,
@@ -51,24 +48,20 @@ export const useComputeRecordRelationFilterLabelValue = ({
 
   const relationObjectLabelPlural = relationObjectMetadataItem.labelPlural;
 
-  const { isCurrentWorkspaceMemberSelected } = jsonRelationFilterValueSchema
-    .catch({
-      isCurrentWorkspaceMemberSelected: false,
-      selectedRecordIds: arrayOfUuidOrVariableSchema.parse(recordFilter.value),
-    })
-    .parse(recordFilter.value);
-
-  const { selectedRecordIds } = jsonRelationFilterValueSchema
-    .catch({
-      isCurrentWorkspaceMemberSelected: false,
-      selectedRecordIds: arrayOfUuidOrVariableSchema.parse(recordFilter?.value),
-    })
-    .parse(recordFilter.value);
+  const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
+    jsonRelationFilterValueSchema
+      .catch({
+        isCurrentWorkspaceMemberSelected: false,
+        selectedRecordIds: arrayOfUuidOrVariableSchema.parse(
+          recordFilter.value,
+        ),
+      })
+      .parse(recordFilter.value);
 
   const { selectedRecords, loading } = useRecordsForSelect({
     searchFilterText: '',
     selectedIds: selectedRecordIds,
-    objectNameSingular: relationObjectMetadataNameSingular ?? '',
+    objectNameSingular: relationObjectMetadataNameSingular,
     limit: 10,
   });
 
@@ -86,16 +79,13 @@ export const useComputeRecordRelationFilterLabelValue = ({
       ? `${labelValueItems.length} ${relationObjectLabelPlural.toLowerCase()}`
       : labelValueItems.join(', ');
 
-  if (labelValueItems.length > 0) {
-    return {
-      labelValue: getRecordFilterLabelValue({
-        ...recordFilter,
-        displayValue: filterDisplayValue,
-      }),
-    };
-  }
-
   return {
-    labelValue: getRecordFilterLabelValue(recordFilter),
+    labelValue:
+      labelValueItems.length > 0
+        ? getRecordFilterLabelValue({
+            ...recordFilter,
+            displayValue: filterDisplayValue,
+          })
+        : getRecordFilterLabelValue(recordFilter),
   };
 };
