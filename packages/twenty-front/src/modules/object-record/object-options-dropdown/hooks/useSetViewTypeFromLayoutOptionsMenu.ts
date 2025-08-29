@@ -95,8 +95,8 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             }
             const previouslySelectedKanbanField = availableFieldsForKanban.find(
               (fieldsForKanban) =>
-                // TODO: replace with viewGroups.fieldMetadataId
-                fieldsForKanban.id === currentView.kanbanFieldMetadataId,
+                fieldsForKanban.id ===
+                currentView.viewGroups[0].fieldMetadataId,
             );
 
             const kanbanField = isDefined(previouslySelectedKanbanField)
@@ -104,8 +104,8 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
               : availableFieldsForKanban[0];
 
             if (!isDefined(previouslySelectedKanbanField)) {
-              // TODO: replace with viewGroups.fieldMetadataId
-              updateCurrentViewParams.kanbanFieldMetadataId = kanbanField.id;
+              updateCurrentViewParams.kanbanFieldMetadataId =
+                currentView.viewGroups[0].fieldMetadataId;
             }
 
             const hasViewGroups = currentView.viewGroups.some(

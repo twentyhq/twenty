@@ -4,7 +4,15 @@ import { type ViewField } from '@/views/types/ViewField';
 import { type CoreViewField } from '~/generated/graphql';
 
 export const convertCoreViewFieldToViewField = (
-  coreViewField: Omit<CoreViewField, 'workspaceId'>,
+  coreViewField: Pick<
+    CoreViewField,
+    | 'id'
+    | 'fieldMetadataId'
+    | 'position'
+    | 'isVisible'
+    | 'size'
+    | 'aggregateOperation'
+  >,
 ): ViewField => {
   const viewField: ViewField = {
     __typename: 'ViewField',

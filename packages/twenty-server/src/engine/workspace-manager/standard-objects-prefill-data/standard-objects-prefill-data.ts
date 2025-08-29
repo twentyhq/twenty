@@ -1,6 +1,6 @@
+import { type DataSource, type EntityManager } from 'typeorm';
+
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
 import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-companies';
 import { prefillPeople } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-people';
@@ -9,40 +9,38 @@ import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-
 import { prefillWorkspaceFavorites } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workspace-favorites';
 
 export const standardObjectsPrefillData = async (
-  workspaceDataSource: WorkspaceDataSource,
+  dataSource: DataSource,
   schemaName: string,
   objectMetadataItems: ObjectMetadataEntity[],
   featureFlags?: Record<string, boolean>,
 ) => {
-  workspaceDataSource.transaction(
-    async (entityManager: WorkspaceEntityManager) => {
-      await prefillCompanies(entityManager, schemaName);
+  dataSource.transaction(async (entityManager: EntityManager) => {
+    await prefillCompanies(entityManager, schemaName);
 
-      await prefillPeople(entityManager, schemaName);
+    await prefillPeople(entityManager, schemaName);
 
-      await prefillWorkflows(entityManager, schemaName, objectMetadataItems);
+    await prefillWorkflows(entityManager, schemaName, objectMetadataItems);
 
-      const viewDefinitionsWithId = await prefillViews(
-        entityManager,
-        schemaName,
-        objectMetadataItems,
-        featureFlags,
-      );
+    const viewDefinitionsWithId = await prefillViews(
+      entityManager,
+      schemaName,
+      objectMetadataItems,
+      featureFlags,
+    );
 
-      await prefillWorkspaceFavorites(
-        viewDefinitionsWithId
-          .filter(
-            (view) =>
-              view.key === 'INDEX' &&
-              shouldSeedWorkspaceFavorite(
-                view.objectMetadataId,
-                objectMetadataItems,
-              ),
-          )
-          .map((view) => view.id),
-        entityManager,
-        schemaName,
-      );
-    },
-  );
+    await prefillWorkspaceFavorites(
+      viewDefinitionsWithId
+        .filter(
+          (view) =>
+            view.key === 'INDEX' &&
+            shouldSeedWorkspaceFavorite(
+              view.objectMetadataId,
+              objectMetadataItems,
+            ),
+        )
+        .map((view) => view.id),
+      entityManager,
+      schemaName,
+    );
+  });
 };
