@@ -32,6 +32,7 @@ export const useReorderRecordGroups = ({
 
   const visibleRecordGroupIdsFamilySelector = useRecoilComponentCallbackState(
     visibleRecordGroupIdsComponentFamilySelector,
+    viewBarId,
   );
 
   const { saveViewGroups } = useSaveCurrentViewGroups();

@@ -104,7 +104,7 @@ export class DevSeederMetadataService {
       });
     }
 
-    await this.seedCoreViews(workspaceId);
+    await this.seedCoreViews({ workspaceId, dataSourceMetadata });
   }
 
   private async seedCustomObject({
@@ -152,14 +152,21 @@ export class DevSeederMetadataService {
     );
   }
 
-  private async seedCoreViews(workspaceId: string): Promise<void> {
+  private async seedCoreViews({
+    workspaceId,
+    dataSourceMetadata,
+  }: {
+    workspaceId: string;
+    dataSourceMetadata: DataSourceEntity;
+  }): Promise<void> {
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-    await prefillCoreViews(
-      this.coreDataSource,
+    await prefillCoreViews({
+      coreDataSource: this.coreDataSource,
       workspaceId,
-      createdObjectMetadata,
-    );
+      objectMetadataItems: createdObjectMetadata,
+      schemaName: dataSourceMetadata.schema,
+    });
   }
 }

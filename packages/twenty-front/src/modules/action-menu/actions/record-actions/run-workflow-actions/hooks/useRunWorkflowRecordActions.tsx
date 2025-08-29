@@ -7,7 +7,6 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
-import { msg } from '@lingui/core/macro';
 
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
@@ -81,8 +80,8 @@ export const useRunWorkflowRecordActions = ({
         type: ActionType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionScope.RecordSelection,
-        label: msg`${name}`,
-        shortLabel: msg`${name}`,
+        label: name,
+        shortLabel: name,
         position: index,
         Icon,
         isPinned: activeWorkflowVersion.trigger?.settings?.isPinned,

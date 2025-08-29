@@ -92,10 +92,13 @@ describe('AiController', () => {
       await Promise.resolve();
 
       expect(featureFlagService.isFeatureEnabled).toHaveBeenCalled();
-      expect(aiService.streamText).toHaveBeenCalledWith(mockRequest.messages, {
-        temperature: 0.7,
-        maxTokens: 100,
-        model: mockModel,
+      expect(aiService.streamText).toHaveBeenCalledWith({
+        messages: mockRequest.messages,
+        options: {
+          temperature: 0.7,
+          maxTokens: 100,
+          model: mockModel,
+        },
       });
       expect(
         mockStreamTextResult.pipeDataStreamToResponse,

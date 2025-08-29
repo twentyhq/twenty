@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { useMutation } from '@apollo/client';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { H2Title } from 'twenty-ui/display';
 
 import { UPDATE_SUBSCRIPTION_ITEM_PRICE } from '@/billing/graphql/mutations/updateSubscriptionItemPrice';
@@ -13,6 +13,18 @@ import {
   type BillingSubscriptionItem,
 } from '~/generated/graphql';
 import { findOrThrow } from '~/utils/array/findOrThrow';
+
+const compareByAmountAsc = (a: BillingPriceOutput, b: BillingPriceOutput) =>
+  a.amount - b.amount;
+
+const toOption = (meteredBillingPrice: BillingPriceOutput) => {
+  const nickname = meteredBillingPrice.nickname;
+  const price = formatNumber(meteredBillingPrice.amount / 100, 2);
+  return {
+    label: t`${nickname} - ${price}$`,
+    value: meteredBillingPrice.stripePriceId,
+  };
+};
 
 export const MeteredPriceSelector = ({
   meteredBillingPrices,
@@ -36,14 +48,10 @@ export const MeteredPriceSelector = ({
     UPDATE_SUBSCRIPTION_ITEM_PRICE,
   );
 
-  const options = meteredBillingPrices.map((meteredBillingPrice) => {
-    const nickname = meteredBillingPrice.nickname;
-    const price = formatNumber(meteredBillingPrice?.amount / 100, 2);
-    return {
-      label: t`${nickname} - ${price}$`,
-      value: meteredBillingPrice.stripePriceId,
-    };
-  });
+  const options = useMemo(
+    () => [...meteredBillingPrices].sort(compareByAmountAsc).map(toOption),
+    [meteredBillingPrices],
+  );
 
   const handleChange = async (priceId: string) => {
     try {

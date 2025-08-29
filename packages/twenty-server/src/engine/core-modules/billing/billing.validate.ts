@@ -15,8 +15,18 @@ const assertIsMeteredTiersSchemaOrThrow = (
     BillingExceptionCode.BILLING_PRICE_INVALID_TIERS,
   );
 
-  if (!isDefined(tiers)) {
+  if (!isMeteredTiersSchema(tiers)) {
     throw error;
+  }
+
+  return;
+};
+
+const isMeteredTiersSchema = (
+  tiers: BillingPrice['tiers'] | undefined | null,
+): tiers is MeterBillingPriceTiers => {
+  if (!isDefined(tiers)) {
+    return false;
   }
 
   if (
@@ -24,17 +34,16 @@ const assertIsMeteredTiersSchemaOrThrow = (
     typeof tiers[0].up_to !== 'number' ||
     tiers[1].up_to !== null
   ) {
-    throw new BillingException(
-      'Metered price must have exactly two tiers and only one must have a defined limitation (up_to)',
-      BillingExceptionCode.BILLING_PRICE_INVALID_TIERS,
-    );
+    return false;
   }
 
-  return;
+  return true;
 };
 
 export const billingValidator: {
   assertIsMeteredTiersSchemaOrThrow: typeof assertIsMeteredTiersSchemaOrThrow;
+  isMeteredTiersSchema: typeof isMeteredTiersSchema;
 } = {
   assertIsMeteredTiersSchemaOrThrow,
+  isMeteredTiersSchema,
 };

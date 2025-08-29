@@ -2,7 +2,7 @@ import { type ViewSort } from '@/views/types/ViewSort';
 import { type CoreViewSort, ViewSortDirection } from '~/generated/graphql';
 
 export const convertCoreViewSortToViewSort = (
-  coreViewSort: Omit<CoreViewSort, 'workspaceId'>,
+  coreViewSort: Pick<CoreViewSort, 'id' | 'fieldMetadataId' | 'direction'>,
 ): ViewSort => {
   return {
     __typename: 'ViewSort',

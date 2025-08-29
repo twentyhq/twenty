@@ -11,6 +11,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
+
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -26,7 +28,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
     where: '"deletedAt" IS NULL',
   },
 )
-export class ViewSortEntity {
+export class ViewSortEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

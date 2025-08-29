@@ -9,9 +9,10 @@ import {
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type GraphColor } from '../types/GraphColor';
 import { createGradientDef } from '../utils/createGradientDef';
 import { createGraphColorRegistry } from '../utils/createGraphColorRegistry';
-import { getColorSchemeByIndex } from '../utils/getColorSchemeByIndex';
+import { getColorScheme } from '../utils/getColorScheme';
 import {
   formatGraphValue,
   type GraphValueFormatOptions,
@@ -20,9 +21,14 @@ import { GraphWidgetLegend } from './GraphWidgetLegend';
 import { GraphWidgetTooltip } from './GraphWidgetTooltip';
 
 type GraphWidgetPieChartProps = {
-  data: Array<{ id: string; value: number; label?: string }>;
+  data: Array<{
+    id: string;
+    value: number;
+    label?: string;
+    color?: GraphColor;
+    to?: string;
+  }>;
   showLegend?: boolean;
-  tooltipHref?: string;
   id: string;
 } & GraphValueFormatOptions;
 
@@ -35,16 +41,23 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledChartContainer = styled.div`
+const StyledChartContainer = styled.div<{ $isClickable?: boolean }>`
   flex: 1;
   position: relative;
   width: 100%;
+
+  ${({ $isClickable }) =>
+    $isClickable &&
+    `
+    svg g path[fill^="url(#"] {
+      cursor: pointer;
+    }
+  `}
 `;
 
 export const GraphWidgetPieChart = ({
   data,
   showLegend = true,
-  tooltipHref,
   id,
   displayType,
   decimals,
@@ -69,7 +82,7 @@ export const GraphWidgetPieChart = ({
 
   let cumulativeAngle = 0;
   const enrichedData = data.map((item, index) => {
-    const colorScheme = getColorSchemeByIndex(colorRegistry, index);
+    const colorScheme = getColorScheme(colorRegistry, item.color, index);
     const isHovered = hoveredSliceId === item.id;
     const gradientId = `${colorScheme.name}Gradient-${id}-${index}`;
     const percentage = totalValue > 0 ? (item.value / totalValue) * 100 : 0;
@@ -102,9 +115,12 @@ export const GraphWidgetPieChart = ({
     id: item.gradientId,
   }));
 
-  const handleSliceClick = () => {
-    if (isDefined(tooltipHref)) {
-      window.location.href = tooltipHref;
+  const handleSliceClick = (
+    datum: ComputedDatum<{ id: string; value: number; label?: string }>,
+  ) => {
+    const clickedItem = data.find((d) => d.id === datum.id);
+    if (isDefined(clickedItem?.to)) {
+      window.location.href = clickedItem.to;
     }
   };
 
@@ -114,6 +130,7 @@ export const GraphWidgetPieChart = ({
     const item = enrichedData.find((d) => d.id === datum.id);
     if (!item) return null;
 
+    const dataItem = data.find((d) => d.id === datum.id);
     const formattedValue = formatGraphValue(item.value, formatOptions);
     const formattedWithPercentage = `${formattedValue} (${item.percentage.toFixed(1)}%)`;
 
@@ -126,7 +143,7 @@ export const GraphWidgetPieChart = ({
             dotColor: item.colorScheme.solid,
           },
         ]}
-        showClickHint={isDefined(tooltipHref)}
+        showClickHint={isDefined(dataItem?.to)}
       />
     );
   };
@@ -174,9 +191,11 @@ export const GraphWidgetPieChart = ({
     );
   };
 
+  const hasClickableItems = data.some((item) => isDefined(item.to));
+
   return (
     <StyledContainer id={id}>
-      <StyledChartContainer>
+      <StyledChartContainer $isClickable={hasClickableItems}>
         <ResponsivePie
           data={data}
           innerRadius={0.8}
