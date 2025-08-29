@@ -96,7 +96,11 @@ export class BillingService {
       ({ metadata }) => metadata.productKey === productKey,
     );
 
-    return targetProduct?.billingPrices.filter(({ active }) => active) ?? [];
+    return (
+      targetProduct?.billingPrices.filter(
+        ({ active, interval }) => active && interval === subscription.interval,
+      ) ?? []
+    );
   }
 
   async canBillMeteredProduct(
