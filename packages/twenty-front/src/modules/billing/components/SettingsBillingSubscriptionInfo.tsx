@@ -26,6 +26,7 @@ import {
   IconCircleX,
   IconTag,
   IconUsers,
+  IconCalendarRepeat,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -40,6 +41,7 @@ import {
   useSwitchSubscriptionToEnterprisePlanMutation,
   useSwitchSubscriptionToYearlyIntervalMutation,
 } from '~/generated-metadata/graphql';
+import { beautifyExactDate } from '~/utils/date-utils';
 import { useEndSubscriptionTrialPeriod } from '@/billing/hooks/useEndSubscriptionTrialPeriod';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 
@@ -93,9 +95,6 @@ export const SettingsBillingSubscriptionInfo = () => {
   const { endTrialPeriod, isLoading: isEndTrialPeriodLoading } =
     useEndSubscriptionTrialPeriod();
 
-  const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
-    usePermissionFlagMap();
-
   const planDescriptor = isProPlan
     ? { color: 'sky' as const, label: t`Pro` }
     : isEnterprisePlan
@@ -110,6 +109,8 @@ export const SettingsBillingSubscriptionInfo = () => {
   ) : undefined;
 
   const intervalLabel = capitalize(getIntervalLabel(isMonthlyPlan, true));
+  const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
+    usePermissionFlagMap();
 
   const seats =
     currentWorkspace?.currentBillingSubscription?.billingSubscriptionItems?.find(
@@ -121,6 +122,9 @@ export const SettingsBillingSubscriptionInfo = () => {
   const baseProductPrices = pricesData?.plans as BillingPlanOutput[];
 
   const formattedPrices = formatMonthlyPrices(baseProductPrices);
+
+  const renewDate =
+    currentWorkspace?.currentBillingSubscription?.currentPeriodEnd;
 
   const yearlyPrice =
     formattedPrices?.[
@@ -199,6 +203,13 @@ export const SettingsBillingSubscriptionInfo = () => {
           Icon={IconCalendarEvent}
           value={intervalLabel}
         />
+        {renewDate && (
+          <SubscriptionInfoRowContainer
+            label={t`Renewal date`}
+            Icon={IconCalendarRepeat}
+            value={beautifyExactDate(renewDate)}
+          />
+        )}
         <SubscriptionInfoRowContainer
           label={t`Seats`}
           Icon={IconUsers}
