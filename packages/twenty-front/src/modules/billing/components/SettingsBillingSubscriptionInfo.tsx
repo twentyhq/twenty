@@ -205,7 +205,7 @@ export const SettingsBillingSubscriptionInfo = () => {
         />
         {renewDate && (
           <SubscriptionInfoRowContainer
-            label={t`Renew date`}
+            label={t`Renewal date`}
             Icon={IconCalendarRepeat}
             value={beautifyExactDate(renewDate)}
           />
