@@ -144,16 +144,16 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     const workspaceViewWithoutOrphansResources = workspaceViews.map((view) => ({
       ...view,
       viewFields: view.viewFields.filter(
-        (field) => !orphanViewFieldIds.includes(field.fieldMetadataId),
+        (viewField) => !orphanViewFieldIds.includes(viewField.id),
       ),
       viewFilters: view.viewFilters.filter(
-        (filter) => !orphanViewFilterIds.includes(filter.fieldMetadataId),
+        (viewFilter) => !orphanViewFilterIds.includes(viewFilter.id),
       ),
       viewSorts: view.viewSorts.filter(
-        (sort) => !orphanViewSortIds.includes(sort.fieldMetadataId),
+        (viewSort) => !orphanViewSortIds.includes(viewSort.id),
       ),
       viewGroups: view.viewGroups.filter(
-        (group) => !orphanViewGroupIds.includes(group.fieldMetadataId),
+        (viewGroup) => !orphanViewGroupIds.includes(viewGroup.id),
       ),
     }));
 
