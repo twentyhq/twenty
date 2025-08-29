@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import type { CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { BillingPlanKey, SubscriptionInterval } from '~/generated/graphql';
 
@@ -25,5 +26,14 @@ export const isEnterprisePlan = (
   currentWorkspace?.currentBillingSubscription?.metadata?.['plan'] ===
   BillingPlanKey.ENTERPRISE;
 
-export const getIntervalLabel = (isMonthly: boolean): string =>
-  isMonthly ? 'monthly' : 'yearly';
+export const getIntervalLabel = (
+  isMonthly: boolean,
+  asAdjective: boolean = false,
+): string =>
+  isMonthly && asAdjective
+    ? t`monthly`
+    : asAdjective
+      ? t`yearly`
+      : isMonthly
+        ? t`month`
+        : t`year`;
