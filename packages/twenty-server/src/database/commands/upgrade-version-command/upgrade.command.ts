@@ -239,7 +239,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
 
     const commands_140: VersionCommands = {
       beforeSyncMetadata: [],
-      afterSyncMetadata: [this.populateMessageFolderFieldsCommand],
+      afterSyncMetadata: [],
     };
 
     const commands_150: VersionCommands = {
@@ -247,7 +247,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.removeFavoriteViewRelation,
         this.addPositionsToWorkflowVersionsAndWorkflowRuns,
       ],
-      afterSyncMetadata: [],
+      afterSyncMetadata: [this.populateMessageFolderFieldsCommand],
     };
 
     this.allCommands = {
