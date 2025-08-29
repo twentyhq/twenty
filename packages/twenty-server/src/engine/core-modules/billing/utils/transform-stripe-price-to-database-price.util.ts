@@ -40,6 +40,7 @@ export const transformStripePriceToDatabasePrice = (data: Stripe.Price) => {
       ? getBillingPriceTiersMode(data.tiers_mode)
       : undefined,
     recurring: data.recurring === null ? undefined : data.recurring,
+    metadata: data.metadata,
   };
 };
 

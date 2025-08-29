@@ -69,10 +69,12 @@ export const USER_QUERY_FRAGMENT = gql`
         status
         interval
         metadata
+        currentPeriodEnd
         billingSubscriptionItems {
           id
           hasReachedCurrentPeriodCap
           quantity
+          stripePriceId
           billingProduct {
             name
             description
