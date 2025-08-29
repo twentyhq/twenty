@@ -249,3 +249,71 @@ export const MKT_CUSTOMER_TAGS_OPTIONS: FieldMetadataComplexOption[] = [
     position: 8,
   },
 ];
+
+export enum MKT_CUSTOMER_COMPANY_SIZE {
+  SMALL = 'SMALL',
+  MEDIUM = 'MEDIUM',
+  LARGE = 'LARGE',
+  OTHER = 'OTHER',
+}
+
+export const MKT_CUSTOMER_COMPANY_SIZE_OPTIONS: FieldMetadataComplexOption[] = [
+  {
+    value: MKT_CUSTOMER_COMPANY_SIZE.SMALL,
+    label: 'Small (1-10 employees)',
+    color: 'green',
+    position: 1,
+  },
+  {
+    value: MKT_CUSTOMER_COMPANY_SIZE.MEDIUM,
+    label: 'Medium (11-50 employees)',
+    color: 'yellow',
+    position: 2,
+  },
+  {
+    value: MKT_CUSTOMER_COMPANY_SIZE.LARGE,
+    label: 'Large (51-200 employees)',
+    color: 'red',
+    position: 3,
+  },
+  {
+    value: MKT_CUSTOMER_COMPANY_SIZE.OTHER,
+    label: 'Other (201+ employees)',
+    color: 'gray',
+    position: 4,
+  },
+];
+
+export enum MKT_CUSTOMER_INDUSTRY {
+  IT = 'IT',
+  FINANCE = 'FINANCE',
+  MANUFACTURING = 'MANUFACTURING',
+  OTHER = 'OTHER',
+}
+
+export const MKT_CUSTOMER_INDUSTRY_OPTIONS: FieldMetadataComplexOption[] = [
+  {
+    value: MKT_CUSTOMER_INDUSTRY.IT,
+    label: 'Information Technology',
+    color: 'blue',
+    position: 1,
+  },
+  {
+    value: MKT_CUSTOMER_INDUSTRY.FINANCE,
+    label: 'Financial Services',
+    color: 'green',
+    position: 2,
+  },
+  {
+    value: MKT_CUSTOMER_INDUSTRY.MANUFACTURING,
+    label: 'Manufacturing',
+    color: 'red',
+    position: 3,
+  },
+  {
+    value: MKT_CUSTOMER_INDUSTRY.OTHER,
+    label: 'Other',
+    color: 'gray',
+    position: 4,
+  },
+];
