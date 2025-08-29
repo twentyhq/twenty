@@ -9,27 +9,45 @@
 
 export const MKT_CUSTOMER_FIELD_IDS = {
   // fields
-  name: 'bc3ac7d1-2e1c-4fe0-a43d-0fa961552cb6',
-  mktCustomerCode: 'b4c82d9d-c204-4ef1-a636-0c9f2779c1ff',
   mktWorkspaceId: '3393c870-41c7-4efd-b57a-cb497569a30a',
+  mktCustomerCode: 'b4c82d9d-c204-4ef1-a636-0c9f2779c1ff',
   type: '204aef63-5db1-43d4-b1d6-d01f36df5558',
+  //basic_info
+  name: 'bc3ac7d1-2e1c-4fe0-a43d-0fa961552cb6',
+  companyName: 'b10c1418-0f38-4f63-8363-b7fbf3f7dd94',
+  companyShortName: '93a7137b-ed7a-4b18-9562-4b50cbd9b17e',
   email: 'fbd13f57-d03b-48c4-9e23-ef6c0a412244',
   phone: '9e0b45ef-5ca8-4d71-a087-96aae069287f',
   taxCode: '57685c22-fab6-4be8-85b2-5e4420274698',
-  companyName: 'b10c1418-0f38-4f63-8363-b7fbf3f7dd94',
+  //business_info
   address: '35ce5702-4618-4488-8e00-5d78a96596c3',
+  website: '27926764-1e7d-4270-9166-5cbf7168ed6b',
+  companySize: '88518a1b-9972-4e92-a069-f8633f14eb1b',
+  industry: 'be335fd5-11b0-433a-b08c-93bf2770461a',
+  legalRepresentative: 'de344573-4d20-4454-921b-6f29b8a5cb46', //"name": "Nguyễn Văn An", "id_number": "012345678901", "position": "Giám đốc"
+  //system_info
   status: '805eddee-a726-41c2-a996-74c3f976b2cc',
   tier: '4103c22a-f604-4f24-aa53-799cb97ce6d0',
   lifecycleStage: 'dae0670f-1e04-407b-bc1e-e8c40c9834d7',
   registrationDate: '7fb838c4-c6d2-4965-9685-3aa15f861aab',
+  tags: '91d6687b-a5a5-490c-ba07-970c6dce9d9b',
+  //tracking_info
+  licensesCount: '049fb64d-b2bd-455d-9a9a-0696c504cad4',
   totalOrderValue: '3142cb73-ef17-4d43-87e5-d32551bea490',
+  lastPurchase: '80667a1e-286e-454b-aef7-79fad59c32cc',
+  customerLtv: 'c157a7d7-5fa7-429a-a302-6976833a1bd4',
   churnRiskScore: '04537b93-1bb2-47d7-b5b6-46f37c07dc4b',
   engagementScore: 'fa17e8e2-a908-48c0-aad6-81a220a99946',
-  tags: '91d6687b-a5a5-490c-ba07-970c6dce9d9b',
+  //other_info
+  notes: '5083861a-a392-49bb-96fc-18058d4edb52',
+  //assignment
+  assignedDate: 'a378fa80-0e59-4d27-bced-2f6fc41d0deb',
+  assignmentReason: '28c2efa3-ed29-4878-9a0e-116aa9327bc8',
   // relations
   salesId: '78be7072-50eb-4edc-81fc-c3e25658d7bd',
-  supportId: 'a1ed4146-269d-46a5-ac7e-7cba043974e1',
+  supportId: 'a1ed4146-269d-46a5-ac7e-7cba043974e1', //support_backup_id
   affiliateId: '940e3766-a147-4cf4-bd50-805b1c8c8880',
+
   mktLicenses: '4ac28e1a-089a-45d3-9725-b40861e98b15',
   mktCustomerTags: '697d8df5-d0a2-4d28-af51-bfa55be23934',
   // common relations or fields
@@ -38,6 +56,33 @@ export const MKT_CUSTOMER_FIELD_IDS = {
   accountOwner: '0ccf0130-8651-4165-b061-a1d1c3bd7aa7',
   timelineActivities: '78be7072-50eb-4edc-81fc-c3e25658d7bd',
   searchVector: 'a1ed4146-269d-46a5-ac7e-7cba043974e1',
+
+  // personal_info
+  personalIdNumber: 'b0a84eb5-ab93-4c2e-990a-b3f47953b51f', // CCCD/CMND
+
+  // payment_info
+  billingAddress: '5d298c21-9f32-4670-a9ef-8123b8f8a201', // billing address
+  bankInfo: '1b7c2cae-e65e-43f5-b061-2e416a4e2b2d', // JSON: {bankName, accountNumber, swiftCode}
+  paymentPreferences: '3a2aba2c-a36d-4117-af00-8e0929148f2e', // example: "credit_card", "bank_transfer"
+
+  // social_info
+  fanpage: 'e6cf2880-144d-4dff-bd9f-d4eecb822e59', // Facebook page or social link
+  socialLinks: 'd49e183d-0fbc-40a6-93cd-8cf653822ac5', // JSON: {facebook, linkedin, zalo}
+
+  // tracking_info
+  trialStatus: '95e58f9f-5281-4df9-9e38-cfcad2acd808', // Current/Expired/Converted
+  customerAcquisitionCost: 'acaca736-9651-423e-a1d4-1a79936020b0', // CAC
+
+  // assignment_history
+  assignmentHistory: '434bbfb7-6bc5-40f8-8726-06aa7812269d',
+  // JSON array [{salesId, supportId, reason, assignedDate}]
+
+  // validation_info
+  emailValidated: 'c6bfeb94-d822-457a-87d9-c8e4db6b4317', // boolean
+  phoneValidated: '1ff58d4d-9c10-45a1-a7b2-42f6d83dccd2', // boolean
+  idNumberValidated: '3afb4d6f-2e95-42f9-9297-6dbc70242e82', // boolean
+  taxCodeValidated: 'e3ea4d21-09a0-4f2a-872e-4f00cd7a621c', // boolean
+  mergeSuggestion: 'ee1d2375-75fc-4575-8374-18120e31d740', // JSON: suggested duplicate customers
 };
 
 export const MKT_TAG_FIELD_IDS = {
