@@ -4,6 +4,8 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { MessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
+
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -21,11 +23,6 @@ type SyncMessageFoldersInput = {
   connectedAccount: MessageChannelWorkspaceEntity['connectedAccount'];
   manager: WorkspaceEntityManager;
 };
-
-type MessageFolder = Pick<
-  MessageFolderWorkspaceEntity,
-  'name' | 'isSynced' | 'isSentFolder' | 'externalId'
->;
 
 @Injectable()
 export class SyncMessageFoldersService {
