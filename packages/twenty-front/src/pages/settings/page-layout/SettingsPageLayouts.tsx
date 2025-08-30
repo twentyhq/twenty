@@ -23,7 +23,7 @@ import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { savedPageLayoutsState } from './states/savedPageLayoutsState';
 
 const StyledTableRow = styled(TableRow)`
-  grid-template-columns: 180px 120px 100px 36px;
+  grid-template-columns: 180px 120px 100px 36px 36px;
 `;
 
 const StyledNameTableCell = styled(TableCell)`
@@ -103,7 +103,8 @@ export const SettingsPageLayouts = () => {
                 <TableCell>{layout.type}</TableCell>
                 <TableCell>{layout.widgets.length}</TableCell>
                 <StyledActionTableCell
-                  onClick={() => {
+                  onClick={(event) => {
+                    event.stopPropagation();
                     handleDelete(layout.id);
                   }}
                 >
