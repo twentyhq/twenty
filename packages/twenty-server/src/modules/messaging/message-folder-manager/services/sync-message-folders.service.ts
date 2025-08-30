@@ -18,6 +18,7 @@ import { MessageFolderName } from 'src/modules/messaging/message-import-manager/
 type SyncMessageFoldersInput = {
   workspaceId: string;
   messageChannelId: string;
+  connectedAccount: MessageChannelWorkspaceEntity['connectedAccount'];
   manager: WorkspaceEntityManager;
 };
 
@@ -37,27 +38,9 @@ export class SyncMessageFoldersService {
   ) {}
 
   async syncMessageFolders(input: SyncMessageFoldersInput): Promise<void> {
-    const { workspaceId, messageChannelId, manager } = input;
+    const { workspaceId, messageChannelId, connectedAccount, manager } = input;
 
-    const messageChannelRepository =
-      await this.twentyORMGlobalManager.getRepositoryForWorkspace<MessageChannelWorkspaceEntity>(
-        workspaceId,
-        'messageChannel',
-      );
-
-    const messageChannel = await messageChannelRepository.findOne(
-      {
-        where: { id: messageChannelId },
-        relations: ['connectedAccount'],
-      },
-      manager,
-    );
-
-    if (!messageChannel) {
-      throw new Error(`Message channel ${messageChannelId} not found`);
-    }
-
-    const folders = await this.discoverAllFolders(messageChannel);
+    const folders = await this.discoverAllFolders(connectedAccount);
 
     await this.upsertDiscoveredFolders({
       workspaceId,
@@ -84,12 +67,16 @@ export class SyncMessageFoldersService {
         'messageFolder',
       );
 
+    const existingFolderMap = await this.buildExistingFolderMap({
+      messageChannelId,
+      messageFolderRepository,
+    });
+
     for (const folder of folders) {
-      const existingFolder = await this.findExistingFolder({
-        messageChannelId,
+      const existingFolder = this.findExistingFolderInMap(
+        existingFolderMap,
         folder,
-        messageFolderRepository,
-      });
+      );
 
       if (existingFolder) {
         await messageFolderRepository.update(
@@ -121,44 +108,57 @@ export class SyncMessageFoldersService {
   }
 
   async discoverAllFolders(
-    messageChannel: MessageChannelWorkspaceEntity,
+    connectedAccount: MessageChannelWorkspaceEntity['connectedAccount'],
   ): Promise<MessageFolder[]> {
-    switch (messageChannel.connectedAccount.provider) {
+    switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
         return await this.gmailGetAllFoldersService.getAllMessageFolders(
-          messageChannel.connectedAccount,
+          connectedAccount,
         );
       case ConnectedAccountProvider.MICROSOFT:
         return await this.microsoftGetAllFoldersService.getAllMessageFolders(
-          messageChannel.connectedAccount,
+          connectedAccount,
         );
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
         return await this.imapGetAllFoldersService.getAllMessageFolders(
-          messageChannel.connectedAccount,
+          connectedAccount,
         );
       default:
         throw new Error(
-          `Provider ${messageChannel.connectedAccount.provider} is not supported`,
+          `Provider ${connectedAccount.provider} is not supported`,
         );
     }
   }
 
-  private async findExistingFolder({
+  private async buildExistingFolderMap({
     messageChannelId,
-    folder,
     messageFolderRepository,
   }: {
     messageChannelId: string;
-    folder: MessageFolder;
     messageFolderRepository: WorkspaceRepository<MessageFolderWorkspaceEntity>;
-  }): Promise<MessageFolderWorkspaceEntity | null> {
+  }): Promise<Map<string, MessageFolderWorkspaceEntity>> {
+    const existingFolders = await messageFolderRepository.find({
+      where: { messageChannelId },
+    });
+
+    const existingFolderMap = new Map<string, MessageFolderWorkspaceEntity>();
+
+    for (const existingFolder of existingFolders) {
+      if (isDefined(existingFolder.externalId)) {
+        existingFolderMap.set(existingFolder.externalId, existingFolder);
+      }
+      existingFolderMap.set(existingFolder.name, existingFolder);
+    }
+
+    return existingFolderMap;
+  }
+
+  private findExistingFolderInMap(
+    existingFolderMap: Map<string, MessageFolderWorkspaceEntity>,
+    folder: MessageFolder,
+  ): MessageFolderWorkspaceEntity | undefined {
     if (isDefined(folder.externalId)) {
-      const existingFolder = await messageFolderRepository.findOne({
-        where: {
-          messageChannelId,
-          externalId: folder.externalId,
-        },
-      });
+      const existingFolder = existingFolderMap.get(folder.externalId);
 
       if (existingFolder) {
         return existingFolder;
@@ -167,12 +167,7 @@ export class SyncMessageFoldersService {
 
     const legacyFolderName = this.getLegacyFolderName(folder);
 
-    return await messageFolderRepository.findOne({
-      where: {
-        messageChannelId,
-        name: legacyFolderName,
-      },
-    });
+    return existingFolderMap.get(legacyFolderName);
   }
 
   private getLegacyFolderName(folder: MessageFolder): string {
