@@ -7,6 +7,7 @@ import { type PluggableList, unified } from 'unified';
 import { visit } from 'unist-util-visit';
 
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { formatDisplayDate } from '~/utils/format/formatDisplayDate';
 
 type ReleaseNote = {
   slug: string;
@@ -104,7 +105,9 @@ export const SettingsReleasesChangelogContent = () => {
         {releases.map((release) => (
           <React.Fragment key={release.slug}>
             <StyledReleaseHeader>{release.release}</StyledReleaseHeader>
-            <StyledReleaseDate>{release.date}</StyledReleaseDate>
+            <StyledReleaseDate>
+              {formatDisplayDate(release.date)}
+            </StyledReleaseDate>
             <div dangerouslySetInnerHTML={{ __html: release.html }}></div>
           </React.Fragment>
         ))}
