@@ -1,7 +1,3 @@
-import { GraphWidgetBarChart } from '@/dashboards/graphs/components/GraphWidgetBarChart';
-import { GraphWidgetGaugeChart } from '@/dashboards/graphs/components/GraphWidgetGaugeChart';
-import { GraphWidgetNumberChart } from '@/dashboards/graphs/components/GraphWidgetNumberChart';
-import { GraphWidgetPieChart } from '@/dashboards/graphs/components/GraphWidgetPieChart';
 import { SaveButton } from '@/settings/components/SaveAndCancelButtons/SaveButton';
 import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPageFullWidthContainer';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -38,6 +34,7 @@ import {
   getWidgetSize,
   getWidgetTitle,
 } from './utils/getDefaultWidgetData';
+import { renderWidget } from './utils/widgetRegistry';
 
 const StyledGridContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -402,48 +399,7 @@ export const PageLayoutEdition = () => {
                     title={widget.title}
                     onRemove={() => handleRemoveWidget(widget.id)}
                   >
-                    {widget.type === 'GRAPH' &&
-                      widget.graphType === 'number' && (
-                        <GraphWidgetNumberChart
-                          value={widget.data.value}
-                          trendPercentage={widget.data.trendPercentage}
-                        />
-                      )}
-                    {widget.type === 'GRAPH' &&
-                      widget.graphType === 'gauge' && (
-                        <GraphWidgetGaugeChart
-                          data={{
-                            value: widget.data.value,
-                            min: widget.data.min,
-                            max: widget.data.max,
-                            label: widget.data.label,
-                          }}
-                          displayType="percentage"
-                          showValue={true}
-                          id={`gauge-chart-${widget.id}`}
-                        />
-                      )}
-                    {widget.type === 'GRAPH' && widget.graphType === 'pie' && (
-                      <GraphWidgetPieChart
-                        data={widget.data.items}
-                        showLegend={true}
-                        displayType="percentage"
-                        id={`pie-chart-${widget.id}`}
-                      />
-                    )}
-                    {widget.type === 'GRAPH' && widget.graphType === 'bar' && (
-                      <GraphWidgetBarChart
-                        data={widget.data.items}
-                        indexBy={widget.data.indexBy}
-                        keys={widget.data.keys}
-                        seriesLabels={widget.data.seriesLabels}
-                        layout={widget.data.layout}
-                        showLegend={true}
-                        showGrid={true}
-                        displayType="number"
-                        id={`bar-chart-${widget.id}`}
-                      />
-                    )}
+                    {renderWidget(widget)}
                   </PageLayoutWidgetPlaceholder>
                 </div>
               ))
