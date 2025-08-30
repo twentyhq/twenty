@@ -3,34 +3,33 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
-import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { type NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { useRecoilValue } from 'recoil';
 import {
-    IconApi,
-    IconApps,
-    IconAt,
-    IconCalendarEvent,
-    IconColorSwatch,
-    type IconComponent,
-    IconCurrencyDollar,
-    IconDoorEnter,
-    IconFunction,
-    IconHierarchy2,
-    IconKey,
-    IconLayout,
-    IconLock,
-    IconMail,
-    IconRocket,
-    IconServer,
-    IconSettings,
-    IconSparkles,
-    IconUserCircle,
-    IconUsers,
-    IconWorld
+  IconApi,
+  IconApps,
+  IconAt,
+  IconCalendarEvent,
+  IconColorSwatch,
+  type IconComponent,
+  IconCurrencyDollar,
+  IconDoorEnter,
+  IconFunction,
+  IconHierarchy2,
+  IconKey,
+  IconLayout,
+  IconLock,
+  IconMail,
+  IconRocket,
+  IconServer,
+  IconSettings,
+  IconSparkles,
+  IconUserCircle,
+  IconUsers,
+  IconWorld,
 } from 'twenty-ui/display';
 import { FeatureFlagKey, PermissionFlagType } from '~/generated/graphql';
 
@@ -64,7 +63,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const isAdminEnabled =
     (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
     false;
-  const labPublicFeatureFlags = useRecoilValue(labPublicFeatureFlagsState);
   const isAIEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
   const isPageLayoutEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
@@ -116,10 +114,10 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
-          label: t`Domains`,
-          path: SettingsPath.Domains,
-          Icon: IconWorld,
-          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
+          label: t`Data model`,
+          path: SettingsPath.Objects,
+          Icon: IconHierarchy2,
+          isHidden: !permissionMap[PermissionFlagType.DATA_MODEL],
         },
         {
           label: t`Members`,
@@ -134,6 +132,12 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !permissionMap[PermissionFlagType.ROLES],
         },
         {
+          label: t`Domains`,
+          path: SettingsPath.Domains,
+          Icon: IconWorld,
+          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
+        },
+        {
           label: t`Billing`,
           path: SettingsPath.Billing,
           Icon: IconCurrencyDollar,
@@ -141,13 +145,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
             !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
-          label: t`Data model`,
-          path: SettingsPath.Objects,
-          Icon: IconHierarchy2,
-          isHidden: !permissionMap[PermissionFlagType.DATA_MODEL],
-        },
-        {
-          label: t`Page Layout`,
+          label: t`Layout`,
           path: SettingsPath.PageLayoutEdition,
           Icon: IconLayout,
           isHidden:

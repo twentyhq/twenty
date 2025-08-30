@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
 
-
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { NameField } from '@/settings/workspace/components/NameField';

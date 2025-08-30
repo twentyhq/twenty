@@ -1,7 +1,10 @@
 import { SettingsLabContent } from '@/settings/lab/components/SettingsLabContent';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import { SETTINGS_RELEASES_TABS, SETTINGS_RELEASES_TABS_ID } from '../constants';
+import {
+  SETTINGS_RELEASES_TABS,
+  SETTINGS_RELEASES_TABS_ID,
+} from '../constants';
 import { SettingsReleasesChangelogContent } from './SettingsReleasesChangelogContent';
 
 export const SettingsReleasesTabContent = () => {

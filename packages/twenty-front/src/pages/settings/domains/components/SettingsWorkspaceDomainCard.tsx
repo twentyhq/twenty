@@ -1,4 +1,3 @@
-
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsCard } from '@/settings/components/SettingsCard';

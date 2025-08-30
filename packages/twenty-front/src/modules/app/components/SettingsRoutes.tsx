@@ -338,7 +338,7 @@ const SettingsAdminConfigVariableDetails = lazy(() =>
 );
 
 const SettingsReleases = lazy(() =>
-  import('~/pages/settings/releases').then((module) => ({
+  import('~/pages/settings/releases/SettingsReleases').then((module) => ({
     default: module.SettingsReleases,
   })),
 );
