@@ -1435,6 +1435,11 @@ msgstr "Continua con Google"
 msgid "Continue with Microsoft"
 msgstr "Continua con Microsoft"
 
+#. js-lingui-id: XgMEX4
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Control which folders are synced"
+msgstr ""
+
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
 msgid "Copied to clipboard"
@@ -2912,6 +2917,16 @@ msgstr "Prime 5 righe"
 msgid "First Name"
 msgstr "Nome"
 
+#. js-lingui-id: kNqMMd
+#: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
+msgid "Folder"
+msgstr ""
+
+#. js-lingui-id: NRJn87
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Folder Management"
+msgstr ""
+
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
 msgid "Forgot your password?"
@@ -4206,6 +4221,11 @@ msgstr "Nessun dato trovato"
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "No description"
 msgstr "Nessuna descrizione"
+
+#. js-lingui-id: 1jgsYC
+#: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard.tsx
+msgid "No folders found for this account"
+msgstr ""
 
 #. js-lingui-id: xlUOps
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
@@ -5864,6 +5884,11 @@ msgstr "Passa a Organizzazione"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Yearly"
 msgstr "Passa all'annuale"
+
+#. js-lingui-id: Nu4DdT
+#: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
+msgid "Sync"
+msgstr ""
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx

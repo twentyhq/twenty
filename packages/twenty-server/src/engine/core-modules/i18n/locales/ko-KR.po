@@ -1042,6 +1042,12 @@ msgstr "실행자"
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
 msgstr "{connectFieldName}의 모든 작업에서 동일한 제약 필드를 일관되게 사용하는 것이 기대됩니다."
 
+#. js-lingui-id: 5KfWxA
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "External ID"
+msgstr ""
+
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite"
@@ -1504,6 +1510,12 @@ msgstr "하루 종일"
 msgid "Is Organizer"
 msgstr "주최자 여부"
 
+#. js-lingui-id: VrHWrH
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Is Sent Folder"
+msgstr ""
+
 #. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1511,6 +1523,12 @@ msgstr "주최자 여부"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Is Sync Enabled"
 msgstr "동기화 사용 여부"
+
+#. js-lingui-id: BHCUSr
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Is Synced"
+msgstr ""
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts

@@ -1435,6 +1435,11 @@ msgstr "Συνέχεια με Google"
 msgid "Continue with Microsoft"
 msgstr "Συνέχεια με τη Microsoft"
 
+#. js-lingui-id: XgMEX4
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Control which folders are synced"
+msgstr ""
+
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
 msgid "Copied to clipboard"
@@ -2912,6 +2917,16 @@ msgstr "Πρώτες 5 γραμμές"
 msgid "First Name"
 msgstr "Όνομα"
 
+#. js-lingui-id: kNqMMd
+#: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
+msgid "Folder"
+msgstr ""
+
+#. js-lingui-id: NRJn87
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Folder Management"
+msgstr ""
+
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
 msgid "Forgot your password?"
@@ -4206,6 +4221,11 @@ msgstr "Δεν βρέθηκαν δεδομένα"
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "No description"
 msgstr "Χωρίς περιγραφή"
+
+#. js-lingui-id: 1jgsYC
+#: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard.tsx
+msgid "No folders found for this account"
+msgstr ""
 
 #. js-lingui-id: xlUOps
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
@@ -5866,6 +5886,11 @@ msgstr "Αλλαγή σε οργανωτικό"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Switch to Yearly"
 msgstr "Αλλαγή σε ετήσια"
+
+#. js-lingui-id: Nu4DdT
+#: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
+msgid "Sync"
+msgstr ""
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
