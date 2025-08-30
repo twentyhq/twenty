@@ -6,7 +6,7 @@ import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPa
 import { SettingsPath } from '@/types/SettingsPath';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Responsive,
   WidthProvider,
@@ -18,13 +18,22 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { v4 as uuidv4 } from 'uuid';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { PageLayoutSidePanel } from './components/PageLayoutSidePanel';
 import { PageLayoutWidgetPlaceholder } from './components/PageLayoutWidgetPlaceholder';
-import { mockLayouts, mockWidgets } from './mocks/mockWidgets';
+import { type GraphSubType, type Widget } from './mocks/mockWidgets';
 import {
   pageLayoutLayoutsState,
   pageLayoutWidgetsState,
 } from './states/pageLayoutState';
+import {
+  getDefaultWidgetData,
+  getWidgetSize,
+  getWidgetTitle,
+} from './utils/getDefaultWidgetData';
 
 const StyledGridContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -85,15 +94,52 @@ export const PageLayoutEdition = () => {
   const [pageLayoutLayouts, setPageLayoutLayouts] = useRecoilState(
     pageLayoutLayoutsState,
   );
+  const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
 
   const handleLayoutChange = (_: Layout[], allLayouts: Layouts) => {
     setPageLayoutLayouts(allLayouts);
   };
 
-  const handleAddWidget = () => {
-    // temp: Populate with mock data when empty placeholder is clicked
-    setPageLayoutWidgets(mockWidgets);
-    setPageLayoutLayouts(mockLayouts);
+  const handleOpenSidePanel = () => {
+    setIsSidePanelOpen(true);
+  };
+
+  const handleCloseSidePanel = () => {
+    setIsSidePanelOpen(false);
+  };
+
+  const handleCreateWidget = (widgetType: 'GRAPH', graphType: GraphSubType) => {
+    const widgetData = getDefaultWidgetData(graphType);
+
+    const existingWidgetCount = pageLayoutWidgets.filter(
+      (w) => w.type === widgetType && w.graphType === graphType,
+    ).length;
+    const title = getWidgetTitle(graphType, existingWidgetCount);
+
+    const newWidget: Widget = {
+      id: `widget-${uuidv4()}`,
+      type: widgetType,
+      graphType,
+      title,
+      data: widgetData,
+    };
+
+    setPageLayoutWidgets((prev) => [...prev, newWidget]);
+
+    const size = getWidgetSize(graphType);
+
+    const newLayout = {
+      i: newWidget.id,
+      x: 0,
+      y: 0,
+      ...size,
+    };
+
+    setPageLayoutLayouts((prev) => ({
+      lg: [...(prev.lg || []), newLayout],
+      md: [...(prev.md || []), newLayout],
+      sm: [...(prev.sm || []), { ...newLayout, w: 1 }],
+    }));
   };
 
   const isEmptyState = pageLayoutWidgets.length === 0;
@@ -139,6 +185,17 @@ export const PageLayoutEdition = () => {
           children: t`Page Layout`,
         },
       ]}
+      actionButton={
+        !isEmptyState && (
+          <Button
+            Icon={IconPlus}
+            title={t`Add Widget`}
+            size="small"
+            variant="secondary"
+            onClick={handleOpenSidePanel}
+          />
+        )
+      }
     >
       <StyledGridContainer>
         <StyledGridOverlay>
@@ -158,12 +215,12 @@ export const PageLayoutEdition = () => {
           isDraggable={true}
           isResizable={true}
           draggableHandle=".drag-handle"
-          compactType="horizontal" // to be determined, lets get this clear before merge!
+          compactType="vertical"
           preventCollision={false}
           onLayoutChange={handleLayoutChange}
         >
           {isEmptyState ? (
-            <div key="empty-placeholder" onClick={handleAddWidget}>
+            <div key="empty-placeholder" onClick={handleOpenSidePanel}>
               <PageLayoutWidgetPlaceholder title="" isEmpty={true} />
             </div>
           ) : (
@@ -202,11 +259,11 @@ export const PageLayoutEdition = () => {
                       data={widget.data.items}
                       indexBy={widget.data.indexBy}
                       keys={widget.data.keys}
-                      showLegend={widget.data.showLegend ?? true}
-                      showGrid={widget.data.showGrid ?? true}
-                      displayType={widget.data.displayType ?? 'number'}
-                      xAxisLabel={widget.data.xAxisLabel}
-                      yAxisLabel={widget.data.yAxisLabel}
+                      seriesLabels={widget.data.seriesLabels}
+                      layout={widget.data.layout}
+                      showLegend={true}
+                      showGrid={true}
+                      displayType="number"
                       id={`bar-chart-${widget.id}`}
                     />
                   )}
@@ -216,6 +273,11 @@ export const PageLayoutEdition = () => {
           )}
         </ResponsiveGridLayout>
       </StyledGridContainer>
+      <PageLayoutSidePanel
+        isOpen={isSidePanelOpen}
+        onClose={handleCloseSidePanel}
+        onCreateWidget={handleCreateWidget}
+      />
     </SettingsPageFullWidthContainer>
   );
 };
