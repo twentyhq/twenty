@@ -4,14 +4,8 @@ export const formatGithubPublishedAtDisplayDate = (
   const date = new Date(dateString);
   if (Number.isNaN(date.getTime())) return '';
 
-  const now = new Date();
-  const isCurrentYear = date.getFullYear() === now.getFullYear();
-
-  const formatter = new Intl.DateTimeFormat('en-US', {
-    month: isCurrentYear ? 'long' : 'short',
-    day: 'numeric',
-    ...(isCurrentYear ? {} : { year: 'numeric' }),
-  });
-
-  return formatter.format(date);
+  const day = date.getDate();
+  const month = date.toLocaleString('en-US', { month: 'short' });
+  const year = date.getFullYear();
+  return `${day} ${month}, ${year}`;
 };

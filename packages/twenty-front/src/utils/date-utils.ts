@@ -205,12 +205,11 @@ export const formatISOStringToHumanReadableDate = (date: string) => {
 
 export const formatToHumanReadableDate = (date: Date | string) => {
   const parsedJSDate = parseDate(date).toJSDate();
-
-  return new Intl.DateTimeFormat(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(parsedJSDate);
+  // Format: 20 Dec, 2025
+  const day = parsedJSDate.getDate();
+  const month = parsedJSDate.toLocaleString('en-US', { month: 'short' });
+  const year = parsedJSDate.getFullYear();
+  return `${day} ${month}, ${year}`;
 };
 
 export const formatToHumanReadableDateTime = (date: Date | string) => {
