@@ -21,8 +21,9 @@ const StyledTrendPercentageValue = styled.span`
 `;
 
 const StyledContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
+  height: 100%;
   justify-content: space-between;
   width: 100%;
 `;

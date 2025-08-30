@@ -33,7 +33,7 @@ export const useRecordGroupReorderConfirmationModal = ({
     useState<Parameters<OnDragEndResponder> | null>(null);
 
   const { reorderRecordGroups } = useReorderRecordGroups({
-    viewBarId: recordIndexId,
+    recordIndexId,
     viewType,
   });
 

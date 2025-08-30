@@ -201,10 +201,6 @@ export const GraphWidgetGaugeChart = ({
           onClick={handleClick}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          radialAxisStart={null}
-          radialAxisEnd={null}
-          circularAxisInner={null}
-          circularAxisOuter={null}
           layers={['bars', renderValueEndLine]}
         />
         {showValue && (
