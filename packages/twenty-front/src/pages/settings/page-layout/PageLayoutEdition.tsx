@@ -142,6 +142,16 @@ export const PageLayoutEdition = () => {
     }));
   };
 
+  const handleRemoveWidget = (widgetId: string) => {
+    setPageLayoutWidgets((prev) => prev.filter((w) => w.id !== widgetId));
+
+    setPageLayoutLayouts((prev) => ({
+      lg: (prev.lg || []).filter((layout) => layout.i !== widgetId),
+      md: (prev.md || []).filter((layout) => layout.i !== widgetId),
+      sm: (prev.sm || []).filter((layout) => layout.i !== widgetId),
+    }));
+  };
+
   const isEmptyState = pageLayoutWidgets.length === 0;
 
   const emptyLayout: Layouts = {
@@ -226,7 +236,10 @@ export const PageLayoutEdition = () => {
           ) : (
             pageLayoutWidgets.map((widget) => (
               <div key={widget.id}>
-                <PageLayoutWidgetPlaceholder title={widget.title}>
+                <PageLayoutWidgetPlaceholder
+                  title={widget.title}
+                  onRemove={() => handleRemoveWidget(widget.id)}
+                >
                   {widget.type === 'GRAPH' && widget.graphType === 'number' && (
                     <GraphWidgetNumberChart
                       value={widget.data.value}
