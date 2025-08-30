@@ -101,7 +101,7 @@ export const PageLayoutSidePanelHeader = ({
         <CommandMenuContextChipGroups contextChips={contextChips} />
       </StyledContentContainer>
 
-      <StyledCloseButtonWrapper isVisible={true}>
+      <StyledCloseButtonWrapper>
         <Button
           Icon={IconX}
           dataTestId="page-layout-close-side-panel-button"

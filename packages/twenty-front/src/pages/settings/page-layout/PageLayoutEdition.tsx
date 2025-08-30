@@ -278,9 +278,8 @@ export const PageLayoutEdition = () => {
 
   const gridRows = useMemo(() => {
     const allLayouts = [
-      ...(currentLayouts.lg || []),
-      ...(currentLayouts.md || []),
-      ...(currentLayouts.sm || []),
+      ...(currentLayouts.desktop || []),
+      ...(currentLayouts.mobile || []),
     ];
 
     const contentRows =
