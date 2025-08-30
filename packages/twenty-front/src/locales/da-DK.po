@@ -220,7 +220,7 @@ msgstr "Et delt miljø, hvor du vil kunne administrere dine kunde relationer sam
 #. js-lingui-id: /cSHSG
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "A verification email has been sent to"
-msgstr "En bekr 6ftelses-e-mail er sendt til"
+msgstr "En bekræftelsesmail er sendt til"
 
 #. js-lingui-id: JE9zuL
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
