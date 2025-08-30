@@ -7,7 +7,6 @@ import {
   type QueueOptions,
   Worker,
 } from 'bullmq';
-import { type Record } from 'cloudflare/core';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
