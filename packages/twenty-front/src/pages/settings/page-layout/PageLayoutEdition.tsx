@@ -1,3 +1,4 @@
+import { GraphWidgetBarChart } from '@/dashboards/graphs/components/GraphWidgetBarChart';
 import { GraphWidgetGaugeChart } from '@/dashboards/graphs/components/GraphWidgetGaugeChart';
 import { GraphWidgetNumberChart } from '@/dashboards/graphs/components/GraphWidgetNumberChart';
 import { GraphWidgetPieChart } from '@/dashboards/graphs/components/GraphWidgetPieChart';
@@ -5,6 +6,7 @@ import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPa
 import { SettingsPath } from '@/types/SettingsPath';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
 import {
   Responsive,
   WidthProvider,
@@ -15,6 +17,7 @@ import {
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { useRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { PageLayoutWidgetPlaceholder } from './components/PageLayoutWidgetPlaceholder';
 import { mockLayouts, mockWidgets } from './mocks/mockWidgets';
@@ -25,13 +28,13 @@ import {
 
 const StyledGridContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
   box-sizing: border-box;
   flex: 1;
+  min-height: 100%;
   overflow-y: auto;
-  padding: ${({ theme }) => theme.spacing(2)};
+  overflow-x: hidden;
   position: relative;
+  padding: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 
   .react-grid-placeholder {
@@ -57,14 +60,10 @@ const StyledGridOverlay = styled.div`
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
   }
-
-  @media (max-width: 768px) and (min-width: 481px) {
-    grid-template-columns: repeat(12, 1fr);
-  }
 `;
 
 const StyledGridCell = styled.div`
-  background: 'transparent';
+  background: transparent;
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.sm};
 `;
@@ -105,6 +104,30 @@ export const PageLayoutEdition = () => {
     sm: [{ i: 'empty-placeholder', x: 0, y: 0, w: 1, h: 4, static: true }],
   };
 
+  // TODO: I dont like this lets back to this after -- need help!
+  // the plan is to fill the height on default, also fill up the virtual cells when the grid container height elongates
+  const gridRows = useMemo(() => {
+    const allLayouts = [
+      ...(pageLayoutLayouts.lg || []),
+      ...(pageLayoutLayouts.md || []),
+      ...(pageLayoutLayouts.sm || []),
+    ];
+
+    const contentRows =
+      allLayouts.length === 0
+        ? 0
+        : Math.max(...allLayouts.map((item) => item.y + item.h));
+
+    if (isDefined(typeof window)) return contentRows + 25;
+
+    const viewportHeight = window.innerHeight;
+    const containerHeight = viewportHeight * 0.8;
+    const rowTotalHeight = 50 + 8;
+    const viewportRows = Math.ceil(containerHeight / rowTotalHeight);
+
+    return Math.max(viewportRows, contentRows + 10);
+  }, [pageLayoutLayouts]);
+
   return (
     <SettingsPageFullWidthContainer
       links={[
@@ -119,7 +142,7 @@ export const PageLayoutEdition = () => {
     >
       <StyledGridContainer>
         <StyledGridOverlay>
-          {Array.from({ length: 12 * 20 }).map((_, i) => (
+          {Array.from({ length: 12 * gridRows }).map((_, i) => (
             <StyledGridCell key={i} />
           ))}
         </StyledGridOverlay>
@@ -129,12 +152,13 @@ export const PageLayoutEdition = () => {
           breakpoints={{ lg: 1024, md: 768, sm: 480 }}
           cols={{ lg: 12, md: 12, sm: 1 }}
           rowHeight={50}
+          maxCols={12}
           containerPadding={[0, 0]}
           margin={[8, 8]}
           isDraggable={true}
           isResizable={true}
           draggableHandle=".drag-handle"
-          compactType="vertical"
+          compactType="horizontal" // to be determined, lets get this clear before merge!
           preventCollision={false}
           onLayoutChange={handleLayoutChange}
         >
@@ -171,6 +195,19 @@ export const PageLayoutEdition = () => {
                       showLegend={true}
                       displayType="percentage"
                       id={`pie-chart-${widget.id}`}
+                    />
+                  )}
+                  {widget.type === 'bar' && (
+                    <GraphWidgetBarChart
+                      data={widget.data.items}
+                      indexBy={widget.data.indexBy}
+                      keys={widget.data.keys}
+                      showLegend={widget.data.showLegend ?? true}
+                      showGrid={widget.data.showGrid ?? true}
+                      displayType={widget.data.displayType ?? 'number'}
+                      xAxisLabel={widget.data.xAxisLabel}
+                      yAxisLabel={widget.data.yAxisLabel}
+                      id={`bar-chart-${widget.id}`}
                     />
                   )}
                 </PageLayoutWidgetPlaceholder>

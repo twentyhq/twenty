@@ -30,24 +30,21 @@ const meta: Meta<typeof PageLayoutWidgetPlaceholder> = {
 export default meta;
 type Story = StoryObj<typeof PageLayoutWidgetPlaceholder>;
 
-export const Empty: Story = {
-  args: {
-    isEmpty: true,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Empty widget placeholder state with dashed border',
-      },
-    },
-  },
-};
-
 export const WithNumberChart: Story = {
   args: {
     title: 'Sales Pipeline',
     children: <GraphWidgetNumberChart value="1,234" trendPercentage={12.5} />,
   },
+  render: (args) => (
+    <div style={{ width: '300px', height: '100px' }}>
+      <PageLayoutWidgetPlaceholder
+        title={args.title}
+        isEmpty={args.isEmpty}
+        onRemove={args.onRemove}
+        children={args.children}
+      />
+    </div>
+  ),
 };
 
 export const WithGaugeChart: Story = {
@@ -67,6 +64,16 @@ export const WithGaugeChart: Story = {
       />
     ),
   },
+  render: (args) => (
+    <div style={{ width: '300px', height: '400px' }}>
+      <PageLayoutWidgetPlaceholder
+        title={args.title}
+        isEmpty={args.isEmpty}
+        onRemove={args.onRemove}
+        children={args.children}
+      />
+    </div>
+  ),
 };
 
 export const EmptyState: Story = {
@@ -80,6 +87,16 @@ export const EmptyState: Story = {
       },
     },
   },
+  render: (args) => (
+    <div style={{ width: '500px', height: '300px' }}>
+      <PageLayoutWidgetPlaceholder
+        title={args.title}
+        isEmpty={args.isEmpty}
+        onRemove={args.onRemove}
+        children={args.children}
+      />
+    </div>
+  ),
 };
 
 export const WithPieChart: Story = {
@@ -125,32 +142,172 @@ export const WithPieChart: Story = {
       />
     ),
   },
+  render: (args) => (
+    <div style={{ width: '300px', height: '500px' }}>
+      <PageLayoutWidgetPlaceholder
+        title={args.title}
+        isEmpty={args.isEmpty}
+        onRemove={args.onRemove}
+        children={args.children}
+      />
+    </div>
+  ),
 };
 
-export const WithCloseButton: Story = {
+export const SmallWidget: Story = {
   args: {
-    title: 'Removable Widget',
-    onRemove: () => {},
-    children: <GraphWidgetNumberChart value="42" trendPercentage={-5.2} />,
-  },
-};
-
-export const NoContent: Story = {
-  args: {
-    title: 'Empty Content Widget',
+    title: 'Small Widget (2x2 grid)',
+    children: <GraphWidgetNumberChart value="42" trendPercentage={5} />,
   },
   parameters: {
     docs: {
       description: {
-        story: 'Widget with title but no content',
+        story: 'Simulates a 2x2 grid cell widget',
       },
     },
   },
+  render: (args) => (
+    <div style={{ width: '300px', height: '100px' }}>
+      <PageLayoutWidgetPlaceholder
+        title={args.title}
+        isEmpty={args.isEmpty}
+        onRemove={args.onRemove}
+        children={args.children}
+      />
+    </div>
+  ),
 };
 
-export const LongTitle: Story = {
+export const MediumWidget: Story = {
   args: {
-    title: 'This is a very long widget title that should be handled gracefully',
-    children: <GraphWidgetNumberChart value="999" trendPercentage={0} />,
+    title: 'Medium Widget (4x3 grid)',
+    children: (
+      <GraphWidgetGaugeChart
+        data={{
+          value: 0.75,
+          min: 0,
+          max: 1,
+          label: 'Progress',
+        }}
+        displayType="percentage"
+        showValue={true}
+        id="gauge-medium"
+      />
+    ),
   },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Simulates a 4x3 grid cell widget',
+      },
+    },
+  },
+  render: (args) => (
+    <div style={{ width: '400px', height: '250px' }}>
+      <PageLayoutWidgetPlaceholder
+        title={args.title}
+        isEmpty={args.isEmpty}
+        onRemove={args.onRemove}
+        children={args.children}
+      />
+    </div>
+  ),
+};
+
+export const LargeWidget: Story = {
+  args: {
+    title: 'Large Widget (6x4 grid)',
+    children: (
+      <GraphWidgetPieChart
+        data={[
+          { id: 'a', value: 40, label: 'Category A', to: '/a' },
+          { id: 'b', value: 30, label: 'Category B', to: '/b' },
+          { id: 'c', value: 20, label: 'Category C', to: '/c' },
+          { id: 'd', value: 10, label: 'Category D', to: '/d' },
+        ]}
+        showLegend={true}
+        displayType="percentage"
+        id="pie-large"
+      />
+    ),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Simulates a 6x4 grid cell widget',
+      },
+    },
+  },
+  render: (args) => (
+    <div style={{ width: '600px', height: '400px' }}>
+      <PageLayoutWidgetPlaceholder
+        title={args.title}
+        isEmpty={args.isEmpty}
+        onRemove={args.onRemove}
+        children={args.children}
+      />
+    </div>
+  ),
+};
+
+export const WideWidget: Story = {
+  args: {
+    title: 'Wide Widget (8x2 grid)',
+    children: (
+      <GraphWidgetNumberChart value="1,234,567" trendPercentage={23.4} />
+    ),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Simulates a wide 8x2 grid cell widget',
+      },
+    },
+  },
+  render: (args) => (
+    <div style={{ width: '800px', height: '200px' }}>
+      <PageLayoutWidgetPlaceholder
+        title={args.title}
+        isEmpty={args.isEmpty}
+        onRemove={args.onRemove}
+        children={args.children}
+      />
+    </div>
+  ),
+};
+
+export const TallWidget: Story = {
+  args: {
+    title: 'Tall Widget (3x6 grid)',
+    children: (
+      <GraphWidgetGaugeChart
+        data={{
+          value: 0.33,
+          min: 0,
+          max: 1,
+          label: 'Utilization',
+        }}
+        displayType="percentage"
+        showValue={true}
+        id="gauge-tall"
+      />
+    ),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Simulates a tall 3x6 grid cell widget',
+      },
+    },
+  },
+  render: (args) => (
+    <div style={{ width: '300px', height: '500px' }}>
+      <PageLayoutWidgetPlaceholder
+        title={args.title}
+        isEmpty={args.isEmpty}
+        onRemove={args.onRemove}
+        children={args.children}
+      />
+    </div>
+  ),
 };
