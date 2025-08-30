@@ -95,7 +95,7 @@ msgstr ""
 #. js-lingui-id: J2Vio9
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "{nickname} - {price}$"
-msgstr ""
+msgstr "{nickname} - {price}$"
 
 #. js-lingui-id: OeIgEg
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
@@ -706,7 +706,7 @@ msgstr "مفاتيح واجهة برمجة التطبيقات"
 #. js-lingui-id: FfSJ1Y
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 msgid "API Keys"
-msgstr ""
+msgstr "مفاتيح واجهة برمجة التطبيقات"
 
 #. js-lingui-id: vByqA1
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -749,7 +749,7 @@ msgstr "واجهات برمجة التطبيقات"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "APIs & Webhooks"
-msgstr ""
+msgstr "واجهة برمجة التطبيقات والويب هوك"
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -1107,7 +1107,7 @@ msgstr "التغيير إلى سنوي؟"
 #. js-lingui-id: CWe7wB
 #: src/pages/settings/releases/SettingsReleases.tsx
 msgid "Changelog"
-msgstr ""
+msgstr "سجل التغييرات"
 
 #. js-lingui-id: AHZflp
 #: src/modules/ai/components/AIChatEmptyState.tsx
@@ -1640,7 +1640,7 @@ msgstr "إنشاء عرض"
 #. js-lingui-id: SiPp29
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 msgid "Create webhook"
-msgstr ""
+msgstr "إنشاء ربط ويب"
 
 #. js-lingui-id: dkAPxi
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -1670,17 +1670,17 @@ msgstr "إنشاء مساحة العمل الخاصة بك"
 #. js-lingui-id: Efny36
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Credit Plan"
-msgstr ""
+msgstr "خطة الرصيد"
 
 #. js-lingui-id: c1ojkj
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credit Usage"
-msgstr ""
+msgstr "استخدام الاعتمادات"
 
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credits Used"
-msgstr ""
+msgstr "الإعتمادات المستخدمة"
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -2183,7 +2183,7 @@ msgstr "النطاق"
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Domains"
-msgstr ""
+msgstr "النطاقات"
 
 #. js-lingui-id: 7kVRe6
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -2553,7 +2553,7 @@ msgstr "خطأ في تحديث الدور"
 #. js-lingui-id: nB84mG
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
 msgid "Error validating approved access domain"
-msgstr ""
+msgstr "خطأ في التحقق من نطاق الوصول الموافق عليه"
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2776,7 +2776,7 @@ msgstr "فشل في إزالة التجاوز"
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Failed to update price."
-msgstr ""
+msgstr "فشل في تحديث السعر."
 
 #. js-lingui-id: Dzh4a2
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -3848,7 +3848,7 @@ msgstr "تم نسخ إعدادات MCP إلى الحافظة"
 #. js-lingui-id: upbzgm
 #: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
 msgid "Me"
-msgstr ""
+msgstr "أنا"
 
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
@@ -3932,12 +3932,12 @@ msgstr "مراقبة تنفيذ مهمة مزامنة البريد الإلكت�
 #. js-lingui-id: kY2ll9
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "month"
-msgstr ""
+msgstr "شهر"
 
 #. js-lingui-id: rdfE9o
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "monthly"
-msgstr ""
+msgstr "شهري"
 
 #. js-lingui-id: 2FYpfJ
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
@@ -4398,7 +4398,7 @@ msgstr "عدد الكسور العشرية"
 #. js-lingui-id: tYOaY8
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Number of new credits allocated every {recurringInterval}"
-msgstr ""
+msgstr "عدد الاعتمادات الجديدة المخصصة كل {recurringInterval}"
 
 #. js-lingui-id: qg5nhQ
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
@@ -4546,7 +4546,7 @@ msgstr "حقل المخرجات {fieldNumber}"
 #. js-lingui-id: nITdXs
 #: src/pages/settings/page-layout/PageLayoutEdition.tsx
 msgid "Page Layout"
-msgstr ""
+msgstr "تخطيط الصفحة"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -4687,7 +4687,7 @@ msgstr "يرجى البحث عن مستخدم أولاً"
 #. js-lingui-id: 8YnlGz
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Please start your subscription first"
-msgstr ""
+msgstr "يرجى بدء اشتراكك أولاً"
 
 #. js-lingui-id: 6nsIo3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4748,7 +4748,7 @@ msgstr "الذكاءات الاصطناعية السابقة"
 #. js-lingui-id: jmc+FY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Price updated."
-msgstr ""
+msgstr "تم تحديث السعر."
 
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -4935,7 +4935,7 @@ msgstr "إزالة الخيار"
 #. js-lingui-id: oQjB9l
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Renewal date"
-msgstr ""
+msgstr "تاريخ التجديد"
 
 #. js-lingui-id: Ee8JBW
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -5654,7 +5654,7 @@ msgstr "خادم SMTP"
 #. js-lingui-id: ISDzCY
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "SMTP Username"
-msgstr ""
+msgstr "اسم مستخدم SMTP"
 
 #. js-lingui-id: 4oakKm
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5670,7 +5670,7 @@ msgstr "بعض"
 #. js-lingui-id: wTrpxV
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Sorry, something went wrong"
-msgstr ""
+msgstr "عذرًا، حدث خطأ ما"
 
 #. js-lingui-id: f6Hub0
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
@@ -5718,7 +5718,7 @@ msgstr "ابدأ محادثة مع وكيل AI الخاص بك للحصول عل
 #. js-lingui-id: s+K73L
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Start Your Subscription"
-msgstr ""
+msgstr "ابدأ اشتراكك"
 
 #. js-lingui-id: RS0o7b
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
@@ -5802,7 +5802,7 @@ msgstr "اشترك"
 #. js-lingui-id: ShbDuS
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscribe Now"
-msgstr ""
+msgstr "اشترك الآن"
 
 #. js-lingui-id: WVzGc2
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -5888,7 +5888,7 @@ msgstr "مزامنة مسميات الكائنات وأسماء الواجهات
 #. js-lingui-id: D+NlUC
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "System"
-msgstr ""
+msgstr "النظام"
 
 #. js-lingui-id: ERq5FY
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -6186,12 +6186,12 @@ msgstr "غدًا"
 #. js-lingui-id: YT/cKI
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Track your {intervalLabel} workflow credit consumption."
-msgstr ""
+msgstr "تتبع استهلاكك من اعتمادات سير العمل {intervalLabel}."
 
 #. js-lingui-id: lhkaAC
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Trial"
-msgstr ""
+msgstr "تجربة"
 
 #. js-lingui-id: wN0jHF
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
@@ -6297,7 +6297,7 @@ msgstr "الأوكرانية"
 #. js-lingui-id: l+ALBd
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
-msgstr ""
+msgstr "غير قادر على الوصول إلى الخلفية"
 
 #. js-lingui-id: wSXm5S
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -6577,7 +6577,7 @@ msgstr "نحن ندعم صيغ PNG و JPEG و GIF المربعة بمقاس يق
 #. js-lingui-id: 4pcfmN
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "We will activate your paid plan. Do you want to proceed?"
-msgstr ""
+msgstr "سوف نقوم بتفعيل خطتك المدفوعة. هل ترغب في المتابعة؟"
 
 #. js-lingui-id: KIfYq0
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -6697,7 +6697,7 @@ msgstr "حذف مساحة العمل"
 #. js-lingui-id: i1AiTd
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Workspace Domain"
-msgstr ""
+msgstr "نطاق مساحة العمل"
 
 #. js-lingui-id: J22jAC
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -6740,12 +6740,12 @@ msgstr "اكتب وصفًا لهذا الوكيل"
 #. js-lingui-id: 7qI8sJ
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "year"
-msgstr ""
+msgstr "عام"
 
 #. js-lingui-id: dfmB8/
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "yearly"
-msgstr ""
+msgstr "سنوي"
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
