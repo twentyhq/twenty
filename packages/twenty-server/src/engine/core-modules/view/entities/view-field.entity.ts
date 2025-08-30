@@ -47,7 +47,7 @@ export class ViewFieldEntity extends SyncableEntity {
   @Column({ nullable: false, type: 'int', default: 0 })
   size: number;
 
-  @Column({ nullable: false, type: 'int', default: 0 })
+  @Column({ nullable: false, type: 'double precision', default: 0 })
   position: number;
 
   @Column({

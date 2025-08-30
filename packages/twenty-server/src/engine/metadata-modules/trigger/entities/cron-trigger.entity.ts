@@ -11,6 +11,8 @@ import {
   Index,
 } from 'typeorm';
 
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
+
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 export type CronTriggerSettings = {
@@ -19,7 +21,7 @@ export type CronTriggerSettings = {
 
 @Entity({ name: 'cronTrigger', schema: 'core' })
 @Index('IDX_CRON_TRIGGER_WORKSPACE_ID', ['workspaceId'])
-export class CronTrigger {
+export class CronTrigger extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

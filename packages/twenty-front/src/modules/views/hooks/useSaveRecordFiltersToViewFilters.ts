@@ -65,11 +65,11 @@ export const useSaveRecordFiltersToViewFilters = () => {
         await deleteViewFilterRecords(viewFilterIdsToDelete);
       },
     [
-      createViewFilterRecords,
-      deleteViewFilterRecords,
-      updateViewFilterRecords,
-      currentRecordFiltersCallbackState,
       currentView,
+      currentRecordFiltersCallbackState,
+      createViewFilterRecords,
+      updateViewFilterRecords,
+      deleteViewFilterRecords,
     ],
   );
 

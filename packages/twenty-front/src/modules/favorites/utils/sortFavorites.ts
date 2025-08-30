@@ -27,10 +27,7 @@ export const sortFavorites = (
 ): ProcessedFavorite[] => {
   return favorites
     .map((favorite) => {
-      if (
-        isDefined(favorite.viewId) &&
-        isDefined(favorite.forWorkspaceMemberId)
-      ) {
+      if (isDefined(favorite.viewId)) {
         const view = views.find((view) => view.id === favorite.viewId);
 
         if (!isDefined(view)) {

@@ -3,6 +3,13 @@ import { SubscriptionInfoRowContainer } from '@/billing/components/SubscriptionI
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { formatMonthlyPrices } from '@/billing/utils/formatMonthlyPrices';
+import {
+  isMonthlyPlan as isMonthlyPlanFn,
+  isYearlyPlan as isYearlyPlanFn,
+  isProPlan as isProPlanFn,
+  isEnterprisePlan as isEnterprisePlanFn,
+  getIntervalLabel,
+} from '@/billing/utils/subscriptionFlags';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -10,14 +17,16 @@ import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
 import {
   H2Title,
   IconArrowUp,
   IconCalendarEvent,
+  IconCircleX,
   IconTag,
   IconUsers,
+  IconCalendarRepeat,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -25,16 +34,22 @@ import {
   BillingPlanKey,
   type BillingPlanOutput,
   BillingProductKey,
+  PermissionFlagType,
   SubscriptionInterval,
   SubscriptionStatus,
   useBillingBaseProductPricesQuery,
   useSwitchSubscriptionToEnterprisePlanMutation,
   useSwitchSubscriptionToYearlyIntervalMutation,
 } from '~/generated-metadata/graphql';
+import { beautifyExactDate } from '~/utils/date-utils';
+import { useEndSubscriptionTrialPeriod } from '@/billing/hooks/useEndSubscriptionTrialPeriod';
+import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 
 const SWITCH_BILLING_INTERVAL_MODAL_ID = 'switch-billing-interval-modal';
 
 const SWITCH_BILLING_PLAN_MODAL_ID = 'switch-billing-plan-modal';
+
+const END_TRIAL_PERIOD_MODAL_ID = 'end-trial-period-modal';
 
 const StyledSwitchButtonContainer = styled.div`
   align-items: center;
@@ -64,36 +79,38 @@ export const SettingsBillingSubscriptionInfo = () => {
     currentWorkspaceState,
   );
 
-  const isMonthlyPlan =
-    currentWorkspace?.currentBillingSubscription?.interval ===
-    SubscriptionInterval.Month;
+  const isMonthlyPlan = isMonthlyPlanFn(currentWorkspace);
 
-  const isYearlyPlan =
-    currentWorkspace?.currentBillingSubscription?.interval ===
-    SubscriptionInterval.Year;
+  const isYearlyPlan = isYearlyPlanFn(currentWorkspace);
 
-  const isProPlan =
-    currentWorkspace?.currentBillingSubscription?.metadata['plan'] ===
-    BillingPlanKey.PRO;
+  const isProPlan = isProPlanFn(currentWorkspace);
 
-  const isEnterprisePlan =
-    currentWorkspace?.currentBillingSubscription?.metadata['plan'] ===
-    BillingPlanKey.ENTERPRISE;
+  const isEnterprisePlan = isEnterprisePlanFn(currentWorkspace);
+
+  const isTrialPeriod = subscriptionStatus === SubscriptionStatus.Trialing;
 
   const canSwitchSubscription =
     subscriptionStatus !== SubscriptionStatus.PastDue;
 
-  const planTag = isProPlan ? (
-    <Tag color={'sky'} text={t`Pro`} />
-  ) : isEnterprisePlan ? (
-    <Tag color={'purple'} text={t`Organization`} />
+  const { endTrialPeriod, isLoading: isEndTrialPeriodLoading } =
+    useEndSubscriptionTrialPeriod();
+
+  const planDescriptor = isProPlan
+    ? { color: 'sky' as const, label: t`Pro` }
+    : isEnterprisePlan
+      ? { color: 'purple' as const, label: t`Organization` }
+      : undefined;
+
+  const planTag = planDescriptor ? (
+    <>
+      <Tag color={planDescriptor.color} text={planDescriptor.label} />
+      {isTrialPeriod && <Tag color="blue" text={t`Trial`} />}
+    </>
   ) : undefined;
 
-  const intervalLabel = isMonthlyPlan
-    ? t`Monthly`
-    : isYearlyPlan
-      ? t`Yearly`
-      : undefined;
+  const intervalLabel = capitalize(getIntervalLabel(isMonthlyPlan, true));
+  const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
+    usePermissionFlagMap();
 
   const seats =
     currentWorkspace?.currentBillingSubscription?.billingSubscriptionItems?.find(
@@ -105,6 +122,9 @@ export const SettingsBillingSubscriptionInfo = () => {
   const baseProductPrices = pricesData?.plans as BillingPlanOutput[];
 
   const formattedPrices = formatMonthlyPrices(baseProductPrices);
+
+  const renewDate =
+    currentWorkspace?.currentBillingSubscription?.currentPeriodEnd;
 
   const yearlyPrice =
     formattedPrices?.[
@@ -183,6 +203,13 @@ export const SettingsBillingSubscriptionInfo = () => {
           Icon={IconCalendarEvent}
           value={intervalLabel}
         />
+        {renewDate && (
+          <SubscriptionInfoRowContainer
+            label={t`Renewal date`}
+            Icon={IconCalendarRepeat}
+            value={beautifyExactDate(renewDate)}
+          />
+        )}
         <SubscriptionInfoRowContainer
           label={t`Seats`}
           Icon={IconUsers}
@@ -208,6 +235,15 @@ export const SettingsBillingSubscriptionInfo = () => {
             disabled={!canSwitchSubscription}
           />
         )}
+        {isTrialPeriod && hasPermissionToEndTrialPeriod && (
+          <Button
+            Icon={IconCircleX}
+            title={t`Subscribe Now`}
+            variant="secondary"
+            onClick={() => openModal(END_TRIAL_PERIOD_MODAL_ID)}
+            disabled={isEndTrialPeriodLoading}
+          />
+        )}
       </StyledSwitchButtonContainer>
       <ConfirmationModal
         modalId={SWITCH_BILLING_INTERVAL_MODAL_ID}
@@ -228,6 +264,15 @@ export const SettingsBillingSubscriptionInfo = () => {
         onConfirmClick={switchPlan}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent={'blue'}
+      />
+      <ConfirmationModal
+        modalId={END_TRIAL_PERIOD_MODAL_ID}
+        title={t`Start Your Subscription`}
+        subtitle={t`We will activate your paid plan. Do you want to proceed?`}
+        onConfirmClick={endTrialPeriod}
+        confirmButtonText={t`Confirm`}
+        confirmButtonAccent={'blue'}
+        loading={isEndTrialPeriodLoading}
       />
     </Section>
   );

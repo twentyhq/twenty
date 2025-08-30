@@ -13,14 +13,14 @@ import { FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-module
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
-import { isRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-flat-field-metadata.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { findFlatObjectMetadataWithFlatFieldMapsInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-with-flat-field-maps-in-flat-object-metadata-maps-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { FlatFieldMetadataPropertyUpdate } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/flat-field-metadata-property-update.type';
 import { type UpdateFieldAction } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
 import { serializeDefaultValueV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/utils/serialize-default-value-v2.util';
@@ -154,7 +154,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
 
       for (const property of compositeType.properties) {
-        if (isRelationFieldMetadataType(property.type)) {
+        if (isMorphOrRelationFieldMetadataType(property.type)) {
           throw new WorkspaceMigrationRunnerException(
             'Relation field metadata in composite type is not supported yet',
             WorkspaceMigrationRunnerExceptionCode.NOT_SUPPORTED,
@@ -179,7 +179,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         });
       }
     } else {
-      if (isRelationFlatFieldMetadata(flatFieldMetadata)) {
+      if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
         throw new WorkspaceMigrationRunnerException(
           'Relation field metadata name update is not supported yet',
           WorkspaceMigrationRunnerExceptionCode.NOT_SUPPORTED,
@@ -226,7 +226,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       const compositeType = getCompositeTypeOrThrow(flatFieldMetadata.type);
 
       for (const property of compositeType.properties) {
-        if (isRelationFieldMetadataType(property.type)) {
+        if (isMorphOrRelationFieldMetadataType(property.type)) {
           throw new WorkspaceMigrationRunnerException(
             'Relation field metadata in composite type is not supported yet',
             WorkspaceMigrationRunnerExceptionCode.NOT_SUPPORTED,

@@ -6,6 +6,7 @@ import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObje
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
@@ -207,7 +208,7 @@ export const RecordTableHeaderCell = ({
 
   const isMobile = useIsMobile();
 
-  const { labelIdentifierFieldMetadataItem } = useRecordTableContextOrThrow();
+  const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
 
   const isLabelIdentifier =
     recordField.fieldMetadataItemId === labelIdentifierFieldMetadataItem?.id;

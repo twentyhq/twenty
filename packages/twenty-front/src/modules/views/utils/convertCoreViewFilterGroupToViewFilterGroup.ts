@@ -3,7 +3,14 @@ import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLog
 import { type CoreViewFilterGroup } from '~/generated/graphql';
 
 export const convertCoreViewFilterGroupToViewFilterGroup = (
-  coreViewFilterGroup: Omit<CoreViewFilterGroup, 'workspaceId'>,
+  coreViewFilterGroup: Pick<
+    CoreViewFilterGroup,
+    | 'id'
+    | 'viewId'
+    | 'parentViewFilterGroupId'
+    | 'logicalOperator'
+    | 'positionInViewFilterGroup'
+  >,
 ): ViewFilterGroup => {
   return {
     __typename: 'ViewFilterGroup',

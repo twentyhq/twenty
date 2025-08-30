@@ -243,7 +243,7 @@ const computePackageJsonFilesAndExportsConfig = (
   return {
     exports,
     typesVersions: { '*': typesVersionsEntries },
-    files: ['dist', 'assets', ...entrypoints],
+    files: ['dist', ...entrypoints],
   };
 };
 

@@ -102,6 +102,7 @@ export class BillingSubscription {
   @Column({ nullable: false, default: 'USD' })
   currency: string;
 
+  @Field(() => Date, { nullable: true })
   @Column({
     nullable: false,
     type: 'timestamptz',

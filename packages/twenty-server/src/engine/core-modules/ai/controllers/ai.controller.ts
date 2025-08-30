@@ -17,6 +17,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AIBillingService } from 'src/engine/core-modules/ai/services/ai-billing.service';
 
 export interface ChatRequest {
   messages: CoreMessage[];
@@ -30,6 +31,7 @@ export class AiController {
   constructor(
     private readonly aiService: AiService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly aiBillingService: AIBillingService,
   ) {}
 
   @Post()
@@ -60,9 +62,24 @@ export class AiController {
     }
 
     try {
-      const result = this.aiService.streamText(messages, {
-        temperature,
-        maxTokens,
+      // TODO: Add support for custom models
+      const model = this.aiService.getModel(undefined);
+
+      const result = this.aiService.streamText({
+        messages,
+        options: {
+          temperature,
+          maxTokens,
+          model,
+        },
+      });
+
+      result.usage.then((usage) => {
+        this.aiBillingService.calculateAndBillUsage(
+          model.modelId,
+          usage,
+          workspace.id,
+        );
       });
 
       result.pipeDataStreamToResponse(res);

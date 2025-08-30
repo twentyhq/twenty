@@ -50,8 +50,8 @@ export class ViewFilterEntity extends SyncableEntity {
   @Column({ nullable: true, type: 'uuid' })
   viewFilterGroupId?: string | null;
 
-  @Column({ nullable: true, type: 'int' })
-  positionInViewFilterGroup?: number | null;
+  @Column({ nullable: true, type: 'double precision' })
+  positionInViewFilterGroup: number | null;
 
   @Column({ nullable: true, type: 'text', default: null })
   subFieldName?: string | null;

@@ -22,13 +22,14 @@ export const RecordTableCellFieldContextGeneric = ({
 }: RecordTableCellFieldContextGenericProps) => {
   const { recordId, isRecordReadOnly } = useRecordTableRowContextOrThrow();
 
+  const { objectMetadataItem, objectPermissions } =
+    useRecordTableContextOrThrow();
+
   const {
-    objectMetadataItem,
-    objectPermissions,
+    indexIdentifierUrl,
+    objectPermissionsByObjectMetadataId,
     fieldDefinitionByFieldMetadataItemId,
-  } = useRecordTableContextOrThrow();
-  const { indexIdentifierUrl, objectPermissionsByObjectMetadataId } =
-    useRecordIndexContextOrThrow();
+  } = useRecordIndexContextOrThrow();
 
   const fieldDefinition =
     fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
