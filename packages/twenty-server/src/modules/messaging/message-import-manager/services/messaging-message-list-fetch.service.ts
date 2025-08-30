@@ -77,12 +77,6 @@ export class MessagingMessageListFetchService {
         },
       };
 
-      this.logger.log(
-        `messageChannelId: ${messageChannel.id} Message channel with fresh tokens: ${JSON.stringify(
-          messageChannelWithFreshTokens,
-        )}`,
-      );
-
       const datasource = await this.twentyORMManager.getDatasource();
 
       await this.syncMessageFoldersService.syncMessageFolders({
