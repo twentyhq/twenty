@@ -297,6 +297,12 @@ const SettingsObjectFieldEdit = lazy(() =>
   ),
 );
 
+const SettingsPageLayouts = lazy(() =>
+  import('~/pages/settings/page-layout/SettingsPageLayouts').then((module) => ({
+    default: module.SettingsPageLayouts,
+  })),
+);
+
 const PageLayoutEdition = lazy(() =>
   import('~/pages/settings/page-layout/PageLayoutEdition').then((module) => ({
     default: module.PageLayoutEdition,
@@ -611,8 +617,13 @@ export const SettingsRoutes = ({
           />
         </>
       )}
+      <Route path={SettingsPath.PageLayout} element={<SettingsPageLayouts />} />
       <Route
-        path={SettingsPath.PageLayoutEdition}
+        path={SettingsPath.PageLayoutNew}
+        element={<PageLayoutEdition />}
+      />
+      <Route
+        path={SettingsPath.PageLayoutEdit}
         element={<PageLayoutEdition />}
       />
       <Route

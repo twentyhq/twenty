@@ -7,7 +7,7 @@ export const getDefaultWidgetData = (graphType: GraphSubType) => {
         value: '1,234',
         trendPercentage: 15.2,
       };
-    
+
     case 'gauge':
       return {
         value: 0.7,
@@ -15,7 +15,7 @@ export const getDefaultWidgetData = (graphType: GraphSubType) => {
         max: 1,
         label: 'Progress',
       };
-    
+
     case 'pie':
       return {
         items: [
@@ -25,7 +25,7 @@ export const getDefaultWidgetData = (graphType: GraphSubType) => {
           { id: 'segment4', value: 17, label: 'Segment D' },
         ],
       };
-    
+
     case 'bar':
       return {
         items: [
@@ -40,7 +40,7 @@ export const getDefaultWidgetData = (graphType: GraphSubType) => {
         seriesLabels: { value: 'Value' },
         layout: 'vertical' as const,
       };
-    
+
     case 'line':
       return {
         items: [
@@ -53,13 +53,16 @@ export const getDefaultWidgetData = (graphType: GraphSubType) => {
         indexBy: 'x',
         keys: ['y'],
       };
-    
+
     default:
       return {};
   }
 };
 
-export const getWidgetTitle = (graphType: GraphSubType, index: number): string => {
+export const getWidgetTitle = (
+  graphType: GraphSubType,
+  index: number,
+): string => {
   const baseNames: Record<GraphSubType, string> = {
     number: 'Number',
     gauge: 'Gauge',
@@ -68,7 +71,7 @@ export const getWidgetTitle = (graphType: GraphSubType, index: number): string =
     line: 'Line Chart',
     area: 'Area Chart',
   };
-  
+
   return `${baseNames[graphType] || 'Widget'} ${index + 1}`;
 };
 

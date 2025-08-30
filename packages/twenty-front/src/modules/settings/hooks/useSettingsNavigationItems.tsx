@@ -142,8 +142,8 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !permissionMap[PermissionFlagType.DATA_MODEL],
         },
         {
-          label: t`Page Layout`,
-          path: SettingsPath.PageLayoutEdition,
+          label: t`Page Layouts`,
+          path: SettingsPath.PageLayout,
           Icon: IconLayout,
           isHidden:
             !isPageLayoutEnabled ||
