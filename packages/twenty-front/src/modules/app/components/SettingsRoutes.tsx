@@ -6,14 +6,6 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { SettingsPath } from '@/types/SettingsPath';
 import { PermissionFlagType } from '~/generated/graphql';
 
-const SettingsApiKeys = lazy(() =>
-  import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
-    (module) => ({
-      default: module.SettingsApiKeys,
-    }),
-  ),
-);
-
 const SettingsGraphQLPlayground = lazy(() =>
   import(
     '~/pages/settings/developers/playground/SettingsGraphQLPlayground'
@@ -28,14 +20,6 @@ const SettingsRestPlayground = lazy(() =>
       default: module.SettingsRestPlayground,
     }),
   ),
-);
-
-const SettingsWebhooks = lazy(() =>
-  import(
-    '~/pages/settings/developers/webhooks/components/SettingsWebhooks'
-  ).then((module) => ({
-    default: module.SettingsWebhooks,
-  })),
 );
 
 const SettingsAccountsCalendars = lazy(() =>
@@ -143,6 +127,12 @@ const SettingsWorkspace = lazy(() =>
 const SettingsDomains = lazy(() =>
   import('~/pages/settings/domains').then((module) => ({
     default: module.SettingsDomains,
+  })),
+);
+
+const SettingsApiWebhooks = lazy(() =>
+  import('~/pages/settings/workspace/SettingsApiWebhooks').then((module) => ({
+    default: module.SettingsApiWebhooks,
   })),
 );
 
@@ -429,6 +419,10 @@ export const SettingsRoutes = ({
       >
         <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
         <Route path={SettingsPath.Domains} element={<SettingsDomains />} />
+        <Route
+          path={SettingsPath.ApiWebhooks}
+          element={<SettingsApiWebhooks />}
+        />
         <Route path={SettingsPath.AI} element={<SettingsAI />} />
         <Route
           path={SettingsPath.AINewAgent}
@@ -512,8 +506,6 @@ export const SettingsRoutes = ({
           />
         }
       >
-        <Route path={SettingsPath.APIs} element={<SettingsApiKeys />} />
-        <Route path={SettingsPath.Webhooks} element={<SettingsWebhooks />} />
         <Route
           path={`${SettingsPath.GraphQLPlayground}`}
           element={<SettingsGraphQLPlayground />}
