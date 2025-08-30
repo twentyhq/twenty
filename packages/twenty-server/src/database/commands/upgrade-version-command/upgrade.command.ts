@@ -245,7 +245,7 @@ export class UpgradeCommand extends UpgradeCommandRunner {
         this.removeFavoriteViewRelation,
         this.addPositionsToWorkflowVersionsAndWorkflowRuns,
       ],
-      afterSyncMetadata: [this.populateMessageFolderFieldsCommand],
+      afterSyncMetadata: [],
     };
 
     this.allCommands = {
