@@ -74,7 +74,7 @@ export const SettingsApiWebhooks = () => {
               title={t`API Keys`}
               description={t`Active API keys created by you or your team.`}
             />
-            <StyledContainer>
+            <StyledContainer isMobile={isMobile}>
               <SettingsApiKeysTable />
               <StyledButtonContainer>
                 <Button
