@@ -1,10 +1,11 @@
+import { currentUserState } from '@/auth/states/currentUserState';
 import { qrCodeState } from '@/auth/states/qrCode';
+import { otpProvisioningInProgressState } from '@/settings/two-factor-authentication/states/otpProvisioningInProgress';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { gql, useMutation } from '@apollo/client';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { useRecoilCallback } from 'recoil';
 
 const INITIATE_OTP_PROVISIONING_FOR_AUTHENTICATED_USER = gql`
   mutation initiateOTPProvisioningForAuthenticatedUser {
@@ -16,51 +17,57 @@ const INITIATE_OTP_PROVISIONING_FOR_AUTHENTICATED_USER = gql`
 
 export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
-  const qrCode = useRecoilValue(qrCodeState);
-  const setQrCodeState = useSetRecoilState(qrCodeState);
   const { t } = useLingui();
-
   const [initiateOTPProvisioningForAuthenticatedUser] = useMutation(
     INITIATE_OTP_PROVISIONING_FOR_AUTHENTICATED_USER,
   );
 
-  useEffect(() => {
-    if (isDefined(qrCode)) {
-      return;
-    }
-
-    const handleTwoFactorAuthenticationProvisioningInitiation = async () => {
-      try {
-        const initiateOTPProvisioningResult =
-          await initiateOTPProvisioningForAuthenticatedUser();
-
-        if (
-          !initiateOTPProvisioningResult.data
-            ?.initiateOTPProvisioningForAuthenticatedUser.uri
-        ) {
-          throw new Error('No URI returned from OTP provisioning');
+  const maybeProvision = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async () => {
+        const user = snapshot.getLoadable(currentUserState).getValue();
+        if (!user) {
+          return;
         }
 
-        setQrCodeState(
-          initiateOTPProvisioningResult.data
-            .initiateOTPProvisioningForAuthenticatedUser.uri,
-        );
-      } catch {
-        enqueueErrorSnackBar({
-          message: t`Two factor authentication provisioning failed.`,
-          options: {
-            dedupeKey:
-              'two-factor-authentication-provisioning-initiation-failed',
-          },
-        });
-      }
-    };
+        const inProgress = snapshot
+          .getLoadable(otpProvisioningInProgressState)
+          .getValue();
+        const code = snapshot.getLoadable(qrCodeState).getValue();
 
-    handleTwoFactorAuthenticationProvisioningInitiation();
+        if (Boolean(inProgress) || Boolean(code)) {
+          return;
+        }
 
-    // Two factor authentication provisioning only needs to run once at mount
+        set(otpProvisioningInProgressState, true);
+
+        try {
+          const res = await initiateOTPProvisioningForAuthenticatedUser();
+          const uri =
+            res.data?.initiateOTPProvisioningForAuthenticatedUser?.uri;
+
+          if (!uri) throw new Error('No URI returned from OTP provisioning');
+
+          set(qrCodeState, uri);
+        } catch {
+          enqueueErrorSnackBar({
+            message: t`Two factor authentication provisioning failed.`,
+            options: {
+              dedupeKey:
+                'two-factor-authentication-provisioning-initiation-failed',
+            },
+          });
+        } finally {
+          set(otpProvisioningInProgressState, false);
+        }
+      },
+    [enqueueErrorSnackBar, initiateOTPProvisioningForAuthenticatedUser, t],
+  );
+
+  useEffect(() => {
+    maybeProvision();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <></>;
+  return null;
 };
