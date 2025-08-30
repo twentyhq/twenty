@@ -4,9 +4,10 @@ import { GraphWidgetNumberChart } from '@/dashboards/graphs/components/GraphWidg
 import { GraphWidgetPieChart } from '@/dashboards/graphs/components/GraphWidgetPieChart';
 import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPageFullWidthContainer';
 import { SettingsPath } from '@/types/SettingsPath';
+import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   Responsive,
   WidthProvider,
@@ -45,15 +46,21 @@ const StyledGridContainer = styled.div`
   position: relative;
   padding: ${({ theme }) => theme.spacing(2)};
   width: 100%;
+  user-select: none; /* Prevent text selection during drag operations */
 
   .react-grid-placeholder {
     background: ${({ theme }) => theme.adaptiveColors.blue3} !important;
 
     border-radius: ${({ theme }) => theme.border.radius.sm};
   }
+
+  /* Re-enable text selection for widget content when not dragging */
+  .react-grid-item:not(.react-draggable-dragging) {
+    user-select: auto;
+  }
 `;
 
-const StyledGridOverlay = styled.div`
+const StyledGridOverlay = styled.div<{ isDragSelecting?: boolean }>`
   position: absolute;
   top: ${({ theme }) => theme.spacing(2)};
   left: ${({ theme }) => theme.spacing(2)};
@@ -63,7 +70,8 @@ const StyledGridOverlay = styled.div`
   grid-template-columns: repeat(12, 1fr);
   grid-auto-rows: 50px;
   gap: ${({ theme }) => theme.spacing(2)};
-  pointer-events: none;
+  pointer-events: ${({ isDragSelecting }) =>
+    isDragSelecting ? 'auto' : 'none'};
   z-index: 0;
 
   @media (max-width: 480px) {
@@ -71,10 +79,12 @@ const StyledGridOverlay = styled.div`
   }
 `;
 
-const StyledGridCell = styled.div`
-  background: transparent;
+const StyledGridCell = styled.div<{ isSelected?: boolean }>`
+  background: ${({ isSelected, theme }) =>
+    isSelected ? theme.adaptiveColors.blue3 : 'transparent'};
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.sm};
+  transition: background-color 0.1s ease;
 `;
 
 type ExtendedResponsiveProps = ResponsiveProps & {
@@ -95,6 +105,14 @@ export const PageLayoutEdition = () => {
     pageLayoutLayoutsState,
   );
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
+  const gridContainerRef = useRef<HTMLDivElement>(null);
+  const [selectedCells, setSelectedCells] = useState<Set<string>>(new Set());
+  const [draggedArea, setDraggedArea] = useState<{
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  } | null>(null);
 
   const handleLayoutChange = (_: Layout[], allLayouts: Layouts) => {
     setPageLayoutLayouts(allLayouts);
@@ -106,6 +124,7 @@ export const PageLayoutEdition = () => {
 
   const handleCloseSidePanel = () => {
     setIsSidePanelOpen(false);
+    setDraggedArea(null);
   };
 
   const handleCreateWidget = (widgetType: 'GRAPH', graphType: GraphSubType) => {
@@ -126,20 +145,29 @@ export const PageLayoutEdition = () => {
 
     setPageLayoutWidgets((prev) => [...prev, newWidget]);
 
-    const size = getWidgetSize(graphType);
+    const defaultSize = getWidgetSize(graphType);
+    const position = draggedArea || {
+      x: 0,
+      y: 0,
+      w: defaultSize.w,
+      h: defaultSize.h,
+    };
 
     const newLayout = {
       i: newWidget.id,
-      x: 0,
-      y: 0,
-      ...size,
+      x: position.x,
+      y: position.y,
+      w: position.w,
+      h: position.h,
     };
 
     setPageLayoutLayouts((prev) => ({
       lg: [...(prev.lg || []), newLayout],
       md: [...(prev.md || []), newLayout],
-      sm: [...(prev.sm || []), { ...newLayout, w: 1 }],
+      sm: [...(prev.sm || []), { ...newLayout, w: 1, x: 0 }],
     }));
+
+    setDraggedArea(null);
   };
 
   const handleRemoveWidget = (widgetId: string) => {
@@ -150,6 +178,47 @@ export const PageLayoutEdition = () => {
       md: (prev.md || []).filter((layout) => layout.i !== widgetId),
       sm: (prev.sm || []).filter((layout) => layout.i !== widgetId),
     }));
+  };
+
+  const handleDragSelectionStart = () => {
+    setSelectedCells(new Set());
+  };
+
+  const handleDragSelectionChange = (cellId: string, selected: boolean) => {
+    setSelectedCells((prev) => {
+      const newSet = new Set(prev);
+      if (selected) {
+        newSet.add(cellId);
+      } else {
+        newSet.delete(cellId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleDragSelectionEnd = () => {
+    if (selectedCells.size > 0) {
+      const cellCoords = Array.from(selectedCells).map((cellId) => {
+        const [col, row] = cellId.split('-').slice(1).map(Number);
+        return { col, row };
+      });
+
+      const minCol = Math.min(...cellCoords.map((c) => c.col));
+      const maxCol = Math.max(...cellCoords.map((c) => c.col));
+      const minRow = Math.min(...cellCoords.map((c) => c.row));
+      const maxRow = Math.max(...cellCoords.map((c) => c.row));
+
+      const draggedBounds = {
+        x: minCol,
+        y: minRow,
+        w: maxCol - minCol + 1,
+        h: maxRow - minRow + 1,
+      };
+
+      setDraggedArea(draggedBounds);
+      setIsSidePanelOpen(true);
+      setSelectedCells(new Set());
+    }
   };
 
   const isEmptyState = pageLayoutWidgets.length === 0;
@@ -207,11 +276,20 @@ export const PageLayoutEdition = () => {
         )
       }
     >
-      <StyledGridContainer>
-        <StyledGridOverlay>
-          {Array.from({ length: 12 * gridRows }).map((_, i) => (
-            <StyledGridCell key={i} />
-          ))}
+      <StyledGridContainer ref={gridContainerRef}>
+        <StyledGridOverlay isDragSelecting={true}>
+          {Array.from({ length: 12 * gridRows }).map((_, i) => {
+            const col = i % 12;
+            const row = Math.floor(i / 12);
+            const cellId = `cell-${col}-${row}`;
+            return (
+              <StyledGridCell
+                key={i}
+                data-selectable-id={cellId}
+                isSelected={selectedCells.has(cellId)}
+              />
+            );
+          })}
         </StyledGridOverlay>
         <ResponsiveGridLayout
           className="layout"
@@ -235,7 +313,7 @@ export const PageLayoutEdition = () => {
             </div>
           ) : (
             pageLayoutWidgets.map((widget) => (
-              <div key={widget.id}>
+              <div key={widget.id} data-select-disable="true">
                 <PageLayoutWidgetPlaceholder
                   title={widget.title}
                   onRemove={() => handleRemoveWidget(widget.id)}
@@ -285,6 +363,12 @@ export const PageLayoutEdition = () => {
             ))
           )}
         </ResponsiveGridLayout>
+        <DragSelect
+          selectableItemsContainerRef={gridContainerRef}
+          onDragSelectionStart={handleDragSelectionStart}
+          onDragSelectionChange={handleDragSelectionChange}
+          onDragSelectionEnd={handleDragSelectionEnd}
+        />
       </StyledGridContainer>
       <PageLayoutSidePanel
         isOpen={isSidePanelOpen}

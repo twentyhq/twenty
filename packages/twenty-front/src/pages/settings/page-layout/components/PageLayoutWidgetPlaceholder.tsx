@@ -39,6 +39,7 @@ const StyledDragHandle = styled.div`
   cursor: grab;
   display: flex;
   align-items: center;
+  user-select: none;
 
   &:active {
     cursor: grabbing;
@@ -50,6 +51,7 @@ const StyledTitle = styled.span`
   flex: 1;
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
+  user-select: none;
 `;
 
 const StyledCloseButton = styled.button`
