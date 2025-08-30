@@ -27,6 +27,7 @@ import { MicrosoftGetMessageListService } from './services/microsoft-get-message
     MicrosoftClientProvider,
     MicrosoftGetMessageListService,
     MicrosoftGetMessagesService,
+
     MicrosoftFetchByBatchService,
     MicrosoftHandleErrorService,
     MicrosoftOAuth2ClientManagerService,
@@ -35,6 +36,7 @@ import { MicrosoftGetMessageListService } from './services/microsoft-get-message
     MicrosoftGetMessageListService,
     MicrosoftClientProvider,
     MicrosoftGetMessagesService,
+    MicrosoftHandleErrorService,
   ],
 })
 export class MessagingMicrosoftDriverModule {}
