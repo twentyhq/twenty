@@ -9,6 +9,7 @@ import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/se
 import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
+import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
@@ -75,6 +76,18 @@ describe('MessagingMessageListFetchService', () => {
       delete: jest.fn().mockResolvedValue(undefined),
     };
 
+    const mockMessageFolderRepository = {
+      find: jest.fn().mockResolvedValue([
+        {
+          id: 'inbox-folder-id',
+          name: 'inbox',
+          syncCursor: 'inbox-sync-cursor',
+          messageChannelId: 'microsoft-message-channel-id',
+          isSynced: true,
+        },
+      ]),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MessagingMessageListFetchService,
@@ -88,41 +101,40 @@ describe('MessagingMessageListFetchService', () => {
         {
           provide: MessagingGetMessageListService,
           useValue: {
-            getMessageLists: jest
-              .fn()
-              .mockImplementation(({ connectedAccount }) => {
-                if (
-                  connectedAccount.provider === ConnectedAccountProvider.GOOGLE
-                ) {
-                  return [
-                    {
-                      messageExternalIds: [
-                        'external-id-existing-message-1',
-                        'external-id-google-message-1',
-                        'external-id-google-message-2',
-                      ],
-                      nextSyncCursor: 'new-google-history-id',
-                      folderId: undefined,
-                      messageExternalIdsToDelete: [],
-                      previousSyncCursor: 'google-sync-cursor',
-                    },
-                  ];
-                } else {
-                  return [
-                    {
-                      messageExternalIds: [
-                        'external-id-existing-message-1',
-                        'external-id-new-message-1',
-                        'external-id-new-message-2',
-                      ],
-                      nextSyncCursor: 'new-sync-cursor',
-                      folderId: 'inbox-folder-id',
-                      messageExternalIdsToDelete: [],
-                      previousSyncCursor: 'inbox-sync-cursor',
-                    },
-                  ];
-                }
-              }),
+            getMessageLists: jest.fn().mockImplementation((messageChannel) => {
+              if (
+                messageChannel.connectedAccount.provider ===
+                ConnectedAccountProvider.GOOGLE
+              ) {
+                return [
+                  {
+                    messageExternalIds: [
+                      'external-id-existing-message-1',
+                      'external-id-google-message-1',
+                      'external-id-google-message-2',
+                    ],
+                    nextSyncCursor: 'new-google-history-id',
+                    folderId: undefined,
+                    messageExternalIdsToDelete: [],
+                    previousSyncCursor: 'google-sync-cursor',
+                  },
+                ];
+              } else {
+                return [
+                  {
+                    messageExternalIds: [
+                      'external-id-existing-message-1',
+                      'external-id-new-message-1',
+                      'external-id-new-message-2',
+                    ],
+                    nextSyncCursor: 'new-sync-cursor',
+                    folderId: 'inbox-folder-id',
+                    messageExternalIdsToDelete: [],
+                    previousSyncCursor: 'inbox-sync-cursor',
+                  },
+                ];
+              }
+            }),
           },
         },
         {
@@ -175,11 +187,17 @@ describe('MessagingMessageListFetchService', () => {
         {
           provide: TwentyORMManager,
           useValue: {
-            getRepository: jest
-              .fn()
-              .mockResolvedValue(
-                mockMessageChannelMessageAssociationRepository,
-              ),
+            getDatasource: jest.fn().mockResolvedValue({
+              manager: {},
+            }),
+            getRepository: jest.fn().mockImplementation((name) => {
+              if (name === 'messageChannelMessageAssociation') {
+                return mockMessageChannelMessageAssociationRepository;
+              }
+              if (name === 'messageFolder') {
+                return mockMessageFolderRepository;
+              }
+            }),
           },
         },
         {
@@ -205,6 +223,12 @@ describe('MessagingMessageListFetchService', () => {
           provide: MessagingMessageCleanerService,
           useValue: {
             cleanWorkspaceThreads: jest.fn().mockResolvedValue(undefined),
+          },
+        },
+        {
+          provide: SyncMessageFoldersService,
+          useValue: {
+            syncMessageFolders: jest.fn().mockResolvedValue(undefined),
           },
         },
       ],
@@ -258,6 +282,15 @@ describe('MessagingMessageListFetchService', () => {
           refreshToken: 'new-microsoft-refresh-token',
         },
       },
+      [
+        {
+          id: 'inbox-folder-id',
+          name: 'inbox',
+          syncCursor: 'inbox-sync-cursor',
+          messageChannelId: 'microsoft-message-channel-id',
+          isSynced: true,
+        },
+      ],
     );
 
     expect(twentyORMManager.getRepository).toHaveBeenCalledWith(
@@ -308,6 +341,15 @@ describe('MessagingMessageListFetchService', () => {
           refreshToken: 'new-google-refresh-token',
         },
       },
+      [
+        {
+          id: 'inbox-folder-id',
+          name: 'inbox',
+          syncCursor: 'inbox-sync-cursor',
+          messageChannelId: 'microsoft-message-channel-id',
+          isSynced: true,
+        },
+      ],
     );
 
     expect(twentyORMManager.getRepository).toHaveBeenCalledWith(
