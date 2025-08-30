@@ -3917,7 +3917,8 @@ msgstr "Minuter mellan triggers"
 #. js-lingui-id: hty0d5
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Monday"
-msgstr "M\n"
+msgstr ""
+"M\n"
 "ndags"
 
 #. js-lingui-id: 8g3Cgz
@@ -5086,7 +5087,8 @@ msgstr "Russian"
 #. js-lingui-id: +5kO8P
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Saturday"
-msgstr "L\n"
+msgstr ""
+"L\n"
 "urdag"
 
 #. js-lingui-id: tfDRzk
@@ -5845,7 +5847,8 @@ msgstr "Summa"
 #. js-lingui-id: DBC3t5
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Sunday"
-msgstr "S\n"
+msgstr ""
+"S\n"
 "nd"
 
 #. js-lingui-id: XYLcNv
@@ -5922,19 +5925,22 @@ msgstr "Systeminställningar - {systemTimeFormatLabel}"
 #. js-lingui-id: e89dEj
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "System settings - Monday"
-msgstr "Systeminst elln\n"
+msgstr ""
+"Systeminst elln\n"
 "gartioner - M 0andags"
 
 #. js-lingui-id: o+Kvng
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "System settings - Saturday"
-msgstr "Systeminst elln\n"
+msgstr ""
+"Systeminst elln\n"
 "gartioner - L 0aurdag"
 
 #. js-lingui-id: gluMQd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "System settings - Sunday"
-msgstr "Systeminst elln\n"
+msgstr ""
+"Systeminst elln\n"
 "gartioner - S 0and"
 
 #. js-lingui-id: 4hJhzz

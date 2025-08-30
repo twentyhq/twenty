@@ -3123,7 +3123,7 @@ msgstr "Steek weg"
 #. js-lingui-id: OlbYor
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Hide deleted"
-msgstr "Versteek verwyderde"
+msgstr "\aVersteek verwyderde"
 
 #. js-lingui-id: FHhlye
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
