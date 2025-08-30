@@ -27,8 +27,8 @@ export const SettingsReleases = () => {
       title={t`Releases`}
       links={[
         {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          children: t`Other`,
+          href: getSettingsPath(SettingsPath.Releases),
         },
         { children: t`Releases` },
       ]}

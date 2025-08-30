@@ -98,7 +98,7 @@ export const SettingsApiWebhooks = () => {
               <StyledButtonContainer>
                 <Button
                   Icon={IconPlus}
-                  title={t`Create Webhook`}
+                  title={t`Create webhook`}
                   size="small"
                   variant="secondary"
                   to={getSettingsPath(SettingsPath.NewWebhook)}
