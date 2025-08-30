@@ -2,9 +2,10 @@ import { GraphWidgetBarChart } from '@/dashboards/graphs/components/GraphWidgetB
 import { GraphWidgetGaugeChart } from '@/dashboards/graphs/components/GraphWidgetGaugeChart';
 import { GraphWidgetNumberChart } from '@/dashboards/graphs/components/GraphWidgetNumberChart';
 import { GraphWidgetPieChart } from '@/dashboards/graphs/components/GraphWidgetPieChart';
+import { SaveButton } from '@/settings/components/SaveAndCancelButtons/SaveButton';
 import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPageFullWidthContainer';
 import { SettingsPath } from '@/types/SettingsPath';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TitleInput } from '@/ui/input/components/TitleInput';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
@@ -20,7 +21,7 @@ import 'react-grid-layout/css/styles.css';
 import { FormProvider } from 'react-hook-form';
 import 'react-resizable/css/styles.css';
 import { isDefined } from 'twenty-shared/utils';
-import { IconDeviceFloppy, IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { v4 as uuidv4 } from 'uuid';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -105,7 +106,6 @@ export const PageLayoutEdition = () => {
     handleSave: saveToStorage,
     handleSubmit,
     canSave,
-    isEditMode,
     existingLayout,
     watchedValues,
   } = usePageLayoutForm();
@@ -306,17 +306,19 @@ export const PageLayoutEdition = () => {
             href: '/settings/page-layout',
           },
           {
-            children: isEditMode ? t`Edit Layout` : t`New Layout`,
+            children: (
+              <TitleInput
+                instanceId="page-layout-name-input"
+                placeholder={t`Layout Name`}
+                value={layoutName}
+                onChange={(value) => setValue('name', value)}
+                sizeVariant="md"
+              />
+            ),
           },
         ]}
         actionButton={
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <TextInput
-              placeholder={t`Layout Name`}
-              value={layoutName}
-              onChange={(value) => setValue('name', value)}
-              style={{ width: '200px' }}
-            />
             {!isEmptyState && (
               <Button
                 Icon={IconPlus}
@@ -326,12 +328,8 @@ export const PageLayoutEdition = () => {
                 onClick={handleOpenSidePanel}
               />
             )}
-            <Button
-              Icon={IconDeviceFloppy}
-              title={t`Save Layout`}
-              size="small"
-              variant="primary"
-              onClick={() => {
+            <SaveButton
+              onSave={() => {
                 const currentBreakpointLayout =
                   currentLayouts[currentBreakpoint] ||
                   currentLayouts.desktop ||
