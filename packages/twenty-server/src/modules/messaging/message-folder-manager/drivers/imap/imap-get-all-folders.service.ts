@@ -3,21 +3,20 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ImapFlow, type ListResponse } from 'imapflow';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  MessageFolder,
+  MessageFolderDriver,
+} from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
+
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapFindSentFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-sent-folder.service';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/imap/types/folders';
 import { StandardFolder } from 'src/modules/messaging/message-import-manager/drivers/types/standard-folder';
 import { getStandardFolderByRegex } from 'src/modules/messaging/message-import-manager/drivers/utils/get-standard-folder-by-regex';
 
-type MessageFolder = Pick<
-  MessageFolderWorkspaceEntity,
-  'name' | 'isSynced' | 'isSentFolder' | 'externalId'
->;
-
 @Injectable()
-export class ImapGetAllFoldersService {
+export class ImapGetAllFoldersService implements MessageFolderDriver {
   private readonly logger = new Logger(ImapGetAllFoldersService.name);
 
   constructor(

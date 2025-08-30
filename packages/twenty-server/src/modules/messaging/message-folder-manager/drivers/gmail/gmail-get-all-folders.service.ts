@@ -3,20 +3,19 @@ import { Injectable, Logger } from '@nestjs/common';
 import { gmail_v1 } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  MessageFolder,
+  MessageFolderDriver,
+} from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
+
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MESSAGING_GMAIL_EXCLUDED_CATEGORIES } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-categories';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import { GmailHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-handle-error.service';
 import { computeGmailCategoryLabelId } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-label-id.util';
 
-type MessageFolder = Pick<
-  MessageFolderWorkspaceEntity,
-  'name' | 'isSynced' | 'isSentFolder' | 'externalId'
->;
-
 @Injectable()
-export class GmailGetAllFoldersService {
+export class GmailGetAllFoldersService implements MessageFolderDriver {
   private readonly logger = new Logger(GmailGetAllFoldersService.name);
 
   constructor(

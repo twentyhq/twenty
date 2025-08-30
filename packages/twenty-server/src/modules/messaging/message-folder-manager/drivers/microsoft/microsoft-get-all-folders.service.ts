@@ -1,7 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import {
+  MessageFolder,
+  MessageFolderDriver,
+} from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
+
 import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { MicrosoftClientProvider } from 'src/modules/messaging/message-import-manager/drivers/microsoft/providers/microsoft-client.provider';
 import { MicrosoftHandleErrorService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-handle-error.service';
 import { StandardFolder } from 'src/modules/messaging/message-import-manager/drivers/types/standard-folder';
@@ -12,13 +16,8 @@ type MicrosoftGraphFolder = {
   displayName: string;
 };
 
-type MessageFolder = Pick<
-  MessageFolderWorkspaceEntity,
-  'name' | 'isSynced' | 'isSentFolder' | 'externalId'
->;
-
 @Injectable()
-export class MicrosoftGetAllFoldersService {
+export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
   private readonly logger = new Logger(MicrosoftGetAllFoldersService.name);
 
   constructor(
