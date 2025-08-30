@@ -300,12 +300,14 @@ msgid "Activate Workflow"
 msgstr "Munkafolyamat aktiválása"
 
 #. js-lingui-id: F6pfE9
+#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Active"
 msgstr "Aktív"
 
 #. js-lingui-id: Mue4oc
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Active API keys created by you or your team."
 msgstr "Aktív API kulcsok, amelyeket te vagy a csapatod hoztatok létre."
@@ -669,7 +671,7 @@ msgid "Any field :"
 msgstr "Bármely mező :"
 
 #. js-lingui-id: xJR+Wq
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
 msgstr "Bárki, akinek van email címe ezekről a tartományokról, csatlakozhat ehhez a munkaterülethez."
 
@@ -701,6 +703,11 @@ msgstr "API kulcs vágólapra másolva"
 msgid "API keys"
 msgstr "API kulcsok"
 
+#. js-lingui-id: FfSJ1Y
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+msgid "API Keys"
+msgstr ""
+
 #. js-lingui-id: vByqA1
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "API Keys & Webhooks"
@@ -727,15 +734,22 @@ msgid "API values"
 msgstr "API értékek"
 
 #. js-lingui-id: JR6nY7
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "APIs"
+msgstr "API-k"
+
+#. js-lingui-id: ZZAOwb
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "APIs"
-msgstr "API-k"
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "APIs & Webhooks"
+msgstr ""
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -748,7 +762,7 @@ msgid "Approved access domain validated"
 msgstr "Jóváhagyott hozzáférési tartomány megerősítve"
 
 #. js-lingui-id: 9tggYj
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Approved Domains"
 msgstr "Jóváhagyott tartományok"
 
@@ -1089,6 +1103,11 @@ msgstr "Váltás szervezeti csomagra?"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Yearly?"
 msgstr "Váltás évesre?"
+
+#. js-lingui-id: CWe7wB
+#: src/pages/settings/releases/SettingsReleases.tsx
+msgid "Changelog"
+msgstr ""
 
 #. js-lingui-id: AHZflp
 #: src/modules/ai/components/AIChatEmptyState.tsx
@@ -1561,6 +1580,7 @@ msgid "Create a workspace"
 msgstr "Hozzon létre munkaterületet"
 
 #. js-lingui-id: uXGLuq
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Create API key"
 msgstr "API kulcs létrehozása"
@@ -1616,6 +1636,11 @@ msgstr "Nézet létrehozása"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Create View"
 msgstr "Nézet létrehozása"
+
+#. js-lingui-id: SiPp29
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+msgid "Create webhook"
+msgstr ""
 
 #. js-lingui-id: dkAPxi
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -1705,7 +1730,7 @@ msgid "Customization"
 msgstr "Testreszabás"
 
 #. js-lingui-id: CMhr4u
-#: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Customize Domain"
 msgstr "Domain testreszabása"
 
@@ -2096,11 +2121,6 @@ msgstr "Megsemmisítés {objectLabelPlural}"
 msgid "Destroy Records on All Objects"
 msgstr "Rekordok megsemmisítése minden objektumon"
 
-#. js-lingui-id: n+SX4g
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Developers"
-msgstr "Fejleszt\\u0151k"
-
 #. js-lingui-id: zAg2B9
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -2139,6 +2159,7 @@ msgid "Do not import"
 msgstr "Ne importálja"
 
 #. js-lingui-id: TvY/XA
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Documentation"
 msgstr "Dokumentáció"
@@ -2149,12 +2170,20 @@ msgid "Doesn't contain"
 msgstr "Nem tartalmazza"
 
 #. js-lingui-id: EoKe5U
-#: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain"
 msgstr "Domain"
+
+#. js-lingui-id: AZ4xlc
+#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Domains"
+msgstr ""
 
 #. js-lingui-id: 7kVRe6
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -2269,7 +2298,7 @@ msgid "Edit Records on All Objects"
 msgstr "Rekordok szerkesztése minden objektumon"
 
 #. js-lingui-id: 6o1M/Q
-#: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Edit your subdomain name or set a custom domain."
 msgstr "Szerkeszd az aldomain nev\\u00e9t vagy \\u00e1ll\\u00edts be egyedi domaint."
 
@@ -2542,6 +2571,7 @@ msgid "Error while switching subscription to Yearly."
 msgstr "Hiba az éves előfizetésre való váltás során."
 
 #. js-lingui-id: JLxMta
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "Hozz l\\u00e9tre Webhook v\\u00e9gpontokat az aszinkron esem\\u00e9nyekkel kapcsolatos \\u00e9rtes\\u00edt\\u00e9sekhez."
@@ -2921,7 +2951,6 @@ msgstr "Funkciók"
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
-#: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "General"
@@ -3264,6 +3293,7 @@ msgid "Importing Data ..."
 msgstr "Adatok importálása ..."
 
 #. js-lingui-id: NoNwIX
+#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Inactive"
@@ -3560,9 +3590,7 @@ msgid "Korean"
 msgstr "Koreai"
 
 #. js-lingui-id: zrpwCd
-#: src/pages/settings/lab/SettingsLab.tsx
-#: src/pages/settings/lab/SettingsLab.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/releases/SettingsReleases.tsx
 msgid "Lab"
 msgstr "Labor"
 
@@ -3648,6 +3676,7 @@ msgid "Launch"
 msgstr "Indítás"
 
 #. js-lingui-id: rdU729
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Layout"
@@ -4490,8 +4519,7 @@ msgid "Organization"
 msgstr "Szervezet"
 
 #. js-lingui-id: /IX/7x
-#: src/pages/settings/Releases.tsx
-#: src/pages/settings/lab/SettingsLab.tsx
+#: src/pages/settings/releases/SettingsReleases.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
@@ -4517,7 +4545,6 @@ msgstr "Kimeneti mező {fieldNumber}"
 
 #. js-lingui-id: nITdXs
 #: src/pages/settings/page-layout/PageLayoutEdition.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Page Layout"
 msgstr ""
 
@@ -4852,8 +4879,8 @@ msgid "Relative"
 msgstr "Relatív"
 
 #. js-lingui-id: 5icoS1
-#: src/pages/settings/Releases.tsx
-#: src/pages/settings/Releases.tsx
+#: src/pages/settings/releases/SettingsReleases.tsx
+#: src/pages/settings/releases/SettingsReleases.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Releases"
 msgstr "Kiadások"
@@ -5222,7 +5249,6 @@ msgstr "Titok (opcionális)"
 
 #. js-lingui-id: a3LDKx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -6212,6 +6238,7 @@ msgid "True"
 msgstr "Igaz"
 
 #. js-lingui-id: haaL9N
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Try our REST or GraphQL API playgrounds."
 msgstr "Próbálja ki a REST vagy GraphQL API játszótereinket."
@@ -6593,11 +6620,10 @@ msgid "Webhook ID is required for updates"
 msgstr "Webhook ID szükséges a frissítéshez"
 
 #. js-lingui-id: v1kQyJ
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Webhooks"
 msgstr "Webhorgok"
 
@@ -6632,11 +6658,13 @@ msgstr "Munkafolyamatok"
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
@@ -6665,6 +6693,11 @@ msgstr "Munkaterület"
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Workspace Deletion"
 msgstr "Munkaterület törlése"
+
+#. js-lingui-id: i1AiTd
+#: src/pages/settings/domains/SettingsDomains.tsx
+msgid "Workspace Domain"
+msgstr ""
 
 #. js-lingui-id: J22jAC
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx

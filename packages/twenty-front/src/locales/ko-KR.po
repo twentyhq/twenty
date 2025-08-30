@@ -300,12 +300,14 @@ msgid "Activate Workflow"
 msgstr "워크플로 활성화"
 
 #. js-lingui-id: F6pfE9
+#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Active"
 msgstr "활성"
 
 #. js-lingui-id: Mue4oc
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Active API keys created by you or your team."
 msgstr "본인 또는 팀이 생성한 활성 API 키입니다."
@@ -669,7 +671,7 @@ msgid "Any field :"
 msgstr ""
 
 #. js-lingui-id: xJR+Wq
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
 msgstr "이 도메인의 이메일 주소를 가진 사람은 이 작업 공간에 가입할 수 있습니다."
 
@@ -701,6 +703,11 @@ msgstr "API 키가 클립보드에 복사되었습니다"
 msgid "API keys"
 msgstr "API 키"
 
+#. js-lingui-id: FfSJ1Y
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+msgid "API Keys"
+msgstr ""
+
 #. js-lingui-id: vByqA1
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "API Keys & Webhooks"
@@ -727,15 +734,22 @@ msgid "API values"
 msgstr "API 값"
 
 #. js-lingui-id: JR6nY7
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "APIs"
+msgstr "API"
+
+#. js-lingui-id: ZZAOwb
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "APIs"
-msgstr "API"
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "APIs & Webhooks"
+msgstr ""
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -748,7 +762,7 @@ msgid "Approved access domain validated"
 msgstr "승인된 액세스 도메인이 검증되었습니다"
 
 #. js-lingui-id: 9tggYj
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Approved Domains"
 msgstr "승인된 도메인"
 
@@ -1089,6 +1103,11 @@ msgstr "조직 플랜으로 변경하시겠습니까?"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Yearly?"
 msgstr "연간 요금제로 변경?"
+
+#. js-lingui-id: CWe7wB
+#: src/pages/settings/releases/SettingsReleases.tsx
+msgid "Changelog"
+msgstr ""
 
 #. js-lingui-id: AHZflp
 #: src/modules/ai/components/AIChatEmptyState.tsx
@@ -1561,6 +1580,7 @@ msgid "Create a workspace"
 msgstr "워크스페이스 만들기"
 
 #. js-lingui-id: uXGLuq
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Create API key"
 msgstr "API 키 생성"
@@ -1616,6 +1636,11 @@ msgstr "보기 생성"
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Create View"
 msgstr "보기 생성"
+
+#. js-lingui-id: SiPp29
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+msgid "Create webhook"
+msgstr ""
 
 #. js-lingui-id: dkAPxi
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -1705,7 +1730,7 @@ msgid "Customization"
 msgstr "사용자 지정"
 
 #. js-lingui-id: CMhr4u
-#: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Customize Domain"
 msgstr "도메인 사용자 지정"
 
@@ -2096,11 +2121,6 @@ msgstr "{objectLabelPlural} 파기"
 msgid "Destroy Records on All Objects"
 msgstr "모든 객체의 기록 파기"
 
-#. js-lingui-id: n+SX4g
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Developers"
-msgstr "개발자"
-
 #. js-lingui-id: zAg2B9
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -2139,6 +2159,7 @@ msgid "Do not import"
 msgstr "가져오지 않음"
 
 #. js-lingui-id: TvY/XA
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Documentation"
 msgstr "문서"
@@ -2149,12 +2170,20 @@ msgid "Doesn't contain"
 msgstr "포함하지 않음"
 
 #. js-lingui-id: EoKe5U
-#: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain"
 msgstr "도메인"
+
+#. js-lingui-id: AZ4xlc
+#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Domains"
+msgstr ""
 
 #. js-lingui-id: 7kVRe6
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -2269,7 +2298,7 @@ msgid "Edit Records on All Objects"
 msgstr "모든 객체의 기록 편집"
 
 #. js-lingui-id: 6o1M/Q
-#: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Edit your subdomain name or set a custom domain."
 msgstr "하위 도메인 이름을 편집하거나 사용자 지정 도메인을 설정하세요."
 
@@ -2542,6 +2571,7 @@ msgid "Error while switching subscription to Yearly."
 msgstr "구독 전환 중 연간 요금제로 오류 발생."
 
 #. js-lingui-id: JLxMta
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "비동기 이벤트 알림을 위한 Webhook 엔드포인트 설정."
@@ -2921,7 +2951,6 @@ msgstr "기능"
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
-#: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "General"
@@ -3264,6 +3293,7 @@ msgid "Importing Data ..."
 msgstr "데이터 가져오는 중 ..."
 
 #. js-lingui-id: NoNwIX
+#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Inactive"
@@ -3560,9 +3590,7 @@ msgid "Korean"
 msgstr "한국어"
 
 #. js-lingui-id: zrpwCd
-#: src/pages/settings/lab/SettingsLab.tsx
-#: src/pages/settings/lab/SettingsLab.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/releases/SettingsReleases.tsx
 msgid "Lab"
 msgstr "실험실"
 
@@ -3648,6 +3676,7 @@ msgid "Launch"
 msgstr "시작"
 
 #. js-lingui-id: rdU729
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Layout"
@@ -4490,8 +4519,7 @@ msgid "Organization"
 msgstr "조직"
 
 #. js-lingui-id: /IX/7x
-#: src/pages/settings/Releases.tsx
-#: src/pages/settings/lab/SettingsLab.tsx
+#: src/pages/settings/releases/SettingsReleases.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
@@ -4517,7 +4545,6 @@ msgstr "출력 필드 {fieldNumber}"
 
 #. js-lingui-id: nITdXs
 #: src/pages/settings/page-layout/PageLayoutEdition.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Page Layout"
 msgstr ""
 
@@ -4852,8 +4879,8 @@ msgid "Relative"
 msgstr "상대적"
 
 #. js-lingui-id: 5icoS1
-#: src/pages/settings/Releases.tsx
-#: src/pages/settings/Releases.tsx
+#: src/pages/settings/releases/SettingsReleases.tsx
+#: src/pages/settings/releases/SettingsReleases.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Releases"
 msgstr "릴리스"
@@ -5222,7 +5249,6 @@ msgstr "비밀 (선택사항)"
 
 #. js-lingui-id: a3LDKx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -6212,6 +6238,7 @@ msgid "True"
 msgstr "참"
 
 #. js-lingui-id: haaL9N
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Try our REST or GraphQL API playgrounds."
 msgstr "REST 또는 GraphQL API 플레이그라운드를 사용해 보십시오."
@@ -6593,11 +6620,10 @@ msgid "Webhook ID is required for updates"
 msgstr "업데이트를 위해서는 웹훅 ID가 필요합니다"
 
 #. js-lingui-id: v1kQyJ
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Webhooks"
 msgstr "Webhooks"
 
@@ -6632,11 +6658,13 @@ msgstr "Workflows"
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
@@ -6665,6 +6693,11 @@ msgstr "워크스페이스"
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Workspace Deletion"
 msgstr "워크스페이스 삭제"
+
+#. js-lingui-id: i1AiTd
+#: src/pages/settings/domains/SettingsDomains.tsx
+msgid "Workspace Domain"
+msgstr ""
 
 #. js-lingui-id: J22jAC
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
