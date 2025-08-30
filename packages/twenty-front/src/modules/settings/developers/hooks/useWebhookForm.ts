@@ -100,7 +100,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       });
 
       navigate(
-        createdWebhook ? SettingsPath.WebhookDetail : SettingsPath.Webhooks,
+        createdWebhook ? SettingsPath.WebhookDetail : SettingsPath.ApiWebhooks,
         createdWebhook ? { webhookId: createdWebhook.id } : undefined,
       );
     } catch (error) {
@@ -188,7 +188,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         message: t`Webhook deleted successfully`,
       });
 
-      navigate(SettingsPath.Webhooks);
+      navigate(SettingsPath.ApiWebhooks);
     } catch (error) {
       enqueueErrorSnackBar({
         apolloError: error instanceof ApolloError ? error : undefined,

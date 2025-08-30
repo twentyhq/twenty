@@ -15,6 +15,7 @@ export enum CoreObjectNameSingular {
   Message = 'message',
   MessageChannel = 'messageChannel',
   MessageParticipant = 'messageParticipant',
+  MessageFolder = 'messageFolder',
   MessageThread = 'messageThread',
   Note = 'note',
   NoteTarget = 'noteTarget',
