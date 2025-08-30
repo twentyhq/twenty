@@ -170,13 +170,13 @@ export const PageLayoutEdition = () => {
             pageLayoutWidgets.map((widget) => (
               <div key={widget.id}>
                 <PageLayoutWidgetPlaceholder title={widget.title}>
-                  {widget.type === 'number' && (
+                  {widget.type === 'GRAPH' && widget.graphType === 'number' && (
                     <GraphWidgetNumberChart
                       value={widget.data.value}
                       trendPercentage={widget.data.trendPercentage}
                     />
                   )}
-                  {widget.type === 'gauge' && (
+                  {widget.type === 'GRAPH' && widget.graphType === 'gauge' && (
                     <GraphWidgetGaugeChart
                       data={{
                         value: widget.data.value,
@@ -189,7 +189,7 @@ export const PageLayoutEdition = () => {
                       id={`gauge-chart-${widget.id}`}
                     />
                   )}
-                  {widget.type === 'pie' && (
+                  {widget.type === 'GRAPH' && widget.graphType === 'pie' && (
                     <GraphWidgetPieChart
                       data={widget.data.items}
                       showLegend={true}
@@ -197,7 +197,7 @@ export const PageLayoutEdition = () => {
                       id={`pie-chart-${widget.id}`}
                     />
                   )}
-                  {widget.type === 'bar' && (
+                  {widget.type === 'GRAPH' && widget.graphType === 'bar' && (
                     <GraphWidgetBarChart
                       data={widget.data.items}
                       indexBy={widget.data.indexBy}

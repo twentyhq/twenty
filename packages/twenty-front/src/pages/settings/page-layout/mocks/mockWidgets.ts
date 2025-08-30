@@ -1,18 +1,26 @@
 import { type Layouts } from 'react-grid-layout';
 
-export type WidgetType = 'number' | 'gauge' | 'pie' | 'view' | 'iframe' | 'bar';
+// Aligned with backend WidgetType enum
+export type WidgetType = 'VIEW' | 'IFRAME' | 'FIELDS' | 'GRAPH';
+
+// Graph subtypes for different chart types
+export type GraphSubType = 'number' | 'gauge' | 'pie' | 'bar' | 'line' | 'area';
 
 export type Widget = {
   id: string;
   type: WidgetType;
   title: string;
+  // For GRAPH widgets, specify the chart type
+  graphType?: GraphSubType;
+  // Widget-specific data/configuration
   data?: any;
 };
 
 export const mockWidgets: Widget[] = [
   {
     id: 'widget-1',
-    type: 'number',
+    type: 'GRAPH',
+    graphType: 'number',
     title: 'Sales Pipeline',
     data: {
       value: '1,234',
@@ -21,7 +29,8 @@ export const mockWidgets: Widget[] = [
   },
   {
     id: 'widget-2',
-    type: 'gauge',
+    type: 'GRAPH',
+    graphType: 'gauge',
     title: 'Conversion Rate',
     data: {
       value: 0.5,
@@ -32,7 +41,8 @@ export const mockWidgets: Widget[] = [
   },
   {
     id: 'widget-3',
-    type: 'pie',
+    type: 'GRAPH',
+    graphType: 'pie',
     title: 'Lead Distribution',
     data: {
       items: [
@@ -71,7 +81,8 @@ export const mockWidgets: Widget[] = [
   },
   {
     id: 'widget-4',
-    type: 'bar',
+    type: 'GRAPH',
+    graphType: 'bar',
     title: 'Monthly Performance',
     data: {
       items: [
@@ -149,8 +160,8 @@ export const mockLayouts: Layouts = {
       i: 'widget-4',
       x: 9,
       y: 0,
-      w: 3,
-      h: 5,
+      w: 4,
+      h: 8,
     },
   ],
   md: [
@@ -180,7 +191,7 @@ export const mockLayouts: Layouts = {
       x: 0,
       y: 5,
       w: 6,
-      h: 5,
+      h: 8,
     },
   ],
   sm: [
