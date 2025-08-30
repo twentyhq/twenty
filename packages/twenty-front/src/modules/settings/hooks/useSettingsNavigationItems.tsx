@@ -32,6 +32,7 @@ import {
   IconUserCircle,
   IconUsers,
   IconWebhook,
+  IconWorld,
 } from 'twenty-ui/display';
 import { FeatureFlagKey, PermissionFlagType } from '~/generated/graphql';
 
@@ -114,6 +115,12 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`General`,
           path: SettingsPath.Workspace,
           Icon: IconSettings,
+          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
+        },
+        {
+          label: t`Domains`,
+          path: SettingsPath.Domains,
+          Icon: IconWorld,
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {

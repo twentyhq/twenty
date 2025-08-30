@@ -5,7 +5,7 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard';
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
-import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard';
+
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -63,13 +63,7 @@ export const SettingsSecurity = () => {
             />
             <SettingsSSOIdentitiesProvidersListCard />
           </StyledSection>
-          <StyledSection>
-            <H2Title
-              title={t`Approved Domains`}
-              description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
-            />
-            <SettingsApprovedAccessDomainsListCard />
-          </StyledSection>
+
           <Section>
             <StyledContainer>
               <H2Title

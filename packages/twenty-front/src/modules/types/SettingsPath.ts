@@ -22,6 +22,7 @@ export enum SettingsPath {
   WorkspaceMembersPage = 'members',
   Workspace = 'general',
   Domain = 'general/domain',
+  Domains = 'domains',
   AI = 'ai',
   AINewAgent = 'ai/new-agent',
   AIAgentDetail = 'ai/agents/:agentId',
