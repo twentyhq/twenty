@@ -217,17 +217,10 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !isAdminEnabled,
         },
         {
-          label: t`Lab`,
-          path: SettingsPath.Lab,
-          Icon: IconFlask,
-          isHidden:
-            !labPublicFeatureFlags.length ||
-            !permissionMap[PermissionFlagType.WORKSPACE],
-        },
-        {
           label: t`Releases`,
           path: SettingsPath.Releases,
           Icon: IconRocket,
+          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
           label: t`Logout`,

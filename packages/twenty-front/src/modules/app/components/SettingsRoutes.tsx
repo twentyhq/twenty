@@ -112,12 +112,6 @@ const SettingsDevelopersApiKeysNew = lazy(() =>
   })),
 );
 
-const Releases = lazy(() =>
-  import('~/pages/settings/Releases').then((module) => ({
-    default: module.Releases,
-  })),
-);
-
 const SettingsServerlessFunctions = lazy(() =>
   import(
     '~/pages/settings/serverless-functions/SettingsServerlessFunctions'
@@ -353,9 +347,9 @@ const SettingsAdminConfigVariableDetails = lazy(() =>
   })),
 );
 
-const SettingsLab = lazy(() =>
-  import('~/pages/settings/lab/SettingsLab').then((module) => ({
-    default: module.SettingsLab,
+const SettingsReleases = lazy(() =>
+  import('~/pages/settings/releases').then((module) => ({
+    default: module.SettingsReleases,
   })),
 );
 
@@ -585,7 +579,7 @@ export const SettingsRoutes = ({
           />
         </>
       )}
-      <Route path={SettingsPath.Releases} element={<Releases />} />
+
       <Route
         element={
           <SettingsProtectedRouteWrapper
@@ -629,7 +623,7 @@ export const SettingsRoutes = ({
           />
         }
       >
-        <Route path={SettingsPath.Lab} element={<SettingsLab />} />
+        <Route path={SettingsPath.Releases} element={<SettingsReleases />} />
       </Route>
     </Routes>
   </Suspense>

@@ -23,6 +23,7 @@ export enum SettingsPath {
   Workspace = 'general',
   Domain = 'general/domain',
   Domains = 'domains',
+  Releases = 'releases',
   AI = 'ai',
   AINewAgent = 'ai/new-agent',
   AIAgentDetail = 'ai/agents/:agentId',
@@ -43,12 +44,12 @@ export enum SettingsPath {
   Webhooks = 'webhooks',
   NewWebhook = 'webhooks/new',
   WebhookDetail = 'webhooks/:webhookId',
-  Releases = 'releases',
+
   AdminPanel = 'admin-panel',
   AdminPanelHealthStatus = 'admin-panel#health-status',
   AdminPanelIndicatorHealthStatus = 'admin-panel/health-status/:indicatorId',
   AdminPanelConfigVariableDetails = 'admin-panel/config-variables/:variableName',
-  Lab = 'lab',
+
   Roles = 'roles',
   RoleCreate = 'roles/create',
   RoleDetail = 'roles/:roleId',
