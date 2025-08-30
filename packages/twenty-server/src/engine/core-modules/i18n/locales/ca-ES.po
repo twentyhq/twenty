@@ -313,7 +313,7 @@ msgstr "Id d'usuari associat"
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "At least one relation is require"
-msgstr ""
+msgstr "Cal almenys una relació"
 
 #. js-lingui-id: UY1vmE
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -593,7 +593,7 @@ msgstr "No es pot tenir més d'una versió de flux de treball activa"
 #. js-lingui-id: UcdPY5
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Cannot update standard field properties: {invalidProperties}"
-msgstr ""
+msgstr "No es poden actualitzar les propietats del camp estàndard: {invalidProperties}"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -813,7 +813,7 @@ msgstr "Data en què es va eliminar el registre"
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
-msgstr ""
+msgstr "El valor predeterminat \"{defaultValue}\" ha de ser un dels valors de l'opció"
 
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -823,12 +823,12 @@ msgstr "El valor predeterminat ha de ser una cadena de text"
 #. js-lingui-id: sv9P4Q
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value should be as quoted string"
-msgstr ""
+msgstr "El valor per defecte hauria d'estar com a cadena entre cometes"
 
 #. js-lingui-id: 6pJV03
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default values must be unique"
-msgstr ""
+msgstr "Els valors predeterminats han de ser únics"
 
 #. js-lingui-id: QN9ahV
 #: src/engine/twenty-orm/base.workspace-entity.ts
@@ -1256,7 +1256,7 @@ msgstr "Valor del Camp"
 #. js-lingui-id: s3HtdT
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required"
-msgstr ""
+msgstr "Es requereix el FieldMetadataId"
 
 #. js-lingui-id: Sof2+k
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
@@ -1383,7 +1383,7 @@ msgstr "Perfil del Client Ideal: Indica si l'empresa és el client més adequat 
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "If defined default value must contain at least one value"
-msgstr ""
+msgstr "Si es defineix, el valor per defecte ha de contenir almenys un valor"
 
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
@@ -1441,7 +1441,7 @@ msgstr "Valor de minut no vàlid. Hauria de ser un enter més gran que 1"
 #. js-lingui-id: sDfyvM
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Invalid morph relation input"
-msgstr ""
+msgstr "Entrada de relació de morfologia no vàlida"
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -1471,12 +1471,12 @@ msgstr "Codi de verificació invàlid. Si us plau, torneu a intentar-ho."
 #. js-lingui-id: 8xkULN
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "Invalid view sort data"
-msgstr ""
+msgstr "Dades d'ordenació de vista no vàlides"
 
 #. js-lingui-id: I0OzaR
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "Invalid view sort data for view sort id: {id}"
-msgstr ""
+msgstr "Dades d'ordenació de vista no vàlides per a l'ID d'ordenació de vista: {id}"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1814,12 +1814,12 @@ msgstr "Falten camps obligatoris: almenys una restricció única ha d'estar comp
 #. js-lingui-id: FqzlX4
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must have the same relation type"
-msgstr ""
+msgstr "Les càrregues útils de creació de relacions de morfologia han de tenir el mateix tipus de relació"
 
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
-msgstr ""
+msgstr "Les càrregues útils de creació de relacions de morfologia han de contenir només relacions amb el mateix objecte i metadades"
 
 #. js-lingui-id: DsdcRG
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
@@ -2970,7 +2970,7 @@ msgstr "Tipus d'horari cron no compatible"
 #. js-lingui-id: crxihq
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Unsupported field metadata type {fieldType}"
-msgstr ""
+msgstr "Tipus de metadades de camp no compatible {fieldType}."
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -3032,7 +3032,7 @@ msgstr "Format d'hora preferit de l'usuari"
 #. js-lingui-id: ckX/Ew
 #: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
 msgid "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
-msgstr ""
+msgstr "La validació ha fallat per a {invalidObjects} objecte(s) i {invalidFields} camp(s)."
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -3228,7 +3228,7 @@ msgstr "Ordenació de vista"
 #. js-lingui-id: znNExx
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "View sort (id: {id}) not found"
-msgstr ""
+msgstr "Ordenació de vista (id: {id}) no trobada"
 
 #. js-lingui-id: 6ZUale
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -3238,7 +3238,7 @@ msgstr "Direcció d'ordenació de vista"
 #. js-lingui-id: 3zMs+f
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "View sort not found"
-msgstr ""
+msgstr "Ordenació de vista no trobada"
 
 #. js-lingui-id: /rCPqN
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -3276,7 +3276,7 @@ msgstr "IdentificadorDeVista"
 #. js-lingui-id: kpQRY2
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "ViewId is required"
-msgstr ""
+msgstr "Es requereix l'ID de vista"
 
 #. js-lingui-id: l88nXn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
@@ -3528,7 +3528,7 @@ msgstr "Membres de l'Espai de Treball"
 #. js-lingui-id: bBr+RW
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required"
-msgstr ""
+msgstr "Es requereix l'ID de l'espai de treball"
 
 #. js-lingui-id: kjLpTn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts

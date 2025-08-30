@@ -95,7 +95,7 @@ msgstr "{formattedCreatedRecordsProgress} од {formattedRecordsToImportCount} �
 #. js-lingui-id: J2Vio9
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "{nickname} - {price}$"
-msgstr ""
+msgstr "{nickname} - {price}$"
 
 #. js-lingui-id: OeIgEg
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
@@ -706,7 +706,7 @@ msgstr "API кључеви"
 #. js-lingui-id: FfSJ1Y
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 msgid "API Keys"
-msgstr ""
+msgstr "API Кључеви"
 
 #. js-lingui-id: vByqA1
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -749,7 +749,7 @@ msgstr "АПИ-и"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "APIs & Webhooks"
-msgstr ""
+msgstr "API и Вебхукс"
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -1107,7 +1107,7 @@ msgstr "Променити на годишње?"
 #. js-lingui-id: CWe7wB
 #: src/pages/settings/releases/SettingsReleases.tsx
 msgid "Changelog"
-msgstr ""
+msgstr "Историја измена"
 
 #. js-lingui-id: AHZflp
 #: src/modules/ai/components/AIChatEmptyState.tsx
@@ -1640,7 +1640,7 @@ msgstr "Креирајте приказ"
 #. js-lingui-id: SiPp29
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 msgid "Create webhook"
-msgstr ""
+msgstr "Креирај вебхук"
 
 #. js-lingui-id: dkAPxi
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -1670,17 +1670,17 @@ msgstr "Креирање вашег радног простора"
 #. js-lingui-id: Efny36
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Credit Plan"
-msgstr ""
+msgstr "Кредитни план"
 
 #. js-lingui-id: c1ojkj
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credit Usage"
-msgstr ""
+msgstr "Кредитно коришћење"
 
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credits Used"
-msgstr ""
+msgstr "Кредити искоришћени"
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -2183,7 +2183,7 @@ msgstr "Домен"
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Domains"
-msgstr ""
+msgstr "Домени"
 
 #. js-lingui-id: 7kVRe6
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -2553,7 +2553,7 @@ msgstr "Грешка приликом ажурирања улоге"
 #. js-lingui-id: nB84mG
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
 msgid "Error validating approved access domain"
-msgstr ""
+msgstr "Грешка при валидацији одобреног приступног домена"
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2776,7 +2776,7 @@ msgstr "Није успело уклањање заменске вредност
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Failed to update price."
-msgstr ""
+msgstr "Није успело ажурирање цене."
 
 #. js-lingui-id: Dzh4a2
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -3848,7 +3848,7 @@ msgstr "MCP Конфигурација је копирана у клипборд
 #. js-lingui-id: upbzgm
 #: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
 msgid "Me"
-msgstr ""
+msgstr "Ја"
 
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
@@ -3932,12 +3932,12 @@ msgstr "Мониторисање извршења синхронизације �
 #. js-lingui-id: kY2ll9
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "month"
-msgstr ""
+msgstr "месец"
 
 #. js-lingui-id: rdfE9o
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "monthly"
-msgstr ""
+msgstr "месечно"
 
 #. js-lingui-id: 2FYpfJ
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
@@ -4398,7 +4398,7 @@ msgstr "Број децимала"
 #. js-lingui-id: tYOaY8
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Number of new credits allocated every {recurringInterval}"
-msgstr ""
+msgstr "Број нових кредита додељених сваки {recurringInterval}"
 
 #. js-lingui-id: qg5nhQ
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
@@ -4546,7 +4546,7 @@ msgstr "Излазно поље {fieldNumber}"
 #. js-lingui-id: nITdXs
 #: src/pages/settings/page-layout/PageLayoutEdition.tsx
 msgid "Page Layout"
-msgstr ""
+msgstr "Распоред странице"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -4687,7 +4687,7 @@ msgstr "Прво пронађите корисника"
 #. js-lingui-id: 8YnlGz
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Please start your subscription first"
-msgstr ""
+msgstr "Молимо вас прво започните своју претплату"
 
 #. js-lingui-id: 6nsIo3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4748,7 +4748,7 @@ msgstr "Претходни разговори са вештачком интел
 #. js-lingui-id: jmc+FY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Price updated."
-msgstr ""
+msgstr "Цена ажурирана."
 
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -4935,7 +4935,7 @@ msgstr "Уклони опцију"
 #. js-lingui-id: oQjB9l
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Renewal date"
-msgstr ""
+msgstr "Датум обнове"
 
 #. js-lingui-id: Ee8JBW
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -5654,7 +5654,7 @@ msgstr "SMTP сервер"
 #. js-lingui-id: ISDzCY
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "SMTP Username"
-msgstr ""
+msgstr "SMTP корисничко име"
 
 #. js-lingui-id: 4oakKm
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5670,7 +5670,7 @@ msgstr "Неки"
 #. js-lingui-id: wTrpxV
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Sorry, something went wrong"
-msgstr ""
+msgstr "Извините, нешто је пошло наопако"
 
 #. js-lingui-id: f6Hub0
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
@@ -5718,7 +5718,7 @@ msgstr "Започните разговор са вашим AI агентом д
 #. js-lingui-id: s+K73L
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Start Your Subscription"
-msgstr ""
+msgstr "Започни претплату"
 
 #. js-lingui-id: RS0o7b
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
@@ -5802,7 +5802,7 @@ msgstr "Претплати се"
 #. js-lingui-id: ShbDuS
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscribe Now"
-msgstr ""
+msgstr "Претплати се сада"
 
 #. js-lingui-id: WVzGc2
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -5888,7 +5888,7 @@ msgstr "Синхронизуј етикете и називе API-а објек�
 #. js-lingui-id: D+NlUC
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "System"
-msgstr ""
+msgstr "Систем"
 
 #. js-lingui-id: ERq5FY
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -6186,12 +6186,12 @@ msgstr "Сутра"
 #. js-lingui-id: YT/cKI
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Track your {intervalLabel} workflow credit consumption."
-msgstr ""
+msgstr "Пратите своје {intervalLabel} потрошњу кредита за workflow."
 
 #. js-lingui-id: lhkaAC
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Trial"
-msgstr ""
+msgstr "Проба"
 
 #. js-lingui-id: wN0jHF
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
@@ -6297,7 +6297,7 @@ msgstr "Украјински"
 #. js-lingui-id: l+ALBd
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
-msgstr ""
+msgstr "Немогуће је приступити позадинском делу"
 
 #. js-lingui-id: wSXm5S
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -6577,7 +6577,7 @@ msgstr "Подржавамо ваше квадратне PNG, JPEG и GIF фај
 #. js-lingui-id: 4pcfmN
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "We will activate your paid plan. Do you want to proceed?"
-msgstr ""
+msgstr "Активираћемо ваш плаћени план. Да ли желите да наставите?"
 
 #. js-lingui-id: KIfYq0
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -6697,7 +6697,7 @@ msgstr "Брисање радног простора"
 #. js-lingui-id: i1AiTd
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Workspace Domain"
-msgstr ""
+msgstr "Домен радног простора"
 
 #. js-lingui-id: J22jAC
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -6740,12 +6740,12 @@ msgstr "Напишите опис за овог агента"
 #. js-lingui-id: 7qI8sJ
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "year"
-msgstr ""
+msgstr "година"
 
 #. js-lingui-id: dfmB8/
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "yearly"
-msgstr ""
+msgstr "годишње"
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx

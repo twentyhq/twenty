@@ -313,7 +313,7 @@ msgstr "Geassosieerde Gebruikers-ID"
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "At least one relation is require"
-msgstr ""
+msgstr "Ten minste een verhouding is vereis"
 
 #. js-lingui-id: UY1vmE
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -593,7 +593,7 @@ msgstr "Kan nie meer as een aktiewe werkvloeiontwikke se weergawe hê nie"
 #. js-lingui-id: UcdPY5
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Cannot update standard field properties: {invalidProperties}"
-msgstr ""
+msgstr "Kan nie standaardveld eienskappe opdateer nie: {invalidProperties}"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -813,7 +813,7 @@ msgstr "Datum toe die rekord verwyder is"
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
-msgstr ""
+msgstr "Standaardwaarde \"{defaultValue}\" moet een van die opsiewaardes wees"
 
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -823,12 +823,12 @@ msgstr "Standaardwaarde moet 'n string wees"
 #. js-lingui-id: sv9P4Q
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value should be as quoted string"
-msgstr ""
+msgstr "Standaardwaarde moet as 'n aangehaalde string wees"
 
 #. js-lingui-id: 6pJV03
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default values must be unique"
-msgstr ""
+msgstr "Standaardwaardes moet uniek wees"
 
 #. js-lingui-id: QN9ahV
 #: src/engine/twenty-orm/base.workspace-entity.ts
@@ -1256,7 +1256,7 @@ msgstr "Veld Waarde"
 #. js-lingui-id: s3HtdT
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required"
-msgstr ""
+msgstr "FieldMetadataId is vereis"
 
 #. js-lingui-id: Sof2+k
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
@@ -1383,7 +1383,7 @@ msgstr "Ideale Klanteprofiel: Dit dui aan of die maatskappy die mees toepaslike 
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "If defined default value must contain at least one value"
-msgstr ""
+msgstr "Indien gedefinieer, moet die standaardwaarde ten minste een waarde bevat"
 
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
@@ -1441,7 +1441,7 @@ msgstr "Ongeldige minuut waarde. Moet 'n heelgetal wees groter as 1"
 #. js-lingui-id: sDfyvM
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Invalid morph relation input"
-msgstr ""
+msgstr "Ongeldige morfverhoudingsinvoer"
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -1471,12 +1471,12 @@ msgstr "Ongeldige verifikasiekode. Probeer asseblief weer."
 #. js-lingui-id: 8xkULN
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "Invalid view sort data"
-msgstr ""
+msgstr "Ongeldige aansig sorteergegewens"
 
 #. js-lingui-id: I0OzaR
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "Invalid view sort data for view sort id: {id}"
-msgstr ""
+msgstr "Ongeldige aansig sorteergegewens vir die aansigsorteer-ID: {id}"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1814,12 +1814,12 @@ msgstr "Vereiste velde ontbreek: ten minste een unieke beperking moet volledig g
 #. js-lingui-id: FqzlX4
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must have the same relation type"
-msgstr ""
+msgstr "Morfverhouding-skeppingsladings moet dieselfde verhoudingtipes hê"
 
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
-msgstr ""
+msgstr "Morfverhouding-skeppingsladings moet slegs verhouding tot dieselfde objekmetadata bevat"
 
 #. js-lingui-id: DsdcRG
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
@@ -2970,7 +2970,7 @@ msgstr "Nie-ondersteunde cron skedule tipe"
 #. js-lingui-id: crxihq
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Unsupported field metadata type {fieldType}"
-msgstr ""
+msgstr "Ongesteunde veldmetadata tipe {fieldType}"
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -3032,7 +3032,7 @@ msgstr "Gebruiker se voorkeur tydformaat"
 #. js-lingui-id: ckX/Ew
 #: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
 msgid "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
-msgstr ""
+msgstr "Validering het misluk vir {invalidObjects} objek(te) en {invalidFields} veld(e)"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -3228,7 +3228,7 @@ msgstr "Bekyk Sorteer"
 #. js-lingui-id: znNExx
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "View sort (id: {id}) not found"
-msgstr ""
+msgstr "Sorteer van aansigte (ID: {id}) nie gevind nie"
 
 #. js-lingui-id: 6ZUale
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -3238,7 +3238,7 @@ msgstr "Bekyk Sorteer rigting"
 #. js-lingui-id: 3zMs+f
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "View sort not found"
-msgstr ""
+msgstr "Sorteer van aansigte nie gevind nie"
 
 #. js-lingui-id: /rCPqN
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -3276,7 +3276,7 @@ msgstr "KykId"
 #. js-lingui-id: kpQRY2
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "ViewId is required"
-msgstr ""
+msgstr "Aansig-ID is benodig"
 
 #. js-lingui-id: l88nXn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
@@ -3528,7 +3528,7 @@ msgstr "Werkruimte Lede"
 #. js-lingui-id: bBr+RW
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required"
-msgstr ""
+msgstr "Werksruimte-ID is benodig"
 
 #. js-lingui-id: kjLpTn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts

@@ -313,7 +313,7 @@ msgstr "İlişkilendirilmiş Kullanıcı Id"
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "At least one relation is require"
-msgstr ""
+msgstr "En az bir ilişki gerekli"
 
 #. js-lingui-id: UY1vmE
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -593,7 +593,7 @@ msgstr "Birden fazla aktif iş akışı sürümü olamaz."
 #. js-lingui-id: UcdPY5
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Cannot update standard field properties: {invalidProperties}"
-msgstr ""
+msgstr "Standart alan özellikleri güncellenemez: {invalidProperties}"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -813,7 +813,7 @@ msgstr "Kaydın silindiği tarih"
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
-msgstr ""
+msgstr "Varsayılan değer \"{defaultValue}\", seçenek değerlerinden biri olmalıdır"
 
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -823,12 +823,12 @@ msgstr "Varsayılan değer bir dize olmalıdır"
 #. js-lingui-id: sv9P4Q
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value should be as quoted string"
-msgstr ""
+msgstr "Varsayılan değer, tırnak içine alınmış bir dize olmalıdır"
 
 #. js-lingui-id: 6pJV03
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default values must be unique"
-msgstr ""
+msgstr "Varsayılan değerler benzersiz olmalıdır"
 
 #. js-lingui-id: QN9ahV
 #: src/engine/twenty-orm/base.workspace-entity.ts
@@ -1256,7 +1256,7 @@ msgstr "Alan Değeri"
 #. js-lingui-id: s3HtdT
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required"
-msgstr ""
+msgstr "FieldMetadataId gereklidir"
 
 #. js-lingui-id: Sof2+k
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
@@ -1383,7 +1383,7 @@ msgstr "Ideal Müşteri Profili: Şirketin sizin için en uygun ve değerli mü�
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "If defined default value must contain at least one value"
-msgstr ""
+msgstr "Tanımlanmışsa, varsayılan değer en az bir değer içermelidir"
 
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
@@ -1441,7 +1441,7 @@ msgstr "Geçersiz dakika değeri. 1'den büyük bir tamsayı olmalıdır"
 #. js-lingui-id: sDfyvM
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Invalid morph relation input"
-msgstr ""
+msgstr "Geçersiz morph ilişki girişi"
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -1471,12 +1471,12 @@ msgstr "Geçersiz doğrulama kodu. Lütfen tekrar deneyin."
 #. js-lingui-id: 8xkULN
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "Invalid view sort data"
-msgstr ""
+msgstr "Geçersiz görünüm sıralama verisi"
 
 #. js-lingui-id: I0OzaR
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "Invalid view sort data for view sort id: {id}"
-msgstr ""
+msgstr "Görünüm sıralama id'si için geçersiz sıralama verisi: {id}"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1814,12 +1814,12 @@ msgstr "Gerekli alanlar eksik: '{connectFieldName}' için en az bir benzersiz k�
 #. js-lingui-id: FqzlX4
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must have the same relation type"
-msgstr ""
+msgstr "Morph ilişki oluşturma taşıyıcılarının aynı ilişki türüne sahip olması gerekir"
 
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
-msgstr ""
+msgstr "Morph ilişki oluşturma taşıyıcıları yalnızca aynı nesne meta verilerine sahip ilişki içermelidir"
 
 #. js-lingui-id: DsdcRG
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
@@ -2970,7 +2970,7 @@ msgstr "Desteklenmeyen cron program türü"
 #. js-lingui-id: crxihq
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Unsupported field metadata type {fieldType}"
-msgstr ""
+msgstr "Desteklenmeyen alan metadata türü {fieldType}"
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -3032,7 +3032,7 @@ msgstr "Kullanıcının tercih ettiği saat biçimi"
 #. js-lingui-id: ckX/Ew
 #: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
 msgid "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
-msgstr ""
+msgstr "{invalidObjects} nesne(ler) ve {invalidFields} alan(lar) için doğrulama başarısız oldu"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -3228,7 +3228,7 @@ msgstr "Görünüm Sıralaması"
 #. js-lingui-id: znNExx
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "View sort (id: {id}) not found"
-msgstr ""
+msgstr "Görünüm sıralama (id: {id}) bulunamadı"
 
 #. js-lingui-id: 6ZUale
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -3238,7 +3238,7 @@ msgstr "Görünüm sıralama yönü"
 #. js-lingui-id: 3zMs+f
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "View sort not found"
-msgstr ""
+msgstr "Görünüm sıralama bulunamadı"
 
 #. js-lingui-id: /rCPqN
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -3276,7 +3276,7 @@ msgstr "GörünümId"
 #. js-lingui-id: kpQRY2
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "ViewId is required"
-msgstr ""
+msgstr "ViewId gereklidir"
 
 #. js-lingui-id: l88nXn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
@@ -3528,7 +3528,7 @@ msgstr "Çalışma Alanı Üyeleri"
 #. js-lingui-id: bBr+RW
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required"
-msgstr ""
+msgstr "WorkspaceId gereklidir"
 
 #. js-lingui-id: kjLpTn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts

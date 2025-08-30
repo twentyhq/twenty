@@ -313,7 +313,7 @@ msgstr "Mã người dùng liên kết"
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "At least one relation is require"
-msgstr ""
+msgstr "Cần ít nhất một quan hệ"
 
 #. js-lingui-id: UY1vmE
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -593,7 +593,7 @@ msgstr "Không thể có nhiều hơn một phiên bản quy trình làm việc 
 #. js-lingui-id: UcdPY5
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Cannot update standard field properties: {invalidProperties}"
-msgstr ""
+msgstr "Không thể cập nhật thuộc tính trường tiêu chuẩn: {invalidProperties}"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -813,7 +813,7 @@ msgstr "Ngày hồ sơ đã bị xóa"
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
-msgstr ""
+msgstr "Giá trị mặc định \"{defaultValue}\" phải là một trong những giá trị lựa chọn"
 
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -823,12 +823,12 @@ msgstr "Giá trị mặc định phải là một chuỗi"
 #. js-lingui-id: sv9P4Q
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value should be as quoted string"
-msgstr ""
+msgstr "Giá trị mặc định nên ở dạng chuỗi trong ngoặc kép"
 
 #. js-lingui-id: 6pJV03
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default values must be unique"
-msgstr ""
+msgstr "Các giá trị mặc định phải là duy nhất"
 
 #. js-lingui-id: QN9ahV
 #: src/engine/twenty-orm/base.workspace-entity.ts
@@ -1256,7 +1256,7 @@ msgstr "Giá trị Trường"
 #. js-lingui-id: s3HtdT
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required"
-msgstr ""
+msgstr "Cần có FieldMetadataId"
 
 #. js-lingui-id: Sof2+k
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
@@ -1383,7 +1383,7 @@ msgstr "Hồ sơ Khách hàng Lý tưởng: Chỉ ra liệu công ty có phải 
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "If defined default value must contain at least one value"
-msgstr ""
+msgstr "Nếu giá trị mặc định đã được xác định thì phải chứa ít nhất một giá trị"
 
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
@@ -1441,7 +1441,7 @@ msgstr "Giá trị phút không hợp lệ. Phải là số nguyên lớn hơn 1
 #. js-lingui-id: sDfyvM
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Invalid morph relation input"
-msgstr ""
+msgstr "Đầu vào mối quan hệ dạng lỗi không hợp lệ"
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -1471,12 +1471,12 @@ msgstr "Mã xác minh không hợp lệ. Vui lòng thử lại."
 #. js-lingui-id: 8xkULN
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "Invalid view sort data"
-msgstr ""
+msgstr "Dữ liệu sắp xếp chế độ xem không hợp lệ"
 
 #. js-lingui-id: I0OzaR
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "Invalid view sort data for view sort id: {id}"
-msgstr ""
+msgstr "Dữ liệu sắp xếp chế độ xem không hợp lệ cho mã sắp xếp: {id}"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1814,12 +1814,12 @@ msgstr "Thiếu các trường bắt buộc: ít nhất một ràng buộc duy n
 #. js-lingui-id: FqzlX4
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must have the same relation type"
-msgstr ""
+msgstr "Payloads tạo mối quan hệ dạng lỗi phải có cùng loại mối quan hệ"
 
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
-msgstr ""
+msgstr "Payloads tạo mối quan hệ dạng lỗi chỉ được chứa liên kết đến cùng một siêu dữ liệu đối tượng"
 
 #. js-lingui-id: DsdcRG
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
@@ -2970,7 +2970,7 @@ msgstr "Loại lịch trình cron không được hỗ trợ"
 #. js-lingui-id: crxihq
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Unsupported field metadata type {fieldType}"
-msgstr ""
+msgstr "Loại siêu dữ liệu trường không được hỗ trợ {fieldType}"
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -3032,7 +3032,7 @@ msgstr "Định dạng thời gian ưa thích của người dùng"
 #. js-lingui-id: ckX/Ew
 #: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
 msgid "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
-msgstr ""
+msgstr "Thất bại xác thực cho {invalidObjects} đối tượng và {invalidFields} trường"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -3228,7 +3228,7 @@ msgstr "Sắp xếp xem"
 #. js-lingui-id: znNExx
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "View sort (id: {id}) not found"
-msgstr ""
+msgstr "Sắp xếp chế độ xem (id: {id}) không tìm thấy"
 
 #. js-lingui-id: 6ZUale
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -3238,7 +3238,7 @@ msgstr "Hướng sắp xếp của xem"
 #. js-lingui-id: 3zMs+f
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "View sort not found"
-msgstr ""
+msgstr "Không tìm thấy sắp xếp chế độ xem"
 
 #. js-lingui-id: /rCPqN
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -3276,7 +3276,7 @@ msgstr "IDXem"
 #. js-lingui-id: kpQRY2
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "ViewId is required"
-msgstr ""
+msgstr "Id chế độ xem là bắt buộc"
 
 #. js-lingui-id: l88nXn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
@@ -3528,7 +3528,7 @@ msgstr "Các Thành Viên Không Gian Làm Việc"
 #. js-lingui-id: bBr+RW
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required"
-msgstr ""
+msgstr "Id không gian làm việc là bắt buộc"
 
 #. js-lingui-id: kjLpTn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts

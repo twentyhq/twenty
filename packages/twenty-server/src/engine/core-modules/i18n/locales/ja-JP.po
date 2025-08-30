@@ -313,7 +313,7 @@ msgstr "関連ユーザーID"
 #. js-lingui-id: K9efby
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "At least one relation is require"
-msgstr ""
+msgstr "少なくとも1つの関連が必要です"
 
 #. js-lingui-id: UY1vmE
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -593,7 +593,7 @@ msgstr "複数のアクティブなワークフローバージョンを持つこ
 #. js-lingui-id: UcdPY5
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Cannot update standard field properties: {invalidProperties}"
-msgstr ""
+msgstr "標準フィールドのプロパティを更新できません: {invalidProperties}"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -813,7 +813,7 @@ msgstr "レコードが削除された日付"
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
-msgstr ""
+msgstr "デフォルト値 \"{defaultValue}\" はオプションの値の一つでなければなりません"
 
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -823,12 +823,12 @@ msgstr "デフォルト値は文字列でなければなりません"
 #. js-lingui-id: sv9P4Q
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value should be as quoted string"
-msgstr ""
+msgstr "デフォルト値は引用符で囲まれた文字列である必要があります"
 
 #. js-lingui-id: 6pJV03
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default values must be unique"
-msgstr ""
+msgstr "デフォルト値は一意でなければなりません"
 
 #. js-lingui-id: QN9ahV
 #: src/engine/twenty-orm/base.workspace-entity.ts
@@ -1256,7 +1256,7 @@ msgstr "フィールド値"
 #. js-lingui-id: s3HtdT
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required"
-msgstr ""
+msgstr "FieldMetadataIdが必要です"
 
 #. js-lingui-id: Sof2+k
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
@@ -1383,7 +1383,7 @@ msgstr "理想的な顧客プロフィール：会社が最も適切で価値の
 #. js-lingui-id: YcVn4w
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "If defined default value must contain at least one value"
-msgstr ""
+msgstr "定義されている場合、デフォルト値には少なくとも1つの値が含まれている必要があります"
 
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
@@ -1441,7 +1441,7 @@ msgstr "無効な分の値。1 を超える整数であるべきです"
 #. js-lingui-id: sDfyvM
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Invalid morph relation input"
-msgstr ""
+msgstr "無効なモーフ関連入力"
 
 #. js-lingui-id: AXZsy/
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
@@ -1471,12 +1471,12 @@ msgstr "無効な認証コードです。もう一度お試しください。"
 #. js-lingui-id: 8xkULN
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "Invalid view sort data"
-msgstr ""
+msgstr "無効なビューソートデータ"
 
 #. js-lingui-id: I0OzaR
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "Invalid view sort data for view sort id: {id}"
-msgstr ""
+msgstr "ビューソートID：{id} の無効なビューソートデータ"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1814,12 +1814,12 @@ msgstr "必要なフィールドがありません: 少なくとも一つのユ�
 #. js-lingui-id: FqzlX4
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must have the same relation type"
-msgstr ""
+msgstr "モーフ関連作成ペイロードは同じ関連タイプを持っている必要があります"
 
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
-msgstr ""
+msgstr "モーフ関連作成ペイロードは同じオブジェクトのメタデータに対する関連を含む必要があります"
 
 #. js-lingui-id: DsdcRG
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
@@ -2970,7 +2970,7 @@ msgstr "サポートされていない cron スケジュールタイプ"
 #. js-lingui-id: crxihq
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Unsupported field metadata type {fieldType}"
-msgstr ""
+msgstr "サポートされていないフィールドメタデータタイプ {fieldType}"
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -3032,7 +3032,7 @@ msgstr "ユーザーの好ましい時間フォーマット"
 #. js-lingui-id: ckX/Ew
 #: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
 msgid "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
-msgstr ""
+msgstr "{invalidObjects} オブジェクトと {invalidFields} フィールドの検証に失敗しました"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -3228,7 +3228,7 @@ msgstr "ビューソート"
 #. js-lingui-id: znNExx
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "View sort (id: {id}) not found"
-msgstr ""
+msgstr "ビューソート（ID：{id}）が見つかりません"
 
 #. js-lingui-id: 6ZUale
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -3238,7 +3238,7 @@ msgstr "ビューソートの方向"
 #. js-lingui-id: 3zMs+f
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "View sort not found"
-msgstr ""
+msgstr "ビューソートが見つかりません"
 
 #. js-lingui-id: /rCPqN
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -3276,7 +3276,7 @@ msgstr "ビューID"
 #. js-lingui-id: kpQRY2
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "ViewId is required"
-msgstr ""
+msgstr "ViewIdが必要です"
 
 #. js-lingui-id: l88nXn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
@@ -3528,7 +3528,7 @@ msgstr "ワークスペースメンバー"
 #. js-lingui-id: bBr+RW
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required"
-msgstr ""
+msgstr "WorkspaceIdが必要です"
 
 #. js-lingui-id: kjLpTn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts

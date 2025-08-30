@@ -95,7 +95,7 @@ msgstr "{formattedCreatedRecordsProgress} trong tổng số {formattedRecordsToI
 #. js-lingui-id: J2Vio9
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "{nickname} - {price}$"
-msgstr ""
+msgstr "{nickname} - {price}USD"
 
 #. js-lingui-id: OeIgEg
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
@@ -706,7 +706,7 @@ msgstr "Khóa API"
 #. js-lingui-id: FfSJ1Y
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 msgid "API Keys"
-msgstr ""
+msgstr "Các khóa API"
 
 #. js-lingui-id: vByqA1
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -749,7 +749,7 @@ msgstr "API"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "APIs & Webhooks"
-msgstr ""
+msgstr "API và Webhooks"
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -1107,7 +1107,7 @@ msgstr "Chuyển sang hàng năm?"
 #. js-lingui-id: CWe7wB
 #: src/pages/settings/releases/SettingsReleases.tsx
 msgid "Changelog"
-msgstr ""
+msgstr "Nhật ký thay đổi"
 
 #. js-lingui-id: AHZflp
 #: src/modules/ai/components/AIChatEmptyState.tsx
@@ -1640,7 +1640,7 @@ msgstr "Tạo chế độ xem"
 #. js-lingui-id: SiPp29
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 msgid "Create webhook"
-msgstr ""
+msgstr "Tạo Webhook"
 
 #. js-lingui-id: dkAPxi
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -1670,17 +1670,17 @@ msgstr "Đang tạo không gian làm việc của bạn"
 #. js-lingui-id: Efny36
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Credit Plan"
-msgstr ""
+msgstr "Kế hoạch tín dụng"
 
 #. js-lingui-id: c1ojkj
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credit Usage"
-msgstr ""
+msgstr "Sử dụng tín dụng"
 
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credits Used"
-msgstr ""
+msgstr "Tín dụng đã sử dụng"
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -2183,7 +2183,7 @@ msgstr "Tên miền"
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Domains"
-msgstr ""
+msgstr "Tên miền"
 
 #. js-lingui-id: 7kVRe6
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -2553,7 +2553,7 @@ msgstr "Lỗi khi cập nhật vai trò"
 #. js-lingui-id: nB84mG
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
 msgid "Error validating approved access domain"
-msgstr ""
+msgstr "Lỗi xác thực tên miền truy cập đã được phê duyệt"
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2776,7 +2776,7 @@ msgstr "Không thể xóa ghi đè"
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Failed to update price."
-msgstr ""
+msgstr "Cập nhật giá thất bại."
 
 #. js-lingui-id: Dzh4a2
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -3848,7 +3848,7 @@ msgstr "Đã sao chép cấu hình MCP vào bảng tạm"
 #. js-lingui-id: upbzgm
 #: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
 msgid "Me"
-msgstr ""
+msgstr "Tôi"
 
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
@@ -3932,12 +3932,12 @@ msgstr "Giám sát việc thực thi công việc đồng bộ email của bạn
 #. js-lingui-id: kY2ll9
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "month"
-msgstr ""
+msgstr "tháng"
 
 #. js-lingui-id: rdfE9o
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "monthly"
-msgstr ""
+msgstr "hàng tháng"
 
 #. js-lingui-id: 2FYpfJ
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
@@ -4398,7 +4398,7 @@ msgstr "Số lượng chữ số thập phân"
 #. js-lingui-id: tYOaY8
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Number of new credits allocated every {recurringInterval}"
-msgstr ""
+msgstr "Số lượng tín dụng mới được cấp phát mỗi {recurringInterval}"
 
 #. js-lingui-id: qg5nhQ
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
@@ -4546,7 +4546,7 @@ msgstr "Trường Đầu Ra {fieldNumber}"
 #. js-lingui-id: nITdXs
 #: src/pages/settings/page-layout/PageLayoutEdition.tsx
 msgid "Page Layout"
-msgstr ""
+msgstr "Bố cục Trang"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -4687,7 +4687,7 @@ msgstr "Vui lòng tìm kiếm người dùng trước"
 #. js-lingui-id: 8YnlGz
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Please start your subscription first"
-msgstr ""
+msgstr "Vui lòng bắt đầu đăng ký của bạn trước"
 
 #. js-lingui-id: 6nsIo3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4748,7 +4748,7 @@ msgstr "Trò chuyện AI trước đây"
 #. js-lingui-id: jmc+FY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Price updated."
-msgstr ""
+msgstr "Giá đã cập nhật."
 
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -4935,7 +4935,7 @@ msgstr "Xóa tùy chọn"
 #. js-lingui-id: oQjB9l
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Renewal date"
-msgstr ""
+msgstr "Ngày gia hạn"
 
 #. js-lingui-id: Ee8JBW
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -5654,7 +5654,7 @@ msgstr "Máy chủ SMTP"
 #. js-lingui-id: ISDzCY
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "SMTP Username"
-msgstr ""
+msgstr "Tên người dùng SMTP"
 
 #. js-lingui-id: 4oakKm
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5670,7 +5670,7 @@ msgstr "Một số"
 #. js-lingui-id: wTrpxV
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Sorry, something went wrong"
-msgstr ""
+msgstr "Xin lỗi, có sự cố xảy ra"
 
 #. js-lingui-id: f6Hub0
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
@@ -5718,7 +5718,7 @@ msgstr "Bắt đầu cuộc trò chuyện với tác nhân AI của bạn để 
 #. js-lingui-id: s+K73L
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Start Your Subscription"
-msgstr ""
+msgstr "Bắt đầu Đăng Ký Của Bạn"
 
 #. js-lingui-id: RS0o7b
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
@@ -5802,7 +5802,7 @@ msgstr "Đăng ký"
 #. js-lingui-id: ShbDuS
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscribe Now"
-msgstr ""
+msgstr "Đăng ký Ngay"
 
 #. js-lingui-id: WVzGc2
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -5888,7 +5888,7 @@ msgstr "Đồng bộ nhãn và tên API của đối tượng"
 #. js-lingui-id: D+NlUC
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "System"
-msgstr ""
+msgstr "Hệ thống"
 
 #. js-lingui-id: ERq5FY
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -6186,12 +6186,12 @@ msgstr "Ngày mai"
 #. js-lingui-id: YT/cKI
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Track your {intervalLabel} workflow credit consumption."
-msgstr ""
+msgstr "Theo dõi sự tiêu thụ tín dụng workflow {intervalLabel} của bạn."
 
 #. js-lingui-id: lhkaAC
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Trial"
-msgstr ""
+msgstr "Dùng thử"
 
 #. js-lingui-id: wN0jHF
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
@@ -6297,7 +6297,7 @@ msgstr "Tiếng Ukraine"
 #. js-lingui-id: l+ALBd
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
-msgstr ""
+msgstr "Không Thể Kết Nối Back-end"
 
 #. js-lingui-id: wSXm5S
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -6577,7 +6577,7 @@ msgstr "Chúng tôi hỗ trợ hình ảnh PNG, JPEG và GIF vuông dưới 10MB
 #. js-lingui-id: 4pcfmN
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "We will activate your paid plan. Do you want to proceed?"
-msgstr ""
+msgstr "Chúng tôi sẽ kích hoạt gói thanh toán của bạn. Bạn có muốn tiếp tục không?"
 
 #. js-lingui-id: KIfYq0
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -6697,7 +6697,7 @@ msgstr "Xóa Workspace"
 #. js-lingui-id: i1AiTd
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Workspace Domain"
-msgstr ""
+msgstr "Tên miền không gian làm việc"
 
 #. js-lingui-id: J22jAC
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -6740,12 +6740,12 @@ msgstr "Viết mô tả cho tác nhân này"
 #. js-lingui-id: 7qI8sJ
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "year"
-msgstr ""
+msgstr "năm"
 
 #. js-lingui-id: dfmB8/
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "yearly"
-msgstr ""
+msgstr "hàng năm"
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx

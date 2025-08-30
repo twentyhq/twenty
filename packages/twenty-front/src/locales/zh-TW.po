@@ -95,7 +95,7 @@ msgstr "已匯入 {formattedCreatedRecordsProgress} 筆資料，共 {formattedRe
 #. js-lingui-id: J2Vio9
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "{nickname} - {price}$"
-msgstr ""
+msgstr "{nickname} - {price}$"
 
 #. js-lingui-id: OeIgEg
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
@@ -706,7 +706,7 @@ msgstr "API 密鑰"
 #. js-lingui-id: FfSJ1Y
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 msgid "API Keys"
-msgstr ""
+msgstr "API 密鑰"
 
 #. js-lingui-id: vByqA1
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -749,7 +749,7 @@ msgstr "API"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "APIs & Webhooks"
-msgstr ""
+msgstr "API 和 Webhooks"
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -1107,7 +1107,7 @@ msgstr "更改為年度？"
 #. js-lingui-id: CWe7wB
 #: src/pages/settings/releases/SettingsReleases.tsx
 msgid "Changelog"
-msgstr ""
+msgstr "變更日誌"
 
 #. js-lingui-id: AHZflp
 #: src/modules/ai/components/AIChatEmptyState.tsx
@@ -1640,7 +1640,7 @@ msgstr "創建視圖"
 #. js-lingui-id: SiPp29
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 msgid "Create webhook"
-msgstr ""
+msgstr "創建 Webhook"
 
 #. js-lingui-id: dkAPxi
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -1670,17 +1670,17 @@ msgstr "創建您的工作區"
 #. js-lingui-id: Efny36
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Credit Plan"
-msgstr ""
+msgstr "信用計劃"
 
 #. js-lingui-id: c1ojkj
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credit Usage"
-msgstr ""
+msgstr "信用使用"
 
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credits Used"
-msgstr ""
+msgstr "使用的免費積分"
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -2183,7 +2183,7 @@ msgstr "域名"
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Domains"
-msgstr ""
+msgstr "域名"
 
 #. js-lingui-id: 7kVRe6
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -2553,7 +2553,7 @@ msgstr "更新角色時出錯"
 #. js-lingui-id: nB84mG
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
 msgid "Error validating approved access domain"
-msgstr ""
+msgstr "驗證核准訪問域名時出錯"
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2776,7 +2776,7 @@ msgstr "移除覆蓋失敗"
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Failed to update price."
-msgstr ""
+msgstr "更新價格失敗。"
 
 #. js-lingui-id: Dzh4a2
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -3848,7 +3848,7 @@ msgstr "MCP配置已複製到剪貼板"
 #. js-lingui-id: upbzgm
 #: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
 msgid "Me"
-msgstr ""
+msgstr "我"
 
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
@@ -3932,12 +3932,12 @@ msgstr "監控您的電子郵件同步工作執行情況"
 #. js-lingui-id: kY2ll9
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "month"
-msgstr ""
+msgstr "月"
 
 #. js-lingui-id: rdfE9o
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "monthly"
-msgstr ""
+msgstr "每月"
 
 #. js-lingui-id: 2FYpfJ
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
@@ -4398,7 +4398,7 @@ msgstr "小數位數"
 #. js-lingui-id: tYOaY8
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Number of new credits allocated every {recurringInterval}"
-msgstr ""
+msgstr "每 {recurringInterval} 分配的新積分數量"
 
 #. js-lingui-id: qg5nhQ
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
@@ -4546,7 +4546,7 @@ msgstr "輸出欄位 {fieldNumber}"
 #. js-lingui-id: nITdXs
 #: src/pages/settings/page-layout/PageLayoutEdition.tsx
 msgid "Page Layout"
-msgstr ""
+msgstr "頁面佈局"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -4687,7 +4687,7 @@ msgstr "請先搜索用戶"
 #. js-lingui-id: 8YnlGz
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Please start your subscription first"
-msgstr ""
+msgstr "請先開始您的訂閱"
 
 #. js-lingui-id: 6nsIo3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4748,7 +4748,7 @@ msgstr "上一次的 AI 聊天"
 #. js-lingui-id: jmc+FY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Price updated."
-msgstr ""
+msgstr "價格已更新。"
 
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -4935,7 +4935,7 @@ msgstr "移除選項"
 #. js-lingui-id: oQjB9l
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Renewal date"
-msgstr ""
+msgstr "續訂日期"
 
 #. js-lingui-id: Ee8JBW
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -5654,7 +5654,7 @@ msgstr "SMTP 伺服器"
 #. js-lingui-id: ISDzCY
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "SMTP Username"
-msgstr ""
+msgstr "SMTP 使用者名稱"
 
 #. js-lingui-id: 4oakKm
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5670,7 +5670,7 @@ msgstr "一些"
 #. js-lingui-id: wTrpxV
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Sorry, something went wrong"
-msgstr ""
+msgstr "抱歉，出問題了"
 
 #. js-lingui-id: f6Hub0
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
@@ -5718,7 +5718,7 @@ msgstr "開始與您的 AI 代理進行對話，以獲取工作流程見解、�
 #. js-lingui-id: s+K73L
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Start Your Subscription"
-msgstr ""
+msgstr "開始您的訂閱"
 
 #. js-lingui-id: RS0o7b
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
@@ -5802,7 +5802,7 @@ msgstr "訂閱"
 #. js-lingui-id: ShbDuS
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscribe Now"
-msgstr ""
+msgstr "立即訂閱"
 
 #. js-lingui-id: WVzGc2
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -5888,7 +5888,7 @@ msgstr "同步對象標籤和 API 名稱"
 #. js-lingui-id: D+NlUC
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "System"
-msgstr ""
+msgstr "系統"
 
 #. js-lingui-id: ERq5FY
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -6186,12 +6186,12 @@ msgstr "明天"
 #. js-lingui-id: YT/cKI
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Track your {intervalLabel} workflow credit consumption."
-msgstr ""
+msgstr "追踪您的 {intervalLabel} 工作流信用消耗。"
 
 #. js-lingui-id: lhkaAC
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Trial"
-msgstr ""
+msgstr "試用"
 
 #. js-lingui-id: wN0jHF
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
@@ -6297,7 +6297,7 @@ msgstr "烏克蘭語"
 #. js-lingui-id: l+ALBd
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
-msgstr ""
+msgstr "無法連接後端"
 
 #. js-lingui-id: wSXm5S
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -6577,7 +6577,7 @@ msgstr "我們支持 10MB 以下的正方形 PNG、JPEG 和 GIF 文件"
 #. js-lingui-id: 4pcfmN
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "We will activate your paid plan. Do you want to proceed?"
-msgstr ""
+msgstr "我們將啟用您的付費計劃。您想繼續嗎？"
 
 #. js-lingui-id: KIfYq0
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -6697,7 +6697,7 @@ msgstr "刪除工作區"
 #. js-lingui-id: i1AiTd
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Workspace Domain"
-msgstr ""
+msgstr "工作區域名"
 
 #. js-lingui-id: J22jAC
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -6740,12 +6740,12 @@ msgstr "為此代理撰寫描述"
 #. js-lingui-id: 7qI8sJ
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "year"
-msgstr ""
+msgstr "年"
 
 #. js-lingui-id: dfmB8/
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "yearly"
-msgstr ""
+msgstr "年度"
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx

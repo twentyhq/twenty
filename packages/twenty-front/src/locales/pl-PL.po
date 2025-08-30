@@ -95,7 +95,7 @@ msgstr "{formattedCreatedRecordsProgress} z {formattedRecordsToImportCount} reko
 #. js-lingui-id: J2Vio9
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "{nickname} - {price}$"
-msgstr ""
+msgstr "{nickname} - {price}$"
 
 #. js-lingui-id: OeIgEg
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
@@ -706,7 +706,7 @@ msgstr "Klucze API"
 #. js-lingui-id: FfSJ1Y
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 msgid "API Keys"
-msgstr ""
+msgstr "Klucze API"
 
 #. js-lingui-id: vByqA1
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -749,7 +749,7 @@ msgstr "API"
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "APIs & Webhooks"
-msgstr ""
+msgstr "API i webhooki"
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -1107,7 +1107,7 @@ msgstr "Zmień na roczny?"
 #. js-lingui-id: CWe7wB
 #: src/pages/settings/releases/SettingsReleases.tsx
 msgid "Changelog"
-msgstr ""
+msgstr "Dziennik zmian"
 
 #. js-lingui-id: AHZflp
 #: src/modules/ai/components/AIChatEmptyState.tsx
@@ -1640,7 +1640,7 @@ msgstr "Utwórz widok"
 #. js-lingui-id: SiPp29
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 msgid "Create webhook"
-msgstr ""
+msgstr "Stwórz Webhook"
 
 #. js-lingui-id: dkAPxi
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -1670,17 +1670,17 @@ msgstr "Tworzenie twojej przestrzeni pracy"
 #. js-lingui-id: Efny36
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Credit Plan"
-msgstr ""
+msgstr "Plan kredytowy"
 
 #. js-lingui-id: c1ojkj
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credit Usage"
-msgstr ""
+msgstr "Wykorzystanie kredytów"
 
 #. js-lingui-id: n3kKrs
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credits Used"
-msgstr ""
+msgstr "Wykorzystane kredyty"
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -2183,7 +2183,7 @@ msgstr "Domena"
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Domains"
-msgstr ""
+msgstr "Domeny"
 
 #. js-lingui-id: 7kVRe6
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -2553,7 +2553,7 @@ msgstr "Błąd podczas aktualizacji roli"
 #. js-lingui-id: nB84mG
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
 msgid "Error validating approved access domain"
-msgstr ""
+msgstr "Błąd weryfikacji zatwierdzonej domeny dostępu"
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2776,7 +2776,7 @@ msgstr "Nie udało się usunąć nadpisania"
 #. js-lingui-id: HnBqPY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Failed to update price."
-msgstr ""
+msgstr "Nie udało się zaktualizować ceny."
 
 #. js-lingui-id: Dzh4a2
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -3848,7 +3848,7 @@ msgstr "Konfiguracja MCP został skopiowany do schowka"
 #. js-lingui-id: upbzgm
 #: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
 msgid "Me"
-msgstr ""
+msgstr "Ja"
 
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
@@ -3932,12 +3932,12 @@ msgstr "Monitorowanie wykonywania zadania synchronizacji wiadomości e-mail"
 #. js-lingui-id: kY2ll9
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "month"
-msgstr ""
+msgstr "miesiąc"
 
 #. js-lingui-id: rdfE9o
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "monthly"
-msgstr ""
+msgstr "miesięcznie"
 
 #. js-lingui-id: 2FYpfJ
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
@@ -4398,7 +4398,7 @@ msgstr "Liczba miejsc po przecinku"
 #. js-lingui-id: tYOaY8
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Number of new credits allocated every {recurringInterval}"
-msgstr ""
+msgstr "Liczba nowych kredytów przydzielanych co {recurringInterval}"
 
 #. js-lingui-id: qg5nhQ
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
@@ -4546,7 +4546,7 @@ msgstr "Pole Wyjściowe {fieldNumber}"
 #. js-lingui-id: nITdXs
 #: src/pages/settings/page-layout/PageLayoutEdition.tsx
 msgid "Page Layout"
-msgstr ""
+msgstr "Rozmieszczenie strony"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -4687,7 +4687,7 @@ msgstr "Najpierw proszę wyszukać użytkownika"
 #. js-lingui-id: 8YnlGz
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Please start your subscription first"
-msgstr ""
+msgstr "Najpierw rozpocznij swoją subskrypcję"
 
 #. js-lingui-id: 6nsIo3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4748,7 +4748,7 @@ msgstr "Poprzednie czaty AI"
 #. js-lingui-id: jmc+FY
 #: src/modules/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Price updated."
-msgstr ""
+msgstr "Cena zaktualizowana."
 
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -4935,7 +4935,7 @@ msgstr "Usuń opcję"
 #. js-lingui-id: oQjB9l
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Renewal date"
-msgstr ""
+msgstr "Data odnowienia"
 
 #. js-lingui-id: Ee8JBW
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -5654,7 +5654,7 @@ msgstr "Serwer SMTP"
 #. js-lingui-id: ISDzCY
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "SMTP Username"
-msgstr ""
+msgstr "Nazwa użytkownika SMTP"
 
 #. js-lingui-id: 4oakKm
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -5670,7 +5670,7 @@ msgstr "Niektóre"
 #. js-lingui-id: wTrpxV
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
 msgid "Sorry, something went wrong"
-msgstr ""
+msgstr "Przepraszamy, coś poszło nie tak"
 
 #. js-lingui-id: f6Hub0
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
@@ -5718,7 +5718,7 @@ msgstr "Rozpocznij rozmowę ze swoim agentem AI, aby uzyskać wgląd w procesy r
 #. js-lingui-id: s+K73L
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Start Your Subscription"
-msgstr ""
+msgstr "Rozpocznij swoją subskrypcję"
 
 #. js-lingui-id: RS0o7b
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
@@ -5802,7 +5802,7 @@ msgstr "Zapisz się do newslettera"
 #. js-lingui-id: ShbDuS
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscribe Now"
-msgstr ""
+msgstr "Subskrybuj teraz"
 
 #. js-lingui-id: WVzGc2
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -5888,7 +5888,7 @@ msgstr "Synchronizuj etykiety obiektów i nazwy API"
 #. js-lingui-id: D+NlUC
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "System"
-msgstr ""
+msgstr "System"
 
 #. js-lingui-id: ERq5FY
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
@@ -6186,12 +6186,12 @@ msgstr "Jutro"
 #. js-lingui-id: YT/cKI
 #: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Track your {intervalLabel} workflow credit consumption."
-msgstr ""
+msgstr "Śledź zużycie kredytów workflow w {intervalLabel}."
 
 #. js-lingui-id: lhkaAC
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Trial"
-msgstr ""
+msgstr "Test"
 
 #. js-lingui-id: wN0jHF
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
@@ -6297,7 +6297,7 @@ msgstr "ukraiński"
 #. js-lingui-id: l+ALBd
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
-msgstr ""
+msgstr "Nie można połączyć się z zapleczem"
 
 #. js-lingui-id: wSXm5S
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -6577,7 +6577,7 @@ msgstr "Obsługujemy kwadratowe pliki PNG, JPEG oraz GIF-y o rozmiarze do 10MB"
 #. js-lingui-id: 4pcfmN
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "We will activate your paid plan. Do you want to proceed?"
-msgstr ""
+msgstr "Aktywujemy twój płatny plan. Czy chcesz kontynuować?"
 
 #. js-lingui-id: KIfYq0
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -6697,7 +6697,7 @@ msgstr "Usunięcie miejsca pracy"
 #. js-lingui-id: i1AiTd
 #: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Workspace Domain"
-msgstr ""
+msgstr "Domena miejsca pracy"
 
 #. js-lingui-id: J22jAC
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -6740,12 +6740,12 @@ msgstr "Napisz opis dla tego agenta"
 #. js-lingui-id: 7qI8sJ
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "year"
-msgstr ""
+msgstr "rok"
 
 #. js-lingui-id: dfmB8/
 #: src/modules/billing/utils/subscriptionFlags.ts
 msgid "yearly"
-msgstr ""
+msgstr "rocznie"
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
