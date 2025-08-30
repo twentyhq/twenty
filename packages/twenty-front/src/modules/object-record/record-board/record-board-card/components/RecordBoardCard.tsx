@@ -1,13 +1,12 @@
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
-import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordBoardCardActiveComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardActiveComponentFamilyState';
 import { isRecordBoardCardFocusedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardFocusedComponentFamilyState';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
-import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
+import { useRecordDragState } from '@/object-record/record-drag/shared/hooks/useRecordDragState';
 
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
 import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
@@ -140,10 +139,6 @@ export const RecordBoardCard = () => {
     multiDragState.originalSelection.includes(recordId) &&
     recordId !== multiDragState.primaryDraggedRecordId;
 
-  const visibleFieldDefinitions = useRecoilComponentValue(
-    recordBoardVisibleFieldDefinitionsComponentSelector,
-  );
-
   const isCompactModeActive = useRecoilComponentValue(
     isRecordBoardCompactModeActiveComponentState,
   );
@@ -223,10 +218,6 @@ export const RecordBoardCard = () => {
     rootMargin: '1000px',
   });
 
-  const visibleFieldDefinitionsFiltered = visibleFieldDefinitions.filter(
-    (boardField) => !boardField.isLabelIdentifier,
-  );
-
   return (
     <RecordBoardCardComponentInstanceContext.Provider
       value={{
@@ -270,9 +261,7 @@ export const RecordBoardCard = () => {
                 isOpen={isCardExpanded || !isCompactModeActive}
                 initial={false}
               >
-                <RecordBoardCardBody
-                  fieldDefinitions={visibleFieldDefinitionsFiltered}
-                />
+                <RecordBoardCardBody />
               </AnimatedEaseInOut>
             </StyledBoardCard>
           </StyledCardContainer>
