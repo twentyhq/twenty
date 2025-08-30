@@ -78,7 +78,6 @@ export const PageLayoutSidePanel = ({
   };
 
   const handleClose = () => {
-    // Reset state when closing
     setSidePanelStep(SidePanelStep.SELECT_WIDGET_TYPE);
     setSelectedWidgetType(null);
     onClose();
@@ -88,8 +87,6 @@ export const PageLayoutSidePanel = ({
     if (onCreateWidget !== undefined && selectedWidgetType === 'GRAPH') {
       onCreateWidget('GRAPH', graphType);
     }
-
-    // Reset and close
     setSidePanelStep(SidePanelStep.SELECT_WIDGET_TYPE);
     setSelectedWidgetType(null);
     onClose();

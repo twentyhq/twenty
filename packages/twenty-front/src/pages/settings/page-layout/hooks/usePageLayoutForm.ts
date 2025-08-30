@@ -47,7 +47,6 @@ export const usePageLayoutForm = () => {
     savedPageLayoutsState,
   );
 
-  // Load existing layout when editing
   const existingLayout = useMemo(
     () => (isEditMode ? savedPageLayouts.find((l) => l.id === id) : null),
     [isEditMode, id, savedPageLayouts],
@@ -73,7 +72,6 @@ export const usePageLayoutForm = () => {
 
   const watchedValues = watch();
 
-  // Convert between grid layouts and form data
   const convertLayoutsToWidgets = useCallback(
     (widgets: Widget[], layouts: Layouts): PageLayoutFormData['widgets'] => {
       const lgLayouts = layouts.lg || [];
@@ -139,9 +137,7 @@ export const usePageLayoutForm = () => {
 
   const updateWidgetsFromLayouts = useCallback(
     (layouts: Layouts) => {
-      // Get current widgets from form (they already have the widget data)
       const currentWidgets = getValues('widgets');
-      // Extract just the widget data without grid positions
       const widgetData = currentWidgets.map((w) => ({
         id: w.id,
         title: w.title,
@@ -149,7 +145,6 @@ export const usePageLayoutForm = () => {
         graphType: w.graphType,
         data: w.data,
       })) as Widget[];
-      // Update with new layouts
       const updatedWidgets = convertLayoutsToWidgets(widgetData, layouts);
       setValue('widgets', updatedWidgets);
     },
