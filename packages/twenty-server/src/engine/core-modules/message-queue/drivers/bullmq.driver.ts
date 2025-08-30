@@ -1,4 +1,4 @@
-import { type OnModuleDestroy } from '@nestjs/common';
+import { Logger, type OnModuleDestroy } from '@nestjs/common';
 
 import {
   type JobsOptions,
@@ -7,6 +7,7 @@ import {
   type QueueOptions,
   Worker,
 } from 'bullmq';
+import { type Record } from 'cloudflare/core';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -26,6 +27,7 @@ export type BullMQDriverOptions = QueueOptions;
 const V4_LENGTH = 36;
 
 export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
+  private logger = new Logger(BullMQDriver.name);
   private queueMap: Record<MessageQueue, Queue> = {} as Record<
     MessageQueue,
     Queue
@@ -71,7 +73,13 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
       queueName,
       async (job) => {
         // TODO: Correctly support for job.id
+        this.logger.log(
+          `Processing job ${job.id} with name ${job.name} on queue ${queueName}`,
+        );
         await handler({ data: job.data, id: job.id ?? '', name: job.name });
+        this.logger.log(
+          `Job ${job.id} with name ${job.name} processed on queue ${queueName}`,
+        );
       },
       workerOptions,
     );
