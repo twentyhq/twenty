@@ -21,9 +21,7 @@ const pageLayoutFormSchema = z.object({
       id: z.string(),
       title: z.string(),
       type: z.enum(['VIEW', 'IFRAME', 'FIELDS', 'GRAPH']),
-      graphType: z
-        .enum(['number', 'gauge', 'pie', 'bar', 'line', 'area'])
-        .optional(),
+      graphType: z.enum(['number', 'gauge', 'pie', 'bar', 'line']).optional(),
       gridPosition: z.object({
         row: z.number(),
         column: z.number(),

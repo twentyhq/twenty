@@ -69,7 +69,6 @@ export const getWidgetTitle = (
     pie: 'Pie Chart',
     bar: 'Bar Chart',
     line: 'Line Chart',
-    area: 'Area Chart',
   };
 
   return `${baseNames[graphType] || 'Widget'} ${index + 1}`;
@@ -85,7 +84,6 @@ export const getWidgetSize = (graphType: GraphSubType) => {
       return { w: 4, h: 4 };
     case 'bar':
     case 'line':
-    case 'area':
       return { w: 6, h: 4 };
     default:
       return { w: 4, h: 4 };

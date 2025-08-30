@@ -10,7 +10,7 @@ export type SavedPageLayout = {
     id: string;
     title: string;
     type: 'VIEW' | 'IFRAME' | 'FIELDS' | 'GRAPH';
-    graphType?: 'number' | 'gauge' | 'pie' | 'bar' | 'line' | 'area';
+    graphType?: 'number' | 'gauge' | 'pie' | 'bar' | 'line';
     gridPosition: {
       row: number;
       column: number;
