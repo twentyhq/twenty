@@ -26,6 +26,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import { PageLayoutSidePanel } from './components/PageLayoutSidePanel';
 import { PageLayoutWidgetPlaceholder } from './components/PageLayoutWidgetPlaceholder';
+import {
+  PAGE_LAYOUT_CONFIG,
+  type PageLayoutBreakpoint,
+} from './constants/PageLayoutBreakpoints';
 import { usePageLayoutForm } from './hooks/usePageLayoutForm';
 import { type GraphSubType, type Widget } from './mocks/mockWidgets';
 import {
@@ -112,7 +116,8 @@ export const PageLayoutEdition = () => {
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
   const gridContainerRef = useRef<HTMLDivElement>(null);
   const [selectedCells, setSelectedCells] = useState<Set<string>>(new Set());
-  const [currentBreakpoint, setCurrentBreakpoint] = useState<string>('desktop');
+  const [currentBreakpoint, setCurrentBreakpoint] =
+    useState<PageLayoutBreakpoint>('desktop');
   const [draggedArea, setDraggedArea] = useState<{
     x: number;
     y: number;
@@ -287,6 +292,7 @@ export const PageLayoutEdition = () => {
   }, [currentLayouts]);
 
   return (
+    // @charlesBochet I know your opinion on react hook form -- happy to find alternatives in upcoming prs -- can we keep this for now?
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formMethods}>
       <SettingsPageFullWidthContainer
@@ -372,8 +378,8 @@ export const PageLayoutEdition = () => {
           <ResponsiveGridLayout
             className="layout"
             layouts={isEmptyState ? emptyLayout : currentLayouts}
-            breakpoints={{ desktop: 816, mobile: 0 }} // TODO: extract break points to a const -- also check with product for the breakpoint
-            cols={{ desktop: 12, mobile: 1 }}
+            breakpoints={PAGE_LAYOUT_CONFIG.breakpoints}
+            cols={PAGE_LAYOUT_CONFIG.columns}
             rowHeight={50}
             maxCols={12}
             containerPadding={[0, 0]}
@@ -385,7 +391,7 @@ export const PageLayoutEdition = () => {
             preventCollision={false}
             onLayoutChange={handleLayoutChange}
             onBreakpointChange={(newBreakpoint) =>
-              setCurrentBreakpoint(newBreakpoint)
+              setCurrentBreakpoint(newBreakpoint as PageLayoutBreakpoint)
             }
           >
             {isEmptyState ? (

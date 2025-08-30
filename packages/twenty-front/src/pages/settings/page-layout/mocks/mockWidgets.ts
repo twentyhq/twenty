@@ -134,7 +134,7 @@ export const mockWidgets: Widget[] = [
 ];
 
 export const mockLayouts: Layouts = {
-  lg: [
+  desktop: [
     {
       i: 'widget-1',
       x: 0,
@@ -164,37 +164,7 @@ export const mockLayouts: Layouts = {
       h: 8,
     },
   ],
-  md: [
-    {
-      i: 'widget-1',
-      x: 0,
-      y: 0,
-      w: 3,
-      h: 2,
-    },
-    {
-      i: 'widget-2',
-      x: 3,
-      y: 0,
-      w: 3,
-      h: 5,
-    },
-    {
-      i: 'widget-3',
-      x: 6,
-      y: 0,
-      w: 6,
-      h: 5,
-    },
-    {
-      i: 'widget-4',
-      x: 0,
-      y: 5,
-      w: 6,
-      h: 8,
-    },
-  ],
-  sm: [
+  mobile: [
     {
       i: 'widget-1',
       x: 0,
