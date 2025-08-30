@@ -85,7 +85,7 @@ export const COMPOSITE_FIELD_FILTER_OPERANDS_MAP = {
   },
 };
 
-export const getViewFilterOperands = ({
+export const getStepFilterOperands = ({
   filterType,
   subFieldName,
 }: {

@@ -1,21 +1,24 @@
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { isUndefined } from '@sniptt/guards';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
-import { isDefined } from 'twenty-shared/utils';
-import { type FieldMetadataItem } from '../types/FieldMetadataItem';
 import { type ObjectPermissions } from 'twenty-shared/types';
+import {
+  computeMorphRelationFieldJoinColumnName,
+  computeMorphRelationFieldName,
+  isDefined,
+} from 'twenty-shared/utils';
+import { type FieldMetadataItem } from '../types/FieldMetadataItem';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];
   gqlField: string;
   fieldMetadata: Pick<
     FieldMetadataItem,
-    'name' | 'type' | 'relation' | 'settings'
+    'name' | 'type' | 'relation' | 'morphRelations' | 'settings'
   >;
   relationRecordGqlFields?: RecordGqlFields;
   computeReferences?: boolean;
@@ -23,7 +26,6 @@ type MapFieldMetadataToGraphQLQueryArgs = {
     string,
     ObjectPermissions & { objectMetadataId: string }
   >;
-  isFieldsPermissionsEnabled?: boolean;
 };
 // TODO: change ObjectMetadataItems mock before refactoring with relation computed field
 export const mapFieldMetadataToGraphQLQuery = ({
@@ -33,7 +35,6 @@ export const mapFieldMetadataToGraphQLQuery = ({
   relationRecordGqlFields,
   computeReferences = false,
   objectPermissionsByObjectMetadataId,
-  isFieldsPermissionsEnabled,
 }: MapFieldMetadataToGraphQLQueryArgs): string => {
   const fieldType = fieldMetadata.type;
 
@@ -41,6 +42,90 @@ export const mapFieldMetadataToGraphQLQuery = ({
 
   if (fieldIsNonCompositeField) {
     return gqlField;
+  }
+
+  if (
+    fieldType === FieldMetadataType.MORPH_RELATION &&
+    (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY ||
+      fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE)
+  ) {
+    let gqlMorphField = '';
+    for (const morphRelation of fieldMetadata.morphRelations ?? []) {
+      const relationFieldName = computeMorphRelationFieldName({
+        fieldName: fieldMetadata.name,
+        relationDirection: fieldMetadata.settings?.relationType,
+        nameSingular: morphRelation.targetObjectMetadata.nameSingular,
+        namePlural: morphRelation.targetObjectMetadata.namePlural,
+      });
+      const relationMetadataItem = objectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.id === morphRelation.targetObjectMetadata.id,
+      );
+
+      if (!isDefined(relationMetadataItem)) {
+        continue;
+      }
+
+      if (
+        isDefined(objectPermissionsByObjectMetadataId) &&
+        isDefined(relationMetadataItem.id)
+      ) {
+        if (!isDefined(morphRelation.targetObjectMetadata.id)) {
+          throw new Error(
+            `Target object metadata id not found with field metadata ${fieldMetadata.name}`,
+          );
+        }
+
+        const objectPermission = getObjectPermissionsForObject(
+          objectPermissionsByObjectMetadataId,
+          morphRelation.targetObjectMetadata.id,
+        );
+
+        if (!objectPermission.canReadObjectRecords) {
+          continue;
+        }
+      }
+
+      if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
+        gqlMorphField += `${relationFieldName}
+{
+  edges {
+    node ${mapObjectMetadataToGraphQLQuery({
+      objectMetadataItems,
+      objectMetadataItem: relationMetadataItem,
+      recordGqlFields: relationRecordGqlFields,
+      computeReferences,
+      isRootLevel: false,
+      objectPermissionsByObjectMetadataId,
+    })}
+  }
+}`;
+      }
+
+      if (fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE) {
+        const joinColumnName = computeMorphRelationFieldJoinColumnName({
+          name: fieldMetadata.name,
+          targetObjectMetadataNameSingular:
+            morphRelation.targetObjectMetadata.nameSingular,
+        });
+        if (gqlField === joinColumnName) {
+          gqlMorphField += `${gqlField}
+    `;
+          continue;
+        }
+
+        gqlMorphField += `${relationFieldName}
+${mapObjectMetadataToGraphQLQuery({
+  objectMetadataItems,
+  objectMetadataItem: relationMetadataItem,
+  recordGqlFields: relationRecordGqlFields,
+  computeReferences,
+  isRootLevel: false,
+  objectPermissionsByObjectMetadataId,
+})}`;
+      }
+    }
+    return `${gqlMorphField}`;
   }
 
   if (
@@ -53,7 +138,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
         fieldMetadata.relation?.targetObjectMetadata.id,
     );
 
-    if (isUndefined(relationMetadataItem)) {
+    if (!isDefined(relationMetadataItem)) {
       return '';
     }
 
@@ -89,7 +174,6 @@ ${mapObjectMetadataToGraphQLQuery({
   computeReferences: computeReferences,
   isRootLevel: false,
   objectPermissionsByObjectMetadataId,
-  isFieldsPermissionsEnabled,
 })}`;
   }
 
@@ -103,7 +187,7 @@ ${mapObjectMetadataToGraphQLQuery({
         fieldMetadata.relation?.targetObjectMetadata.id,
     );
 
-    if (isUndefined(relationMetadataItem)) {
+    if (!isDefined(relationMetadataItem)) {
       return '';
     }
 
@@ -137,7 +221,6 @@ ${mapObjectMetadataToGraphQLQuery({
       computeReferences,
       isRootLevel: false,
       objectPermissionsByObjectMetadataId,
-      isFieldsPermissionsEnabled,
     })}
   }
 }`;

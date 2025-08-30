@@ -96,9 +96,6 @@ export type WorkflowDiagramNodeType = 'default' | 'empty-trigger';
 
 export type WorkflowDiagramEdgeType =
   | 'blank'
-  | 'filtering-disabled--editable'
-  | 'filtering-disabled--readonly'
-  | 'filtering-disabled--run'
   | 'empty-filter--editable'
   | 'empty-filter--readonly'
   | 'empty-filter--run'

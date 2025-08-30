@@ -5,7 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { type ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
-import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { type ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
@@ -13,13 +14,13 @@ import { type ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view
 @Injectable()
 export class ViewSyncService {
   constructor(
-    @InjectRepository(View, 'core')
-    private readonly coreViewRepository: Repository<View>,
+    @InjectRepository(ViewEntity)
+    private readonly coreViewRepository: Repository<ViewEntity>,
   ) {}
 
   private parseUpdateDataFromDiff(
     diff: Partial<ObjectRecordDiff<ViewWorkspaceEntity>>,
-  ): Partial<View> {
+  ): Partial<ViewEntity> {
     const updateData: Record<string, unknown> = {};
 
     for (const key of Object.keys(diff)) {
@@ -38,13 +39,18 @@ export class ViewSyncService {
         } else if (key === 'type') {
           updateData[key] =
             diffValue.after === 'table' ? ViewType.TABLE : ViewType.KANBAN;
+        } else if (key === 'key') {
+          updateData[key] =
+            diffValue.after === 'INDEX' || diffValue.after === ViewKey.INDEX
+              ? ViewKey.INDEX
+              : null;
         } else {
           updateData[key] = diffValue.after;
         }
       }
     }
 
-    return updateData as Partial<View>;
+    return updateData as Partial<ViewEntity>;
   }
 
   public async createCoreView(
@@ -58,12 +64,15 @@ export class ViewSyncService {
       viewName = 'All {objectLabelPlural}';
     }
 
-    const coreView: Partial<View> = {
+    const coreView: Partial<ViewEntity> = {
       id: workspaceView.id,
       name: viewName,
       objectMetadataId: workspaceView.objectMetadataId,
       type: workspaceView.type === 'table' ? ViewType.TABLE : ViewType.KANBAN,
-      key: workspaceView.key,
+      key:
+        workspaceView.key === 'INDEX' || workspaceView.key === ViewKey.INDEX
+          ? ViewKey.INDEX
+          : null,
       icon: workspaceView.icon,
       position: workspaceView.position,
       isCompact: workspaceView.isCompact,

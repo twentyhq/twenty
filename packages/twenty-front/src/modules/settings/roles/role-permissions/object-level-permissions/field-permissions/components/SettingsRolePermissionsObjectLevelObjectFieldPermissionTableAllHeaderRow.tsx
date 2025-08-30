@@ -92,35 +92,39 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableAllHead
       }
     };
 
+    const shouldShowSeeTableHeader = !cannotAllowFieldReadRestrict;
+    const shouldShowUpdateTableHeader =
+      !cannotAllowFieldReadRestrict && !cannotAllowFieldUpdateRestrict;
+    const shouldShowEmptyTableHeader = cannotAllowFieldUpdateRestrict;
+
     return (
       <>
         <StyledSectionHeader>
           <Label>{t`All`}</Label>
           <div></div>
-          {cannotAllowFieldReadRestrict ? (
-            <div></div>
-          ) : (
-            <StyledCheckboxContainer>
-              <OverridableCheckbox
-                disabled={false}
-                checked={true}
-                onChange={handleReadAllChange}
-                type={hasAnyRestrictionOnRead ? 'override' : 'default'}
-              />
-            </StyledCheckboxContainer>
-          )}
-          {cannotAllowFieldUpdateRestrict ? (
-            <div></div>
-          ) : (
-            <StyledCheckboxContainer>
-              <OverridableCheckbox
-                disabled={false}
-                checked={true}
-                onChange={handleUpdateAllChange}
-                type={hasAnyRestrictionOnUpdate ? 'override' : 'default'}
-              />
-            </StyledCheckboxContainer>
-          )}
+          <>
+            {shouldShowEmptyTableHeader && <div />}
+            {shouldShowSeeTableHeader && (
+              <StyledCheckboxContainer>
+                <OverridableCheckbox
+                  disabled={false}
+                  checked={true}
+                  onChange={handleReadAllChange}
+                  type={hasAnyRestrictionOnRead ? 'override' : 'default'}
+                />
+              </StyledCheckboxContainer>
+            )}
+            {shouldShowUpdateTableHeader && (
+              <StyledCheckboxContainer>
+                <OverridableCheckbox
+                  disabled={false}
+                  checked={true}
+                  onChange={handleUpdateAllChange}
+                  type={hasAnyRestrictionOnUpdate ? 'override' : 'default'}
+                />
+              </StyledCheckboxContainer>
+            )}
+          </>
         </StyledSectionHeader>
       </>
     );

@@ -2,7 +2,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsBillingMonthlyCreditsSection } from '@/billing/components/SettingsBillingMonthlyCreditsSection';
+import { SettingsBillingCreditsSection } from '@/billing/components/SettingsBillingCreditsSection';
 import { SettingsBillingSubscriptionInfo } from '@/billing/components/SettingsBillingSubscriptionInfo';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -67,8 +67,8 @@ export const SettingsBilling = () => {
         {hasNotCanceledCurrentSubscription && (
           <SettingsBillingSubscriptionInfo />
         )}
-        {hasNotCanceledCurrentSubscription && (
-          <SettingsBillingMonthlyCreditsSection />
+        {hasNotCanceledCurrentSubscription && currentWorkspace && (
+          <SettingsBillingCreditsSection currentWorkspace={currentWorkspace} />
         )}
         <Section>
           <H2Title

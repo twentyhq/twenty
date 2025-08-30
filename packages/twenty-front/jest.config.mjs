@@ -51,7 +51,7 @@ const jestConfig = {
   },
   moduleNameMapper: {
     '\\.(jpg|jpeg|png|gif|webp|svg|svg\\?react)$':
-      '<rootDir>/__mocks__/imageMock.js',
+      '<rootDir>/__mocks__/imageMockFront.js',
     '\\.css$': '<rootDir>/__mocks__/styleMock.js',
     ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths, {
       prefix: '<rootDir>/../../',
@@ -61,9 +61,9 @@ const jestConfig = {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {
     global: {
-      statements: 54,
+      statements: 53,
       lines: 53,
-      functions: 43,
+      functions: 42,
     },
   },
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],

@@ -55,7 +55,7 @@ describe('FeatureFlagService', () => {
       providers: [
         FeatureFlagService,
         {
-          provide: getRepositoryToken(FeatureFlag, 'core'),
+          provide: getRepositoryToken(FeatureFlag),
           useValue: mockFeatureFlagRepository,
         },
         {

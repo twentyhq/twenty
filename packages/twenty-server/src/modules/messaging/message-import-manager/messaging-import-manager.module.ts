@@ -39,6 +39,7 @@ import { MessagingMessagesImportService } from 'src/modules/messaging/message-im
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { MessagingSendMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-send-message.service';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
+import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
 import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/messaging-monitoring.module';
 @Module({
   imports: [
@@ -49,13 +50,15 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingIMAPDriverModule,
     MessagingSmtpDriverModule,
     MessagingCommonModule,
-    TypeOrmModule.forFeature(
-      [Workspace, DataSourceEntity, ObjectMetadataEntity],
-      'core',
-    ),
+    TypeOrmModule.forFeature([
+      Workspace,
+      DataSourceEntity,
+      ObjectMetadataEntity,
+    ]),
     EmailAliasManagerModule,
     FeatureFlagModule,
     MessageParticipantManagerModule,
+    MessagingFolderSyncManagerModule,
     MessagingMonitoringModule,
     MessagingMessageCleanerModule,
     WorkspaceEventEmitterModule,

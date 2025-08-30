@@ -20,17 +20,14 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [
-        Workspace,
-        ApiKey,
-        FieldMetadataEntity,
-        ObjectMetadataEntity,
-        RoleEntity,
-        RoleTargetsEntity,
-      ],
-      'core',
-    ),
+    TypeOrmModule.forFeature([
+      Workspace,
+      ApiKey,
+      FieldMetadataEntity,
+      ObjectMetadataEntity,
+      RoleEntity,
+      RoleTargetsEntity,
+    ]),
     WorkspaceDataSourceModule,
     ApiKeyModule,
     FeatureFlagModule,

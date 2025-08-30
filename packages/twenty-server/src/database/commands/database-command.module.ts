@@ -14,6 +14,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { TriggerModule } from 'src/engine/metadata-modules/trigger/trigger.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
@@ -27,7 +28,7 @@ import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
 @Module({
   imports: [
     UpgradeVersionCommandModule,
-    TypeOrmModule.forFeature([Workspace], 'core'),
+    TypeOrmModule.forFeature([Workspace]),
     // Cron command dependencies
     MessagingImportManagerModule,
     CalendarEventImportManagerModule,
@@ -45,6 +46,7 @@ import { DataSeedWorkspaceCommand } from './data-seed-dev-workspace.command';
     WorkspaceCacheStorageModule,
     ApiKeyModule,
     FeatureFlagModule,
+    TriggerModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,

@@ -34,8 +34,8 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
-import { ViewModule } from 'src/modules/view/view.module';
 import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-v2.module';
+import { ViewModule } from 'src/modules/view/view.module';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
@@ -47,10 +47,10 @@ import { FieldMetadataService } from './services/field-metadata.service';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature(
-          [FieldMetadataEntity, ObjectMetadataEntity],
-          'core',
-        ),
+        NestjsQueryTypeOrmModule.forFeature([
+          FieldMetadataEntity,
+          ObjectMetadataEntity,
+        ]),
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,
         WorkspaceMetadataVersionModule,

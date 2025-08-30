@@ -1,15 +1,27 @@
-import { isDefined } from 'twenty-shared/utils';
+import { t } from '@lingui/core/macro';
 
-import { type FailedFlatObjectMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
-import { runFlatObjectMetadataValidator } from 'src/engine/metadata-modules/flat-object-metadata/utils/run-flat-object-metadata-validator.util';
+import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
+import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { type FlatMetadataValidator } from 'src/engine/metadata-modules/types/flat-metadata-validator.type';
 
-export const runFlatObjectMetadataValidators = <T>(
-  elementToValidate: T,
-  validators: FlatMetadataValidator<T>[],
-): FailedFlatObjectMetadataValidationExceptions[] =>
-  validators
-    .map((validator) =>
-      runFlatObjectMetadataValidator(elementToValidate, validator),
-    )
-    .filter(isDefined);
+export const runFlatObjectMetadataValidators = <T>({
+  elementToValidate,
+  validators,
+}: {
+  elementToValidate: T;
+  validators: FlatMetadataValidator<T>[];
+}): FlatObjectMetadataValidationError[] => {
+  return validators.flatMap(({ validator, message }) => {
+    const isInvalid = validator(elementToValidate);
+
+    if (isInvalid) {
+      return {
+        code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        message: t(message),
+        value: elementToValidate,
+      };
+    }
+
+    return [];
+  });
+};

@@ -1,3 +1,4 @@
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
@@ -7,7 +8,6 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 
 import { WorkflowStepFilterValueCompositeInput } from '@/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterValueCompositeInput';
-import { useFilterFieldMetadataItem } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useFilterFieldMetadataItem';
 import { useUpsertStepFilterSettings } from '@/workflow/workflow-steps/workflow-actions/filter-action/hooks/useUpsertStepFilterSettings';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-actions/filter-action/states/context/WorkflowStepFilterContext';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
@@ -91,7 +91,7 @@ export const WorkflowStepFilterValueInput = ({
   } = stepFilter;
 
   const { fieldMetadataItem: selectedFieldMetadataItem, objectMetadataItem } =
-    useFilterFieldMetadataItem(fieldMetadataId ?? '');
+    useFieldMetadataItemById(fieldMetadataId ?? '');
 
   if (isDisabled || operandHasNoInput) {
     return null;
@@ -102,7 +102,8 @@ export const WorkflowStepFilterValueInput = ({
     variableType === FieldMetadataType.SELECT;
 
   const isFullRecord =
-    selectedFieldMetadataItem?.name === 'id' &&
+    isDefined(stepFilter.isFullRecord) &&
+    stepFilter.isFullRecord &&
     isDefined(objectMetadataItem?.nameSingular);
 
   const isDateField =
@@ -116,6 +117,7 @@ export const WorkflowStepFilterValueInput = ({
         onChange={handleValueChange}
         VariablePicker={WorkflowVariablePicker}
         objectNameSingular={objectMetadataItem.nameSingular}
+        disabled={readonly}
       />
     );
   }

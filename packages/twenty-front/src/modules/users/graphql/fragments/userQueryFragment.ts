@@ -5,6 +5,7 @@ import {
 import { OBJECT_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/objectPermissionFragment';
 import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
 import { WORKSPACE_URLS_FRAGMENT } from '@/users/graphql/fragments/workspaceUrlsFragment';
+import { VIEW_FRAGMENT } from '@/views/graphql/fragments/viewFragment';
 import { DELETED_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/deletedWorkspaceMemberQueryFragment';
 import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
 import { gql } from '@apollo/client';
@@ -68,10 +69,12 @@ export const USER_QUERY_FRAGMENT = gql`
         status
         interval
         metadata
+        currentPeriodEnd
         billingSubscriptionItems {
           id
           hasReachedCurrentPeriodCap
           quantity
+          stripePriceId
           billingProduct {
             name
             description
@@ -96,6 +99,9 @@ export const USER_QUERY_FRAGMENT = gql`
         id
       }
       isTwoFactorAuthenticationEnforced
+      views {
+        ...ViewFragment
+      }
     }
     availableWorkspaces {
       ...AvailableWorkspacesFragment
@@ -108,6 +114,7 @@ export const USER_QUERY_FRAGMENT = gql`
   ${OBJECT_PERMISSION_FRAGMENT}
   ${WORKSPACE_URLS_FRAGMENT}
   ${ROLE_FRAGMENT}
+  ${VIEW_FRAGMENT}
   ${AVAILABLE_WORKSPACES_FOR_AUTH_FRAGMENT}
   ${AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT}
 `;

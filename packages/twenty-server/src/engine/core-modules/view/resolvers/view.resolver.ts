@@ -13,10 +13,21 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
+import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
+import { ViewFilterGroupDTO } from 'src/engine/core-modules/view/dtos/view-filter-group.dto';
+import { ViewFilterDTO } from 'src/engine/core-modules/view/dtos/view-filter.dto';
+import { ViewGroupDTO } from 'src/engine/core-modules/view/dtos/view-group.dto';
+import { ViewSortDTO } from 'src/engine/core-modules/view/dtos/view-sort.dto';
 import { ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
+import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
+import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/view-filter-group.service';
+import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
+import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
+import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/utils/view-graphql-api-exception.filter';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -30,20 +41,25 @@ import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modul
 export class ViewResolver {
   constructor(
     private readonly viewService: ViewService,
+    private readonly viewFieldService: ViewFieldService,
+    private readonly viewFilterService: ViewFilterService,
+    private readonly viewFilterGroupService: ViewFilterGroupService,
+    private readonly viewGroupService: ViewGroupService,
+    private readonly viewSortService: ViewSortService,
     private readonly i18nService: I18nService,
   ) {}
 
   @ResolveField(() => String)
   async name(
     @Parent() view: ViewDTO,
-    @Context() context: I18nContext,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<string> {
     if (view.name.includes('{objectLabelPlural}')) {
-      const objectMetadata = await this.viewService.getObjectMetadataByViewId(
-        view.id,
-        workspace.id,
-      );
+      const objectMetadata = await context.loaders.objectMetadataLoader.load({
+        objectMetadataId: view.objectMetadataId,
+        workspaceId: workspace.id,
+      });
 
       if (objectMetadata) {
         const translatedObjectLabel = resolveObjectMetadataStandardOverride(
@@ -151,5 +167,45 @@ export class ViewResolver {
     const deletedView = await this.viewService.destroy(id, workspace.id);
 
     return isDefined(deletedView);
+  }
+
+  @ResolveField(() => [ViewFieldDTO])
+  async viewFields(
+    @Parent() view: ViewDTO,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    return this.viewFieldService.findByViewId(workspace.id, view.id);
+  }
+
+  @ResolveField(() => [ViewFilterDTO])
+  async viewFilters(
+    @Parent() view: ViewDTO,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    return this.viewFilterService.findByViewId(workspace.id, view.id);
+  }
+
+  @ResolveField(() => [ViewFilterGroupDTO])
+  async viewFilterGroups(
+    @Parent() view: ViewDTO,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    return this.viewFilterGroupService.findByViewId(workspace.id, view.id);
+  }
+
+  @ResolveField(() => [ViewSortDTO])
+  async viewSorts(
+    @Parent() view: ViewDTO,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    return this.viewSortService.findByViewId(workspace.id, view.id);
+  }
+
+  @ResolveField(() => [ViewGroupDTO])
+  async viewGroups(
+    @Parent() view: ViewDTO,
+    @AuthWorkspace() workspace: Workspace,
+  ) {
+    return this.viewGroupService.findByViewId(workspace.id, view.id);
   }
 }

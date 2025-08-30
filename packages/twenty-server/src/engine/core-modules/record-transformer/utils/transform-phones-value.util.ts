@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isArray, isNonEmptyString } from '@sniptt/guards';
 import {
   type CountryCallingCode,
   parsePhoneNumberWithError,
@@ -8,7 +8,6 @@ import {
   getCountryCodesForCallingCode,
   isDefined,
   isValidCountryCode,
-  parseJson,
   removeUndefinedFields,
 } from 'twenty-shared/utils';
 
@@ -24,7 +23,7 @@ import {
 export type PhonesFieldGraphQLInput =
   | Partial<
       Omit<PhonesMetadata, 'additionalPhones'> & {
-        additionalPhones: string | null;
+        additionalPhones: Partial<AdditionalPhoneMetadata>[];
       }
     >
   | null
@@ -195,15 +194,12 @@ export const transformPhonesValue = ({
     number: primary.primaryPhoneNumber,
   });
 
-  const parsedAdditionalPhones = isDefined(additionalPhones)
-    ? parseJson<AdditionalPhoneMetadata[]>(additionalPhones)
-    : additionalPhones;
-  const transformedAdditionalPhones = isDefined(parsedAdditionalPhones)
-    ? JSON.stringify(parsedAdditionalPhones.map(validateAndInferPhoneInput))
-    : parsedAdditionalPhones;
+  const parsedAdditionalPhones = isArray(additionalPhones)
+    ? additionalPhones
+    : [];
 
   return removeUndefinedFields({
-    additionalPhones: transformedAdditionalPhones,
+    additionalPhones: parsedAdditionalPhones.map(validateAndInferPhoneInput),
     primaryPhoneCallingCode,
     primaryPhoneCountryCode,
     primaryPhoneNumber,

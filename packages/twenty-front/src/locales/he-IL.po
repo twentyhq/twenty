@@ -72,12 +72,6 @@ msgstr "· {objectFilterDropdownSearchInput}"
 msgid "[empty string]"
 msgstr "[empty string]"
 
-#. js-lingui-id: J/hVSQ
-#. placeholder {0}: theme.id
-#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
-msgid "{0}"
-msgstr "{0}"
-
 #. js-lingui-id: ROdDR9
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
 msgid "{aggregateLabel} of {fieldLabel}"
@@ -98,17 +92,10 @@ msgstr "{failedCount} קובץ(ים) לא הצליחו להיטען"
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 msgstr ""
 
-#. js-lingui-id: wapGcj
-#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
-msgid "{message}"
-msgstr "{הודעה}"
-
-#. js-lingui-id: 6j5rE1
-#: src/modules/action-menu/actions/record-agnostic-actions/run-workflow-actions/hooks/useRunWorkflowRecordAgnosticActions.tsx
-#: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
-#: src/modules/action-menu/actions/record-actions/run-workflow-actions/hooks/useRunWorkflowRecordActions.tsx
-msgid "{name}"
-msgstr "{name}"
+#. js-lingui-id: J2Vio9
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "{nickname} - {price}$"
+msgstr "{nickname} - {price}$"
 
 #. js-lingui-id: OeIgEg
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
@@ -119,17 +106,6 @@ msgstr "{roleLabel} יכול {humanReadableAction} רשומות {objectLabel}"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCell.tsx
 msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
 msgstr "{roleLabel} לא יכול {humanReadableAction} רשומות {objectLabel}"
-
-#. js-lingui-id: 32wPk/
-#. placeholder {0}: selectedOptionsCount <= 1 ? fixedText : pluralize(fixedText)
-#: src/modules/ui/input/components/MultiSelectControl.tsx
-msgid "{selectedOptionsCount} {0}"
-msgstr ""
-
-#. js-lingui-id: pDgeaz
-#: src/modules/error-handler/components/AppRootErrorFallback.tsx
-msgid "{title}"
-msgstr "{title}"
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -142,11 +118,6 @@ msgstr "{workspaceMemberName} יוסר מהתפקיד הבא:"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "••••••••"
 msgstr "••••••••"
-
-#. js-lingui-id: 3DNcuK
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
-msgid "1. Scan the QR code"
-msgstr "1. סרקו את קוד ה-QR"
 
 #. js-lingui-id: vb5TwV
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
@@ -186,11 +157,6 @@ msgstr "2. קבע תצורה"
 msgid "2. Configure field"
 msgstr "2. קבע תצורה לשדה"
 
-#. js-lingui-id: bD1Hnc
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
-msgid "2. Enter the code"
-msgstr "2. הזינו את הקוד"
-
 #. js-lingui-id: 0Tx9MD
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 msgid "2. Set {objectLabelPlural} permissions"
@@ -220,7 +186,7 @@ msgstr "איפוס שיטת אימות דו-שלבי"
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "A role must be selected for the API key"
-msgstr ""
+msgstr "חובה לבחור תפקיד עבור המפתח של API"
 
 #. js-lingui-id: nMTB1f
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -240,7 +206,7 @@ msgstr "יכולת לערוך את כל ההגדרות"
 #. js-lingui-id: wTKqOI
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Ability to interact with this object's fields."
-msgstr ""
+msgstr "יכולת אינטראקציה עם שדות של אובייקט זה."
 
 #. js-lingui-id: ssjjFt
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -312,12 +278,7 @@ msgstr "פעולות"
 #. js-lingui-id: mQKK3r
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Actions permissions"
-msgstr ""
-
-#. js-lingui-id: 9MxZtA
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "Actions users can perform on all objects"
-msgstr "פעולות שניתן לבצע על כל האובייקטים"
+msgstr "הרשאות פעולות"
 
 #. js-lingui-id: N4ZcCd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
@@ -339,12 +300,14 @@ msgid "Activate Workflow"
 msgstr "הפוך Workflows לפעיל"
 
 #. js-lingui-id: F6pfE9
+#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Active"
 msgstr "פעיל"
 
 #. js-lingui-id: Mue4oc
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Active API keys created by you or your team."
 msgstr "מפתחי API פעילים שנוצרו על ידך או על ידי הצוות שלך."
@@ -354,7 +317,7 @@ msgstr "מפתחי API פעילים שנוצרו על ידך או על ידי ה
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
 msgid "Add a Trigger"
-msgstr ""
+msgstr "הוסף טריגר"
 
 #. js-lingui-id: MPPZ54
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsListCard.tsx
@@ -387,7 +350,7 @@ msgstr "הוסף מסנן ראשון"
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Add Handoff"
-msgstr ""
+msgstr "הוסף העברת סוכן"
 
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
@@ -402,17 +365,17 @@ msgstr "הוסף חדש"
 #. js-lingui-id: ApsD9J
 #: src/modules/object-record/record-table/components/RecordTableAddNew.tsx
 msgid "Add New"
-msgstr ""
+msgstr "הוסף חדש"
 
 #. js-lingui-id: erHjaG
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
 msgid "Add node"
-msgstr ""
+msgstr "הוסף צומת"
 
 #. js-lingui-id: 1Ltnvs
-#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Add Node"
-msgstr ""
+msgstr "הוסף צומת"
 
 #. js-lingui-id: dEO3Zx
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -442,7 +405,7 @@ msgstr "הוסף שדה פלט"
 #. js-lingui-id: O8tK4v
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
 msgid "Add rule"
-msgstr ""
+msgstr "הוסף כלל"
 
 #. js-lingui-id: sgXUv+
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard.tsx
@@ -496,12 +459,12 @@ msgstr "הוסף לרשימת החסימה"
 #. js-lingui-id: hW/fMg
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 msgid "Address 1"
-msgstr ""
+msgstr "כתובת 1"
 
 #. js-lingui-id: 5Um70B
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 msgid "Address 2"
-msgstr ""
+msgstr "כתובת 2"
 
 #. js-lingui-id: Eis4ey
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
@@ -541,27 +504,27 @@ msgstr "אפריקאנס"
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Agent"
-msgstr ""
+msgstr "סוכן"
 
 #. js-lingui-id: Q37C8E
 #: src/pages/settings/ai/components/SettingsAgentHandoffSection.tsx
 msgid "Agent Handoffs"
-msgstr ""
+msgstr "העברות סוכן"
 
 #. js-lingui-id: mDXkHu
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Agent not found"
-msgstr ""
+msgstr "סוכן לא נמצא"
 
 #. js-lingui-id: 8Uv5e6
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Agents"
-msgstr ""
+msgstr "סוכנים"
 
 #. js-lingui-id: 0k5XwN
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Agents used to route queries to specialized agents"
-msgstr ""
+msgstr "סוכנים המשמשים להכוונה של פניות לסוכנים המתמחים"
 
 #. js-lingui-id: jsQZMk
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -570,7 +533,7 @@ msgstr ""
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
 msgid "AI"
-msgstr ""
+msgstr "בינה מלאכותית (AI)"
 
 #. js-lingui-id: MnmJG1
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -608,7 +571,7 @@ msgstr "גישה לכל הפעולות"
 #. js-lingui-id: dJn2LR
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "All emails and events linked to this account ({accountHandle}) will be deleted"
-msgstr ""
+msgstr "כל האימיילים והאירועים המקושרים לחשבון זה ({accountHandle}) יימחקו"
 
 #. js-lingui-id: 3xugyj
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -620,9 +583,9 @@ msgstr "כל השדות"
 msgid "All lines"
 msgstr "כל השורות"
 
-#. js-lingui-id: zIk4M6
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
-msgid "All objects"
+#. js-lingui-id: aFE/OW
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
+msgid "All Objects"
 msgstr "כל האובייקטים"
 
 #. js-lingui-id: Hm90t3
@@ -648,12 +611,12 @@ msgstr "כל האובייקטים המותאמים אישית שלך"
 #. js-lingui-id: +XmkDf
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Allow exporting data to CSV files"
-msgstr ""
+msgstr "אפשר ייצוא מידע לקובצי CSV"
 
 #. js-lingui-id: gCnKdT
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Allow importing data from CSV files"
-msgstr ""
+msgstr "אפשר ייבוא נתונים מקבצי CSV"
 
 #. js-lingui-id: GMx1K0
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -708,7 +671,7 @@ msgid "Any field :"
 msgstr "כל שדה :"
 
 #. js-lingui-id: xJR+Wq
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Anyone with an email address at these domains is allowed to sign up for this workspace."
 msgstr "כל אחד עם כתובת דוא\"ל בדומיינים הללו רשאי להרשם למרחב עבודה זה."
 
@@ -740,6 +703,11 @@ msgstr "מפתח API הועתק ללוח הגזירים"
 msgid "API keys"
 msgstr "מפתחות API"
 
+#. js-lingui-id: FfSJ1Y
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+msgid "API Keys"
+msgstr "מפתחות API"
+
 #. js-lingui-id: vByqA1
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "API Keys & Webhooks"
@@ -766,15 +734,22 @@ msgid "API values"
 msgstr "ערכי API"
 
 #. js-lingui-id: JR6nY7
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+msgid "APIs"
+msgstr "APIים"
+
+#. js-lingui-id: ZZAOwb
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "APIs"
-msgstr "APIים"
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "APIs & Webhooks"
+msgstr "API ו-Webhooks"
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -787,7 +762,7 @@ msgid "Approved access domain validated"
 msgstr "הדומיין המאושר גישה אומת"
 
 #. js-lingui-id: 9tggYj
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Approved Domains"
 msgstr "דומיינים מאושרים"
 
@@ -876,10 +851,20 @@ msgstr "אימות"
 msgid "Authentication failed"
 msgstr "האימות נכשל"
 
+#. js-lingui-id: H7qgYQ
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "Authenticator app"
+msgstr "אפליקציית מאמת"
+
 #. js-lingui-id: YZWcQL
 #: src/pages/settings/SettingsProfile.tsx
 msgid "Authenticator App"
 msgstr "אפליקציית מאמת"
+
+#. js-lingui-id: 9aB4Rs
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "Authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator, etc. generate one-time passwords that are used as a second factor to verify your identity when prompted during sign-in."
+msgstr "אפליקציות מאמת ותוספי דפדפן כמו 1Password, Authy, Microsoft Authenticator, וכו' מייצרים סיסמאות חד-פעמיות המשמשות כגורם שני לאימות זהותכם בעת התחברות."
 
 #. js-lingui-id: yIVrHZ
 #: src/pages/auth/Authorize.tsx
@@ -919,7 +904,7 @@ msgstr "יצירה אוטומטית של רשומות אנשים בעת קבלה
 #. js-lingui-id: lXkUEV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 msgid "Availability"
-msgstr ""
+msgstr "זמינות"
 
 #. js-lingui-id: 3uQmjD
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
@@ -1034,7 +1019,7 @@ msgstr "הגדרות לוח שנה"
 #. js-lingui-id: xmUVPi
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Calendar start day"
-msgstr ""
+msgstr "הגדרות לוח שנה - יום תחילת השבוע בלוח השנה"
 
 #. js-lingui-id: LbIh3Y
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
@@ -1052,6 +1037,11 @@ msgstr "לוחות שנה"
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Can't change API names for standard objects"
 msgstr "לא ניתן לשנות שמות API עבור עצמים סטנדרטיים"
+
+#. js-lingui-id: YXzPl1
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "Can't scan? Copy the"
+msgstr "לא ניתן לסרוק? העתק את"
 
 #. js-lingui-id: dEgA5A
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -1113,6 +1103,11 @@ msgstr "שינוי לתוכנית ארגונית?"
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Change to Yearly?"
 msgstr "שנה לשנתי?"
+
+#. js-lingui-id: CWe7wB
+#: src/pages/settings/releases/SettingsReleases.tsx
+msgid "Changelog"
+msgstr "שינויי גרסה"
 
 #. js-lingui-id: AHZflp
 #: src/modules/ai/components/AIChatEmptyState.tsx
@@ -1177,7 +1172,7 @@ msgstr "בחר את ניסיונך"
 #. js-lingui-id: 3wV73y
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 msgid "City"
-msgstr ""
+msgstr "עיר"
 
 #. js-lingui-id: xCJdfg
 #: src/modules/ui/input/components/internal/date/components/InternalDatePicker.tsx
@@ -1203,6 +1198,11 @@ msgstr "לחץ על \"הוסף שדה פלט\" למטה כדי להגדיר את
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Click on the checkmark to apply your changes."
 msgstr "לחץ על סימן הביקורת כדי להחיל את השינויים שלך."
+
+#. js-lingui-id: d0rtA5
+#: src/modules/dashboards/graphs/components/GraphWidgetTooltip.tsx
+msgid "Click to see data"
+msgstr "לחץ כדי לראות נתונים"
 
 #. js-lingui-id: b9Y4up
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -1237,7 +1237,7 @@ msgstr "קוד"
 #. js-lingui-id: /8PmQ9
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 msgid "Code Editor"
-msgstr ""
+msgstr "עורך קוד"
 
 #. js-lingui-id: H86f9p
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -1265,7 +1265,7 @@ msgstr "עמודות שלא תואמו:"
 #. js-lingui-id: RyZt4H
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 msgid "Command Icon"
-msgstr ""
+msgstr "אייקון פקודות"
 
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -1328,7 +1328,7 @@ msgstr "הגדר הגדרות SMTP לשליחת אימיילים מהחשבון 
 #. js-lingui-id: SpV+F6
 #: src/pages/settings/ai/components/SettingsAgentHandoffSection.tsx
 msgid "Configure which agents this agent can hand off conversations to"
-msgstr ""
+msgstr "קוֹנפִיגוּרָציָה שמציינת לאיזה סוכנים סוכן זה יכול להעביר שיחות"
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -1339,6 +1339,7 @@ msgstr "הגדר את ההגדרות של האימיילים ולוח השנה �
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Confirm"
@@ -1357,7 +1358,7 @@ msgstr "חבר חשבון חדש למרחב העבודה שלך"
 #. js-lingui-id: dUcoLZ
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "Connect Account"
-msgstr ""
+msgstr "חבר חשבון"
 
 #. js-lingui-id: Zgi9Fd
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
@@ -1434,6 +1435,11 @@ msgstr "המשך עם Google"
 msgid "Continue with Microsoft"
 msgstr "המשך עם מיקרוסופט"
 
+#. js-lingui-id: XgMEX4
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Control which folders are synced"
+msgstr ""
+
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
 msgid "Copied to clipboard"
@@ -1459,12 +1465,17 @@ msgid "Copy link"
 msgstr "העתק קישור"
 
 #. js-lingui-id: eZ5HO9
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Copy link to view"
 msgstr "העתק קישור לצפייה"
 
-#. js-lingui-id: S+Jl8l
+#. js-lingui-id: HvB+os
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "Copy paste the code below"
+msgstr "הדבק את הקוד למטה"
+
+#. js-lingui-id: S+Jl8l
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Copy Setup Key"
 msgstr "העתק מפתח הגדרה"
@@ -1481,12 +1492,12 @@ msgid "Core"
 msgstr "ליבה"
 
 #. js-lingui-id: I99Miw
-#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Cost"
 msgstr "עלות"
 
 #. js-lingui-id: iX2opZ
-#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Cost per 1k Extra Credits"
 msgstr "עלות לכל אלף נקודות"
 
@@ -1545,7 +1556,7 @@ msgstr "ספור ערכים ייחודיים"
 #. js-lingui-id: JNCzPW
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 msgid "Country"
-msgstr ""
+msgstr "מדינה"
 
 #. js-lingui-id: hYgDIe
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
@@ -1561,7 +1572,7 @@ msgstr "צור {targetObjectLabelSingular}"
 #. js-lingui-id: 7/h1ZC
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Create a new AI agent"
-msgstr ""
+msgstr "צור סוכן AI חדש"
 
 #. js-lingui-id: zNoOC2
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
@@ -1574,9 +1585,15 @@ msgid "Create a workspace"
 msgstr "צור מרחב עבודה"
 
 #. js-lingui-id: uXGLuq
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Create API key"
 msgstr "צור מפתח API"
+
+#. js-lingui-id: 4+EmHM
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
+msgid "Create custom view"
+msgstr "צור תצוגה מותאמת אישית"
 
 #. js-lingui-id: d0DCww
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -1625,6 +1642,11 @@ msgstr "צור תצוגה"
 msgid "Create View"
 msgstr "צור תצוגה"
 
+#. js-lingui-id: SiPp29
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+msgid "Create webhook"
+msgstr "צור Webhook"
+
 #. js-lingui-id: dkAPxi
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Create Webhook"
@@ -1649,6 +1671,21 @@ msgstr "יוצר את מודל הנתונים שלך..."
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Creating your workspace"
 msgstr "יוצר את המרחב שלך"
+
+#. js-lingui-id: Efny36
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Credit Plan"
+msgstr "תוכנית אשראי"
+
+#. js-lingui-id: c1ojkj
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Credit Usage"
+msgstr "שימוש באשראי"
+
+#. js-lingui-id: n3kKrs
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Credits Used"
+msgstr "נקודות חינם בשימוש"
 
 #. js-lingui-id: R3PLzn
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownCurrencySelect.tsx
@@ -1695,17 +1732,17 @@ msgstr "התאם אישית את השדות הזמינים בתצוגות של {
 #. js-lingui-id: qqLY+j
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Customization"
-msgstr ""
+msgstr "התאמה אישית"
 
 #. js-lingui-id: CMhr4u
-#: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Customize Domain"
 msgstr "התאמה אישית של דומיין"
 
 #. js-lingui-id: wiqA3D
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 msgid "Customize field settings"
-msgstr ""
+msgstr "התאם אישית הגדרות שדה"
 
 #. js-lingui-id: RP2we8
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
@@ -1741,13 +1778,14 @@ msgstr "דנית"
 
 #. js-lingui-id: pvnfJD
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Dark"
 msgstr "כהה"
 
 #. js-lingui-id: HKH+W+
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
 msgid "Data"
-msgstr ""
+msgstr "מידע"
 
 #. js-lingui-id: TtG/MN
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
@@ -1839,7 +1877,7 @@ msgstr "מושבת"
 #. js-lingui-id: dPDEh6
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "Decide which Sub-address fields you want to display"
-msgstr ""
+msgstr "החליטו אילו שדות כתובת משנה אתם רוצים להציג"
 
 #. js-lingui-id: ovBPCi
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
@@ -1866,6 +1904,11 @@ msgstr "ערך ברירת המחדל"
 #: src/modules/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm.tsx
 msgid "Default Value"
 msgstr "ערך ברירת מחדל"
+
+#. js-lingui-id: wWTYoF
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
+msgid "Default View"
+msgstr "תצוגת ברירת מחדל"
 
 #. js-lingui-id: Y2ImVJ
 #: src/pages/settings/data-model/SettingsNewObject.tsx
@@ -1908,7 +1951,7 @@ msgstr "מחק"
 #. js-lingui-id: 65N6Yr
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Delete {objectLabelPlural}"
-msgstr ""
+msgstr "מחיקת {objectLabelPlural}"
 
 #. js-lingui-id: ZDGm40
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -1928,7 +1971,7 @@ msgstr "מחק חשבון ואת כל הנתונים הקשורים בו"
 #: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
 #: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
 msgid "Delete Agent"
-msgstr ""
+msgstr "מחק סוכן"
 
 #. js-lingui-id: hGfWDm
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -1936,9 +1979,9 @@ msgid "Delete API key"
 msgstr "מחק מפתח API"
 
 #. js-lingui-id: YLfVFw
-#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Delete branch"
-msgstr ""
+msgstr "מחק ענף"
 
 #. js-lingui-id: x2p4/4
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -1968,7 +2011,7 @@ msgstr "מחיקת תפקיד לצמיתות"
 #. js-lingui-id: DgHnjS
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Delete this agent"
-msgstr ""
+msgstr "מחק סוכן זה"
 
 #. js-lingui-id: T6S2Ns
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -1991,7 +2034,7 @@ msgid "Delete Two-Factor Authentication Method"
 msgstr "מחק שיטת אימות דו-שלבית"
 
 #. js-lingui-id: aRG49z
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Delete view"
 msgstr "מחק תצוגה"
 
@@ -2045,7 +2088,7 @@ msgstr "תאר מה אתה רוצה שהבינה המלאכותית תעשה..."
 #. js-lingui-id: ptyOy7
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Describe when this handoff should be used"
-msgstr ""
+msgstr "תאר מתי יש להשתמש בהעברה זו"
 
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -2060,7 +2103,7 @@ msgstr "תיאור"
 #. js-lingui-id: /mo9tB
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Description (Optional)"
-msgstr ""
+msgstr "תיאור (אופציונלי)"
 
 #. js-lingui-id: +ow7t4
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -2076,17 +2119,12 @@ msgstr "הרוס"
 #. js-lingui-id: YI3c7h
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Destroy {objectLabelPlural}"
-msgstr ""
+msgstr "השמדת {objectLabelPlural}"
 
 #. js-lingui-id: L68qSB
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Destroy Records on All Objects"
 msgstr "הריסת רשומות מכל הישויות"
-
-#. js-lingui-id: n+SX4g
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Developers"
-msgstr "מפתחים"
 
 #. js-lingui-id: zAg2B9
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -2102,7 +2140,7 @@ msgstr "הצגה"
 #. js-lingui-id: r/aDR/
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 msgid "Display a button in the top navbar to trigger this workflow"
-msgstr ""
+msgstr "הצגת כפתור בסרגל עליון להפעלת זרימת עבודה זו"
 
 #. js-lingui-id: 8Vg8H7
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
@@ -2126,9 +2164,10 @@ msgid "Do not import"
 msgstr "אל תייבא"
 
 #. js-lingui-id: TvY/XA
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Documentation"
-msgstr ""
+msgstr "תיעוד"
 
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -2136,12 +2175,20 @@ msgid "Doesn't contain"
 msgstr "לא כולל"
 
 #. js-lingui-id: EoKe5U
-#: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Domain"
 msgstr "תחום"
+
+#. js-lingui-id: AZ4xlc
+#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Domains"
+msgstr "תחומים"
 
 #. js-lingui-id: 7kVRe6
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -2216,18 +2263,18 @@ msgstr "ערוך"
 #. js-lingui-id: zQXUkv
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Edit {objectLabelPlural}"
-msgstr ""
+msgstr "עריכת {objectLabelPlural}"
 
 #. js-lingui-id: 9B436y
 #: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsEditImapSmtpCaldavConnection.tsx
 msgid "Edit Account"
-msgstr ""
+msgstr "ערוך חשבון"
 
 #. js-lingui-id: CQrc7J
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Edit Agent"
-msgstr ""
+msgstr "ערוך סוכן"
 
 #. js-lingui-id: 6vZ75d
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -2256,14 +2303,14 @@ msgid "Edit Records on All Objects"
 msgstr "עריכת רשומות מכל הישויות"
 
 #. js-lingui-id: 6o1M/Q
-#: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
 msgid "Edit your subdomain name or set a custom domain."
 msgstr "ערוך את שם התת-דומיין שלך או הגדר תחום מותאם אישית."
 
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Eighth"
-msgstr ""
+msgstr "שמיני"
 
 #. js-lingui-id: O3oNi5
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -2288,7 +2335,7 @@ msgstr "דוא\"ל לא יכול להיות ריק"
 #. js-lingui-id: UZQ5eW
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
 msgid "Email copied to clipboard"
-msgstr ""
+msgstr "האימייל הועתק ללוח הגזירים"
 
 #. js-lingui-id: lfQsvW
 #: src/pages/onboarding/ChooseYourPlan.tsx
@@ -2415,17 +2462,12 @@ msgstr "הזן ערך לאחסון בבסיס הנתונים"
 #. js-lingui-id: P/e64M
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "Enter agent name*"
-msgstr ""
+msgstr "הזן שם סוכן*"
 
 #. js-lingui-id: 9/30HU
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Enter in <0>Unicode</0> format"
 msgstr "הכנס בפורמט <0>Unicode</0>"
-
-#. js-lingui-id: MY3Tl9
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
-msgid "Enter the 6-digit verification code from your authenticator app to complete the setup."
-msgstr "הזן את קוד האימות בן 6 הספרות מאפליקציית המאמת שלך כדי להשלים את ההגדרה."
 
 #. js-lingui-id: XJU8BD
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -2440,7 +2482,7 @@ msgstr "הזן את המידע כדי להגדיר את החיבור"
 #. js-lingui-id: 3EF9HN
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "Enter the system prompt that defines this agent's behavior and capabilities"
-msgstr ""
+msgstr "הזן את הפקודה המערכתית שמגדירה את התנהגות הסוכן ויכולותיו"
 
 #. js-lingui-id: rYIISB
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -2511,7 +2553,12 @@ msgstr "שגיאה בשליחת הזמנה מחדש"
 #. js-lingui-id: lX3Yil
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Error updating role"
-msgstr ""
+msgstr "שגיאה בעדכון התפקיד"
+
+#. js-lingui-id: nB84mG
+#: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
+msgid "Error validating approved access domain"
+msgstr "שגיאה באימות הדומיין המאושר גישה"
 
 #. js-lingui-id: QmR+2U
 #: src/modules/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2529,6 +2576,7 @@ msgid "Error while switching subscription to Yearly."
 msgstr "שגיאה בעת החלפת המנוי לשנתי."
 
 #. js-lingui-id: JLxMta
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr "הקים נקודות קצה של Webhook להתראות על אירועים אסינכרוניים."
@@ -2596,7 +2644,7 @@ msgstr "הרחב"
 #. js-lingui-id: Y7w75u
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowServerlessFunctionCodeEditor.tsx
 msgid "Expand to Full Screen"
-msgstr ""
+msgstr "הרחב למסך מלא"
 
 #. js-lingui-id: bKBhgb
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -2643,7 +2691,7 @@ msgstr "יצוא"
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Export CSV"
-msgstr ""
+msgstr "ייצוא CSV"
 
 #. js-lingui-id: ep2rbf
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -2701,14 +2749,14 @@ msgid "Expression"
 msgstr "ביטוי"
 
 #. js-lingui-id: uE7S0L
-#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Extra Credits Used"
 msgstr "קרדיטים נוספים שנוצלו"
 
 #. js-lingui-id: w/6jdn
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Failed to create handoff"
-msgstr ""
+msgstr "נכשל ביצירת העברה"
 
 #. js-lingui-id: nKkohy
 #: src/modules/settings/developers/hooks/useWebhookForm.ts
@@ -2723,12 +2771,17 @@ msgstr "נכשל בניסיון להסיר קובץ"
 #. js-lingui-id: 99t8X7
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "Failed to remove handoff"
-msgstr ""
+msgstr "נכשל בניסיון להסיר העברה"
 
 #. js-lingui-id: A/P7PX
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
 msgid "Failed to remove override"
 msgstr "נכשל בניסיון להסיר עקיפת ערך"
+
+#. js-lingui-id: HnBqPY
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Failed to update price."
+msgstr "העדכון של המחיר נכשל."
 
 #. js-lingui-id: Dzh4a2
 #: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
@@ -2775,7 +2828,7 @@ msgstr "שם שדה"
 #. js-lingui-id: x07QTl
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldMorphRelationForm.tsx
 msgid "Field on destination"
-msgstr ""
+msgstr "שדה ביעד"
 
 #. js-lingui-id: zXgopL
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -2787,8 +2840,9 @@ msgstr "סוג שדה"
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Fields"
 msgstr "שדות"
 
@@ -2800,12 +2854,12 @@ msgstr "ספירת שדות"
 #. js-lingui-id: 5UU7Q6
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "Fields Permissions"
-msgstr ""
+msgstr "הרשאות שדות"
 
 #. js-lingui-id: uTDtiS
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Fifth"
-msgstr ""
+msgstr "חמישי"
 
 #. js-lingui-id: o7J4JM
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -2840,7 +2894,7 @@ msgstr "פינית"
 #. js-lingui-id: syyeb9
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "First"
-msgstr ""
+msgstr "ראשון"
 
 #. js-lingui-id: ZyIk6Y
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
@@ -2863,6 +2917,16 @@ msgstr "5 השורות הראשונות"
 msgid "First Name"
 msgstr "שם פרטי"
 
+#. js-lingui-id: kNqMMd
+#: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
+msgid "Folder"
+msgstr ""
+
+#. js-lingui-id: NRJn87
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Folder Management"
+msgstr ""
+
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
 msgid "Forgot your password?"
@@ -2881,12 +2945,7 @@ msgstr "פורמט לדוגמה: d-MMM-y (qqq''yy)"
 #. js-lingui-id: a8nooQ
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Fourth"
-msgstr ""
-
-#. js-lingui-id: wjsFMQ
-#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
-msgid "Free Credits Used"
-msgstr "נקודות חינם בשימוש"
+msgstr "רביעי"
 
 #. js-lingui-id: nLC6tu
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -2907,7 +2966,6 @@ msgstr "פונקציות"
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
-#: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "General"
@@ -3001,7 +3059,7 @@ msgstr "הוענק עבור אובייקט זה"
 #. js-lingui-id: fcUyLo
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Grants permission to perform all available actions without restriction"
-msgstr ""
+msgstr "מעניק הרשאה לבצע את כל הפעולות הזמינות ללא הגבלות"
 
 #. js-lingui-id: gBiL6J
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
@@ -3016,7 +3074,7 @@ msgstr "מגרש משחקים ל-GraphQL API"
 #. js-lingui-id: FJWI9L
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Greater than or equal"
-msgstr "תום גדול יותר או שווה\aF"
+msgstr "תום גדול יותר או שווה\\aF"
 
 #. js-lingui-id: CZXzs4
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3025,8 +3083,8 @@ msgstr "יוונית"
 
 #. js-lingui-id: L8fEEm
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Group"
 msgstr "קבוצה"
 
@@ -3039,12 +3097,12 @@ msgstr "קיבוץ לפי"
 #. js-lingui-id: /Oqu/V
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Handoff created successfully"
-msgstr ""
+msgstr "העברה נוצרה בהצלחה"
 
 #. js-lingui-id: cZP3a/
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "Handoff removed successfully"
-msgstr ""
+msgstr "העברה הוסרה בהצלחה"
 
 #. js-lingui-id: I1IOmb
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
@@ -3135,7 +3193,7 @@ msgstr "https://example.com/webhook"
 #. js-lingui-id: khBRyu
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
 msgid "Human Input"
-msgstr ""
+msgstr "קלט אנושי"
 
 #. js-lingui-id: mkWad2
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3227,7 +3285,7 @@ msgstr "יבא"
 #. js-lingui-id: 2CeOI3
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection.tsx
 msgid "Import CSV"
-msgstr ""
+msgstr "ייבוא CSV"
 
 #. js-lingui-id: eECp4f
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -3250,6 +3308,7 @@ msgid "Importing Data ..."
 msgstr ""
 
 #. js-lingui-id: NoNwIX
+#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "Inactive"
@@ -3348,7 +3407,7 @@ msgid "Invalid form values"
 msgstr "ערכים לא חוקיים בטופס"
 
 #. js-lingui-id: VEKoJx
-#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationForSettings.tsx
+#: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Invalid verification code. Please try again."
 msgstr "קוד אימות שגוי. אנא נסה שוב."
@@ -3520,6 +3579,7 @@ msgstr "יפנית"
 
 #. js-lingui-id: C5FAaq
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "john.doe"
 msgstr "john.doe"
 
@@ -3545,9 +3605,7 @@ msgid "Korean"
 msgstr "קוריאנית"
 
 #. js-lingui-id: zrpwCd
-#: src/pages/settings/lab/SettingsLab.tsx
-#: src/pages/settings/lab/SettingsLab.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/releases/SettingsReleases.tsx
 msgid "Lab"
 msgstr "מעבדה"
 
@@ -3633,8 +3691,9 @@ msgid "Launch"
 msgstr "הפעל"
 
 #. js-lingui-id: rdU729
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Layout"
 msgstr "פריסה"
 
@@ -3660,14 +3719,17 @@ msgstr "או קטן יותר"
 
 #. js-lingui-id: 1njn7W
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Light"
 msgstr "בהיר"
 
 #. js-lingui-id: pQjjYo
 #: src/pages/onboarding/InviteTeam.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Link copied to clipboard"
 msgstr "הקישור הועתק ללוח הגזירים"
 
@@ -3688,6 +3750,7 @@ msgstr "טוען נתוני מדדים..."
 
 #. js-lingui-id: Z3FXyt
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
+#: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Loading..."
@@ -3723,7 +3786,7 @@ msgstr "חפש משתמשים כדי להתחפש אליהם."
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Mail Account"
-msgstr ""
+msgstr "חשבון דואר"
 
 #. js-lingui-id: n0FHLv
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -3797,6 +3860,11 @@ msgstr "MCP"
 msgid "MCP Configuration copied to clipboard"
 msgstr "תצורת MCP הועתקה ללוח הגזירים"
 
+#. js-lingui-id: upbzgm
+#: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
+msgid "Me"
+msgstr "אני"
+
 #. js-lingui-id: Sma10A
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/WorkspacesForSignIn.tsx
 msgid "Member of"
@@ -3813,19 +3881,19 @@ msgstr "חברים"
 #. js-lingui-id: UODtG8
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Merge"
-msgstr ""
+msgstr "מזג"
 
 #. js-lingui-id: d2c8f+
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
 msgid "Merge preview"
-msgstr ""
+msgstr "תצוגה מקדימה של מיזוג"
 
 #. js-lingui-id: Cmeamd
 #: src/modules/command-menu/hooks/useOpenMergeRecordsPageInCommandMenu.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
 msgid "Merge records"
-msgstr ""
+msgstr "מזג רשומות"
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -3864,7 +3932,7 @@ msgstr "דקות בין הפעלות"
 #. js-lingui-id: hty0d5
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Monday"
-msgstr ""
+msgstr "יום שני"
 
 #. js-lingui-id: 8g3Cgz
 #: src/modules/settings/admin-panel/health-status/components/ConnectedAccountHealthStatus.tsx
@@ -3876,15 +3944,15 @@ msgstr "ניטור ביצוע סנכרון אירועי לוח השנה שלך"
 msgid "Monitor the execution of your emails sync job"
 msgstr "ניטור ביצוע סנכרון הדואר האלקטרוני שלך"
 
-#. js-lingui-id: +8Nek/
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Monthly"
-msgstr "חודשי"
+#. js-lingui-id: kY2ll9
+#: src/modules/billing/utils/subscriptionFlags.ts
+msgid "month"
+msgstr "חודש"
 
-#. js-lingui-id: 1cOZuL
-#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
-msgid "Monthly Credits"
-msgstr "נקודות חודשיות"
+#. js-lingui-id: rdfE9o
+#: src/modules/billing/utils/subscriptionFlags.ts
+msgid "monthly"
+msgstr "חודשי"
 
 #. js-lingui-id: 2FYpfJ
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
@@ -3946,7 +4014,6 @@ msgstr "חייב להיות מערך של אימיילים חוקיים"
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
@@ -3981,7 +4048,7 @@ msgstr "שם המרחב העבודה שלך"
 #. js-lingui-id: JxC/pi
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 msgid "Navbar"
-msgstr ""
+msgstr "סרגל עליון"
 
 #. js-lingui-id: 2T8KCk
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4022,7 +4089,7 @@ msgstr "חדש"
 #. js-lingui-id: LfvvW4
 #: src/modules/command-menu/hooks/useOpenRecordInCommandMenu.ts
 msgid "New {objectLabelSingular}"
-msgstr ""
+msgstr "חדש {objectLabelSingular}"
 
 #. js-lingui-id: Kcr9Fr
 #: src/modules/settings/accounts/components/SettingsNewAccountSection.tsx
@@ -4033,7 +4100,7 @@ msgstr "חשבון חדש"
 #: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsNewImapSmtpCaldavConnection.tsx
 msgid "New Account"
-msgstr ""
+msgstr "חשבון חדש"
 
 #. js-lingui-id: mJIA0/
 #: src/pages/settings/ai/SettingsAgentForm.tsx
@@ -4041,7 +4108,7 @@ msgstr ""
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "New Agent"
-msgstr ""
+msgstr "סוכן חדש"
 
 #. js-lingui-id: 2qr/61
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -4097,28 +4164,28 @@ msgstr "שלב הבא"
 #. js-lingui-id: ulck7h
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Ninth"
-msgstr ""
+msgstr "תשיעי"
 
 #. js-lingui-id: 1UzENP
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
 msgid "No"
-msgstr ""
+msgstr "לא"
 
 #. js-lingui-id: vhsJG1
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "No Agent"
-msgstr ""
+msgstr "אין סוכן"
 
 #. js-lingui-id: pC+mOo
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "No agents available for handoff"
-msgstr ""
+msgstr "אין סוכנים זמינים להעברה"
 
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "No available fields to select"
-msgstr ""
+msgstr "אין שדות זמינים לבחירה"
 
 #. js-lingui-id: OTe3RI
 #: src/pages/settings/workspace/SettingsDomain.tsx
@@ -4153,6 +4220,11 @@ msgstr "לא נמצאו נתונים"
 #. js-lingui-id: flmDTf
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "No description"
+msgstr "אין תיאור"
+
+#. js-lingui-id: 1jgsYC
+#: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard.tsx
+msgid "No folders found for this account"
 msgstr ""
 
 #. js-lingui-id: xlUOps
@@ -4168,12 +4240,12 @@ msgstr "אין עוד הפעלות חינמיות של <span>Workflows</span>. �
 #. js-lingui-id: S81IYy
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "No handoffs configured for this agent"
-msgstr ""
+msgstr "אין העברות מוגדרות לסוכן זה"
 
 #. js-lingui-id: zsMgNq
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "No handoffs match your search"
-msgstr ""
+msgstr "לא נמצאו העברות תואמות לחיפוש שלך"
 
 #. js-lingui-id: OcMef3
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
@@ -4204,7 +4276,7 @@ msgstr "אין נתונים זמינים"
 #. js-lingui-id: UWZZdQ
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "No models available. Please configure AI models in your workspace settings."
-msgstr ""
+msgstr "אין מודלים זמינים. נא להגדיר מודלים לבינה מלאכותית בהגדרות מרחב העבודה שלכם."
 
 #. js-lingui-id: daCzI1
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
@@ -4224,7 +4296,7 @@ msgstr "לא נמצאה שיטת תשלום. אנא עדכן את פרטי הח�
 #. js-lingui-id: kSCxfd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection.tsx
 msgid "No permissions have been set for individual objects."
-msgstr ""
+msgstr "לא הוגדרו הרשאות עבור אובייקטים בודדים."
 
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -4295,9 +4367,9 @@ msgid "Not available for default view"
 msgstr "אינו זמין בתצוגת ברירת מחדל"
 
 #. js-lingui-id: 0qBE9S
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
-#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
+#: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Not available on Default View"
 msgstr "אינו זמין בתצוגת ברירת מחדל"
 
@@ -4343,6 +4415,11 @@ msgstr "מספר"
 msgid "Number of decimals"
 msgstr "מספר ספרות עשרוניות"
 
+#. js-lingui-id: tYOaY8
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Number of new credits allocated every {recurringInterval}"
+msgstr "מספר נקודות חדשות מוקצה כל {recurringInterval}"
+
 #. js-lingui-id: qg5nhQ
 #: src/modules/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm.tsx
 msgid "Number type"
@@ -4373,8 +4450,14 @@ msgstr "רמת-האובייקט"
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Objects"
 msgstr "אובייקטים"
+
+#. js-lingui-id: /8Yh6y
+#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+msgid "Objects and fields permissions settings"
+msgstr "הגדרות הרשאות אובייקטים ושדות"
 
 #. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
@@ -4384,7 +4467,7 @@ msgstr "מחוץ למסלול המוכר"
 #. js-lingui-id: 4e9dd8
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 msgid "On which object(s) should this trigger be available"
-msgstr ""
+msgstr "על איזה אובייקט(ים) צריך להיות זמין הטריגר הזה"
 
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -4456,8 +4539,7 @@ msgid "Organization"
 msgstr "ארגון"
 
 #. js-lingui-id: /IX/7x
-#: src/pages/settings/Releases.tsx
-#: src/pages/settings/lab/SettingsLab.tsx
+#: src/pages/settings/releases/SettingsReleases.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
@@ -4480,6 +4562,11 @@ msgstr "הצוות שלנו יכול לסייע לך להגדיר את סביב�
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Output Field {fieldNumber}"
 msgstr "שדה פלט {fieldNumber}"
+
+#. js-lingui-id: nITdXs
+#: src/pages/settings/page-layout/PageLayoutEdition.tsx
+msgid "Page Layout"
+msgstr "פריסת עמוד"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -4581,6 +4668,7 @@ msgstr "מספר הטלפון הועתק ללוח הגזירים"
 
 #. js-lingui-id: FdlpPK
 #: src/modules/workflow/workflow-variables/components/WorkflowVariablesDropdownAllItems.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowDropdownStepOutputItems.tsx
 msgid "Pick a {nameSingular} record"
 msgstr "בחר רשומת {nameSingular}"
 
@@ -4603,7 +4691,7 @@ msgstr "אנא בדוק את האימייל שלך עבור קישור לאימ�
 #. js-lingui-id: K/TMbW
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "Please create agents in the AI settings to use in workflows."
-msgstr ""
+msgstr "נא ליצור סוכנים בהגדרות הבינה המלאכותית לצורך שימוש ב-התהליכים (Workflows)."
 
 #. js-lingui-id: CjNkdJ
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -4615,6 +4703,11 @@ msgstr "אנא רענן/ני את הדף."
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Please search for a user first"
 msgstr "אנא חפש משתמש קודם"
+
+#. js-lingui-id: 8YnlGz
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Please start your subscription first"
+msgstr "נא להתחיל את המנוי שלך קודם כל"
 
 #. js-lingui-id: 6nsIo3
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -4649,7 +4742,7 @@ msgstr "פורטוגזית — פורטוגל"
 #. js-lingui-id: OKJUcC
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 msgid "Postcode"
-msgstr ""
+msgstr "מיקוד"
 
 #. js-lingui-id: /v6Rp9
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -4659,7 +4752,7 @@ msgstr "ממלא את נתוני סביבת העבודה שלך מראש..."
 #. js-lingui-id: ut1ZY+
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIsUniqueForm.tsx
 msgid "Prevent from assigning the same value to different records"
-msgstr ""
+msgstr "למנוע ממשתמשים להקצות את אותו הערך לרשומות שונות"
 
 #. js-lingui-id: rdUucN
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
@@ -4671,6 +4764,11 @@ msgstr "תצוגה מקדימה"
 #: src/modules/action-menu/actions/record-agnostic-actions/constants/RecordAgnosticActionsConfig.tsx
 msgid "Previous AI Chats"
 msgstr "שיחות AI קודמות"
+
+#. js-lingui-id: jmc+FY
+#: src/modules/billing/components/internal/MeteredPriceSelector.tsx
+msgid "Price updated."
+msgstr "המחיר עודכן."
 
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
@@ -4761,7 +4859,7 @@ msgstr "\\"
 #. js-lingui-id: PWlTvh
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 msgid "Records"
-msgstr ""
+msgstr "רישומים"
 
 #. js-lingui-id: LfH+Ea
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -4801,8 +4899,8 @@ msgid "Relative"
 msgstr "יחסי"
 
 #. js-lingui-id: 5icoS1
-#: src/pages/settings/Releases.tsx
-#: src/pages/settings/Releases.tsx
+#: src/pages/settings/releases/SettingsReleases.tsx
+#: src/pages/settings/releases/SettingsReleases.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Releases"
 msgstr "\\"
@@ -4829,7 +4927,7 @@ msgid "Remove as default"
 msgstr "הסר כברירת מחדל"
 
 #. js-lingui-id: rn2/2V
-#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramFilterEdgeEditable.tsx
+#: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
 msgid "Remove filter"
 msgstr ""
 
@@ -4842,17 +4940,22 @@ msgstr "\\"
 #. js-lingui-id: utQSYi
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "Remove handoff"
-msgstr ""
+msgstr "הסר העברה"
 
 #. js-lingui-id: OwOSPx
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "Remove Handoff"
-msgstr ""
+msgstr "הסר העברה"
 
 #. js-lingui-id: 00Lxnh
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove option"
 msgstr "הסר אפשרות"
+
+#. js-lingui-id: oQjB9l
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Renewal date"
+msgstr "תאריך חידוש"
 
 #. js-lingui-id: Ee8JBW
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -4890,7 +4993,7 @@ msgstr "\\"
 #. js-lingui-id: L+rMC9
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "Reset to default"
-msgstr ""
+msgstr "איפוס לברירת מחדל"
 
 #. js-lingui-id: Tj36Dr
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
@@ -4956,7 +5059,7 @@ msgstr "בוטל עבור אובייקט זה"
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 msgid "Role"
-msgstr ""
+msgstr "תפקיד"
 
 #. js-lingui-id: iSfzXo
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -4972,7 +5075,7 @@ msgstr "שם תפקיד לא יכול להיות ריק"
 #. js-lingui-id: M9SCiK
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Role updated successfully"
-msgstr ""
+msgstr "התפקיד עודכן בהצלחה"
 
 #. js-lingui-id: 5dJK4M
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
@@ -5002,7 +5105,7 @@ msgstr "רוסית"
 #. js-lingui-id: +5kO8P
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Saturday"
-msgstr ""
+msgstr "יום שבת"
 
 #. js-lingui-id: tfDRzk
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
@@ -5063,7 +5166,7 @@ msgstr "חפש סוג"
 #. js-lingui-id: 4fd0q+
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
 msgid "Search an agent..."
-msgstr ""
+msgstr "חפש סוכן..."
 
 #. js-lingui-id: x55IVv
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
@@ -5121,7 +5224,7 @@ msgstr "חפש אובייקט..."
 #. js-lingui-id: OflyKY
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "Search handoffs..."
-msgstr ""
+msgstr "חפש העברות..."
 
 #. js-lingui-id: lnwW17
 #: src/modules/ui/input/components/IconPicker.tsx
@@ -5152,7 +5255,7 @@ msgstr "מקומות"
 #. js-lingui-id: ku//5b
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Second"
-msgstr ""
+msgstr "שני"
 
 #. js-lingui-id: 8VEDbV
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -5166,7 +5269,6 @@ msgstr "סוד (אופציונלי)"
 
 #. js-lingui-id: a3LDKx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
-#: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -5182,12 +5284,12 @@ msgstr "ראה"
 #. js-lingui-id: h+8V38
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 msgid "See"
-msgstr ""
+msgstr "ראה"
 
 #. js-lingui-id: aOvXdk
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "See {objectLabelPlural}"
-msgstr ""
+msgstr "ראה {objectLabelPlural}"
 
 #. js-lingui-id: QREcJS
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowActionsConfig.tsx
@@ -5213,7 +5315,7 @@ msgstr "ראה זרימות עבודה שנמחקו"
 #. js-lingui-id: oGROXc
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 msgid "See Fields"
-msgstr ""
+msgstr "ראה שדות"
 
 #. js-lingui-id: irbH/8
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -5264,17 +5366,17 @@ msgstr "ראה תהליכי עבודה"
 #. js-lingui-id: bP/w4M
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Select a field from a previous step"
-msgstr ""
+msgstr "בחר שדה משלב קודם"
 
 #. js-lingui-id: h4pFju
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "Select a role"
-msgstr ""
+msgstr "בחר תפקיד"
 
 #. js-lingui-id: l5KvVl
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Select a target agent"
-msgstr ""
+msgstr "בחר סוכן יעד"
 
 #. js-lingui-id: WZvt/6
 #: src/modules/command-menu/hooks/useWorkflowCommandMenu.ts
@@ -5285,7 +5387,7 @@ msgstr "בחר פעולה"
 #. js-lingui-id: JDdVYO
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "Select Agent"
-msgstr ""
+msgstr "בחר סוכן"
 
 #. js-lingui-id: hVPa4O
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/UnmatchColumn.tsx
@@ -5414,6 +5516,7 @@ msgid "Setting up your database..."
 msgstr "מגדיר את מסד הנתונים שלך..."
 
 #. js-lingui-id: Tz0i8g
+#: src/pages/settings/page-layout/PageLayoutEdition.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -5435,6 +5538,11 @@ msgstr "כל אפשרויות ההגדרות פתוחות"
 msgid "Settings permissions"
 msgstr "הרשאות הגדרות"
 
+#. js-lingui-id: J2TlKG
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "setup key"
+msgstr "מפתח הגדרות"
+
 #. js-lingui-id: i5CJAR
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
@@ -5449,7 +5557,7 @@ msgstr "הגדר את האימות הדו-שלבי שלך"
 #. js-lingui-id: dsCM1m
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Seventh"
-msgstr ""
+msgstr "שביעי"
 
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -5530,7 +5638,7 @@ msgstr "יש לוודא ששמות היחיד והרבים יהיו שונים"
 #. js-lingui-id: Swe8Fi
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Sixth"
-msgstr ""
+msgstr "שישי"
 
 #. js-lingui-id: 6Uau97
 #: src/pages/onboarding/InviteTeam.tsx
@@ -5563,6 +5671,11 @@ msgstr "יציאת SMTP"
 msgid "SMTP Server"
 msgstr "שרת SMTP"
 
+#. js-lingui-id: ISDzCY
+#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
+msgid "SMTP Username"
+msgstr "שם משתמש SMTP"
+
 #. js-lingui-id: 4oakKm
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "smtp.example.com"
@@ -5572,7 +5685,12 @@ msgstr "smtp.example.com"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
 msgid "Some"
-msgstr ""
+msgstr "חלק"
+
+#. js-lingui-id: wTrpxV
+#: src/modules/error-handler/components/AppRootErrorFallback.tsx
+msgid "Sorry, something went wrong"
+msgstr "מצטערים, משהו השתבש"
 
 #. js-lingui-id: f6Hub0
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
@@ -5617,10 +5735,15 @@ msgstr "סטנדרטי"
 msgid "Start a conversation with your AI agent to get workflow insights, task assistance, and process guidance"
 msgstr "התחל שיחה עם הסוכן האינטליגנטי לקבלת תובנות על זרימת העבודה, עזרה במשימות והכוונה בתהליכים"
 
+#. js-lingui-id: s+K73L
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Start Your Subscription"
+msgstr "התחל את המנוי שלך"
+
 #. js-lingui-id: RS0o7b
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 msgid "State"
-msgstr ""
+msgstr "מצב"
 
 #. js-lingui-id: uAQUqI
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
@@ -5637,7 +5760,7 @@ msgstr "מאוחסן בבסיס הנתונים"
 #. js-lingui-id: WIUeUf
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 msgid "Sub-Fields"
-msgstr ""
+msgstr "שדות משנה"
 
 #. js-lingui-id: ku9TbG
 #: src/pages/settings/workspace/SettingsSubdomain.tsx
@@ -5696,6 +5819,11 @@ msgstr "שלח"
 msgid "Subscribe"
 msgstr "הירשם"
 
+#. js-lingui-id: ShbDuS
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Subscribe Now"
+msgstr "הירשם עכשיו"
+
 #. js-lingui-id: WVzGc2
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Subscription"
@@ -5719,7 +5847,7 @@ msgstr "המינוי הועבר לשנתי."
 #. js-lingui-id: OjK1bU
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsActions.ts
 msgid "Successfully merged {recordCount} records"
-msgstr ""
+msgstr "נמזגו בהצלחה {recordCount} רשומות"
 
 #. js-lingui-id: nyQWMb
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -5735,7 +5863,7 @@ msgstr "\\"
 #. js-lingui-id: DBC3t5
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "Sunday"
-msgstr ""
+msgstr "יום ראשון"
 
 #. js-lingui-id: XYLcNv
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -5757,6 +5885,11 @@ msgstr "העבר לארגון"
 msgid "Switch to Yearly"
 msgstr "העבר לשנתי"
 
+#. js-lingui-id: Nu4DdT
+#: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
+msgid "Sync"
+msgstr ""
+
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
 msgid "Sync failed"
@@ -5777,10 +5910,15 @@ msgstr "\\"
 msgid "Synchronize Objects Labels and API Names"
 msgstr "סנכרון תוויות ושמות API של אובייקטים"
 
+#. js-lingui-id: D+NlUC
+#: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
+msgid "System"
+msgstr "מערכת"
+
 #. js-lingui-id: ERq5FY
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "System Prompt*"
-msgstr ""
+msgstr "הנחיית מערכת*"
 
 #. js-lingui-id: D4SseJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -5806,17 +5944,17 @@ msgstr "הגדרות מערכת - {systemTimeFormatLabel}"
 #. js-lingui-id: e89dEj
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "System settings - Monday"
-msgstr ""
+msgstr "הגדרות מערכת - יום שני"
 
 #. js-lingui-id: o+Kvng
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "System settings - Saturday"
-msgstr ""
+msgstr "הגדרות מערכת - יום שבת"
 
 #. js-lingui-id: gluMQd
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 msgid "System settings - Sunday"
-msgstr ""
+msgstr "הגדרות מערכת - יום ראשון"
 
 #. js-lingui-id: 4hJhzz
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
@@ -5828,7 +5966,7 @@ msgstr "טבלה"
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "Target Agent"
-msgstr ""
+msgstr "סוכן יעד"
 
 #. js-lingui-id: GtycJ/
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -5915,7 +6053,7 @@ msgstr "\\"
 #. js-lingui-id: 3lMl10
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManualForm.tsx
 msgid "The selected record(s) will be passed to your workflow"
-msgstr ""
+msgstr "הרשומות שנבחרו יועברו לתהליך העבודה שלך"
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -5965,7 +6103,7 @@ msgstr "אירעה תקלה בעדכון הסיסמה."
 #. js-lingui-id: UlykKR
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
 msgid "Third"
-msgstr ""
+msgstr "שלישי"
 
 #. js-lingui-id: hqCwGc
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -5975,7 +6113,7 @@ msgstr "פעולה זו אינה ניתנת לביטול. זה ימחק לצמי
 #. js-lingui-id: bNY3MH
 #: src/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal.tsx
 msgid "This action cannot be undone. This will permanently delete your agent.<0/>Please type in the agent name to confirm."
-msgstr ""
+msgstr "פעולה זו אינה ניתנת לביטול. היא תמחק את הסוכן שלך לצמיתות.<0/>אנא הקלד את שם הסוכן כדי לאשר."
 
 #. js-lingui-id: gWGuHC
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -5985,7 +6123,7 @@ msgstr "פעולה זו אינה ניתנת לביטול. זה ימחק לצמי
 #. js-lingui-id: igSFzI
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "This action cannot be undone. This will permanently remove the handoff configuration."
-msgstr ""
+msgstr "פעולה זו אינה ניתנת לביטול. היא תמחק לצמיתות את הגדרות ההעברה."
 
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -6030,7 +6168,7 @@ msgstr "פעולה זו תחזיר את הערך של בסיס הנתונים ל
 #. js-lingui-id: Vqn9Z1
 #: src/modules/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu.tsx
 msgid "Tidy up workflow"
-msgstr ""
+msgstr "סדר את הזרימת עבודה"
 
 #. js-lingui-id: n9nSNJ
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -6070,10 +6208,15 @@ msgstr "שנה את כל הגדרות ההרשאות"
 msgid "Tomorrow"
 msgstr "מחר"
 
-#. js-lingui-id: dshGKq
-#: src/modules/billing/components/SettingsBillingMonthlyCreditsSection.tsx
-msgid "Track your monthly workflow credit consumption."
-msgstr "עקוב אחר צריכת הקרדיט החודשית בזרימות העבודה שלך."
+#. js-lingui-id: YT/cKI
+#: src/modules/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Track your {intervalLabel} workflow credit consumption."
+msgstr "עקוב אחר צריכת נקודות העבודה שלך ב{intervalLabel}."
+
+#. js-lingui-id: lhkaAC
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "Trial"
+msgstr "ניסיון"
 
 #. js-lingui-id: wN0jHF
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
@@ -6089,7 +6232,7 @@ msgstr "תקופת הניסיון פגה. אנא עדכן את פרטי החיו
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
 msgid "Trigger"
-msgstr ""
+msgstr "הפעל\",\"pluralForm\":null}]}]}{"
 
 #. js-lingui-id: EfDzVR
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -6120,6 +6263,7 @@ msgid "True"
 msgstr "נכון"
 
 #. js-lingui-id: haaL9N
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Try our REST or GraphQL API playgrounds."
 msgstr "נסו את אזורי המשחק של API מסוג REST או GraphQL."
@@ -6153,7 +6297,7 @@ msgid "Two-Factor Authentication"
 msgstr "אימות דו-שלבי"
 
 #. js-lingui-id: cRM1ec
-#: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationForSettings.tsx
+#: src/modules/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings.ts
 msgid "Two-factor authentication setup completed successfully!"
 msgstr "הגדרת האימות הדו-שלבי הושלמה בהצלחה!"
 
@@ -6174,6 +6318,11 @@ msgstr "הקלד כל דבר"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Ukrainian"
 msgstr "אוקראינית"
+
+#. js-lingui-id: l+ALBd
+#: src/modules/client-config/components/ClientConfigProvider.tsx
+msgid "Unable to Reach Back-end"
+msgstr "לא ניתן להגיע לשרת"
 
 #. js-lingui-id: wSXm5S
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -6211,7 +6360,7 @@ msgstr "תפקיד ללא כותרת"
 #. js-lingui-id: p1M9l4
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionServerlessFunction.tsx
 msgid "Untitled Workflow"
-msgstr ""
+msgstr "תהליך עבודה ללא כותרת"
 
 #. js-lingui-id: Y8zko3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText.ts
@@ -6227,12 +6376,12 @@ msgstr "עדכן"
 #. js-lingui-id: YT2VWW
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Update agent information"
-msgstr ""
+msgstr "עדכן מידע על הסוכן"
 
 #. js-lingui-id: qbg8VE
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Update your account's configuration. Configure any combination of IMAP, SMTP, and CalDAV as needed."
-msgstr ""
+msgstr "עדכן את תצורת החשבון שלך. קבע תצורה של כל קומבינציה של IMAP, SMTP ו-CalDAV לפי הצורך."
 
 #. js-lingui-id: ONWvwQ
 #: src/modules/ui/input/components/ImageInput.tsx
@@ -6258,11 +6407,6 @@ msgstr "העלה קובץ"
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 msgid "Upload the XML file with your connection infos"
 msgstr "העלה את קובץ ה-XML עם המידע על החיבור שלך"
-
-#. js-lingui-id: zlvvC+
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
-msgid "Use an authenticator app like Google Authenticator, Authy, or Microsoft Authenticator to scan this QR code."
-msgstr "השתמש באפליקציית מאמת כמו Google Authenticator, Authy או Microsoft Authenticator כדי לסרוק קוד QR זה."
 
 #. js-lingui-id: 6dMpmz
 #: src/modules/action-menu/actions/record-actions/constants/WorkflowVersionsActionsConfig.tsx
@@ -6371,6 +6515,11 @@ msgstr "המשתנה עודכן בהצלחה."
 msgid "Verify code from the app"
 msgstr "אמת קוד מהאפליקציה"
 
+#. js-lingui-id: zS/rMV
+#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+msgid "Verify the code from the app"
+msgstr "אמת את הקוד מהאפליקציה"
+
 #. js-lingui-id: IHIWR4
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Version of the application"
@@ -6450,15 +6599,20 @@ msgstr "נתקלנו בבעיה בזמן האימות"
 msgid "We support your square PNGs, JPEGs and GIFs under 10MB"
 msgstr "אנחנו תומכים ב-PNGs ריבועיים, JPEGs ו-GIFs עד 10MB"
 
+#. js-lingui-id: 4pcfmN
+#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "We will activate your paid plan. Do you want to proceed?"
+msgstr "נפעיל את התוכנית בתשלום שלך. האם ברצונך להמשיך?"
+
 #. js-lingui-id: KIfYq0
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "We will send a POST request to this endpoint for each new event in application/json format"
-msgstr ""
+msgstr "נשלח בקשת POST לכתובת זו עבור כל אירוע חדש בפורמט application/json"
 
 #. js-lingui-id: K4HbuR
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "We will send a POST request to this endpoint for each new event in application/json format."
-msgstr ""
+msgstr "נשלח בקשות POST לכתובת זו עבור כל אירוע חדש בפורמט application/json."
 
 #. js-lingui-id: PI4LiB
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -6491,11 +6645,10 @@ msgid "Webhook ID is required for updates"
 msgstr "נדרש מזהה Webhook לעדכונים"
 
 #. js-lingui-id: v1kQyJ
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Webhooks"
 msgstr "וובהוקים"
 
@@ -6508,7 +6661,7 @@ msgstr "ברוכים הבאים ל-{workspaceName}"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "What this API can do: Select a user role to define its permissions."
-msgstr ""
+msgstr "מה API זה יכול לעשות: בחר תפקיד משתמש כדי להגדיר את ההרשאות שלו."
 
 #. js-lingui-id: C51ilI
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -6530,11 +6683,13 @@ msgstr "זרימות עבודה"
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
+#: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
@@ -6563,6 +6718,11 @@ msgstr "סביבת עבודה"
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
 msgid "Workspace Deletion"
 msgstr "מחיקת סביבת עבודה"
+
+#. js-lingui-id: i1AiTd
+#: src/pages/settings/domains/SettingsDomains.tsx
+msgid "Workspace Domain"
+msgstr "תחום סביבת עבודה"
 
 #. js-lingui-id: J22jAC
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -6600,11 +6760,16 @@ msgstr "כתוב תיאור"
 #. js-lingui-id: 7QXVrh
 #: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
 msgid "Write a description for this agent"
-msgstr ""
+msgstr "כתוב תיאור עבור סוכן זה"
 
-#. js-lingui-id: zkWmBh
-#: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
-msgid "Yearly"
+#. js-lingui-id: 7qI8sJ
+#: src/modules/billing/utils/subscriptionFlags.ts
+msgid "year"
+msgstr "שנה"
+
+#. js-lingui-id: dfmB8/
+#: src/modules/billing/utils/subscriptionFlags.ts
+msgid "yearly"
 msgstr "שנתי"
 
 #. js-lingui-id: 3d1wCB

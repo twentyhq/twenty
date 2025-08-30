@@ -65,7 +65,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
           enqueueSuccessSnackBar({
             message: t`Please check your email for a verification link.`,
           });
-          navigate(SettingsPath.Security);
+          navigate(SettingsPath.Domains);
         },
         onError: (error) => {
           enqueueErrorSnackBar({
@@ -86,7 +86,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
         title="New Approved Access Domain"
         actionButton={
           <SaveAndCancelButtons
-            onCancel={() => navigate(SettingsPath.Security)}
+            onCancel={() => navigate(SettingsPath.Domains)}
             isSaveDisabled={form.formState.isSubmitting}
           />
         }
@@ -96,8 +96,8 @@ export const SettingsSecurityApprovedAccessDomain = () => {
             href: getSettingsPath(SettingsPath.Workspace),
           },
           {
-            children: <Trans>Security</Trans>,
-            href: getSettingsPath(SettingsPath.Security),
+            children: <Trans>Domains</Trans>,
+            href: getSettingsPath(SettingsPath.Domains),
           },
           { children: <Trans>New Approved Access Domain</Trans> },
         ]}

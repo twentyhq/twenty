@@ -40,10 +40,6 @@ export const WorkflowDiagramEffect = () => {
     workflowLastCreatedStepIdComponentState,
   );
 
-  const isWorkflowFilteringEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_FILTERING_ENABLED,
-  );
-
   const isWorkflowBranchEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
   );
@@ -58,7 +54,6 @@ export const WorkflowDiagramEffect = () => {
 
         const nextWorkflowDiagram = getWorkflowVersionDiagram({
           workflowVersion: currentVersion,
-          isWorkflowFilteringEnabled,
           isWorkflowBranchEnabled,
           isEditable: true,
         });
@@ -95,7 +90,6 @@ export const WorkflowDiagramEffect = () => {
     },
     [
       workflowDiagramState,
-      isWorkflowFilteringEnabled,
       isWorkflowBranchEnabled,
       workflowLastCreatedStepIdState,
     ],

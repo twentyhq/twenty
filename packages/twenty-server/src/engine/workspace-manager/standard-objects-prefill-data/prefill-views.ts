@@ -1,10 +1,12 @@
+import { type EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { type ViewDefinition } from 'src/engine/workspace-manager/standard-objects-prefill-data/types/view-definition.interface';
 import { companiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view';
 import { customAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view';
+import { dashboardsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view';
 import { notesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view';
 import { opportunitiesAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view';
 import { opportunitiesByStageView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view';
@@ -17,9 +19,10 @@ import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-o
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
 
 export const prefillViews = async (
-  entityManager: WorkspaceEntityManager,
+  entityManager: EntityManager,
   schemaName: string,
   objectMetadataItems: ObjectMetadataEntity[],
+  featureFlags?: Record<string, boolean>,
 ) => {
   const customObjectMetadataItems = objectMetadataItems.filter(
     (item) => item.isCustom,
@@ -44,11 +47,15 @@ export const prefillViews = async (
     ...customViews,
   ];
 
+  if (featureFlags?.[FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED]) {
+    views.push(dashboardsAllView(objectMetadataItems));
+  }
+
   return createWorkspaceViews(entityManager, schemaName, views);
 };
 
 const createWorkspaceViews = async (
-  entityManager: WorkspaceEntityManager,
+  entityManager: EntityManager,
   schemaName: string,
   viewDefinitions: ViewDefinition[],
 ) => {
@@ -58,9 +65,7 @@ const createWorkspaceViews = async (
   }));
 
   await entityManager
-    .createQueryBuilder(undefined, undefined, undefined, {
-      shouldBypassPermissionChecks: true,
-    })
+    .createQueryBuilder()
     .insert()
     .into(`${schemaName}.view`, [
       'id',
@@ -110,9 +115,7 @@ const createWorkspaceViews = async (
   for (const viewDefinition of viewDefinitionsWithId) {
     if (viewDefinition.fields && viewDefinition.fields.length > 0) {
       await entityManager
-        .createQueryBuilder(undefined, undefined, undefined, {
-          shouldBypassPermissionChecks: true,
-        })
+        .createQueryBuilder()
         .insert()
         .into(`${schemaName}.viewField`, [
           'fieldMetadataId',
@@ -137,9 +140,7 @@ const createWorkspaceViews = async (
 
     if (viewDefinition.filters && viewDefinition.filters.length > 0) {
       await entityManager
-        .createQueryBuilder(undefined, undefined, undefined, {
-          shouldBypassPermissionChecks: true,
-        })
+        .createQueryBuilder()
         .insert()
         .into(`${schemaName}.viewFilter`, [
           'fieldMetadataId',
@@ -167,9 +168,7 @@ const createWorkspaceViews = async (
       viewDefinition.groups.length > 0
     ) {
       await entityManager
-        .createQueryBuilder(undefined, undefined, undefined, {
-          shouldBypassPermissionChecks: true,
-        })
+        .createQueryBuilder()
         .insert()
         .into(`${schemaName}.viewGroup`, [
           'fieldMetadataId',

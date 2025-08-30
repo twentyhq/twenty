@@ -1,12 +1,10 @@
-import { t } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 
-import { type FailedFlatObjectMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-object-metadata/types/failed-flat-object-metadata-validation.type';
+import { type FlatObjectMetadataValidationError } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata-validation-error.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type ObjectMetadataMinimalInformation } from 'src/engine/metadata-modules/flat-object-metadata/types/object-metadata-minimal-information.type';
 import { runFlatObjectMetadataValidators } from 'src/engine/metadata-modules/flat-object-metadata/utils/run-flat-object-metadata-validators.util';
-import {
-  ObjectMetadataException,
-  ObjectMetadataExceptionCode,
-} from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
+import { ObjectMetadataExceptionCode } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { type FlatMetadataValidator } from 'src/engine/metadata-modules/types/flat-metadata-validator.type';
 import {
   beneathDatabaseIdentifierMinimumLength,
@@ -16,25 +14,26 @@ import {
 export const validateFlatObjectMetadataLabel = ({
   labelPlural,
   labelSingular,
-}: Pick<
-  FlatObjectMetadata,
-  'labelPlural' | 'labelSingular'
->): FailedFlatObjectMetadataValidationExceptions[] => {
-  const errors: FailedFlatObjectMetadataValidationExceptions[] = [];
+}: Pick<FlatObjectMetadata, 'labelPlural' | 'labelSingular'> &
+  ObjectMetadataMinimalInformation): FlatObjectMetadataValidationError[] => {
+  const errors: FlatObjectMetadataValidationError[] = [];
   const validators: FlatMetadataValidator<string>[] = [
     {
       validator: (label) => beneathDatabaseIdentifierMinimumLength(label),
-      message: t`Object label is too short`,
+      message: msg`Object label is too short`,
     },
     {
       validator: (label) => exceedsDatabaseIdentifierMaximumLength(label),
-      message: t`Object label is too long`,
+      message: msg`Object label is too long`,
     },
   ];
 
   errors.push(
     ...[labelSingular, labelPlural].flatMap((label) =>
-      runFlatObjectMetadataValidators(label, validators),
+      runFlatObjectMetadataValidators({
+        elementToValidate: label,
+        validators,
+      }),
     ),
   );
 
@@ -42,12 +41,12 @@ export const validateFlatObjectMetadataLabel = ({
     labelSingular.trim().toLowerCase() === labelPlural.trim().toLowerCase();
 
   if (labelsAreIdentical) {
-    errors.push(
-      new ObjectMetadataException(
-        t`The singular and plural labels cannot be the same for an object`,
-        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-      ),
-    );
+    errors.push({
+      code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+      message: `The singular and plural labels cannot be the same for an object`,
+      userFriendlyMessage: t`The singular and plural labels cannot be the same for an object`,
+      value: labelSingular,
+    });
   }
 
   return errors;

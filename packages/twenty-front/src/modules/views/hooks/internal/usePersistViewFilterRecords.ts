@@ -12,11 +12,22 @@ import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRe
 import { useDestroyOneRecordMutation } from '@/object-record/hooks/useDestroyOneRecordMutation';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
+import { CREATE_CORE_VIEW_FILTER } from '@/views/graphql/mutations/createCoreViewFilter';
+import { DESTROY_CORE_VIEW_FILTER } from '@/views/graphql/mutations/destroyCoreViewFilter';
+import { UPDATE_CORE_VIEW_FILTER } from '@/views/graphql/mutations/updateCoreViewFilter';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewFilter } from '@/views/types/ViewFilter';
+import { convertViewFilterOperandToCore } from '@/views/utils/convertViewFilterOperandToCore';
+import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
+import { useApolloClient } from '@apollo/client';
+import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { type CoreViewFilter, FeatureFlagKey } from '~/generated/graphql';
 
 export const usePersistViewFilterRecords = () => {
+  const featureFlags = useFeatureFlagsMap();
+  const isCoreViewEnabled = featureFlags[FeatureFlagKey.IS_CORE_VIEW_ENABLED];
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.ViewFilter,
   });
@@ -40,9 +51,9 @@ export const usePersistViewFilterRecords = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const apolloCoreClient = useApolloCoreClient();
-
+  const apolloClient = useApolloClient();
   const createViewFilterRecords = useCallback(
-    (viewFiltersToCreate: ViewFilter[], view: GraphQLView) => {
+    (viewFiltersToCreate: ViewFilter[], view: Pick<GraphQLView, 'id'>) => {
       if (viewFiltersToCreate.length === 0) return;
 
       return Promise.all(
@@ -95,7 +106,7 @@ export const usePersistViewFilterRecords = () => {
           apolloCoreClient.mutate({
             mutation: updateOneRecordMutation,
             variables: {
-              idToUpdate: viewFilter.id,
+              id: viewFilter.id,
               input: {
                 value: viewFilter.value,
                 displayValue: viewFilter.displayValue,
@@ -144,7 +155,7 @@ export const usePersistViewFilterRecords = () => {
           apolloCoreClient.mutate({
             mutation: destroyOneRecordMutation,
             variables: {
-              idToDestroy: viewFilterId,
+              id: viewFilterId,
             },
             update: (cache, { data }) => {
               const record = data?.['destroyViewFilter'];
@@ -176,9 +187,135 @@ export const usePersistViewFilterRecords = () => {
     ],
   );
 
+  const createCoreViewFilterRecords = useCallback(
+    (viewFiltersToCreate: ViewFilter[], view: Pick<GraphQLView, 'id'>) => {
+      if (viewFiltersToCreate.length === 0) return;
+
+      return Promise.all(
+        viewFiltersToCreate.map((viewFilter) =>
+          apolloClient.mutate({
+            mutation: CREATE_CORE_VIEW_FILTER,
+            variables: {
+              input: {
+                id: viewFilter.id,
+                fieldMetadataId: viewFilter.fieldMetadataId,
+                viewId: view.id,
+                value: viewFilter.value,
+                operand: convertViewFilterOperandToCore(viewFilter.operand),
+                viewFilterGroupId: viewFilter.viewFilterGroupId,
+                positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+                subFieldName: viewFilter.subFieldName ?? null,
+              } satisfies Partial<CoreViewFilter>,
+            },
+            update: (cache, { data }) => {
+              const record = data?.['createCoreViewFilter'];
+              if (!isDefined(record)) return;
+
+              triggerCreateRecordsOptimisticEffect({
+                cache,
+                objectMetadataItem,
+                recordsToCreate: [record],
+                objectMetadataItems,
+                objectPermissionsByObjectMetadataId,
+              });
+            },
+          }),
+        ),
+      );
+    },
+    [
+      apolloClient,
+      objectMetadataItem,
+      objectMetadataItems,
+      objectPermissionsByObjectMetadataId,
+    ],
+  );
+
+  const updateCoreViewFilterRecords = useCallback(
+    (viewFiltersToUpdate: ViewFilter[]) => {
+      if (!viewFiltersToUpdate.length) return;
+      return Promise.all(
+        viewFiltersToUpdate.map((viewFilter) =>
+          apolloClient.mutate({
+            mutation: UPDATE_CORE_VIEW_FILTER,
+            variables: {
+              id: viewFilter.id,
+              input: {
+                value: viewFilter.value,
+                operand: convertViewFilterOperandToCore(viewFilter.operand),
+                positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+                viewFilterGroupId: viewFilter.viewFilterGroupId,
+                subFieldName: viewFilter.subFieldName ?? null,
+              } satisfies Partial<CoreViewFilter>,
+            },
+            update: (cache, { data }) => {
+              const record = data?.['updateCoreViewFilter'];
+              if (!isDefined(record)) return;
+
+              const cachedRecord = getRecordFromCache<ViewFilter>(
+                record.id,
+                cache,
+              );
+              if (isNull(cachedRecord)) return;
+
+              triggerUpdateRecordOptimisticEffect({
+                cache,
+                objectMetadataItem,
+                currentRecord: cachedRecord,
+                updatedRecord: record,
+                objectMetadataItems,
+              });
+            },
+          }),
+        ),
+      );
+    },
+    [apolloClient, getRecordFromCache, objectMetadataItem, objectMetadataItems],
+  );
+
+  const deleteCoreViewFilterRecords = useCallback(
+    (viewFilterIdsToDelete: string[]) => {
+      if (!viewFilterIdsToDelete.length) return;
+      return Promise.all(
+        viewFilterIdsToDelete.map((viewFilterId) =>
+          apolloClient.mutate({
+            mutation: DESTROY_CORE_VIEW_FILTER,
+            variables: {
+              id: viewFilterId,
+            },
+            update: (cache, { data }) => {
+              const record = data?.['destroyCoreViewFilter'];
+              if (!isDefined(record)) return;
+
+              const cachedRecord = getRecordFromCache<ViewFilter>(
+                record.id,
+                cache,
+              );
+              if (isNull(cachedRecord)) return;
+
+              triggerDestroyRecordsOptimisticEffect({
+                cache,
+                objectMetadataItem,
+                recordsToDestroy: [cachedRecord],
+                objectMetadataItems,
+              });
+            },
+          }),
+        ),
+      );
+    },
+    [apolloClient, getRecordFromCache, objectMetadataItem, objectMetadataItems],
+  );
+
   return {
-    createViewFilterRecords,
-    updateViewFilterRecords,
-    deleteViewFilterRecords,
+    createViewFilterRecords: isCoreViewEnabled
+      ? createCoreViewFilterRecords
+      : createViewFilterRecords,
+    updateViewFilterRecords: isCoreViewEnabled
+      ? updateCoreViewFilterRecords
+      : updateViewFilterRecords,
+    deleteViewFilterRecords: isCoreViewEnabled
+      ? deleteCoreViewFilterRecords
+      : deleteViewFilterRecords,
   };
 };

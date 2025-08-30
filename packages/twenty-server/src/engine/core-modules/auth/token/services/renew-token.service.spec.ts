@@ -24,7 +24,7 @@ describe('RenewTokenService', () => {
       providers: [
         RenewTokenService,
         {
-          provide: getRepositoryToken(AppToken, 'core'),
+          provide: getRepositoryToken(AppToken),
           useClass: Repository,
         },
         {
@@ -51,7 +51,7 @@ describe('RenewTokenService', () => {
 
     service = module.get<RenewTokenService>(RenewTokenService);
     appTokenRepository = module.get<Repository<AppToken>>(
-      getRepositoryToken(AppToken, 'core'),
+      getRepositoryToken(AppToken),
     );
     accessTokenService = module.get<AccessTokenService>(AccessTokenService);
     refreshTokenService = module.get<RefreshTokenService>(RefreshTokenService);

@@ -1,0 +1,1 @@
+export { SettingsWorkspaceDomainCard } from './SettingsWorkspaceDomainCard';

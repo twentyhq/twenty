@@ -3,10 +3,14 @@ import { useRecoilValue } from 'recoil';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { labelIdentifierFieldMetadataItemSelector } from '@/object-metadata/states/labelIdentifierFieldMetadataItemSelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
@@ -16,12 +20,13 @@ import {
 } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { type View } from '@/views/types/View';
+import { mapViewFieldToRecordField } from '@/views/utils/mapViewFieldToRecordField';
 import { useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
@@ -35,6 +40,9 @@ const InternalTableStateLoaderEffect = ({
 }) => {
   const { recordTableId } = useRecordTableContextOrThrow();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
+  const setCurrentRecordFields = useSetRecoilComponentState(
+    currentRecordFieldsComponentState,
+  );
 
   const setRecordTableData = useSetRecordTableData({
     recordTableId,
@@ -54,7 +62,18 @@ const InternalTableStateLoaderEffect = ({
     setRecordTableData({
       records: getCompaniesMock(),
     });
-  }, [loadRecordIndexStates, objectMetadataItem, setRecordTableData, view]);
+    const recordFields = view.viewFields
+      .map(mapViewFieldToRecordField)
+      .filter(isDefined);
+
+    setCurrentRecordFields(recordFields);
+  }, [
+    loadRecordIndexStates,
+    objectMetadataItem,
+    setRecordTableData,
+    view,
+    setCurrentRecordFields,
+  ]);
 
   return null;
 };
@@ -66,11 +85,53 @@ const InternalTableContextProviders = ({
   children: React.ReactNode;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const visibleTableColumns = useRecoilComponentValue(
-    visibleTableColumnsComponentSelector,
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+
+  const currentRecordFields = useRecoilComponentValue(
+    currentRecordFieldsComponentState,
+    'record-index',
   );
 
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const visibleRecordFields = useRecoilComponentValue(
+    visibleRecordFieldsComponentSelector,
+    'record-index',
+  );
+
+  const fieldMetadataItems = objectMetadataItem.fields;
+
+  const fieldMetadataItemByFieldMetadataItemId = Object.fromEntries(
+    fieldMetadataItems.map((fieldMetadataItem) => [
+      fieldMetadataItem.id,
+      fieldMetadataItem,
+    ]),
+  );
+
+  const recordFieldByFieldMetadataItemId = Object.fromEntries(
+    currentRecordFields.map((recordField) => [
+      recordField.fieldMetadataItemId,
+      recordField,
+    ]),
+  );
+
+  const fieldDefinitionByFieldMetadataItemId = Object.fromEntries(
+    fieldMetadataItems.map((fieldMetadataItem) => [
+      fieldMetadataItem.id,
+      formatFieldMetadataItemAsColumnDefinition({
+        field: fieldMetadataItem,
+        objectMetadataItem: objectMetadataItem,
+        position:
+          recordFieldByFieldMetadataItemId[fieldMetadataItem.id]?.position ?? 0,
+        labelWidth:
+          recordFieldByFieldMetadataItemId[fieldMetadataItem.id]?.size ?? 0,
+      }),
+    ]),
+  );
+
+  const labelIdentifierFieldMetadataItem = useRecoilValue(
+    labelIdentifierFieldMetadataItemSelector({
+      objectMetadataItemId: objectMetadataItem.id,
+    }),
+  );
 
   return (
     <RecordIndexContextProvider
@@ -82,6 +143,10 @@ const InternalTableContextProviders = ({
         objectMetadataItem: objectMetadataItem,
         objectPermissionsByObjectMetadataId,
         recordIndexId: 'record-index',
+        labelIdentifierFieldMetadataItem,
+        recordFieldByFieldMetadataItemId,
+        fieldDefinitionByFieldMetadataItemId,
+        fieldMetadataItemByFieldMetadataItemId,
       }}
     >
       <RecordTableContextProvider
@@ -90,11 +155,11 @@ const InternalTableContextProviders = ({
           objectMetadataItem: objectMetadataItem,
           recordTableId: objectMetadataItem.namePlural,
           viewBarId: 'view-bar',
-          visibleTableColumns: visibleTableColumns,
           objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
             objectPermissionsByObjectMetadataId,
             objectMetadataId: objectMetadataItem.id,
           }),
+          visibleRecordFields,
         }}
       >
         <RecordTableBodyContextProvider

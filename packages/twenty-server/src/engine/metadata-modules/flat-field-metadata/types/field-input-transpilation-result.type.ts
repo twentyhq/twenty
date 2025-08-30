@@ -1,8 +1,8 @@
-import { type FailedFlatFieldMetadataValidationExceptions } from 'src/engine/metadata-modules/flat-field-metadata/types/failed-flat-field-metadata-validation.type';
+import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 
 export type FailedFieldInputTranspilation = {
   status: 'fail';
-  error: FailedFlatFieldMetadataValidationExceptions;
+  error: FlatFieldMetadataValidationError;
 };
 export type SuccessfulFieldInputTranspilation<T> = {
   status: 'success';

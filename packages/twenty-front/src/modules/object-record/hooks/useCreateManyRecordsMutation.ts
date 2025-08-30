@@ -8,9 +8,7 @@ import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { type RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { capitalize } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateManyRecordsMutation = ({
@@ -27,10 +25,6 @@ export const useCreateManyRecordsMutation = ({
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-
-  const featureFlags = useFeatureFlagsMap();
-  const isFieldsPermissionsEnabled =
-    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
 
   if (isUndefinedOrNull(objectMetadataItem)) {
     return { createManyRecordsMutation: EMPTY_MUTATION };
@@ -52,7 +46,6 @@ export const useCreateManyRecordsMutation = ({
           objectMetadataItem,
           recordGqlFields,
           objectPermissionsByObjectMetadataId,
-          isFieldsPermissionsEnabled,
         },
       )}
   }`;

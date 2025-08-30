@@ -9,10 +9,8 @@ import { type RecordGqlOperationSignature } from '@/object-record/graphql/types/
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { getCombinedFindManyRecordsQueryFilteringPart } from '@/object-record/multiple-objects/utils/getCombinedFindManyRecordsQueryFilteringPart';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import isEmpty from 'lodash.isempty';
 import { capitalize } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 export const useGenerateCombinedFindManyRecordsQuery = ({
@@ -22,10 +20,6 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
-  const featureFlags = useFeatureFlagsMap();
-  const isFieldsPermissionsEnabled =
-    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
 
   if (!isNonEmptyArray(operationSignatures)) {
     return null;
@@ -118,7 +112,6 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
                   objectMetadataItem,
                 }),
               objectPermissionsByObjectMetadataId,
-              isFieldsPermissionsEnabled,
             })}
             cursor
           }

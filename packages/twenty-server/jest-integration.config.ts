@@ -21,6 +21,7 @@ const jestConfig: JestConfigWithTsJest = {
   prettierPath: null,
   silent: false,
   errorOnDeprecated: true,
+  maxConcurrency: 1,
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: '.',
   testEnvironment: 'node',

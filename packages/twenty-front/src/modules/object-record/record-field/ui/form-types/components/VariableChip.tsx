@@ -1,11 +1,8 @@
-import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersionIdOrThrow';
-import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
+import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
 import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
-import { searchVariableThroughOutputSchema } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchema';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { IconAlertTriangle, IconX } from 'twenty-ui/display';
 
@@ -82,29 +79,15 @@ export const VariableChip = ({
 }: VariableChipProps) => {
   const theme = useTheme();
   const { t } = useLingui();
-  const workflowVersionId = useWorkflowVersionIdOrThrow();
 
-  const stepId = extractRawVariableNamePart({
-    rawVariableName,
-    part: 'stepId',
-  });
-  const stepsOutputSchema = useRecoilValue(
-    stepsOutputSchemaFamilySelector({
-      workflowVersionId,
-      stepIds: [stepId],
-    }),
-  );
-
-  if (!isDefined(stepId)) {
-    return null;
-  }
-
-  const { variableLabel, variablePathLabel } =
-    searchVariableThroughOutputSchema({
-      stepOutputSchema: stepsOutputSchema?.[0],
+  const { variableLabel, variablePathLabel } = useSearchVariable({
+    stepId: extractRawVariableNamePart({
       rawVariableName,
-      isFullRecord,
-    });
+      part: 'stepId',
+    }),
+    rawVariableName,
+    isFullRecord,
+  });
 
   const isVariableNotFound = !isDefined(variableLabel);
   const label = isVariableNotFound ? t`Not Found` : variableLabel;

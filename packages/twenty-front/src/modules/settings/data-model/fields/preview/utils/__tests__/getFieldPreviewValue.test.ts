@@ -25,11 +25,13 @@ describe('getFieldPreviewValue', () => {
 
     // When
     const result = getFieldPreviewValue({
-      fieldMetadataItem,
+      fieldType: fieldMetadataItem.type,
+      fieldSettings: fieldMetadataItem.settings,
+      defaultValue: fieldMetadataItem.defaultValue,
     });
 
     // Then
-    expect(result).toBe(true);
+    expect(result).toBe(false);
   });
 
   it('returns a placeholder defaultValue if the field metadata does not have a defaultValue', () => {
@@ -45,7 +47,9 @@ describe('getFieldPreviewValue', () => {
 
     // When
     const result = getFieldPreviewValue({
-      fieldMetadataItem,
+      fieldType: fieldMetadataItem.type,
+      fieldSettings: fieldMetadataItem.settings,
+      defaultValue: fieldMetadataItem.defaultValue,
     });
 
     // Then
@@ -68,7 +72,9 @@ describe('getFieldPreviewValue', () => {
 
     // When
     const result = getFieldPreviewValue({
-      fieldMetadataItem,
+      fieldType: fieldMetadataItem.type,
+      fieldSettings: fieldMetadataItem.settings,
+      defaultValue: fieldMetadataItem.defaultValue,
     });
 
     // Then

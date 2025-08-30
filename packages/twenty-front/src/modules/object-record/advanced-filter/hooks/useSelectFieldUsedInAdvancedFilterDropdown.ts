@@ -1,4 +1,4 @@
-import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
+import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -45,7 +45,8 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
-  const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
+  const { getFieldMetadataItemByIdOrThrow } =
+    useGetFieldMetadataItemByIdOrThrow();
 
   const setSubFieldNameUsedInDropdown = useSetRecoilComponentState(
     subFieldNameUsedInDropdownComponentState,
@@ -64,7 +65,8 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
   }: SelectFilterParams) => {
     setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemId);
 
-    const fieldMetadataItem = getFieldMetadataItemById(fieldMetadataItemId);
+    const { fieldMetadataItem } =
+      getFieldMetadataItemByIdOrThrow(fieldMetadataItemId);
 
     if (!isDefined(fieldMetadataItem)) {
       return;

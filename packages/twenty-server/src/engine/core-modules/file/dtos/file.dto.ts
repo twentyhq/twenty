@@ -22,6 +22,6 @@ export class FileDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   messageId?: string;
 
-  @Field()
+  @Field(() => Date, { nullable: false })
   createdAt: Date;
 }

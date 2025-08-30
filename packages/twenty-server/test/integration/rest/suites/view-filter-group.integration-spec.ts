@@ -2,6 +2,8 @@ import {
   TEST_NOT_EXISTING_VIEW_FILTER_GROUP_ID,
   TEST_VIEW_1_ID,
 } from 'test/integration/constants/test-view-ids.constants';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import {
   assertRestApiErrorResponse,
@@ -25,11 +27,42 @@ import {
 } from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
 
 describe('View Filter Group REST API', () => {
+  let testObjectMetadataId: string;
+
+  beforeAll(async () => {
+    await deleteOneObjectMetadata({
+      input: { idToDelete: testObjectMetadataId },
+    });
+
+    const {
+      data: {
+        createOneObject: { id: objectMetadataId },
+      },
+    } = await createOneObjectMetadata({
+      input: {
+        nameSingular: 'myTestObject',
+        namePlural: 'myTestObjects',
+        labelSingular: 'My Test Object',
+        labelPlural: 'My Test Objects',
+        icon: 'Icon123',
+      },
+    });
+
+    testObjectMetadataId = objectMetadataId;
+  });
+
+  afterAll(async () => {
+    await deleteOneObjectMetadata({
+      input: { idToDelete: testObjectMetadataId },
+    });
+  });
+
   beforeEach(async () => {
     await cleanupViewRecords();
 
     await createTestViewWithRestApi({
       name: generateRecordName('Test View for Filter Groups'),
+      objectMetadataId: testObjectMetadataId,
     });
   });
 
@@ -90,6 +123,7 @@ describe('View Filter Group REST API', () => {
       const parentData = {
         viewId: TEST_VIEW_1_ID,
         logicalOperator: 'AND',
+        objectMetadataId: testObjectMetadataId,
       };
 
       const parentResponse = await makeRestAPIRequest({
@@ -105,6 +139,7 @@ describe('View Filter Group REST API', () => {
         viewId: TEST_VIEW_1_ID,
         parentViewFilterGroupId: parentId,
         logicalOperator: 'OR',
+        objectMetadataId: testObjectMetadataId,
       };
 
       const childResponse = await makeRestAPIRequest({
@@ -214,6 +249,7 @@ describe('View Filter Group REST API', () => {
       const parentData = {
         viewId: TEST_VIEW_1_ID,
         logicalOperator: 'AND',
+        objectMetadataId: testObjectMetadataId,
       };
 
       const parentResponse = await makeRestAPIRequest({
@@ -229,6 +265,7 @@ describe('View Filter Group REST API', () => {
         viewId: TEST_VIEW_1_ID,
         parentViewFilterGroupId: parentId,
         logicalOperator: 'OR',
+        objectMetadataId: testObjectMetadataId,
       };
 
       const childGroupResponse = await makeRestAPIRequest({
@@ -247,6 +284,7 @@ describe('View Filter Group REST API', () => {
       const viewFilterGroupData = {
         viewId: TEST_VIEW_1_ID,
         logicalOperator: 'NOT',
+        objectMetadataId: testObjectMetadataId,
       };
 
       const createResponse = await makeRestAPIRequest({
@@ -288,6 +326,7 @@ describe('View Filter Group REST API', () => {
       const viewFilterGroupData = {
         viewId: TEST_VIEW_1_ID,
         logicalOperator: 'AND',
+        objectMetadataId: testObjectMetadataId,
       };
 
       const createResponse = await makeRestAPIRequest({
@@ -301,6 +340,7 @@ describe('View Filter Group REST API', () => {
 
       const updateData = {
         logicalOperator: 'OR',
+        objectMetadataId: testObjectMetadataId,
       };
 
       const response = await makeRestAPIRequest({
@@ -321,6 +361,7 @@ describe('View Filter Group REST API', () => {
       const parentData = {
         viewId: TEST_VIEW_1_ID,
         logicalOperator: 'AND',
+        objectMetadataId: testObjectMetadataId,
       };
 
       const parentResponse = await makeRestAPIRequest({
@@ -335,6 +376,7 @@ describe('View Filter Group REST API', () => {
       const childData = {
         viewId: TEST_VIEW_1_ID,
         logicalOperator: 'OR',
+        objectMetadataId: testObjectMetadataId,
       };
 
       const childResponse = await makeRestAPIRequest({
@@ -394,6 +436,7 @@ describe('View Filter Group REST API', () => {
       const viewFilterGroupData = {
         viewId: TEST_VIEW_1_ID,
         logicalOperator: 'AND',
+        objectMetadataId: testObjectMetadataId,
       };
 
       const createResponse = await makeRestAPIRequest({

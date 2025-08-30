@@ -37,6 +37,8 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
+import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import {
   type AuthProviders,
@@ -94,7 +96,8 @@ export class WorkspaceResolver {
     private readonly featureFlagService: FeatureFlagService,
     private readonly roleService: RoleService,
     private readonly agentService: AgentService,
-    @InjectRepository(BillingSubscription, 'core')
+    private readonly viewService: ViewService,
+    @InjectRepository(BillingSubscription)
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
   ) {}
 
@@ -315,6 +318,11 @@ export class WorkspaceResolver {
       workspace.isPasswordAuthEnabled &&
       this.twentyConfigService.get('AUTH_PASSWORD_ENABLED')
     );
+  }
+
+  @ResolveField(() => [ViewDTO])
+  async views(@Parent() workspace: Workspace): Promise<ViewDTO[]> {
+    return this.viewService.findByWorkspaceId(workspace.id);
   }
 
   @Query(() => PublicWorkspaceDataOutput)

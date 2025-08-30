@@ -14,7 +14,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([AppToken, User], 'core'),
+    TypeOrmModule.forFeature([AppToken, User]),
     EmailModule,
     TwentyConfigModule,
     DomainManagerModule,

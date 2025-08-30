@@ -13,6 +13,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
+import { useOpenCreateViewDropdown } from '@/views/hooks/useOpenCreateViewDropown';
 import { useUpdateView } from '@/views/hooks/useUpdateView';
 import { ViewPickerOptionDropdown } from '@/views/view-picker/components/ViewPickerOptionDropdown';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
@@ -20,7 +21,6 @@ import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
@@ -58,11 +58,10 @@ export const ViewPickerListContent = () => {
     closeDropdown(VIEW_PICKER_DROPDOWN_ID);
   };
 
+  const { openCreateViewDropdown } = useOpenCreateViewDropdown();
+
   const handleAddViewButtonClick = () => {
-    if (isDefined(currentView?.id)) {
-      setViewPickerReferenceViewId(currentView.id);
-      setViewPickerMode('create-empty');
-    }
+    openCreateViewDropdown(currentView);
   };
 
   const handleEditViewButtonClick = (
@@ -86,7 +85,7 @@ export const ViewPickerListContent = () => {
       Promise.all(
         viewsReordered.map(async (view, index) => {
           if (view.position !== index) {
-            await updateView({ ...view, position: index });
+            await updateView({ id: view.id, position: index });
           }
         }),
       );

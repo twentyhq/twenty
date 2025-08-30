@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
 import { ViewFieldController } from 'src/engine/core-modules/view/controllers/view-field.controller';
 import { ViewFilterGroupController } from 'src/engine/core-modules/view/controllers/view-filter-group.controller';
@@ -9,12 +8,12 @@ import { ViewFilterController } from 'src/engine/core-modules/view/controllers/v
 import { ViewGroupController } from 'src/engine/core-modules/view/controllers/view-group.controller';
 import { ViewSortController } from 'src/engine/core-modules/view/controllers/view-sort.controller';
 import { ViewController } from 'src/engine/core-modules/view/controllers/view.controller';
-import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
-import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
-import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
-import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
-import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
-import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewFieldResolver } from 'src/engine/core-modules/view/resolvers/view-field.resolver';
 import { ViewFilterGroupResolver } from 'src/engine/core-modules/view/resolvers/view-filter-group.resolver';
 import { ViewFilterResolver } from 'src/engine/core-modules/view/resolvers/view-filter.resolver';
@@ -32,11 +31,14 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [View, ViewField, ViewFilter, ViewFilterGroup, ViewGroup, ViewSort],
-      'core',
-    ),
-    AuthModule,
+    TypeOrmModule.forFeature([
+      ViewEntity,
+      ViewFieldEntity,
+      ViewFilterEntity,
+      ViewFilterGroupEntity,
+      ViewGroupEntity,
+      ViewSortEntity,
+    ]),
     I18nModule,
     WorkspaceCacheStorageModule,
     WorkspaceMetadataCacheModule,

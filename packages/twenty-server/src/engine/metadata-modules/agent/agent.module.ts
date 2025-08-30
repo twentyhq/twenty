@@ -14,10 +14,12 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { AgentRoleModule } from 'src/engine/metadata-modules/agent-role/agent-role.module';
 import { AgentChatController } from 'src/engine/metadata-modules/agent/agent-chat.controller';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspacePermissionsCacheModule } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { AgentChatMessageEntity } from './agent-chat-message.entity';
 import { AgentChatThreadEntity } from './agent-chat-thread.entity';
@@ -25,30 +27,28 @@ import { AgentChatResolver } from './agent-chat.resolver';
 import { AgentChatService } from './agent-chat.service';
 import { AgentExecutionService } from './agent-execution.service';
 import { AgentHandoffExecutorService } from './agent-handoff-executor.service';
+import { AgentHandoffToolService } from './agent-handoff-tool.service';
 import { AgentHandoffEntity } from './agent-handoff.entity';
 import { AgentHandoffService } from './agent-handoff.service';
 import { AgentStreamingService } from './agent-streaming.service';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
-import { AgentToolService } from './agent-tool.service';
+import { AgentToolGeneratorService } from './agent-tool-generator.service';
 import { AgentEntity } from './agent.entity';
 import { AgentResolver } from './agent.resolver';
 import { AgentService } from './agent.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [
-        AgentEntity,
-        AgentHandoffEntity,
-        RoleEntity,
-        RoleTargetsEntity,
-        AgentChatMessageEntity,
-        AgentChatThreadEntity,
-        FileEntity,
-        UserWorkspace,
-      ],
-      'core',
-    ),
+    TypeOrmModule.forFeature([
+      AgentEntity,
+      AgentHandoffEntity,
+      RoleEntity,
+      RoleTargetsEntity,
+      AgentChatMessageEntity,
+      AgentChatThreadEntity,
+      FileEntity,
+      UserWorkspace,
+    ]),
     AiModule,
     AgentRoleModule,
     ThrottlerModule,
@@ -57,10 +57,12 @@ import { AgentService } from './agent.service';
     FileUploadModule,
     FileModule,
     ObjectMetadataModule,
+    PermissionsModule,
     WorkspacePermissionsCacheModule,
     WorkspaceCacheStorageModule,
     TokenModule,
     DomainManagerModule,
+    WorkflowToolsModule,
   ],
   controllers: [AgentChatController],
   providers: [
@@ -68,7 +70,8 @@ import { AgentService } from './agent.service';
     AgentChatResolver,
     AgentService,
     AgentExecutionService,
-    AgentToolService,
+    AgentToolGeneratorService,
+    AgentHandoffToolService,
     AgentChatService,
     AgentStreamingService,
     AgentTitleGenerationService,
@@ -78,14 +81,16 @@ import { AgentService } from './agent.service';
   exports: [
     AgentService,
     AgentExecutionService,
-    AgentToolService,
+    AgentToolGeneratorService,
+    AgentHandoffToolService,
     AgentChatService,
     AgentStreamingService,
     AgentTitleGenerationService,
-    TypeOrmModule.forFeature(
-      [AgentEntity, AgentChatMessageEntity, AgentChatThreadEntity],
-      'core',
-    ),
+    TypeOrmModule.forFeature([
+      AgentEntity,
+      AgentChatMessageEntity,
+      AgentChatThreadEntity,
+    ]),
     AgentHandoffExecutorService,
     AgentHandoffService,
   ],

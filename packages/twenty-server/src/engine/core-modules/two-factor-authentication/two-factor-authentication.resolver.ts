@@ -41,7 +41,7 @@ export class TwoFactorAuthenticationResolver {
     private readonly loginTokenService: LoginTokenService,
     private readonly userService: UserService,
     private readonly domainManagerService: DomainManagerService,
-    @InjectRepository(TwoFactorAuthenticationMethod, 'core')
+    @InjectRepository(TwoFactorAuthenticationMethod)
     private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethod>,
   ) {}
 

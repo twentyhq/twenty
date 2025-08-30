@@ -116,7 +116,6 @@ describe('useTestHttpRequest', () => {
       expect.objectContaining({
         method: 'GET',
         headers: expect.objectContaining({
-          'Content-Type': 'application/json',
           Authorization: 'Bearer test-token-123',
         }),
       }),

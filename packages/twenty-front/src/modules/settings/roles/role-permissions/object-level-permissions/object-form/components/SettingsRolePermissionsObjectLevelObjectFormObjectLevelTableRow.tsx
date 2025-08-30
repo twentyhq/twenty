@@ -50,7 +50,7 @@ const StyledCheckboxCell = styled(TableCell)`
   align-items: center;
   display: flex;
   justify-content: flex-end;
-  padding-right: ${({ theme }) => theme.spacing(4)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 type OverridableCheckboxType = 'no_cta' | 'default' | 'override';

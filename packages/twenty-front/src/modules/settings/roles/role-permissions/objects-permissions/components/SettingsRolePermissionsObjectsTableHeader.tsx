@@ -43,7 +43,7 @@ export const SettingsRolePermissionsObjectsTableHeader = ({
 
   return (
     <TableRow>
-      <StyledNameHeader>{t`Name`}</StyledNameHeader>
+      <StyledNameHeader>{t`All Objects`}</StyledNameHeader>
       <StyledActionsHeader aria-label={t`Actions`}>
         <Checkbox
           checked={allPermissionsEnabled}

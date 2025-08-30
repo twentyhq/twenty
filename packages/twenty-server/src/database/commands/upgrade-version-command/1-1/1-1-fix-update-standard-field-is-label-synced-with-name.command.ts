@@ -20,10 +20,10 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 })
 export class FixUpdateStandardFieldsIsLabelSyncedWithName extends ActiveOrSuspendedWorkspacesMigrationCommandRunner {
   constructor(
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectRepository(FieldMetadataEntity, 'core')
+    @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
   ) {

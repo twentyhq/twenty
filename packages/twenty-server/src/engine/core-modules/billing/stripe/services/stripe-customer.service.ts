@@ -19,7 +19,7 @@ export class StripeCustomerService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly stripeSDKService: StripeSDKService,
-    @InjectRepository(BillingCustomer, 'core')
+    @InjectRepository(BillingCustomer)
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
   ) {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
@@ -46,8 +46,13 @@ export class StripeCustomerService {
     return paymentMethods.length > 0;
   }
 
-  async createStripeCustomer(userEmail: string, workspaceId: string) {
+  async createStripeCustomer(
+    userEmail: string,
+    workspaceId: string,
+    customerName: string | undefined,
+  ) {
     const customer = await this.stripe.customers.create({
+      name: customerName,
       email: userEmail,
       metadata: {
         workspaceId,

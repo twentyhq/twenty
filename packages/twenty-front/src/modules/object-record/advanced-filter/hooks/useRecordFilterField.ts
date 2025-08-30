@@ -1,4 +1,4 @@
-import { useGetFieldMetadataItemById } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
+import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
@@ -17,11 +17,9 @@ export const useRecordFilterField = (recordFilterId: string) => {
     (recordFilter) => recordFilter.id === recordFilterId,
   );
 
-  const { getFieldMetadataItemById } = useGetFieldMetadataItemById();
-
-  const fieldMetadataItem = isNonEmptyString(recordFilter?.fieldMetadataId)
-    ? getFieldMetadataItemById(recordFilter?.fieldMetadataId)
-    : undefined;
+  const { fieldMetadataItem } = useFieldMetadataItemById(
+    recordFilter?.fieldMetadataId ?? '',
+  );
 
   const { getIcon } = useIcons();
 

@@ -24,6 +24,18 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ViewFieldDTO } from 'src/engine/core-modules/view/dtos/view-field.dto';
+import { ViewFilterGroupDTO } from 'src/engine/core-modules/view/dtos/view-filter-group.dto';
+import { ViewFilterDTO } from 'src/engine/core-modules/view/dtos/view-filter.dto';
+import { ViewGroupDTO } from 'src/engine/core-modules/view/dtos/view-group.dto';
+import { ViewSortDTO } from 'src/engine/core-modules/view/dtos/view-sort.dto';
+import { ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
+import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { Webhook } from 'src/engine/core-modules/webhook/webhook.entity';
 import { AgentHandoffEntity } from 'src/engine/metadata-modules/agent/agent-handoff.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
@@ -143,6 +155,33 @@ export class Workspace {
 
   @OneToMany(() => ApiKey, (apiKey) => apiKey.workspace)
   apiKeys: Relation<ApiKey[]>;
+
+  @Field(() => [ViewDTO], { nullable: true })
+  @OneToMany(() => ViewEntity, (view) => view.workspace)
+  views: Relation<ViewEntity[]>;
+
+  @Field(() => [ViewFieldDTO], { nullable: true })
+  @OneToMany(() => ViewFieldEntity, (viewField) => viewField.workspace)
+  viewFields: Relation<ViewFieldEntity[]>;
+
+  @Field(() => [ViewFilterDTO], { nullable: true })
+  @OneToMany(() => ViewFilterEntity, (viewFilter) => viewFilter.workspace)
+  viewFilters: Relation<ViewFilterEntity[]>;
+
+  @Field(() => [ViewFilterGroupDTO], { nullable: true })
+  @OneToMany(
+    () => ViewFilterGroupEntity,
+    (viewFilterGroup) => viewFilterGroup.workspace,
+  )
+  viewFilterGroups: Relation<ViewFilterGroupEntity[]>;
+
+  @Field(() => [ViewGroupDTO], { nullable: true })
+  @OneToMany(() => ViewGroupEntity, (viewGroup) => viewGroup.workspace)
+  viewGroups: Relation<ViewGroupEntity[]>;
+
+  @Field(() => [ViewSortDTO], { nullable: true })
+  @OneToMany(() => ViewSortEntity, (viewSort) => viewSort.workspace)
+  viewSorts: Relation<ViewSortEntity[]>;
 
   @Field()
   @Column({ default: 1 })

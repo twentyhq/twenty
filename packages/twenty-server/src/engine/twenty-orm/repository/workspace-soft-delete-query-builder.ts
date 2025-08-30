@@ -12,7 +12,6 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { computeTwentyORMException } from 'src/engine/twenty-orm/error-handling/compute-twenty-orm-exception';
 import {
   TwentyORMException,
@@ -69,8 +68,6 @@ export class WorkspaceSoftDeleteQueryBuilder<
         objectsPermissions: this.objectRecordsPermissions,
         objectMetadataMaps: this.internalContext.objectMetadataMaps,
         shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
-        isFieldPermissionsEnabled:
-          this.featureFlagMap?.[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED],
       });
 
       const mainAliasTarget = this.getMainAliasTarget();

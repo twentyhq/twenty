@@ -56,12 +56,7 @@ msgstr "{fieldName} и {fieldName}Id не могут быть предостав
 #. js-lingui-id: ZkHTHm
 #: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
 msgid "{fieldType} fields cannot be unique."
-msgstr ""
-
-#. js-lingui-id: wapGcj
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
-msgid "{message}"
-msgstr ""
+msgstr "Поля {fieldType} не могут быть уникальными."
 
 #. js-lingui-id: 8haj+G
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
@@ -77,6 +72,11 @@ msgstr "Компания"
 #: src/modules/connected-account/standard-objects/connected-account.workspace-entity.ts
 msgid "A connected account"
 msgstr "Подключенный аккаунт"
+
+#. js-lingui-id: cOSBjW
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "A dashboard"
+msgstr "Панель управления"
 
 #. js-lingui-id: HCoswz
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -185,10 +185,16 @@ msgstr "Необходимо действие для предотвращени�
 msgid "Action Needed to Reset Password"
 msgstr "Необходимо действие для сброса пароля"
 
+#. js-lingui-id: 52fA3U
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Active fields cannot be deleted"
+msgstr "Активные поля нельзя удалить"
+
 #. js-lingui-id: 0N5kF6
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Active objects cannot be deleted"
-msgstr ""
+msgstr "Активные объекты нельзя удалить"
 
 #. js-lingui-id: Du6bPw
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -229,10 +235,11 @@ msgstr "Агрегированное / отфильтрованное событ
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/people-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunities-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/notes-all.view.ts
+#: src/engine/workspace-manager/standard-objects-prefill-data/views/dashboards-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
 msgid "All {objectLabelPlural}"
-msgstr ""
+msgstr "Все {objectLabelPlural}"
 
 #. js-lingui-id: hehnjM
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -291,7 +298,7 @@ msgstr "Назначенные задачи"
 #. js-lingui-id: kZ7PLo
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me.ts
 msgid "Assigned to Me"
-msgstr ""
+msgstr "Назначено мне"
 
 #. js-lingui-id: ojKCLU
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -302,6 +309,11 @@ msgstr "Исполнитель"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "Идентификатор связанного пользователя"
+
+#. js-lingui-id: K9efby
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "At least one relation is require"
+msgstr "Требуется как минимум одна связь"
 
 #. js-lingui-id: UY1vmE
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -467,12 +479,12 @@ msgstr "Содержимое"
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
 msgid "By Stage"
-msgstr ""
+msgstr "По этапам"
 
 #. js-lingui-id: jQX8V+
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view.ts
 msgid "By Status"
-msgstr ""
+msgstr "По статусу"
 
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -540,7 +552,7 @@ msgstr "События Календаря"
 #. js-lingui-id: eSaCR/
 #: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
 msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
-msgstr ""
+msgstr "Не удается подключиться к {connectFieldName}. Не найдено уникальной записи с условием: {formattedConnectCondition}"
 
 #. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -571,12 +583,17 @@ msgstr "Невозможно отключить неактивную верси�
 #. js-lingui-id: otFZos
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
-msgstr ""
+msgstr "Невозможно включить уникальность из-за существующих дублирующихся значений. Пожалуйста, проверьте и исправьте ваши данные сначала (включая мягко удаленные записи)."
 
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
 msgstr "Не может быть более одной активной версии процесса"
+
+#. js-lingui-id: UcdPY5
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
+msgid "Cannot update standard field properties: {invalidProperties}"
+msgstr "Невозможно обновить свойства стандартного поля: {invalidProperties}"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -734,6 +751,11 @@ msgstr "Аккаунт X/Twitter Контакта"
 msgid "Created by"
 msgstr "Создано"
 
+#. js-lingui-id: 2ZhYYy
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util.ts
+msgid "Created field metadata, parent object metadata not found"
+msgstr "Создана метадата поля, метадата родительского объекта не найдена"
+
 #. js-lingui-id: wPvFAD
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -758,6 +780,26 @@ msgstr "Шаблон Cron '{pattern}' недействителен"
 msgid "Custom Connection Parameters"
 msgstr "Пользовательские параметры подключения"
 
+#. js-lingui-id: 7p5kLi
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboard"
+msgstr "Панель"
+
+#. js-lingui-id: Lddz0a
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboard page layout"
+msgstr "Макет страницы панели управления"
+
+#. js-lingui-id: xGgnPh
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboard title"
+msgstr "Заголовок панели управления"
+
+#. js-lingui-id: w6iIMm
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Dashboards"
+msgstr "Панели управления"
+
 #. js-lingui-id: Lhd0oQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Date format"
@@ -767,6 +809,26 @@ msgstr "Формат Даты"
 #: src/engine/twenty-orm/base.workspace-entity.ts
 msgid "Date when the record was deleted"
 msgstr "Дата Удаления Записи"
+
+#. js-lingui-id: GGNmm+
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default value \"{defaultValue}\" must be one of the option values"
+msgstr "Значение по умолчанию \"{defaultValue}\" должно быть одним из значений опций"
+
+#. js-lingui-id: FdUbPo
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default value must be a string"
+msgstr "Значение по умолчанию должно быть строкой"
+
+#. js-lingui-id: sv9P4Q
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default value should be as quoted string"
+msgstr "Значение по умолчанию должно быть в виде строкового литерала"
+
+#. js-lingui-id: 6pJV03
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default values must be unique"
+msgstr "Значения по умолчанию должны быть уникальными"
 
 #. js-lingui-id: QN9ahV
 #: src/engine/twenty-orm/base.workspace-entity.ts
@@ -821,7 +883,7 @@ msgstr "Срок исполнения"
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
-msgstr ""
+msgstr "Дублированная опция {field}"
 
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -864,7 +926,7 @@ msgstr "Дата окончания"
 #. js-lingui-id: hcogQc
 #: src/engine/core-modules/domain-manager/validator/cloudflare.validate.ts
 msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
-msgstr ""
+msgstr "Переменная окружения CLOUDFLARE_API_KEY должна быть определена для использования этой функции."
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -980,6 +1042,12 @@ msgstr "Выполнено"
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
 msgstr "Ожидается, что одни и те же поля ограничения будут последовательно использоваться для всех операций для {connectFieldName}."
 
+#. js-lingui-id: 5KfWxA
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "External ID"
+msgstr ""
+
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite"
@@ -1031,11 +1099,6 @@ msgstr "Избранная должность"
 msgid "Favorite task"
 msgstr "Избранная задача"
 
-#. js-lingui-id: VkWV1s
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
-msgid "Favorite view"
-msgstr "Избранный вид"
-
 #. js-lingui-id: l+lx2f
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite workflow"
@@ -1061,7 +1124,6 @@ msgstr "Избранный участник рабочего пространс�
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
-#: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/person/standard-objects/person.workspace-entity.ts
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -1103,11 +1165,6 @@ msgstr "Избранное, связанное с возможностью"
 msgid "Favorites linked to the task"
 msgstr "Избранное, связанное с задачей"
 
-#. js-lingui-id: R+1ib/
-#: src/modules/view/standard-objects/view.workspace-entity.ts
-msgid "Favorites linked to the view"
-msgstr "Избранное, связанное с видом"
-
 #. js-lingui-id: ee0tmj
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
 msgid "Favorites linked to the workflow"
@@ -1133,20 +1190,25 @@ msgstr "Избранное, связанное с участником рабо�
 msgid "Favorites tied to the {label}"
 msgstr "Избранное, связанное с {label}"
 
+#. js-lingui-id: vngnhF
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Field already exists"
+msgstr "Поле уже существует"
+
 #. js-lingui-id: Hg95ys
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field cannot be used as label identifier"
-msgstr ""
+msgstr "Поле не может использоваться в качестве идентификатора метки"
 
 #. js-lingui-id: F6OLoA
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field declared as image identifier not found"
-msgstr ""
+msgstr "Не найдено заявленное поле как идентификатор изображения"
 
 #. js-lingui-id: 75hHpn
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field declared as label identifier not found"
-msgstr ""
+msgstr "Поле, объявленное как идентификатор метки, не найдено"
 
 #. js-lingui-id: nSFFML
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -1156,11 +1218,36 @@ msgstr ""
 msgid "Field Metadata Id"
 msgstr "Идентификатор метаданных поля"
 
+#. js-lingui-id: Ljqo/T
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
+msgid "Field metadata to update not found"
+msgstr "Метадата для обновления поля не найдена"
+
+#. js-lingui-id: p3kNMz
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
+msgid "Field metadata to update object metadata not found"
+msgstr "Обновлённая метадата поля объекта не найдена"
+
 #. js-lingui-id: g+t8w9
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Field metadata used for aggregate operation"
 msgstr "Метаданные поля, используемые для агрегирования операции"
+
+#. js-lingui-id: prTOhK
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Field name is not synced with field label"
+msgstr "Название поля не синхронизировано с меткой поля"
+
+#. js-lingui-id: cK8ILP
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Field to create related object not found"
+msgstr "Поле для создания связанного объекта не найдено"
+
+#. js-lingui-id: K6qzz4
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Field to update not found"
+msgstr "Поле для обновления не найдено"
 
 #. js-lingui-id: J4hC2m
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts
@@ -1172,30 +1259,35 @@ msgstr "Поле, используемое для полнотекстового
 msgid "Field Value"
 msgstr "Значение поля"
 
+#. js-lingui-id: s3HtdT
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "FieldMetadataId is required"
+msgstr "Требуется FieldMetadataId"
+
 #. js-lingui-id: Sof2+k
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
-msgstr ""
+msgstr "FieldMetadataId требуется для создания поля отображения."
 
 #. js-lingui-id: NTyTR5
 #: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "FieldMetadataId is required to create a view filter group."
-msgstr ""
+msgstr "FieldMetadataId требуется для создания группы фильтров отображения."
 
 #. js-lingui-id: Ya6oU7
 #: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "FieldMetadataId is required to create a view filter."
-msgstr ""
+msgstr "FieldMetadataId требуется для создания фильтра отображения."
 
 #. js-lingui-id: DU4jcg
 #: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "FieldMetadataId is required to create a view group."
-msgstr ""
+msgstr "FieldMetadataId требуется для создания группы отображения."
 
 #. js-lingui-id: snEXuU
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required to create a view sort."
-msgstr ""
+msgstr "FieldMetadataId требуется для создания сортировки отображения."
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1206,6 +1298,11 @@ msgstr "Папка для сообщений канала"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Folder name"
 msgstr "Название папки"
+
+#. js-lingui-id: eWmJYU
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Forbidden updated properties for relation field metadata"
+msgstr "Запрещенные обновляемые свойства для метаданных связанных полей"
 
 #. js-lingui-id: kuN9I4
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
@@ -1289,6 +1386,11 @@ msgstr "Идентификатор"
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "Идеальный клиентский профиль: Указывает, является ли компания наиболее подходящим и ценным клиентом для вас"
 
+#. js-lingui-id: YcVn4w
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "If defined default value must contain at least one value"
+msgstr "Если определено, значение по умолчанию должно содержать хотя бы одно значение"
+
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
 msgid "Input is too short: \"{name}\""
@@ -1342,6 +1444,16 @@ msgstr "Недействительное значение минуты. Долж
 msgid "Invalid minute value. Should be integer greater than 1"
 msgstr "Недействительное значение минуты. Должно быть целое число больше 1"
 
+#. js-lingui-id: sDfyvM
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Invalid morph relation input"
+msgstr "Неверный ввод отношения морфинга"
+
+#. js-lingui-id: AXZsy/
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
+msgid "Invalid relation creation payload"
+msgstr "Недействительная полезная нагрузка создания связи"
+
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "Invalid setting type provided in cron trigger"
@@ -1352,10 +1464,25 @@ msgstr "Предоставлен недействительный тип нас�
 msgid "Invalid trigger type for enabling workflow trigger"
 msgstr "Недействительный тип триггера для активации триггера процесса"
 
+#. js-lingui-id: 1Iyic0
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Invalid uuid {id}"
+msgstr "Недействительный UUID {id}"
+
 #. js-lingui-id: VEKoJx
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "Недействительный код подтверждения. Пожалуйста, попробуйте снова."
+
+#. js-lingui-id: 8xkULN
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "Invalid view sort data"
+msgstr "Недопустимые данные сортировки представления"
+
+#. js-lingui-id: I0OzaR
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "Invalid view sort data for view sort id: {id}"
+msgstr "Недопустимые данные сортировки представления для идентификатора сортировки: {id}"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1383,6 +1510,12 @@ msgstr "На весь день"
 msgid "Is Organizer"
 msgstr "Является организатором"
 
+#. js-lingui-id: VrHWrH
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Is Sent Folder"
+msgstr ""
+
 #. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1390,6 +1523,12 @@ msgstr "Является организатором"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Is Sync Enabled"
 msgstr "Синхронизация включена"
+
+#. js-lingui-id: BHCUSr
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Is Synced"
+msgstr ""
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1690,6 +1829,26 @@ msgstr "Токен обновления провайдера сообщений"
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "Отсутствуют необходимые поля: как минимум одно уникальное ограничение должно быть полностью заполнено для '{connectFieldName}'."
 
+#. js-lingui-id: FqzlX4
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must have the same relation type"
+msgstr "Пакеты создания отношений морфинга должны иметь одинаковый тип отношений"
+
+#. js-lingui-id: Z/Awgf
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to the same object metadata"
+msgstr "Пакеты создания отношений морфинга должны содержать только отношения к одной и той же метаданной объекта"
+
+#. js-lingui-id: DsdcRG
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+msgid "Morph relation fields are disabled for your workspace"
+msgstr "Поля отношений типа \"morph\" отключены в вашей рабочей области"
+
+#. js-lingui-id: Wu/pkS
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Multi-select field default value must be an array"
+msgstr "Значением по умолчанию для поля с множественным выбором должен быть массив"
+
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow.workspace-entity.ts
@@ -1712,26 +1871,30 @@ msgstr "Имя"
 msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 msgstr "Имя \"{computedMetadataNameFromLabel}\" не может быть одинаковым с обеих сторон отношения"
 
+#. js-lingui-id: 2m6Fru
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
+msgid "Name \"{name}\" is not available"
+msgstr "Имя \"{name}\" недоступно"
+
+#. js-lingui-id: U8mbyw
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
+msgid "Name \"{name}\" is not available as it is already used by another field"
+msgstr "Имя \"{name}\" недоступно, так как уже используется другим полем"
+
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
 msgid "Name is not available, it may be duplicating another field's name."
 msgstr "Имя недоступно, возможно, оно дублирует имя другого поля."
 
-#. js-lingui-id: Aam+mb
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
-#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
-msgid "Name is not synced with label."
-msgstr ""
-
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
-msgstr ""
+msgstr "Имя недействительно: должно начинаться с маленькой буквы и содержать только буквы и цифры"
 
 #. js-lingui-id: zjh2SJ
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is too long"
-msgstr ""
+msgstr "Имя слишком длинное"
 
 #. js-lingui-id: 0MobB1
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils.ts
@@ -1741,7 +1904,7 @@ msgstr "Имя слишком длинное: превышает лимит в 6
 #. js-lingui-id: go/Vg1
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is too short"
-msgstr ""
+msgstr "Имя слишком короткое"
 
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -1756,12 +1919,13 @@ msgstr "Название выполнения рабочего процесса"
 #. js-lingui-id: P+jdmX
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name should be in camelCase"
-msgstr ""
+msgstr "Имя должно быть в стиле camelCase"
 
 #. js-lingui-id: Dr0xtb
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Names are not synced with labels"
-msgstr ""
+msgstr "Имена не синхронизированы с метками"
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1905,37 +2069,65 @@ msgstr "Объект уже существует"
 #. js-lingui-id: wLX74t
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "Object label is too long"
-msgstr ""
+msgstr "Метка объекта слишком длинная"
 
 #. js-lingui-id: nmhjwk
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "Object label is too short"
-msgstr ""
+msgstr "Метка объекта слишком короткая"
 
 #. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 msgid "Object Metadata Id"
 msgstr "Идентификатор метаданных объекта"
 
+#. js-lingui-id: lG0Qqm
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Object related to field to delete not found"
+msgstr "Объект, связанный с полем для удаления не найден"
+
+#. js-lingui-id: E8vJ0A
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Object related to field to update not found"
+msgstr "Объект, связанный с полем для обновления не найден"
+
+#. js-lingui-id: MnOwTp
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Object related to updated field does not have a label identifier"
+msgstr "Объект, связанный с обновлённым полем, не имеет идентификатора метки"
+
+#. js-lingui-id: 6unt40
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
+msgid "Object targeted by field to create not found"
+msgstr "Целевой объект полем для создания не найден"
+
+#. js-lingui-id: KHK54G
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Object targeted by the relation not found"
+msgstr "Целевой объект для связи не найден"
+
 #. js-lingui-id: bMeJkW
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Object to delete not found"
-msgstr ""
+msgstr "Объект для удаления не найден"
 
 #. js-lingui-id: pQ5dZU
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Object to update not found"
-msgstr ""
+msgstr "Объект для обновления не найден"
 
 #. js-lingui-id: cdjRFZ
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Object with same id already exists"
-msgstr ""
+msgstr "Объект с тем же идентификатором уже существует"
 
 #. js-lingui-id: 53pIyA
 #: src/engine/core-modules/view/exceptions/view.exception.ts
 msgid "ObjectMetadataId is required to create a view."
-msgstr ""
+msgstr "ObjectMetadataId требуется для создания отображения."
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2007,12 +2199,12 @@ msgstr "Стадия возможности"
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is invalid"
-msgstr ""
+msgstr "Неверный идентификатор опции"
 
 #. js-lingui-id: MniXaX
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is required"
-msgstr ""
+msgstr "Требуется идентификатор опции"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2026,11 +2218,22 @@ msgstr "Метка опции \"{sanitizedLabel}\" меньше 1 символа
 msgid "Option label exceeds 63 characters"
 msgstr "Метка опции превосходит 63 символа"
 
+#. js-lingui-id: h8lHqX
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Option label format not supported"
+msgstr "Формат метки параметра не поддерживается"
+
 #. js-lingui-id: +E9N4m
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option label is required"
 msgstr "Требуется метка опции"
+
+#. js-lingui-id: dFudyC
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Option label must be a string of at least one character"
+msgstr "Метка опции должна быть строкой из хотя бы одного символа"
 
 #. js-lingui-id: nQqNzE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2044,17 +2247,38 @@ msgstr "Значение опции \"{sanitizedValue}\" меньше 1 симв
 msgid "Option value exceeds 63 characters"
 msgstr "Значение опции превосходит 63 символа"
 
+#. js-lingui-id: zEGChV
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Option value format not supported"
+msgstr "Формат значения опции не поддерживается"
+
 #. js-lingui-id: /wsRPd
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-enum-validation.service.ts
 msgid "Option value is required"
 msgstr "Требуется значение опции"
+
+#. js-lingui-id: Kub9t0
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Option value must be a string of at least one character"
+msgstr "Значение опции должно быть строкой из хотя бы одного символа"
 
 #. js-lingui-id: eLggyd
 #: src/modules/view/standard-objects/view.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "Optional aggregate operation"
 msgstr "Необязательная агрегатная операция"
+
+#. js-lingui-id: EabrTR
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Options are required for enum fields"
+msgstr "Для полей типа перечисление требуются параметры"
+
+#. js-lingui-id: AODALE
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
+msgid "Page Layout ID"
+msgstr "ID компоновки страницы"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
@@ -2213,17 +2437,35 @@ msgstr "\\"
 msgid "Related user email address"
 msgstr "\\"
 
+#. js-lingui-id: +bFtT5
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util.ts
+msgid "Relation creation payload is required"
+msgstr "Требуется полезная нагрузка создания соединения"
+
+#. js-lingui-id: 5y41wK
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
+msgid "Relation field target metadata not found"
+msgstr "Целевая метадата поля связи не обнаружена"
+
 #. js-lingui-id: g87L9j
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
 msgid "Relations"
 msgstr "\\"
 
+#. js-lingui-id: PWdFkY
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Remote objects are not production ready yet"
+msgstr "Удалённые объекты ещё не готовы для производства"
+
 #. js-lingui-id: yVxtzR
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Remote objects are not supported yet"
-msgstr ""
+msgstr "Удалённые объекты пока не поддерживаются"
 
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -2274,10 +2516,16 @@ msgstr "\\"
 msgid "Stage"
 msgstr "\\"
 
+#. js-lingui-id: dc5N0o
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Standard fields cannot be deleted"
+msgstr "Стандартные поля не могут быть удалены"
+
 #. js-lingui-id: Ptv+nG
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
+#: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Standard objects cannot be deleted"
-msgstr ""
+msgstr "Стандартные объекты нельзя удалить"
 
 #. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2288,7 +2536,7 @@ msgstr "\\"
 #. js-lingui-id: amGzX5
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Start of the week"
-msgstr ""
+msgstr "Начало недели"
 
 #. js-lingui-id: RS0o7b
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2566,7 +2814,7 @@ msgstr "Начальная версия процесса не может быт�
 #. js-lingui-id: YTftFF
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "The name is not available"
-msgstr ""
+msgstr "Имя недоступно"
 
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -2576,12 +2824,12 @@ msgstr "Название возможности"
 #. js-lingui-id: H1tAJD
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "The singular and plural labels cannot be the same for an object"
-msgstr ""
+msgstr "Единственные и множественные метки объекта не могут быть одинаковыми"
 
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"
-msgstr ""
+msgstr "Единственные и множественные имена объекта не могут быть одинаковыми"
 
 #. js-lingui-id: 5N6QtE
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
@@ -2615,14 +2863,12 @@ msgstr "Статус версии рабочего процесса"
 
 #. js-lingui-id: NbABJb
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "This name is not available as it is already used by another field"
 msgstr "Это имя недоступно, так как уже используется другим полем"
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "This name is not available."
 msgstr "Это имя недоступно."
 
@@ -2715,6 +2961,7 @@ msgstr "Действие на временной шкале"
 #. js-lingui-id: MHrjPM
 #: src/modules/task/standard-objects/task.workspace-entity.ts
 #: src/modules/note/standard-objects/note.workspace-entity.ts
+#: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
 msgid "Title"
@@ -2731,12 +2978,17 @@ msgstr "Тип"
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Unique field cannot have a default value"
-msgstr ""
+msgstr "Уникальное поле не может иметь значение по умолчанию"
 
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
 msgstr "Тип расписания cron не поддерживается"
+
+#. js-lingui-id: crxihq
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
+msgid "Unsupported field metadata type {fieldType}"
+msgstr "Неподдерживаемый тип метаданных поля {fieldType}"
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2744,8 +2996,14 @@ msgstr "Тип расписания cron не поддерживается"
 msgid "Update DateTime"
 msgstr "Дата и время обновления"
 
+#. js-lingui-id: r5C2wB
+#: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
+msgid "Updated field name is not synced with label"
+msgstr "Имя обновленного поля не синхронизировано с меткой"
+
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
+#: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User does not have access to this workspace"
 msgstr "Пользователь не имеет доступа к этому рабочему пространству"
 
@@ -2772,7 +3030,7 @@ msgstr "Часовой пояс пользователя"
 #. js-lingui-id: VkcC68
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User was not created with email/password"
-msgstr ""
+msgstr "Пользователь не был создан с использованием электронной почты/пароля"
 
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2782,12 +3040,17 @@ msgstr "Предпочитаемый пользователем формат д�
 #. js-lingui-id: Uce+A8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred start day of the week"
-msgstr ""
+msgstr "Предпочитаемый пользователем день начала недели"
 
 #. js-lingui-id: kJuoKm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
 msgstr "Предпочитаемый пользователем формат времени"
+
+#. js-lingui-id: ckX/Ew
+#: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
+msgid "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
+msgstr "Проверка не пройдена для {invalidObjects} объекта(ов) и {invalidFields} поля(ей)"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -2797,7 +3060,7 @@ msgstr "Значение"
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
-msgstr ""
+msgstr "Значение должно быть в ВЕРХНЕМ_РЕГИСТРЕ и соответствовать snake_case \"{sanitizedValue}\""
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -2827,7 +3090,6 @@ msgstr "Версии"
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
-#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "View"
 msgstr "Представление"
 
@@ -2981,10 +3243,20 @@ msgstr "Позиция представления"
 msgid "View Sort"
 msgstr "Сортировка представления"
 
+#. js-lingui-id: znNExx
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "View sort (id: {id}) not found"
+msgstr "Сортировка представления (id: {id}) не найдена"
+
 #. js-lingui-id: 6ZUale
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort direction"
 msgstr "Направление сортировки представления"
+
+#. js-lingui-id: 3zMs+f
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "View sort not found"
+msgstr "Сортировка представления не найдена"
 
 #. js-lingui-id: /rCPqN
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -3013,30 +3285,41 @@ msgstr "Целевой объект представления"
 msgid "View type"
 msgstr "Тип представления"
 
+#. js-lingui-id: aeqysn
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+#: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
+msgid "ViewId"
+msgstr "Посмотреть ID"
+
+#. js-lingui-id: kpQRY2
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "ViewId is required"
+msgstr "Требуется идентификатор представления (ViewId)"
+
 #. js-lingui-id: l88nXn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "ViewId is required to create a view field."
-msgstr ""
+msgstr "ViewId требуется для создания поля отображения."
 
 #. js-lingui-id: 9XMTpT
 #: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "ViewId is required to create a view filter group."
-msgstr ""
+msgstr "ViewId требуется для создания группы фильтров отображения."
 
 #. js-lingui-id: pCCxli
 #: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "ViewId is required to create a view filter."
-msgstr ""
+msgstr "ViewId требуется для создания фильтра отображения."
 
 #. js-lingui-id: 1X1RW5
 #: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "ViewId is required to create a view group."
-msgstr ""
+msgstr "ViewId требуется для создания группы отображения."
 
 #. js-lingui-id: uGUFcy
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "ViewId is required to create a view sort."
-msgstr ""
+msgstr "ViewId требуется для создания сортировки отображения."
 
 #. js-lingui-id: 1I6UoR
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -3060,7 +3343,7 @@ msgstr "Видимый"
 #. js-lingui-id: xvV2NJ
 #: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
-msgstr ""
+msgstr "У нас временные проблемы с базой данных. Повторите попытку позже."
 
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
@@ -3110,7 +3393,7 @@ msgstr "Запуск рабочего процесса завершился в"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run enqueued at"
-msgstr ""
+msgstr "Рабочий процесс поставлен в очередь в"
 
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -3260,35 +3543,40 @@ msgstr "Позиция участника рабочего пространст�
 msgid "Workspace Members"
 msgstr "Участники рабочего пространства"
 
+#. js-lingui-id: bBr+RW
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "WorkspaceId is required"
+msgstr "Требуется идентификатор рабочего пространства (WorkspaceId)"
+
 #. js-lingui-id: kjLpTn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
-msgstr ""
+msgstr "WorkspaceId требуется для создания поля отображения."
 
 #. js-lingui-id: zWj6VZ
 #: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "WorkspaceId is required to create a view filter group."
-msgstr ""
+msgstr "WorkspaceId требуется для создания группы фильтров отображения."
 
 #. js-lingui-id: jQMXtD
 #: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "WorkspaceId is required to create a view filter."
-msgstr ""
+msgstr "WorkspaceId требуется для создания фильтра отображения."
 
 #. js-lingui-id: NAoJAX
 #: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "WorkspaceId is required to create a view group."
-msgstr ""
+msgstr "WorkspaceId требуется для создания группы отображения."
 
 #. js-lingui-id: hU1QaN
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required to create a view sort."
-msgstr ""
+msgstr "WorkspaceId требуется для создания сортировки отображения."
 
 #. js-lingui-id: jtb/lI
 #: src/engine/core-modules/view/exceptions/view.exception.ts
 msgid "WorkspaceId is required to create a view."
-msgstr ""
+msgstr "WorkspaceId требуется для создания отображения."
 
 #. js-lingui-id: EtzFC0
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts

@@ -5,14 +5,12 @@ import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/ro
 import { SettingsPath } from '@/types/SettingsPath';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledCreateObjectOverrideSection = styled(Section)`
@@ -70,16 +68,11 @@ export const SettingsRolePermissionsObjectLevelSection = ({
     isDefined(objectMetadataItemsWithPermissionOverride) &&
     objectMetadataItemsWithPermissionOverride?.length > 0;
 
-  const featureFlags = useFeatureFlagsMap();
-  const isFieldsPermissionsEnabled =
-    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
-
   return (
     <Section>
       <Table>
         <SettingsRolePermissionsObjectLevelTableHeader
           showPermissionsLabel={hasObjectPermissions}
-          isFieldsPermissionsEnabled={isFieldsPermissionsEnabled}
         />
         <StyledTableRows>
           {hasObjectPermissions ? (
@@ -89,7 +82,6 @@ export const SettingsRolePermissionsObjectLevelSection = ({
                   key={objectMetadataItem.id}
                   objectMetadataItem={objectMetadataItem}
                   roleId={roleId}
-                  isFieldsPermissionsEnabled={isFieldsPermissionsEnabled}
                 />
               ),
             )

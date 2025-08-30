@@ -54,6 +54,16 @@ export const useHttpRequestForm = ({
       newFormData = { ...newFormData, body: undefined };
     }
 
+    if (field === 'method' && isMethodWithBody(value as string)) {
+      newFormData = {
+        ...newFormData,
+        headers: {
+          ...newFormData.headers,
+          'content-type': 'application/json',
+        },
+      };
+    }
+
     setFormData(newFormData);
     saveAction(newFormData);
   };

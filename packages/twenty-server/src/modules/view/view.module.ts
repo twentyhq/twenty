@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { ViewField } from 'src/engine/core-modules/view/entities/view-field.entity';
-import { ViewFilterGroup } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
-import { ViewFilter } from 'src/engine/core-modules/view/entities/view-filter.entity';
-import { ViewGroup } from 'src/engine/core-modules/view/entities/view-group.entity';
-import { ViewSort } from 'src/engine/core-modules/view/entities/view-sort.entity';
-import { View } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
+import { ViewFilterEntity } from 'src/engine/core-modules/view/entities/view-filter.entity';
+import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
+import { ViewSortEntity } from 'src/engine/core-modules/view/entities/view-sort.entity';
+import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldListener } from 'src/modules/view/listeners/view-field.listener';
 import { ViewFilterGroupListener } from 'src/modules/view/listeners/view-filter-group.listener';
@@ -26,11 +26,15 @@ import { ViewService } from 'src/modules/view/services/view.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature(
-      [View, ViewField, ViewFilter, ViewFilterGroup, ViewGroup, ViewSort],
-      'core',
-    ),
-    TypeOrmModule.forFeature([ObjectMetadataEntity], 'core'),
+    TypeOrmModule.forFeature([
+      ViewEntity,
+      ViewFieldEntity,
+      ViewFilterEntity,
+      ViewFilterGroupEntity,
+      ViewGroupEntity,
+      ViewSortEntity,
+    ]),
+    TypeOrmModule.forFeature([ObjectMetadataEntity]),
     FeatureFlagModule,
   ],
 

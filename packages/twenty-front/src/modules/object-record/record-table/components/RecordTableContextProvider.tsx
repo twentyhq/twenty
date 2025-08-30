@@ -4,7 +4,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { RecordTableContextProvider as RecordTableContextInternalProvider } from '@/object-record/record-table/contexts/RecordTableContext';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
+import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 
 type RecordTableContextProviderProps = {
@@ -28,8 +28,8 @@ export const RecordTableContextProvider = ({
     objectMetadataItem.id,
   );
 
-  const visibleTableColumns = useRecoilComponentValue(
-    visibleTableColumnsComponentSelector,
+  const visibleRecordFields = useRecoilComponentValue(
+    visibleRecordFieldsComponentSelector,
     recordTableId,
   );
 
@@ -38,10 +38,10 @@ export const RecordTableContextProvider = ({
       value={{
         viewBarId,
         objectMetadataItem,
-        visibleTableColumns,
         recordTableId,
         objectNameSingular,
         objectPermissions,
+        visibleRecordFields,
       }}
     >
       {children}

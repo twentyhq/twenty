@@ -95,6 +95,10 @@ const StyledSortValue = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
+const StyledKeyLabelContainer = styled.div`
+  display: flex;
+`;
+
 export type SortOrFilterChipVariant = 'default' | 'danger';
 
 export type SortOrFilterChipType = 'sort' | 'filter';
@@ -134,12 +138,14 @@ export const SortOrFilterChip = ({
           <Icon size={theme.icon.size.sm} />
         </StyledIcon>
       )}
-      {labelKey && <StyledLabelKey>{labelKey}</StyledLabelKey>}
-      {type === 'sort' ? (
-        <StyledSortValue>{labelValue}</StyledSortValue>
-      ) : (
-        <StyledFilterValue>{labelValue}</StyledFilterValue>
-      )}
+      <StyledKeyLabelContainer>
+        {labelKey && <StyledLabelKey>{labelKey}</StyledLabelKey>}
+        {type === 'sort' ? (
+          <StyledSortValue>{labelValue}</StyledSortValue>
+        ) : (
+          <StyledFilterValue>{labelValue}</StyledFilterValue>
+        )}
+      </StyledKeyLabelContainer>
       <StyledDelete
         variant={variant}
         onClick={handleDeleteClick}

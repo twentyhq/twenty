@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import type { Point } from '@nivo/line';
+import type { Point, LineSeries } from '@nivo/line';
 import { type ReactElement } from 'react';
 
 const StyledTooltipContainer = styled.div`
@@ -45,7 +45,7 @@ const StyledTooltipValue = styled.span`
 
 type WorkerMetricsTooltipProps = {
   slice: {
-    points: readonly Point[];
+    points: readonly Point<LineSeries>[];
   };
 };
 
@@ -55,11 +55,11 @@ export const WorkerMetricsTooltip = ({
   return (
     <StyledTooltipContainer>
       {slice.points.map((point) => (
-        <StyledTooltipItem key={point.id} color={point.serieColor}>
-          <StyledTooltipColorCircle color={point.serieColor} />
+        <StyledTooltipItem key={point.id} color={point.seriesColor}>
+          <StyledTooltipColorCircle color={point.seriesColor} />
           <StyledTooltipDataRow>
-            <span>{point.serieId}</span>
-            <StyledTooltipValue>{String(point.data.y)}</StyledTooltipValue>
+            <span>{point.seriesId}</span>
+            <StyledTooltipValue>{point.data.yFormatted}</StyledTooltipValue>
           </StyledTooltipDataRow>
         </StyledTooltipItem>
       ))}

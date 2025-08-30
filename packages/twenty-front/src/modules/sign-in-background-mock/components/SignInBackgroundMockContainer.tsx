@@ -7,6 +7,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { SignInBackgroundMockContainerEffect } from '@/sign-in-background-mock/components/SignInBackgroundMockContainerEffect';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
@@ -39,6 +40,16 @@ export const SignInBackgroundMockContainer = () => {
     (objectMetadataItem) => objectMetadataItem.id === objectMetadataItemId,
   );
 
+  const {
+    fieldDefinitionByFieldMetadataItemId,
+    fieldMetadataItemByFieldMetadataItemId,
+    labelIdentifierFieldMetadataItem,
+    recordFieldByFieldMetadataItemId,
+  } = useRecordIndexFieldMetadataDerivedStates(
+    objectMetadataItem,
+    recordIndexId,
+  );
+
   return (
     <StyledContainer>
       <RecordIndexContextProvider
@@ -50,6 +61,10 @@ export const SignInBackgroundMockContainer = () => {
           objectMetadataItem: objectMetadataItem ?? objectMetadataItems[0],
           onIndexRecordsLoaded: () => {},
           indexIdentifierUrl: () => '',
+          fieldDefinitionByFieldMetadataItemId,
+          fieldMetadataItemByFieldMetadataItemId,
+          labelIdentifierFieldMetadataItem,
+          recordFieldByFieldMetadataItemId,
         }}
       >
         <ViewComponentInstanceContext.Provider

@@ -21,7 +21,7 @@ export class ConnectedAccountDeleteOnePreQueryHook
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    @InjectRepository(ObjectMetadataEntity, 'core')
+    @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 

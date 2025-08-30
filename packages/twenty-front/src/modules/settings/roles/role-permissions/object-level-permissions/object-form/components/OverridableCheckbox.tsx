@@ -82,7 +82,7 @@ export const OverridableCheckbox = ({
               onClick={disabled ? undefined : onChange}
               isDisabled={disabled}
             >
-              <AnimatedRotate animateOnHover>
+              <AnimatedRotate animateOnHover={!disabled}>
                 <IconReload
                   size={theme.icon.size.md}
                   color={theme.adaptiveColors.orange4}

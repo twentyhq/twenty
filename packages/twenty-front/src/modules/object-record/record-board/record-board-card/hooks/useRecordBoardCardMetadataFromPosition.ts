@@ -1,7 +1,8 @@
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { recordBoardCardEditModePositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardEditModePositionComponentState';
 import { recordBoardCardHoverPositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardHoverPositionComponentState';
-import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
+import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,33 +18,36 @@ export const useRecordBoardCardMetadataFromPosition = () => {
     recordBoardCardEditModePositionComponentState,
   );
 
-  const visibleFieldDefinitions = useRecoilComponentValue(
-    recordBoardVisibleFieldDefinitionsComponentSelector,
+  const visibleRecordFields = useRecoilComponentValue(
+    visibleRecordFieldsComponentSelector,
   );
 
-  const visibleFieldDefinitionsFiltered = visibleFieldDefinitions.filter(
-    (boardField) => !boardField.isLabelIdentifier,
+  const { labelIdentifierFieldMetadataItem } = useRecordIndexContextOrThrow();
+
+  const visibleRecordFieldsFiltered = visibleRecordFields.filter(
+    (recordField) =>
+      labelIdentifierFieldMetadataItem?.id !== recordField.fieldMetadataItemId,
   );
 
-  const hoveredFieldDefinition = isDefined(hoverPosition)
-    ? visibleFieldDefinitionsFiltered.at(hoverPosition)
+  const hoveredRecordField = isDefined(hoverPosition)
+    ? visibleRecordFieldsFiltered.at(hoverPosition)
     : undefined;
 
-  const editedFieldDefinition = isDefined(editModePosition)
-    ? visibleFieldDefinitionsFiltered.at(editModePosition)
+  const editedRecordField = isDefined(editModePosition)
+    ? visibleRecordFieldsFiltered.at(editModePosition)
     : undefined;
 
-  const hoveredFieldMetadataItem = isDefined(hoveredFieldDefinition)
+  const hoveredFieldMetadataItem = isDefined(hoveredRecordField)
     ? objectMetadataItem.fields.find(
         (fieldMetadataItem) =>
-          fieldMetadataItem.id === hoveredFieldDefinition.fieldMetadataId,
+          fieldMetadataItem.id === hoveredRecordField.fieldMetadataItemId,
       )
     : undefined;
 
-  const editedFieldMetadataItem = isDefined(editedFieldDefinition)
+  const editedFieldMetadataItem = isDefined(editedRecordField)
     ? objectMetadataItem.fields.find(
         (fieldMetadataItem) =>
-          fieldMetadataItem.id === editedFieldDefinition.fieldMetadataId,
+          fieldMetadataItem.id === editedRecordField.fieldMetadataItemId,
       )
     : undefined;
 

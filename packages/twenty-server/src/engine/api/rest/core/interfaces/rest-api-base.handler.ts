@@ -190,38 +190,29 @@ export abstract class RestApiBaseHandler {
 
     let restrictedFields: RestrictedFieldsPermissions = {};
 
-    if (
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED,
-        workspace.id,
-      )
-    ) {
-      if (roleId) {
-        const objectMetadataPermissions =
-          await this.workspacePermissionsCacheService.getObjectRecordPermissionsForRoles(
-            {
-              workspaceId: workspace.id,
-              roleIds: roleId ? [roleId] : undefined,
-            },
-          );
+    if (roleId) {
+      const objectMetadataPermissions =
+        await this.workspacePermissionsCacheService.getObjectRecordPermissionsForRoles(
+          {
+            workspaceId: workspace.id,
+            roleIds: roleId ? [roleId] : undefined,
+          },
+        );
 
-        if (
-          !isDefined(
-            objectMetadataPermissions?.[roleId]?.[
-              objectMetadata.objectMetadataMapItem.id
-            ]?.restrictedFields,
-          )
-        ) {
-          throw new InternalServerError(
-            'Fields permissions not found for role',
-          );
-        }
-
-        restrictedFields =
-          objectMetadataPermissions[roleId][
+      if (
+        !isDefined(
+          objectMetadataPermissions?.[roleId]?.[
             objectMetadata.objectMetadataMapItem.id
-          ].restrictedFields;
+          ]?.restrictedFields,
+        )
+      ) {
+        throw new InternalServerError('Fields permissions not found for role');
       }
+
+      restrictedFields =
+        objectMetadataPermissions[roleId][
+          objectMetadata.objectMetadataMapItem.id
+        ].restrictedFields;
     }
 
     return {

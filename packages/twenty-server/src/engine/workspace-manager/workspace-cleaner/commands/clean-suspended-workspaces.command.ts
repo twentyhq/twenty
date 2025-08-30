@@ -20,7 +20,7 @@ export class CleanSuspendedWorkspacesCommand extends MigrationCommandRunner {
 
   constructor(
     private readonly cleanerWorkspaceService: CleanerWorkspaceService,
-    @InjectRepository(Workspace, 'core')
+    @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
   ) {
     super();

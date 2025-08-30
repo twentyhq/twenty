@@ -17,7 +17,6 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
   recordGqlFields,
   record,
   objectPermissionsByObjectMetadataId,
-  isFieldsPermissionsEnabled,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
@@ -28,7 +27,6 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
     string,
     ObjectPermissions & { objectMetadataId: string }
   >;
-  isFieldsPermissionsEnabled?: boolean;
 }) => {
   if (isUndefinedOrNull(objectMetadataItem)) {
     return null;
@@ -44,7 +42,6 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
           computeReferences: true,
           recordGqlFields,
           objectPermissionsByObjectMetadataId,
-          isFieldsPermissionsEnabled,
         },
       )}
     `;

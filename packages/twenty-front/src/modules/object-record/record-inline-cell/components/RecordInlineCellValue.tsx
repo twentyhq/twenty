@@ -28,7 +28,13 @@ const StyledClickableContainer = styled.div<{
     `};
 `;
 
-export const RecordInlineCellValue = () => {
+type RecordInlineCellValueProps = {
+  className?: string;
+};
+
+export const RecordInlineCellValue = ({
+  className,
+}: RecordInlineCellValueProps) => {
   const { readonly, loading, isCentered } = useRecordInlineCellContext();
 
   if (loading === true) {
@@ -36,7 +42,11 @@ export const RecordInlineCellValue = () => {
   }
 
   return (
-    <StyledClickableContainer readonly={readonly} isCentered={isCentered}>
+    <StyledClickableContainer
+      readonly={readonly}
+      isCentered={isCentered}
+      className={className}
+    >
       <RecordInlineCellDisplayMode isHovered={false}>
         <FieldDisplay />
       </RecordInlineCellDisplayMode>

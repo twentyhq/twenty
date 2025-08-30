@@ -11,6 +11,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlag } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -50,11 +51,11 @@ import { WorkspaceMigrationV2Module } from 'src/engine/workspace-manager/workspa
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         TypeORMModule,
-        NestjsQueryTypeOrmModule.forFeature(
-          [ObjectMetadataEntity, FieldMetadataEntity],
-          'core',
-        ),
-        TypeOrmModule.forFeature([FeatureFlag], 'core'),
+        NestjsQueryTypeOrmModule.forFeature([
+          ObjectMetadataEntity,
+          FieldMetadataEntity,
+        ]),
+        TypeOrmModule.forFeature([FeatureFlag, ViewEntity]),
         DataSourceModule,
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,

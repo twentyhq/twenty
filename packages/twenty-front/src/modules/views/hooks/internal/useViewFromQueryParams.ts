@@ -16,10 +16,8 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import { type ViewFilter } from '@/views/types/ViewFilter';
 import { relationFilterValueSchemaObject } from '@/views/view-filter-value/validation-schemas/jsonRelationFilterValueSchema';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 const filterQueryParamsSchema = z.object({
   viewId: z.string().optional(),
@@ -70,10 +68,6 @@ export const useViewFromQueryParams = () => {
   const hasFiltersQueryParams =
     isDefined(filterQueryParams) &&
     Object.entries(filterQueryParams).length > 0;
-
-  const featureFlags = useFeatureFlagsMap();
-  const isFieldsPermissionsEnabled =
-    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
 
   const getFiltersFromQueryParams = useRecoilCallback(
     ({ snapshot }) =>
@@ -131,7 +125,6 @@ export const useViewFromQueryParams = () => {
                       objectMetadataItem: relationObjectMetadataItem,
                       objectMetadataItems,
                       objectPermissionsByObjectMetadataId,
-                      isFieldsPermissionsEnabled,
                     }),
                     variables: {
                       filter: {
@@ -193,7 +186,6 @@ export const useViewFromQueryParams = () => {
       objectMetadataItem.fields,
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
-      isFieldsPermissionsEnabled,
     ],
   );
 

@@ -20,7 +20,7 @@ import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/wo
 @Injectable()
 export class FeatureFlagService {
   constructor(
-    @InjectRepository(FeatureFlag, 'core')
+    @InjectRepository(FeatureFlag)
     private readonly featureFlagRepository: Repository<FeatureFlag>,
     private readonly workspaceFeatureFlagsMapCacheService: WorkspaceFeatureFlagsMapCacheService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
@@ -131,14 +131,6 @@ export class FeatureFlagService {
     await this.workspaceFeatureFlagsMapCacheService.recomputeFeatureFlagsMapCache(
       { workspaceId },
     );
-
-    if (featureFlag === FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED) {
-      await this.workspacePermissionsCacheService.recomputeRolesPermissionsCache(
-        {
-          workspaceId,
-        },
-      );
-    }
 
     return result;
   }

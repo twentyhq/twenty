@@ -43,8 +43,19 @@ export const RecordTitleCell = ({
   const { closeRecordTitleCell } = useRecordTitleCell();
 
   const closeCell = useCallback(() => {
-    closeRecordTitleCell();
-  }, [closeRecordTitleCell]);
+    closeRecordTitleCell(
+      getRecordFieldInputInstanceId({
+        recordId,
+        fieldName: fieldDefinition.metadata.fieldName,
+        prefix: containerType,
+      }),
+    );
+  }, [
+    closeRecordTitleCell,
+    containerType,
+    fieldDefinition.metadata.fieldName,
+    recordId,
+  ]);
 
   const { persistFieldFromFieldInputContext } =
     usePersistFieldFromFieldInputContext();

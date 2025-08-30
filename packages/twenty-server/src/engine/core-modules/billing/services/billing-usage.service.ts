@@ -24,7 +24,7 @@ import { type Workspace } from 'src/engine/core-modules/workspace/workspace.enti
 export class BillingUsageService {
   protected readonly logger = new Logger(BillingUsageService.name);
   constructor(
-    @InjectRepository(BillingCustomer, 'core')
+    @InjectRepository(BillingCustomer)
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
@@ -131,20 +131,16 @@ export class BillingUsageService {
             periodEnd,
           );
 
-        const totalCostCents =
-          meterEventsSum - item.freeTierQuantity > 0
-            ? (meterEventsSum - item.freeTierQuantity) * item.unitPriceCents
-            : 0;
-
         return {
           productKey: item.productKey,
           periodStart,
           periodEnd,
-          usageQuantity: meterEventsSum,
-          freeTierQuantity: item.freeTierQuantity,
-          freeTrialQuantity: item.freeTrialQuantity,
+          usedCredits: meterEventsSum,
+          grantedCredits:
+            subscription.status === SubscriptionStatus.Trialing
+              ? item.freeTrialQuantity
+              : item.tierQuantity,
           unitPriceCents: item.unitPriceCents,
-          totalCostCents,
         };
       }),
     );

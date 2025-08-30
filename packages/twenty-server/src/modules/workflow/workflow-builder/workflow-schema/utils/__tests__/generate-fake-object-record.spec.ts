@@ -41,7 +41,6 @@ describe('generateFakeObjectRecord', () => {
         icon: 'test-company-icon',
         label: 'Company',
         value: 'A company',
-        nameSingular: 'company',
         fieldIdName: 'id',
         objectMetadataId: '20202020-c03c-45d6-a4b0-04afe1357c5c',
       },
@@ -59,6 +58,7 @@ describe('generateFakeObjectRecord', () => {
     expect(generateObjectRecordFields).toHaveBeenCalledWith({
       objectMetadataInfo,
       depth: 0,
+      maxDepth: 1,
     });
   });
 });

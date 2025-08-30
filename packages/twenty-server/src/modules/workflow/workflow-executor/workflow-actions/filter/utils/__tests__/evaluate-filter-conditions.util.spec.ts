@@ -21,10 +21,8 @@ describe('evaluateFilterConditions', () => {
   ): ResolvedFilter => ({
     id: 'filter1',
     type: type,
-    label: 'Test Filter',
     rightOperand,
     operand,
-    displayValue: String(rightOperand),
     stepFilterGroupId: 'group1',
     leftOperand,
   });
@@ -311,6 +309,80 @@ describe('evaluateFilterConditions', () => {
         expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow(
           'Operand contains not supported for uuid filter',
         );
+      });
+    });
+
+    describe('Select filter operands', () => {
+      it('should return true when there are common values (SELECT)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.Is,
+          ['John'],
+          ['John', 'Jane'],
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when there are no common values (SELECT)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.Is,
+          ['John'],
+          ['Jane'],
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when there are no common values (IsNot)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IsNot,
+          ['John'],
+          ['Jane'],
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return true when there are no values (IsEmpty)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IsEmpty,
+          [],
+          '',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when there is a value (IsEmpty)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IsEmpty,
+          ['John'],
+          '',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when there are values (IsNotEmpty)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IsNotEmpty,
+          ['John'],
+          '',
+          'SELECT',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
       });
     });
 
@@ -710,10 +782,8 @@ describe('evaluateFilterConditions', () => {
         const filter: ResolvedFilter = {
           id: 'filter1',
           type: 'CURRENCY',
-          label: 'Currency Filter',
           rightOperand: 'USD',
           operand: ViewFilterOperand.Is,
-          displayValue: 'USD',
           stepFilterGroupId: 'group1',
           leftOperand: 'USD',
           compositeFieldSubFieldName: 'currencyCode',
@@ -726,10 +796,8 @@ describe('evaluateFilterConditions', () => {
         const filter: ResolvedFilter = {
           id: 'filter1',
           type: 'CURRENCY',
-          label: 'Currency Filter',
           rightOperand: 100,
           operand: ViewFilterOperand.GreaterThanOrEqual,
-          displayValue: '100',
           stepFilterGroupId: 'group1',
           leftOperand: 150,
           compositeFieldSubFieldName: 'amountMicros',
@@ -1141,20 +1209,16 @@ describe('evaluateFilterConditions', () => {
         {
           id: 'filter1',
           type: 'RELATION',
-          label: 'Name Filter',
           rightOperand: 'John',
           operand: ViewFilterOperand.Is,
-          displayValue: 'John',
           stepFilterGroupId: 'group1',
           leftOperand: 'John',
         },
         {
           id: 'filter2',
           type: 'NUMBER',
-          label: 'Age Filter',
           rightOperand: 25,
           operand: ViewFilterOperand.GreaterThanOrEqual,
-          displayValue: '25',
           stepFilterGroupId: 'group1',
           leftOperand: 30,
         },
@@ -1170,20 +1234,16 @@ describe('evaluateFilterConditions', () => {
         {
           id: 'filter1',
           type: 'RELATION',
-          label: 'Name Filter',
           rightOperand: 'John',
           operand: ViewFilterOperand.Is,
-          displayValue: 'John',
           stepFilterGroupId: 'group1',
           leftOperand: 'John',
         },
         {
           id: 'filter2',
           type: 'NUMBER',
-          label: 'Age Filter',
           rightOperand: 25,
           operand: ViewFilterOperand.GreaterThanOrEqual,
-          displayValue: '25',
           stepFilterGroupId: 'group1',
           leftOperand: 20, // This will fail
         },
@@ -1209,20 +1269,16 @@ describe('evaluateFilterConditions', () => {
           {
             id: 'filter1',
             type: 'RELATION',
-            label: 'Name Filter',
             rightOperand: 'John',
             operand: ViewFilterOperand.Is,
-            displayValue: 'John',
             stepFilterGroupId: 'group1',
             leftOperand: 'John',
           },
           {
             id: 'filter2',
             type: 'NUMBER',
-            label: 'Age Filter',
             rightOperand: 25,
             operand: ViewFilterOperand.GreaterThanOrEqual,
-            displayValue: '25',
             stepFilterGroupId: 'group1',
             leftOperand: 30,
           },
@@ -1245,20 +1301,16 @@ describe('evaluateFilterConditions', () => {
           {
             id: 'filter1',
             type: 'RELATION',
-            label: 'Name Filter',
             rightOperand: 'John',
             operand: ViewFilterOperand.Is,
-            displayValue: 'John',
             stepFilterGroupId: 'group1',
             leftOperand: 'Jane', // This will fail
           },
           {
             id: 'filter2',
             type: 'NUMBER',
-            label: 'Age Filter',
             rightOperand: 25,
             operand: ViewFilterOperand.GreaterThanOrEqual,
-            displayValue: '25',
             stepFilterGroupId: 'group1',
             leftOperand: 30,
           },
@@ -1283,20 +1335,16 @@ describe('evaluateFilterConditions', () => {
           {
             id: 'filter1',
             type: 'RELATION',
-            label: 'Name Filter',
             rightOperand: 'John',
             operand: ViewFilterOperand.Is,
-            displayValue: 'John',
             stepFilterGroupId: 'group1',
             leftOperand: 'Jane', // This will fail
           },
           {
             id: 'filter2',
             type: 'NUMBER',
-            label: 'Age Filter',
             rightOperand: 25,
             operand: ViewFilterOperand.GreaterThanOrEqual,
-            displayValue: '25',
             stepFilterGroupId: 'group1',
             leftOperand: 30, // This will pass
           },
@@ -1319,20 +1367,16 @@ describe('evaluateFilterConditions', () => {
           {
             id: 'filter1',
             type: 'RELATION',
-            label: 'Name Filter',
             rightOperand: 'John',
             operand: ViewFilterOperand.Is,
-            displayValue: 'John',
             stepFilterGroupId: 'group1',
             leftOperand: 'Jane', // This will fail
           },
           {
             id: 'filter2',
             type: 'NUMBER',
-            label: 'Age Filter',
             rightOperand: 25,
             operand: ViewFilterOperand.GreaterThanOrEqual,
-            displayValue: '25',
             stepFilterGroupId: 'group1',
             leftOperand: 20, // This will fail
           },
@@ -1361,20 +1405,16 @@ describe('evaluateFilterConditions', () => {
           {
             id: 'filter1',
             type: 'RELATION',
-            label: 'Name Filter',
             rightOperand: 'John',
             operand: ViewFilterOperand.Is,
-            displayValue: 'John',
             stepFilterGroupId: 'group1',
             leftOperand: 'John',
           },
           {
             id: 'filter2',
             type: 'NUMBER',
-            label: 'Age Filter',
             rightOperand: 25,
             operand: ViewFilterOperand.GreaterThanOrEqual,
-            displayValue: '25',
             stepFilterGroupId: 'group2',
             leftOperand: 30,
           },
@@ -1411,30 +1451,24 @@ describe('evaluateFilterConditions', () => {
           {
             id: 'filter1',
             type: 'RELATION',
-            label: 'Filter 1',
             rightOperand: 'John',
             operand: ViewFilterOperand.Is,
-            displayValue: 'John',
             stepFilterGroupId: 'child1',
             leftOperand: 'Jane', // This will fail
           },
           {
             id: 'filter2',
             type: 'RELATION',
-            label: 'Filter 2',
             rightOperand: 'Smith',
             operand: ViewFilterOperand.Is,
-            displayValue: 'Smith',
             stepFilterGroupId: 'child1',
             leftOperand: 'Smith', // This will pass (OR group passes)
           },
           {
             id: 'filter3',
             type: 'NUMBER',
-            label: 'Filter 3',
             rightOperand: 25,
             operand: ViewFilterOperand.GreaterThanOrEqual,
-            displayValue: '25',
             stepFilterGroupId: 'child2',
             leftOperand: 30, // This will pass (AND group passes)
           },
@@ -1474,10 +1508,8 @@ describe('evaluateFilterConditions', () => {
           {
             id: 'filter1',
             type: 'RELATION',
-            label: 'Name Filter',
             rightOperand: 'John',
             operand: ViewFilterOperand.Is,
-            displayValue: 'John',
             stepFilterGroupId: 'nonexistent',
             leftOperand: 'John',
           },

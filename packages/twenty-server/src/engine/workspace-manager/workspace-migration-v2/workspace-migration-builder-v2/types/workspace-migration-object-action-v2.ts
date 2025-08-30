@@ -35,3 +35,9 @@ export type WorkspaceMigrationObjectActionV2 =
 
 export type WorkspaceMigrationObjectActionTypeV2 =
   WorkspaceMigrationObjectActionV2['type'];
+
+export const WORKSPACE_MIGRATION_OBJECT_ACTION_TYPES = [
+  'create_object',
+  'delete_object',
+  'update_object',
+] as const satisfies WorkspaceMigrationObjectActionTypeV2[];

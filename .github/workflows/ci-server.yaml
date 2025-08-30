@@ -29,8 +29,6 @@ jobs:
     if: needs.changed-files-check.outputs.any_changed == 'true'
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
-    env:
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     services:
       postgres:
         image: twentycrm/twenty-postgres-spilo
@@ -144,8 +142,6 @@ jobs:
     timeout-minutes: 30
     runs-on: depot-ubuntu-24.04-8
     needs: server-setup
-    env:
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
@@ -204,7 +200,6 @@ jobs:
           --health-timeout 5s 
           --health-retries 5
     env:
-      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
       NODE_ENV: test
       ANALYTICS_ENABLED: true
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"

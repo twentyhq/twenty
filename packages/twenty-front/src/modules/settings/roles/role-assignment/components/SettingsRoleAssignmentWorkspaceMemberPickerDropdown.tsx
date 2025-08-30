@@ -23,7 +23,7 @@ export const SettingsRoleAssignmentWorkspaceMemberPickerDropdown = ({
 
   const { loading, searchRecords: workspaceMembers } =
     useObjectRecordSearchRecords({
-      objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+      objectNameSingulars: [CoreObjectNameSingular.WorkspaceMember],
       searchInput: searchFilter,
     });
 

@@ -10,7 +10,6 @@ describe('getWorkflowVersionDiagram', () => {
     const result = getWorkflowVersionDiagram({
       workflowVersion: undefined,
       isEditable: true,
-      isWorkflowFilteringEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -35,7 +34,6 @@ describe('getWorkflowVersionDiagram', () => {
         workflowId: '',
       },
       isEditable: true,
-      isWorkflowFilteringEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -80,7 +78,6 @@ describe('getWorkflowVersionDiagram', () => {
         workflowId: '',
       },
       isEditable: true,
-      isWorkflowFilteringEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -149,7 +146,6 @@ describe('getWorkflowVersionDiagram', () => {
         workflowId: '',
       },
       isEditable: true,
-      isWorkflowFilteringEnabled: true,
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -161,12 +157,13 @@ describe('getWorkflowVersionDiagram', () => {
       },
       "deletable": true,
       "id": "8f3b2121-f194-4ba4-9fbf-0",
-      "markerEnd": "workflow-edge-branch-arrow",
+      "markerEnd": "edge-branch-arrow-default",
       "markerStart": undefined,
       "selectable": true,
       "source": "trigger",
       "target": "step-1",
       "type": "empty-filter--editable",
+      "zIndex": -2,
     },
   ],
   "nodes": [

@@ -8,8 +8,6 @@ import { type RecordGqlOperationVariables } from '@/object-record/graphql/types/
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
-import { FeatureFlagKey } from '~/generated/graphql';
 
 export const useUpsertFindManyRecordsQueryInCache = ({
   objectMetadataItem,
@@ -20,10 +18,6 @@ export const useUpsertFindManyRecordsQueryInCache = ({
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
-  const featureFlags = useFeatureFlagsMap();
-  const isFieldsPermissionsEnabled =
-    featureFlags[FeatureFlagKey.IS_FIELDS_PERMISSIONS_ENABLED];
 
   const upsertFindManyRecordsQueryInCache = <
     T extends ObjectRecord = ObjectRecord,
@@ -44,7 +38,6 @@ export const useUpsertFindManyRecordsQueryInCache = ({
       recordGqlFields,
       computeReferences,
       objectPermissionsByObjectMetadataId,
-      isFieldsPermissionsEnabled,
     });
 
     const newObjectRecordConnection = getRecordConnectionFromRecords({
