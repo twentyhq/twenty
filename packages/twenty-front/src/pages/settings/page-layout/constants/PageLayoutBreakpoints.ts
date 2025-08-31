@@ -1,8 +1,8 @@
-import { MOBILE_VIEWPORT } from 'twenty-ui';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 
 export const PAGE_LAYOUT_CONFIG = {
   breakpoints: {
-    desktop: MOBILE_VIEWPORT, // Use the standard mobile viewport (768px) as the breakpoint
+    desktop: MOBILE_VIEWPORT,
     mobile: 0,
   },
   columns: {

@@ -46,7 +46,7 @@ const StyledGridContainer = styled.div`
   position: relative;
   padding: ${({ theme }) => theme.spacing(2)};
   width: 100%;
-  user-select: none; /* Prevent text selection during drag operations */
+  user-select: none;
 
   .react-grid-placeholder {
     background: ${({ theme }) => theme.adaptiveColors.blue3} !important;
@@ -54,7 +54,6 @@ const StyledGridContainer = styled.div`
     border-radius: ${({ theme }) => theme.border.radius.sm};
   }
 
-  /* Re-enable text selection for widget content when not dragging */
   .react-grid-item:not(.react-draggable-dragging) {
     user-select: auto;
   }
