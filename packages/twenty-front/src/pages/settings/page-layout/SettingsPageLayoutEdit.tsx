@@ -6,21 +6,22 @@ import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
 } from '@/settings/page-layout/constants/PageLayoutBreakpoints';
-import { usePageLayoutForm } from '@/settings/page-layout/hooks/usePageLayoutForm';
+import { usePageLayoutFormState } from '@/settings/page-layout/hooks/usePageLayoutFormState';
+import { usePageLayoutSaveHandler } from '@/settings/page-layout/hooks/usePageLayoutSaveHandler';
 import {
   type GraphSubType,
   type Widget,
 } from '@/settings/page-layout/mocks/mockWidgets';
+import { calculateGridBoundsFromSelectedCells } from '@/settings/page-layout/utils/calculateGridBoundsFromSelectedCells';
+import { calculateTotalGridRows } from '@/settings/page-layout/utils/calculateTotalGridRows';
+import { generateCellId } from '@/settings/page-layout/utils/generateCellId';
 import {
   getDefaultWidgetData,
   getWidgetSize,
   getWidgetTitle,
 } from '@/settings/page-layout/utils/getDefaultWidgetData';
-import { renderWidget } from '@/settings/page-layout/utils/widgetRegistry';
-import { calculateGridBoundsFromSelectedCells } from '@/settings/page-layout/utils/calculateGridBoundsFromSelectedCells';
-import { calculateTotalGridRows } from '@/settings/page-layout/utils/calculateTotalGridRows';
-import { generateCellId } from '@/settings/page-layout/utils/generateCellId';
 import { getDefaultWidgetPosition } from '@/settings/page-layout/utils/getDefaultWidgetPosition';
+import { renderWidget } from '@/settings/page-layout/utils/widgetRegistry';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -117,16 +118,11 @@ const ResponsiveGridLayout = WidthProvider(
 
 export const SettingsPageLayoutEdit = () => {
   const { t } = useLingui();
-  const {
-    formMethods,
-    handleSave: saveToStorage,
-    handleSubmit,
-    canSave,
-    existingLayout,
-    watchedValues,
-  } = usePageLayoutForm();
+  const { formMethods, canSave, existingLayout, watchedValues } =
+    usePageLayoutFormState();
 
-  const { setValue } = formMethods;
+  const { handleSave: saveToStorage } = usePageLayoutSaveHandler();
+  const { setValue, handleSubmit } = formMethods;
 
   // Local state for UI interactions
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
