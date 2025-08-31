@@ -185,9 +185,6 @@ export const workflowHttpRequestActionSettingsSchema =
         )
         .or(z.string())
         .optional(),
-      bodyType: z
-        .enum(['keyValue', 'rawJson', 'FormData', 'Text', 'None'])
-        .optional(),
     }),
   });
 

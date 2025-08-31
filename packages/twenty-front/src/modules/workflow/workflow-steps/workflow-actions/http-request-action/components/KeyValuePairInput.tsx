@@ -4,7 +4,6 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useState } from 'react';
 import { IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { v4 } from 'uuid';
@@ -42,26 +41,23 @@ export type KeyValuePairInputProps = {
   readonly?: boolean;
   keyPlaceholder?: string;
   valuePlaceholder?: string;
+  uniqueNotEditableKey?: string;
+  pairs:KeyValuePair[];
+  setPairs:(value:KeyValuePair[])=>void
+
 };
 
 export const KeyValuePairInput = ({
   label,
-  defaultValue = {},
   onChange,
   readonly,
   keyPlaceholder = 'Key',
   valuePlaceholder = 'Value',
+  uniqueNotEditableKey,
+  pairs,
+  setPairs
 }: KeyValuePairInputProps) => {
-  const [pairs, setPairs] = useState<KeyValuePair[]>(() => {
-    const initialPairs = Object.entries(defaultValue).map(([key, value]) => ({
-      id: v4(),
-      key,
-      value,
-    }));
-    return initialPairs.length > 0
-      ? [...initialPairs, { id: v4(), key: '', value: '' }]
-      : [{ id: v4(), key: '', value: '' }];
-  });
+  
 
   const handlePairChange = (
     pairId: string,
@@ -70,8 +66,12 @@ export const KeyValuePairInput = ({
   ) => {
     const index = pairs.findIndex((p) => p.id === pairId);
     const newPairs = [...pairs];
+if (field === "key" && newValue.trim() === uniqueNotEditableKey) {
+    newPairs.splice(index, 1);
+}
+else{
     newPairs[index] = { ...newPairs[index], [field]: newValue };
-
+}
     if (
       index === pairs.length - 1 &&
       (field === 'key' || field === 'value') &&
@@ -81,9 +81,12 @@ export const KeyValuePairInput = ({
     }
 
     setPairs(newPairs);
-
+   
+    
+ 
     const record = newPairs.reduce(
       (acc, { key, value }) => {
+        
         if (key.trim().length > 0) {
           acc[key] = value;
         }
@@ -96,8 +99,14 @@ export const KeyValuePairInput = ({
   };
 
   const handleRemovePair = (pairId: string) => {
+    const pairToRemove = pairs.find((p) => p.id === pairId);
+
+
+  if (pairToRemove?.key.trim() === uniqueNotEditableKey) {
+    return;
+  }
     const newPairs = pairs.filter((pair) => pair.id !== pairId);
-    if (newPairs.length === 0) {
+    if (newPairs.length === 0||(newPairs.length===1&&newPairs[0].key.trim()===uniqueNotEditableKey)) {
       newPairs.push({ id: v4(), key: '', value: '' });
     }
     setPairs(newPairs);
@@ -119,36 +128,39 @@ export const KeyValuePairInput = ({
     <FormFieldInputContainer>
       {label && <InputLabel>{label}</InputLabel>}
       <StyledContainer>
-        {pairs.map((pair) => (
-          <StyledKeyValueContainer key={pair.id} readonly={readonly}>
-            <FormTextFieldInput
-              placeholder={keyPlaceholder}
-              readonly={readonly}
-              defaultValue={pair.key}
-              onChange={(value) =>
-                handlePairChange(pair.id, 'key', value ?? '')
-              }
-              VariablePicker={WorkflowVariablePicker}
-            />
+        {pairs.map(
+          (pair) =>
+            pair.key!==uniqueNotEditableKey&&(
+              <StyledKeyValueContainer key={pair.id} readonly={readonly}>
+                <FormTextFieldInput
+                  placeholder={keyPlaceholder}
+                  readonly={readonly}
+                  defaultValue={pair.key}
+                  onChange={(value) =>
+                    handlePairChange(pair.id, 'key', value ?? '')
+                  }
+                  VariablePicker={WorkflowVariablePicker}
+                />
 
-            <FormTextFieldInput
-              placeholder={valuePlaceholder}
-              readonly={readonly}
-              defaultValue={pair.value}
-              onChange={(value) =>
-                handlePairChange(pair.id, 'value', value ?? '')
-              }
-              VariablePicker={WorkflowVariablePicker}
-            />
+                <FormTextFieldInput
+                  placeholder={valuePlaceholder}
+                  readonly={readonly}
+                  defaultValue={pair.value}
+                  onChange={(value) =>
+                    handlePairChange(pair.id, 'value', value ?? '')
+                  }
+                  VariablePicker={WorkflowVariablePicker}
+                />
 
-            {!readonly && pair.id !== pairs[pairs.length - 1].id ? (
-              <Button
-                onClick={() => handleRemovePair(pair.id)}
-                Icon={IconTrash}
-              />
-            ) : null}
-          </StyledKeyValueContainer>
-        ))}
+                {!readonly && pair.id !== pairs[pairs.length - 1].id ? (
+                  <Button
+                    onClick={() => handleRemovePair(pair.id)}
+                    Icon={IconTrash}
+                  />
+                ) : null}
+              </StyledKeyValueContainer>
+            ),
+        )}
       </StyledContainer>
     </FormFieldInputContainer>
   );

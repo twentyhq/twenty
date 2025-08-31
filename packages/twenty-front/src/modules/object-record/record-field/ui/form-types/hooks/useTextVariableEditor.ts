@@ -24,6 +24,8 @@ export const useTextVariableEditor = ({
   defaultValue,
   onUpdate,
 }: UseTextVariableEditorProps) => {
+  console.log("defaultValuein useTextVariableEditor",defaultValue);
+  
   const editor = useEditor({
     extensions: [
       Document,

@@ -16,13 +16,13 @@ import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/htt
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { IconPlayerPlay, IconSettings, useIcons } from 'twenty-ui/display';
+import { v4 } from 'uuid';
 import {
-  BODY_TYPES,
   HTTP_METHODS,
   type HttpRequestBody,
-  JSON_RESPONSE_PLACEHOLDER,
+  JSON_RESPONSE_PLACEHOLDER
 } from '../constants/HttpRequest';
 import { WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID } from '../constants/WorkflowHttpRequestTabListComponentId';
 import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
@@ -33,8 +33,10 @@ import { BodyInput } from './BodyInput';
 import { HttpRequestExecutionResult } from './HttpRequestExecutionResult';
 import { HttpRequestTestVariableInput } from './HttpRequestTestVariableInput';
 import { KeyValuePairInput } from './KeyValuePairInput';
-import { isDefined } from 'twenty-shared/utils';
-import { type BodyType } from 'twenty-shared/workflow';
+import {
+  KeyValuePair,
+  useKeyValuePairs,
+} from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useKeyValuePairs';
 
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
@@ -119,13 +121,15 @@ export const WorkflowEditActionHttpRequest = ({
   const onBodyChange = (value: string | HttpRequestBody | undefined) => {
     handleFieldChange('body', value);
   };
-  const onBodyTypeChange = (value?: string) => {
-    if (!isDefined(value) || !BODY_TYPES.includes(value as BodyType)) return;
-    handleFieldChange('bodyType', value);
+  const onHeaderseChange = (value?: Record<string,string>) => {
+    handleFieldChange('headers', value);
   };
   const { testHttpRequest, isTesting, httpRequestTestData } =
     useTestHttpRequest(action.id);
 
+ const { pairs, setPairs } = useKeyValuePairs(
+    formData.headers as Record<string, string>,
+  );
   const handleTestRequest = async () => {
     if (actionOptions.readonly === true) {
       return;
@@ -187,22 +191,28 @@ export const WorkflowEditActionHttpRequest = ({
             />
 
             <KeyValuePairInput
+
               label="Headers Input"
               defaultValue={formData.headers}
               onChange={(value) => handleFieldChange('headers', value)}
               readonly={actionOptions.readonly}
               keyPlaceholder="Header name"
               valuePlaceholder="Header value"
+              uniqueNotEditableKey='content-type'
+              pairs={pairs}
+              setPairs={setPairs}
             />
 
             {isMethodWithBody(formData.method) && (
               <BodyInput
                 defaultValue={formData.body}
-                onChange={(value, isBodyType) =>
-                  isBodyType ? onBodyTypeChange(value) : onBodyChange(value)
+                onChange={(value, isHeaders) =>
+                  isHeaders ? onHeaderseChange(value as Record<string,string>) : onBodyChange(value)
                 }
                 readonly={actionOptions.readonly}
-                bodyType={formData?.bodyType}
+                headers={formData.headers}
+                setHeadersPairs={setPairs}
+
               />
             )}
 

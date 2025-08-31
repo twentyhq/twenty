@@ -24,5 +24,5 @@ export type {
   WorkflowRunStepInfos,
 } from './types/WorkflowRunStateStepInfos';
 export { StepStatus } from './types/WorkflowRunStateStepInfos';
-export { bodyParsersHttpRequestStep } from './utils/bodyParsersHttpRequestStep';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
+export { parseDataFromHeader } from './utils/parseDataFromHeader';

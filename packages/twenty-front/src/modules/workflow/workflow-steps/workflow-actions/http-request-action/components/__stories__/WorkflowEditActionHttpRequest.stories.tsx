@@ -48,14 +48,13 @@ const CONFIGURED_ACTION: WorkflowHttpRequestAction = {
       url: 'https://api.example.com/data',
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'content-type': 'application/json',
         Authorization: 'Bearer token123',
       },
       body: {
         name: 'Test',
         value: 123,
       },
-      bodyType: 'rawJson',
     },
     outputSchema: {},
     errorHandlingOptions: {
@@ -166,14 +165,13 @@ export const WithArrayStringBody: Story = {
           url: 'https://api.example.com/tags',
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'content-type': 'application/x-www-form-urlencoded',
           },
           body: `[
   "frontend",
   "backend",
   "database"
 ]`,
-          bodyType: 'keyValue',
         },
         outputSchema: {},
         errorHandlingOptions: {
@@ -217,14 +215,13 @@ export const WithObjectStringBody: Story = {
           url: 'https://api.example.com/tags',
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'content-type': 'application/x-www-form-urlencoded',
           },
           body: `{
   "hey": "frontend",
   "oh": "backend",
   "amazing": "database {{${MOCKED_STEP_ID}.salary}}"
 }`,
-          bodyType: 'keyValue',
         },
         outputSchema: {},
         errorHandlingOptions: {
@@ -274,14 +271,13 @@ export const WithArrayContainingNonStringVariablesBody: Story = {
           url: 'https://api.example.com/tags',
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'content-type': 'application/json',
           },
           body: `[
   "frontend",
   {{${MOCKED_STEP_ID}.salary}},
   "database"
 ]`,
-          bodyType: 'rawJson',
         },
         outputSchema: {},
         errorHandlingOptions: {
@@ -325,13 +321,12 @@ export const WithObjectContainingNonStringVariablesBody: Story = {
           url: 'https://api.example.com/tags',
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'content-type': 'application/json',
           },
           body: `{
   "speciality": "frontend",
   "salary": {{${MOCKED_STEP_ID}.salary}}
 }`,
-          bodyType: 'rawJson',
         },
         outputSchema: {},
         errorHandlingOptions: {
