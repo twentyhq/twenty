@@ -46,7 +46,7 @@ export const PageLayoutInitializationEffect = ({
               id: w.id,
               title: w.title,
               type: w.type,
-              graphType: w.graphType,
+              configuration: w.configuration,
               data: w.data,
             }));
             set(pageLayoutWidgetsState, widgets);

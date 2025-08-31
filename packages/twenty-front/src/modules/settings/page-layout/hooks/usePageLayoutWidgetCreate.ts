@@ -29,15 +29,18 @@ export const usePageLayoutWidgetCreate = () => {
       const widgetData = getDefaultWidgetData(graphType);
 
       const existingWidgetCount = pageLayoutWidgets.filter(
-        (w) => w.type === widgetType && w.graphType === graphType,
+        (w) =>
+          w.type === widgetType && w.configuration?.graphType === graphType,
       ).length;
       const title = getWidgetTitle(graphType, existingWidgetCount);
 
       const newWidget: Widget = {
         id: `widget-${uuidv4()}`,
         type: widgetType,
-        graphType,
         title,
+        configuration: {
+          graphType,
+        },
         data: widgetData,
       };
 

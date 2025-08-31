@@ -10,7 +10,6 @@ export type SavedPageLayout = {
     id: string;
     title: string;
     type: 'VIEW' | 'IFRAME' | 'FIELDS' | 'GRAPH';
-    graphType?: 'number' | 'gauge' | 'pie' | 'bar';
     gridPosition: {
       row: number;
       column: number;
@@ -18,7 +17,7 @@ export type SavedPageLayout = {
       columnSpan: number;
     };
     configuration?: Record<string, unknown>;
-    data?: any;
+    data?: any; // TODO: Remove when backend connected - data will be fetched dynamically
   }>;
 };
 

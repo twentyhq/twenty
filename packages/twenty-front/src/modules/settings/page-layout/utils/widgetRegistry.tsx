@@ -51,11 +51,16 @@ const widgetRenderers: Record<GraphSubType, WidgetRenderer> = {
 };
 
 export const renderWidget = (widget: Widget): ReactNode => {
-  if (widget.type !== 'GRAPH' || !widget.graphType) {
+  if (widget.type !== 'GRAPH') {
     return null;
   }
 
-  const renderer = widgetRenderers[widget.graphType];
+  const graphType = widget.configuration?.graphType as GraphSubType | undefined;
+  if (!graphType) {
+    return null;
+  }
+
+  const renderer = widgetRenderers[graphType];
   if (!renderer) {
     return null;
   }

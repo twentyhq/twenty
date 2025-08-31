@@ -10,9 +10,9 @@ export type Widget = {
   id: string;
   type: WidgetType;
   title: string;
-  // For GRAPH widgets, specify the chart type
-  graphType?: GraphSubType;
-  // Widget-specific data/configuration
+  // Widget-specific configuration
+  configuration?: Record<string, unknown>;
+  // Widget-specific data - TODO: Remove when backend connected
   data?: any;
 };
 
@@ -20,8 +20,10 @@ export const mockWidgets: Widget[] = [
   {
     id: 'widget-1',
     type: 'GRAPH',
-    graphType: 'number',
     title: 'Sales Pipeline',
+    configuration: {
+      graphType: 'number',
+    },
     data: {
       value: '1,234',
       trendPercentage: 12.5,
@@ -30,8 +32,10 @@ export const mockWidgets: Widget[] = [
   {
     id: 'widget-2',
     type: 'GRAPH',
-    graphType: 'gauge',
     title: 'Conversion Rate',
+    configuration: {
+      graphType: 'gauge',
+    },
     data: {
       value: 0.5,
       min: 0,
@@ -42,8 +46,10 @@ export const mockWidgets: Widget[] = [
   {
     id: 'widget-3',
     type: 'GRAPH',
-    graphType: 'pie',
     title: 'Lead Distribution',
+    configuration: {
+      graphType: 'pie',
+    },
     data: {
       items: [
         {
@@ -82,8 +88,10 @@ export const mockWidgets: Widget[] = [
   {
     id: 'widget-4',
     type: 'GRAPH',
-    graphType: 'bar',
     title: 'Monthly Performance',
+    configuration: {
+      graphType: 'bar',
+    },
     data: {
       items: [
         {

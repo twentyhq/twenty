@@ -7,14 +7,18 @@ describe('convertLayoutsToWidgets', () => {
       id: 'widget-1',
       title: 'Widget 1',
       type: 'GRAPH',
-      graphType: 'number',
+      configuration: {
+        graphType: 'number',
+      },
       data: { value: 100 },
     },
     {
       id: 'widget-2',
       title: 'Widget 2',
       type: 'GRAPH',
-      graphType: 'pie',
+      configuration: {
+        graphType: 'pie',
+      },
       data: { items: [] },
     },
   ];
