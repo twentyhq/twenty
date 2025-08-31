@@ -1,13 +1,19 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
 import { IconGripVertical, IconX } from 'twenty-ui/display';
+import { IconButton } from 'twenty-ui/input';
+import {
+  AnimatedPlaceholder,
+  AnimatedPlaceholderEmptyContainer,
+  AnimatedPlaceholderEmptySubTitle,
+  AnimatedPlaceholderEmptyTextContainer,
+  AnimatedPlaceholderEmptyTitle,
+  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+} from 'twenty-ui/layout';
 
-const StyledPlaceholderContainer = styled.div<{ $isEmpty?: boolean }>`
+const StyledPlaceholderContainer = styled.div<{ isEmpty?: boolean }>`
   background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid
-    ${({ theme, $isEmpty }) =>
-      $isEmpty ? theme.border.color.light : theme.border.color.medium};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-sizing: border-box;
   display: flex;
@@ -16,17 +22,10 @@ const StyledPlaceholderContainer = styled.div<{ $isEmpty?: boolean }>`
   position: relative;
   width: 100%;
   padding: ${({ theme }) => theme.spacing(4)};
-  ${({ $isEmpty, theme }) =>
-    $isEmpty &&
-    `
-    border-style: solid;
-    cursor: pointer;
 
-    &:hover {
-      background: ${theme.background.tertiary};
-      border-color: ${theme.border.color.medium};
-    }
-  `}
+  &:hover {
+    cursor: ${({ isEmpty }) => (isEmpty ? 'pointer' : 'default')};
+  }
 `;
 
 const StyledHeader = styled.div`
@@ -35,7 +34,7 @@ const StyledHeader = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledDragHandle = styled.div`
+const StyledDragHandleButton = styled(IconButton)`
   cursor: grab;
   display: flex;
   align-items: center;
@@ -54,36 +53,12 @@ const StyledTitle = styled.span`
   user-select: none;
 `;
 
-const StyledCloseButton = styled.button`
-  background: transparent;
-  border: none;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  cursor: pointer;
-
-  &:hover {
-    color: ${({ theme }) => theme.font.color.secondary};
-  }
-`;
-
 const StyledContent = styled.div`
   align-items: center;
   display: flex;
   height: 100%;
   width: 100%;
   justify-content: center;
-`;
-
-const StyledEmptyState = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledEmptyText = styled.span`
-  font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
 type PageLayoutWidgetPlaceholderProps = {
@@ -99,22 +74,32 @@ export const PageLayoutWidgetPlaceholder = ({
   children,
   isEmpty = false,
 }: PageLayoutWidgetPlaceholderProps) => {
-  const theme = useTheme();
-
   if (isEmpty) {
     return (
-      <StyledPlaceholderContainer $isEmpty={true}>
+      <StyledPlaceholderContainer isEmpty>
         <StyledHeader>
-          <StyledDragHandle className="drag-handle">
-            <IconGripVertical size={16} color={theme.border.color.light} />
-          </StyledDragHandle>
+          <IconButton
+            Icon={IconGripVertical}
+            variant="tertiary"
+            size="small"
+            disabled
+          />
           <StyledTitle>Add Widget</StyledTitle>
         </StyledHeader>
-        <StyledContent>
-          <StyledEmptyState>
-            <StyledEmptyText>Click to add a widget</StyledEmptyText>
-          </StyledEmptyState>
-        </StyledContent>
+        <AnimatedPlaceholderEmptyContainer
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
+        >
+          <AnimatedPlaceholder type="noWidgets" />
+          <AnimatedPlaceholderEmptyTextContainer>
+            <AnimatedPlaceholderEmptyTitle>
+              No widgets yet
+            </AnimatedPlaceholderEmptyTitle>
+            <AnimatedPlaceholderEmptySubTitle>
+              Click to add your first widget
+            </AnimatedPlaceholderEmptySubTitle>
+          </AnimatedPlaceholderEmptyTextContainer>
+        </AnimatedPlaceholderEmptyContainer>
       </StyledPlaceholderContainer>
     );
   }
@@ -122,14 +107,20 @@ export const PageLayoutWidgetPlaceholder = ({
   return (
     <StyledPlaceholderContainer>
       <StyledHeader>
-        <StyledDragHandle className="drag-handle">
-          <IconGripVertical size={16} color={theme.border.color.strong} />
-        </StyledDragHandle>
+        <StyledDragHandleButton
+          Icon={IconGripVertical}
+          className="drag-handle"
+          variant="tertiary"
+          size="small"
+        />
         <StyledTitle>{title}</StyledTitle>
         {onRemove && (
-          <StyledCloseButton onClick={onRemove}>
-            <IconX size={16} />
-          </StyledCloseButton>
+          <IconButton
+            onClick={onRemove}
+            Icon={IconX}
+            variant="tertiary"
+            size="small"
+          />
         )}
       </StyledHeader>
       <StyledContent>{children}</StyledContent>

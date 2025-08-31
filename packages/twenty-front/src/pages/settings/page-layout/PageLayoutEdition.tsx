@@ -68,7 +68,7 @@ const StyledGridOverlay = styled.div<{ isDragSelecting?: boolean }>`
   bottom: ${({ theme }) => theme.spacing(2)};
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-auto-rows: 50px;
+  grid-auto-rows: 55px;
   gap: ${({ theme }) => theme.spacing(2)};
   pointer-events: ${({ isDragSelecting }) =>
     isDragSelecting ? 'auto' : 'none'};
@@ -374,7 +374,7 @@ export const PageLayoutEdition = () => {
             layouts={isEmptyState ? emptyLayout : currentLayouts}
             breakpoints={PAGE_LAYOUT_CONFIG.breakpoints}
             cols={PAGE_LAYOUT_CONFIG.columns}
-            rowHeight={50}
+            rowHeight={55}
             maxCols={12}
             containerPadding={[0, 0]}
             margin={[8, 8]}
