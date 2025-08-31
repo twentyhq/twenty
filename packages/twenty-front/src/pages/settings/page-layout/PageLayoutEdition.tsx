@@ -81,10 +81,17 @@ const StyledGridOverlay = styled.div<{ isDragSelecting?: boolean }>`
 
 const StyledGridCell = styled.div<{ isSelected?: boolean }>`
   background: ${({ isSelected, theme }) =>
-    isSelected ? theme.adaptiveColors.blue3 : 'transparent'};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  transition: background-color 0.1s ease;
+    isSelected ? theme.adaptiveColors.blue1 : 'transparent'};
+  border: 1px solid
+    ${({ theme, isSelected }) =>
+      isSelected ? theme.adaptiveColors.blue3 : theme.border.color.light};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme.background.transparent.lighter};
+    border-color: ${({ theme }) => theme.border.color.medium};
+  }
 `;
 
 type ExtendedResponsiveProps = ResponsiveProps & {
