@@ -117,7 +117,7 @@ export const WorkflowEditActionHttpRequest = ({
   const onBodyChange = (value: string | HttpRequestBody | undefined) => {
     handleFieldChange('body', value);
   };
-  const onHeaderseChange = (value?: Record<string, string>) => {
+  const onHeadersChange = (value?: Record<string, string>) => {
     handleFieldChange('headers', value);
   };
   const { testHttpRequest, isTesting, httpRequestTestData } =
@@ -203,7 +203,7 @@ export const WorkflowEditActionHttpRequest = ({
                 defaultValue={formData.body}
                 onChange={(value, isHeaders) =>
                   isHeaders
-                    ? onHeaderseChange(value as Record<string, string>)
+                    ? onHeadersChange(value as Record<string, string>)
                     : onBodyChange(value)
                 }
                 readonly={actionOptions.readonly}
