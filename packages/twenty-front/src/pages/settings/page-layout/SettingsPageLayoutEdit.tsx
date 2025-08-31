@@ -6,42 +6,35 @@ import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
 } from '@/settings/page-layout/constants/PageLayoutBreakpoints';
+import { usePageLayoutDragSelection } from '@/settings/page-layout/hooks/usePageLayoutDragSelection';
 import { usePageLayoutFormState } from '@/settings/page-layout/hooks/usePageLayoutFormState';
+import { usePageLayoutGrid } from '@/settings/page-layout/hooks/usePageLayoutGrid';
+import { usePageLayoutHandleLayoutChange } from '@/settings/page-layout/hooks/usePageLayoutHandleLayoutChange';
+import { usePageLayoutInitialize } from '@/settings/page-layout/hooks/usePageLayoutInitialize';
 import { usePageLayoutSaveHandler } from '@/settings/page-layout/hooks/usePageLayoutSaveHandler';
-import {
-  type GraphSubType,
-  type Widget,
-} from '@/settings/page-layout/mocks/mockWidgets';
-import { calculateGridBoundsFromSelectedCells } from '@/settings/page-layout/utils/calculateGridBoundsFromSelectedCells';
+import { usePageLayoutSidePanel } from '@/settings/page-layout/hooks/usePageLayoutSidePanel';
+import { usePageLayoutWidgetCreate } from '@/settings/page-layout/hooks/usePageLayoutWidgetCreate';
+import { usePageLayoutWidgetDelete } from '@/settings/page-layout/hooks/usePageLayoutWidgetDelete';
 import { calculateTotalGridRows } from '@/settings/page-layout/utils/calculateTotalGridRows';
 import { generateCellId } from '@/settings/page-layout/utils/generateCellId';
-import {
-  getDefaultWidgetData,
-  getWidgetSize,
-  getWidgetTitle,
-} from '@/settings/page-layout/utils/getDefaultWidgetData';
-import { getDefaultWidgetPosition } from '@/settings/page-layout/utils/getDefaultWidgetPosition';
 import { renderWidget } from '@/settings/page-layout/utils/widgetRegistry';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef } from 'react';
 import {
   Responsive,
   WidthProvider,
-  type Layout,
   type Layouts,
   type ResponsiveProps,
 } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import { FormProvider } from 'react-hook-form';
 import 'react-resizable/css/styles.css';
-import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { v4 as uuidv4 } from 'uuid';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledGridContainer = styled.div`
@@ -89,7 +82,7 @@ const StyledGridOverlay = styled.div<{
 const StyledActionButtonContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledGridCell = styled.div<{ isSelected?: boolean }>`
@@ -124,145 +117,31 @@ export const SettingsPageLayoutEdit = () => {
   const { handleSave: saveToStorage } = usePageLayoutSaveHandler();
   const { setValue, handleSubmit } = formMethods;
 
-  // Local state for UI interactions
-  const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
+  usePageLayoutInitialize(existingLayout);
+
+  const {
+    pageLayoutCurrentBreakpoint,
+    setPageLayoutCurrentBreakpoint,
+    pageLayoutSelectedCells,
+    pageLayoutCurrentLayouts,
+    pageLayoutWidgets,
+    pageLayoutSidePanelOpen,
+  } = usePageLayoutGrid();
+
+  const {
+    handleDragSelectionStart,
+    handleDragSelectionChange,
+    handleDragSelectionEnd,
+  } = usePageLayoutDragSelection();
+
+  const { handleOpenSidePanel, handleCloseSidePanel } =
+    usePageLayoutSidePanel();
+
+  const { handleCreateWidget } = usePageLayoutWidgetCreate();
+  const { handleRemoveWidget } = usePageLayoutWidgetDelete();
+  const { handleLayoutChange } = usePageLayoutHandleLayoutChange();
+
   const gridContainerRef = useRef<HTMLDivElement>(null);
-  const [selectedCells, setSelectedCells] = useState<Set<string>>(new Set());
-  const [currentBreakpoint, setCurrentBreakpoint] =
-    useState<PageLayoutBreakpoint>('desktop');
-  const [draggedArea, setDraggedArea] = useState<{
-    x: number;
-    y: number;
-    w: number;
-    h: number;
-  } | null>(null);
-
-  const [pageLayoutWidgets, setPageLayoutWidgets] = useState<Widget[]>(() => {
-    if (isDefined(existingLayout)) {
-      return existingLayout.widgets.map((w) => ({
-        id: w.id,
-        title: w.title,
-        type: w.type,
-        graphType: w.graphType,
-        data: w.data,
-      }));
-    }
-    return [];
-  });
-
-  const [currentLayouts, setCurrentLayouts] = useState<Layouts>(() => {
-    if (isDefined(existingLayout)) {
-      const layouts = existingLayout.widgets.map((w) => ({
-        i: w.id,
-        x: w.gridPosition.column,
-        y: w.gridPosition.row,
-        w: w.gridPosition.columnSpan,
-        h: w.gridPosition.rowSpan,
-      }));
-      return {
-        desktop: layouts,
-        mobile: layouts.map((l) => ({ ...l, w: 1, x: 0 })),
-      };
-    }
-    return { desktop: [], mobile: [] };
-  });
-
-  const handleLayoutChange = (_: Layout[], allLayouts: Layouts) => {
-    setCurrentLayouts(allLayouts);
-  };
-
-  const handleOpenSidePanel = () => {
-    setIsSidePanelOpen(true);
-  };
-
-  const handleCloseSidePanel = () => {
-    setIsSidePanelOpen(false);
-    setDraggedArea(null);
-  };
-
-  const handleCreateWidget = (widgetType: 'GRAPH', graphType: GraphSubType) => {
-    const widgetData = getDefaultWidgetData(graphType);
-
-    const existingWidgetCount = pageLayoutWidgets.filter(
-      (w) => w.type === widgetType && w.graphType === graphType,
-    ).length;
-    const title = getWidgetTitle(graphType, existingWidgetCount);
-
-    const newWidget: Widget = {
-      id: `widget-${uuidv4()}`,
-      type: widgetType,
-      graphType,
-      title,
-      data: widgetData,
-    };
-
-    const defaultSize = getWidgetSize(graphType);
-    const position = getDefaultWidgetPosition(draggedArea, defaultSize);
-
-    const newLayout = {
-      i: newWidget.id,
-      x: position.x,
-      y: position.y,
-      w: position.w,
-      h: position.h,
-    };
-
-    const updatedWidgets = [...pageLayoutWidgets, newWidget];
-    setPageLayoutWidgets(updatedWidgets);
-
-    const updatedLayouts = {
-      desktop: [...(currentLayouts.desktop || []), newLayout],
-      mobile: [...(currentLayouts.mobile || []), { ...newLayout, w: 1, x: 0 }],
-    };
-    setCurrentLayouts(updatedLayouts);
-
-    setDraggedArea(null);
-  };
-
-  const handleRemoveWidget = (widgetId: string) => {
-    const updatedWidgets = pageLayoutWidgets.filter((w) => w.id !== widgetId);
-    setPageLayoutWidgets(updatedWidgets);
-
-    const updatedLayouts = {
-      desktop: (currentLayouts.desktop || []).filter(
-        (layout) => layout.i !== widgetId,
-      ),
-      mobile: (currentLayouts.mobile || []).filter(
-        (layout) => layout.i !== widgetId,
-      ),
-    };
-    setCurrentLayouts(updatedLayouts);
-  };
-
-  const handleDragSelectionStart = () => {
-    setSelectedCells(new Set());
-  };
-
-  const handleDragSelectionChange = (cellId: string, selected: boolean) => {
-    setSelectedCells((prev) => {
-      const newSet = new Set(prev);
-      if (selected) {
-        newSet.add(cellId);
-      } else {
-        newSet.delete(cellId);
-      }
-      return newSet;
-    });
-  };
-
-  const handleDragSelectionEnd = () => {
-    if (selectedCells.size > 0) {
-      const draggedBounds = calculateGridBoundsFromSelectedCells(
-        Array.from(selectedCells),
-      );
-
-      if (draggedBounds !== null) {
-        setDraggedArea(draggedBounds);
-        setIsSidePanelOpen(true);
-        setSelectedCells(new Set());
-      }
-    }
-  };
 
   const isEmptyState = pageLayoutWidgets.length === 0;
   const layoutName = watchedValues.name;
@@ -273,8 +152,8 @@ export const SettingsPageLayoutEdit = () => {
   };
 
   const gridRows = useMemo(
-    () => calculateTotalGridRows(currentLayouts),
-    [currentLayouts],
+    () => calculateTotalGridRows(pageLayoutCurrentLayouts),
+    [pageLayoutCurrentLayouts],
   );
 
   return (
@@ -317,8 +196,8 @@ export const SettingsPageLayoutEdit = () => {
             <SaveButton
               onSave={() => {
                 const currentBreakpointLayout =
-                  currentLayouts[currentBreakpoint] ||
-                  currentLayouts.desktop ||
+                  pageLayoutCurrentLayouts[pageLayoutCurrentBreakpoint] ||
+                  pageLayoutCurrentLayouts.desktop ||
                   [];
 
                 const widgetsWithPositions = pageLayoutWidgets.map((widget) => {
@@ -346,13 +225,14 @@ export const SettingsPageLayoutEdit = () => {
       >
         <StyledGridContainer ref={gridContainerRef}>
           <StyledGridOverlay
-            isDragSelecting={currentBreakpoint !== 'mobile'}
-            breakpoint={currentBreakpoint}
+            isDragSelecting={pageLayoutCurrentBreakpoint !== 'mobile'}
+            breakpoint={pageLayoutCurrentBreakpoint}
           >
             {Array.from({
-              length: (currentBreakpoint === 'mobile' ? 1 : 12) * gridRows,
+              length:
+                (pageLayoutCurrentBreakpoint === 'mobile' ? 1 : 12) * gridRows,
             }).map((_, i) => {
-              const cols = currentBreakpoint === 'mobile' ? 1 : 12;
+              const cols = pageLayoutCurrentBreakpoint === 'mobile' ? 1 : 12;
               const col = i % cols;
               const row = Math.floor(i / cols);
               const cellId = generateCellId(col, row);
@@ -360,28 +240,30 @@ export const SettingsPageLayoutEdit = () => {
                 <StyledGridCell
                   key={i}
                   data-selectable-id={cellId}
-                  isSelected={selectedCells.has(cellId)}
+                  isSelected={pageLayoutSelectedCells.has(cellId)}
                 />
               );
             })}
           </StyledGridOverlay>
           <ResponsiveGridLayout
             className="layout"
-            layouts={isEmptyState ? emptyLayout : currentLayouts}
+            layouts={isEmptyState ? emptyLayout : pageLayoutCurrentLayouts}
             breakpoints={PAGE_LAYOUT_CONFIG.breakpoints}
             cols={PAGE_LAYOUT_CONFIG.columns}
             rowHeight={55}
             maxCols={12}
             containerPadding={[0, 0]}
             margin={[8, 8]}
-            isDraggable={currentBreakpoint !== 'mobile'}
-            isResizable={currentBreakpoint !== 'mobile'}
+            isDraggable={pageLayoutCurrentBreakpoint !== 'mobile'}
+            isResizable={pageLayoutCurrentBreakpoint !== 'mobile'}
             draggableHandle=".drag-handle"
             compactType="vertical"
             preventCollision={false}
             onLayoutChange={handleLayoutChange}
             onBreakpointChange={(newBreakpoint) =>
-              setCurrentBreakpoint(newBreakpoint as PageLayoutBreakpoint)
+              setPageLayoutCurrentBreakpoint(
+                newBreakpoint as PageLayoutBreakpoint,
+              )
             }
           >
             {isEmptyState ? (
@@ -401,7 +283,7 @@ export const SettingsPageLayoutEdit = () => {
               ))
             )}
           </ResponsiveGridLayout>
-          {currentBreakpoint !== 'mobile' && (
+          {pageLayoutCurrentBreakpoint !== 'mobile' && (
             <DragSelect
               selectableItemsContainerRef={gridContainerRef}
               onDragSelectionStart={handleDragSelectionStart}
@@ -411,7 +293,7 @@ export const SettingsPageLayoutEdit = () => {
           )}
         </StyledGridContainer>
         <PageLayoutSidePanel
-          isOpen={isSidePanelOpen}
+          isOpen={pageLayoutSidePanelOpen}
           onClose={handleCloseSidePanel}
           onCreateWidget={handleCreateWidget}
         />
