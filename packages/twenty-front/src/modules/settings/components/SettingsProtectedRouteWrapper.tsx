@@ -31,7 +31,9 @@ export const SettingsProtectedRouteWrapper = ({
     return null;
   }
 
-  // TODO: this should be part of PageChangeEffect as otherwise we will have multiple sources of redirection
+  // TODO: this should be part of PageChangeEffect as otherwise we will have multiple sources of redirection that can:
+  // - conflict (race conditions)
+  // - degrade performance as we will redirect multiple times
   if ((requiredFeatureFlag && !requiredFeatureFlagEnabled) || !hasPermission) {
     return <Navigate to={getSettingsPath(SettingsPath.ProfilePage)} replace />;
   }
