@@ -20,7 +20,7 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { savedPageLayoutsState } from './states/savedPageLayoutsState';
+import { savedPageLayoutsState } from '@/settings/page-layout/states/savedPageLayoutsState';
 
 const StyledTableRow = styled(TableRow)`
   grid-template-columns: 180px 120px 100px 36px 36px;

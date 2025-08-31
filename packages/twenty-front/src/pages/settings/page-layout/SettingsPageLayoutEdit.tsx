@@ -1,5 +1,22 @@
 import { SaveButton } from '@/settings/components/SaveAndCancelButtons/SaveButton';
 import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPageFullWidthContainer';
+import { PageLayoutSidePanel } from '@/settings/page-layout/components/PageLayoutSidePanel';
+import { PageLayoutWidgetPlaceholder } from '@/settings/page-layout/components/PageLayoutWidgetPlaceholder';
+import {
+  PAGE_LAYOUT_CONFIG,
+  type PageLayoutBreakpoint,
+} from '@/settings/page-layout/constants/PageLayoutBreakpoints';
+import { usePageLayoutForm } from '@/settings/page-layout/hooks/usePageLayoutForm';
+import {
+  type GraphSubType,
+  type Widget,
+} from '@/settings/page-layout/mocks/mockWidgets';
+import {
+  getDefaultWidgetData,
+  getWidgetSize,
+  getWidgetTitle,
+} from '@/settings/page-layout/utils/getDefaultWidgetData';
+import { renderWidget } from '@/settings/page-layout/utils/widgetRegistry';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -21,20 +38,6 @@ import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { v4 as uuidv4 } from 'uuid';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
-import { PageLayoutSidePanel } from './components/PageLayoutSidePanel';
-import { PageLayoutWidgetPlaceholder } from './components/PageLayoutWidgetPlaceholder';
-import {
-  PAGE_LAYOUT_CONFIG,
-  type PageLayoutBreakpoint,
-} from './constants/PageLayoutBreakpoints';
-import { usePageLayoutForm } from './hooks/usePageLayoutForm';
-import { type GraphSubType, type Widget } from './mocks/mockWidgets';
-import {
-  getDefaultWidgetData,
-  getWidgetSize,
-  getWidgetTitle,
-} from './utils/getDefaultWidgetData';
-import { renderWidget } from './utils/widgetRegistry';
 
 const StyledGridContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -108,7 +111,7 @@ const ResponsiveGridLayout = WidthProvider(
   Responsive,
 ) as React.ComponentType<ExtendedResponsiveProps>;
 
-export const PageLayoutEdition = () => {
+export const SettingsPageLayoutEdit = () => {
   const { t } = useLingui();
   const {
     formMethods,

@@ -293,10 +293,12 @@ const SettingsPageLayouts = lazy(() =>
   })),
 );
 
-const PageLayoutEdition = lazy(() =>
-  import('~/pages/settings/page-layout/PageLayoutEdition').then((module) => ({
-    default: module.PageLayoutEdition,
-  })),
+const SettingsPageLayoutEdit = lazy(() =>
+  import('~/pages/settings/page-layout/SettingsPageLayoutEdit').then(
+    (module) => ({
+      default: module.SettingsPageLayoutEdit,
+    }),
+  ),
 );
 
 const SettingsSecurity = lazy(() =>
@@ -613,11 +615,11 @@ export const SettingsRoutes = ({
       <Route path={SettingsPath.PageLayout} element={<SettingsPageLayouts />} />
       <Route
         path={SettingsPath.PageLayoutNew}
-        element={<PageLayoutEdition />}
+        element={<SettingsPageLayoutEdit />}
       />
       <Route
         path={SettingsPath.PageLayoutEdit}
-        element={<PageLayoutEdition />}
+        element={<SettingsPageLayoutEdit />}
       />
       <Route
         element={
