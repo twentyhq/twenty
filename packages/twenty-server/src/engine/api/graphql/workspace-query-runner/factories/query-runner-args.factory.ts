@@ -191,13 +191,14 @@ export class QueryRunnerArgsFactory {
             case FieldMetadataType.RICH_TEXT_V2:
             case FieldMetadataType.LINKS:
             case FieldMetadataType.EMAILS: {
-              const transformedValue =
-                await this.recordInputTransformerService.transformFieldValue(
-                  fieldMetadata.type,
-                  value,
-                );
+              const transformedRecord =
+                await this.recordInputTransformerService.process({
+                  recordInput: { [key]: value },
+                  objectMetadataMapItem:
+                    options.objectMetadataItemWithFieldMaps,
+                });
 
-              return [key, transformedValue];
+              return [key, transformedRecord[key]];
             }
             default:
               return [key, value];
