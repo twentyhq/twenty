@@ -247,17 +247,17 @@ export const WithObjectStringBody: Story = {
 
     const textboxes = await waitFor(() => {
       const elements = canvas.getAllByRole('textbox');
-      expect(elements.length).toBe(14);
+      expect(elements.length).toBe(12);
       return elements;
     });
 
-    expect(textboxes[5]).toHaveTextContent('hey');
-    expect(textboxes[7]).toHaveTextContent('oh');
-    expect(textboxes[9]).toHaveTextContent('amazing');
+    expect(textboxes[3]).toHaveTextContent('hey');
+    expect(textboxes[5]).toHaveTextContent('oh');
+    expect(textboxes[7]).toHaveTextContent('amazing');
 
-    expect(textboxes[6]).toHaveTextContent('frontend');
-    expect(textboxes[8]).toHaveTextContent('backend');
-    expect(textboxes[10]).toHaveTextContent('database Salary');
+    expect(textboxes[4]).toHaveTextContent('frontend');
+    expect(textboxes[6]).toHaveTextContent('backend');
+    expect(textboxes[8]).toHaveTextContent('database Salary');
   },
 };
 
@@ -304,7 +304,7 @@ export const WithArrayContainingNonStringVariablesBody: Story = {
     await waitFor(() => {
       const textboxes = canvas.getAllByRole('textbox');
 
-      expect(textboxes[5]).toHaveTextContent(
+      expect(textboxes[3]).toHaveTextContent(
         '[ "frontend", Salary, "database"]',
       );
     });
@@ -353,7 +353,7 @@ export const WithObjectContainingNonStringVariablesBody: Story = {
     await waitFor(() => {
       const textboxes = canvas.getAllByRole('textbox');
 
-      expect(textboxes[5]).toHaveTextContent(
+      expect(textboxes[3]).toHaveTextContent(
         '{ "speciality": "frontend", "salary": Salary}',
       );
     });
