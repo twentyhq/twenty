@@ -7,10 +7,9 @@ import {
 export const getBodyTypeFromHeaders = (
   headers?: Record<string, string>,
 ): BodyType | null => {
-  if (!isDefined(headers)||!isDefined(headers["content-type"])) return null;
+  if (!isDefined(headers) || !isDefined(headers['content-type'])) return null;
 
-  const contentType = headers["content-type"];
-
+  const contentType = headers['content-type'];
 
   const match = Object.entries(CONTENT_TYPE_VALUES_HTTP_REQUEST).find(
     ([bodyTypeKey, contentTypeVal]) =>
@@ -18,5 +17,4 @@ export const getBodyTypeFromHeaders = (
   );
 
   return isDefined(match) ? (match[0] as BodyType) : null;
-
 };

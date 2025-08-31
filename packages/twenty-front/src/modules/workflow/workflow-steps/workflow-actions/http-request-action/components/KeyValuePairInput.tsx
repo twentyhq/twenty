@@ -1,6 +1,7 @@
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { type KeyValuePair } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useKeyValuePairs';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -28,12 +29,6 @@ const StyledKeyValueContainer = styled.div<{ readonly: boolean | undefined }>`
         `};
 `;
 
-export type KeyValuePair = {
-  id: string;
-  key: string;
-  value: string;
-};
-
 export type KeyValuePairInputProps = {
   label?: string;
   defaultValue?: Record<string, string> | Array<string>;
@@ -42,9 +37,8 @@ export type KeyValuePairInputProps = {
   keyPlaceholder?: string;
   valuePlaceholder?: string;
   uniqueNotEditableKey?: string;
-  pairs:KeyValuePair[];
-  setPairs:(value:KeyValuePair[])=>void
-
+  pairs: KeyValuePair[];
+  setPairs: (value: KeyValuePair[]) => void;
 };
 
 export const KeyValuePairInput = ({
@@ -55,10 +49,8 @@ export const KeyValuePairInput = ({
   valuePlaceholder = 'Value',
   uniqueNotEditableKey,
   pairs,
-  setPairs
+  setPairs,
 }: KeyValuePairInputProps) => {
-  
-
   const handlePairChange = (
     pairId: string,
     field: 'key' | 'value',
@@ -66,12 +58,11 @@ export const KeyValuePairInput = ({
   ) => {
     const index = pairs.findIndex((p) => p.id === pairId);
     const newPairs = [...pairs];
-if (field === "key" && newValue.trim() === uniqueNotEditableKey) {
-    newPairs.splice(index, 1);
-}
-else{
-    newPairs[index] = { ...newPairs[index], [field]: newValue };
-}
+    if (field === 'key' && newValue.trim() === uniqueNotEditableKey) {
+      newPairs.splice(index, 1);
+    } else {
+      newPairs[index] = { ...newPairs[index], [field]: newValue };
+    }
     if (
       index === pairs.length - 1 &&
       (field === 'key' || field === 'value') &&
@@ -81,12 +72,9 @@ else{
     }
 
     setPairs(newPairs);
-   
-    
- 
+
     const record = newPairs.reduce(
       (acc, { key, value }) => {
-        
         if (key.trim().length > 0) {
           acc[key] = value;
         }
@@ -101,12 +89,14 @@ else{
   const handleRemovePair = (pairId: string) => {
     const pairToRemove = pairs.find((p) => p.id === pairId);
 
-
-  if (pairToRemove?.key.trim() === uniqueNotEditableKey) {
-    return;
-  }
+    if (pairToRemove?.key.trim() === uniqueNotEditableKey) {
+      return;
+    }
     const newPairs = pairs.filter((pair) => pair.id !== pairId);
-    if (newPairs.length === 0||(newPairs.length===1&&newPairs[0].key.trim()===uniqueNotEditableKey)) {
+    if (
+      newPairs.length === 0 ||
+      (newPairs.length === 1 && newPairs[0].key.trim() === uniqueNotEditableKey)
+    ) {
       newPairs.push({ id: v4(), key: '', value: '' });
     }
     setPairs(newPairs);
@@ -130,7 +120,7 @@ else{
       <StyledContainer>
         {pairs.map(
           (pair) =>
-            pair.key!==uniqueNotEditableKey&&(
+            pair.key !== uniqueNotEditableKey && (
               <StyledKeyValueContainer key={pair.id} readonly={readonly}>
                 <FormTextFieldInput
                   placeholder={keyPlaceholder}

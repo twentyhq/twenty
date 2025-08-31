@@ -1,6 +1,4 @@
-import { isDefined } from '@/utils';
-import { CONTENT_TYPE_VALUES_HTTP_REQUEST } from '@/workflow/constants/contentTypeValuesHttpRequest';
-import { BodyType } from '../types/workflowHttpRequestStep';
+import { BodyType } from '@/workflow/types/workflowHttpRequestStep';
 
 type InputData = Record<string, any> | string;
 
@@ -49,32 +47,19 @@ const parseText = (data: InputData): string => {
     .join('\n');
 };
 
-export const parseDataFromHeader = (
+export const parseDataFromBodyType = (
+  bodyType: BodyType | undefined,
   data: InputData,
-  headers?:Record<string,string>
 ) => {
-  if(!isDefined(headers)||!isDefined(headers["content-type"]))return parseJson(data);
-  // if (bodyType === undefined) return parseJson(data);
-  // switch (bodyType) {
-  //   case 'keyValue':
-  //     return parseUrlEncoded(data);
-  //   case 'FormData':
-  //     return parseFormData(data);
-  //   case 'rawJson':
-  //     return parseJson(data);
-  //   case 'Text':
-  //     return parseText(data);
-  //   default:
-  //     return parseJson(data);
-  // }
-  switch (headers["content-type"]) {
-    case CONTENT_TYPE_VALUES_HTTP_REQUEST.keyValue:
+  if (bodyType === undefined) return parseJson(data);
+  switch (bodyType) {
+    case 'keyValue':
       return parseUrlEncoded(data);
-    case CONTENT_TYPE_VALUES_HTTP_REQUEST.FormData:
+    case 'FormData':
       return parseFormData(data);
-    case CONTENT_TYPE_VALUES_HTTP_REQUEST.rawJson:
+    case 'rawJson':
       return parseJson(data);
-    case CONTENT_TYPE_VALUES_HTTP_REQUEST.Text:
+    case 'Text':
       return parseText(data);
     default:
       return parseJson(data);
