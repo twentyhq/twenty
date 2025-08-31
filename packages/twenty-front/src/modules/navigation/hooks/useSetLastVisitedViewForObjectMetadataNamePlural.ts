@@ -1,7 +1,7 @@
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
-import { type View } from '@/views/types/View';
+import { coreViewsState } from '@/views/states/coreViewState';
+import { CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -15,9 +15,11 @@ export const useSetLastVisitedViewForObjectMetadataNamePlural = () => {
         objectNamePlural: string;
         viewId: string;
       }) => {
-        const views = snapshot.getLoadable(prefetchViewsState).getValue();
+        const views = snapshot.getLoadable(coreViewsState).getValue();
 
-        const view = views.find((view: View) => view.id === viewId);
+        const view = views.find(
+          (view: CoreViewWithRelations) => view.id === viewId,
+        );
 
         const objectMetadataItems = snapshot
           .getLoadable(objectMetadataItemsState)

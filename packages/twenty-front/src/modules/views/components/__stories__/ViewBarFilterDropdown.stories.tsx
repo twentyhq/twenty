@@ -7,7 +7,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
 import { ViewBarFilterDropdown } from '@/views/components/ViewBarFilterDropdown';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -51,13 +50,11 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
         instanceId,
       );
 
-      const setPrefetchViews = useSetRecoilState(prefetchViewsState);
       const setCoreViews = useSetRecoilState(coreViewsState);
 
       const mockView = mockedViewsData[0];
       const mockCoreView = mockedCoreViewsData[0];
 
-      setPrefetchViews([mockView]);
       setCoreViews([mockCoreView]);
 
       const setCurrentViewId = useSetRecoilComponentState(

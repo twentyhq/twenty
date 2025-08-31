@@ -3,7 +3,6 @@ import { renderHook } from '@testing-library/react';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups } from '@/views/hooks/useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups';
 import { coreViewsState } from '@/views/states/coreViewState';
@@ -90,7 +89,6 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
           contextStoreCurrentObjectMetadataNameSingular:
             mockObjectMetadataItemNameSingular,
           onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(prefetchViewsState, [mockView]);
             snapshot.set(coreViewsState, [mockCoreView]);
           },
         }),
@@ -148,7 +146,6 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
               mockView.id,
             );
 
-            snapshot.set(prefetchViewsState, []);
             snapshot.set(coreViewsState, []);
           },
         }),
@@ -191,9 +188,6 @@ describe('useApplyCurrentViewFilterGroupsToCurrentRecordFilterGroups', () => {
               mockView.id,
             );
 
-            snapshot.set(prefetchViewsState, [
-              { ...mockView, viewFilterGroups: [] },
-            ]);
             snapshot.set(coreViewsState, [
               { ...mockCoreView, viewFilterGroups: [] },
             ]);

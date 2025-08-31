@@ -1,9 +1,7 @@
 import { sortFavorites } from '@/favorites/utils/sortFavorites';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { coreViewsState } from '@/views/states/coreViewState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { convertCoreViewToView } from '@/views/utils/convertCoreViewToView';
 import { useRecoilValue } from 'recoil';
-import { FeatureFlagKey } from '~/generated/graphql';
 import { useFavoritesMetadata } from './useFavoritesMetadata';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 import { usePrefetchedFavoritesFoldersData } from './usePrefetchedFavoritesFoldersData';
@@ -17,14 +15,9 @@ export const useFavoritesByFolder = () => {
     favoriteRelationFields,
   } = useFavoritesMetadata();
 
-  const prefetchViews = useRecoilValue(prefetchViewsState);
   const coreViews = useRecoilValue(coreViewsState);
 
-  const isCoreViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CORE_VIEW_ENABLED,
-  );
-
-  const views = isCoreViewEnabled ? coreViews : prefetchViews;
+  const views = coreViews.map(convertCoreViewToView);
 
   const favoritesByFolder = favoriteFolders.map((folder) => ({
     folderId: folder.id,
