@@ -14,10 +14,11 @@ export const convertLayoutsToWidgets = (
   widgets: Widget[],
   layouts: Layouts,
 ): WidgetWithGridPosition[] => {
-  const lgLayouts = layouts.lg || layouts.desktop || [];
+  // Use desktop layout as primary, fallback to mobile if desktop not available
+  const activeLayouts = layouts.desktop || layouts.mobile || [];
 
   return widgets.map((widget) => {
-    const layout = lgLayouts.find((l) => l.i === widget.id);
+    const layout = activeLayouts.find((l) => l.i === widget.id);
     return {
       ...widget,
       gridPosition: {

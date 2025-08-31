@@ -21,7 +21,7 @@ describe('convertLayoutsToWidgets', () => {
 
   it('should map layout positions to widgets', () => {
     const layouts = {
-      lg: [
+      desktop: [
         { i: 'widget-1', x: 2, y: 3, w: 4, h: 5 },
         { i: 'widget-2', x: 6, y: 7, w: 8, h: 9 },
       ],
@@ -45,7 +45,7 @@ describe('convertLayoutsToWidgets', () => {
 
   it('should use defaults when layout not found', () => {
     const layouts = {
-      lg: [{ i: 'widget-1', x: 1, y: 1, w: 1, h: 1 }],
+      desktop: [{ i: 'widget-1', x: 1, y: 1, w: 1, h: 1 }],
     };
 
     const result = convertLayoutsToWidgets(mockWidgets, layouts);
@@ -58,17 +58,17 @@ describe('convertLayoutsToWidgets', () => {
     });
   });
 
-  it('should handle desktop key instead of lg', () => {
+  it('should handle mobile layout', () => {
     const layouts = {
-      desktop: [{ i: 'widget-1', x: 3, y: 4, w: 5, h: 6 }],
+      mobile: [{ i: 'widget-1', x: 0, y: 4, w: 1, h: 6 }],
     };
 
     const result = convertLayoutsToWidgets(mockWidgets, layouts);
 
     expect(result[0].gridPosition).toEqual({
-      column: 3,
+      column: 0,
       row: 4,
-      columnSpan: 5,
+      columnSpan: 1,
       rowSpan: 6,
     });
   });
