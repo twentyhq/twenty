@@ -12,17 +12,17 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { WorkflowActionFooter } from '@/workflow/workflow-steps/components/WorkflowActionFooter';
+import { useKeyValuePairs } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useKeyValuePairs';
 import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { IconPlayerPlay, IconSettings, useIcons } from 'twenty-ui/display';
-import { v4 } from 'uuid';
 import {
   HTTP_METHODS,
   type HttpRequestBody,
-  JSON_RESPONSE_PLACEHOLDER
+  JSON_RESPONSE_PLACEHOLDER,
 } from '../constants/HttpRequest';
 import { WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID } from '../constants/WorkflowHttpRequestTabListComponentId';
 import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
@@ -33,10 +33,6 @@ import { BodyInput } from './BodyInput';
 import { HttpRequestExecutionResult } from './HttpRequestExecutionResult';
 import { HttpRequestTestVariableInput } from './HttpRequestTestVariableInput';
 import { KeyValuePairInput } from './KeyValuePairInput';
-import {
-  KeyValuePair,
-  useKeyValuePairs,
-} from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useKeyValuePairs';
 
 type WorkflowEditActionHttpRequestProps = {
   action: WorkflowHttpRequestAction;
@@ -121,13 +117,13 @@ export const WorkflowEditActionHttpRequest = ({
   const onBodyChange = (value: string | HttpRequestBody | undefined) => {
     handleFieldChange('body', value);
   };
-  const onHeaderseChange = (value?: Record<string,string>) => {
+  const onHeaderseChange = (value?: Record<string, string>) => {
     handleFieldChange('headers', value);
   };
   const { testHttpRequest, isTesting, httpRequestTestData } =
     useTestHttpRequest(action.id);
 
- const { pairs, setPairs } = useKeyValuePairs(
+  const { pairs, setPairs } = useKeyValuePairs(
     formData.headers as Record<string, string>,
   );
   const handleTestRequest = async () => {
@@ -191,14 +187,13 @@ export const WorkflowEditActionHttpRequest = ({
             />
 
             <KeyValuePairInput
-
               label="Headers Input"
               defaultValue={formData.headers}
               onChange={(value) => handleFieldChange('headers', value)}
               readonly={actionOptions.readonly}
               keyPlaceholder="Header name"
               valuePlaceholder="Header value"
-              uniqueNotEditableKey='content-type'
+              uniqueNotEditableKey="content-type"
               pairs={pairs}
               setPairs={setPairs}
             />
@@ -207,12 +202,13 @@ export const WorkflowEditActionHttpRequest = ({
               <BodyInput
                 defaultValue={formData.body}
                 onChange={(value, isHeaders) =>
-                  isHeaders ? onHeaderseChange(value as Record<string,string>) : onBodyChange(value)
+                  isHeaders
+                    ? onHeaderseChange(value as Record<string, string>)
+                    : onBodyChange(value)
                 }
                 readonly={actionOptions.readonly}
                 headers={formData.headers}
                 setHeadersPairs={setPairs}
-
               />
             )}
 

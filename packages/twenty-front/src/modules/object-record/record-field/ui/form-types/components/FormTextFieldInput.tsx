@@ -37,7 +37,6 @@ export const FormTextFieldInput = ({
   VariablePicker,
 }: FormTextFieldInputProps) => {
   const instanceId = useId();
-console.log("defaultValuedefaultValuedefaultValuedefaultValue",defaultValue);
 
   const editor = useTextVariableEditor({
     placeholder: placeholder ?? 'Enter text',

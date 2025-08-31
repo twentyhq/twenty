@@ -8,7 +8,7 @@ import {
   type HttpRequestBody,
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import {
-  KeyValuePair,
+  type KeyValuePair,
   useKeyValuePairs,
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useKeyValuePairs';
 import { getBodyTypeFromHeaders } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/getBodyTypeFromHeaders';
@@ -16,7 +16,7 @@ import { parseHttpJsonBodyWithoutVariablesOrThrow } from '@/workflow/workflow-st
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import styled from '@emotion/styled';
 import { isString } from '@sniptt/guards';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { type Dispatch, type SetStateAction, useState } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import {
   CONTENT_TYPE_VALUES_HTTP_REQUEST,
@@ -162,7 +162,10 @@ export const BodyInput = ({
           return newPairs;
         }
       });
-      if ((bodyTypeValue === 'FormData' || bodyTypeValue === 'keyValue')&&getBodyTypeFromHeaders(headers)!==bodyTypeValue) {
+      if (
+        (bodyTypeValue === 'FormData' || bodyTypeValue === 'keyValue') &&
+        getBodyTypeFromHeaders(headers) !== bodyTypeValue
+      ) {
         setPairs([
           {
             key: '',

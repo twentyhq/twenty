@@ -52,16 +52,17 @@ export const useHttpRequestForm = ({
 
     if (
       (field === 'method' && !isMethodWithBody(value as string)) ||
-      (field === 'headers' &&typeof value==='object' && formData.headers?.["content-type"]!== value?.["content-type"])
+      (field === 'headers' &&
+        typeof value === 'object' &&
+        formData.headers?.['content-type'] !== value?.['content-type'])
     ) {
       newFormData = { ...newFormData, body: undefined };
       if (field === 'method') {
-        const headersCopy={...formData.headers};
-        delete headersCopy?.["content-type"]
+        const headersCopy = { ...formData.headers };
+        delete headersCopy?.['content-type'];
         newFormData = { ...newFormData, headers: headersCopy };
       }
     }
-console.log("saved db newFormDatanewFormDatanewFormData",newFormData);
 
     setFormData(newFormData);
     saveAction(newFormData);

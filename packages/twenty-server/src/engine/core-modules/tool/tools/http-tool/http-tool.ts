@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import axios, { type AxiosRequestConfig } from 'axios';
 import {
   CONTENT_TYPE_VALUES_HTTP_REQUEST,
-  parseDataFromHeader,
+  parseDataFromBodyType,
 } from 'twenty-shared/workflow';
 
 import { HttpToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/http-tool/http-tool.schema';
@@ -31,7 +31,7 @@ export class HttpTool implements Tool {
       };
 
       if (isMethodForBody && body) {
-        axiosConfig.data = parseDataFromHeader(body, headers);
+        axiosConfig.data = parseDataFromBodyType(body, headers);
         if (
           isDefined(headersCopy) &&
           headersCopy['content-type'] ===
