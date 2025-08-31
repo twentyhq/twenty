@@ -26,8 +26,3 @@ export const savedPageLayoutsState = atom<SavedPageLayout[]>({
   key: 'savedPageLayoutsState',
   default: [],
 });
-
-export const currentEditingLayoutIdState = atom<string | null>({
-  key: 'currentEditingLayoutIdState',
-  default: null,
-});

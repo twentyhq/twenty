@@ -1,21 +1,22 @@
-import { SaveButton } from '@/settings/components/SaveAndCancelButtons/SaveButton';
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPageFullWidthContainer';
+import { PageLayoutInitializationEffect } from '@/settings/page-layout/components/PageLayoutInitializationEffect';
 import { PageLayoutSidePanel } from '@/settings/page-layout/components/PageLayoutSidePanel';
 import { PageLayoutWidgetPlaceholder } from '@/settings/page-layout/components/PageLayoutWidgetPlaceholder';
 import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
 } from '@/settings/page-layout/constants/PageLayoutBreakpoints';
+import { usePageLayoutDraftState } from '@/settings/page-layout/hooks/usePageLayoutDraftState';
 import { usePageLayoutDragSelection } from '@/settings/page-layout/hooks/usePageLayoutDragSelection';
-import { usePageLayoutFormState } from '@/settings/page-layout/hooks/usePageLayoutFormState';
 import { usePageLayoutGrid } from '@/settings/page-layout/hooks/usePageLayoutGrid';
 import { usePageLayoutHandleLayoutChange } from '@/settings/page-layout/hooks/usePageLayoutHandleLayoutChange';
-import { usePageLayoutInitialize } from '@/settings/page-layout/hooks/usePageLayoutInitialize';
 import { usePageLayoutSaveHandler } from '@/settings/page-layout/hooks/usePageLayoutSaveHandler';
 import { usePageLayoutSidePanel } from '@/settings/page-layout/hooks/usePageLayoutSidePanel';
 import { usePageLayoutWidgetCreate } from '@/settings/page-layout/hooks/usePageLayoutWidgetCreate';
 import { usePageLayoutWidgetDelete } from '@/settings/page-layout/hooks/usePageLayoutWidgetDelete';
 import { calculateTotalGridRows } from '@/settings/page-layout/utils/calculateTotalGridRows';
+import { convertLayoutsToWidgets } from '@/settings/page-layout/utils/convertLayoutsToWidgets';
 import { generateCellId } from '@/settings/page-layout/utils/generateCellId';
 import { renderWidget } from '@/settings/page-layout/utils/widgetRegistry';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -23,7 +24,7 @@ import { TitleInput } from '@/ui/input/components/TitleInput';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
   Responsive,
   WidthProvider,
@@ -31,10 +32,11 @@ import {
   type ResponsiveProps,
 } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
-import { FormProvider } from 'react-hook-form';
 import 'react-resizable/css/styles.css';
+import { useParams } from 'react-router-dom';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 const StyledGridContainer = styled.div`
@@ -111,13 +113,15 @@ const ResponsiveGridLayout = WidthProvider(
 
 export const SettingsPageLayoutEdit = () => {
   const { t } = useLingui();
-  const { formMethods, canSave, existingLayout, watchedValues } =
-    usePageLayoutFormState();
+  const { id } = useParams<{ id: string }>();
+  const isEditMode = id && id !== 'new';
 
-  const { handleSave: saveToStorage } = usePageLayoutSaveHandler();
-  const { setValue, handleSubmit } = formMethods;
+  const { pageLayoutDraft, setPageLayoutDraft, isDirty } =
+    usePageLayoutDraftState();
 
-  usePageLayoutInitialize(existingLayout);
+  const { savePageLayout } = usePageLayoutSaveHandler();
+  const navigateSettings = useNavigateSettings();
+  const [isSaving, setIsSaving] = useState(false);
 
   const {
     pageLayoutCurrentBreakpoint,
@@ -144,7 +148,6 @@ export const SettingsPageLayoutEdit = () => {
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
   const isEmptyState = pageLayoutWidgets.length === 0;
-  const layoutName = watchedValues.name;
 
   const emptyLayout: Layouts = {
     desktop: [{ i: 'empty-placeholder', x: 0, y: 0, w: 4, h: 4, static: true }],
@@ -156,10 +159,32 @@ export const SettingsPageLayoutEdit = () => {
     [pageLayoutCurrentLayouts],
   );
 
+  const handleCancel = () => {
+    navigateSettings(SettingsPath.PageLayout);
+  };
+
+  const handleSaveClick = async () => {
+    setIsSaving(true);
+    try {
+      const widgetsWithPositions = convertLayoutsToWidgets(
+        pageLayoutWidgets,
+        pageLayoutCurrentLayouts,
+      );
+
+      setPageLayoutDraft((prev) => ({
+        ...prev,
+        widgets: widgetsWithPositions,
+      }));
+
+      await savePageLayout(widgetsWithPositions);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
-    // @charlesBochet I know your opinion on react hook form -- happy to find alternatives in upcoming prs -- can we keep this for now?
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <FormProvider {...formMethods}>
+    <>
+      <PageLayoutInitializationEffect layoutId={id} isEditMode={!!isEditMode} />
       <SettingsPageFullWidthContainer
         links={[
           {
@@ -175,8 +200,10 @@ export const SettingsPageLayoutEdit = () => {
               <TitleInput
                 instanceId="page-layout-name-input"
                 placeholder={t`Layout Name`}
-                value={layoutName}
-                onChange={(value) => setValue('name', value)}
+                value={pageLayoutDraft.name}
+                onChange={(value) =>
+                  setPageLayoutDraft((prev) => ({ ...prev, name: value }))
+                }
                 sizeVariant="md"
               />
             ),
@@ -184,6 +211,16 @@ export const SettingsPageLayoutEdit = () => {
         ]}
         actionButton={
           <StyledActionButtonContainer>
+            <SaveAndCancelButtons
+              onSave={handleSaveClick}
+              onCancel={handleCancel}
+              isLoading={isSaving}
+              isSaveDisabled={
+                !isDirty ||
+                !pageLayoutDraft.name.trim() ||
+                pageLayoutWidgets.length === 0
+              }
+            />
             {!isEmptyState && (
               <Button
                 Icon={IconPlus}
@@ -193,33 +230,6 @@ export const SettingsPageLayoutEdit = () => {
                 onClick={handleOpenSidePanel}
               />
             )}
-            <SaveButton
-              onSave={() => {
-                const currentBreakpointLayout =
-                  pageLayoutCurrentLayouts[pageLayoutCurrentBreakpoint] ||
-                  pageLayoutCurrentLayouts.desktop ||
-                  [];
-
-                const widgetsWithPositions = pageLayoutWidgets.map((widget) => {
-                  const layout = currentBreakpointLayout.find(
-                    (l) => l.i === widget.id,
-                  );
-                  return {
-                    ...widget,
-                    gridPosition: {
-                      row: layout?.y || 0,
-                      column: layout?.x || 0,
-                      rowSpan: layout?.h || 2,
-                      columnSpan: layout?.w || 2,
-                    },
-                  };
-                });
-
-                setValue('widgets', widgetsWithPositions);
-                handleSubmit(saveToStorage)();
-              }}
-              disabled={!canSave || pageLayoutWidgets.length === 0}
-            />
           </StyledActionButtonContainer>
         }
       >
@@ -298,6 +308,6 @@ export const SettingsPageLayoutEdit = () => {
           onCreateWidget={handleCreateWidget}
         />
       </SettingsPageFullWidthContainer>
-    </FormProvider>
+    </>
   );
 };

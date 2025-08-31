@@ -1,13 +1,16 @@
 import { useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
+import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
+import { pageLayoutPersistedState } from '../states/pageLayoutPersistedState';
 import {
   savedPageLayoutsState,
   type SavedPageLayout,
 } from '../states/savedPageLayoutsState';
-import { type PageLayoutFormData } from './usePageLayoutFormState';
+
+type WidgetWithGridPosition = SavedPageLayout['widgets'][0];
 
 export const usePageLayoutSaveHandler = () => {
   const navigate = useNavigate();
@@ -16,22 +19,26 @@ export const usePageLayoutSaveHandler = () => {
   const [savedPageLayouts, setSavedPageLayouts] = useRecoilState(
     savedPageLayoutsState,
   );
+  const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
+  const setPageLayoutPersisted = useSetRecoilState(pageLayoutPersistedState);
 
   const existingLayout = isEditMode
     ? savedPageLayouts.find((layout) => layout.id === id)
     : undefined;
 
-  const handleSave = useCallback(
-    async (formData: PageLayoutFormData) => {
+  const savePageLayout = useCallback(
+    async (widgetsWithPositions?: WidgetWithGridPosition[]) => {
+      const widgets = widgetsWithPositions || pageLayoutDraft.widgets;
+
       const layoutToSave: SavedPageLayout = {
         id: isEditMode ? id : uuidv4(),
-        name: formData.name,
-        type: formData.type,
+        name: pageLayoutDraft.name,
+        type: pageLayoutDraft.type,
         createdAt: isEditMode
           ? existingLayout?.createdAt || new Date().toISOString()
           : new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        widgets: formData.widgets,
+        widgets,
       };
 
       setSavedPageLayouts((prev) => {
@@ -43,10 +50,20 @@ export const usePageLayoutSaveHandler = () => {
         return [...prev, layoutToSave];
       });
 
+      setPageLayoutPersisted(layoutToSave);
+
       navigate('/settings/page-layout');
     },
-    [isEditMode, id, existingLayout?.createdAt, setSavedPageLayouts, navigate],
+    [
+      isEditMode,
+      id,
+      existingLayout?.createdAt,
+      pageLayoutDraft,
+      setSavedPageLayouts,
+      setPageLayoutPersisted,
+      navigate,
+    ],
   );
 
-  return { handleSave };
+  return { savePageLayout };
 };

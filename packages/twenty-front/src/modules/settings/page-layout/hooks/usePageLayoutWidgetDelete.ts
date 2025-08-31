@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
-import { useRecoilState } from 'recoil';
-import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
+import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
+import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
 
 export const usePageLayoutWidgetDelete = () => {
   const [pageLayoutWidgets, setPageLayoutWidgets] = useRecoilState(
@@ -9,6 +10,7 @@ export const usePageLayoutWidgetDelete = () => {
   );
   const [pageLayoutCurrentLayouts, setPageLayoutCurrentLayouts] =
     useRecoilState(pageLayoutCurrentLayoutsState);
+  const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
 
   const handleRemoveWidget = useCallback(
     (widgetId: string) => {
@@ -24,12 +26,18 @@ export const usePageLayoutWidgetDelete = () => {
         ),
       };
       setPageLayoutCurrentLayouts(updatedLayouts);
+
+      setPageLayoutDraft((prev) => ({
+        ...prev,
+        widgets: prev.widgets.filter((w) => w.id !== widgetId),
+      }));
     },
     [
       pageLayoutWidgets,
       pageLayoutCurrentLayouts,
       setPageLayoutWidgets,
       setPageLayoutCurrentLayouts,
+      setPageLayoutDraft,
     ],
   );
 

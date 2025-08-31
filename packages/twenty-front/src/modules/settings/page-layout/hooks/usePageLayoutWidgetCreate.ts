@@ -1,10 +1,11 @@
 import { useCallback } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 import { type GraphSubType, type Widget } from '../mocks/mockWidgets';
-import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
+import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
+import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
 import {
   getDefaultWidgetData,
   getWidgetSize,
@@ -21,6 +22,7 @@ export const usePageLayoutWidgetCreate = () => {
   const [pageLayoutDraggedArea, setPageLayoutDraggedArea] = useRecoilState(
     pageLayoutDraggedAreaState,
   );
+  const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
 
   const handleCreateWidget = useCallback(
     (widgetType: 'GRAPH', graphType: GraphSubType) => {
@@ -65,6 +67,21 @@ export const usePageLayoutWidgetCreate = () => {
       };
       setPageLayoutCurrentLayouts(updatedLayouts);
 
+      const widgetWithPosition = {
+        ...newWidget,
+        gridPosition: {
+          row: position.y,
+          column: position.x,
+          rowSpan: position.h,
+          columnSpan: position.w,
+        },
+      };
+
+      setPageLayoutDraft((prev) => ({
+        ...prev,
+        widgets: [...prev.widgets, widgetWithPosition],
+      }));
+
       setPageLayoutDraggedArea(null);
     },
     [
@@ -74,6 +91,7 @@ export const usePageLayoutWidgetCreate = () => {
       setPageLayoutWidgets,
       setPageLayoutCurrentLayouts,
       setPageLayoutDraggedArea,
+      setPageLayoutDraft,
     ],
   );
 
