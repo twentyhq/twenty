@@ -60,23 +60,29 @@ const StyledGridContainer = styled.div`
   }
 `;
 
-const StyledGridOverlay = styled.div<{ isDragSelecting?: boolean }>`
+const StyledGridOverlay = styled.div<{
+  isDragSelecting?: boolean;
+  breakpoint: PageLayoutBreakpoint;
+}>`
   position: absolute;
   top: ${({ theme }) => theme.spacing(2)};
   left: ${({ theme }) => theme.spacing(2)};
   right: ${({ theme }) => theme.spacing(2)};
   bottom: ${({ theme }) => theme.spacing(2)};
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: ${({ breakpoint }) =>
+    breakpoint === 'mobile' ? '1fr' : 'repeat(12, 1fr)'};
   grid-auto-rows: 55px;
   gap: ${({ theme }) => theme.spacing(2)};
   pointer-events: ${({ isDragSelecting }) =>
     isDragSelecting ? 'auto' : 'none'};
   z-index: 0;
+`;
 
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-  }
+const StyledActionButtonContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 8px;
 `;
 
 const StyledGridCell = styled.div<{ isSelected?: boolean }>`
@@ -321,7 +327,7 @@ export const PageLayoutEdition = () => {
           },
         ]}
         actionButton={
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <StyledActionButtonContainer>
             {!isEmptyState && (
               <Button
                 Icon={IconPlus}
@@ -358,14 +364,20 @@ export const PageLayoutEdition = () => {
               }}
               disabled={!canSave || pageLayoutWidgets.length === 0}
             />
-          </div>
+          </StyledActionButtonContainer>
         }
       >
         <StyledGridContainer ref={gridContainerRef}>
-          <StyledGridOverlay isDragSelecting={true}>
-            {Array.from({ length: 12 * gridRows }).map((_, i) => {
-              const col = i % 12;
-              const row = Math.floor(i / 12);
+          <StyledGridOverlay
+            isDragSelecting={currentBreakpoint !== 'mobile'}
+            breakpoint={currentBreakpoint}
+          >
+            {Array.from({
+              length: (currentBreakpoint === 'mobile' ? 1 : 12) * gridRows,
+            }).map((_, i) => {
+              const cols = currentBreakpoint === 'mobile' ? 1 : 12;
+              const col = i % cols;
+              const row = Math.floor(i / cols);
               const cellId = `cell-${col}-${row}`;
               return (
                 <StyledGridCell
@@ -412,12 +424,14 @@ export const PageLayoutEdition = () => {
               ))
             )}
           </ResponsiveGridLayout>
-          <DragSelect
-            selectableItemsContainerRef={gridContainerRef}
-            onDragSelectionStart={handleDragSelectionStart}
-            onDragSelectionChange={handleDragSelectionChange}
-            onDragSelectionEnd={handleDragSelectionEnd}
-          />
+          {currentBreakpoint !== 'mobile' && (
+            <DragSelect
+              selectableItemsContainerRef={gridContainerRef}
+              onDragSelectionStart={handleDragSelectionStart}
+              onDragSelectionChange={handleDragSelectionChange}
+              onDragSelectionEnd={handleDragSelectionEnd}
+            />
+          )}
         </StyledGridContainer>
         <PageLayoutSidePanel
           isOpen={isSidePanelOpen}

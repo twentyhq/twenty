@@ -1,8 +1,8 @@
-import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 export const PAGE_LAYOUT_CONFIG = {
   breakpoints: {
-    desktop: NAV_DRAWER_WIDTHS.menu.desktop.expanded + 500, // 220 + 500 = 720px need confirmation from product side
+    desktop: MOBILE_VIEWPORT, // Use the standard mobile viewport (768px) as the breakpoint
     mobile: 0,
   },
   columns: {
