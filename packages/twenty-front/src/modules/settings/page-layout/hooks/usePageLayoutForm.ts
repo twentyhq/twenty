@@ -12,6 +12,7 @@ import {
   savedPageLayoutsState,
   type SavedPageLayout,
 } from '../states/savedPageLayoutsState';
+import { convertLayoutsToWidgets } from '../utils/convertLayoutsToWidgets';
 
 const pageLayoutFormSchema = z.object({
   name: z.string().min(1, 'Layout name is required'),
@@ -70,43 +71,6 @@ export const usePageLayoutForm = () => {
 
   const watchedValues = watch();
 
-  const convertLayoutsToWidgets = useCallback(
-    (widgets: Widget[], layouts: Layouts): PageLayoutFormData['widgets'] => {
-      const lgLayouts = layouts.lg || [];
-      return widgets.map((widget) => {
-        const layout = lgLayouts.find((l) => l.i === widget.id);
-        return {
-          ...widget,
-          gridPosition: {
-            row: layout?.y || 0,
-            column: layout?.x || 0,
-            rowSpan: layout?.h || 2,
-            columnSpan: layout?.w || 2,
-          },
-        };
-      });
-    },
-    [],
-  );
-
-  const convertWidgetsToLayouts = useCallback(
-    (widgets: PageLayoutFormData['widgets']): Layouts => {
-      const layouts = widgets.map((w) => ({
-        i: w.id,
-        x: w.gridPosition.column,
-        y: w.gridPosition.row,
-        w: w.gridPosition.columnSpan,
-        h: w.gridPosition.rowSpan,
-      }));
-      return {
-        lg: layouts,
-        md: layouts,
-        sm: layouts.map((l) => ({ ...l, w: 1, x: 0 })),
-      };
-    },
-    [],
-  );
-
   const handleSave = useCallback(
     async (formData: PageLayoutFormData) => {
       const layoutToSave: SavedPageLayout = {
@@ -146,7 +110,7 @@ export const usePageLayoutForm = () => {
       const updatedWidgets = convertLayoutsToWidgets(widgetData, layouts);
       setValue('widgets', updatedWidgets);
     },
-    [convertLayoutsToWidgets, setValue, getValues],
+    [setValue, getValues],
   );
 
   const addWidget = useCallback(
@@ -188,7 +152,6 @@ export const usePageLayoutForm = () => {
     isSubmitting: formState.isSubmitting,
     isEditMode,
     existingLayout,
-    convertWidgetsToLayouts,
     updateWidgetsFromLayouts,
     addWidget,
     removeWidget,

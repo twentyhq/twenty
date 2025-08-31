@@ -17,6 +17,10 @@ import {
   getWidgetTitle,
 } from '@/settings/page-layout/utils/getDefaultWidgetData';
 import { renderWidget } from '@/settings/page-layout/utils/widgetRegistry';
+import { calculateGridBoundsFromSelectedCells } from '@/settings/page-layout/utils/calculateGridBoundsFromSelectedCells';
+import { calculateTotalGridRows } from '@/settings/page-layout/utils/calculateTotalGridRows';
+import { generateCellId } from '@/settings/page-layout/utils/generateCellId';
+import { getDefaultWidgetPosition } from '@/settings/page-layout/utils/getDefaultWidgetPosition';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -197,12 +201,7 @@ export const SettingsPageLayoutEdit = () => {
     };
 
     const defaultSize = getWidgetSize(graphType);
-    const position = draggedArea || {
-      x: 0,
-      y: 0,
-      w: defaultSize.w,
-      h: defaultSize.h,
-    };
+    const position = getDefaultWidgetPosition(draggedArea, defaultSize);
 
     const newLayout = {
       i: newWidget.id,
@@ -257,26 +256,15 @@ export const SettingsPageLayoutEdit = () => {
 
   const handleDragSelectionEnd = () => {
     if (selectedCells.size > 0) {
-      const cellCoords = Array.from(selectedCells).map((cellId) => {
-        const [col, row] = cellId.split('-').slice(1).map(Number);
-        return { col, row };
-      });
+      const draggedBounds = calculateGridBoundsFromSelectedCells(
+        Array.from(selectedCells),
+      );
 
-      const minCol = Math.min(...cellCoords.map((c) => c.col));
-      const maxCol = Math.max(...cellCoords.map((c) => c.col));
-      const minRow = Math.min(...cellCoords.map((c) => c.row));
-      const maxRow = Math.max(...cellCoords.map((c) => c.row));
-
-      const draggedBounds = {
-        x: minCol,
-        y: minRow,
-        w: maxCol - minCol + 1,
-        h: maxRow - minRow + 1,
-      };
-
-      setDraggedArea(draggedBounds);
-      setIsSidePanelOpen(true);
-      setSelectedCells(new Set());
+      if (draggedBounds !== null) {
+        setDraggedArea(draggedBounds);
+        setIsSidePanelOpen(true);
+        setSelectedCells(new Set());
+      }
     }
   };
 
@@ -288,19 +276,10 @@ export const SettingsPageLayoutEdit = () => {
     mobile: [{ i: 'empty-placeholder', x: 0, y: 0, w: 1, h: 4, static: true }],
   };
 
-  const gridRows = useMemo(() => {
-    const allLayouts = [
-      ...(currentLayouts.desktop || []),
-      ...(currentLayouts.mobile || []),
-    ];
-
-    const contentRows =
-      allLayouts.length === 0
-        ? 0
-        : Math.max(...allLayouts.map((item) => item.y + item.h));
-
-    return Math.max(25, contentRows + 10);
-  }, [currentLayouts]);
+  const gridRows = useMemo(
+    () => calculateTotalGridRows(currentLayouts),
+    [currentLayouts],
+  );
 
   return (
     // @charlesBochet I know your opinion on react hook form -- happy to find alternatives in upcoming prs -- can we keep this for now?
@@ -380,7 +359,7 @@ export const SettingsPageLayoutEdit = () => {
               const cols = currentBreakpoint === 'mobile' ? 1 : 12;
               const col = i % cols;
               const row = Math.floor(i / cols);
-              const cellId = `cell-${col}-${row}`;
+              const cellId = generateCellId(col, row);
               return (
                 <StyledGridCell
                   key={i}
