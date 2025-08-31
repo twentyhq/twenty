@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import axios, { type AxiosRequestConfig } from 'axios';
+import { isDefined } from 'twenty-shared/utils';
 import {
+  type BodyType,
   CONTENT_TYPE_VALUES_HTTP_REQUEST,
   parseDataFromBodyType,
 } from 'twenty-shared/workflow';
@@ -11,7 +13,6 @@ import { type HttpRequestInput } from 'src/engine/core-modules/tool/tools/http-t
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { isDefined } from 'twenty-shared/utils';
 @Injectable()
 export class HttpTool implements Tool {
   description =
@@ -31,12 +32,20 @@ export class HttpTool implements Tool {
       };
 
       if (isMethodForBody && body) {
-        axiosConfig.data = parseDataFromBodyType(body, headers);
-        if (
-          isDefined(headersCopy) &&
-          headersCopy['content-type'] ===
-            CONTENT_TYPE_VALUES_HTTP_REQUEST.FormData
-        ) {
+        const contentType = headers?.['content-type'];
+        let bodyType: BodyType | undefined;
+
+        if (contentType === CONTENT_TYPE_VALUES_HTTP_REQUEST.FormData) {
+          bodyType = 'FormData';
+        } else if (contentType === CONTENT_TYPE_VALUES_HTTP_REQUEST.keyValue) {
+          bodyType = 'keyValue';
+        } else if (contentType === CONTENT_TYPE_VALUES_HTTP_REQUEST.Text) {
+          bodyType = 'Text';
+        } else {
+          bodyType = 'rawJson';
+        }
+        axiosConfig.data = parseDataFromBodyType(bodyType, body);
+        if (isDefined(headersCopy) && bodyType === 'FormData') {
           delete headersCopy['content-type'];
         }
       }
