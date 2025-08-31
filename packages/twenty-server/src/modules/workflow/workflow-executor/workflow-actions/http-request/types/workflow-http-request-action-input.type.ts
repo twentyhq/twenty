@@ -1,4 +1,4 @@
-import { type BodyType } from 'twenty-shared/workflow';
+
 
 export type WorkflowHttpRequestActionInput = {
   url: string;
@@ -15,5 +15,4 @@ export type WorkflowHttpRequestActionInput = {
         | Array<string | number | boolean | null>
       >
     | string;
-  bodyType?: BodyType;
 };

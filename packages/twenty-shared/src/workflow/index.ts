@@ -19,7 +19,7 @@ export type {
   WorkflowRunStepInfo,
   WorkflowRunStepInfos
 } from './types/WorkflowRunStateStepInfos';
-export { bodyParsersHttpRequestStep } from './utils/bodyParsersHttpRequestStep';
 export { canObjectBeManagedByWorkflow } from './utils/canObjectBeManagedByWorkflow';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
+export { parseDataFromHeader } from './utils/parseDataFromHeader';
 

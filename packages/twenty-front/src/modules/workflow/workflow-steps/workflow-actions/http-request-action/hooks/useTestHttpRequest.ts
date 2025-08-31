@@ -3,11 +3,11 @@ import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workfl
 import { type HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { resolveInput } from 'twenty-shared/utils';
+import { isDefined, resolveInput } from 'twenty-shared/utils';
 import {
-  bodyParsersHttpRequestStep,
-  type BodyType,
   CONTENT_TYPE_VALUES_HTTP_REQUEST,
+  parseDataFromHeader,
+  type BodyType,
 } from 'twenty-shared/workflow';
 import { type HttpRequestBody } from '../constants/HttpRequest';
 
@@ -45,34 +45,18 @@ export const useTestHttpRequest = (actionId: string) => {
     headers: Record<string, string>,
     method: string,
     body?: HttpRequestBody | string,
-    bodyType?: BodyType,
   ): Promise<HttpRequestTestData['output']> => {
+     const headersCopy = { ...headers };
     const requestOptions: RequestInit = {
       method,
-      headers: headers as Record<string, string>,
+      headers: headersCopy as Record<string, string>,
     };
     if (['POST', 'PUT', 'PATCH'].includes(method)) {
       if (body !== undefined) {
-        requestOptions.body = bodyParsersHttpRequestStep(bodyType, body);
+        requestOptions.body = parseDataFromHeader( body,headersCopy);
 
-        const hasContentTypeHeader = Object.keys(headers).some(
-          (key) => key.toLowerCase() === 'content-type',
-        );
-
-        const isFormData = bodyType === 'FormData';
-        const isNoneType = bodyType === 'None';
-        const shouldSetContentType =
-          !hasContentTypeHeader && !isFormData && !isNoneType;
-
-        const contentTypeValue = bodyType
-          ? CONTENT_TYPE_VALUES_HTTP_REQUEST[bodyType] || 'application/json'
-          : 'application/json';
-
-        if (shouldSetContentType) {
-          requestOptions.headers = {
-            ...requestOptions.headers,
-            'content-type': contentTypeValue,
-          };
+        if (isDefined(headersCopy)&&headersCopy["content-type"]===CONTENT_TYPE_VALUES_HTTP_REQUEST.FormData) {
+          delete headersCopy["content-type"];
         }
       }
     }
@@ -135,7 +119,6 @@ export const useTestHttpRequest = (actionId: string) => {
         substitutedHeaders as Record<string, string>,
         httpRequestFormData.method,
         substitutedBody,
-        httpRequestFormData.bodyType,
       );
 
       const contentType = output?.headers?.['content-type'];

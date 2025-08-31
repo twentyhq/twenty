@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import axios, { type AxiosRequestConfig } from 'axios';
 import {
-  bodyParsersHttpRequestStep,
   CONTENT_TYPE_VALUES_HTTP_REQUEST,
+  parseDataFromHeader,
 } from 'twenty-shared/workflow';
 
 import { HttpToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/http-tool/http-tool.schema';
@@ -11,6 +11,7 @@ import { type HttpRequestInput } from 'src/engine/core-modules/tool/tools/http-t
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
+import { isDefined } from 'twenty-shared/utils';
 @Injectable()
 export class HttpTool implements Tool {
   description =
@@ -18,40 +19,25 @@ export class HttpTool implements Tool {
   parameters = HttpToolParametersZodSchema;
 
   async execute(parameters: ToolInput): Promise<ToolOutput> {
-    const { url, method, headers, body, bodyType } =
-      parameters as HttpRequestInput;
-
+    const { url, method, headers, body } = parameters as HttpRequestInput;
+    const headersCopy = { ...headers };
     const isMethodForBody = ['POST', 'PUT', 'PATCH'].includes(method);
 
     try {
       const axiosConfig: AxiosRequestConfig = {
         url,
         method: method,
-        headers,
+        headers: headersCopy,
       };
 
       if (isMethodForBody && body) {
-        axiosConfig.data = bodyParsersHttpRequestStep(bodyType, body);
-        const hasContentTypeHeader =
-          headers &&
-          Object.keys(headers).some(
-            (key) => key.toLowerCase() === 'content-type',
-          );
-
-        const isFormData = bodyType === 'FormData';
-        const isNoneType = bodyType === 'None';
-        const shouldSetContentType =
-          !hasContentTypeHeader && !isFormData && !isNoneType;
-
-        const contentTypeValue = bodyType
-          ? CONTENT_TYPE_VALUES_HTTP_REQUEST[bodyType] || 'application/json'
-          : 'application/json';
-
-        if (shouldSetContentType) {
-          axiosConfig.headers = {
-            ...axiosConfig.headers,
-            'content-type': contentTypeValue,
-          };
+        axiosConfig.data = parseDataFromHeader(body, headers);
+        if (
+          isDefined(headersCopy) &&
+          headersCopy['content-type'] ===
+            CONTENT_TYPE_VALUES_HTTP_REQUEST.FormData
+        ) {
+          delete headersCopy['content-type'];
         }
       }
 
