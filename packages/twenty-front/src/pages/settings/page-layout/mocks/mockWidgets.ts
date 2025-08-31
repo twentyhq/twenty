@@ -4,7 +4,7 @@ import { type Layouts } from 'react-grid-layout';
 export type WidgetType = 'VIEW' | 'IFRAME' | 'FIELDS' | 'GRAPH';
 
 // Graph subtypes for different chart types
-export type GraphSubType = 'number' | 'gauge' | 'pie' | 'bar' | 'line';
+export type GraphSubType = 'number' | 'gauge' | 'pie' | 'bar';
 
 export type Widget = {
   id: string;

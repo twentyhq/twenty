@@ -41,19 +41,6 @@ export const getDefaultWidgetData = (graphType: GraphSubType) => {
         layout: 'vertical' as const,
       };
 
-    case 'line':
-      return {
-        items: [
-          { x: 'Mon', y: 20 },
-          { x: 'Tue', y: 35 },
-          { x: 'Wed', y: 25 },
-          { x: 'Thu', y: 40 },
-          { x: 'Fri', y: 30 },
-        ],
-        indexBy: 'x',
-        keys: ['y'],
-      };
-
     default:
       return {};
   }
@@ -68,7 +55,6 @@ export const getWidgetTitle = (
     gauge: 'Gauge',
     pie: 'Pie Chart',
     bar: 'Bar Chart',
-    line: 'Line Chart',
   };
 
   return `${baseNames[graphType] || 'Widget'} ${index + 1}`;
@@ -83,7 +69,6 @@ export const getWidgetSize = (graphType: GraphSubType) => {
     case 'pie':
       return { w: 4, h: 4 };
     case 'bar':
-    case 'line':
       return { w: 6, h: 4 };
     default:
       return { w: 4, h: 4 };

@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import {
   IconChartBar,
-  IconChartDots3,
   IconChartPie,
   IconGauge,
   IconNumber,
@@ -44,11 +43,6 @@ const graphTypeOptions = [
     type: 'bar' as GraphSubType,
     icon: IconChartBar,
     title: 'Bar Chart',
-  },
-  {
-    type: 'line' as GraphSubType,
-    icon: IconChartDots3,
-    title: 'Line Chart',
   },
 ];
 

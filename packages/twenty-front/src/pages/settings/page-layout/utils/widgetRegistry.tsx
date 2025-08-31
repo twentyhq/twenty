@@ -48,10 +48,6 @@ const widgetRenderers: Record<GraphSubType, WidgetRenderer> = {
       id={`bar-chart-${widget.id}`}
     />
   ),
-  line: () => {
-    // TODO: Implement line chart when component is available
-    return <div>Line chart not yet implemented</div>;
-  },
 };
 
 export const renderWidget = (widget: Widget): ReactNode => {
