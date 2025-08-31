@@ -1,3 +1,4 @@
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -20,11 +21,17 @@ export const SettingsProtectedRouteWrapper = ({
   settingsPermission,
   requiredFeatureFlag,
 }: SettingsProtectedRouteWrapperProps) => {
+  const isLoggedIn = useIsLogged();
   const hasPermission = useHasPermissionFlag(settingsPermission);
   const requiredFeatureFlagEnabled = useIsFeatureEnabled(
     requiredFeatureFlag || null,
   );
 
+  if (!isLoggedIn) {
+    return null;
+  }
+
+  // TODO: this should be part of PageChangeEffect as otherwise we will have multiple sources of redirection
   if ((requiredFeatureFlag && !requiredFeatureFlagEnabled) || !hasPermission) {
     return <Navigate to={getSettingsPath(SettingsPath.ProfilePage)} replace />;
   }
