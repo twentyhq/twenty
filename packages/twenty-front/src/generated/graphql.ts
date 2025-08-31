@@ -2688,6 +2688,8 @@ export type RevokeApiKeyDto = {
 
 export type Role = {
   __typename?: 'Role';
+  agents: Array<Agent>;
+  apiKeys: Array<ApiKey>;
   canAccessAllTools: Scalars['Boolean'];
   canBeAssignedToAgents: Scalars['Boolean'];
   canBeAssignedToApiKeys: Scalars['Boolean'];
