@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { resolveInput } from 'twenty-shared/utils';
 import {
-  BodyType,
+  type BodyType,
   CONTENT_TYPE_VALUES_HTTP_REQUEST,
   parseDataFromBodyType,
 } from 'twenty-shared/workflow';

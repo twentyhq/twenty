@@ -1,5 +1,3 @@
-
-
 export type WorkflowHttpRequestActionInput = {
   url: string;
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
