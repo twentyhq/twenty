@@ -9,6 +9,8 @@ import {
 } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
+import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -22,6 +24,7 @@ import { SettingsPermissionsGuard } from 'src/engine/guards/settings-permissions
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
+import { AgentDTO } from 'src/engine/metadata-modules/agent/dtos/agent.dto';
 import { FieldPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/field-permission.dto';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
 import { UpsertFieldPermissionsInput } from 'src/engine/metadata-modules/object-permission/dtos/upsert-field-permissions.input';
@@ -63,6 +66,7 @@ export class RoleResolver {
     private readonly objectPermissionService: ObjectPermissionService,
     private readonly settingPermissionService: PermissionFlagService,
     private readonly agentRoleService: AgentRoleService,
+    private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly fieldPermissionService: FieldPermissionService,
   ) {}
 
@@ -242,5 +246,31 @@ export class RoleResolver {
       );
 
     return workspaceMembers;
+  }
+
+  @ResolveField('agents', () => [AgentDTO])
+  async getAgentsAssignedToRole(
+    @Parent() role: RoleDTO,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<AgentDTO[]> {
+    const agents = await this.agentRoleService.getAgentsAssignedToRole(
+      role.id,
+      workspace.id,
+    );
+
+    return agents;
+  }
+
+  @ResolveField('apiKeys', () => [ApiKey])
+  async getApiKeysAssignedToRole(
+    @Parent() role: RoleDTO,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<ApiKey[]> {
+    const apiKeys = await this.apiKeyRoleService.getApiKeysAssignedToRole(
+      role.id,
+      workspace.id,
+    );
+
+    return apiKeys;
   }
 }

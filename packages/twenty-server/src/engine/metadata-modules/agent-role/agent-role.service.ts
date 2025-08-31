@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Not, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import {
@@ -92,6 +92,36 @@ export class AgentRoleService {
       agentId,
       workspaceId,
     });
+  }
+
+  public async getAgentsAssignedToRole(
+    roleId: string,
+    workspaceId: string,
+  ): Promise<AgentEntity[]> {
+    const roleTargets = await this.roleTargetsRepository.find({
+      where: {
+        roleId,
+        workspaceId,
+        agentId: Not(IsNull()),
+      },
+    });
+
+    const agentIds = roleTargets
+      .map((roleTarget) => roleTarget.agentId)
+      .filter((agentId): agentId is string => agentId !== null);
+
+    if (!agentIds.length) {
+      return [];
+    }
+
+    const agents = await this.agentRepository.find({
+      where: {
+        id: In(agentIds),
+        workspaceId,
+      },
+    });
+
+    return agents;
   }
 
   private async validateAssignRoleInput({
