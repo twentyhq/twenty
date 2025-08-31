@@ -6,7 +6,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { PageLayoutWidgetPlaceholder } from '../PageLayoutWidgetPlaceholder';
 
 const meta: Meta<typeof PageLayoutWidgetPlaceholder> = {
-  title: 'Pages/Settings/PageLayout/PageLayoutWidgetPlaceholder',
+  title: 'Modules/Settings/PageLayout/PageLayoutWidgetPlaceholder',
   component: PageLayoutWidgetPlaceholder,
   decorators: [ComponentDecorator],
   parameters: {
