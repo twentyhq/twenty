@@ -25,7 +25,8 @@ const StyledPlaceholderContainer = styled.div<{ isEmpty?: boolean }>`
 
   &:hover {
     cursor: ${({ isEmpty }) => (isEmpty ? 'pointer' : 'default')};
-    border-color: ${({ theme }) => theme.color.blue};
+    border: 1px solid ${({ theme }) => theme.color.blue};
+    background: ${({ theme }) => theme.background.primary};
   }
 `;
 
