@@ -114,6 +114,7 @@ export class QueryRunnerArgsFactory {
                 'id',
                 id,
                 fieldMetadataMapByNameByName,
+                options.objectMetadataItemWithFieldMaps,
               ),
             ) ?? [],
           )) as string[],
@@ -132,6 +133,7 @@ export class QueryRunnerArgsFactory {
                 'id',
                 id,
                 fieldMetadataMapByNameByName,
+                options.objectMetadataItemWithFieldMaps,
               ),
             ) ?? [],
           )) as string[],
@@ -284,6 +286,7 @@ export class QueryRunnerArgsFactory {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any,
     fieldMetadataMapByName: FieldMetadataMap,
+    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   ) {
     const fieldMetadata = fieldMetadataMapByName[key];
 
@@ -291,9 +294,9 @@ export class QueryRunnerArgsFactory {
       return value;
     }
 
-    return this.recordInputTransformerService.transformFieldValue(
-      fieldMetadata.type,
-      value,
-    );
+    return this.recordInputTransformerService.process({
+      recordInput: { [key]: value },
+      objectMetadataMapItem: objectMetadataItemWithFieldMaps,
+    });
   }
 }
