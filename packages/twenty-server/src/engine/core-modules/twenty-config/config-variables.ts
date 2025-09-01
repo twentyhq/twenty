@@ -170,7 +170,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.MicrosoftAuth,
     isSensitive: false,
     description: 
-      'Tenant ID for Microsoft authentication. Leave empty for common tenant/multi-tenant app registrations.',
+      'Tenant ID for Microsoft authentication. Leave empty for common tenant/multi-tenant app registrations',
     type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
