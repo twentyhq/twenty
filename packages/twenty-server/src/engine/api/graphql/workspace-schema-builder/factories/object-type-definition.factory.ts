@@ -4,11 +4,9 @@ import { GraphQLObjectType } from 'graphql';
 
 import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
-import { generateFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/generate-fields.util';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { FieldFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/field.factory';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
-
-import { OutputTypeFactory } from './output-type.factory';
 
 export enum ObjectTypeDefinitionKind {
   Connection = 'Connection',
@@ -24,7 +22,7 @@ export interface ObjectTypeDefinition {
 
 @Injectable()
 export class ObjectTypeDefinitionFactory {
-  constructor(private readonly outputTypeFactory: OutputTypeFactory) {}
+  constructor(private readonly fieldFactory: FieldFactory) {}
 
   public create(
     objectMetadata: ObjectMetadataEntity,
@@ -37,11 +35,11 @@ export class ObjectTypeDefinitionFactory {
       type: new GraphQLObjectType({
         name: `${pascalCase(objectMetadata.nameSingular)}${kind.toString()}`,
         description: objectMetadata.description,
-        fields: generateFields({
+        //tododo
+        fields: this.fieldFactory.create({
           objectMetadata,
           kind,
           options,
-          typeFactory: this.outputTypeFactory,
         }),
       }),
     };

@@ -1,15 +1,13 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { GraphQLInputObjectType } from 'graphql';
 
 import { type WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-options.interface';
 
+import { FieldFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/field.factory';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
-import { generateFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/generate-fields.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
-
-import { InputTypeFactory } from './input-type.factory';
 
 export enum InputTypeDefinitionKind {
   Create = 'Create',
@@ -27,9 +25,8 @@ export interface InputTypeDefinition {
 @Injectable()
 export class InputTypeDefinitionFactory {
   constructor(
-    @Inject(forwardRef(() => InputTypeFactory))
-    private readonly inputTypeFactory: CircularDep<InputTypeFactory>,
     private readonly typeMapperService: TypeMapperService,
+    private readonly fieldFactory: FieldFactory,
   ) {}
 
   public create({
@@ -59,12 +56,12 @@ export class InputTypeDefinitionFactory {
               nullable: true,
             });
 
+            //tododo
             return {
-              ...generateFields({
+              ...this.fieldFactory.create({
                 objectMetadata,
                 kind,
                 options,
-                typeFactory: this.inputTypeFactory,
               }),
               and: {
                 type: andOrType,
@@ -83,11 +80,11 @@ export class InputTypeDefinitionFactory {
            * Other input types are generated with fields only
            */
           default:
-            return generateFields({
+            //tododo
+            return this.fieldFactory.create({
               objectMetadata,
               kind,
               options,
-              typeFactory: this.inputTypeFactory,
             });
         }
       },
