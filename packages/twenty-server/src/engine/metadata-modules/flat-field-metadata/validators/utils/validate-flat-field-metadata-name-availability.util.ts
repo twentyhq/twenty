@@ -46,29 +46,31 @@ export const validateFlatFieldMetadataNameAvailability = ({
   const reservedCompositeFieldsNames =
     getReservedCompositeFieldNames(flatObjectMetadata);
 
+  const flatFieldMetadataName = flatFieldMetadata.name;
+
   if (
     !isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
     flatObjectMetadata.flatFieldMetadatas.some(
       (field) =>
-        field.name === flatFieldMetadata.name ||
+        field.name === flatFieldMetadataName ||
         (isMorphOrRelationFieldMetadataType(field.type) &&
-          `${field.name}Id` === flatFieldMetadata.name),
+          `${field.name}Id` === flatFieldMetadataName),
     )
   ) {
     errors.push({
       code: FieldMetadataExceptionCode.NOT_AVAILABLE,
-      value: flatFieldMetadata.name,
-      message: `Name "${flatFieldMetadata.name}" is not available as it is already used by another field`,
-      userFriendlyMessage: t`Name "${flatFieldMetadata.name}" is not available as it is already used by another field`,
+      value: flatFieldMetadataName,
+      message: `Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
+      userFriendlyMessage: t`Name "${flatFieldMetadataName}" is not available as it is already used by another field`,
     });
   }
 
-  if (reservedCompositeFieldsNames.includes(flatFieldMetadata.name)) {
+  if (reservedCompositeFieldsNames.includes(flatFieldMetadataName)) {
     errors.push({
       code: FieldMetadataExceptionCode.RESERVED_KEYWORD,
-      message: `Name "${flatFieldMetadata.name}" is reserved composite field name`,
-      value: flatFieldMetadata.name,
-      userFriendlyMessage: t`Name "${flatFieldMetadata.name}" is not available`,
+      message: `Name "${flatFieldMetadataName}" is reserved composite field name`,
+      value: flatFieldMetadataName,
+      userFriendlyMessage: t`Name "${flatFieldMetadataName}" is not available`,
     });
   }
 
