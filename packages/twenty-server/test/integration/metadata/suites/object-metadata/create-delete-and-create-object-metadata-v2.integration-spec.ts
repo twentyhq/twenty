@@ -9,9 +9,9 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 
 describe('Handle same object sequential operations test suite', () => {
   let createdObjectMetadataId: string | undefined = undefined;
@@ -110,7 +110,7 @@ describe('Handle same object sequential operations test suite', () => {
     } = await createOneFieldMetadata({
       input: {
         ...createFieldInput,
-        objectMetadataId: createdObjectMetadataId
+        objectMetadataId: createdObjectMetadataId,
       },
       expectToFail: false,
       gqlFields: fieldCreationGqlFields,
@@ -139,7 +139,7 @@ describe('Handle same object sequential operations test suite', () => {
     } = await createOneFieldMetadata({
       input: {
         ...createFieldInput,
-        objectMetadataId: createdObjectMetadataId
+        objectMetadataId: createdObjectMetadataId,
       },
       expectToFail: false,
       gqlFields: fieldCreationGqlFields,
@@ -178,7 +178,7 @@ describe('Handle same object sequential operations test suite', () => {
     } = await createOneFieldMetadata({
       input: {
         ...createFieldInput,
-        objectMetadataId: createdObjectMetadataId
+        objectMetadataId: createdObjectMetadataId,
       },
       expectToFail: false,
       gqlFields: fieldCreationGqlFields,
