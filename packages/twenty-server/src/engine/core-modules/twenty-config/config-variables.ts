@@ -172,7 +172,7 @@ export class ConfigVariables {
     description: 'Tenant ID for Microsoft authentication. Leave empty for common tenant/multi-tenant app registrations.',
     type: ConfigVariableType.STRING,
   })
-  @ValidateIf((env) => env.AUTH_MICROSOFT_TENANT_ID)
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   @IsOptional()
   AUTH_MICROSOFT_TENANT_ID: string;
 
