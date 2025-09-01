@@ -13,7 +13,6 @@ import { useRefreshCachedViews } from '@/views/hooks/useRefreshViews';
 
 export const useCreateOneObjectMetadataItem = () => {
   const { refreshCachedViews } = useRefreshCachedViews();
-
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
 
@@ -30,7 +29,7 @@ export const useCreateOneObjectMetadataItem = () => {
     });
 
     await refreshObjectMetadataItems();
-    refreshCachedViews();
+    await refreshCachedViews();
     return createdObjectMetadata;
   };
 
