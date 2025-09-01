@@ -12,12 +12,15 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
-import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/utils/get-all-step-ids-in-loop.util';
+import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
 import { type WorkflowIteratorActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
 import { WorkflowIteratorResult } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-result.type';
+import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+
+const MAX_ITERATIONS = 10000;
 
 @Injectable()
 export class IteratorWorkflowAction implements WorkflowActionInterface {
@@ -28,14 +31,10 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
   async execute(input: WorkflowActionInput): Promise<WorkflowActionOutput> {
     const { currentStepId: iteratorStepId, steps, context, runInfo } = input;
 
-    const step = steps.find((step) => step.id === iteratorStepId);
-
-    if (!step) {
-      throw new WorkflowStepExecutorException(
-        'Step not found',
-        WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
-      );
-    }
+    const step = findStepOrThrow({
+      stepId: iteratorStepId,
+      steps,
+    });
 
     if (!isWorkflowIteratorAction(step)) {
       throw new WorkflowStepExecutorException(
@@ -51,7 +50,7 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
 
     const { items, initialLoopStepIds } = iteratorInput;
 
-    // testing purpose, will be removed once the UI is implemented
+    // TODO: remove once the UI is implemented
     const parsedInitialLoopStepIds = isString(initialLoopStepIds)
       ? JSON.parse(initialLoopStepIds)
       : initialLoopStepIds;
@@ -68,8 +67,8 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
     if (parsedInitialLoopStepIds.length === 0 || parsedItems.length === 0) {
       return {
         result: {
-          itemsProcessed: 0,
-          nextItemToProcess: undefined,
+          currentItemIndex: 0,
+          currentItem: undefined,
           hasProcessedAllItems: true,
         } satisfies WorkflowIteratorResult,
       };
@@ -85,17 +84,24 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
     const existingIteratorStepResult = stepInfos[iteratorStepId]
       ?.result as WorkflowIteratorResult;
 
-    const itemsProcessed = isDefined(existingIteratorStepResult)
-      ? existingIteratorStepResult.itemsProcessed + 1
+    const currentItemIndex = isDefined(existingIteratorStepResult)
+      ? existingIteratorStepResult.currentItemIndex + 1
       : 0;
 
-    const hasProcessedAllItems = itemsProcessed === parsedItems.length;
+    if (currentItemIndex >= MAX_ITERATIONS) {
+      throw new WorkflowStepExecutorException(
+        'Iterator has reached the maximum number of iterations',
+        WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
+      );
+    }
+
+    const hasProcessedAllItems = currentItemIndex >= parsedItems.length;
 
     const nextIteratorStepInfoResult: WorkflowIteratorResult = {
-      itemsProcessed,
-      nextItemToProcess:
-        itemsProcessed < parsedItems.length
-          ? parsedItems[itemsProcessed]
+      currentItemIndex,
+      currentItem:
+        currentItemIndex < parsedItems.length
+          ? parsedItems[currentItemIndex]
           : undefined,
       hasProcessedAllItems,
     };

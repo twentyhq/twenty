@@ -1,6 +1,6 @@
-import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/utils/get-all-step-ids-in-loop.util';
 import { type WorkflowCodeActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-settings.type';
 import { type WorkflowIteratorActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/types/workflow-iterator-action-settings.type';
+import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util';
 import {
   type WorkflowAction,
   WorkflowActionType,

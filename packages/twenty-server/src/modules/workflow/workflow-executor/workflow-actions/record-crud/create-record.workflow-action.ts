@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
-import { Repository } from 'typeorm';
 import { resolveInput } from 'twenty-shared/utils';
+import { Repository } from 'typeorm';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -14,17 +14,13 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import {
-  WorkflowStepExecutorException,
-  WorkflowStepExecutorExceptionCode,
-} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
-import { isWorkflowCreateRecordAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-create-record-action.guard';
 import { type WorkflowCreateRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
 @Injectable()
@@ -44,21 +40,10 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
     steps,
     context,
   }: WorkflowActionInput): Promise<WorkflowActionOutput> {
-    const step = steps.find((step) => step.id === currentStepId);
-
-    if (!step) {
-      throw new WorkflowStepExecutorException(
-        'Step not found',
-        WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
-      );
-    }
-
-    if (!isWorkflowCreateRecordAction(step)) {
-      throw new WorkflowStepExecutorException(
-        'Step is not a create record action',
-        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
-      );
-    }
+    const step = findStepOrThrow({
+      steps,
+      stepId: currentStepId,
+    });
 
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
 

@@ -1,5 +1,5 @@
 export type WorkflowIteratorResult = {
-  itemsProcessed: number;
-  nextItemToProcess?: unknown;
+  currentItemIndex: number;
+  currentItem?: unknown;
   hasProcessedAllItems: boolean;
 };

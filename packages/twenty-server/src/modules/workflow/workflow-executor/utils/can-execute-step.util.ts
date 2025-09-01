@@ -1,10 +1,13 @@
+import { isString } from 'class-validator';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
+import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util';
 import {
-  WorkflowActionType,
   type WorkflowAction,
+  type WorkflowIteratorAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const stepHasBeenStarted = (
@@ -17,8 +20,36 @@ const stepHasBeenStarted = (
   );
 };
 
-const isIteratorStep = (step: WorkflowAction) => {
-  return step.type === WorkflowActionType.ITERATOR;
+const canExecuteIteratorStep = (
+  step: WorkflowIteratorAction,
+  steps: WorkflowAction[],
+  stepInfos: WorkflowRunStepInfos,
+) => {
+  const stepsTargetingIterator = steps.filter(
+    (parentStep) =>
+      isDefined(parentStep) && parentStep.nextStepIds?.includes(step.id),
+  );
+
+  // TODO: remove once the UI is implemented
+  const parsedInitialLoopStepIds = isString(
+    step.settings.input.initialLoopStepIds,
+  )
+    ? JSON.parse(step.settings.input.initialLoopStepIds)
+    : step.settings.input.initialLoopStepIds;
+
+  const stepIdsInLoop = getAllStepIdsInLoop({
+    iteratorStepId: step.id,
+    initialLoopStepIds: parsedInitialLoopStepIds,
+    steps,
+  });
+
+  const parentSteps = stepsTargetingIterator.filter((step) =>
+    stepIdsInLoop.includes(step.id),
+  );
+
+  return parentSteps.every(
+    (step) => stepInfos[step.id]?.status === StepStatus.SUCCESS,
+  );
 };
 
 export const canExecuteStep = ({
@@ -42,8 +73,8 @@ export const canExecuteStep = ({
     return false;
   }
 
-  if (isIteratorStep(step)) {
-    return true;
+  if (isWorkflowIteratorAction(step)) {
+    return canExecuteIteratorStep(step, steps, stepInfos);
   }
 
   if (stepHasBeenStarted(stepId, stepInfos)) {
