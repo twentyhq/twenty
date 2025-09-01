@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Query, type QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import {
-  DataSource,
   In,
   Repository,
   type FindManyOptions,
@@ -49,6 +48,7 @@ import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/wor
 import { WorkspacePermissionsCacheService } from 'src/engine/metadata-modules/workspace-permissions-cache/workspace-permissions-cache.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
@@ -73,8 +73,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly objectMetadataRelatedRecordsService: ObjectMetadataRelatedRecordsService,
     private readonly indexMetadataService: IndexMetadataService,
     private readonly workspacePermissionsCacheService: WorkspacePermissionsCacheService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly objectMetadataServiceV2: ObjectMetadataServiceV2,
   ) {
@@ -131,7 +130,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       return createdObjectMetadata;
     }
 
-    const queryRunner = this.coreDataSource.createQueryRunner();
+    const mainDataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
+    const queryRunner = mainDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -298,7 +299,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     updateObjectInput: UpdateOneObjectInput,
     workspaceId: string,
   ): Promise<ObjectMetadataEntity> {
-    const queryRunner = this.coreDataSource.createQueryRunner();
+    const mainDataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
+    const queryRunner = mainDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -475,7 +478,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       });
     }
 
-    const queryRunner = this.coreDataSource.createQueryRunner();
+    const mainDataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
+    const queryRunner = mainDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();

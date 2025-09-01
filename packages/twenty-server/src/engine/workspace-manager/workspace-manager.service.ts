@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -29,8 +29,6 @@ export class WorkspaceManagerService {
   private readonly logger = new Logger(WorkspaceManagerService.name);
 
   constructor(
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly objectMetadataService: ObjectMetadataService,
@@ -130,8 +128,15 @@ export class WorkspaceManagerService {
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
+    const mainDataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
+
+    if (!mainDataSource) {
+      throw new Error('Could not connect to main data source');
+    }
+
     await standardObjectsPrefillData(
-      this.coreDataSource,
+      mainDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
       featureFlags,
@@ -141,7 +146,7 @@ export class WorkspaceManagerService {
       this.logger.log(`Prefilling core views for workspace ${workspaceId}`);
 
       await prefillCoreViews({
-        coreDataSource: this.coreDataSource,
+        coreDataSource: mainDataSource,
         workspaceId,
         objectMetadataItems: createdObjectMetadata,
         schemaName: dataSourceMetadata.schema,

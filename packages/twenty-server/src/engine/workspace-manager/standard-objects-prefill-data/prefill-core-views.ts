@@ -31,6 +31,7 @@ import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-
 import { ViewOpenRecordInType } from 'src/modules/view/standard-objects/view.workspace-entity';
 import { convertViewFilterOperandToCoreOperand } from 'src/modules/view/utils/convert-view-filter-operand-to-core-operand.util';
 
+<<<<<<< HEAD
 type PrefillCoreViewsArgs = {
   coreDataSource: DataSource;
   workspaceId: string;
@@ -46,6 +47,14 @@ export const prefillCoreViews = async ({
   schemaName,
   featureFlags,
 }: PrefillCoreViewsArgs): Promise<ViewEntity[]> => {
+=======
+export const prefillCoreViews = async (
+  dataSource: DataSource,
+  workspaceId: string,
+  objectMetadataItems: ObjectMetadataEntity[],
+  featureFlags?: Record<string, boolean>,
+): Promise<ViewEntity[]> => {
+>>>>>>> parent of dec2239ae7 (Remove typeorm service (#14116))
   const views = [
     companiesAllView(objectMetadataItems, true),
     peopleAllView(objectMetadataItems, true),
@@ -64,7 +73,7 @@ export const prefillCoreViews = async ({
     views.push(dashboardsAllView(objectMetadataItems, true));
   }
 
-  const queryRunner = coreDataSource.createQueryRunner();
+  const queryRunner = dataSource.createQueryRunner();
 
   await queryRunner.connect();
 

@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
 
-import { FieldMetadataType } from 'twenty-shared/types';
-import { DataSource, type ColumnType } from 'typeorm';
+import { type ColumnType } from 'typeorm';
 import { type ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import {
   type FieldMetadataDefaultValue,
@@ -14,6 +13,7 @@ import {
   type WorkspaceTableStructureResult,
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-table-definition.interface';
 
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type FieldMetadataDefaultValueFunctionNames } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -26,16 +26,14 @@ import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or
 
 @Injectable()
 export class DatabaseStructureService {
-  constructor(
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
-  ) {}
+  constructor(private readonly typeORMService: TypeORMService) {}
 
   async getWorkspaceTableColumns(
     schemaName: string,
     tableName: string,
   ): Promise<WorkspaceTableStructure[]> {
-    const results = await this.coreDataSource.query<
+    const mainDataSource = this.typeORMService.getMainDataSource();
+    const results = await mainDataSource.query<
       WorkspaceTableStructureResult[]
     >(`
       WITH foreign_keys AS (
@@ -152,6 +150,8 @@ export class DatabaseStructureService {
   }
 
   getPostgresDataTypes(fieldMetadata: FieldMetadataEntity): string[] {
+    const mainDataSource = this.typeORMService.getMainDataSource();
+
     const normalizer = (
       type: FieldMetadataType,
       isArray: boolean | undefined,
@@ -166,7 +166,7 @@ export class DatabaseStructureService {
         return `${objectName}_${columnName}_enum${isArray ? '[]' : ''}`;
       }
 
-      return this.coreDataSource.driver.normalizeType({
+      return mainDataSource.driver.normalizeType({
         type: typeORMType,
       });
     };
@@ -201,6 +201,7 @@ export class DatabaseStructureService {
   getFieldMetadataTypeFromPostgresDataType(
     postgresDataType: string,
   ): FieldMetadataType | null {
+    const mainDataSource = this.typeORMService.getMainDataSource();
     const types = Object.values(FieldMetadataType).filter((type) => {
       // We're skipping composite and relation types, as they're not directly mapped to a column type
       if (isCompositeFieldMetadataType(type)) {
@@ -218,7 +219,7 @@ export class DatabaseStructureService {
       const typeORMType = fieldMetadataTypeToColumnType(
         FieldMetadataType[type],
       ) as ColumnType;
-      const dataType = this.coreDataSource.driver.normalizeType({
+      const dataType = mainDataSource.driver.normalizeType({
         type: typeORMType,
       });
 
@@ -247,6 +248,7 @@ export class DatabaseStructureService {
         | null,
     ) => {
       const typeORMType = fieldMetadataTypeToColumnType(type) as ColumnType;
+      const mainDataSource = this.typeORMService.getMainDataSource();
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let value: any =
@@ -280,7 +282,7 @@ export class DatabaseStructureService {
         value = value.replace(/^'/, '').replace(/'$/, '');
       }
 
-      return this.coreDataSource.driver.normalizeDefault({
+      return mainDataSource.driver.normalizeDefault({
         type: typeORMType,
         default: value,
         isArray: false,

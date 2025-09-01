@@ -1,9 +1,9 @@
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import Dagre from '@dagrejs/dagre';
 import { Command, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -14,6 +14,7 @@ import {
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
@@ -45,8 +46,7 @@ export class AddPositionsToWorkflowVersionsAndWorkflowRuns extends ActiveOrSuspe
   constructor(
     @InjectRepository(Workspace)
     protected readonly workspaceRepository: Repository<Workspace>,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     protected readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {
     super(workspaceRepository, twentyORMGlobalManager);
@@ -142,9 +142,12 @@ export class AddPositionsToWorkflowVersionsAndWorkflowRuns extends ActiveOrSuspe
   }: {
     workspaceId: string;
   }) {
+    const mainDataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
+
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
-    const workflowRuns = await this.coreDataSource.query(
+    const workflowRuns = await mainDataSource.query(
       `SELECT id, state FROM ${schemaName}."workflowRun"`,
     );
 
@@ -165,7 +168,7 @@ export class AddPositionsToWorkflowVersionsAndWorkflowRuns extends ActiveOrSuspe
           },
         };
 
-        await this.coreDataSource.query(
+        await mainDataSource.query(
           `UPDATE ${schemaName}."workflowRun" SET state = $1::jsonb WHERE id = $2`,
           [updatedState, workflowRun.id],
         );

@@ -1,8 +1,8 @@
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -17,6 +17,7 @@ import {
   DataSourceExceptionCode,
 } from 'src/engine/metadata-modules/data-source/data-source.exception';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessagingMessagesImportJob,
@@ -33,8 +34,7 @@ export class MessagingMessagesImportCronJob {
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
   @Process(MessagingMessagesImportCronJob.name)
@@ -49,11 +49,14 @@ export class MessagingMessagesImportCronJob {
       },
     });
 
+    const mainDataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
+
     for (const activeWorkspace of activeWorkspaces) {
       try {
         const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
-        const messageChannels = await this.coreDataSource.query(
+        const messageChannels = await mainDataSource.query(
           `SELECT * FROM ${schemaName}."messageChannel" WHERE "isSyncEnabled" = true AND "syncStage" = '${MessageChannelSyncStage.MESSAGES_IMPORT_PENDING}'`,
         );
 

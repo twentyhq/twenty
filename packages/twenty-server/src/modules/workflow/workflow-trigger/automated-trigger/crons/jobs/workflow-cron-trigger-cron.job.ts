@@ -1,8 +1,8 @@
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -13,6 +13,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { AutomatedTriggerType } from 'src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity';
 import { type CronTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 import {
@@ -26,8 +27,7 @@ export const WORKFLOW_CRON_TRIGGER_CRON_PATTERN = '* * * * *';
 @Processor(MessageQueue.cronQueue)
 export class WorkflowCronTriggerCronJob {
   constructor(
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectMessageQueue(MessageQueue.workflowQueue)
@@ -49,11 +49,14 @@ export class WorkflowCronTriggerCronJob {
 
     const now = new Date();
 
+    const mainDataSource =
+      await this.workspaceDataSourceService.connectToMainDataSource();
+
     for (const activeWorkspace of activeWorkspaces) {
       try {
         const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
-        const workflowAutomatedCronTriggers = await this.coreDataSource.query(
+        const workflowAutomatedCronTriggers = await mainDataSource.query(
           `SELECT * FROM ${schemaName}."workflowAutomatedTrigger" WHERE type = '${AutomatedTriggerType.CRON}'`,
         );
 

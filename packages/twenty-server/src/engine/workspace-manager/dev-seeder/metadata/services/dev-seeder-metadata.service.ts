@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
 
+import { Record } from 'cloudflare/core';
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource } from 'typeorm';
 
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { type DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
@@ -32,8 +32,7 @@ export class DevSeederMetadataService {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
+    private readonly typeORMService: TypeORMService,
   ) {}
 
   private readonly workspaceConfigs: Record<
@@ -176,7 +175,7 @@ export class DevSeederMetadataService {
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
     await prefillCoreViews({
-      coreDataSource: this.coreDataSource,
+      coreDataSource: this.typeORMService.getMainDataSource(),
       workspaceId,
       objectMetadataItems: createdObjectMetadata,
       schemaName: dataSourceMetadata.schema,

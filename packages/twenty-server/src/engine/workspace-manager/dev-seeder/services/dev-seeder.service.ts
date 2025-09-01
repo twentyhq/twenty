@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
 
-import { DataSource } from 'typeorm';
-
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -17,6 +15,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
 @Injectable()
 export class DevSeederService {
   constructor(
+    private readonly typeORMService: TypeORMService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -26,16 +25,20 @@ export class DevSeederService {
     private readonly devSeederMetadataService: DevSeederMetadataService,
     private readonly devSeederPermissionsService: DevSeederPermissionsService,
     private readonly devSeederDataService: DevSeederDataService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
   ) {}
 
   public async seedDev(workspaceId: string): Promise<void> {
+    const mainDataSource = this.typeORMService.getMainDataSource();
+
+    if (!mainDataSource) {
+      throw new Error('Could not connect to workspace data source');
+    }
+
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const appVersion = this.twentyConfigService.get('APP_VERSION');
 
     await seedCoreSchema({
-      dataSource: this.coreDataSource,
+      dataSource: mainDataSource,
       workspaceId,
       seedBilling: isBillingEnabled,
       appVersion,
