@@ -1,23 +1,23 @@
 import { SettingsRoleAssignmentConfirmationModalSubtitle } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle';
 import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '@/settings/roles/role-assignment/constants/RoleAssignmentConfirmationModalId';
-import { type SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember } from '@/settings/roles/role-assignment/types/SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember';
+import { type SettingsRoleAssignmentConfirmationModalSelectedRoleTarget } from '@/settings/roles/role-assignment/types/SettingsRoleAssignmentConfirmationModalSelectedRoleTarget';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { t } from '@lingui/core/macro';
 
 type SettingsRoleAssignmentConfirmationModalProps = {
-  selectedWorkspaceMember: SettingsRoleAssignmentConfirmationModalSelectedWorkspaceMember;
+  selectedRoleTarget: SettingsRoleAssignmentConfirmationModalSelectedRoleTarget;
   onClose: () => void;
   onConfirm: () => void;
   onRoleClick: (roleId: string) => void;
 };
 
 export const SettingsRoleAssignmentConfirmationModal = ({
-  selectedWorkspaceMember,
+  selectedRoleTarget,
   onClose,
   onConfirm,
   onRoleClick,
 }: SettingsRoleAssignmentConfirmationModalProps) => {
-  const workspaceMemberName = selectedWorkspaceMember.name;
+  const workspaceMemberName = selectedRoleTarget.name;
 
   const title = t`Assign ${workspaceMemberName}?`;
 
@@ -26,10 +26,12 @@ export const SettingsRoleAssignmentConfirmationModal = ({
       modalId={ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID}
       title={title}
       subtitle={
-        <SettingsRoleAssignmentConfirmationModalSubtitle
-          selectedWorkspaceMember={selectedWorkspaceMember}
-          onRoleClick={onRoleClick}
-        />
+        selectedRoleTarget.role && (
+          <SettingsRoleAssignmentConfirmationModalSubtitle
+            selectedRoleTarget={selectedRoleTarget}
+            onRoleClick={onRoleClick}
+          />
+        )
       }
       onClose={onClose}
       onConfirmClick={onConfirm}
