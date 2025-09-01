@@ -3,6 +3,7 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { PageLayoutTabDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout-tab.dto';
 import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
 
 registerEnumType(PageLayoutType, { name: 'PageLayoutType' });
@@ -26,6 +27,9 @@ export class PageLayoutDTO {
 
   @Field(() => UUIDScalarType, { nullable: true })
   objectMetadataId?: string | null;
+
+  @Field(() => [PageLayoutTabDTO], { nullable: true })
+  tabs?: PageLayoutTabDTO[] | null;
 
   @Field()
   createdAt: Date;

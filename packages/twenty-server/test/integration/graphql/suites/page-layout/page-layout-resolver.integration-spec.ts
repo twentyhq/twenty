@@ -53,10 +53,6 @@ describe('Page Layout Resolver', () => {
     });
   });
 
-  beforeEach(async () => {
-    await cleanupPageLayoutRecordsWithGraphQL();
-  });
-
   afterEach(async () => {
     await cleanupPageLayoutRecordsWithGraphQL();
   });
@@ -105,6 +101,7 @@ describe('Page Layout Resolver', () => {
           labelSingular: 'My Test Page Layout Object 2',
           labelPlural: 'My Test Page Layout Objects 2',
           icon: 'IconLayout2',
+          isLabelSyncedWithName: false,
         },
       });
 
