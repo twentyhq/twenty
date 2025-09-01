@@ -291,7 +291,7 @@ export const workflowDatabaseEventTriggerSchema = baseTriggerSchema.extend({
     eventName: z
       .string()
       .regex(
-        /^[a-z][a-z0-9_]*\.(created|updated|deleted)$/,
+        /^[a-z][a-zA-Z0-9_]*\.(created|updated|deleted)$/,
         'Event name must follow the pattern: objectName.action (e.g., "company.created", "person.updated")',
       )
       .describe(
