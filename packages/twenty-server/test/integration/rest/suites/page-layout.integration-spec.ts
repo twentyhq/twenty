@@ -47,10 +47,9 @@ describe('Page Layout REST API', () => {
     await deleteOneObjectMetadata({
       input: { idToDelete: testObjectMetadataId },
     });
-    await cleanupPageLayoutRecords();
   });
 
-  beforeEach(async () => {
+  afterEach(async () => {
     await cleanupPageLayoutRecords();
   });
 
@@ -134,255 +133,225 @@ describe('Page Layout REST API', () => {
       await deleteTestPageLayoutWithRestApi(pageLayout.id);
     });
 
-    it('should create a record index page layout', async () => {
-      const pageLayoutName = generateRecordName('Record Index Page Layout');
-      const pageLayout = await createTestPageLayoutWithRestApi({
-        name: pageLayoutName,
-        type: PageLayoutType.RECORD_INDEX,
-        objectMetadataId: testObjectMetadataId,
+    describe('GET /rest/metadata/page-layouts/:id', () => {
+      it('should return a page layout by id', async () => {
+        const pageLayoutName = generateRecordName('Test Page Layout for Get');
+        const pageLayout = await createTestPageLayoutWithRestApi({
+          name: pageLayoutName,
+          type: PageLayoutType.DASHBOARD,
+          objectMetadataId: testObjectMetadataId,
+        });
+
+        const response = await makeRestAPIRequest({
+          method: 'get',
+          path: `/metadata/page-layouts/${pageLayout.id}`,
+          bearer: API_KEY_ACCESS_TOKEN,
+        });
+
+        assertRestApiSuccessfulResponse(response);
+        assertPageLayoutStructure(response.body, {
+          id: pageLayout.id,
+          name: pageLayoutName,
+          type: PageLayoutType.DASHBOARD,
+          objectMetadataId: testObjectMetadataId,
+        });
+
+        await deleteTestPageLayoutWithRestApi(pageLayout.id);
       });
 
-      assertPageLayoutStructure(pageLayout, {
-        name: pageLayoutName,
-        type: PageLayoutType.RECORD_INDEX,
-        objectMetadataId: testObjectMetadataId,
-      });
+      it('should return {} for non-existent page layout', async () => {
+        const response = await makeRestAPIRequest({
+          method: 'get',
+          path: `/metadata/page-layouts/${TEST_NOT_EXISTING_PAGE_LAYOUT_ID}`,
+          bearer: API_KEY_ACCESS_TOKEN,
+        });
 
-      await deleteTestPageLayoutWithRestApi(pageLayout.id);
+        assertRestApiSuccessfulResponse(response);
+        expect(response.body).toEqual({});
+      });
     });
 
-    it('should create a record page layout', async () => {
-      const pageLayoutName = generateRecordName('Record Page Layout');
-      const pageLayout = await createTestPageLayoutWithRestApi({
-        name: pageLayoutName,
-        type: PageLayoutType.RECORD_PAGE,
-        objectMetadataId: testObjectMetadataId,
+    describe('PATCH /rest/metadata/page-layouts/:id', () => {
+      it('should update an existing page layout', async () => {
+        const pageLayoutName = generateRecordName(
+          'Test Page Layout for Update',
+        );
+        const pageLayout = await createTestPageLayoutWithRestApi({
+          name: pageLayoutName,
+          type: PageLayoutType.RECORD_PAGE,
+          objectMetadataId: testObjectMetadataId,
+        });
+
+        const updatedName = generateRecordName('Updated Page Layout');
+        const updateData = {
+          name: updatedName,
+          type: PageLayoutType.DASHBOARD,
+        };
+
+        const response = await makeRestAPIRequest({
+          method: 'patch',
+          path: `/metadata/page-layouts/${pageLayout.id}`,
+          body: updateData,
+          bearer: API_KEY_ACCESS_TOKEN,
+        });
+
+        assertRestApiSuccessfulResponse(response);
+        assertPageLayoutStructure(response.body, {
+          id: pageLayout.id,
+          name: updatedName,
+          type: PageLayoutType.DASHBOARD,
+          objectMetadataId: testObjectMetadataId,
+        });
+
+        await deleteTestPageLayoutWithRestApi(pageLayout.id);
       });
 
-      assertPageLayoutStructure(pageLayout, {
-        name: pageLayoutName,
-        type: PageLayoutType.RECORD_PAGE,
-        objectMetadataId: testObjectMetadataId,
+      it('should update only provided fields', async () => {
+        const originalName = generateRecordName('Original Page Layout');
+        const pageLayout = await createTestPageLayoutWithRestApi({
+          name: originalName,
+          type: PageLayoutType.RECORD_PAGE,
+          objectMetadataId: testObjectMetadataId,
+        });
+
+        const updatedName = generateRecordName('Updated Name Only');
+        const updateData = {
+          name: updatedName,
+        };
+
+        const response = await makeRestAPIRequest({
+          method: 'patch',
+          path: `/metadata/page-layouts/${pageLayout.id}`,
+          body: updateData,
+          bearer: API_KEY_ACCESS_TOKEN,
+        });
+
+        assertRestApiSuccessfulResponse(response);
+        assertPageLayoutStructure(response.body, {
+          id: pageLayout.id,
+          name: updatedName,
+          type: PageLayoutType.RECORD_PAGE,
+          objectMetadataId: testObjectMetadataId,
+        });
+
+        await deleteTestPageLayoutWithRestApi(pageLayout.id);
       });
 
-      await deleteTestPageLayoutWithRestApi(pageLayout.id);
-    });
-  });
+      it('should return 404 error when updating non-existent page layout', async () => {
+        const updateData = {
+          name: 'Updated Page Layout',
+          type: PageLayoutType.DASHBOARD,
+        };
 
-  describe('GET /rest/metadata/page-layouts/:id', () => {
-    it('should return a page layout by id', async () => {
-      const pageLayoutName = generateRecordName('Test Page Layout for Get');
-      const pageLayout = await createTestPageLayoutWithRestApi({
-        name: pageLayoutName,
-        type: PageLayoutType.DASHBOARD,
-        objectMetadataId: testObjectMetadataId,
+        const response = await makeRestAPIRequest({
+          method: 'patch',
+          path: `/metadata/page-layouts/${TEST_NOT_EXISTING_PAGE_LAYOUT_ID}`,
+          body: updateData,
+          bearer: API_KEY_ACCESS_TOKEN,
+        });
+
+        assertRestApiErrorResponse(
+          response,
+          404,
+          generatePageLayoutExceptionMessage(
+            PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
+            TEST_NOT_EXISTING_PAGE_LAYOUT_ID,
+          ),
+        );
       });
-
-      const response = await makeRestAPIRequest({
-        method: 'get',
-        path: `/metadata/page-layouts/${pageLayout.id}`,
-        bearer: API_KEY_ACCESS_TOKEN,
-      });
-
-      assertRestApiSuccessfulResponse(response);
-      assertPageLayoutStructure(response.body, {
-        id: pageLayout.id,
-        name: pageLayoutName,
-        type: PageLayoutType.DASHBOARD,
-        objectMetadataId: testObjectMetadataId,
-      });
-
-      await deleteTestPageLayoutWithRestApi(pageLayout.id);
-    });
-
-    it('should return null for non-existent page layout', async () => {
-      const response = await makeRestAPIRequest({
-        method: 'get',
-        path: `/metadata/page-layouts/${TEST_NOT_EXISTING_PAGE_LAYOUT_ID}`,
-        bearer: API_KEY_ACCESS_TOKEN,
-      });
-
-      assertRestApiSuccessfulResponse(response);
-      expect(response.body).toEqual({});
-    });
-  });
-
-  describe('PATCH /rest/metadata/page-layouts/:id', () => {
-    it('should update an existing page layout', async () => {
-      const pageLayoutName = generateRecordName('Test Page Layout for Update');
-      const pageLayout = await createTestPageLayoutWithRestApi({
-        name: pageLayoutName,
-        type: PageLayoutType.RECORD_PAGE,
-        objectMetadataId: testObjectMetadataId,
-      });
-
-      const updatedName = generateRecordName('Updated Page Layout');
-      const updateData = {
-        name: updatedName,
-        type: PageLayoutType.DASHBOARD,
-      };
-
-      const response = await makeRestAPIRequest({
-        method: 'patch',
-        path: `/metadata/page-layouts/${pageLayout.id}`,
-        body: updateData,
-        bearer: API_KEY_ACCESS_TOKEN,
-      });
-
-      assertRestApiSuccessfulResponse(response);
-      assertPageLayoutStructure(response.body, {
-        id: pageLayout.id,
-        name: updatedName,
-        type: PageLayoutType.DASHBOARD,
-        objectMetadataId: testObjectMetadataId,
-      });
-
-      await deleteTestPageLayoutWithRestApi(pageLayout.id);
-    });
-
-    it('should update only provided fields', async () => {
-      const originalName = generateRecordName('Original Page Layout');
-      const pageLayout = await createTestPageLayoutWithRestApi({
-        name: originalName,
-        type: PageLayoutType.RECORD_PAGE,
-        objectMetadataId: testObjectMetadataId,
-      });
-
-      const updatedName = generateRecordName('Updated Name Only');
-      const updateData = {
-        name: updatedName,
-      };
-
-      const response = await makeRestAPIRequest({
-        method: 'patch',
-        path: `/metadata/page-layouts/${pageLayout.id}`,
-        body: updateData,
-        bearer: API_KEY_ACCESS_TOKEN,
-      });
-
-      assertRestApiSuccessfulResponse(response);
-      assertPageLayoutStructure(response.body, {
-        id: pageLayout.id,
-        name: updatedName,
-        type: PageLayoutType.RECORD_PAGE,
-        objectMetadataId: testObjectMetadataId,
-      });
-
-      await deleteTestPageLayoutWithRestApi(pageLayout.id);
     });
 
-    it('should return 404 error when updating non-existent page layout', async () => {
-      const updateData = {
-        name: 'Updated Page Layout',
-        type: PageLayoutType.DASHBOARD,
-      };
+    describe('DELETE /rest/metadata/page-layouts/:id', () => {
+      it('should delete an existing page layout', async () => {
+        const pageLayoutName = generateRecordName(
+          'Test Page Layout for Delete',
+        );
+        const pageLayout = await createTestPageLayoutWithRestApi({
+          name: pageLayoutName,
+          type: PageLayoutType.RECORD_INDEX,
+          objectMetadataId: testObjectMetadataId,
+        });
 
-      const response = await makeRestAPIRequest({
-        method: 'patch',
-        path: `/metadata/page-layouts/${TEST_NOT_EXISTING_PAGE_LAYOUT_ID}`,
-        body: updateData,
-        bearer: API_KEY_ACCESS_TOKEN,
+        const deleteResponse = await makeRestAPIRequest({
+          method: 'delete',
+          path: `/metadata/page-layouts/${pageLayout.id}`,
+          bearer: API_KEY_ACCESS_TOKEN,
+        });
+
+        assertRestApiSuccessfulResponse(deleteResponse);
+        expect(deleteResponse.body.success).toBe(true);
+
+        const getResponse = await makeRestAPIRequest({
+          method: 'get',
+          path: `/metadata/page-layouts/${pageLayout.id}`,
+          bearer: API_KEY_ACCESS_TOKEN,
+        });
+
+        assertRestApiSuccessfulResponse(getResponse);
+        expect(getResponse.body).toEqual({});
       });
 
-      assertRestApiErrorResponse(
-        response,
-        404,
-        generatePageLayoutExceptionMessage(
-          PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
-          TEST_NOT_EXISTING_PAGE_LAYOUT_ID,
-        ),
-      );
-    });
-  });
+      it('should return 404 error when deleting non-existent page layout', async () => {
+        const response = await makeRestAPIRequest({
+          method: 'delete',
+          path: `/metadata/page-layouts/${TEST_NOT_EXISTING_PAGE_LAYOUT_ID}`,
+          bearer: API_KEY_ACCESS_TOKEN,
+        });
 
-  describe('DELETE /rest/metadata/page-layouts/:id', () => {
-    it('should delete an existing page layout', async () => {
-      const pageLayoutName = generateRecordName('Test Page Layout for Delete');
-      const pageLayout = await createTestPageLayoutWithRestApi({
-        name: pageLayoutName,
-        type: PageLayoutType.RECORD_INDEX,
-        objectMetadataId: testObjectMetadataId,
+        assertRestApiErrorResponse(
+          response,
+          404,
+          generatePageLayoutExceptionMessage(
+            PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
+            TEST_NOT_EXISTING_PAGE_LAYOUT_ID,
+          ),
+        );
       });
-
-      const deleteResponse = await makeRestAPIRequest({
-        method: 'delete',
-        path: `/metadata/page-layouts/${pageLayout.id}`,
-        bearer: API_KEY_ACCESS_TOKEN,
-      });
-
-      assertRestApiSuccessfulResponse(deleteResponse);
-      expect(deleteResponse.body.success).toBe(true);
-
-      const getResponse = await makeRestAPIRequest({
-        method: 'get',
-        path: `/metadata/page-layouts/${pageLayout.id}`,
-        bearer: API_KEY_ACCESS_TOKEN,
-      });
-
-      assertRestApiSuccessfulResponse(getResponse);
-      expect(getResponse.body).toEqual({});
     });
 
-    it('should return 404 error when deleting non-existent page layout', async () => {
-      const response = await makeRestAPIRequest({
-        method: 'delete',
-        path: `/metadata/page-layouts/${TEST_NOT_EXISTING_PAGE_LAYOUT_ID}`,
-        bearer: API_KEY_ACCESS_TOKEN,
+    describe('Edge Cases', () => {
+      it('should handle multiple page layouts for same object', async () => {
+        const pageLayout1 = await createTestPageLayoutWithRestApi({
+          name: generateRecordName('Page Layout 1'),
+          type: PageLayoutType.RECORD_PAGE,
+          objectMetadataId: testObjectMetadataId,
+        });
+
+        const pageLayout2 = await createTestPageLayoutWithRestApi({
+          name: generateRecordName('Page Layout 2'),
+          type: PageLayoutType.RECORD_INDEX,
+          objectMetadataId: testObjectMetadataId,
+        });
+
+        const response = await makeRestAPIRequest({
+          method: 'get',
+          path: `/metadata/page-layouts?objectMetadataId=${testObjectMetadataId}`,
+          bearer: API_KEY_ACCESS_TOKEN,
+        });
+
+        assertRestApiSuccessfulResponse(response);
+        expect(response.body).toHaveLength(2);
+
+        await Promise.all([
+          deleteTestPageLayoutWithRestApi(pageLayout1.id),
+          deleteTestPageLayoutWithRestApi(pageLayout2.id),
+        ]);
       });
 
-      assertRestApiErrorResponse(
-        response,
-        404,
-        generatePageLayoutExceptionMessage(
-          PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
-          TEST_NOT_EXISTING_PAGE_LAYOUT_ID,
-        ),
-      );
-    });
-  });
+      it('should handle page layouts with null objectMetadataId', async () => {
+        const pageLayout = await createTestPageLayoutWithRestApi({
+          name: generateRecordName('Global Page Layout'),
+          type: PageLayoutType.DASHBOARD,
+          objectMetadataId: null,
+        });
 
-  describe('Edge Cases', () => {
-    it('should handle multiple page layouts for same object', async () => {
-      const pageLayout1 = await createTestPageLayoutWithRestApi({
-        name: generateRecordName('Page Layout 1'),
-        type: PageLayoutType.RECORD_PAGE,
-        objectMetadataId: testObjectMetadataId,
+        assertPageLayoutStructure(pageLayout, {
+          type: PageLayoutType.DASHBOARD,
+          objectMetadataId: null,
+        });
+
+        await deleteTestPageLayoutWithRestApi(pageLayout.id);
       });
-
-      const pageLayout2 = await createTestPageLayoutWithRestApi({
-        name: generateRecordName('Page Layout 2'),
-        type: PageLayoutType.RECORD_INDEX,
-        objectMetadataId: testObjectMetadataId,
-      });
-
-      const response = await makeRestAPIRequest({
-        method: 'get',
-        path: `/metadata/page-layouts?objectMetadataId=${testObjectMetadataId}`,
-        bearer: API_KEY_ACCESS_TOKEN,
-      });
-
-      assertRestApiSuccessfulResponse(response);
-      expect(response.body).toHaveLength(2);
-
-      await Promise.all([
-        deleteTestPageLayoutWithRestApi(pageLayout1.id),
-        deleteTestPageLayoutWithRestApi(pageLayout2.id),
-      ]);
-    });
-
-    it('should handle page layouts with null objectMetadataId', async () => {
-      const pageLayout = await createTestPageLayoutWithRestApi({
-        name: generateRecordName('Global Page Layout'),
-        type: PageLayoutType.DASHBOARD,
-        objectMetadataId: null,
-      });
-
-      assertPageLayoutStructure(pageLayout, {
-        type: PageLayoutType.DASHBOARD,
-        objectMetadataId: null,
-      });
-
-      await deleteTestPageLayoutWithRestApi(pageLayout.id);
     });
   });
 });

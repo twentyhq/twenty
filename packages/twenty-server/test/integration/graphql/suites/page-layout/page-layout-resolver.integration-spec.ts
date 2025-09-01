@@ -210,28 +210,6 @@ describe('Page Layout Resolver', () => {
         deletedAt: null,
       });
     });
-
-    it('should create page layout for record index type', async () => {
-      const input = {
-        name: 'Record Index Page Layout',
-        type: PageLayoutType.RECORD_INDEX,
-        objectMetadataId: testObjectMetadataId,
-      };
-
-      const operation = createPageLayoutOperationFactory({ data: input });
-      const response = await makeGraphqlAPIRequest(operation);
-
-      assertGraphQLSuccessfulResponse(response);
-
-      const createdPageLayout = response.body.data.createPageLayout;
-
-      assertPageLayoutStructure(createdPageLayout, {
-        name: input.name,
-        type: PageLayoutType.RECORD_INDEX,
-        objectMetadataId: input.objectMetadataId,
-        deletedAt: null,
-      });
-    });
   });
 
   describe('updatePageLayout', () => {
