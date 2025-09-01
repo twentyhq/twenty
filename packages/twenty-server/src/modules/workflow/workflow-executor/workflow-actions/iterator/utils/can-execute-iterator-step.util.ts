@@ -8,11 +8,15 @@ import {
   type WorkflowIteratorAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-export const canExecuteIteratorStep = (
-  step: WorkflowIteratorAction,
-  steps: WorkflowAction[],
-  stepInfos: WorkflowRunStepInfos,
-) => {
+export const canExecuteIteratorStep = ({
+  step,
+  steps,
+  stepInfos,
+}: {
+  step: WorkflowIteratorAction;
+  steps: WorkflowAction[];
+  stepInfos: WorkflowRunStepInfos;
+}) => {
   const stepsTargetingIterator = steps.filter(
     (parentStep) =>
       isDefined(parentStep) && parentStep.nextStepIds?.includes(step.id),

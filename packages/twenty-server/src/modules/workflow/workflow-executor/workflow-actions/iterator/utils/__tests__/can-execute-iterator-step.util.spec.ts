@@ -89,7 +89,11 @@ describe('canExecuteIteratorStep', () => {
     // Mock getAllStepIdsInLoop to return the loop step IDs
     getAllStepIdsInLoop.mockReturnValue(['step-1', 'step-2']);
 
-    const result = canExecuteIteratorStep(iteratorStep, steps, stepInfos);
+    const result = canExecuteIteratorStep({
+      step: iteratorStep,
+      steps,
+      stepInfos,
+    });
 
     expect(result).toBe(true);
     expect(getAllStepIdsInLoop).toHaveBeenCalledWith({
@@ -116,7 +120,11 @@ describe('canExecuteIteratorStep', () => {
 
     getAllStepIdsInLoop.mockReturnValue(['step-2']);
 
-    const result = canExecuteIteratorStep(iteratorStep, steps, stepInfos);
+    const result = canExecuteIteratorStep({
+      step: iteratorStep,
+      steps,
+      stepInfos,
+    });
 
     expect(result).toBe(false);
   });
@@ -138,7 +146,11 @@ describe('canExecuteIteratorStep', () => {
 
     getAllStepIdsInLoop.mockReturnValue(['step-1']);
 
-    const result = canExecuteIteratorStep(iteratorStep, steps, stepInfos);
+    const result = canExecuteIteratorStep({
+      step: iteratorStep,
+      steps,
+      stepInfos,
+    });
 
     expect(result).toBe(false);
   });
@@ -158,7 +170,11 @@ describe('canExecuteIteratorStep', () => {
     // Only step-1 is in the loop
     getAllStepIdsInLoop.mockReturnValue(['step-1']);
 
-    const result = canExecuteIteratorStep(iteratorStep, steps, stepInfos);
+    const result = canExecuteIteratorStep({
+      step: iteratorStep,
+      steps,
+      stepInfos,
+    });
 
     expect(result).toBe(true);
   });
@@ -177,7 +193,11 @@ describe('canExecuteIteratorStep', () => {
 
     getAllStepIdsInLoop.mockReturnValue([]);
 
-    const result = canExecuteIteratorStep(iteratorStep, steps, stepInfos);
+    const result = canExecuteIteratorStep({
+      step: iteratorStep,
+      steps,
+      stepInfos,
+    });
 
     expect(result).toBe(true);
   });
@@ -195,7 +215,11 @@ describe('canExecuteIteratorStep', () => {
 
     getAllStepIdsInLoop.mockReturnValue(['step-1']);
 
-    const result = canExecuteIteratorStep(iteratorStep, steps, stepInfos);
+    const result = canExecuteIteratorStep({
+      step: iteratorStep,
+      steps,
+      stepInfos,
+    });
 
     expect(result).toBe(true);
   });
@@ -222,7 +246,11 @@ describe('canExecuteIteratorStep', () => {
 
     getAllStepIdsInLoop.mockReturnValue(['step-1', 'step-2', 'step-3']);
 
-    const result = canExecuteIteratorStep(iteratorStep, steps, stepInfos);
+    const result = canExecuteIteratorStep({
+      step: iteratorStep,
+      steps,
+      stepInfos,
+    });
 
     expect(result).toBe(true);
   });
