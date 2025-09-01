@@ -1,7 +1,7 @@
 import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
 import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import { IconPlus } from 'twenty-ui/display';
+import { IconAppWindow } from 'twenty-ui/display';
 import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
 import { pageLayoutSelectedCellsState } from '../states/pageLayoutSelectedCellsState';
 import { calculateGridBoundsFromSelectedCells } from '../utils/calculateGridBoundsFromSelectedCells';
@@ -43,7 +43,7 @@ export const usePageLayoutDragSelection = () => {
         navigateCommandMenu({
           page: CommandMenuPages.PageLayoutWidgetTypeSelect,
           pageTitle: 'Add Widget',
-          pageIcon: IconPlus,
+          pageIcon: IconAppWindow,
           resetNavigationStack: true,
         });
 

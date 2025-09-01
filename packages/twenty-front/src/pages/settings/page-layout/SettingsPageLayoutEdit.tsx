@@ -37,7 +37,7 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IconPlus } from 'twenty-ui/display';
+import { IconAppWindow, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -145,7 +145,7 @@ export const SettingsPageLayoutEdit = () => {
     navigateCommandMenu({
       page: CommandMenuPages.PageLayoutWidgetTypeSelect,
       pageTitle: 'Add Widget',
-      pageIcon: IconPlus,
+      pageIcon: IconAppWindow,
       resetNavigationStack: true,
     });
   }, [navigateCommandMenu]);
