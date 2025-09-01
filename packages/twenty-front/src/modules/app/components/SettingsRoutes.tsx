@@ -386,11 +386,13 @@ const SettingsRoleAddObjectLevel = lazy(() =>
 type SettingsRoutesProps = {
   isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
+  isPageLayoutFeatureFlagEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
   isFunctionSettingsEnabled,
   isAdminPageEnabled,
+  isPageLayoutFeatureFlagEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
@@ -612,15 +614,22 @@ export const SettingsRoutes = ({
           />
         </>
       )}
-      <Route path={SettingsPath.PageLayout} element={<SettingsPageLayouts />} />
-      <Route
-        path={SettingsPath.PageLayoutNew}
-        element={<SettingsPageLayoutEdit />}
-      />
-      <Route
-        path={SettingsPath.PageLayoutEdit}
-        element={<SettingsPageLayoutEdit />}
-      />
+      {isPageLayoutFeatureFlagEnabled && (
+        <>
+          <Route
+            path={SettingsPath.PageLayout}
+            element={<SettingsPageLayouts />}
+          />
+          <Route
+            path={SettingsPath.PageLayoutNew}
+            element={<SettingsPageLayoutEdit />}
+          />
+          <Route
+            path={SettingsPath.PageLayoutEdit}
+            element={<SettingsPageLayoutEdit />}
+          />
+        </>
+      )}
       <Route
         element={
           <SettingsProtectedRouteWrapper
