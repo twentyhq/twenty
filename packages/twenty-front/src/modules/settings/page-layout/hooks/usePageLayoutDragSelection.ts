@@ -1,20 +1,20 @@
-import { useRecoilState } from 'recoil';
+import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { IconPlus } from 'twenty-ui/display';
 import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
 import { pageLayoutSelectedCellsState } from '../states/pageLayoutSelectedCellsState';
-import { pageLayoutSidePanelOpenState } from '../states/pageLayoutSidePanelOpenState';
 import { calculateGridBoundsFromSelectedCells } from '../utils/calculateGridBoundsFromSelectedCells';
 
 export const usePageLayoutDragSelection = () => {
   const [pageLayoutSelectedCells, setPageLayoutSelectedCells] = useRecoilState(
     pageLayoutSelectedCellsState,
   );
-  const [, setPageLayoutDraggedArea] = useRecoilState(
+  const setPageLayoutDraggedArea = useSetRecoilState(
     pageLayoutDraggedAreaState,
   );
-  const [, setPageLayoutSidePanelOpen] = useRecoilState(
-    pageLayoutSidePanelOpenState,
-  );
 
+  const { navigateCommandMenu } = useNavigateCommandMenu();
   const handleDragSelectionStart = () => {
     setPageLayoutSelectedCells(new Set());
   };
@@ -39,7 +39,14 @@ export const usePageLayoutDragSelection = () => {
 
       if (draggedBounds !== null) {
         setPageLayoutDraggedArea(draggedBounds);
-        setPageLayoutSidePanelOpen(true);
+
+        navigateCommandMenu({
+          page: CommandMenuPages.PageLayoutWidgetTypeSelect,
+          pageTitle: 'Add Widget',
+          pageIcon: IconPlus,
+          resetNavigationStack: true,
+        });
+
         setPageLayoutSelectedCells(new Set());
       }
     }

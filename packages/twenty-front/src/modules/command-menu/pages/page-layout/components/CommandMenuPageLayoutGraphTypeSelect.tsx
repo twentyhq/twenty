@@ -1,3 +1,9 @@
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { usePageLayoutWidgetCreate } from '@/settings/page-layout/hooks/usePageLayoutWidgetCreate';
+import {
+  GraphSubType,
+  WidgetType,
+} from '@/settings/page-layout/mocks/mockWidgets';
 import styled from '@emotion/styled';
 import {
   IconChartBar,
@@ -6,7 +12,6 @@ import {
   IconNumber,
 } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
-import { GraphSubType } from '../mocks/mockWidgets';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -25,14 +30,9 @@ const StyledSectionTitle = styled.div`
 
 const graphTypeOptions = [
   {
-    type: GraphSubType.NUMBER,
-    icon: IconNumber,
-    title: 'Number',
-  },
-  {
-    type: GraphSubType.GAUGE,
-    icon: IconGauge,
-    title: 'Gauge',
+    type: GraphSubType.BAR,
+    icon: IconChartBar,
+    title: 'Bar Chart',
   },
   {
     type: GraphSubType.PIE,
@@ -40,28 +40,36 @@ const graphTypeOptions = [
     title: 'Pie Chart',
   },
   {
-    type: GraphSubType.BAR,
-    icon: IconChartBar,
-    title: 'Bar Chart',
+    type: GraphSubType.GAUGE,
+    icon: IconGauge,
+    title: 'Gauge',
+  },
+  {
+    type: GraphSubType.NUMBER,
+    icon: IconNumber,
+    title: 'Number',
   },
 ];
 
-type PageLayoutSelectGraphTypeProps = {
-  onSelectGraphType: (graphType: GraphSubType) => void;
-};
+export const CommandMenuPageLayoutGraphTypeSelect = () => {
+  const { closeCommandMenu } = useCommandMenu();
+  const { handleCreateWidget } = usePageLayoutWidgetCreate();
 
-export const PageLayoutSelectGraphType = ({
-  onSelectGraphType,
-}: PageLayoutSelectGraphTypeProps) => {
+  const handleSelectGraphType = (graphType: GraphSubType) => {
+    handleCreateWidget(WidgetType.GRAPH, graphType);
+    closeCommandMenu();
+  };
+
   return (
     <StyledContainer>
       <StyledSectionTitle>Graph type</StyledSectionTitle>
+
       {graphTypeOptions.map((option) => (
         <MenuItemCommand
           key={option.type}
           LeftIcon={option.icon}
           text={option.title}
-          onClick={() => onSelectGraphType(option.type)}
+          onClick={() => handleSelectGraphType(option.type)}
         />
       ))}
     </StyledContainer>

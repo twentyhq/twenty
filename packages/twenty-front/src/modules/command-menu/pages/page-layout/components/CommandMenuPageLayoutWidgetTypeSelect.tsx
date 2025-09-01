@@ -1,13 +1,11 @@
+import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
+import { WidgetType } from '@/settings/page-layout/mocks/mockWidgets';
+import { pageLayoutDraggedAreaState } from '@/settings/page-layout/states/pageLayoutDraggedAreaState';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 import { IconChartPie, IconFrame, IconList } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
-import { WidgetType } from '../mocks/mockWidgets';
-import {
-  selectedWidgetTypeState,
-  SidePanelStep,
-  sidePanelStepState,
-} from '../states/pageLayoutSidePanelState';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -51,15 +49,21 @@ const widgetTypeOptions = [
   },
 ];
 
-export const PageLayoutSelectWidgetType = () => {
-  const setSidePanelStep = useSetRecoilState(sidePanelStepState);
-  const setSelectedWidgetType = useSetRecoilState(selectedWidgetTypeState);
+export const CommandMenuPageLayoutWidgetTypeSelect = () => {
+  const { navigateCommandMenu } = useNavigateCommandMenu();
+  const setPageLayoutDraggedArea = useSetRecoilState(
+    pageLayoutDraggedAreaState,
+  );
 
-  const handleSelectWidgetType = (type: WidgetType) => {
-    setSelectedWidgetType(type);
-
-    if (type === WidgetType.GRAPH) {
-      setSidePanelStep(SidePanelStep.SELECT_GRAPH_TYPE);
+  const handleSelectWidget = (widgetType: WidgetType) => {
+    if (widgetType === WidgetType.GRAPH) {
+      navigateCommandMenu({
+        page: CommandMenuPages.PageLayoutGraphTypeSelect,
+        pageTitle: 'Select Graph Type',
+        pageIcon: IconChartPie,
+      });
+    } else {
+      setPageLayoutDraggedArea(null);
     }
   };
 
@@ -72,7 +76,7 @@ export const PageLayoutSelectWidgetType = () => {
             key={option.type}
             LeftIcon={option.icon}
             text={option.title}
-            onClick={() => handleSelectWidgetType(option.type)}
+            onClick={() => handleSelectWidget(option.type)}
           />
         );
 

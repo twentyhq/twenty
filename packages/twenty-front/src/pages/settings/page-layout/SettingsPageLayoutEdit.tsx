@@ -1,7 +1,8 @@
+import { useNavigateCommandMenu } from '@/command-menu/hooks/useNavigateCommandMenu';
+import { CommandMenuPages } from '@/command-menu/types/CommandMenuPages';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPageFullWidthContainer';
 import { PageLayoutInitializationEffect } from '@/settings/page-layout/components/PageLayoutInitializationEffect';
-import { PageLayoutSidePanel } from '@/settings/page-layout/components/PageLayoutSidePanel';
 import { PageLayoutWidgetPlaceholder } from '@/settings/page-layout/components/PageLayoutWidgetPlaceholder';
 import { EMPTY_LAYOUT } from '@/settings/page-layout/constants/EmptyLayout';
 import {
@@ -12,13 +13,10 @@ import { usePageLayoutDraftState } from '@/settings/page-layout/hooks/usePageLay
 import { usePageLayoutDragSelection } from '@/settings/page-layout/hooks/usePageLayoutDragSelection';
 import { usePageLayoutHandleLayoutChange } from '@/settings/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import { usePageLayoutSaveHandler } from '@/settings/page-layout/hooks/usePageLayoutSaveHandler';
-import { usePageLayoutSidePanel } from '@/settings/page-layout/hooks/usePageLayoutSidePanel';
-import { usePageLayoutWidgetCreate } from '@/settings/page-layout/hooks/usePageLayoutWidgetCreate';
 import { usePageLayoutWidgetDelete } from '@/settings/page-layout/hooks/usePageLayoutWidgetDelete';
 import { pageLayoutCurrentBreakpointState } from '@/settings/page-layout/states/pageLayoutCurrentBreakpointState';
 import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
 import { pageLayoutSelectedCellsState } from '@/settings/page-layout/states/pageLayoutSelectedCellsState';
-import { pageLayoutSidePanelOpenState } from '@/settings/page-layout/states/pageLayoutSidePanelOpenState';
 import { pageLayoutWidgetsState } from '@/settings/page-layout/states/pageLayoutWidgetsState';
 import { calculateTotalGridRows } from '@/settings/page-layout/utils/calculateTotalGridRows';
 import { convertLayoutsToWidgets } from '@/settings/page-layout/utils/convertLayoutsToWidgets';
@@ -29,7 +27,7 @@ import { TitleInput } from '@/ui/input/components/TitleInput';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   Responsive,
   WidthProvider,
@@ -135,7 +133,7 @@ export const SettingsPageLayoutEdit = () => {
     pageLayoutCurrentLayoutsState,
   );
   const pageLayoutWidgets = useRecoilValue(pageLayoutWidgetsState);
-  const pageLayoutSidePanelOpen = useRecoilValue(pageLayoutSidePanelOpenState);
+  const { navigateCommandMenu } = useNavigateCommandMenu();
 
   const {
     handleDragSelectionStart,
@@ -143,10 +141,15 @@ export const SettingsPageLayoutEdit = () => {
     handleDragSelectionEnd,
   } = usePageLayoutDragSelection();
 
-  const { handleOpenSidePanel, handleCloseSidePanel } =
-    usePageLayoutSidePanel();
+  const handleOpenAddWidget = useCallback(() => {
+    navigateCommandMenu({
+      page: CommandMenuPages.PageLayoutWidgetTypeSelect,
+      pageTitle: 'Add Widget',
+      pageIcon: IconPlus,
+      resetNavigationStack: true,
+    });
+  }, [navigateCommandMenu]);
 
-  const { handleCreateWidget } = usePageLayoutWidgetCreate();
   const { handleRemoveWidget } = usePageLayoutWidgetDelete();
   const { handleLayoutChange } = usePageLayoutHandleLayoutChange();
 
@@ -227,7 +230,7 @@ export const SettingsPageLayoutEdit = () => {
                 title={t`Add Widget`}
                 size="small"
                 variant="secondary"
-                onClick={handleOpenSidePanel}
+                onClick={handleOpenAddWidget}
               />
             )}
           </StyledActionButtonContainer>
@@ -277,7 +280,7 @@ export const SettingsPageLayoutEdit = () => {
             }
           >
             {isEmptyState ? (
-              <div key="empty-placeholder" onClick={handleOpenSidePanel}>
+              <div key="empty-placeholder" onClick={handleOpenAddWidget}>
                 <PageLayoutWidgetPlaceholder title="" isEmpty={true} />
               </div>
             ) : (
@@ -302,11 +305,6 @@ export const SettingsPageLayoutEdit = () => {
             />
           )}
         </StyledGridContainer>
-        <PageLayoutSidePanel
-          isOpen={pageLayoutSidePanelOpen}
-          onClose={handleCloseSidePanel}
-          onCreateWidget={handleCreateWidget}
-        />
       </SettingsPageFullWidthContainer>
     </>
   );
