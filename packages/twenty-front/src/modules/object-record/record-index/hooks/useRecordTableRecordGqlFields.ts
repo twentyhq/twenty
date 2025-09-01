@@ -6,6 +6,7 @@ import { generateDepthOneWithoutRelationsRecordGqlFields } from '@/object-record
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import * as Sentry from '@sentry/react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
@@ -41,6 +42,16 @@ export const useRecordTableRecordGqlFields = ({
       const fieldMetadataItem =
         fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
+      if (!isDefined(fieldMetadataItem)) {
+        Sentry.captureMessage(
+          `Field metadata item not found for record field ${recordField.id} and fieldMetadataItem id ${recordField.fieldMetadataItemId}, this should not happen, is it a stale view field due to a recent migration ?`,
+          {
+            level: 'error',
+          },
+        );
+        return [];
+      }
+
       const isMorphRelation =
         fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION;
 
@@ -48,13 +59,14 @@ export const useRecordTableRecordGqlFields = ({
         return [[fieldMetadataItem.name, true]];
       }
 
-      if (
-        !isDefined(fieldMetadataItem) ||
-        !isDefined(fieldMetadataItem.morphRelations)
-      ) {
-        throw new Error(
-          `Field ${fieldMetadataItem.name} is missing, please refresh the page. If the problem persists, please contact support.`,
+      if (!isDefined(fieldMetadataItem.morphRelations)) {
+        Sentry.captureMessage(
+          `Morph relations not found for fieldMetadataItem ${fieldMetadataItem.name}, this should not happen.`,
+          {
+            level: 'error',
+          },
         );
+        return [];
       }
 
       return fieldMetadataItem.morphRelations.map((morphRelation) => [
