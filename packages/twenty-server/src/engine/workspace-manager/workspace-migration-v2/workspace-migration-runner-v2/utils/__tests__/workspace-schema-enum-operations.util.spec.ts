@@ -86,7 +86,7 @@ describe('WorkspaceSchemaEnumOperations', () => {
   describe('Enum Collection for SELECT Fields', () => {
     it('should collect enum operations for simple SELECT fields', () => {
       const selectField = getFlatFieldMetadataMock({
-        uniqueIdentifier: 'status',
+        universalIdentifier: 'status',
         objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
         type: FieldMetadataType.SELECT,
         name: 'status',
@@ -124,7 +124,7 @@ describe('WorkspaceSchemaEnumOperations', () => {
 
     it('should collect enum operations for MULTI_SELECT fields', () => {
       const multiSelectField = getFlatFieldMetadataMock({
-        uniqueIdentifier: 'tags',
+        universalIdentifier: 'tags',
         objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
         type: FieldMetadataType.MULTI_SELECT,
         name: 'tags',
@@ -162,7 +162,7 @@ describe('WorkspaceSchemaEnumOperations', () => {
 
     it('should handle field renaming with proper enum name mapping', () => {
       const selectField = getFlatFieldMetadataMock({
-        uniqueIdentifier: 'status',
+        universalIdentifier: 'status',
         objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
         type: FieldMetadataType.SELECT,
         name: 'oldStatus',
@@ -187,7 +187,7 @@ describe('WorkspaceSchemaEnumOperations', () => {
   describe('Composite Field Enum Handling', () => {
     it('should handle composite fields that do not currently generate enum operations', () => {
       const addressField = getFlatFieldMetadataMock({
-        uniqueIdentifier: 'address',
+        universalIdentifier: 'address',
         objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
         type: FieldMetadataType.ADDRESS,
         name: 'primaryAddress',
@@ -205,7 +205,7 @@ describe('WorkspaceSchemaEnumOperations', () => {
 
     it('should skip relation properties in composite types', () => {
       const relationField = getFlatFieldMetadataMock({
-        uniqueIdentifier: 'relation',
+        universalIdentifier: 'relation',
         objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
         type: FieldMetadataType.RELATION,
         name: 'company',
@@ -225,7 +225,7 @@ describe('WorkspaceSchemaEnumOperations', () => {
   describe('Non-Enum Field Safety', () => {
     it('should return empty operations for non-enum fields', () => {
       const textField = getFlatFieldMetadataMock({
-        uniqueIdentifier: 'description',
+        universalIdentifier: 'description',
         objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
         type: FieldMetadataType.TEXT,
         name: 'description',

@@ -28,7 +28,7 @@ export class WorkspaceAgentComparator {
   }: WorkspaceAgentComparatorArgs): AgentComparatorResult[] {
     const results: AgentComparatorResult[] = [];
 
-    const keyFactory = (agent: FlatAgent) => agent.uniqueIdentifier;
+    const keyFactory = (agent: FlatAgent) => agent.universalIdentifier;
 
     const fromAgentMap = transformMetadataForComparison(fromFlatAgents, {
       shouldIgnoreProperty: (property) =>
@@ -45,12 +45,12 @@ export class WorkspaceAgentComparator {
     const agentDifferences = diff(fromAgentMap, toAgentMap);
 
     for (const difference of agentDifferences) {
-      const uniqueIdentifier = difference.path[0] as string;
+      const universalIdentifier = difference.path[0] as string;
 
       switch (difference.type) {
         case 'CREATE': {
           const toAgent = toFlatAgents.find(
-            (agent) => keyFactory(agent) === uniqueIdentifier,
+            (agent) => keyFactory(agent) === universalIdentifier,
           );
 
           if (toAgent) {
@@ -63,10 +63,10 @@ export class WorkspaceAgentComparator {
         }
         case 'CHANGE': {
           const fromAgent = fromFlatAgents.find(
-            (agent) => keyFactory(agent) === uniqueIdentifier,
+            (agent) => keyFactory(agent) === universalIdentifier,
           );
           const toAgent = toFlatAgents.find(
-            (agent) => keyFactory(agent) === uniqueIdentifier,
+            (agent) => keyFactory(agent) === universalIdentifier,
           );
 
           if (fromAgent && toAgent) {
@@ -82,7 +82,7 @@ export class WorkspaceAgentComparator {
         }
         case 'REMOVE': {
           const fromAgent = fromFlatAgents.find(
-            (agent) => keyFactory(agent) === uniqueIdentifier,
+            (agent) => keyFactory(agent) === universalIdentifier,
           );
 
           if (fromAgent && difference.path.length === 1) {

@@ -17,21 +17,21 @@ export const mergeTwoFlatObjectMetadatas = ({
 >): FlatObjectMetadata[] => {
   const initialObjectAccumulator = fromArrayToUniqueKeyRecord({
     array: destFlatObjectMetadatas,
-    uniqueKey: 'uniqueIdentifier',
+    uniqueKey: 'universalIdentifier',
   });
 
-  const mergedUniqueIdentifierFlatObjectMetadataRecord =
+  const mergedUniversalIdentifierFlatObjectMetadataRecord =
     toMergeFlatObjectMetadatas.reduce<Record<string, FlatObjectMetadata>>(
       (acc, toMergeFlatObjectMetadata) => {
-        const flatObjectUniqueIdentifier =
-          toMergeFlatObjectMetadata.uniqueIdentifier;
+        const flatObjectUniversalIdentifier =
+          toMergeFlatObjectMetadata.universalIdentifier;
         const accumulatorCurrentOccurrence: FlatObjectMetadata | undefined =
-          initialObjectAccumulator[flatObjectUniqueIdentifier];
+          initialObjectAccumulator[flatObjectUniversalIdentifier];
 
         if (!isDefined(accumulatorCurrentOccurrence)) {
           return {
             ...acc,
-            [flatObjectUniqueIdentifier]: toMergeFlatObjectMetadata,
+            [flatObjectUniversalIdentifier]: toMergeFlatObjectMetadata,
           };
         }
 
@@ -57,11 +57,11 @@ export const mergeTwoFlatObjectMetadatas = ({
 
         return {
           ...acc,
-          [flatObjectUniqueIdentifier]: mergedFlatObjectMetadata,
+          [flatObjectUniversalIdentifier]: mergedFlatObjectMetadata,
         };
       },
       initialObjectAccumulator,
     );
 
-  return Object.values(mergedUniqueIdentifierFlatObjectMetadataRecord);
+  return Object.values(mergedUniversalIdentifierFlatObjectMetadataRecord);
 };

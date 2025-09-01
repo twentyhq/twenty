@@ -4,7 +4,6 @@ import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
@@ -86,7 +85,6 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
       mockObjectMetadataItemNameSingular,
     contextStoreCurrentViewId: mockView.id,
     onInitializeRecoilSnapshot: (snapshot) => {
-      snapshot.set(prefetchViewsState, [mockView]);
       snapshot.set(coreViewsState, [mockCoreView]);
     },
   });
@@ -159,7 +157,6 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
               }),
               mockView.id,
             );
-            snapshot.set(prefetchViewsState, []);
             snapshot.set(coreViewsState, []);
           },
         }),
@@ -201,9 +198,6 @@ describe('useApplyCurrentViewFiltersToCurrentRecordFilters', () => {
               }),
               mockView.id,
             );
-            snapshot.set(prefetchViewsState, [
-              { ...mockView, viewFilters: [] },
-            ]);
             snapshot.set(coreViewsState, [
               { ...mockCoreView, viewFilters: [] },
             ]);
