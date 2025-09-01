@@ -8,8 +8,7 @@ import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole'
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
 import { SettingsRoleAssignmentConfirmationModal } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal';
 
-import { SettingsRoleAssignmentAgentPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentAgentPickerDropdown';
-import { SettingsRoleAssignmentApiKeyPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentApiKeyPickerDropdown';
+import { SettingsRoleAssignmentEntityPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown';
 import { SettingsRoleAssignmentTable } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentTable';
 import { SettingsRoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown';
 import { type SettingsRoleAssignmentConfirmationModalSelectedRoleTarget } from '@/settings/roles/role-assignment/types/SettingsRoleAssignmentConfirmationModalSelectedRoleTarget';
@@ -332,11 +331,10 @@ export const SettingsRoleAssignment = ({
                 />
               }
               dropdownComponents={
-                <SettingsRoleAssignmentAgentPickerDropdown
-                  excludedAgentIds={assignedAgentIds}
-                  onSelect={(agent: Agent) =>
-                    handleSelectEntity(agent, 'agent')
-                  }
+                <SettingsRoleAssignmentEntityPickerDropdown
+                  entityType="agent"
+                  excludedIds={assignedAgentIds}
+                  onSelect={(agent) => handleSelectEntity(agent, 'agent')}
                 />
               }
             />
@@ -363,11 +361,10 @@ export const SettingsRoleAssignment = ({
                 />
               }
               dropdownComponents={
-                <SettingsRoleAssignmentApiKeyPickerDropdown
-                  excludedApiKeyIds={assignedApiKeyIds}
-                  onSelect={(apiKey: ApiKey) =>
-                    handleSelectEntity(apiKey, 'apiKey')
-                  }
+                <SettingsRoleAssignmentEntityPickerDropdown
+                  entityType="apiKey"
+                  excludedIds={assignedApiKeyIds}
+                  onSelect={(apiKey) => handleSelectEntity(apiKey, 'apiKey')}
                 />
               }
             />
