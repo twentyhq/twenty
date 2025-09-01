@@ -2,19 +2,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { stepHasBeenStarted } from 'src/modules/workflow/workflow-executor/utils/step-has-been-started.util';
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
 import { canExecuteIteratorStep } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/can-execute-iterator-step.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-
-const stepHasBeenStarted = (
-  stepId: string,
-  stepInfos: WorkflowRunStepInfos,
-) => {
-  return (
-    isDefined(stepInfos[stepId]?.status) &&
-    stepInfos[stepId].status !== StepStatus.NOT_STARTED
-  );
-};
 
 export const canExecuteStep = ({
   stepId,
