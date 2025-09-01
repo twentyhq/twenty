@@ -153,6 +153,9 @@ You need to add the following redirect URIs to your project:
    - `AUTH_MICROSOFT_CLIENT_SECRET=<client-secret>`
    - `AUTH_MICROSOFT_CALLBACK_URL=https://<your-domain>/auth/microsoft/redirect`
    - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://<your-domain>/auth/microsoft-apis/get-access-token`
+4. (Optional) If your Entra app registration [account type](https://learn.microsoft.com/en-us/entra/identity-platform/single-and-multi-tenant-apps) is single-tenant, set this variable:
+   - `AUTH_MICROSOFT_TENANT_ID=<your-tenant-id>`
+
 
 <ArticleWarning>
 **Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
