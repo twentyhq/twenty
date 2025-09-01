@@ -8,7 +8,6 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { type ViewSort } from '@/views/types/ViewSort';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 
 import { coreViewsState } from '@/views/states/coreViewState';
 import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
@@ -97,7 +96,6 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
             mockObjectMetadataItemNameSingular,
           contextStoreCurrentViewId: mockView.id,
           onInitializeRecoilSnapshot: (snapshot) => {
-            snapshot.set(prefetchViewsState, [mockView]);
             snapshot.set(coreViewsState, [mockCoreView]);
           },
         }),
@@ -146,7 +144,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
               mockView.id,
             );
 
-            snapshot.set(prefetchViewsState, []);
+            snapshot.set(coreViewsState, []);
           },
         }),
       },
@@ -161,7 +159,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
 
   it('should handle view with empty sorts', () => {
     const viewWithNoSorts = {
-      ...mockView,
+      ...mockCoreView,
       viewSorts: [],
     };
 
@@ -193,7 +191,7 @@ describe('useApplyCurrentViewSortsToCurrentRecordSorts', () => {
               mockView.id,
             );
 
-            snapshot.set(prefetchViewsState, [viewWithNoSorts]);
+            snapshot.set(coreViewsState, [viewWithNoSorts]);
           },
         }),
       },

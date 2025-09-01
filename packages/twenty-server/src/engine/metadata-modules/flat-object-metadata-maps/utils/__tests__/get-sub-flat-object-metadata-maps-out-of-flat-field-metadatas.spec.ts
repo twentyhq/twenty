@@ -24,7 +24,7 @@ describe('getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatas', () => {
               getFlatFieldMetadataMock({
                 objectMetadataId: 'non-existent',
                 type: FieldMetadataType.TEXT,
-                uniqueIdentifier: 'unique-identifier-1',
+                universalIdentifier: 'unique-identifier-1',
               }),
             ],
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,

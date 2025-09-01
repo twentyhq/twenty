@@ -19,7 +19,7 @@ const fromCachedRelationFieldMetadataEntityToFlatRelationTargetFieldMetadata = <
 ): FlatRelationTargetFieldMetadata => {
   return {
     ...cachedFieldMetadataEntity,
-    uniqueIdentifier:
+    universalIdentifier:
       cachedFieldMetadataEntity.standardId ?? cachedFieldMetadataEntity.id,
     type: cachedFieldMetadataEntity.type,
   };
@@ -102,7 +102,7 @@ export const fromCachedFieldMetadataEntityToFlatFieldMetadata = <
 
     return {
       ...cachedFieldMetadataEntity,
-      uniqueIdentifier:
+      universalIdentifier:
         cachedFieldMetadataEntity.standardId ?? cachedFieldMetadataEntity.id,
       flatRelationTargetFieldMetadata,
       flatRelationTargetObjectMetadata,
@@ -114,7 +114,7 @@ export const fromCachedFieldMetadataEntityToFlatFieldMetadata = <
 
   return {
     ...cachedFieldMetadataEntity,
-    uniqueIdentifier:
+    universalIdentifier:
       cachedFieldMetadataEntity.standardId ?? cachedFieldMetadataEntity.id,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,

@@ -5,7 +5,7 @@ import { type FlatIndexFieldMetadata } from 'src/engine/workspace-manager/worksp
 type FlatIndexFieldMetadataOverrides = Required<
   Pick<
     FlatIndexFieldMetadata,
-    'fieldMetadataId' | 'indexMetadataId' | 'uniqueIdentifier'
+    'fieldMetadataId' | 'indexMetadataId' | 'universalIdentifier'
   >
 > &
   Partial<FlatIndexFieldMetadata>;
