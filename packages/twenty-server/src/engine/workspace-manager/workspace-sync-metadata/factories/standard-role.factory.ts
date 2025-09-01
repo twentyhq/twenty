@@ -30,12 +30,12 @@ export class StandardRoleFactory {
         computedRoles.push({
           ...flatRole,
           id: existingRole.id,
-          uniqueIdentifier: roleDefinition.standardId || existingRole.id,
+          universalIdentifier: roleDefinition.standardId || existingRole.id,
         });
       } else {
         computedRoles.push({
           ...flatRole,
-          uniqueIdentifier: roleDefinition.standardId,
+          universalIdentifier: roleDefinition.standardId,
         });
       }
     }

@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type FlatObjectMetadataOverrides = Required<
-  Pick<FlatObjectMetadata, 'uniqueIdentifier'>
+  Pick<FlatObjectMetadata, 'universalIdentifier'>
 > &
   Partial<FlatObjectMetadata>;
 export const getFlatObjectMetadataMock = (

@@ -19,7 +19,7 @@ type GetWorkspaceMigrationUpdateFieldActionArgs = FromTo<
   'FlatFieldMetadata'
 >;
 /**
- * This comparator handles update on colliding uniqueIdentifier flatFieldMetadata
+ * This comparator handles update on colliding universalIdentifier flatFieldMetadata
  */
 export const compareTwoFlatFieldMetadata = ({
   fromFlatFieldMetadata,
