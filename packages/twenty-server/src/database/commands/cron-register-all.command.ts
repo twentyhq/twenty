@@ -4,6 +4,7 @@ import { Command, CommandRunner } from 'nest-commander';
 
 import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/domain-manager/crons/commands/check-custom-domain-valid-records.cron.command';
 import { CleanupOrphanedFilesCronCommand } from 'src/engine/core-modules/file/crons/commands/cleanup-orphaned-files.cron.command';
+import { CronTriggerCronCommand } from 'src/engine/metadata-modules/trigger/crons/commands/cron-trigger.cron.command';
 import { CalendarEventListFetchCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-event-list-fetch.cron.command';
 import { CalendarEventsImportCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-import.cron.command';
 import { CalendarOngoingStaleCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-ongoing-stale.cron.command';
@@ -26,6 +27,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly messagingMessagesImportCronCommand: MessagingMessagesImportCronCommand,
     private readonly messagingMessageListFetchCronCommand: MessagingMessageListFetchCronCommand,
     private readonly messagingOngoingStaleCronCommand: MessagingOngoingStaleCronCommand,
+
     private readonly calendarEventListFetchCronCommand: CalendarEventListFetchCronCommand,
     private readonly calendarEventsImportCronCommand: CalendarEventsImportCronCommand,
     private readonly calendarOngoingStaleCronCommand: CalendarOngoingStaleCronCommand,
@@ -35,6 +37,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly workflowRunEnqueueCronCommand: WorkflowRunEnqueueCronCommand,
     private readonly workflowHandleStaledRunsCronCommand: WorkflowHandleStaledRunsCronCommand,
     private readonly workflowCleanWorkflowRunsCronCommand: WorkflowCleanWorkflowRunsCommand,
+    private readonly cronTriggerCronCommand: CronTriggerCronCommand,
   ) {
     super();
   }
@@ -90,6 +93,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'WorkflowCleanWorkflowRuns',
         command: this.workflowCleanWorkflowRunsCronCommand,
+      },
+      {
+        name: 'CronTrigger',
+        command: this.cronTriggerCronCommand,
       },
     ];
 

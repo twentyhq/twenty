@@ -1,14 +1,15 @@
 import { msg } from '@lingui/core/macro';
-import { Relation } from 'typeorm';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { Relation } from 'typeorm';
 
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-on-delete-action.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -57,6 +58,37 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconHash',
   })
   syncCursor: string;
+
+  @WorkspaceField({
+    standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.isSentFolder,
+    type: FieldMetadataType.BOOLEAN,
+    label: msg`Is Sent Folder`,
+    description: msg`Is Sent Folder`,
+    icon: 'IconCheck',
+    defaultValue: false,
+  })
+  isSentFolder: boolean;
+
+  @WorkspaceField({
+    standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.isSynced,
+    type: FieldMetadataType.BOOLEAN,
+    label: msg`Is Synced`,
+    description: msg`Is Synced`,
+    icon: 'IconCheck',
+    defaultValue: false,
+  })
+  isSynced: boolean;
+
+  @WorkspaceField({
+    standardId: MESSAGE_FOLDER_STANDARD_FIELD_IDS.externalId,
+    type: FieldMetadataType.TEXT,
+    label: msg`External ID`,
+    description: msg`External ID`,
+    icon: 'IconHash',
+    defaultValue: null,
+  })
+  @WorkspaceIsNullable()
+  externalId: string | null;
 
   @WorkspaceJoinColumn('messageChannel')
   messageChannelId: string;

@@ -14,7 +14,7 @@ import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type UseReorderRecordGroupsParams = {
-  viewBarId: string;
+  recordIndexId: string;
   viewType: ViewType;
 };
 
@@ -24,7 +24,7 @@ type ReorderRecordGroupsParams = {
 };
 
 export const useReorderRecordGroups = ({
-  viewBarId,
+  recordIndexId,
   viewType,
 }: UseReorderRecordGroupsParams) => {
   const { setRecordGroups } = useSetRecordGroups();
@@ -32,6 +32,7 @@ export const useReorderRecordGroups = ({
 
   const visibleRecordGroupIdsFamilySelector = useRecoilComponentCallbackState(
     visibleRecordGroupIdsComponentFamilySelector,
+    recordIndexId,
   );
 
   const { saveViewGroups } = useSaveCurrentViewGroups();
@@ -79,16 +80,20 @@ export const useReorderRecordGroups = ({
           ];
         }, []);
 
-        setRecordGroups(updatedRecordGroups, viewBarId, objectMetadataItem.id);
+        setRecordGroups(
+          updatedRecordGroups,
+          recordIndexId,
+          objectMetadataItem.id,
+        );
         saveViewGroups(
           mapRecordGroupDefinitionsToViewGroups(updatedRecordGroups),
         );
       },
     [
-      objectMetadataItem,
+      objectMetadataItem.id,
+      recordIndexId,
       saveViewGroups,
       setRecordGroups,
-      viewBarId,
       viewType,
       visibleRecordGroupIdsFamilySelector,
     ],

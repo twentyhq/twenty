@@ -6,14 +6,6 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { SettingsPath } from '@/types/SettingsPath';
 import { PermissionFlagType } from '~/generated/graphql';
 
-const SettingsApiKeys = lazy(() =>
-  import('~/pages/settings/developers/api-keys/SettingsApiKeys').then(
-    (module) => ({
-      default: module.SettingsApiKeys,
-    }),
-  ),
-);
-
 const SettingsGraphQLPlayground = lazy(() =>
   import(
     '~/pages/settings/developers/playground/SettingsGraphQLPlayground'
@@ -28,14 +20,6 @@ const SettingsRestPlayground = lazy(() =>
       default: module.SettingsRestPlayground,
     }),
   ),
-);
-
-const SettingsWebhooks = lazy(() =>
-  import(
-    '~/pages/settings/developers/webhooks/components/SettingsWebhooks'
-  ).then((module) => ({
-    default: module.SettingsWebhooks,
-  })),
 );
 
 const SettingsAccountsCalendars = lazy(() =>
@@ -112,12 +96,6 @@ const SettingsDevelopersApiKeysNew = lazy(() =>
   })),
 );
 
-const Releases = lazy(() =>
-  import('~/pages/settings/Releases').then((module) => ({
-    default: module.Releases,
-  })),
-);
-
 const SettingsServerlessFunctions = lazy(() =>
   import(
     '~/pages/settings/serverless-functions/SettingsServerlessFunctions'
@@ -143,6 +121,18 @@ const SettingsServerlessFunctionsNew = lazy(() =>
 const SettingsWorkspace = lazy(() =>
   import('~/pages/settings/SettingsWorkspace').then((module) => ({
     default: module.SettingsWorkspace,
+  })),
+);
+
+const SettingsDomains = lazy(() =>
+  import('~/pages/settings/domains').then((module) => ({
+    default: module.SettingsDomains,
+  })),
+);
+
+const SettingsApiWebhooks = lazy(() =>
+  import('~/pages/settings/workspace/SettingsApiWebhooks').then((module) => ({
+    default: module.SettingsApiWebhooks,
   })),
 );
 
@@ -297,6 +287,12 @@ const SettingsObjectFieldEdit = lazy(() =>
   ),
 );
 
+const PageLayoutEdition = lazy(() =>
+  import('~/pages/settings/page-layout/PageLayoutEdition').then((module) => ({
+    default: module.PageLayoutEdition,
+  })),
+);
+
 const SettingsSecurity = lazy(() =>
   import('~/pages/settings/security/SettingsSecurity').then((module) => ({
     default: module.SettingsSecurity,
@@ -341,9 +337,9 @@ const SettingsAdminConfigVariableDetails = lazy(() =>
   })),
 );
 
-const SettingsLab = lazy(() =>
-  import('~/pages/settings/lab/SettingsLab').then((module) => ({
-    default: module.SettingsLab,
+const SettingsReleases = lazy(() =>
+  import('~/pages/settings/releases/SettingsReleases').then((module) => ({
+    default: module.SettingsReleases,
   })),
 );
 
@@ -422,6 +418,11 @@ export const SettingsRoutes = ({
         }
       >
         <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
+        <Route path={SettingsPath.Domains} element={<SettingsDomains />} />
+        <Route
+          path={SettingsPath.ApiWebhooks}
+          element={<SettingsApiWebhooks />}
+        />
         <Route path={SettingsPath.AI} element={<SettingsAI />} />
         <Route
           path={SettingsPath.AINewAgent}
@@ -505,8 +506,6 @@ export const SettingsRoutes = ({
           />
         }
       >
-        <Route path={SettingsPath.APIs} element={<SettingsApiKeys />} />
-        <Route path={SettingsPath.Webhooks} element={<SettingsWebhooks />} />
         <Route
           path={`${SettingsPath.GraphQLPlayground}`}
           element={<SettingsGraphQLPlayground />}
@@ -572,7 +571,7 @@ export const SettingsRoutes = ({
           />
         </>
       )}
-      <Route path={SettingsPath.Releases} element={<Releases />} />
+
       <Route
         element={
           <SettingsProtectedRouteWrapper
@@ -606,13 +605,17 @@ export const SettingsRoutes = ({
         </>
       )}
       <Route
+        path={SettingsPath.PageLayoutEdition}
+        element={<PageLayoutEdition />}
+      />
+      <Route
         element={
           <SettingsProtectedRouteWrapper
             settingsPermission={PermissionFlagType.WORKSPACE}
           />
         }
       >
-        <Route path={SettingsPath.Lab} element={<SettingsLab />} />
+        <Route path={SettingsPath.Releases} element={<SettingsReleases />} />
       </Route>
     </Routes>
   </Suspense>

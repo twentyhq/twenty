@@ -137,6 +137,7 @@ describe('WorkspaceEntityManager', () => {
         IS_WORKSPACE_MIGRATION_V2_ENABLED: false,
         IS_API_KEY_ROLES_ENABLED: false,
         IS_PAGE_LAYOUT_ENABLED: false,
+        IS_MESSAGE_FOLDER_CONTROL_ENABLED: false,
       },
       eventEmitterService: {
         emitMutationEvent: jest.fn(),

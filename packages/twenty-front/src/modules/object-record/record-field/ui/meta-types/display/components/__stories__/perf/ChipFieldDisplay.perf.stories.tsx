@@ -4,6 +4,7 @@ import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlur
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ChipFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ChipFieldDisplay';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
@@ -22,6 +23,16 @@ const meta: Meta = {
         (item) => item.nameSingular === CoreObjectNameSingular.Company,
       )!;
 
+      const {
+        fieldDefinitionByFieldMetadataItemId,
+        fieldMetadataItemByFieldMetadataItemId,
+        labelIdentifierFieldMetadataItem,
+        recordFieldByFieldMetadataItemId,
+      } = useRecordIndexFieldMetadataDerivedStates(
+        companyObjectMetadataItem,
+        instanceId,
+      );
+
       return (
         <RecordTableComponentInstanceContext.Provider
           value={{
@@ -37,6 +48,10 @@ const meta: Meta = {
               objectNameSingular: CoreObjectNameSingular.Company,
               objectMetadataItem: companyObjectMetadataItem,
               recordIndexId: instanceId,
+              fieldDefinitionByFieldMetadataItemId,
+              fieldMetadataItemByFieldMetadataItemId,
+              labelIdentifierFieldMetadataItem,
+              recordFieldByFieldMetadataItemId,
             }}
           >
             <Story />

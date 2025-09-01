@@ -1,4 +1,5 @@
 import { type ImapSmtpCaldavAccount } from '@/accounts/types/ImapSmtpCaldavAccount';
+import { type MessageFolder } from '@/accounts/types/MessageFolder';
 import { type ConnectedAccountProvider } from 'twenty-shared/types';
 import { type MessageChannelVisibility } from '~/generated/graphql';
 
@@ -35,6 +36,7 @@ export type MessageChannel = {
   excludeNonProfessionalEmails: boolean;
   excludeGroupEmails: boolean;
   isSyncEnabled: boolean;
+  messageFolders: MessageFolder[];
   visibility: MessageChannelVisibility;
   syncStatus: MessageChannelSyncStatus;
   syncStage: MessageChannelSyncStage;

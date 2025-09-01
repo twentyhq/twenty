@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { QUOTED_STRING_REGEX } from 'twenty-shared/constants';
 import {
@@ -31,11 +31,11 @@ const validateMetadataOptionId = (sanitizedId?: string) => {
   const validators: FlatMetadataValidator<string>[] = [
     {
       validator: (id) => !isDefined(id),
-      message: t`Option id is required`,
+      message: msg`Option id is required`,
     },
     {
       validator: (id) => !z.string().uuid().safeParse(id).success,
-      message: t`Option id is invalid`,
+      message: msg`Option id is invalid`,
     },
   ];
 
@@ -45,27 +45,46 @@ const validateMetadataOptionId = (sanitizedId?: string) => {
   });
 };
 
-const validateMetadataOptionLabel = (sanitizedLabel: string) => {
+const validateMetadataOptionLabel = (
+  sanitizedLabel: string,
+): FlatFieldMetadataValidationError[] => {
+  if (!isDefined(sanitizedLabel)) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: t`Option label is required`,
+        userFriendlyMessage: t`Option label is required`,
+      },
+    ];
+  }
+
+  if (!isNonEmptyString(sanitizedLabel)) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: t`Option label must be a string of at least one character`,
+        userFriendlyMessage: t`Option label format not supported`,
+        value: sanitizedLabel,
+      },
+    ];
+  }
+
   const validators: FlatMetadataValidator<string>[] = [
     {
-      validator: (label) => !isDefined(label),
-      message: t`Option label is required`,
-    },
-    {
       validator: exceedsDatabaseIdentifierMaximumLength,
-      message: t`Option label exceeds 63 characters`,
+      message: msg`Option label exceeds 63 characters`,
     },
     {
       validator: beneathDatabaseIdentifierMinimumLength,
-      message: t`Option label "${sanitizedLabel}" is beneath 1 character`,
+      message: msg`Option label "${sanitizedLabel}" is beneath 1 character`,
     },
     {
       validator: (label) => label.includes(','),
-      message: t`Label must not contain a comma`,
+      message: msg`Label must not contain a comma`,
     },
     {
       validator: (label) => !isNonEmptyString(label) || label === ' ',
-      message: t`Label must not be empty`,
+      message: msg`Label must not be empty`,
     },
   ];
 
@@ -75,23 +94,41 @@ const validateMetadataOptionLabel = (sanitizedLabel: string) => {
   });
 };
 
-const validateMetadataOptionValue = (sanitizedValue: string) => {
+const validateMetadataOptionValue = (
+  sanitizedValue: string,
+): FlatFieldMetadataValidationError[] => {
+  if (!isDefined(sanitizedValue)) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: t`Option value is required`,
+        userFriendlyMessage: t`Option value is required`,
+      },
+    ];
+  }
+
+  if (!isNonEmptyString(sanitizedValue)) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: t`Option value must be a string of at least one character`,
+        userFriendlyMessage: t`Option value format not supported`,
+      },
+    ];
+  }
+
   const validators: FlatMetadataValidator<string>[] = [
     {
-      validator: (value) => !isDefined(value),
-      message: t`Option value is required`,
-    },
-    {
       validator: exceedsDatabaseIdentifierMaximumLength,
-      message: t`Option value exceeds 63 characters`,
+      message: msg`Option value exceeds 63 characters`,
     },
     {
       validator: beneathDatabaseIdentifierMinimumLength,
-      message: t`Option value "${sanitizedValue}" is beneath 1 character`,
+      message: msg`Option value "${sanitizedValue}" is beneath 1 character`,
     },
     {
       validator: (value) => !isSnakeCaseString(value),
-      message: t`Value must be in UPPER_CASE and follow snake_case "${sanitizedValue}"`,
+      message: msg`Value must be in UPPER_CASE and follow snake_case "${sanitizedValue}"`,
     },
   ];
 
@@ -117,7 +154,7 @@ const validateDuplicates = (
       FieldMetadataDefaultOption[] | FieldMetadataComplexOption[]
     >
   >((field) => ({
-    message: t`Duplicated option ${field}`,
+    message: msg`Duplicated option ${field}`,
     validator: () =>
       new Set(options.map((option) => option[field])).size !== options.length,
   }));
@@ -178,14 +215,14 @@ const validateSelectDefaultValue = ({
   const validators: FlatMetadataValidator<string>[] = [
     {
       validator: (value: string) => !QUOTED_STRING_REGEX.test(value),
-      message: 'Default value should be as quoted string',
+      message: msg`Default value should be as quoted string`,
     },
     {
       validator: (value: string) =>
         !options.some(
           (option) => option.value === value.replace(QUOTED_STRING_REGEX, '$1'),
         ),
-      message: `Default value "${defaultValue}" must be one of the option values`,
+      message: msg`Default value "${defaultValue}" must be one of the option values`,
     },
   ];
 
@@ -216,11 +253,11 @@ const validateMultiSelectDefaultValue = ({
   const validators: FlatMetadataValidator<string[]>[] = [
     {
       validator: (values) => values.length === 0,
-      message: 'If defined default value must contain at least one value',
+      message: msg`If defined default value must contain at least one value`,
     },
     {
       validator: (values) => new Set(values).size !== values.length,
-      message: 'Default values must be unique',
+      message: msg`Default values must be unique`,
     },
   ];
 

@@ -443,6 +443,7 @@ describe('roles permissions', () => {
 
       beforeAll(async () => {
         const { data } = await createOneObjectMetadata({
+          expectToFail: false,
           input: {
             nameSingular: 'house',
             namePlural: 'houses',
@@ -457,6 +458,7 @@ describe('roles permissions', () => {
 
       afterAll(async () => {
         await deleteOneObjectMetadata({
+          expectToFail: false,
           input: { idToDelete: listingObjectId },
         });
       });

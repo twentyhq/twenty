@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -11,7 +11,6 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
   WorkflowRunStatus,
   WorkflowRunWorkspaceEntity,
@@ -28,8 +27,9 @@ export class WorkflowCleanWorkflowRunsJob {
   constructor(
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   @Process(WorkflowCleanWorkflowRunsJob.name)
@@ -44,13 +44,10 @@ export class WorkflowCleanWorkflowRunsJob {
       },
     });
 
-    const mainDataSource =
-      await this.workspaceDataSourceService.connectToMainDataSource();
-
     for (const activeWorkspace of activeWorkspaces) {
       const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
-      const workflowRunsToDelete = await mainDataSource.query(
+      const workflowRunsToDelete = await this.coreDataSource.query(
         `
           WITH ranked_runs AS (
             SELECT id,

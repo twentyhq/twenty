@@ -253,6 +253,9 @@ export const MESSAGE_FOLDER_STANDARD_FIELD_IDS = {
   name: '20202020-7cf8-40bc-a681-b80b771449b7',
   messageChannel: '20202020-b658-408f-bd46-3bd2d15d7e52',
   syncCursor: '20202020-98cd-49ed-8dfc-cb5796400e64',
+  isSentFolder: '20202020-2af5-4a25-b2de-3c9386da941b',
+  isSynced: '20202020-764f-4e09-8f95-cd46b6bfe3c4',
+  externalId: '20202020-f3a8-4d2b-9c7e-1b5f9a8e4c6d',
 } as const;
 
 export const MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS = {

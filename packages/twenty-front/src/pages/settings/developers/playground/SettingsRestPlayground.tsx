@@ -14,7 +14,7 @@ export const SettingsRestPlayground = () => {
   }>();
 
   const handleExitFullScreen = () => {
-    navigateSettings(SettingsPath.APIs);
+    navigateSettings(SettingsPath.ApiWebhooks);
   };
 
   return (
@@ -26,15 +26,15 @@ export const SettingsRestPlayground = () => {
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: <Trans>APIs</Trans>,
-          href: getSettingsPath(SettingsPath.APIs),
+          children: <Trans>APIs & Webhooks</Trans>,
+          href: getSettingsPath(SettingsPath.ApiWebhooks),
         },
         { children: <Trans>REST</Trans> },
       ]}
     >
       <RestPlayground
         schema={schema}
-        onError={() => navigateSettings(SettingsPath.APIs)}
+        onError={() => navigateSettings(SettingsPath.ApiWebhooks)}
       />
     </FullScreenContainer>
   );

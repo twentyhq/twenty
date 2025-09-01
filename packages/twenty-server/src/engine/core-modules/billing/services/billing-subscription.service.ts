@@ -17,7 +17,7 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
-import { type BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { type BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
@@ -33,6 +33,10 @@ import { StripeSubscriptionService } from 'src/engine/core-modules/billing/strip
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
+import { findOrThrow } from 'src/utils/find-or-throw.util';
+import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
+import type { MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
 
 @Injectable()
 export class BillingSubscriptionService {
@@ -47,6 +51,8 @@ export class BillingSubscriptionService {
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     private readonly stripeCustomerService: StripeCustomerService,
     private readonly twentyConfigService: TwentyConfigService,
+    @InjectRepository(BillingPrice)
+    private readonly billingPriceRepository: Repository<BillingPrice>,
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
     @InjectRepository(BillingSubscriptionItem)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
@@ -71,6 +77,27 @@ export class BillingSubscriptionService {
     );
 
     return notCanceledSubscriptions?.[0];
+  }
+
+  async getCurrentActiveBillingSubscriptionOrThrow(criteria: {
+    workspaceId?: string;
+    stripeCustomerId?: string;
+  }) {
+    const subscription =
+      await this.getCurrentBillingSubscriptionOrThrow(criteria);
+
+    if (
+      ![SubscriptionStatus.Active, SubscriptionStatus.Trialing].includes(
+        subscription.status,
+      )
+    ) {
+      throw new BillingException(
+        'No active billing subscription found',
+        BillingExceptionCode.BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND,
+      );
+    }
+
+    return subscription;
   }
 
   async getBaseProductCurrentBillingSubscriptionItemOrThrow(
@@ -179,9 +206,13 @@ export class BillingSubscriptionService {
         planKey,
       });
 
-    const subscriptionItemsToUpdate = this.getSubscriptionItemsToUpdate(
+    const subscriptionItemsToUpdate = await this.getSubscriptionItemsToUpdate(
       billingSubscription,
       pricesPerPlanArray,
+    );
+
+    await this.stripeSubscriptionService.setYearlyThresholds(
+      billingSubscription.stripeSubscriptionId,
     );
 
     await this.stripeSubscriptionService.updateSubscriptionItems(
@@ -212,7 +243,7 @@ export class BillingSubscriptionService {
         planKey,
       });
 
-    const subscriptionItemsToUpdate = this.getSubscriptionItemsToUpdate(
+    const subscriptionItemsToUpdate = await this.getSubscriptionItemsToUpdate(
       billingSubscription,
       pricesPerPlanArray,
     );
@@ -228,32 +259,100 @@ export class BillingSubscriptionService {
     );
   }
 
-  private getSubscriptionItemsToUpdate(
+  private async getSubscriptionItemsToUpdate(
     billingSubscription: BillingSubscription,
     billingPricesPerPlanAndIntervalArray: BillingPrice[],
-  ): BillingSubscriptionItem[] {
+  ): Promise<BillingSubscriptionItem[]> {
+    const currentLicensedBillingSubscriptionItem = findOrThrow(
+      billingSubscription.billingSubscriptionItems,
+      ({ billingProduct }) =>
+        billingProduct.metadata.priceUsageBased === BillingUsageType.LICENSED,
+    );
+
+    const yearlyLicensedMatchingPrice = findOrThrow(
+      billingPricesPerPlanAndIntervalArray,
+      (price) =>
+        price.billingProduct.metadata.priceUsageBased ===
+        currentLicensedBillingSubscriptionItem.billingProduct.metadata
+          .priceUsageBased,
+    );
+
+    const currentMeteredBillingSubscriptionItem = findOrThrow(
+      billingSubscription.billingSubscriptionItems,
+      ({ billingProduct }) =>
+        billingProduct.metadata.priceUsageBased === BillingUsageType.METERED,
+    );
+
+    const { tiers: currentMeteredBillingPriceTiers } =
+      await this.billingPriceRepository.findOneByOrFail({
+        stripePriceId: currentMeteredBillingSubscriptionItem.stripePriceId,
+      });
+
+    billingValidator.assertIsMeteredTiersSchemaOrThrow(
+      currentMeteredBillingPriceTiers,
+    );
+
+    const yearlyMeteredMatchingPrice = this.findYearlyMeteredMatchingPrice(
+      billingPricesPerPlanAndIntervalArray,
+      currentMeteredBillingPriceTiers,
+      currentMeteredBillingSubscriptionItem.stripeProductId,
+    );
+
     return billingSubscription.billingSubscriptionItems.map(
       (subscriptionItem) => {
-        const matchingPrice = billingPricesPerPlanAndIntervalArray.find(
-          (price) =>
-            price.billingProduct.metadata.priceUsageBased ===
-            subscriptionItem.billingProduct.metadata.priceUsageBased,
-        );
-
-        if (!matchingPrice) {
-          throw new BillingException(
-            `Cannot find matching price for product ${subscriptionItem.stripeProductId}`,
-            BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
-          );
-        }
+        const isMetered =
+          subscriptionItem.billingProduct.metadata.priceUsageBased ===
+          BillingUsageType.METERED;
 
         return {
           ...subscriptionItem,
-          stripePriceId: matchingPrice.stripePriceId,
-          stripeProductId: matchingPrice.stripeProductId,
+          stripePriceId: isMetered
+            ? yearlyMeteredMatchingPrice.stripePriceId
+            : yearlyLicensedMatchingPrice.stripePriceId,
+          stripeProductId: isMetered
+            ? yearlyMeteredMatchingPrice.stripeProductId
+            : yearlyLicensedMatchingPrice.stripeProductId,
         };
       },
     );
+  }
+
+  private findYearlyMeteredMatchingPrice(
+    billingPricesPerPlanAndIntervalArray: BillingPrice[],
+    currentMeteredBillingPriceTiers: MeterBillingPriceTiers,
+    currentStripeProductId: string,
+  ): BillingPrice & { tiers: MeterBillingPriceTiers } {
+    const meteredYearlyCandidates = billingPricesPerPlanAndIntervalArray.filter(
+      (price) =>
+        price.billingProduct.metadata.priceUsageBased ===
+          BillingUsageType.METERED &&
+        price.interval === SubscriptionInterval.Year,
+    );
+
+    const validCandidates = meteredYearlyCandidates.filter((price) =>
+      billingValidator.isMeteredTiersSchema(price.tiers),
+    ) as Array<
+      BillingPrice & {
+        tiers: MeterBillingPriceTiers;
+      }
+    >;
+
+    const currentMonthlyCap = currentMeteredBillingPriceTiers[0].up_to;
+    const currentYearlyCap = currentMonthlyCap * 12;
+
+    const match = validCandidates
+      .filter((price) => price.tiers[0].up_to <= currentYearlyCap)
+      .sort((a, b) => a.tiers[0].up_to - b.tiers[0].up_to)
+      .pop();
+
+    if (!match) {
+      throw new BillingException(
+        `Cannot find matching price for product ${currentStripeProductId}`,
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+      );
+    }
+
+    return match;
   }
 
   async endTrialPeriod(workspace: Workspace) {

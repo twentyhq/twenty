@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
-import { type Repository } from 'typeorm';
+import { type DataSource, type Repository } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -19,6 +19,7 @@ import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
@@ -32,13 +33,22 @@ describe('WorkspaceManagerService', () => {
   let workspaceDataSourceService: WorkspaceDataSourceService;
   let roleTargetsRepository: Repository<RoleTargetsEntity>;
   let roleRepository: Repository<RoleEntity>;
+  let mockDataSource: jest.Mocked<DataSource>;
 
   beforeEach(async () => {
+    mockDataSource = {
+      transaction: jest.fn(),
+    } as any;
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkspaceManagerService,
         WorkspaceMigrationService,
         DataSourceService,
+        {
+          provide: getDataSourceToken(),
+          useValue: mockDataSource,
+        },
         {
           provide: getRepositoryToken(Workspace),
           useValue: {},
@@ -122,6 +132,14 @@ describe('WorkspaceManagerService', () => {
             createOneAgent: jest
               .fn()
               .mockResolvedValue({ id: 'mock-agent-id' }),
+          },
+        },
+        {
+          provide: TwentyORMGlobalManager,
+          useValue: {
+            getDataSourceForWorkspace: jest.fn().mockResolvedValue({
+              transaction: jest.fn(),
+            }),
           },
         },
       ],

@@ -4,7 +4,9 @@ import { useRecoilValue } from 'recoil';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
@@ -24,6 +26,10 @@ export const SettingsAccountsMessageChannelsContainer = () => {
     SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID,
   );
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
+  const messageChannelObjectMetadataItem = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.MessageChannel,
+  });
 
   const { records: accounts } = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
@@ -48,15 +54,16 @@ export const SettingsAccountsMessageChannelsContainer = () => {
         eq: true,
       },
     },
+    recordGqlFields: generateDepthOneRecordGqlFields(
+      messageChannelObjectMetadataItem,
+    ),
     skip: !accounts.length,
   });
 
-  const tabs = [
-    ...messageChannels.map((messageChannel) => ({
-      id: messageChannel.id,
-      title: messageChannel.handle,
-    })),
-  ];
+  const tabs = messageChannels.map((messageChannel) => ({
+    id: messageChannel.id,
+    title: messageChannel.handle,
+  }));
 
   if (!messageChannels.length) {
     return <SettingsNewAccountSection />;
