@@ -102,10 +102,12 @@ describe('removeUndefinedFields', () => {
           undefined,
           { id: 3, label: undefined },
         ],
+        emptyArray: [],
       },
       expected: {
         names: ['John', 'Jane', null],
         tags: [{ id: 1, label: 'active' }, { label: 'pending' }, { id: 3 }],
+        emptyArray: [],
       },
     },
     {

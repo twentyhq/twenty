@@ -25,6 +25,10 @@ export const removeUndefinedFields = <T>(input: T): T | Partial<T> => {
         return { ...acc, [key]: value };
       }
 
+      if (Array.isArray(value) && value.length === 0) {
+        return { ...acc, [key]: value };
+      }
+
       if (typeof value === 'object') {
         const cleaned = removeUndefinedFields(value);
         if (
