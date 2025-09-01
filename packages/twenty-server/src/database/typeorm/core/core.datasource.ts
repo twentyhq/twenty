@@ -43,6 +43,9 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
           rejectUnauthorized: false,
         }
       : undefined,
+  extra: {
+    query_timeout: 15000,
+  },
 };
 
 export const connectionSource = new DataSource(
