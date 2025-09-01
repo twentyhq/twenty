@@ -2861,10 +2861,10 @@ msgstr "워크플로 버전 이름"
 msgid "The workflow version status"
 msgstr "워크플로 버전 상태"
 
-#. js-lingui-id: NbABJb
+#. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field"
-msgstr "이 이름은 다른 필드에 이미 사용되었기 때문에 사용할 수 없습니다."
+msgid "This name is not available as it is already used by another field."
+msgstr ""
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts

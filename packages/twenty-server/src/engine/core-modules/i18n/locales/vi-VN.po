@@ -2861,10 +2861,10 @@ msgstr "Tên phiên bản quy trình làm việc"
 msgid "The workflow version status"
 msgstr "Trạng thái phiên bản quy trình làm việc"
 
-#. js-lingui-id: NbABJb
+#. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field"
-msgstr "Tên này không khả dụng vì đã được một trường khác sử dụng"
+msgid "This name is not available as it is already used by another field."
+msgstr ""
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
