@@ -160,7 +160,7 @@ export class FieldMetadataRelationService {
     ) {
       validateFieldNameAvailabilityOrThrow({
         name: `${fieldMetadataInput.name}Id`,
-        objectMetadata,
+        fieldMetadataMapById: objectMetadata.fieldsById,
       });
 
       const relationCreationPayload = (
@@ -189,12 +189,12 @@ export class FieldMetadataRelationService {
 
         validateFieldNameAvailabilityOrThrow({
           name: computedMetadataNameFromLabel,
-          objectMetadata: objectMetadataTarget,
+          fieldMetadataMapById: objectMetadataTarget.fieldsById,
         });
 
         validateFieldNameAvailabilityOrThrow({
           name: `${computedMetadataNameFromLabel}Id`,
-          objectMetadata: objectMetadataTarget,
+          fieldMetadataMapById: objectMetadataTarget.fieldsById,
         });
 
         if (

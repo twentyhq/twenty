@@ -142,7 +142,7 @@ export class ObjectMetadataMigrationService {
     currentObjectMetadata: Pick<ObjectMetadataEntity, 'nameSingular'>,
     alteredObjectMetadata: Pick<ObjectMetadataEntity, 'nameSingular'>,
     relationMetadataCollection: {
-      targetObjectMetadata: ObjectMetadataEntity;
+      targetObjectMetadata: ObjectMetadataItemWithFieldMaps;
       targetFieldMetadata: FieldMetadataEntity;
       sourceFieldMetadata: FieldMetadataEntity;
     }[],
