@@ -94,9 +94,18 @@ export const SettingsRoleAssignment = ({
     string,
     { id: string; label: string }
   >();
+  const agentRoleMap = new Map<string, { id: string; label: string }>();
+  const apiKeyRoleMap = new Map<string, { id: string; label: string }>();
+
   settingsAllRoles.forEach((role: Role) => {
     role.workspaceMembers.forEach((member: WorkspaceMember) => {
       workspaceMemberRoleMap.set(member.id, { id: role.id, label: role.label });
+    });
+    role.agents?.forEach((agent: Agent) => {
+      agentRoleMap.set(agent.id, { id: role.id, label: role.label });
+    });
+    role.apiKeys?.forEach((apiKey: ApiKey) => {
+      apiKeyRoleMap.set(apiKey.id, { id: role.id, label: role.label });
     });
   });
 
@@ -230,18 +239,14 @@ export const SettingsRoleAssignment = ({
       }
       case 'agent': {
         const agent = entity as Agent;
-        existingRole = settingsAllRoles.find(
-          (role) => role.id === agent.roleId,
-        );
+        existingRole = agentRoleMap.get(agent.id);
         name = agent.label;
         dropdownIdToClose = agentDropdownId;
         break;
       }
       case 'apiKey': {
         const apiKey = entity as ApiKey;
-        existingRole = settingsAllRoles.find(
-          (role) => role.id === apiKey.role?.id,
-        );
+        existingRole = apiKeyRoleMap.get(apiKey.id);
         name = apiKey.name;
         dropdownIdToClose = apiKeyDropdownId;
         break;
