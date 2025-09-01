@@ -20,7 +20,6 @@ import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/met
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
-import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
@@ -150,29 +149,33 @@ export class FieldMetadataServiceV2 {
       throw inputTranspilationResult.error;
     }
 
-    const { flatObjectMetadata, optimisticiallyUpdatedFlatFieldMetadata } =
+    const optimisticiallyUpdatedFlatFieldMetadatas =
       inputTranspilationResult.result;
 
     const relatedObjectMetadataIds = [
       ...new Set(
-        flatObjectMetadata.flatFieldMetadatas
-          .filter(isMorphOrRelationFlatFieldMetadata)
-          .map((el) => el.relationTargetObjectMetadataId),
+        optimisticiallyUpdatedFlatFieldMetadatas.flatMap(
+          ({ objectMetadataId, relationTargetObjectMetadataId }) =>
+            isDefined(relationTargetObjectMetadataId)
+              ? [objectMetadataId, relationTargetObjectMetadataId]
+              : [objectMetadataId],
+        ),
       ),
     ];
-
     const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      objectMetadataIds: [
-        optimisticiallyUpdatedFlatFieldMetadata.objectMetadataId,
-        ...relatedObjectMetadataIds,
-      ],
+      objectMetadataIds: relatedObjectMetadataIds,
     });
+
     const toFlatObjectMetadataMaps =
-      replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
-        flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
-        flatFieldMetadata: optimisticiallyUpdatedFlatFieldMetadata,
-      });
+      optimisticiallyUpdatedFlatFieldMetadatas.reduce(
+        (flatObjectMetadataMaps, flatFieldMetadata) =>
+          replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+            flatObjectMetadataMaps,
+            flatFieldMetadata,
+          }),
+        fromFlatObjectMetadataMaps,
+      );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -196,7 +199,7 @@ export class FieldMetadataServiceV2 {
 
     return this.fieldMetadataRepository.findOneOrFail({
       where: {
-        id: optimisticiallyUpdatedFlatFieldMetadata.id,
+        id: optimisticiallyUpdatedFlatFieldMetadatas[0].id,
         workspaceId,
       },
     });

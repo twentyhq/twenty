@@ -14,11 +14,35 @@ import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-properties-to-compare.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
-import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
+import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
+import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
-import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromFlatObjectMetadataWithFlatFieldMapsToFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-with-flat-field-maps-to-flat-object-metadatas.util';
 import { isStandardMetadata } from 'src/engine/metadata-modules/utils/is-standard-metadata.util';
+
+const applyUpdatesToFlatFieldMetadata = ({
+  updatedEditableFieldProperties,
+  flatFieldMetadata,
+}: {
+  updatedEditableFieldProperties: SanitizedUpdateFieldInput;
+  flatFieldMetadata: FlatFieldMetadata;
+}) => {
+  return fieldMetadataEditableProperties.reduce((acc, property) => {
+    let newValue = updatedEditableFieldProperties[property];
+
+    if (property === 'options' && isDefined(newValue)) {
+      newValue = updatedEditableFieldProperties[property]?.map((option) => ({
+        id: v4(),
+        ...option,
+      }));
+    }
+
+    return {
+      ...acc,
+      ...(newValue !== undefined ? { [property]: newValue } : {}),
+    };
+  }, flatFieldMetadata);
+};
 
 const fieldMetadataEditableProperties =
   FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE.filter(
@@ -30,6 +54,13 @@ const fieldMetadataEditableProperties =
     > => property !== 'standardOverrides',
   );
 
+type SanitizedUpdateFieldInput = ReturnType<
+  typeof extractAndSanitizeObjectStringFields<
+    UpdateFieldInput,
+    (typeof fieldMetadataEditableProperties)[number][]
+  >
+>;
+
 type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
   updateFieldInput: UpdateFieldInput;
@@ -37,10 +68,9 @@ type FromUpdateFieldInputToFlatFieldMetadataArgs = {
 export const fromUpdateFieldInputToFlatFieldMetadata = ({
   existingFlatObjectMetadataMaps,
   updateFieldInput: rawUpdateFieldInput,
-}: FromUpdateFieldInputToFlatFieldMetadataArgs): FieldInputTranspilationResult<{
-  optimisticiallyUpdatedFlatFieldMetadata: FlatFieldMetadata;
-  flatObjectMetadata: FlatObjectMetadata;
-}> => {
+}: FromUpdateFieldInputToFlatFieldMetadataArgs): FieldInputTranspilationResult<
+  FlatFieldMetadata[]
+> => {
   const updateFieldInputInformalProperties =
     extractAndSanitizeObjectStringFields(rawUpdateFieldInput, [
       'objectMetadataId',
@@ -51,13 +81,13 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     fieldMetadataEditableProperties,
   );
 
-  const relatedFlatFieldMetadata =
+  const existingFlatFieldMetadataToUpdate =
     findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId({
       fieldMetadataId: updateFieldInputInformalProperties.id,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
     });
 
-  if (!isDefined(relatedFlatFieldMetadata)) {
+  if (!isDefined(existingFlatFieldMetadataToUpdate)) {
     return {
       status: 'fail',
       error: {
@@ -70,7 +100,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
 
   const flatObjectMetadataWithFlatFieldMaps =
     existingFlatObjectMetadataMaps.byId[
-      relatedFlatFieldMetadata.objectMetadataId
+      existingFlatFieldMetadataToUpdate.objectMetadataId
     ];
 
   if (!isDefined(flatObjectMetadataWithFlatFieldMaps)) {
@@ -99,7 +129,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     };
   }
 
-  if (isStandardMetadata(relatedFlatFieldMetadata)) {
+  if (isStandardMetadata(existingFlatFieldMetadataToUpdate)) {
     const invalidUpdatedProperties = Object.keys(
       updatedEditableFieldProperties,
     ).filter((property) =>
@@ -135,42 +165,35 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
               : {}),
           },
         };
-      }, relatedFlatFieldMetadata);
+      }, existingFlatFieldMetadataToUpdate);
 
     return {
       status: 'success',
-      result: {
-        flatObjectMetadata,
-        optimisticiallyUpdatedFlatFieldMetadata:
-          updatedStandardFlatFieldMetadata,
-      },
+      result: [updatedStandardFlatFieldMetadata],
     };
   }
 
-  const updatedFlatFieldMetadata = fieldMetadataEditableProperties.reduce(
-    (acc, property) => {
-      let newValue = updatedEditableFieldProperties[property];
+  const relatedFlatFieldMetadatasToUdpate =
+    computeFlatFieldMetadataRelatedFlatFieldMetadata({
+      flatFieldMetadata: existingFlatFieldMetadataToUpdate,
+      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+    });
 
-      if (property === 'options' && isDefined(newValue)) {
-        newValue = updatedEditableFieldProperties[property]?.map((option) => ({
-          id: v4(),
-          ...option,
-        }));
-      }
+  const flatFieldMetadatasToUpdate = [
+    existingFlatFieldMetadataToUpdate,
+    ...relatedFlatFieldMetadatasToUdpate,
+  ];
 
-      return {
-        ...acc,
-        ...(newValue !== undefined ? { [property]: newValue } : {}),
-      };
-    },
-    relatedFlatFieldMetadata,
-  );
+  const optimisticiallyUpdatedFlatFieldMetadatas =
+    flatFieldMetadatasToUpdate.map((flatFieldMetadata) => {
+      return applyUpdatesToFlatFieldMetadata({
+        flatFieldMetadata,
+        updatedEditableFieldProperties,
+      });
+    });
 
   return {
     status: 'success',
-    result: {
-      flatObjectMetadata,
-      optimisticiallyUpdatedFlatFieldMetadata: updatedFlatFieldMetadata,
-    },
+    result: optimisticiallyUpdatedFlatFieldMetadatas,
   };
 };
