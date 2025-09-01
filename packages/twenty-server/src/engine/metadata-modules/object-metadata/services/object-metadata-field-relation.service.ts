@@ -178,16 +178,22 @@ export class ObjectMetadataFieldRelationService {
     ]);
   }
 
-  public async updateRelationsAndForeignKeysMetadata(
-    workspaceId: string,
+  public async updateRelationsAndForeignKeysMetadata({
+    workspaceId,
+    updatedObjectMetadata,
+    objectMetadataMaps,
+    queryRunner,
+  }: {
+    workspaceId: string;
     updatedObjectMetadata: Pick<
       ObjectMetadataEntity,
       'nameSingular' | 'isCustom' | 'id' | 'labelSingular'
-    >,
-    queryRunner?: QueryRunner,
-  ): Promise<
+    >;
+    objectMetadataMaps: ObjectMetadataMaps;
+    queryRunner?: QueryRunner;
+  }): Promise<
     {
-      targetObjectMetadata: ObjectMetadataEntity;
+      targetObjectMetadata: ObjectMetadataItemWithFieldMaps;
       targetFieldMetadata: FieldMetadataEntity;
       sourceFieldMetadata: FieldMetadataEntity;
     }[]
@@ -195,39 +201,61 @@ export class ObjectMetadataFieldRelationService {
     return await Promise.all(
       DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map(
         async (relationObjectMetadataStandardId) =>
-          this.updateRelationAndForeignKeyMetadata(
+          this.updateRelationAndForeignKeyMetadata({
             workspaceId,
-            updatedObjectMetadata,
-            relationObjectMetadataStandardId,
+            sourceObjectMetadata: updatedObjectMetadata,
+            targetObjectMetadataStandardId: relationObjectMetadataStandardId,
+            objectMetadataMaps,
             queryRunner,
-          ),
+          }),
       ),
     );
   }
 
-  private async updateRelationAndForeignKeyMetadata(
-    workspaceId: string,
+  private async updateRelationAndForeignKeyMetadata({
+    workspaceId,
+    sourceObjectMetadata,
+    targetObjectMetadataStandardId,
+    objectMetadataMaps,
+    queryRunner,
+  }: {
+    workspaceId: string;
     sourceObjectMetadata: Pick<
       ObjectMetadataEntity,
       'nameSingular' | 'id' | 'isCustom' | 'labelSingular'
-    >,
-    targetObjectMetadataStandardId: string,
-    queryRunner?: QueryRunner,
-  ) {
-    const objectMetadataRepository = queryRunner
-      ? queryRunner.manager.getRepository(ObjectMetadataEntity)
-      : this.objectMetadataRepository;
+    >;
+    targetObjectMetadataStandardId: string;
+    objectMetadataMaps: ObjectMetadataMaps;
+    queryRunner?: QueryRunner;
+  }): Promise<{
+    targetObjectMetadata: ObjectMetadataItemWithFieldMaps;
+    targetFieldMetadata: FieldMetadataEntity;
+    sourceFieldMetadata: FieldMetadataEntity;
+  }> {
     const fieldMetadataRepository = queryRunner
       ? queryRunner.manager.getRepository(FieldMetadataEntity)
       : this.fieldMetadataRepository;
 
-    const targetObjectMetadata = await objectMetadataRepository.findOneByOrFail(
-      {
-        standardId: targetObjectMetadataStandardId,
-        workspaceId: workspaceId,
-        isCustom: false,
-      },
-    );
+    const targetObjectMetadataId = Object.values(objectMetadataMaps.byId).find(
+      (objectMetadata) =>
+        objectMetadata?.standardId === targetObjectMetadataStandardId &&
+        objectMetadata.isCustom === false,
+    )?.id;
+
+    if (!targetObjectMetadataId) {
+      throw new Error(
+        `Target object metadata id not found for standard ID: ${targetObjectMetadataStandardId}`,
+      );
+    }
+
+    const targetObjectMetadata =
+      objectMetadataMaps.byId[targetObjectMetadataId];
+
+    if (!targetObjectMetadata) {
+      throw new Error(
+        `Target object metadata not found for id: ${targetObjectMetadataId}`,
+      );
+    }
 
     const targetFieldMetadataUpdateData = this.updateTargetFieldMetadata(
       sourceObjectMetadata,
@@ -249,23 +277,18 @@ export class ObjectMetadataFieldRelationService {
       targetFieldMetadataUpdateData.name !== targetFieldMetadataToUpdate.name;
 
     if (nameIsUpdated) {
-      const targetObjectMetadataFields = await fieldMetadataRepository.find({
-        where: {
-          objectMetadataId: targetObjectMetadata.id,
-        },
-      });
+      const targetObjectMetadataFieldsById =
+        objectMetadataMaps.byId[targetObjectMetadata.id]?.fieldsById;
 
-      const fieldsById = targetObjectMetadataFields.reduce(
-        (acc, field) => ({
-          ...acc,
-          [field.id]: field,
-        }),
-        {},
-      );
+      if (!targetObjectMetadataFieldsById) {
+        throw new Error(
+          `Target object metadata fields not found for ${targetObjectMetadata.id}`,
+        );
+      }
 
       this.validateFieldNameAvailabilityOrThrow({
         name: targetFieldMetadataUpdateData.name,
-        fieldMetadataMapById: fieldsById,
+        fieldMetadataMapById: targetObjectMetadataFieldsById,
       });
     }
 
