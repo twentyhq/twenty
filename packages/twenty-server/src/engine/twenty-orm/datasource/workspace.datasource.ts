@@ -254,6 +254,7 @@ export class WorkspaceDataSource extends DataSource {
 
   override async destroy(): Promise<void> {
     if (this.isPoolSharingEnabled) {
+      // eslint-disable-next-line no-console
       console.log(
         `PromiseMemoizer Event: A WorkspaceDataSource for workspace ${this.internalContext.workspaceId} is being cleared. Actual pool closure managed by PgPoolSharedService. Not calling dataSource.destroy().`,
       );
@@ -263,6 +264,7 @@ export class WorkspaceDataSource extends DataSource {
 
       return Promise.resolve();
     } else {
+      // eslint-disable-next-line no-console
       console.log(
         `PromiseMemoizer Event: A WorkspaceDataSource for workspace ${this.internalContext.workspaceId} is being cleared. Calling safelyDestroyDataSource.`,
       );
