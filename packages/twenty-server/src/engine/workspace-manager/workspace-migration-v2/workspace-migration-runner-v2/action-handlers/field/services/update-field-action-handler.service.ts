@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+
 import { isDefined } from 'twenty-shared/utils';
 import { ColumnType, type QueryRunner } from 'typeorm';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
@@ -37,7 +39,6 @@ import {
   EnumOperation,
   executeBatchEnumOperations,
 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/utils/workspace-schema-enum-operations.util';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 type UpdateFieldPropertyUpdateHandlerArgs<
   P extends FlatFieldMetadataPropertiesToCompare,
