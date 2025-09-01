@@ -1,24 +1,24 @@
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
+import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
-import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
-import { forceCreateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/force-create-one-object-metadata.util';
-import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { isDefined } from 'twenty-shared/utils';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
-import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
-import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
 describe('createOne FieldMetadataService morph relation fields', () => {
   let createdObjectMetadataPersonId: string;
@@ -38,7 +38,8 @@ describe('createOne FieldMetadataService morph relation fields', () => {
       data: {
         createOneObject: { id: objectMetadataPersonId },
       },
-    } = await forceCreateOneObjectMetadata({
+    } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'personForMorphRelationSecond',
         namePlural: 'peopleForMorphRelationSecond',
@@ -54,7 +55,8 @@ describe('createOne FieldMetadataService morph relation fields', () => {
       data: {
         createOneObject: { id: objectMetadataCompanyId },
       },
-    } = await forceCreateOneObjectMetadata({
+    } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'companyForMorphRelationSecond',
         namePlural: 'companiesForMorphRelationSecond',
@@ -70,7 +72,8 @@ describe('createOne FieldMetadataService morph relation fields', () => {
       data: {
         createOneObject: { id: objectMetadataOpportunityId },
       },
-    } = await forceCreateOneObjectMetadata({
+    } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'opportunityForMorphRelationSecond',
         namePlural: 'opportunitiesForMorphRelationSecond',
