@@ -1,20 +1,11 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
 import { CreatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { UpdatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout.input';
-import { PageLayoutTabDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout-tab.dto';
 import { PageLayoutDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout.dto';
-import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/core-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -25,10 +16,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @UseFilters(PageLayoutGraphqlApiExceptionFilter)
 @UseGuards(WorkspaceAuthGuard)
 export class PageLayoutResolver {
-  constructor(
-    private readonly pageLayoutService: PageLayoutService,
-    private readonly pageLayoutTabService: PageLayoutTabService,
-  ) {}
+  constructor(private readonly pageLayoutService: PageLayoutService) {}
 
   @Query(() => [PageLayoutDTO])
   async getPageLayouts(
@@ -106,16 +94,5 @@ export class PageLayoutResolver {
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutDTO> {
     return this.pageLayoutService.restore(id, workspace.id);
-  }
-
-  @ResolveField(() => [PageLayoutTabDTO])
-  async tabs(
-    @Parent() pageLayout: PageLayoutDTO,
-    @AuthWorkspace() workspace: Workspace,
-  ) {
-    return this.pageLayoutTabService.findByPageLayoutId(
-      workspace.id,
-      pageLayout.id,
-    );
   }
 }
