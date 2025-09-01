@@ -16,7 +16,7 @@ import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePers
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
-import { useRefreshCoreViews } from '@/views/hooks/useRefreshCoreViews';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type View } from '@/views/types/View';
@@ -65,7 +65,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const { refreshCoreViews } = useRefreshCoreViews();
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const { findManyRecordsLazy } = useLazyFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.View,
@@ -254,7 +255,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         }
 
         if (isCoreViewEnabled) {
-          await refreshCoreViews(objectMetadataItem.id);
+          await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
         } else {
           await findManyRecordsLazy();
         }
@@ -278,7 +279,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       createViewFilterGroupRecords,
       createViewFilterRecords,
       createViewSortRecords,
-      refreshCoreViews,
+      refreshCoreViewsByObjectMetadataId,
       findManyRecordsLazy,
     ],
   );

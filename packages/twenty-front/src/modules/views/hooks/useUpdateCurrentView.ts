@@ -5,7 +5,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRefreshCoreViews } from '@/views/hooks/useRefreshCoreViews';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { convertUpdateViewInputToCore } from '@/views/utils/convertUpdateViewInputToCore';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
@@ -24,7 +24,8 @@ export const useUpdateCurrentView = () => {
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.View,
   });
-  const { refreshCoreViews } = useRefreshCoreViews();
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const [updateOneCoreView] = useUpdateCoreViewMutation();
 
@@ -57,7 +58,9 @@ export const useUpdateCurrentView = () => {
                 input,
               },
             });
-            await refreshCoreViews(currentView.objectMetadataId);
+            await refreshCoreViewsByObjectMetadataId(
+              currentView.objectMetadataId,
+            );
           } else {
             await updateOneRecord({
               idToUpdate: currentViewId,
@@ -69,7 +72,7 @@ export const useUpdateCurrentView = () => {
     [
       currentViewIdCallbackState,
       isCoreViewEnabled,
-      refreshCoreViews,
+      refreshCoreViewsByObjectMetadataId,
       updateOneCoreView,
       updateOneRecord,
     ],

@@ -1,13 +1,13 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { convertUpdateViewInputToCore } from '@/views/utils/convertUpdateViewInputToCore';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey, useUpdateCoreViewMutation } from '~/generated/graphql';
-import { useRefreshCoreViews } from './useRefreshCoreViews';
 
 export const useUpdateView = () => {
   const featureFlagMap = useFeatureFlagsMap();
@@ -19,7 +19,8 @@ export const useUpdateView = () => {
 
   const [updateOneCoreView] = useUpdateCoreViewMutation();
 
-  const { refreshCoreViews } = useRefreshCoreViews();
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
@@ -37,7 +38,7 @@ export const useUpdateView = () => {
           },
         });
 
-        await refreshCoreViews(objectMetadataItem.id);
+        await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
       } else {
         await updateOneRecord({
           idToUpdate: view.id,
@@ -48,7 +49,7 @@ export const useUpdateView = () => {
     [
       isCoreViewEnabled,
       objectMetadataItem.id,
-      refreshCoreViews,
+      refreshCoreViewsByObjectMetadataId,
       updateOneCoreView,
       updateOneRecord,
     ],

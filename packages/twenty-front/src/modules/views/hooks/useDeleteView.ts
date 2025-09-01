@@ -1,7 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
-import { useRefreshCoreViews } from '@/views/hooks/useRefreshCoreViews';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,7 +12,8 @@ export const useDeleteView = () => {
   const isCoreViewEnabled = featureFlags[FeatureFlagKey.IS_CORE_VIEW_ENABLED];
 
   const [deleteCoreViewMutation] = useDeleteCoreViewMutation();
-  const { refreshCoreViews } = useRefreshCoreViews();
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
   const { deleteOneRecord } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.View,
   });
@@ -39,7 +40,9 @@ export const useDeleteView = () => {
             },
           });
 
-          await refreshCoreViews(currentView.objectMetadataId);
+          await refreshCoreViewsByObjectMetadataId(
+            currentView.objectMetadataId,
+          );
         } else {
           await deleteOneRecord(viewId);
         }
@@ -48,7 +51,7 @@ export const useDeleteView = () => {
       deleteCoreViewMutation,
       deleteOneRecord,
       isCoreViewEnabled,
-      refreshCoreViews,
+      refreshCoreViewsByObjectMetadataId,
     ],
   );
 
