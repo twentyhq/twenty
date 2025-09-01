@@ -8,7 +8,7 @@ import { PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entitie
 @Injectable()
 export class PageLayoutTabService {
   constructor(
-    @InjectRepository(PageLayoutTabEntity, 'core')
+    @InjectRepository(PageLayoutTabEntity)
     private readonly pageLayoutTabRepository: Repository<PageLayoutTabEntity>,
   ) {}
 

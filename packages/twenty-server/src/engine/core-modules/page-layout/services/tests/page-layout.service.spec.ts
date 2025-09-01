@@ -34,7 +34,7 @@ describe('PageLayoutService', () => {
       providers: [
         PageLayoutService,
         {
-          provide: getRepositoryToken(PageLayoutEntity, 'core'),
+          provide: getRepositoryToken(PageLayoutEntity),
           useValue: {
             find: jest.fn(),
             findOne: jest.fn(),
@@ -50,7 +50,7 @@ describe('PageLayoutService', () => {
 
     pageLayoutService = module.get<PageLayoutService>(PageLayoutService);
     pageLayoutRepository = module.get<Repository<PageLayoutEntity>>(
-      getRepositoryToken(PageLayoutEntity, 'core'),
+      getRepositoryToken(PageLayoutEntity),
     );
   });
 
@@ -211,10 +211,10 @@ describe('PageLayoutService', () => {
 
       expect(pageLayoutService.findById).toHaveBeenCalledWith(id, workspaceId);
       expect(pageLayoutRepository.save).toHaveBeenCalledWith({
-        id,
+        ...mockPageLayout,
         ...updateData,
       });
-      expect(result).toEqual({ ...mockPageLayout, ...updatedPageLayout });
+      expect(result).toEqual(updatedPageLayout);
     });
 
     it('should throw exception when page layout is not found', async () => {

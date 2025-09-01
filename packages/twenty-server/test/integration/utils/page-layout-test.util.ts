@@ -1,4 +1,5 @@
 import { type PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
+import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
 
 export const cleanupPageLayoutRecords = async (): Promise<void> => {
   // @ts-expect-error legacy noImplicitAny
@@ -10,12 +11,12 @@ export const assertPageLayoutStructure = (
   expectedFields?: Partial<PageLayoutEntity>,
 ) => {
   expect(pageLayout).toBeDefined();
-  expect(pageLayout.id).toBeDefined();
-  expect(pageLayout.name).toBeDefined();
-  expect(pageLayout.type).toBeDefined();
-  expect(pageLayout.workspaceId).toBeDefined();
-  expect(pageLayout.createdAt).toBeDefined();
-  expect(pageLayout.updatedAt).toBeDefined();
+  expect(pageLayout.id).toEqual(expect.any(String));
+  expect(pageLayout.name).toEqual(expect.any(String));
+  expect(Object.values(PageLayoutType)).toContain(pageLayout.type);
+  expect(pageLayout.workspaceId).toEqual(expect.any(String));
+  expect(pageLayout.createdAt).toEqual(expect.any(String));
+  expect(pageLayout.updatedAt).toEqual(expect.any(String));
 
   if (expectedFields) {
     expect(pageLayout).toMatchObject(expectedFields);

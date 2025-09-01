@@ -15,7 +15,7 @@ import {
 @Injectable()
 export class PageLayoutService {
   constructor(
-    @InjectRepository(PageLayoutEntity, 'core')
+    @InjectRepository(PageLayoutEntity)
     private readonly pageLayoutRepository: Repository<PageLayoutEntity>,
   ) {}
 
@@ -103,11 +103,11 @@ export class PageLayoutService {
     }
 
     const updatedPageLayout = await this.pageLayoutRepository.save({
-      id,
+      ...existingPageLayout,
       ...updateData,
     });
 
-    return { ...existingPageLayout, ...updatedPageLayout };
+    return updatedPageLayout;
   }
 
   async delete(id: string, workspaceId: string): Promise<PageLayoutEntity> {

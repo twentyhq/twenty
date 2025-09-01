@@ -42,7 +42,7 @@ describe('PageLayoutTabService', () => {
       providers: [
         PageLayoutTabService,
         {
-          provide: getRepositoryToken(PageLayoutTabEntity, 'core'),
+          provide: getRepositoryToken(PageLayoutTabEntity),
           useValue: {
             find: jest.fn(),
           },
@@ -53,7 +53,7 @@ describe('PageLayoutTabService', () => {
     pageLayoutTabService =
       module.get<PageLayoutTabService>(PageLayoutTabService);
     pageLayoutTabRepository = module.get<Repository<PageLayoutTabEntity>>(
-      getRepositoryToken(PageLayoutTabEntity, 'core'),
+      getRepositoryToken(PageLayoutTabEntity),
     );
   });
 

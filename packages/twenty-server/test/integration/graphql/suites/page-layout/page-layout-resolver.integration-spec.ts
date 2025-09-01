@@ -17,6 +17,7 @@ import { restorePageLayoutOperationFactory } from 'test/integration/graphql/util
 import { updatePageLayoutOperationFactory } from 'test/integration/graphql/utils/update-page-layout-operation-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { assertPageLayoutStructure } from 'test/integration/utils/page-layout-test.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PageLayoutType } from 'src/engine/core-modules/page-layout/enums/page-layout-type.enum';
@@ -82,7 +83,7 @@ describe('Page Layout Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getPageLayouts).toHaveLength(1);
-      expect(response.body.data.getPageLayouts[0]).toMatchObject({
+      assertPageLayoutStructure(response.body.data.getPageLayouts[0], {
         name: pageLayoutName,
         objectMetadataId: testObjectMetadataId,
         type: PageLayoutType.RECORD_PAGE,
@@ -125,7 +126,7 @@ describe('Page Layout Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
       expect(response.body.data.getPageLayouts).toHaveLength(1);
-      expect(response.body.data.getPageLayouts[0]).toMatchObject({
+      assertPageLayoutStructure(response.body.data.getPageLayouts[0], {
         name: object1PageLayoutName,
         objectMetadataId: testObjectMetadataId,
       });
@@ -161,13 +162,11 @@ describe('Page Layout Resolver', () => {
       const response = await makeGraphqlAPIRequest(operation);
 
       assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.getPageLayout).toMatchObject({
+      assertPageLayoutStructure(response.body.data.getPageLayout, {
         id: pageLayout.id,
         name: pageLayoutName,
         objectMetadataId: testObjectMetadataId,
         type: PageLayoutType.RECORD_PAGE,
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
       });
     });
   });
@@ -187,14 +186,10 @@ describe('Page Layout Resolver', () => {
 
       const createdPageLayout = response.body.data.createPageLayout;
 
-      expect(createdPageLayout).toMatchObject({
-        id: expect.any(String),
-        workspaceId: expect.any(String),
+      assertPageLayoutStructure(createdPageLayout, {
         name: input.name,
         type: input.type,
         objectMetadataId: input.objectMetadataId,
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
         deletedAt: null,
       });
     });
@@ -211,14 +206,10 @@ describe('Page Layout Resolver', () => {
 
       const createdPageLayout = response.body.data.createPageLayout;
 
-      expect(createdPageLayout).toMatchObject({
-        id: expect.any(String),
-        workspaceId: expect.any(String),
+      assertPageLayoutStructure(createdPageLayout, {
         name: input.name,
         type: PageLayoutType.RECORD_PAGE,
         objectMetadataId: null,
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
         deletedAt: null,
       });
     });
@@ -237,14 +228,10 @@ describe('Page Layout Resolver', () => {
 
       const createdPageLayout = response.body.data.createPageLayout;
 
-      expect(createdPageLayout).toMatchObject({
-        id: expect.any(String),
-        workspaceId: expect.any(String),
+      assertPageLayoutStructure(createdPageLayout, {
         name: input.name,
         type: PageLayoutType.RECORD_INDEX,
         objectMetadataId: input.objectMetadataId,
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
         deletedAt: null,
       });
     });
@@ -269,12 +256,10 @@ describe('Page Layout Resolver', () => {
       const response = await makeGraphqlAPIRequest(operation);
 
       assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.updatePageLayout).toMatchObject({
+      assertPageLayoutStructure(response.body.data.updatePageLayout, {
         id: pageLayout.id,
         name: updateInput.name,
         type: updateInput.type,
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
         deletedAt: null,
       });
     });
@@ -296,12 +281,10 @@ describe('Page Layout Resolver', () => {
       const response = await makeGraphqlAPIRequest(operation);
 
       assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.updatePageLayout).toMatchObject({
+      assertPageLayoutStructure(response.body.data.updatePageLayout, {
         id: pageLayout.id,
         name: updateInput.name,
         type: PageLayoutType.RECORD_PAGE,
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
         deletedAt: null,
       });
     });
@@ -415,12 +398,10 @@ describe('Page Layout Resolver', () => {
       const restoreResponse = await makeGraphqlAPIRequest(restoreOperation);
 
       assertGraphQLSuccessfulResponse(restoreResponse);
-      expect(restoreResponse.body.data.restorePageLayout).toMatchObject({
+      assertPageLayoutStructure(restoreResponse.body.data.restorePageLayout, {
         id: pageLayout.id,
         name: 'Page Layout to Restore',
         type: PageLayoutType.RECORD_INDEX,
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
         deletedAt: null,
       });
 
