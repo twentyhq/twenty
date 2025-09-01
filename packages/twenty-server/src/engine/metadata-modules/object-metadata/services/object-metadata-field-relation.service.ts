@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   capitalize,
@@ -22,8 +21,11 @@ import {
 import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
 import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
+import { type FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
+import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import {
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
   STANDARD_OBJECT_FIELD_IDS,
@@ -40,6 +42,11 @@ export const DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS = [
   STANDARD_OBJECT_IDS.taskTarget,
 ];
 
+type PartialRelationFieldMetadata = Partial<
+  FieldMetadataEntity<FieldMetadataType.RELATION>
+> &
+  Required<Pick<FieldMetadataEntity<FieldMetadataType.RELATION>, 'name'>>;
+
 @Injectable()
 export class ObjectMetadataFieldRelationService {
   constructor(
@@ -53,8 +60,8 @@ export class ObjectMetadataFieldRelationService {
     workspaceId: string,
     sourceObjectMetadata: Pick<
       ObjectMetadataItemWithFieldMaps,
-      'id' | 'nameSingular' | 'labelSingular'
-    > & { fields: FieldMetadataEntity[] },
+      'id' | 'nameSingular' | 'labelSingular' | 'fieldsById'
+    >,
     objectMetadataMaps: ObjectMetadataMaps,
     queryRunner?: QueryRunner,
   ) {
@@ -84,8 +91,8 @@ export class ObjectMetadataFieldRelationService {
     workspaceId: string;
     sourceObjectMetadata: Pick<
       ObjectMetadataItemWithFieldMaps,
-      'id' | 'nameSingular' | 'labelSingular'
-    > & { fields: FieldMetadataEntity[] };
+      'id' | 'nameSingular' | 'labelSingular' | 'fieldsById'
+    >;
 
     objectMetadataMaps: ObjectMetadataMaps;
     relationObjectMetadataStandardId: string;
@@ -118,8 +125,8 @@ export class ObjectMetadataFieldRelationService {
     workspaceId: string,
     sourceObjectMetadata: Pick<
       ObjectMetadataItemWithFieldMaps,
-      'id' | 'nameSingular' | 'labelSingular'
-    > & { fields: FieldMetadataEntity[] },
+      'id' | 'nameSingular' | 'labelSingular' | 'fieldsById'
+    >,
     targetObjectMetadata: ObjectMetadataItemWithFieldMaps,
     queryRunner?: QueryRunner,
   ): Promise<FieldMetadataEntity<FieldMetadataType.RELATION>[]> {
@@ -129,9 +136,9 @@ export class ObjectMetadataFieldRelationService {
       targetObjectMetadata,
     );
 
-    this.validateFieldMetadataNameAvailabilityOrThrow({
+    this.validateFieldNameAvailabilityOrThrow({
       name: sourceFieldMetadata.name,
-      objectMetadataFields: sourceObjectMetadata.fields,
+      fieldMetadataMapById: sourceObjectMetadata.fieldsById,
     });
 
     const targetFieldMetadata = this.createTargetFieldMetadata(
@@ -140,9 +147,9 @@ export class ObjectMetadataFieldRelationService {
       targetObjectMetadata,
     );
 
-    this.validateFieldMetadataNameAvailabilityOrThrow({
+    this.validateFieldNameAvailabilityOrThrow({
       name: targetFieldMetadata.name,
-      objectMetadataFields: sourceObjectMetadata.fields,
+      fieldMetadataMapById: sourceObjectMetadata.fieldsById,
     });
 
     const fieldMetadataRepository = queryRunner
@@ -248,9 +255,17 @@ export class ObjectMetadataFieldRelationService {
         },
       });
 
-      this.validateFieldMetadataNameAvailabilityOrThrow({
+      const fieldsById = targetObjectMetadataFields.reduce(
+        (acc, field) => ({
+          ...acc,
+          [field.id]: field,
+        }),
+        {},
+      );
+
+      this.validateFieldNameAvailabilityOrThrow({
         name: targetFieldMetadataUpdateData.name,
-        objectMetadataFields: targetObjectMetadataFields,
+        fieldMetadataMapById: fieldsById,
       });
     }
 
@@ -321,7 +336,7 @@ export class ObjectMetadataFieldRelationService {
       ObjectMetadataItemWithFieldMaps,
       'namePlural' | 'labelSingular'
     >,
-  ): Partial<FieldMetadataEntity<FieldMetadataType.RELATION>> {
+  ): PartialRelationFieldMetadata {
     const relationObjectMetadataNamePlural = targetObjectMetadata.namePlural;
 
     const { description } = buildDescriptionForRelationFieldMetadataOnFromField(
@@ -381,7 +396,7 @@ export class ObjectMetadataFieldRelationService {
       ObjectMetadataItemWithFieldMaps,
       'namePlural' | 'labelSingular' | 'id' | 'nameSingular'
     >,
-  ): Partial<FieldMetadataEntity<FieldMetadataType.RELATION>> {
+  ): PartialRelationFieldMetadata {
     const customStandardFieldId =
       // @ts-expect-error legacy noImplicitAny
       STANDARD_OBJECT_FIELD_IDS[targetObjectMetadata.nameSingular].custom;
@@ -553,21 +568,29 @@ export class ObjectMetadataFieldRelationService {
     return morphRelationFieldMetadataToUpdateWithNewJoinColumnName;
   }
 
-  private validateFieldMetadataNameAvailabilityOrThrow({
+  private validateFieldNameAvailabilityOrThrow({
     name,
-    objectMetadataFields,
+    fieldMetadataMapById,
   }: {
-    name?: string;
-    objectMetadataFields: FieldMetadataEntity[];
+    name: string;
+    fieldMetadataMapById: FieldMetadataMap;
   }) {
-    if (objectMetadataFields.some((field) => field.name === name)) {
-      throw new ObjectMetadataException(
-        `Field with name ${name} already exists on object`,
-        ObjectMetadataExceptionCode.NAME_CONFLICT,
-        {
-          userFriendlyMessage: t`Name "${name}" is not available.`,
-        },
-      );
+    try {
+      validateFieldNameAvailabilityOrThrow({
+        name,
+        fieldMetadataMapById,
+      });
+    } catch (error) {
+      if (error instanceof InvalidMetadataException) {
+        throw new ObjectMetadataException(
+          `Name "${name}" is not available.`,
+          ObjectMetadataExceptionCode.NAME_CONFLICT,
+          {
+            userFriendlyMessage: `Name "${name}" is not available.`,
+          },
+        );
+      }
+      throw error;
     }
   }
 }
