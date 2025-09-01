@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { type Layout, type Layouts } from 'react-grid-layout';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
@@ -13,22 +12,19 @@ export const usePageLayoutHandleLayoutChange = () => {
   const pageLayoutWidgets = useRecoilValue(pageLayoutWidgetsState);
   const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
 
-  const handleLayoutChange = useCallback(
-    (_: Layout[], allLayouts: Layouts) => {
-      setPageLayoutCurrentLayouts(allLayouts);
+  const handleLayoutChange = (_: Layout[], allLayouts: Layouts) => {
+    setPageLayoutCurrentLayouts(allLayouts);
 
-      const updatedWidgets = convertLayoutsToWidgets(
-        pageLayoutWidgets,
-        allLayouts,
-      );
+    const updatedWidgets = convertLayoutsToWidgets(
+      pageLayoutWidgets,
+      allLayouts,
+    );
 
-      setPageLayoutDraft((prev) => ({
-        ...prev,
-        widgets: updatedWidgets,
-      }));
-    },
-    [setPageLayoutCurrentLayouts, pageLayoutWidgets, setPageLayoutDraft],
-  );
+    setPageLayoutDraft((prev) => ({
+      ...prev,
+      widgets: updatedWidgets,
+    }));
+  };
 
   return { handleLayoutChange };
 };

@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
 import { pageLayoutSelectedCellsState } from '../states/pageLayoutSelectedCellsState';
@@ -16,26 +15,23 @@ export const usePageLayoutDragSelection = () => {
     pageLayoutSidePanelOpenState,
   );
 
-  const handleDragSelectionStart = useCallback(() => {
+  const handleDragSelectionStart = () => {
     setPageLayoutSelectedCells(new Set());
-  }, [setPageLayoutSelectedCells]);
+  };
 
-  const handleDragSelectionChange = useCallback(
-    (cellId: string, selected: boolean) => {
-      setPageLayoutSelectedCells((prev) => {
-        const newSet = new Set(prev);
-        if (selected) {
-          newSet.add(cellId);
-        } else {
-          newSet.delete(cellId);
-        }
-        return newSet;
-      });
-    },
-    [setPageLayoutSelectedCells],
-  );
+  const handleDragSelectionChange = (cellId: string, selected: boolean) => {
+    setPageLayoutSelectedCells((prev) => {
+      const newSet = new Set(prev);
+      if (selected) {
+        newSet.add(cellId);
+      } else {
+        newSet.delete(cellId);
+      }
+      return newSet;
+    });
+  };
 
-  const handleDragSelectionEnd = useCallback(() => {
+  const handleDragSelectionEnd = () => {
     if (pageLayoutSelectedCells.size > 0) {
       const draggedBounds = calculateGridBoundsFromSelectedCells(
         Array.from(pageLayoutSelectedCells),
@@ -47,12 +43,7 @@ export const usePageLayoutDragSelection = () => {
         setPageLayoutSelectedCells(new Set());
       }
     }
-  }, [
-    pageLayoutSelectedCells,
-    setPageLayoutDraggedArea,
-    setPageLayoutSidePanelOpen,
-    setPageLayoutSelectedCells,
-  ]);
+  };
 
   return {
     pageLayoutSelectedCells,

@@ -1,5 +1,4 @@
-import { useCallback } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 import {
   type GraphSubType,
@@ -18,88 +17,81 @@ import {
 import { getDefaultWidgetPosition } from '../utils/getDefaultWidgetPosition';
 
 export const usePageLayoutWidgetCreate = () => {
-  const [pageLayoutWidgets, setPageLayoutWidgets] = useRecoilState(
-    pageLayoutWidgetsState,
-  );
-  const [pageLayoutCurrentLayouts, setPageLayoutCurrentLayouts] =
-    useRecoilState(pageLayoutCurrentLayoutsState);
-  const [pageLayoutDraggedArea, setPageLayoutDraggedArea] = useRecoilState(
-    pageLayoutDraggedAreaState,
-  );
-  const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
+  const handleCreateWidget = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (widgetType: WidgetType, graphType: GraphSubType) => {
+        const widgetData = getDefaultWidgetData(graphType);
 
-  const handleCreateWidget = useCallback(
-    (widgetType: WidgetType, graphType: GraphSubType) => {
-      const widgetData = getDefaultWidgetData(graphType);
+        const pageLayoutWidgets = snapshot
+          .getLoadable(pageLayoutWidgetsState)
+          .getValue();
+        const pageLayoutCurrentLayouts = snapshot
+          .getLoadable(pageLayoutCurrentLayoutsState)
+          .getValue();
+        const pageLayoutDraggedArea = snapshot
+          .getLoadable(pageLayoutDraggedAreaState)
+          .getValue();
 
-      const existingWidgetCount = pageLayoutWidgets.filter(
-        (w) =>
-          w.type === widgetType && w.configuration?.graphType === graphType,
-      ).length;
-      const title = getWidgetTitle(graphType, existingWidgetCount);
+        const existingWidgetCount = pageLayoutWidgets.filter(
+          (w) =>
+            w.type === widgetType && w.configuration?.graphType === graphType,
+        ).length;
+        const title = getWidgetTitle(graphType, existingWidgetCount);
 
-      const newWidget: Widget = {
-        id: `widget-${uuidv4()}`,
-        type: widgetType,
-        title,
-        configuration: {
-          graphType,
-        },
-        data: widgetData,
-      };
+        const newWidget: Widget = {
+          id: `widget-${uuidv4()}`,
+          type: widgetType,
+          title,
+          configuration: {
+            graphType,
+          },
+          data: widgetData,
+        };
 
-      const defaultSize = getWidgetSize(graphType);
-      const position = getDefaultWidgetPosition(
-        pageLayoutDraggedArea,
-        defaultSize,
-      );
+        const defaultSize = getWidgetSize(graphType);
+        const position = getDefaultWidgetPosition(
+          pageLayoutDraggedArea,
+          defaultSize,
+        );
 
-      const newLayout = {
-        i: newWidget.id,
-        x: position.x,
-        y: position.y,
-        w: position.w,
-        h: position.h,
-      };
+        const newLayout = {
+          i: newWidget.id,
+          x: position.x,
+          y: position.y,
+          w: position.w,
+          h: position.h,
+        };
 
-      const updatedWidgets = [...pageLayoutWidgets, newWidget];
-      setPageLayoutWidgets(updatedWidgets);
+        const updatedWidgets = [...pageLayoutWidgets, newWidget];
+        set(pageLayoutWidgetsState, updatedWidgets);
 
-      const updatedLayouts = {
-        desktop: [...(pageLayoutCurrentLayouts.desktop || []), newLayout],
-        mobile: [
-          ...(pageLayoutCurrentLayouts.mobile || []),
-          { ...newLayout, w: 1, x: 0 },
-        ],
-      };
-      setPageLayoutCurrentLayouts(updatedLayouts);
+        const updatedLayouts = {
+          desktop: [...(pageLayoutCurrentLayouts.desktop || []), newLayout],
+          mobile: [
+            ...(pageLayoutCurrentLayouts.mobile || []),
+            { ...newLayout, w: 1, x: 0 },
+          ],
+        };
+        set(pageLayoutCurrentLayoutsState, updatedLayouts);
 
-      const widgetWithPosition = {
-        ...newWidget,
-        gridPosition: {
-          row: position.y,
-          column: position.x,
-          rowSpan: position.h,
-          columnSpan: position.w,
-        },
-      };
+        const widgetWithPosition = {
+          ...newWidget,
+          gridPosition: {
+            row: position.y,
+            column: position.x,
+            rowSpan: position.h,
+            columnSpan: position.w,
+          },
+        };
 
-      setPageLayoutDraft((prev) => ({
-        ...prev,
-        widgets: [...prev.widgets, widgetWithPosition],
-      }));
+        set(pageLayoutDraftState, (prev) => ({
+          ...prev,
+          widgets: [...prev.widgets, widgetWithPosition],
+        }));
 
-      setPageLayoutDraggedArea(null);
-    },
-    [
-      pageLayoutWidgets,
-      pageLayoutDraggedArea,
-      pageLayoutCurrentLayouts,
-      setPageLayoutWidgets,
-      setPageLayoutCurrentLayouts,
-      setPageLayoutDraggedArea,
-      setPageLayoutDraft,
-    ],
+        set(pageLayoutDraggedAreaState, null);
+      },
+    [],
   );
 
   return { handleCreateWidget };
