@@ -424,6 +424,8 @@ export class PgPoolSharedService {
     (pool as PoolWithEndTracker).end = (
       callback?: (err?: Error) => void,
     ): Promise<void> => {
+      console.trace('end() called');
+
       if ((pool as PoolWithEndTracker).__hasEnded) {
         if (callback) {
           callback();
@@ -444,6 +446,7 @@ export class PgPoolSharedService {
 
       return new Promise<void>((resolve, reject) => {
         originalEnd((err) => {
+          console.trace('end() called with error', err);
           if (err) {
             // If error is about duplicate end, suppress it
             if (err.message === 'Called end on pool more than once') {
