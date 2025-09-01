@@ -169,7 +169,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MicrosoftAuth,
     isSensitive: false,
-    description: 
+    description:
       'Tenant ID for Microsoft authentication. Leave empty for common tenant/multi-tenant app registrations',
     type: ConfigVariableType.STRING,
   })
