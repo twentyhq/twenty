@@ -83,7 +83,7 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
     ])
     .execute();
