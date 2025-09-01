@@ -50,15 +50,11 @@ export const cleanupPageLayoutRecordsWithGraphQL = async (): Promise<void> => {
 
   if (response.body.data?.getPageLayouts) {
     for (const pageLayout of response.body.data.getPageLayouts) {
-      try {
-        const destroyOperation = destroyPageLayoutOperationFactory({
-          pageLayoutId: pageLayout.id,
-        });
+      const destroyOperation = destroyPageLayoutOperationFactory({
+        pageLayoutId: pageLayout.id,
+      });
 
-        await makeGraphqlAPIRequest(destroyOperation);
-      } catch {
-        // Ignore errors during cleanup
-      }
+      await makeGraphqlAPIRequest(destroyOperation);
     }
   }
 };
