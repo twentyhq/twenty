@@ -9,12 +9,16 @@ import {
 } from '@/settings/page-layout/constants/PageLayoutBreakpoints';
 import { usePageLayoutDraftState } from '@/settings/page-layout/hooks/usePageLayoutDraftState';
 import { usePageLayoutDragSelection } from '@/settings/page-layout/hooks/usePageLayoutDragSelection';
-import { usePageLayoutGrid } from '@/settings/page-layout/hooks/usePageLayoutGrid';
 import { usePageLayoutHandleLayoutChange } from '@/settings/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import { usePageLayoutSaveHandler } from '@/settings/page-layout/hooks/usePageLayoutSaveHandler';
 import { usePageLayoutSidePanel } from '@/settings/page-layout/hooks/usePageLayoutSidePanel';
 import { usePageLayoutWidgetCreate } from '@/settings/page-layout/hooks/usePageLayoutWidgetCreate';
 import { usePageLayoutWidgetDelete } from '@/settings/page-layout/hooks/usePageLayoutWidgetDelete';
+import { pageLayoutCurrentBreakpointState } from '@/settings/page-layout/states/pageLayoutCurrentBreakpointState';
+import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
+import { pageLayoutSelectedCellsState } from '@/settings/page-layout/states/pageLayoutSelectedCellsState';
+import { pageLayoutSidePanelOpenState } from '@/settings/page-layout/states/pageLayoutSidePanelOpenState';
+import { pageLayoutWidgetsState } from '@/settings/page-layout/states/pageLayoutWidgetsState';
 import { calculateTotalGridRows } from '@/settings/page-layout/utils/calculateTotalGridRows';
 import { convertLayoutsToWidgets } from '@/settings/page-layout/utils/convertLayoutsToWidgets';
 import { generateCellId } from '@/settings/page-layout/utils/generateCellId';
@@ -34,6 +38,7 @@ import {
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { useParams } from 'react-router-dom';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -123,14 +128,14 @@ export const SettingsPageLayoutEdit = () => {
   const navigateSettings = useNavigateSettings();
   const [isSaving, setIsSaving] = useState(false);
 
-  const {
-    pageLayoutCurrentBreakpoint,
-    setPageLayoutCurrentBreakpoint,
-    pageLayoutSelectedCells,
-    pageLayoutCurrentLayouts,
-    pageLayoutWidgets,
-    pageLayoutSidePanelOpen,
-  } = usePageLayoutGrid();
+  const [pageLayoutCurrentBreakpoint, setPageLayoutCurrentBreakpoint] =
+    useRecoilState(pageLayoutCurrentBreakpointState);
+  const pageLayoutSelectedCells = useRecoilValue(pageLayoutSelectedCellsState);
+  const pageLayoutCurrentLayouts = useRecoilValue(
+    pageLayoutCurrentLayoutsState,
+  );
+  const pageLayoutWidgets = useRecoilValue(pageLayoutWidgetsState);
+  const pageLayoutSidePanelOpen = useRecoilValue(pageLayoutSidePanelOpenState);
 
   const {
     handleDragSelectionStart,
