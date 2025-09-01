@@ -9,7 +9,6 @@ import { type ChangeEvent, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type Agent,
-  type ApiKey,
   useFindManyAgentsQuery,
   useGetApiKeysQuery,
 } from '~/generated-metadata/graphql';
@@ -46,10 +45,20 @@ const StyledEmptyState = styled.div`
 
 type EntityType = 'agent' | 'apiKey';
 
+type ApiKeyFragment = {
+  id: string;
+  name: string;
+  expiresAt: string;
+  revokedAt?: string | null;
+  role?: { id: string; label: string; icon?: string | null } | null;
+};
+
+type EntityData = Agent | ApiKeyFragment;
+
 type SettingsRoleAssignmentEntityPickerDropdownProps = {
   entityType: EntityType;
   excludedIds: string[];
-  onSelect: (entity: any) => void;
+  onSelect: (entity: EntityData) => void;
 };
 
 export const SettingsRoleAssignmentEntityPickerDropdown = ({
@@ -83,19 +92,20 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
           agent.label.toLowerCase().includes(searchFilter.toLowerCase())
         );
       } else {
-        const apiKey = entity as ApiKey;
+        const apiKey = entity as EntityData;
         return apiKey.name.toLowerCase().includes(searchFilter.toLowerCase());
       }
     });
   };
 
-  const getEntitySubtext = (entity: any) => {
+  const getEntitySubtext = (entity: EntityData) => {
     if (entityType === 'agent') {
-      return entity.label;
+      return (entity as Agent).label;
     } else {
+      const apiKey = entity as ApiKeyFragment;
       return `Expires: ${
-        entity.expiresAt
-          ? new Date(entity.expiresAt).toLocaleDateString()
+        apiKey.expiresAt
+          ? new Date(apiKey.expiresAt).toLocaleDateString()
           : 'Never'
       }`;
     }
