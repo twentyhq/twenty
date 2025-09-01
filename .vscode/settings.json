@@ -50,5 +50,6 @@
     ".cursorrules": "markdown"
   },
   "jestrunner.codeLensSelector": "**/*.{test,spec,integration-spec}.{js,jsx,ts,tsx}",
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "nxConsole.generateAiAgentRules": true
 }

@@ -48,3 +48,9 @@ dump.rdb
 
 mcp.json
 /.junie/
+
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
+
+*.env
+packages/*/.env
