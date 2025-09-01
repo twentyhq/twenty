@@ -1,7 +1,7 @@
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { coreViewsState } from '@/views/states/coreViewState';
-import { CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
+import { type CoreViewWithRelations } from '@/views/types/CoreViewWithRelations';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 

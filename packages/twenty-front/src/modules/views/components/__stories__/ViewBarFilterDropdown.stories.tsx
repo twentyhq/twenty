@@ -29,10 +29,7 @@ import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import {
-  mockedCoreViewsData,
-  mockedViewsData,
-} from '~/testing/mock-data/views';
+import { mockedCoreViewsData } from '~/testing/mock-data/views';
 import { generatedMockObjectMetadataItems } from '~/testing/utils/generatedMockObjectMetadataItems';
 
 const meta: Meta<typeof ViewBarFilterDropdown> = {
@@ -52,7 +49,6 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
 
       const setCoreViews = useSetRecoilState(coreViewsState);
 
-      const mockView = mockedViewsData[0];
       const mockCoreView = mockedCoreViewsData[0];
 
       setCoreViews([mockCoreView]);
@@ -62,7 +58,7 @@ const meta: Meta<typeof ViewBarFilterDropdown> = {
         MAIN_CONTEXT_STORE_INSTANCE_ID,
       );
 
-      setCurrentViewId(mockView.id);
+      setCurrentViewId(mockCoreView.id);
 
       const columns = companyObjectMetadataItem.fields.map(
         (fieldMetadataItem, index) =>

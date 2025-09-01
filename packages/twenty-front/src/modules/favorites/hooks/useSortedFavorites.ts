@@ -14,7 +14,7 @@ export const useSortedFavorites = () => {
     favoriteRelationFields,
   } = useFavoritesMetadata();
 
-  const coreViews = useRecoilValue(coreViewsState);
+  const coreViews = useRecoilValue(coreViewsState).map(convertCoreViewToView);
 
   const favoritesSorted = useMemo(() => {
     return sortFavorites(
@@ -22,7 +22,7 @@ export const useSortedFavorites = () => {
       favoriteRelationFields,
       getObjectRecordIdentifierByNameSingular,
       true,
-      coreViews.map(convertCoreViewToView),
+      coreViews,
       objectMetadataItems,
     );
   }, [
@@ -39,7 +39,7 @@ export const useSortedFavorites = () => {
       favoriteRelationFields,
       getObjectRecordIdentifierByNameSingular,
       false,
-      coreViews.map(convertCoreViewToView),
+      coreViews,
       objectMetadataItems,
     );
   }, [
