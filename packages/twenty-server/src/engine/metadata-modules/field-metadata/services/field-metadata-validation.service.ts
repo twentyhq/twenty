@@ -170,7 +170,7 @@ export class FieldMetadataValidationService {
       try {
         validateFieldNameAvailabilityOrThrow({
           name: fieldMetadataInput.name,
-          objectMetadata,
+          fieldMetadataMapById: objectMetadata.fieldsById,
         });
       } catch (error) {
         if (error instanceof InvalidMetadataException) {

@@ -221,10 +221,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       if (createObjectInput.isRemote) {
         throw new Error('Remote objects are not supported yet');
       } else {
+        const fieldsById = createdObjectMetadata.fields.reduce(
+          (acc, field) => ({
+            ...acc,
+            [field.id]: field,
+          }),
+          {},
+        );
+
         const createdRelatedObjectMetadataCollection =
           await this.objectMetadataFieldRelationService.createRelationsAndForeignKeysMetadata(
             createObjectInput.workspaceId,
-            createdObjectMetadata,
+            { ...createdObjectMetadata, fieldsById },
             objectMetadataMaps,
             queryRunner,
           );
