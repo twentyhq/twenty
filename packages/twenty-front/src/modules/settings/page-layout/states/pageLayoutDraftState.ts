@@ -1,16 +1,16 @@
-import { atom } from 'recoil';
-import { type SavedPageLayout } from './savedPageLayoutsState';
+import { createState } from 'twenty-ui/utilities';
+import { PageLayoutType, type SavedPageLayout } from './savedPageLayoutsState';
 
 export type DraftPageLayout = Omit<
   SavedPageLayout,
   'id' | 'createdAt' | 'updatedAt'
 >;
 
-export const pageLayoutDraftState = atom<DraftPageLayout>({
+export const pageLayoutDraftState = createState<DraftPageLayout>({
   key: 'pageLayoutDraftState',
-  default: {
+  defaultValue: {
     name: '',
-    type: 'DASHBOARD',
+    type: PageLayoutType.DASHBOARD,
     widgets: [],
   },
 });

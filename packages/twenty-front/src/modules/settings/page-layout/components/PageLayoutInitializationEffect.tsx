@@ -9,6 +9,7 @@ import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutPersistedState } from '../states/pageLayoutPersistedState';
 import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
 import {
+  PageLayoutType,
   savedPageLayoutsState,
   type SavedPageLayout,
 } from '../states/savedPageLayoutsState';
@@ -66,7 +67,7 @@ export const PageLayoutInitializationEffect = ({
         } else {
           set(pageLayoutDraftState, {
             name: '',
-            type: 'DASHBOARD',
+            type: PageLayoutType.DASHBOARD,
             widgets: [],
           });
           set(pageLayoutPersistedState, undefined);

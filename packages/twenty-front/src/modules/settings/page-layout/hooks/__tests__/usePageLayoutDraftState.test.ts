@@ -1,3 +1,8 @@
+import {
+  GraphSubType,
+  WidgetType,
+} from '@/settings/page-layout/mocks/mockWidgets';
+import { PageLayoutType } from '@/settings/page-layout/states/savedPageLayoutsState';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import { usePageLayoutDraftState } from '../usePageLayoutDraftState';
@@ -20,7 +25,7 @@ describe('usePageLayoutDraftState', () => {
     act(() => {
       result.current.setPageLayoutDraft({
         name: '   ',
-        type: 'DASHBOARD',
+        type: PageLayoutType.DASHBOARD,
         widgets: [],
       });
     });
@@ -37,7 +42,7 @@ describe('usePageLayoutDraftState', () => {
     act(() => {
       result.current.setPageLayoutDraft({
         name: 'Updated Name',
-        type: 'DASHBOARD',
+        type: PageLayoutType.DASHBOARD,
         widgets: [],
       });
     });
@@ -55,14 +60,14 @@ describe('usePageLayoutDraftState', () => {
     act(() => {
       result.current.setPageLayoutDraft({
         name: 'Test Layout',
-        type: 'DASHBOARD',
+        type: PageLayoutType.DASHBOARD,
         widgets: [
           {
             id: 'widget-1',
             title: 'New Widget',
-            type: 'GRAPH',
+            type: WidgetType.GRAPH,
             gridPosition: { row: 2, column: 2, rowSpan: 2, columnSpan: 2 },
-            configuration: { graphType: 'pie' },
+            configuration: { graphType: GraphSubType.BAR },
             data: {},
           },
         ],

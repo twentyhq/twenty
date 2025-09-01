@@ -1,14 +1,14 @@
-import { type GraphSubType } from '../mocks/mockWidgets';
+import { GraphSubType } from '../mocks/mockWidgets';
 
 export const getDefaultWidgetData = (graphType: GraphSubType) => {
   switch (graphType) {
-    case 'number':
+    case GraphSubType.NUMBER:
       return {
         value: '1,234',
         trendPercentage: 15.2,
       };
 
-    case 'gauge':
+    case GraphSubType.GAUGE:
       return {
         value: 0.7,
         min: 0,
@@ -16,7 +16,7 @@ export const getDefaultWidgetData = (graphType: GraphSubType) => {
         label: 'Progress',
       };
 
-    case 'pie':
+    case GraphSubType.PIE:
       return {
         items: [
           { id: 'segment1', value: 35, label: 'Segment A' },
@@ -26,7 +26,7 @@ export const getDefaultWidgetData = (graphType: GraphSubType) => {
         ],
       };
 
-    case 'bar':
+    case GraphSubType.BAR:
       return {
         items: [
           { category: 'Jan', value: 45 },
@@ -51,10 +51,10 @@ export const getWidgetTitle = (
   index: number,
 ): string => {
   const baseNames: Record<GraphSubType, string> = {
-    number: 'Number',
-    gauge: 'Gauge',
-    pie: 'Pie Chart',
-    bar: 'Bar Chart',
+    [GraphSubType.NUMBER]: 'Number',
+    [GraphSubType.GAUGE]: 'Gauge',
+    [GraphSubType.PIE]: 'Pie Chart',
+    [GraphSubType.BAR]: 'Bar Chart',
   };
 
   return `${baseNames[graphType] || 'Widget'} ${index + 1}`;
@@ -62,13 +62,13 @@ export const getWidgetTitle = (
 
 export const getWidgetSize = (graphType: GraphSubType) => {
   switch (graphType) {
-    case 'number':
+    case GraphSubType.NUMBER:
       return { w: 3, h: 2 };
-    case 'gauge':
+    case GraphSubType.GAUGE:
       return { w: 3, h: 3 };
-    case 'pie':
+    case GraphSubType.PIE:
       return { w: 4, h: 4 };
-    case 'bar':
+    case GraphSubType.BAR:
       return { w: 6, h: 4 };
     default:
       return { w: 4, h: 4 };

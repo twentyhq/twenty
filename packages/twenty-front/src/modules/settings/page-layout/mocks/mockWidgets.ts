@@ -1,28 +1,34 @@
 import { type Layouts } from 'react-grid-layout';
 
-// Aligned with backend WidgetType enum
-export type WidgetType = 'VIEW' | 'IFRAME' | 'FIELDS' | 'GRAPH';
+export enum WidgetType {
+  VIEW = 'VIEW',
+  IFRAME = 'IFRAME',
+  FIELDS = 'FIELDS',
+  GRAPH = 'GRAPH',
+}
 
-// Graph subtypes for different chart types
-export type GraphSubType = 'number' | 'gauge' | 'pie' | 'bar';
+export enum GraphSubType {
+  NUMBER = 'NUMBER',
+  GAUGE = 'GAUGE',
+  PIE = 'PIE',
+  BAR = 'BAR',
+}
 
 export type Widget = {
   id: string;
   type: WidgetType;
   title: string;
-  // Widget-specific configuration
   configuration?: Record<string, unknown>;
-  // Widget-specific data - TODO: Remove when backend connected
   data?: any;
 };
 
 export const mockWidgets: Widget[] = [
   {
     id: 'widget-1',
-    type: 'GRAPH',
+    type: WidgetType.GRAPH,
     title: 'Sales Pipeline',
     configuration: {
-      graphType: 'number',
+      graphType: GraphSubType.NUMBER,
     },
     data: {
       value: '1,234',
@@ -31,10 +37,10 @@ export const mockWidgets: Widget[] = [
   },
   {
     id: 'widget-2',
-    type: 'GRAPH',
+    type: WidgetType.GRAPH,
     title: 'Conversion Rate',
     configuration: {
-      graphType: 'gauge',
+      graphType: GraphSubType.GAUGE,
     },
     data: {
       value: 0.5,
@@ -45,10 +51,10 @@ export const mockWidgets: Widget[] = [
   },
   {
     id: 'widget-3',
-    type: 'GRAPH',
+    type: WidgetType.GRAPH,
     title: 'Lead Distribution',
     configuration: {
-      graphType: 'pie',
+      graphType: GraphSubType.PIE,
     },
     data: {
       items: [
@@ -87,10 +93,10 @@ export const mockWidgets: Widget[] = [
   },
   {
     id: 'widget-4',
-    type: 'GRAPH',
+    type: WidgetType.GRAPH,
     title: 'Monthly Performance',
     configuration: {
-      graphType: 'bar',
+      graphType: GraphSubType.BAR,
     },
     data: {
       items: [

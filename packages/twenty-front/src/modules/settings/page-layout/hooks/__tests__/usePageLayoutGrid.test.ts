@@ -1,3 +1,7 @@
+import {
+  GraphSubType,
+  WidgetType,
+} from '@/settings/page-layout/mocks/mockWidgets';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import { usePageLayoutGrid } from '../usePageLayoutGrid';
@@ -94,8 +98,8 @@ describe('usePageLayoutGrid', () => {
       {
         id: 'widget-1',
         title: 'Test Widget',
-        type: 'GRAPH' as const,
-        graphType: 'bar' as const,
+        type: WidgetType.GRAPH,
+        graphType: GraphSubType.BAR,
         data: {},
       },
     ];

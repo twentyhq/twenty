@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 import { IconChartPie, IconFrame, IconList } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
-import { type WidgetType } from '../mocks/mockWidgets';
+import { WidgetType } from '../mocks/mockWidgets';
 import {
   selectedWidgetTypeState,
   SidePanelStep,
@@ -32,19 +32,19 @@ const StyledDisabledMenuItem = styled.div`
 
 const widgetTypeOptions = [
   {
-    type: 'GRAPH' as WidgetType,
+    type: WidgetType.GRAPH,
     icon: IconChartPie,
     title: 'Add a graph',
     disabled: false,
   },
   {
-    type: 'VIEW' as WidgetType,
+    type: WidgetType.VIEW,
     icon: IconList,
     title: 'Add a view',
     disabled: true,
   },
   {
-    type: 'IFRAME' as WidgetType,
+    type: WidgetType.IFRAME,
     icon: IconFrame,
     title: 'Add an iframe',
     disabled: true,
@@ -58,7 +58,7 @@ export const PageLayoutSelectWidgetType = () => {
   const handleSelectWidgetType = (type: WidgetType) => {
     setSelectedWidgetType(type);
 
-    if (type === 'GRAPH') {
+    if (type === WidgetType.GRAPH) {
       setSidePanelStep(SidePanelStep.SELECT_GRAPH_TYPE);
     }
   };

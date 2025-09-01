@@ -6,7 +6,7 @@ import {
   IconNumber,
 } from 'twenty-ui/display';
 import { MenuItemCommand } from 'twenty-ui/navigation';
-import { type GraphSubType } from '../mocks/mockWidgets';
+import { GraphSubType } from '../mocks/mockWidgets';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -25,22 +25,22 @@ const StyledSectionTitle = styled.div`
 
 const graphTypeOptions = [
   {
-    type: 'number' as GraphSubType,
+    type: GraphSubType.NUMBER,
     icon: IconNumber,
     title: 'Number',
   },
   {
-    type: 'gauge' as GraphSubType,
+    type: GraphSubType.GAUGE,
     icon: IconGauge,
     title: 'Gauge',
   },
   {
-    type: 'pie' as GraphSubType,
+    type: GraphSubType.PIE,
     icon: IconChartPie,
     title: 'Pie Chart',
   },
   {
-    type: 'bar' as GraphSubType,
+    type: GraphSubType.BAR,
     icon: IconChartBar,
     title: 'Bar Chart',
   },

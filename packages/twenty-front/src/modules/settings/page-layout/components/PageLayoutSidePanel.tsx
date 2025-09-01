@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { type GraphSubType } from '../mocks/mockWidgets';
+import { WidgetType, type GraphSubType } from '../mocks/mockWidgets';
 import {
   selectedWidgetTypeState,
   SidePanelStep,
@@ -48,7 +48,7 @@ const StyledBackdrop = styled(motion.div)`
 type PageLayoutSidePanelProps = {
   isOpen: boolean;
   onClose: () => void;
-  onCreateWidget?: (widgetType: 'GRAPH', graphType: GraphSubType) => void;
+  onCreateWidget?: (widgetType: WidgetType, graphType: GraphSubType) => void;
 };
 
 export const PageLayoutSidePanel = ({
@@ -84,8 +84,11 @@ export const PageLayoutSidePanel = ({
   };
 
   const handleSelectGraphType = (graphType: GraphSubType) => {
-    if (onCreateWidget !== undefined && selectedWidgetType === 'GRAPH') {
-      onCreateWidget('GRAPH', graphType);
+    if (
+      onCreateWidget !== undefined &&
+      selectedWidgetType === WidgetType.GRAPH
+    ) {
+      onCreateWidget(WidgetType.GRAPH, graphType);
     }
     setSidePanelStep(SidePanelStep.SELECT_WIDGET_TYPE);
     setSelectedWidgetType(null);

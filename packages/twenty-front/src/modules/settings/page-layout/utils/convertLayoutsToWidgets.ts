@@ -14,7 +14,6 @@ export const convertLayoutsToWidgets = (
   widgets: Widget[],
   layouts: Layouts,
 ): WidgetWithGridPosition[] => {
-  // Use desktop layout as primary, fallback to mobile if desktop not available
   const activeLayouts = layouts.desktop || layouts.mobile || [];
 
   return widgets.map((widget) => {

@@ -1,3 +1,7 @@
+import {
+  GraphSubType,
+  WidgetType,
+} from '@/settings/page-layout/mocks/mockWidgets';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 import { usePageLayoutWidgetCreate } from '../usePageLayoutWidgetCreate';
@@ -17,7 +21,7 @@ describe('usePageLayoutWidgetCreate', () => {
     });
 
     act(() => {
-      result.current.handleCreateWidget('GRAPH', 'bar');
+      result.current.handleCreateWidget(WidgetType.GRAPH, GraphSubType.BAR);
     });
 
     expect(typeof result.current.handleCreateWidget).toBe('function');
@@ -28,11 +32,16 @@ describe('usePageLayoutWidgetCreate', () => {
       wrapper: RecoilRoot,
     });
 
-    const graphTypes = ['number', 'gauge', 'pie', 'bar'] as const;
+    const graphTypes = [
+      GraphSubType.NUMBER,
+      GraphSubType.GAUGE,
+      GraphSubType.PIE,
+      GraphSubType.BAR,
+    ];
 
     graphTypes.forEach((graphType) => {
       act(() => {
-        result.current.handleCreateWidget('GRAPH', graphType);
+        result.current.handleCreateWidget(WidgetType.GRAPH, graphType);
       });
     });
 

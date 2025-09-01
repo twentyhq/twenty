@@ -1,15 +1,22 @@
-import { atom } from 'recoil';
+import { type WidgetType } from '@/settings/page-layout/mocks/mockWidgets';
+import { createState } from 'twenty-ui/utilities';
+
+export enum PageLayoutType {
+  DASHBOARD = 'DASHBOARD',
+  RECORD_INDEX = 'RECORD_INDEX',
+  RECORD_PAGE = 'RECORD_PAGE',
+}
 
 export type SavedPageLayout = {
   id: string;
   name: string;
-  type: 'DASHBOARD' | 'RECORD_INDEX' | 'RECORD_PAGE';
+  type: PageLayoutType;
   createdAt: string;
   updatedAt: string;
   widgets: Array<{
     id: string;
     title: string;
-    type: 'VIEW' | 'IFRAME' | 'FIELDS' | 'GRAPH';
+    type: WidgetType;
     gridPosition: {
       row: number;
       column: number;
@@ -21,7 +28,7 @@ export type SavedPageLayout = {
   }>;
 };
 
-export const savedPageLayoutsState = atom<SavedPageLayout[]>({
+export const savedPageLayoutsState = createState<SavedPageLayout[]>({
   key: 'savedPageLayoutsState',
-  default: [],
+  defaultValue: [],
 });

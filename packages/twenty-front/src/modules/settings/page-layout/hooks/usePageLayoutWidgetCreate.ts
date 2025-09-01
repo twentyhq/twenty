@@ -1,7 +1,11 @@
 import { useCallback } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
-import { type GraphSubType, type Widget } from '../mocks/mockWidgets';
+import {
+  type GraphSubType,
+  type Widget,
+  type WidgetType,
+} from '../mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
@@ -25,7 +29,7 @@ export const usePageLayoutWidgetCreate = () => {
   const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
 
   const handleCreateWidget = useCallback(
-    (widgetType: 'GRAPH', graphType: GraphSubType) => {
+    (widgetType: WidgetType, graphType: GraphSubType) => {
       const widgetData = getDefaultWidgetData(graphType);
 
       const existingWidgetCount = pageLayoutWidgets.filter(

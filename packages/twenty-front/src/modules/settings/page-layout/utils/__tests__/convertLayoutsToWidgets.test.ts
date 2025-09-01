@@ -1,4 +1,4 @@
-import { type Widget } from '../../mocks/mockWidgets';
+import { GraphSubType, WidgetType, type Widget } from '../../mocks/mockWidgets';
 import { convertLayoutsToWidgets } from '../convertLayoutsToWidgets';
 
 describe('convertLayoutsToWidgets', () => {
@@ -6,18 +6,18 @@ describe('convertLayoutsToWidgets', () => {
     {
       id: 'widget-1',
       title: 'Widget 1',
-      type: 'GRAPH',
+      type: WidgetType.GRAPH,
       configuration: {
-        graphType: 'number',
+        graphType: GraphSubType.NUMBER,
       },
       data: { value: 100 },
     },
     {
       id: 'widget-2',
       title: 'Widget 2',
-      type: 'GRAPH',
+      type: WidgetType.GRAPH,
       configuration: {
-        graphType: 'pie',
+        graphType: GraphSubType.PIE,
       },
       data: { items: [] },
     },

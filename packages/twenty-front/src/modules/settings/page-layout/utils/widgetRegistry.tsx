@@ -3,18 +3,18 @@ import { GraphWidgetGaugeChart } from '@/dashboards/graphs/components/GraphWidge
 import { GraphWidgetNumberChart } from '@/dashboards/graphs/components/GraphWidgetNumberChart';
 import { GraphWidgetPieChart } from '@/dashboards/graphs/components/GraphWidgetPieChart';
 import { type ReactNode } from 'react';
-import { type GraphSubType, type Widget } from '../mocks/mockWidgets';
+import { GraphSubType, WidgetType, type Widget } from '../mocks/mockWidgets';
 
 type WidgetRenderer = (widget: Widget) => ReactNode;
 
 const widgetRenderers: Record<GraphSubType, WidgetRenderer> = {
-  number: (widget) => (
+  [GraphSubType.NUMBER]: (widget) => (
     <GraphWidgetNumberChart
       value={widget.data.value}
       trendPercentage={widget.data.trendPercentage}
     />
   ),
-  gauge: (widget) => (
+  [GraphSubType.GAUGE]: (widget) => (
     <GraphWidgetGaugeChart
       data={{
         value: widget.data.value,
@@ -27,7 +27,7 @@ const widgetRenderers: Record<GraphSubType, WidgetRenderer> = {
       id={`gauge-chart-${widget.id}`}
     />
   ),
-  pie: (widget) => (
+  [GraphSubType.PIE]: (widget) => (
     <GraphWidgetPieChart
       data={widget.data.items}
       showLegend={true}
@@ -35,7 +35,7 @@ const widgetRenderers: Record<GraphSubType, WidgetRenderer> = {
       id={`pie-chart-${widget.id}`}
     />
   ),
-  bar: (widget) => (
+  [GraphSubType.BAR]: (widget) => (
     <GraphWidgetBarChart
       data={widget.data.items}
       indexBy={widget.data.indexBy}
@@ -51,7 +51,7 @@ const widgetRenderers: Record<GraphSubType, WidgetRenderer> = {
 };
 
 export const renderWidget = (widget: Widget): ReactNode => {
-  if (widget.type !== 'GRAPH') {
+  if (widget.type !== WidgetType.GRAPH) {
     return null;
   }
 

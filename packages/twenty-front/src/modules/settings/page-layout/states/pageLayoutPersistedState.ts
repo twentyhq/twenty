@@ -1,7 +1,9 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui/utilities';
 import { type SavedPageLayout } from './savedPageLayoutsState';
 
-export const pageLayoutPersistedState = atom<SavedPageLayout | undefined>({
+export const pageLayoutPersistedState = createState<
+  SavedPageLayout | undefined
+>({
   key: 'pageLayoutPersistedState',
-  default: undefined,
+  defaultValue: undefined,
 });
