@@ -2861,10 +2861,10 @@ msgstr "Назив верзије тока рада"
 msgid "The workflow version status"
 msgstr "Статус верзије тока рада"
 
-#. js-lingui-id: NbABJb
+#. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field"
-msgstr "Ово име није доступно јер га већ користи друго поље"
+msgid "This name is not available as it is already used by another field."
+msgstr ""
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts

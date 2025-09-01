@@ -4,18 +4,18 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { type FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import {
   InvalidMetadataException,
   InvalidMetadataExceptionCode,
 } from 'src/engine/metadata-modules/utils/exceptions/invalid-metadata.exception';
 
 const getReservedCompositeFieldNames = (
-  objectMetadata: ObjectMetadataItemWithFieldMaps,
+  fieldMetadataMapById: FieldMetadataMap,
 ) => {
   const reservedCompositeFieldsNames: string[] = [];
 
-  for (const field of Object.values(objectMetadata.fieldsById)) {
+  for (const field of Object.values(fieldMetadataMapById)) {
     if (isCompositeFieldMetadataType(field.type)) {
       const base = field.name;
       const compositeType = compositeTypeDefinitions.get(field.type);
@@ -33,17 +33,17 @@ const getReservedCompositeFieldNames = (
 
 type ValidateFieldNameAvailabilityOrThrowArgs = {
   name: string;
-  objectMetadata: ObjectMetadataItemWithFieldMaps;
+  fieldMetadataMapById: FieldMetadataMap;
 };
 export const validateFieldNameAvailabilityOrThrow = ({
   name,
-  objectMetadata,
+  fieldMetadataMapById,
 }: ValidateFieldNameAvailabilityOrThrowArgs) => {
   const reservedCompositeFieldsNames =
-    getReservedCompositeFieldNames(objectMetadata);
+    getReservedCompositeFieldNames(fieldMetadataMapById);
 
   if (
-    Object.values(objectMetadata.fieldsById).some(
+    Object.values(fieldMetadataMapById).some(
       (field) =>
         field.name === name ||
         (field.type === FieldMetadataType.RELATION &&
@@ -54,7 +54,7 @@ export const validateFieldNameAvailabilityOrThrow = ({
       `Name "${name}" is not available as it is already used by another field`,
       InvalidMetadataExceptionCode.NOT_AVAILABLE,
       {
-        userFriendlyMessage: t`This name is not available as it is already used by another field`,
+        userFriendlyMessage: t`This name is not available as it is already used by another field.`,
       },
     );
   }
