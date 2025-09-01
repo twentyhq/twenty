@@ -28,7 +28,7 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
     useRecordIndexContextOrThrow();
   const { recordId, isRecordReadOnly } = useRecordTableRowContextOrThrow();
   const { fieldDefinitionByFieldMetadataItemId } =
-    useRecordTableContextOrThrow();
+    useRecordIndexContextOrThrow();
 
   const { recordField } = useContext(RecordTableCellContext);
   const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();

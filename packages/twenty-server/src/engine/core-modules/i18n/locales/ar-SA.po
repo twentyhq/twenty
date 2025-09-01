@@ -56,12 +56,7 @@ msgstr "لا يمكن توفير كل من {fieldName} و{fieldName}Id معاً.
 #. js-lingui-id: ZkHTHm
 #: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
 msgid "{fieldType} fields cannot be unique."
-msgstr ""
-
-#. js-lingui-id: wapGcj
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
-msgid "{message}"
-msgstr ""
+msgstr "لا يمكن أن تكون الحقول من النوع {fieldType} فريدة من نوعها."
 
 #. js-lingui-id: 8haj+G
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
@@ -81,7 +76,7 @@ msgstr "حساب متصل"
 #. js-lingui-id: cOSBjW
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "A dashboard"
-msgstr ""
+msgstr "لوحة القيادة"
 
 #. js-lingui-id: HCoswz
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -193,13 +188,13 @@ msgstr "العمل المطلوب لإعادة تعيين كلمة المرور"
 #. js-lingui-id: 52fA3U
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Active fields cannot be deleted"
-msgstr ""
+msgstr "لا يمكن حذف الحقول النشطة"
 
 #. js-lingui-id: 0N5kF6
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Active objects cannot be deleted"
-msgstr ""
+msgstr "لا يمكن حذف الكائنات النشطة"
 
 #. js-lingui-id: Du6bPw
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -244,7 +239,7 @@ msgstr "حدث متجمع / مصفى لعرضه على الشريط الزمني
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
 msgid "All {objectLabelPlural}"
-msgstr ""
+msgstr "الكل {objectLabelPlural}"
 
 #. js-lingui-id: hehnjM
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -303,7 +298,7 @@ msgstr "المهام المعينة"
 #. js-lingui-id: kZ7PLo
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me.ts
 msgid "Assigned to Me"
-msgstr ""
+msgstr "مُعين إليّ"
 
 #. js-lingui-id: ojKCLU
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -314,6 +309,11 @@ msgstr "الموكِل"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "معرف المستخدم المرتبط"
+
+#. js-lingui-id: K9efby
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "At least one relation is require"
+msgstr "مطلوب على الأقل علاقة واحدة"
 
 #. js-lingui-id: UY1vmE
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -479,12 +479,12 @@ msgstr "النص"
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
 msgid "By Stage"
-msgstr ""
+msgstr "حسب المرحلة"
 
 #. js-lingui-id: jQX8V+
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view.ts
 msgid "By Status"
-msgstr ""
+msgstr "حسب الحالة"
 
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -552,7 +552,7 @@ msgstr "أحداث التقويم"
 #. js-lingui-id: eSaCR/
 #: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
 msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
-msgstr ""
+msgstr "لا يمكن الاتصال بـ {connectFieldName}. لم يتم العثور على سجل فريد بالشرط: {formattedConnectCondition}"
 
 #. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -583,18 +583,17 @@ msgstr "لا يمكن تعطيل إصدار سير العمل غير النشط"
 #. js-lingui-id: otFZos
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
-msgstr ""
+msgstr "لا يمكن تمكين التفرد بسبب وجود قيم مكررة موجودة. يُرجى مراجعة بياناتك وإصلاحها أولاً (بما في ذلك السجلات المحذوفة مؤقتًا)."
 
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
 msgstr "لا يمكن أن يكون لديك أكثر من إصدار نشط من سير العمل"
 
-#. js-lingui-id: TkG4aS
-#. placeholder {0}: invalidUpdatedProperties.join(', ')
+#. js-lingui-id: UcdPY5
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
-msgid "Cannot update standard field properties: {0}"
-msgstr ""
+msgid "Cannot update standard field properties: {invalidProperties}"
+msgstr "لا يمكن تحديث خصائص الحقول القياسية: {invalidProperties}"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -755,7 +754,7 @@ msgstr "أنشأت بواسطة"
 #. js-lingui-id: 2ZhYYy
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util.ts
 msgid "Created field metadata, parent object metadata not found"
-msgstr ""
+msgstr "تم إنشاء بيانات التعريف للحقل، بيانات التعريف للعنصر الأب غير موجودة"
 
 #. js-lingui-id: wPvFAD
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -784,22 +783,22 @@ msgstr "معلمات اتصال مخصصة"
 #. js-lingui-id: 7p5kLi
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard"
-msgstr ""
+msgstr "لوحة"
 
 #. js-lingui-id: Lddz0a
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard page layout"
-msgstr ""
+msgstr "تخطيط صفحة لوحة القيادة"
 
 #. js-lingui-id: xGgnPh
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard title"
-msgstr ""
+msgstr "عنوان اللوحة"
 
 #. js-lingui-id: w6iIMm
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboards"
-msgstr ""
+msgstr "لوحات القيادة"
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -811,10 +810,25 @@ msgstr "تنسيق التاريخ"
 msgid "Date when the record was deleted"
 msgstr "التاريخ الذي تم فيه حذف السجل"
 
+#. js-lingui-id: GGNmm+
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default value \"{defaultValue}\" must be one of the option values"
+msgstr "يجب أن تكون القيمة الافتراضية \"{defaultValue}\" واحدة من القيم الاختيارية"
+
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value must be a string"
-msgstr ""
+msgstr "يجب أن تكون القيمة الافتراضية سلسلة نصية"
+
+#. js-lingui-id: sv9P4Q
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default value should be as quoted string"
+msgstr "القيمة الافتراضية يجب أن تكون كنص مقتبس"
+
+#. js-lingui-id: 6pJV03
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default values must be unique"
+msgstr "يجب أن تكون القيم الافتراضية فريدة"
 
 #. js-lingui-id: QN9ahV
 #: src/engine/twenty-orm/base.workspace-entity.ts
@@ -869,7 +883,7 @@ msgstr "تاريخ الاستحقاق"
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
-msgstr ""
+msgstr "الخيار المكرر {field}"
 
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -912,7 +926,7 @@ msgstr "تاريخ الانتهاء"
 #. js-lingui-id: hcogQc
 #: src/engine/core-modules/domain-manager/validator/cloudflare.validate.ts
 msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
-msgstr ""
+msgstr "يجب تعريف متغير البيئة CLOUDFLARE_API_KEY لاستخدام هذه الميزة."
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1027,6 +1041,12 @@ msgstr "نفذ بواسطة"
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
 msgstr "من المتوقع استخدام نفس حقول القيود بشكل متسق عبر جميع العمليات لـ{connectFieldName}."
+
+#. js-lingui-id: 5KfWxA
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "External ID"
+msgstr ""
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1173,22 +1193,22 @@ msgstr "المفضلات المرتبطة بـ{label}"
 #. js-lingui-id: vngnhF
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Field already exists"
-msgstr ""
+msgstr "الحقل موجود بالفعل"
 
 #. js-lingui-id: Hg95ys
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field cannot be used as label identifier"
-msgstr ""
+msgstr "لا يمكن استخدام الحقل كمعرّف تسمية."
 
 #. js-lingui-id: F6OLoA
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field declared as image identifier not found"
-msgstr ""
+msgstr "لم يتم العثور على الحقل المعلن عنه كمعرّف للصورة."
 
 #. js-lingui-id: 75hHpn
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field declared as label identifier not found"
-msgstr ""
+msgstr "الحقل المعرف كمعرف الملصق غير موجود"
 
 #. js-lingui-id: nSFFML
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -1201,12 +1221,12 @@ msgstr "معرف بيانات الحقل"
 #. js-lingui-id: Ljqo/T
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Field metadata to update not found"
-msgstr ""
+msgstr "بيانات التعريف للحقل المطلوب تحديثه غير موجودة"
 
 #. js-lingui-id: p3kNMz
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Field metadata to update object metadata not found"
-msgstr ""
+msgstr "بيانات التعريف "
 
 #. js-lingui-id: g+t8w9
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1217,17 +1237,17 @@ msgstr "بيانات الحقل المستخدم لعملية التجميع"
 #. js-lingui-id: prTOhK
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Field name is not synced with field label"
-msgstr ""
+msgstr "الاسم غير متزامن مع التسمية"
 
 #. js-lingui-id: cK8ILP
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Field to create related object not found"
-msgstr ""
+msgstr "الحقل المطلوب إنشاء كائن مرتبط به غير موجود"
 
 #. js-lingui-id: K6qzz4
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Field to update not found"
-msgstr ""
+msgstr "الحقل المطلوب تحديثه غير موجود"
 
 #. js-lingui-id: J4hC2m
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts
@@ -1239,30 +1259,35 @@ msgstr "الحقل المستخدم للبحث النصي الكامل"
 msgid "Field Value"
 msgstr "قيمة الحقل"
 
+#. js-lingui-id: s3HtdT
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "FieldMetadataId is required"
+msgstr "معرف بيانات الحقل مطلوب"
+
 #. js-lingui-id: Sof2+k
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
-msgstr ""
+msgstr "معرف البيانات الوصفية للحقل مطلوب لإنشاء حقل عرض."
 
 #. js-lingui-id: NTyTR5
 #: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "FieldMetadataId is required to create a view filter group."
-msgstr ""
+msgstr "معرف البيانات الوصفية للحقل مطلوب لإنشاء مجموعة عوامل تصفية العرض."
 
 #. js-lingui-id: Ya6oU7
 #: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "FieldMetadataId is required to create a view filter."
-msgstr ""
+msgstr "معرف البيانات الوصفية للحقل مطلوب لإنشاء فلتر عرض."
 
 #. js-lingui-id: DU4jcg
 #: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "FieldMetadataId is required to create a view group."
-msgstr ""
+msgstr "أيّدمجانتاتاديتااهلياذغايبضرورتلإنشاءمجموععرض."
 
 #. js-lingui-id: snEXuU
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required to create a view sort."
-msgstr ""
+msgstr "أيّدمجانتاتاديتااهلياذغايبضرورتلإنشاءقمترتيب."
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1277,7 +1302,7 @@ msgstr "اسم المجلد"
 #. js-lingui-id: eWmJYU
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Forbidden updated properties for relation field metadata"
-msgstr ""
+msgstr "خصائص التحديث المحظورة لبيانات التعريف لحقل الارتباط"
 
 #. js-lingui-id: kuN9I4
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
@@ -1361,6 +1386,11 @@ msgstr "المُعرّف"
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "ملف تعريف العميل المثالي: يُشير ما إذا كانت الشركة هي العميل الأكثر ملاءمة وقيمة بالنسبة لك"
 
+#. js-lingui-id: YcVn4w
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "If defined default value must contain at least one value"
+msgstr "إذا تم تحديد القيمة الافتراضية يجب أن تحتوي على قيمة واحدة على الأقل"
+
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
 msgid "Input is too short: \"{name}\""
@@ -1414,10 +1444,15 @@ msgstr "قيمة الدقيقة غير صحيحة. يجب أن تكون عددً
 msgid "Invalid minute value. Should be integer greater than 1"
 msgstr "قيمة الدقيقة غير صحيحة. يجب أن تكون عددًا صحيحًا أكبر من 1"
 
+#. js-lingui-id: sDfyvM
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Invalid morph relation input"
+msgstr "مدخل علاقة مورف غير صالح"
+
 #. js-lingui-id: AXZsy/
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
 msgid "Invalid relation creation payload"
-msgstr ""
+msgstr "تحميل إنشاء العلاقة غير صالح"
 
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1430,14 +1465,24 @@ msgid "Invalid trigger type for enabling workflow trigger"
 msgstr "نوع المشغل غير صالح لتفعيل مشغل سير العمل"
 
 #. js-lingui-id: 1Iyic0
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid uuid {id}"
-msgstr ""
+msgstr "الرقم المميز غير صحيح {id}"
 
 #. js-lingui-id: VEKoJx
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "رمز التحقق غير صالح. يرجى المحاولة مرة أخرى."
+
+#. js-lingui-id: 8xkULN
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "Invalid view sort data"
+msgstr "بيانات ترتيب العرض غير صالحة"
+
+#. js-lingui-id: I0OzaR
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "Invalid view sort data for view sort id: {id}"
+msgstr "بيانات ترتيب العرض غير صالحة لمعرف ترتيب العرض: {id}"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1465,6 +1510,12 @@ msgstr "طوال اليوم"
 msgid "Is Organizer"
 msgstr "هو المُنظم"
 
+#. js-lingui-id: VrHWrH
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Is Sent Folder"
+msgstr ""
+
 #. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1472,6 +1523,12 @@ msgstr "هو المُنظم"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Is Sync Enabled"
 msgstr "ما إذا تم تفعيل المُزامنة"
+
+#. js-lingui-id: BHCUSr
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Is Synced"
+msgstr ""
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1772,15 +1829,25 @@ msgstr "رمز تحديث مزود الرسائل"
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "الحقول المطلوبة مفقودة: يجب ملء قيد فريد واحد على الأقل بالكامل لـ'{connectFieldName}'."
 
+#. js-lingui-id: FqzlX4
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must have the same relation type"
+msgstr "البيانات المستخدمة لإنشاء علاقة مورف يجب أن تكون من نفس نوع العلاقة"
+
+#. js-lingui-id: Z/Awgf
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to the same object metadata"
+msgstr "البيانات المستخدمة لإنشاء علاقة مورف يجب أن تحتوي فقط على علاقة لبيانات ميتا نفس الكائن"
+
 #. js-lingui-id: DsdcRG
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Morph relation fields are disabled for your workspace"
-msgstr ""
+msgstr "حقول العلاقة Morph غير مفعلة لمساحة العمل الخاصة بك"
 
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
-msgstr ""
+msgstr "القيمة الافتراضية للحقل المتعدد الاختيار يجب أن تكون قائمة"
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1807,12 +1874,12 @@ msgstr "الاسم \"{computedMetadataNameFromLabel}\" لا يمكن أن يكو
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
-msgstr ""
+msgstr "هذا الاسم غير متاح"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr ""
+msgstr "هذا الاسم غير متاح لأنه مستخدم بالفعل من قبل حقل آخر"
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -1822,12 +1889,12 @@ msgstr "الاسم غير متاح، قد يكون مكرراً لاسم حقل 
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
-msgstr ""
+msgstr "الاسم غير صحيح: يجب أن يبدأ بحرف صغير ويحتوي فقط على أحرف أبجدية رقمية"
 
 #. js-lingui-id: zjh2SJ
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is too long"
-msgstr ""
+msgstr "الاسم طويل جدًا"
 
 #. js-lingui-id: 0MobB1
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils.ts
@@ -1837,7 +1904,7 @@ msgstr "الاسم طويل جدًا: يتجاوز الحد الأقصى 63 حر
 #. js-lingui-id: go/Vg1
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is too short"
-msgstr ""
+msgstr "الاسم قصير جدًا"
 
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -1852,13 +1919,13 @@ msgstr "اسم تشغيل السيرة الذاتية"
 #. js-lingui-id: P+jdmX
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name should be in camelCase"
-msgstr ""
+msgstr "يجب أن يكون الاسم بصيغة camelCase"
 
 #. js-lingui-id: Dr0xtb
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Names are not synced with labels"
-msgstr ""
+msgstr "الأسماء غير متزامنة مع التسمية."
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2002,12 +2069,12 @@ msgstr "العنصر موجود بالفعل"
 #. js-lingui-id: wLX74t
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "Object label is too long"
-msgstr ""
+msgstr "التسمية الطويلة جدًا"
 
 #. js-lingui-id: nmhjwk
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "Object label is too short"
-msgstr ""
+msgstr "التسمية قصيرة جدًا"
 
 #. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2017,50 +2084,50 @@ msgstr "معرف بيانات الكائن"
 #. js-lingui-id: lG0Qqm
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Object related to field to delete not found"
-msgstr ""
+msgstr "الكائن المتعلق بالحقل المطلوب حذفه غير موجود"
 
 #. js-lingui-id: E8vJ0A
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Object related to field to update not found"
-msgstr ""
+msgstr "الكائن المتعلق بالحقل المطلوب تحديثه غير موجود"
 
 #. js-lingui-id: MnOwTp
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Object related to updated field does not have a label identifier"
-msgstr ""
+msgstr "الكائن المتعلق بالحقل المحدث لا يحتوي على معرف التسمية"
 
 #. js-lingui-id: 6unt40
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
 msgid "Object targeted by field to create not found"
-msgstr ""
+msgstr "الكائن المستهدف من الحقل المطلوب إنشاؤه غير موجود"
 
 #. js-lingui-id: KHK54G
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Object targeted by the relation not found"
-msgstr ""
+msgstr "الكائن المستهدف من العلاقة غير موجود"
 
 #. js-lingui-id: bMeJkW
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Object to delete not found"
-msgstr ""
+msgstr "الكيان المطلوب حذفه غير موجود"
 
 #. js-lingui-id: pQ5dZU
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Object to update not found"
-msgstr ""
+msgstr "الكيان المطلوب تحديثه غير موجود"
 
 #. js-lingui-id: cdjRFZ
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Object with same id already exists"
-msgstr ""
+msgstr "العنصر بنفس المعرف موجود بالفعل"
 
 #. js-lingui-id: 53pIyA
 #: src/engine/core-modules/view/exceptions/view.exception.ts
 msgid "ObjectMetadataId is required to create a view."
-msgstr ""
+msgstr "أيّدجازاتاتاديتااهلياذغايبضرورتلإنشاءعرض."
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2132,12 +2199,12 @@ msgstr "مرحلة الفرصة"
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is invalid"
-msgstr ""
+msgstr "معرف الخيار غير صالح"
 
 #. js-lingui-id: MniXaX
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is required"
-msgstr ""
+msgstr "معرف الخيار مطلوب"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2154,7 +2221,7 @@ msgstr "تجاوز التسمية التوضيحية الحد الأقصى 63 ح
 #. js-lingui-id: h8lHqX
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label format not supported"
-msgstr ""
+msgstr "تنسيق علامة الخيار غير مدعوم"
 
 #. js-lingui-id: +E9N4m
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2166,7 +2233,7 @@ msgstr "التسمية التوضيحية مطلوبة"
 #. js-lingui-id: dFudyC
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label must be a string of at least one character"
-msgstr ""
+msgstr "يجب أن يكون تسمية الخيار عبارة عن نص يحتوي على حرف واحد على الأقل"
 
 #. js-lingui-id: nQqNzE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2183,7 +2250,7 @@ msgstr "تجاوز القيمة الحد الأقصى 63 حرفًا"
 #. js-lingui-id: zEGChV
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value format not supported"
-msgstr ""
+msgstr "تنسيق قيمة الخيار غير مدعوم"
 
 #. js-lingui-id: /wsRPd
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2195,7 +2262,7 @@ msgstr "القيمة مطلوبة"
 #. js-lingui-id: Kub9t0
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value must be a string of at least one character"
-msgstr ""
+msgstr "يجب أن تكون قيمة الخيار عبارة عن نص يحتوي على حرف واحد على الأقل"
 
 #. js-lingui-id: eLggyd
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2206,12 +2273,12 @@ msgstr "عملية تجميع اختيارية"
 #. js-lingui-id: EabrTR
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Options are required for enum fields"
-msgstr ""
+msgstr "الخيارات مطلوبة لحقول التعداد"
 
 #. js-lingui-id: AODALE
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Page Layout ID"
-msgstr ""
+msgstr "معرف تخطيط الصفحة"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
@@ -2371,14 +2438,15 @@ msgid "Related user email address"
 msgstr "عنوان البريد الإلكتروني للمستخدم المرتبط"
 
 #. js-lingui-id: +bFtT5
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util.ts
 msgid "Relation creation payload is required"
-msgstr ""
+msgstr "تحميل إنشاء العلاقة مطلوب"
 
 #. js-lingui-id: 5y41wK
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Relation field target metadata not found"
-msgstr ""
+msgstr "بيانات التعريف للهدف في حقل العلاقة غير موجودة"
 
 #. js-lingui-id: g87L9j
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -2389,7 +2457,7 @@ msgstr "العلاقات"
 #. js-lingui-id: PWdFkY
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Remote objects are not production ready yet"
-msgstr ""
+msgstr "الكائنات البعيدة ليست جاهزة للإنتاج بعد"
 
 #. js-lingui-id: yVxtzR
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
@@ -2397,7 +2465,7 @@ msgstr ""
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Remote objects are not supported yet"
-msgstr ""
+msgstr "الكائنات البعيدة ليست مدعومة بعد"
 
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -2451,13 +2519,13 @@ msgstr "المرحلة"
 #. js-lingui-id: dc5N0o
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Standard fields cannot be deleted"
-msgstr ""
+msgstr "لا يمكن حذف الحقول القياسية"
 
 #. js-lingui-id: Ptv+nG
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Standard objects cannot be deleted"
-msgstr ""
+msgstr "لا يمكن حذف الكائنات القياسية"
 
 #. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2468,7 +2536,7 @@ msgstr "تاريخ البداية"
 #. js-lingui-id: amGzX5
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Start of the week"
-msgstr ""
+msgstr "بداية الأسبوع"
 
 #. js-lingui-id: RS0o7b
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2746,7 +2814,7 @@ msgstr "لا يمكن حذف الإصدار الأولي من سير العمل"
 #. js-lingui-id: YTftFF
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "The name is not available"
-msgstr ""
+msgstr "هذا الاسم غير متاح"
 
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -2756,12 +2824,12 @@ msgstr "اسم الفرصة"
 #. js-lingui-id: H1tAJD
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "The singular and plural labels cannot be the same for an object"
-msgstr ""
+msgstr "لا يمكن أن تكون التسمية المفردة والجمعية نفسها لكائن واحد"
 
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"
-msgstr ""
+msgstr "لا يمكن أن تكون الأسماء المفردة والجمعية نفسها لكائن واحد"
 
 #. js-lingui-id: 5N6QtE
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
@@ -2910,18 +2978,17 @@ msgstr "النوع"
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Unique field cannot have a default value"
-msgstr ""
+msgstr "لا يمكن أن يحتوي الحقل الفريد على قيمة افتراضية"
 
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
 msgstr "نوع جدول الكرون غير مدعوم"
 
-#. js-lingui-id: ZPqDC0
-#. placeholder {0}: flatFieldMetadataToValidate.type
+#. js-lingui-id: crxihq
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
-msgid "Unsupported field metadata type {0}"
-msgstr ""
+msgid "Unsupported field metadata type {fieldType}"
+msgstr "نوع بيانات التعريف للحقل غير مدعوم {fieldType}"
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2932,7 +2999,7 @@ msgstr "تاريخ ووقت التحديث"
 #. js-lingui-id: r5C2wB
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Updated field name is not synced with label"
-msgstr ""
+msgstr "الاسم المحدث غير متزامن مع التسمية"
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
@@ -2963,7 +3030,7 @@ msgstr "المنطقة الزمنية للمستخدم"
 #. js-lingui-id: VkcC68
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User was not created with email/password"
-msgstr ""
+msgstr "لم يتم إنشاء المستخدم بالبريد الإلكتروني/كلمة المرور"
 
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2973,19 +3040,17 @@ msgstr "تنسيق التاريخ المفضل للمستخدم"
 #. js-lingui-id: Uce+A8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred start day of the week"
-msgstr ""
+msgstr "اليوم المفضل للمستخدم كبداية للأسبوع"
 
 #. js-lingui-id: kJuoKm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
 msgstr "تنسيق الوقت المفضل للمستخدم"
 
-#. js-lingui-id: dGFKJs
-#. placeholder {0}: summary.invalidObjects
-#. placeholder {1}: summary.invalidFields
+#. js-lingui-id: ckX/Ew
 #: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
-msgid "Validation failed for {0} object(s) and {1} field(s)"
-msgstr ""
+msgid "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
+msgstr "فشل التحقق لكائن(ات) عددها {invalidObjects} وحقل(ات) عددها {invalidFields}"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -2995,7 +3060,7 @@ msgstr "القيمة"
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
-msgstr ""
+msgstr "يجب أن يكون القيمة بالأحرف الكبيرة وأن تتبع التنسيق \"{sanitizedValue}\""
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -3178,10 +3243,20 @@ msgstr "موضع العرض"
 msgid "View Sort"
 msgstr "فرز العرض"
 
+#. js-lingui-id: znNExx
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "View sort (id: {id}) not found"
+msgstr "ترتيب العرض (معرف: {id}) غير موجود"
+
 #. js-lingui-id: 6ZUale
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort direction"
 msgstr "اتجاه فرز العرض"
+
+#. js-lingui-id: 3zMs+f
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "View sort not found"
+msgstr "ترتيب العرض غير موجود"
 
 #. js-lingui-id: /rCPqN
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -3214,32 +3289,37 @@ msgstr "نوع العرض"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "ViewId"
-msgstr ""
+msgstr "معرف العرض"
+
+#. js-lingui-id: kpQRY2
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "ViewId is required"
+msgstr "معرف العرض مطلوب"
 
 #. js-lingui-id: l88nXn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "ViewId is required to create a view field."
-msgstr ""
+msgstr "أيّدجزويذغايبضرورتلإنشاءمجالعرض."
 
 #. js-lingui-id: 9XMTpT
 #: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "ViewId is required to create a view filter group."
-msgstr ""
+msgstr "أيّدجزويذغايبضرورتلإنشاءمجموعفلترة."
 
 #. js-lingui-id: pCCxli
 #: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "ViewId is required to create a view filter."
-msgstr ""
+msgstr "أيّدجزويذغايبضرورتلإنشاءفلترة."
 
 #. js-lingui-id: 1X1RW5
 #: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "ViewId is required to create a view group."
-msgstr ""
+msgstr "أيّدجزويذغايبضرورتلإنشاءمجموععرض."
 
 #. js-lingui-id: uGUFcy
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "ViewId is required to create a view sort."
-msgstr ""
+msgstr "أيّدجزويذغايبضرورتلإنشاءقمترتيب."
 
 #. js-lingui-id: 1I6UoR
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -3263,7 +3343,7 @@ msgstr "مرئي"
 #. js-lingui-id: xvV2NJ
 #: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
-msgstr ""
+msgstr "نحن نواجه مشكلة مؤقتة في قاعدة البيانات لدينا. يُرجى المحاولة مرة أخرى لاحقًا."
 
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
@@ -3313,7 +3393,7 @@ msgstr "انتهاء تشغيل سير العمل في"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run enqueued at"
-msgstr ""
+msgstr "تشغيل سير العمل الاصطفاف في"
 
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -3463,35 +3543,40 @@ msgstr "منصب عضو مساحة العمل"
 msgid "Workspace Members"
 msgstr "أعضاء مساحة العمل"
 
+#. js-lingui-id: bBr+RW
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "WorkspaceId is required"
+msgstr "معرف مساحة العمل مطلوب"
+
 #. js-lingui-id: kjLpTn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
-msgstr ""
+msgstr "أيّدجزابصمويلاذغايبضرورتلإنشاءمجالعرض."
 
 #. js-lingui-id: zWj6VZ
 #: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "WorkspaceId is required to create a view filter group."
-msgstr ""
+msgstr "أيّدجزابصمويلاذغايبضرورتلإنشاءمجموعفلترة."
 
 #. js-lingui-id: jQMXtD
 #: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "WorkspaceId is required to create a view filter."
-msgstr ""
+msgstr "أيّدجزابصمويلاذغايبضرورتلإنشاءفلترة."
 
 #. js-lingui-id: NAoJAX
 #: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "WorkspaceId is required to create a view group."
-msgstr ""
+msgstr "أيّدجزابصمويلاذغايبضرورتلإنشاءمجموععرض."
 
 #. js-lingui-id: hU1QaN
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required to create a view sort."
-msgstr ""
+msgstr "أيّدجزابصمويلاذغايبضرورتلإنشاءقمترتيب."
 
 #. js-lingui-id: jtb/lI
 #: src/engine/core-modules/view/exceptions/view.exception.ts
 msgid "WorkspaceId is required to create a view."
-msgstr ""
+msgstr "أيّدجزابصمويلاذغايبضرورتلإنشاءعرض."
 
 #. js-lingui-id: EtzFC0
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts

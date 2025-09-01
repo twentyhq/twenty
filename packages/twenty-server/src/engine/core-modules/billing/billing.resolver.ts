@@ -4,6 +4,7 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { isDefined } from 'twenty-shared/utils';
 
 import { BillingCheckoutSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-checkout-session.input';
 import { BillingSessionInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-session.input';
@@ -39,6 +40,8 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { BillingPriceOutput } from 'src/engine/core-modules/billing/dtos/outputs/billing-price.output';
+import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
 
 @Resolver()
 @UsePipes(ResolverValidationPipe)
@@ -157,6 +160,23 @@ export class BillingResolver {
     return { success: true };
   }
 
+  @Mutation(() => BillingUpdateOutput)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
+  )
+  async updateSubscriptionItemPrice(
+    @AuthWorkspace() workspace: Workspace,
+    @Args() { priceId }: BillingUpdateSubscriptionItemPriceInput,
+  ) {
+    await this.billingService.updateMeteredSubscriptionPrice(
+      workspace.id,
+      priceId,
+    );
+
+    return { success: true };
+  }
+
   @Query(() => [BillingPlanOutput])
   @UseGuards(WorkspaceAuthGuard)
   async plans(): Promise<BillingPlanOutput[]> {
@@ -185,6 +205,34 @@ export class BillingResolver {
     @AuthWorkspace() workspace: Workspace,
   ): Promise<BillingMeteredProductUsageOutput[]> {
     return await this.billingUsageService.getMeteredProductsUsage(workspace);
+  }
+
+  @Query(() => [BillingPriceOutput])
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionsGuard(PermissionFlagType.WORKSPACE),
+  )
+  async listAvailableMeteredBillingPrices(
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<BillingPriceOutput[]> {
+    return (
+      await this.billingService.listMeteredBillingPricesByWorkspaceIdAndProductKey(
+        workspace.id,
+      )
+    ).reduce(
+      (acc, billingPrice) =>
+        isDefined(billingPrice.tiers?.[0].flat_amount) &&
+        isDefined(billingPrice.nickname) &&
+        isDefined(billingPrice.interval)
+          ? acc.concat({
+              amount: billingPrice.tiers[0].flat_amount,
+              nickname: billingPrice.nickname,
+              stripePriceId: billingPrice.stripePriceId,
+              recurringInterval: billingPrice.interval,
+            })
+          : acc,
+      [] as BillingPriceOutput[],
+    );
   }
 
   private async validateCanCheckoutSessionPermissionOrThrow({

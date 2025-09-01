@@ -7,12 +7,17 @@ import {
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
+import { SettingsAccountsMessageFoldersCard } from '@/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { type MessageChannelVisibility } from '~/generated-metadata/graphql';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
-import { Card, Section } from 'twenty-ui/layout';
 import { H2Title, IconBriefcase, IconUsers } from 'twenty-ui/display';
+import { Card, Section } from 'twenty-ui/layout';
+import {
+  FeatureFlagKey,
+  type MessageChannelVisibility,
+} from '~/generated-metadata/graphql';
 
 type SettingsAccountsMessageChannelDetailsProps = {
   messageChannel: Pick<
@@ -23,6 +28,7 @@ type SettingsAccountsMessageChannelDetailsProps = {
     | 'excludeNonProfessionalEmails'
     | 'excludeGroupEmails'
     | 'isSyncEnabled'
+    | 'messageFolders'
   >;
 };
 
@@ -38,6 +44,10 @@ export const SettingsAccountsMessageChannelDetails = ({
   const { updateOneRecord } = useUpdateOneRecord<MessageChannel>({
     objectNameSingular: CoreObjectNameSingular.MessageChannel,
   });
+
+  const isFolderControlEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MESSAGE_FOLDER_CONTROL_ENABLED,
+  );
 
   const handleVisibilityChange = (value: MessageChannelVisibility) => {
     updateOneRecord({
@@ -79,6 +89,18 @@ export const SettingsAccountsMessageChannelDetails = ({
 
   return (
     <StyledDetailsContainer>
+      {isFolderControlEnabled && messageChannel.messageFolders && (
+        <Section>
+          <H2Title
+            title={t`Folder Management`}
+            description={t`Control which folders are synced`}
+          />
+          <SettingsAccountsMessageFoldersCard
+            messageChannelId={messageChannel.id}
+            messageFolders={messageChannel.messageFolders}
+          />
+        </Section>
+      )}
       <Section>
         <H2Title
           title={t`Visibility`}

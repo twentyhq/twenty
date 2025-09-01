@@ -131,8 +131,8 @@ export const SettingsDevelopersWebhookForm = ({
             href: getSettingsPath(SettingsPath.Workspace),
           },
           {
-            children: t`Webhooks`,
-            href: getSettingsPath(SettingsPath.Webhooks),
+            children: t`APIs & Webhooks`,
+            href: getSettingsPath(SettingsPath.ApiWebhooks),
           },
           { children: isCreationMode ? t`New` : getTitle() },
         ]}
@@ -140,7 +140,7 @@ export const SettingsDevelopersWebhookForm = ({
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
             isCancelDisabled={formConfig.formState.isSubmitting}
-            onCancel={() => navigate(SettingsPath.Webhooks)}
+            onCancel={() => navigate(SettingsPath.ApiWebhooks)}
             onSave={formConfig.handleSubmit(handleSave)}
           />
         }

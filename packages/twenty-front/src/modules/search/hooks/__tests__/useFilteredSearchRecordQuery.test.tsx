@@ -87,7 +87,7 @@ describe('useFilteredSearchRecordQuery', () => {
           selectedIds: ['1'],
           limit: 10,
           excludedRecordIds: ['2'],
-          objectNameSingular: 'person',
+          objectNameSingulars: ['person'],
           searchFilter: 'Entity',
         });
       },

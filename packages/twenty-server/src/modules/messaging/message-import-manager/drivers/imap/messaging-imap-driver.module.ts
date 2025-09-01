@@ -46,6 +46,7 @@ import { MessageParticipantManagerModule } from 'src/modules/messaging/message-p
     ImapGetMessagesService,
     ImapGetMessageListService,
     ImapClientProvider,
+    ImapFindSentFolderService,
   ],
 })
 export class MessagingIMAPDriverModule {}

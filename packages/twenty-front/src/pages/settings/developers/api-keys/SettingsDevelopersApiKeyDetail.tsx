@@ -143,7 +143,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
         },
       });
       if (redirect) {
-        navigate(SettingsPath.APIs);
+        navigate(SettingsPath.ApiWebhooks);
       }
     } catch {
       enqueueErrorSnackBar({ message: t`Error deleting api key.` });
@@ -242,8 +242,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
               href: getSettingsPath(SettingsPath.Workspace),
             },
             {
-              children: t`APIs`,
-              href: getSettingsPath(SettingsPath.APIs),
+              children: t`APIs & Webhooks`,
+              href: getSettingsPath(SettingsPath.ApiWebhooks),
             },
             { children: apiKey?.name },
           ]}

@@ -59,7 +59,7 @@ describe('deleteFieldFromFlatObjectMetadataMapsOrThrow', () => {
                 flatFieldMetadata: getFlatFieldMetadataMock({
                   objectMetadataId: PET_FLAT_OBJECT_MOCK.id,
                   type: FieldMetadataType.RELATION,
-                  uniqueIdentifier: 'field-metadata-id',
+                  universalIdentifier: 'field-metadata-id',
                   id: 'field-metadata-id',
                   settings: {
                     relationType: RelationType.MANY_TO_ONE,

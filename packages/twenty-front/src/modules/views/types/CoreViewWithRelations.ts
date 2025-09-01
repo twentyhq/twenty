@@ -17,11 +17,17 @@ export type CoreViewWithRelations = {
   key?: ViewKey | null;
   objectMetadataId: string;
   isCompact: boolean;
-  viewFields: Omit<CoreViewField, 'workspaceId'>[];
-  viewGroups: Omit<CoreViewGroup, 'workspaceId'>[];
-  viewFilters: Omit<CoreViewFilter, 'workspaceId'>[];
-  viewFilterGroups?: Omit<CoreViewFilterGroup, 'workspaceId'>[];
-  viewSorts: Omit<CoreViewSort, 'workspaceId'>[];
+  viewFields: Omit<CoreViewField, 'workspaceId' | 'createdAt' | 'updatedAt'>[];
+  viewGroups: Omit<CoreViewGroup, 'workspaceId' | 'createdAt' | 'updatedAt'>[];
+  viewFilters: Omit<
+    CoreViewFilter,
+    'workspaceId' | 'createdAt' | 'updatedAt'
+  >[];
+  viewFilterGroups?: Omit<
+    CoreViewFilterGroup,
+    'workspaceId' | 'createdAt' | 'updatedAt'
+  >[];
+  viewSorts: Omit<CoreViewSort, 'workspaceId' | 'createdAt' | 'updatedAt'>[];
   kanbanAggregateOperation?: AggregateOperations | null;
   kanbanAggregateOperationFieldMetadataId?: string | null;
   position: number;

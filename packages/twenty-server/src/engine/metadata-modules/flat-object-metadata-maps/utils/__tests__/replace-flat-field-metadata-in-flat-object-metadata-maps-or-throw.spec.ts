@@ -31,7 +31,7 @@ describe('replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow', () => {
             flatFieldMetadata: getFlatFieldMetadataMock({
               objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
               type: FieldMetadataType.TEXT,
-              uniqueIdentifier: 'unique-identifier-1',
+              universalIdentifier: 'unique-identifier-1',
               id: 'non-existent',
             }),
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,

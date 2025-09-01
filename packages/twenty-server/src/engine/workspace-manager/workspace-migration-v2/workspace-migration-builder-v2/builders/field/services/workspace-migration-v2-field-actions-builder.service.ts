@@ -4,12 +4,12 @@ import { FromTo } from 'twenty-shared/types';
 
 import { FlatFieldMetadataValidatorService } from 'src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service';
 import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
-import { isRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-flat-field-metadata.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/add-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-field-from-flat-object-metadata-maps-or-throw.util';
 import { replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
-import { computeRelationTargetFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/compute-relation-target-flat-object-metadata-maps.util';
+import { computeMorphOrRelationTargetFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/compute-morph-or-relation-target-flat-object-metadata-maps.util';
 import { WorkspaceMigrationV2BuilderOptions } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/services/workspace-migration-builder-v2.service';
 import { ValidateAndBuildMetadataResult } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/validate-and-build-metadata-result.type';
 import { type WorkspaceMigrationFieldActionV2 } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-builder-v2/types/workspace-migration-field-action-v2';
@@ -115,14 +115,13 @@ export class WorkspaceMigrationV2FieldActionsBuilderService {
     }
 
     for (const flatFieldMetadataToCreate of createdFlatFieldMetadatas) {
-      const relationTargetFlatObjectMetadataMaps = isRelationFlatFieldMetadata(
-        flatFieldMetadataToCreate,
-      )
-        ? computeRelationTargetFlatObjectMetadataMaps({
-            flatFieldMetadata: flatFieldMetadataToCreate,
-            flatObjectMetadataMaps: toFlatObjectMetadataMaps,
-          })
-        : undefined;
+      const relationTargetFlatObjectMetadataMaps =
+        isMorphOrRelationFlatFieldMetadata(flatFieldMetadataToCreate)
+          ? computeMorphOrRelationTargetFlatObjectMetadataMaps({
+              flatFieldMetadata: flatFieldMetadataToCreate,
+              flatObjectMetadataMaps: toFlatObjectMetadataMaps,
+            })
+          : undefined;
 
       const validationErrors =
         await this.flatFieldMetadataValidatorService.validateFlatFieldMetadataCreation(

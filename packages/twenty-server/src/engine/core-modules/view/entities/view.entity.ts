@@ -12,6 +12,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
+
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
@@ -29,7 +31,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
   'workspaceId',
   'objectMetadataId',
 ])
-export class ViewEntity {
+export class ViewEntity extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -64,7 +66,7 @@ export class ViewEntity {
   @Column({ nullable: false, type: 'text' })
   icon: string;
 
-  @Column({ nullable: false, type: 'int', default: 0 })
+  @Column({ nullable: false, type: 'double precision', default: 0 })
   position: number;
 
   @Column({ nullable: false, default: false, type: 'boolean' })

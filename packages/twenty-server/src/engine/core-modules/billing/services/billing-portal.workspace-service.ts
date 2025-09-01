@@ -27,6 +27,9 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
+import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
+import { MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
 
 @Injectable()
 export class BillingPortalWorkspaceService {
@@ -64,7 +67,7 @@ export class BillingPortalWorkspaceService {
     const checkoutSession =
       await this.stripeCheckoutService.createCheckoutSession({
         user,
-        workspaceId: workspace.id,
+        workspace,
         stripeSubscriptionLineItems,
         successUrl,
         cancelUrl,
@@ -98,7 +101,7 @@ export class BillingPortalWorkspaceService {
     const subscription =
       await this.stripeCheckoutService.createDirectSubscription({
         user,
-        workspaceId: workspace.id,
+        workspace,
         stripeSubscriptionLineItems,
         stripeCustomerId: customer?.stripeCustomerId,
         plan,
@@ -253,6 +256,44 @@ export class BillingPortalWorkspaceService {
     return session.url;
   }
 
+  private getDefaultMeteredProductPrice(
+    billingPricesPerPlan: BillingGetPricesPerPlanResult,
+  ): BillingPrice & {
+    tiers: MeterBillingPriceTiers;
+  } {
+    const defaultMeteredProductPrice =
+      billingPricesPerPlan.meteredProductsPrices.reduce(
+        (result, billingPrice) => {
+          if (!result) {
+            return billingPrice as BillingPrice & {
+              tiers: MeterBillingPriceTiers;
+            };
+          }
+          const tiers = billingPrice.tiers;
+
+          if (billingValidator.isMeteredTiersSchema(tiers)) {
+            if (tiers[0].flat_amount < result.tiers[0].flat_amount) {
+              return billingPrice as BillingPrice & {
+                tiers: MeterBillingPriceTiers;
+              };
+            }
+          }
+
+          return result;
+        },
+        null as (BillingPrice & { tiers: MeterBillingPriceTiers }) | null,
+      );
+
+    if (!isDefined(defaultMeteredProductPrice)) {
+      throw new BillingException(
+        'Missing Default Metered price',
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+      );
+    }
+
+    return defaultMeteredProductPrice;
+  }
+
   private getStripeSubscriptionLineItems({
     quantity,
     billingPricesPerPlan,
@@ -261,14 +302,17 @@ export class BillingPortalWorkspaceService {
     billingPricesPerPlan?: BillingGetPricesPerPlanResult;
   }): Stripe.Checkout.SessionCreateParams.LineItem[] {
     if (billingPricesPerPlan) {
+      const defaultMeteredProductPrice =
+        this.getDefaultMeteredProductPrice(billingPricesPerPlan);
+
       return [
         {
           price: billingPricesPerPlan.baseProductPrice.stripePriceId,
           quantity,
         },
-        ...billingPricesPerPlan.meteredProductsPrices.map((price) => ({
-          price: price.stripePriceId,
-        })),
+        {
+          price: defaultMeteredProductPrice.stripePriceId,
+        },
       ];
     }
 

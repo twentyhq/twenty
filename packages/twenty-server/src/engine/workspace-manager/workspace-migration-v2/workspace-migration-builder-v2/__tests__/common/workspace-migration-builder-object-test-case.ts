@@ -129,7 +129,7 @@ const CREATE_OBJECT_TEST_CASES: WorkspaceMigrationBuilderTestCase[] = [
               flatIndexMetadatas: [
                 getFlatIndexMetadataMock({
                   objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
-                  uniqueIdentifier: 'field-metadata-unique-identifier-1',
+                  universalIdentifier: 'field-metadata-unique-identifier-1',
                 }),
               ],
             },
