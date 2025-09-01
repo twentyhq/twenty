@@ -2856,9 +2856,9 @@ msgstr ""
 msgid "The workflow version status"
 msgstr ""
 
-#. js-lingui-id: NbABJb
+#. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field"
+msgid "This name is not available as it is already used by another field."
 msgstr ""
 
 #. js-lingui-id: yIUmAs
