@@ -13,7 +13,7 @@ import { FLAT_FIELD_METADATA_PROPERTIES_TO_COMPARE } from 'src/engine/metadata-m
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadataPropertiesToCompare } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-properties-to-compare.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import {} from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
+import { } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatFieldMetadataInFlatObjectMetadataMapsWithOnlyFieldId } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-field-metadata-in-flat-object-metadata-maps-with-field-id-only.util';
@@ -173,7 +173,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
     };
   }
 
-  const relatedFlatFieldMetadatasToUdpate =
+  const relatedFlatFieldMetadatasToUpdate =
     computeFlatFieldMetadataRelatedFlatFieldMetadata({
       flatFieldMetadata: existingFlatFieldMetadataToUpdate,
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
@@ -181,7 +181,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
 
   const flatFieldMetadatasToUpdate = [
     existingFlatFieldMetadataToUpdate,
-    ...relatedFlatFieldMetadatasToUdpate,
+    ...relatedFlatFieldMetadatasToUpdate,
   ];
 
   const optimisticiallyUpdatedFlatFieldMetadatas =

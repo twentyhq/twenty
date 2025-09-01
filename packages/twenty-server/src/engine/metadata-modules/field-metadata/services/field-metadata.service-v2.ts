@@ -149,12 +149,12 @@ export class FieldMetadataServiceV2 {
       throw inputTranspilationResult.error;
     }
 
-    const optimisticiallyUpdatedFlatFieldMetadatas =
+    const optimisticallyUpdatedFlatFieldMetadatas =
       inputTranspilationResult.result;
 
     const relatedObjectMetadataIds = [
       ...new Set(
-        optimisticiallyUpdatedFlatFieldMetadatas.flatMap(
+        optimisticallyUpdatedFlatFieldMetadatas.flatMap(
           ({ objectMetadataId, relationTargetObjectMetadataId }) =>
             isDefined(relationTargetObjectMetadataId)
               ? [objectMetadataId, relationTargetObjectMetadataId]
@@ -168,7 +168,7 @@ export class FieldMetadataServiceV2 {
     });
 
     const toFlatObjectMetadataMaps =
-      optimisticiallyUpdatedFlatFieldMetadatas.reduce(
+      optimisticallyUpdatedFlatFieldMetadatas.reduce(
         (flatObjectMetadataMaps, flatFieldMetadata) =>
           replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
             flatObjectMetadataMaps,
@@ -199,7 +199,7 @@ export class FieldMetadataServiceV2 {
 
     return this.fieldMetadataRepository.findOneOrFail({
       where: {
-        id: optimisticiallyUpdatedFlatFieldMetadatas[0].id,
+        id: optimisticallyUpdatedFlatFieldMetadatas[0].id,
         workspaceId,
       },
     });

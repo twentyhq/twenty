@@ -57,18 +57,18 @@ export const validateFlatFieldMetadataNameAvailability = ({
   ) {
     errors.push({
       code: FieldMetadataExceptionCode.NOT_AVAILABLE,
-      value: name,
-      message: `Name "${name}" is not available as it is already used by another field`,
-      userFriendlyMessage: t`Name "${name}" is not available as it is already used by another field`,
+      value: flatFieldMetadata.name,
+      message: `Name "${flatFieldMetadata.name}" is not available as it is already used by another field`,
+      userFriendlyMessage: t`Name "${flatFieldMetadata.name}" is not available as it is already used by another field`,
     });
   }
 
   if (reservedCompositeFieldsNames.includes(flatFieldMetadata.name)) {
     errors.push({
       code: FieldMetadataExceptionCode.RESERVED_KEYWORD,
-      message: `Name "${name}" is reserved composite field name`,
-      value: name,
-      userFriendlyMessage: t`Name "${name}" is not available`,
+      message: `Name "${flatFieldMetadata.name}" is reserved composite field name`,
+      value: flatFieldMetadata.name,
+      userFriendlyMessage: t`Name "${flatFieldMetadata.name}" is not available`,
     });
   }
 
