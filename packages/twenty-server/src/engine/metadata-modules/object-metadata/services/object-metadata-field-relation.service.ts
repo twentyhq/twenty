@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   capitalize,
@@ -53,7 +54,7 @@ export class ObjectMetadataFieldRelationService {
     sourceObjectMetadata: Pick<
       ObjectMetadataItemWithFieldMaps,
       'id' | 'nameSingular' | 'labelSingular'
-    >,
+    > & { fields: FieldMetadataEntity[] },
     objectMetadataMaps: ObjectMetadataMaps,
     queryRunner?: QueryRunner,
   ) {
@@ -84,7 +85,8 @@ export class ObjectMetadataFieldRelationService {
     sourceObjectMetadata: Pick<
       ObjectMetadataItemWithFieldMaps,
       'id' | 'nameSingular' | 'labelSingular'
-    >;
+    > & { fields: FieldMetadataEntity[] };
+
     objectMetadataMaps: ObjectMetadataMaps;
     relationObjectMetadataStandardId: string;
     queryRunner?: QueryRunner;
@@ -117,7 +119,7 @@ export class ObjectMetadataFieldRelationService {
     sourceObjectMetadata: Pick<
       ObjectMetadataItemWithFieldMaps,
       'id' | 'nameSingular' | 'labelSingular'
-    >,
+    > & { fields: FieldMetadataEntity[] },
     targetObjectMetadata: ObjectMetadataItemWithFieldMaps,
     queryRunner?: QueryRunner,
   ): Promise<FieldMetadataEntity<FieldMetadataType.RELATION>[]> {
@@ -127,11 +129,21 @@ export class ObjectMetadataFieldRelationService {
       targetObjectMetadata,
     );
 
+    this.validateFieldMetadataNameAvailabilityOrThrow({
+      name: sourceFieldMetadata.name,
+      objectMetadataFields: sourceObjectMetadata.fields,
+    });
+
     const targetFieldMetadata = this.createTargetFieldMetadata(
       workspaceId,
       sourceObjectMetadata,
       targetObjectMetadata,
     );
+
+    this.validateFieldMetadataNameAvailabilityOrThrow({
+      name: targetFieldMetadata.name,
+      objectMetadataFields: sourceObjectMetadata.fields,
+    });
 
     const fieldMetadataRepository = queryRunner
       ? queryRunner.manager.getRepository(FieldMetadataEntity)
@@ -225,6 +237,22 @@ export class ObjectMetadataFieldRelationService {
         objectMetadataId: targetObjectMetadata.id,
         workspaceId: workspaceId,
       });
+
+    const nameIsUpdated =
+      targetFieldMetadataUpdateData.name !== targetFieldMetadataToUpdate.name;
+
+    if (nameIsUpdated) {
+      const targetObjectMetadataFields = await fieldMetadataRepository.find({
+        where: {
+          objectMetadataId: targetObjectMetadata.id,
+        },
+      });
+
+      this.validateFieldMetadataNameAvailabilityOrThrow({
+        name: targetFieldMetadataUpdateData.name,
+        objectMetadataFields: targetObjectMetadataFields,
+      });
+    }
 
     const isTargetFieldMetadataManyToOneRelation =
       (
@@ -523,5 +551,23 @@ export class ObjectMetadataFieldRelationService {
     }
 
     return morphRelationFieldMetadataToUpdateWithNewJoinColumnName;
+  }
+
+  private validateFieldMetadataNameAvailabilityOrThrow({
+    name,
+    objectMetadataFields,
+  }: {
+    name?: string;
+    objectMetadataFields: FieldMetadataEntity[];
+  }) {
+    if (objectMetadataFields.some((field) => field.name === name)) {
+      throw new ObjectMetadataException(
+        `Field with name ${name} already exists on object`,
+        ObjectMetadataExceptionCode.NAME_CONFLICT,
+        {
+          userFriendlyMessage: t`Name "${name}" is not available.`,
+        },
+      );
+    }
   }
 }

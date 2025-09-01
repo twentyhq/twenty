@@ -31,6 +31,7 @@ export const objectMetadataGraphqlApiExceptionHandler = (error: Error) => {
       case ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT:
         throw new UserInputError(error);
       case ObjectMetadataExceptionCode.OBJECT_MUTATION_NOT_ALLOWED:
+      case ObjectMetadataExceptionCode.NAME_CONFLICT:
         throw new ForbiddenError(error);
       case ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS:
         throw new ConflictError(error);
