@@ -47,13 +47,10 @@ describe('Page Layout REST API', () => {
     await deleteOneObjectMetadata({
       input: { idToDelete: testObjectMetadataId },
     });
-  });
-
-  beforeEach(async () => {
     await cleanupPageLayoutRecords();
   });
 
-  afterAll(async () => {
+  beforeEach(async () => {
     await cleanupPageLayoutRecords();
   });
 

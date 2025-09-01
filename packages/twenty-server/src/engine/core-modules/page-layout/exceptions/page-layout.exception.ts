@@ -1,3 +1,5 @@
+import { assertUnreachable } from 'twenty-shared/utils';
+
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum PageLayoutExceptionCode {
@@ -24,5 +26,7 @@ export const generatePageLayoutExceptionMessage = (
       return 'Workspace ID is required';
     case PageLayoutExceptionMessageKey.NAME_REQUIRED:
       return 'Page layout name is required';
+    default:
+      assertUnreachable(key);
   }
 };
