@@ -56,7 +56,6 @@ export class InputTypeDefinitionFactory {
               nullable: true,
             });
 
-            //tododo
             return {
               ...this.fieldFactory.create({
                 objectMetadata,
@@ -80,7 +79,6 @@ export class InputTypeDefinitionFactory {
            * Other input types are generated with fields only
            */
           default:
-            //tododo
             return this.fieldFactory.create({
               objectMetadata,
               kind,

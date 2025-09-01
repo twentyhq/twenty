@@ -35,7 +35,6 @@ export class ObjectTypeDefinitionFactory {
       type: new GraphQLObjectType({
         name: `${pascalCase(objectMetadata.nameSingular)}${kind.toString()}`,
         description: objectMetadata.description,
-        //tododo
         fields: this.fieldFactory.create({
           objectMetadata,
           kind,
