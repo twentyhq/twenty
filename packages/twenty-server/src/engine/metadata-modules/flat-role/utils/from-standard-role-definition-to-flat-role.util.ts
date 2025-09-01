@@ -11,6 +11,6 @@ export const fromStandardRoleDefinitionToFlatRole = (
     ...standardRoleDefinition,
     id: v4(),
     workspaceId,
-    uniqueIdentifier: standardRoleDefinition.standardId || v4(),
+    universalIdentifier: standardRoleDefinition.standardId || v4(),
   };
 };

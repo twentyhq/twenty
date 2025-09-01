@@ -73,7 +73,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       shortcut: createObjectInput.shortcut ?? null,
       standardId: null,
       standardOverrides: null,
-      uniqueIdentifier: objectMetadataId,
+      universalIdentifier: objectMetadataId,
       targetTableName: 'DEPRECATED',
       workspaceId,
     };

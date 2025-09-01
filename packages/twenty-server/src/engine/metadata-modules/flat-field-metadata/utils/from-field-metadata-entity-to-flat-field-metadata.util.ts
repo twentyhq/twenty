@@ -22,7 +22,8 @@ export const fromFieldMetadataEntityToFlatRelationTargetFieldMetadata = (
   fieldMetadataEntity: FieldMetadataEntity<RelationAndMorphRelationFieldMetadataType>,
 ): FlatRelationTargetFieldMetadata => {
   return {
-    uniqueIdentifier: fieldMetadataEntity.standardId ?? fieldMetadataEntity.id,
+    universalIdentifier:
+      fieldMetadataEntity.standardId ?? fieldMetadataEntity.id,
     ...removePropertiesFromRecord(fieldMetadataEntity, [
       'relationTargetObjectMetadata',
       'relationTargetFieldMetadata',
@@ -78,7 +79,7 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
 
     return {
       ...fieldMetadataWithoutRelations,
-      uniqueIdentifier:
+      universalIdentifier:
         fieldMetadataWithoutRelations.standardId ??
         fieldMetadataWithoutRelations.id,
       flatRelationTargetFieldMetadata,
@@ -96,7 +97,7 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = <
 
   return {
     ...fieldMetadataWithoutRelations,
-    uniqueIdentifier:
+    universalIdentifier:
       fieldMetadataWithoutRelations.standardId ??
       fieldMetadataWithoutRelations.id,
     flatRelationTargetFieldMetadata: null,

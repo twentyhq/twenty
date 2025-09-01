@@ -14,5 +14,5 @@ export type FlatIndexMetadata = Partial<
 > & {
   id: string;
   flatIndexFieldMetadatas: FlatIndexFieldMetadata[];
-  uniqueIdentifier: string;
+  universalIdentifier: string;
 };
