@@ -133,7 +133,7 @@ export class FlatFieldMetadataValidatorService {
       validationResult.errors.push(
         ...validateFlatFieldMetadataName(updatedFlatFieldMetadata.name),
         ...validateFlatFieldMetadataNameAvailability({
-          name: updatedFlatFieldMetadata.name,
+          flatFieldMetadata: updatedFlatFieldMetadata,
           flatObjectMetadata: flatObjectMetadata,
         }),
       );
@@ -298,7 +298,7 @@ export class FlatFieldMetadataValidatorService {
 
       validationResult.errors.push(
         ...validateFlatFieldMetadataNameAvailability({
-          name: flatFieldMetadataToValidate.name,
+          flatFieldMetadata: flatFieldMetadataToValidate,
           flatObjectMetadata: parentFlatObjectMetadata,
         }),
       );

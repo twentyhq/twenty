@@ -6,6 +6,8 @@ import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-me
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 
@@ -32,11 +34,12 @@ const getReservedCompositeFieldNames = (
   });
 };
 
+// Should implement Morph relation nameObjectId col availability
 export const validateFlatFieldMetadataNameAvailability = ({
-  name,
+  flatFieldMetadata,
   flatObjectMetadata,
 }: {
-  name: string;
+  flatFieldMetadata: FlatFieldMetadata;
   flatObjectMetadata: FlatObjectMetadata;
 }): FlatFieldMetadataValidationError[] => {
   const errors: FlatFieldMetadataValidationError[] = [];
@@ -44,11 +47,12 @@ export const validateFlatFieldMetadataNameAvailability = ({
     getReservedCompositeFieldNames(flatObjectMetadata);
 
   if (
+    !isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
     flatObjectMetadata.flatFieldMetadatas.some(
       (field) =>
-        field.name === name ||
+        field.name === flatFieldMetadata.name ||
         (isMorphOrRelationFieldMetadataType(field.type) &&
-          `${field.name}Id` === name),
+          `${field.name}Id` === flatFieldMetadata.name),
     )
   ) {
     errors.push({
@@ -59,7 +63,7 @@ export const validateFlatFieldMetadataNameAvailability = ({
     });
   }
 
-  if (reservedCompositeFieldsNames.includes(name)) {
+  if (reservedCompositeFieldsNames.includes(flatFieldMetadata.name)) {
     errors.push({
       code: FieldMetadataExceptionCode.RESERVED_KEYWORD,
       message: `Name "${name}" is reserved composite field name`,
