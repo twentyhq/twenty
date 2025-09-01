@@ -153,7 +153,7 @@ export const usePersistViewFilterRecords = () => {
   );
 
   return {
-    createViewFilterRecords: createViewFilterRecords,
+    createViewFilterRecords: createCoreViewFilterRecords,
     updateViewFilterRecords: updateCoreViewFilterRecords,
     deleteViewFilterRecords: deleteCoreViewFilterRecords,
   };
