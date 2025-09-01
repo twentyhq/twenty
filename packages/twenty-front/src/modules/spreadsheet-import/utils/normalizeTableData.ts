@@ -5,6 +5,7 @@ import {
 } from '@/spreadsheet-import/types';
 import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
+import { parseMultiSelectOptions } from '@/spreadsheet-import/utils/parseMultiSelectOptions';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { normalizeCheckboxValue } from './normalizeCheckboxValue';
@@ -60,10 +61,9 @@ export const normalizeTableData = (
           }
 
           if (field.fieldType.type === 'multiSelect' && isDefined(curr)) {
-            const currentOptionsSchema = z.preprocess(
-              (value) => JSON.parse(z.string().parse(value)),
-              z.array(z.unknown()),
-            );
+            const currentOptionsSchema = z.preprocess((value) => {
+              return parseMultiSelectOptions(value);
+            }, z.array(z.unknown()));
 
             const rawCurrentOptions = currentOptionsSchema.safeParse(curr).data;
 

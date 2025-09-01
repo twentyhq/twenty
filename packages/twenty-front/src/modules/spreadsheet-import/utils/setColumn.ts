@@ -4,9 +4,9 @@ import { type SpreadsheetImportField } from '@/spreadsheet-import/types';
 import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
+import { parseMultiSelectOptions } from '@/spreadsheet-import/utils/parseMultiSelectOptions';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { z } from 'zod';
 import { uniqueEntries } from './uniqueEntries';
 
 export const setColumn = (
@@ -55,8 +55,7 @@ export const setColumn = (
             ?.flatMap((row) => {
               const value = row[oldColumn.index];
               if (!isDefined(value)) return [];
-              const options = JSON.parse(z.string().parse(value));
-              return z.array(z.string()).parse(options);
+              return parseMultiSelectOptions(value);
             })
             .filter((entry) => typeof entry === 'string'),
         ),
@@ -67,7 +66,7 @@ export const setColumn = (
         header: oldColumn.header,
         type: SpreadsheetColumnType.matchedError,
         value: field.key,
-        errorMessage: t`column data is not compatible with Multi-Select.`,
+        errorMessage: t`column data is not compatible with Multi-Select. Format required is '["option1", "option2"]' or option1,option2.`,
       };
     }
 
