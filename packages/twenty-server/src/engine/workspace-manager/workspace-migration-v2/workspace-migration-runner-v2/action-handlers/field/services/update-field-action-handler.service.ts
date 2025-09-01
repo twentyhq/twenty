@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { ColumnType, type QueryRunner } from 'typeorm';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration-v2/workspace-migration-runner-v2/interfaces/workspace-migration-runner-action-handler-service.interface';
 
@@ -355,8 +355,8 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     'settings',
     MorphOrRelationFieldMetadataType
   >) {
-    const fromJoinColumnName = update.to.joinColumnName;
-    const toJoinColumnName = update.from.joinColumnName;
+    const fromJoinColumnName = update.from.joinColumnName;
+    const toJoinColumnName = update.to.joinColumnName;
 
     if (
       !isDefined(fromJoinColumnName) ||
