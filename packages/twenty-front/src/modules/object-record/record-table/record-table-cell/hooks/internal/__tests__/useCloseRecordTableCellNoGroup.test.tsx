@@ -35,6 +35,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
         recordTableId={recordTableId}
         viewBarId="viewBarId"
         objectNameSingular={CoreObjectNameSingular.Person}
+        onRecordIdentifierClick={() => {}}
       >
         <RecordComponentInstanceContextsWrapper
           componentInstanceId={recordTableId}
