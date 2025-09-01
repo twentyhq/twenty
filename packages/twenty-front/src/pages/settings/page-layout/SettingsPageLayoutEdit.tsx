@@ -3,6 +3,7 @@ import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPa
 import { PageLayoutInitializationEffect } from '@/settings/page-layout/components/PageLayoutInitializationEffect';
 import { PageLayoutSidePanel } from '@/settings/page-layout/components/PageLayoutSidePanel';
 import { PageLayoutWidgetPlaceholder } from '@/settings/page-layout/components/PageLayoutWidgetPlaceholder';
+import { EMPTY_LAYOUT } from '@/settings/page-layout/constants/EmptyLayout';
 import {
   PAGE_LAYOUT_CONFIG,
   type PageLayoutBreakpoint,
@@ -32,7 +33,6 @@ import { useMemo, useRef, useState } from 'react';
 import {
   Responsive,
   WidthProvider,
-  type Layouts,
   type ResponsiveProps,
 } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
@@ -154,11 +154,6 @@ export const SettingsPageLayoutEdit = () => {
 
   const isEmptyState = pageLayoutWidgets.length === 0;
 
-  const emptyLayout: Layouts = {
-    desktop: [{ i: 'empty-placeholder', x: 0, y: 0, w: 4, h: 4, static: true }],
-    mobile: [{ i: 'empty-placeholder', x: 0, y: 0, w: 1, h: 4, static: true }],
-  };
-
   const gridRows = useMemo(
     () => calculateTotalGridRows(pageLayoutCurrentLayouts),
     [pageLayoutCurrentLayouts],
@@ -262,7 +257,7 @@ export const SettingsPageLayoutEdit = () => {
           </StyledGridOverlay>
           <ResponsiveGridLayout
             className="layout"
-            layouts={isEmptyState ? emptyLayout : pageLayoutCurrentLayouts}
+            layouts={isEmptyState ? EMPTY_LAYOUT : pageLayoutCurrentLayouts}
             breakpoints={PAGE_LAYOUT_CONFIG.breakpoints}
             cols={PAGE_LAYOUT_CONFIG.columns}
             rowHeight={55}
