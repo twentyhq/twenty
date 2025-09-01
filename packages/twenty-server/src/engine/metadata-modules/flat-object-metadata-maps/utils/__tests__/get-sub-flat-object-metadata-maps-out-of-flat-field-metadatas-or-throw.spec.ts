@@ -11,8 +11,8 @@ import { ROCKET_FLAT_FIELDS_MOCK } from 'src/engine/metadata-modules/flat-field-
 import { FLAT_OBJECT_METADATA_MAPS_MOCKS } from 'src/engine/metadata-modules/flat-object-metadata-maps/mocks/flat-object-metadata-maps.mock';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import {
-  type GetSubFlatObjectMetadataMapsOfSpecificFieldsOrThrowArgs,
   getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatasOrThrow,
+  type GetSubFlatObjectMetadataMapsOfSpecificFieldsOrThrowArgs,
 } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-out-of-flat-field-metadatas-or-throw.util';
 import { PET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/pet-flat-object.mock';
 import { ROCKET_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/rocket-flat-object.mock';
@@ -35,7 +35,7 @@ describe('getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatasOrThrow', () => {
               getFlatFieldMetadataMock({
                 objectMetadataId: 'non-existent',
                 type: FieldMetadataType.TEXT,
-                uniqueIdentifier: 'unique-identifier-1',
+                universalIdentifier: 'unique-identifier-1',
               }),
             ],
             flatObjectMetadataMaps: FLAT_OBJECT_METADATA_MAPS_MOCKS,

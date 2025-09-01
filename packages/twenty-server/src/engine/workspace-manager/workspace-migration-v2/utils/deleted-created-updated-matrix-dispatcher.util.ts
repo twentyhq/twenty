@@ -10,12 +10,12 @@ export type CustomDeletedCreatedUpdatedMatrix<TLabel extends string, TInput> = {
   [P in keyof DeletedCreatedUpdatedMatrix<TInput> as `${P}${Capitalize<TLabel>}`]: DeletedCreatedUpdatedMatrix<TInput>[P];
 };
 
-export type UniqueIdentifierItem = {
-  uniqueIdentifier: string;
+export type UniversalIdentifierItem = {
+  universalIdentifier: string;
 };
 
 export const deletedCreatedUpdatedMatrixDispatcher = <
-  T extends UniqueIdentifierItem,
+  T extends UniversalIdentifierItem,
 >({
   from,
   to,
@@ -26,8 +26,8 @@ export const deletedCreatedUpdatedMatrixDispatcher = <
     deleted: [],
   };
 
-  const fromMap = new Map(from.map((obj) => [obj.uniqueIdentifier, obj]));
-  const toMap = new Map(to.map((obj) => [obj.uniqueIdentifier, obj]));
+  const fromMap = new Map(from.map((obj) => [obj.universalIdentifier, obj]));
+  const toMap = new Map(to.map((obj) => [obj.universalIdentifier, obj]));
 
   for (const [identifier, fromObj] of fromMap) {
     if (!toMap.has(identifier)) {

@@ -13,22 +13,22 @@ export const mergeTwoFlatFieldMetadatas = ({
 }: ToMerge<FlatFieldMetadata[], 'FlatFieldMetadatas'>): FlatFieldMetadata[] => {
   const initialRecordAccumulator = fromArrayToUniqueKeyRecord({
     array: destFlatFieldMetadatas,
-    uniqueKey: 'uniqueIdentifier',
+    uniqueKey: 'universalIdentifier',
   });
 
-  const mergedUniqueIdentifierFlatFieldMetadataRecord =
+  const mergedUniversalIdentifierFlatFieldMetadataRecord =
     toMergeFlatFieldMetadatas.reduce((acc, flatFieldToMerge) => {
-      const fieldUniqueIdentifier = flatFieldToMerge.uniqueIdentifier;
+      const fieldUniversalIdentifier = flatFieldToMerge.universalIdentifier;
       const destFieldMetadata: FlatFieldMetadata | undefined =
-        acc[fieldUniqueIdentifier];
+        acc[fieldUniversalIdentifier];
 
       return {
         ...acc,
-        [fieldUniqueIdentifier]: isDefined(destFieldMetadata)
+        [fieldUniversalIdentifier]: isDefined(destFieldMetadata)
           ? deepMerge(destFieldMetadata, flatFieldToMerge)
           : flatFieldToMerge,
       };
     }, initialRecordAccumulator);
 
-  return Object.values(mergedUniqueIdentifierFlatFieldMetadataRecord);
+  return Object.values(mergedUniversalIdentifierFlatFieldMetadataRecord);
 };

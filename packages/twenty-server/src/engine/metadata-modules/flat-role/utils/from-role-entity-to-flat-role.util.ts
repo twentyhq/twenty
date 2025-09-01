@@ -16,6 +16,6 @@ export const fromRoleEntityToFlatRole = (role: RoleEntity): FlatRole => {
     canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,
     canDestroyAllObjectRecords: role.canDestroyAllObjectRecords,
     workspaceId: role.workspaceId,
-    uniqueIdentifier: role.standardId || role.id,
+    universalIdentifier: role.standardId || role.id,
   };
 };
