@@ -4,4 +4,5 @@ export type SettingsRoleAssignmentConfirmationModalSelectedRoleTarget = {
   role?: { id: string; label: string };
   colorScheme?: string;
   userEmail?: string;
+  entityType: 'workspaceMember' | 'agent' | 'apiKey';
 };
