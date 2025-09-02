@@ -6,7 +6,7 @@ import {
   Parent,
   Query,
   ResolveField,
-  Resolver
+  Resolver,
 } from '@nestjs/graphql';
 
 import { isArray } from '@sniptt/guards';
