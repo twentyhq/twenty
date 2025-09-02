@@ -152,7 +152,7 @@ export class FieldMetadataServiceV2 {
     const optimisticallyUpdatedFlatFieldMetadatas =
       inputTranspilationResult.result;
 
-    const relatedObjectMetadataIds = [
+    const objectMetadataIdWithRelatedObjectMetadataIds = [
       ...new Set(
         optimisticallyUpdatedFlatFieldMetadatas.flatMap(
           ({ objectMetadataId, relationTargetObjectMetadataId }) =>
@@ -164,7 +164,7 @@ export class FieldMetadataServiceV2 {
     ];
     const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      objectMetadataIds: relatedObjectMetadataIds,
+      objectMetadataIds: objectMetadataIdWithRelatedObjectMetadataIds,
     });
 
     const toFlatObjectMetadataMaps =
