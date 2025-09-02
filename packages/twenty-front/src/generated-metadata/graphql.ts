@@ -1399,7 +1399,7 @@ export type Mutation = {
   deleteOneRemoteServer: RemoteServer;
   deleteOneRole: Scalars['String'];
   deleteOneServerlessFunction: ServerlessFunction;
-  deletePageLayout: Scalars['Boolean'];
+  deletePageLayout: PageLayout;
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
