@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { PageLayoutTabController } from 'src/engine/core-modules/page-layout/controllers/page-layout-tab.controller';
 import { PageLayoutController } from 'src/engine/core-modules/page-layout/controllers/page-layout.controller';
 import { PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
 import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
@@ -18,7 +19,7 @@ import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/
       PageLayoutWidgetEntity,
     ]),
   ],
-  controllers: [PageLayoutController],
+  controllers: [PageLayoutController, PageLayoutTabController],
   providers: [
     PageLayoutService,
     PageLayoutTabService,

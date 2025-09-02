@@ -11,6 +11,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { CreatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { UpdatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout.input';
 import { type PageLayoutDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout.dto';
@@ -32,7 +34,7 @@ export class PageLayoutController {
     @AuthWorkspace() workspace: Workspace,
     @Query('objectMetadataId') objectMetadataId?: string,
   ): Promise<PageLayoutDTO[]> {
-    if (objectMetadataId) {
+    if (isDefined(objectMetadataId)) {
       return this.pageLayoutService.findByObjectMetadataId(
         workspace.id,
         objectMetadataId,
