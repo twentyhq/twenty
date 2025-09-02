@@ -1,4 +1,4 @@
-import { IframeWidget } from '@/dashboards/widgets/components/IframeWidget';
+import { IframeWidget } from '@/dashboards/widgets/iframe/components/IframeWidget';
 import { type ReactNode } from 'react';
 import { WidgetType, type Widget } from '../mocks/mockWidgets';
 import { renderGraphWidget } from './graphRegistry';
