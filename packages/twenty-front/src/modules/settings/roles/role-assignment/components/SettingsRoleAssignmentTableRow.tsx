@@ -90,7 +90,7 @@ export const SettingsRoleAssignmentTableRow = ({
     }
   };
 
-  const renderDescription = () => {
+  const renderSecondaryInfo = () => {
     switch (roleTarget.type) {
       case 'member':
         return roleTarget.data.userEmail;
@@ -114,7 +114,7 @@ export const SettingsRoleAssignmentTableRow = ({
         </StyledNameContainer>
       </StyledTableCell>
       <StyledTableCell>
-        <OverflowingTextWithTooltip text={renderDescription()} />
+        <OverflowingTextWithTooltip text={renderSecondaryInfo()} />
       </StyledTableCell>
     </TableRow>
   );
