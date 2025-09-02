@@ -175,7 +175,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       <SubMenuTopBarContainer
         title={title}
         actionButton={
-          !isEditMode || !isAskAIAgent ? (
+          (!isEditMode || !isAskAIAgent) && agent?.isCustom ? (
             <SaveAndCancelButtons
               onSave={handleSave}
               onCancel={() => navigate(SettingsPath.AI)}
@@ -210,6 +210,7 @@ export const SettingsAgentForm = ({ mode }: { mode: 'create' | 'edit' }) => {
                     <SettingsAIAgentForm
                       formValues={formValues}
                       onFieldChange={handleFieldChange}
+                      disabled={!agent?.isCustom}
                     />
                     {isEditMode && agent && formValues.isCustom && (
                       <Section>

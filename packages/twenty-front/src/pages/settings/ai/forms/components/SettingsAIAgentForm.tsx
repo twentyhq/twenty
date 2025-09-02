@@ -39,11 +39,13 @@ type SettingsAIAgentFormProps = {
     field: keyof SettingsAIAgentFormValues,
     value: SettingsAIAgentFormValues[keyof SettingsAIAgentFormValues],
   ) => void;
+  disabled: boolean;
 };
 
 export const SettingsAIAgentForm = ({
   formValues,
   onFieldChange,
+  disabled,
 }: SettingsAIAgentFormProps) => {
   const { t } = useLingui();
 
@@ -80,6 +82,7 @@ export const SettingsAIAgentForm = ({
             onChange={({ iconKey }) => {
               onFieldChange('icon', iconKey);
             }}
+            disabled={disabled}
           />
 
           <StyledNameContainer>
@@ -92,6 +95,7 @@ export const SettingsAIAgentForm = ({
                 fillNameFromLabel(value);
               }}
               fullWidth
+              disabled={disabled}
             />
           </StyledNameContainer>
         </StyledIconNameRow>
@@ -104,6 +108,7 @@ export const SettingsAIAgentForm = ({
           minRows={3}
           value={formValues.description || ''}
           onChange={(value) => onFieldChange('description', value)}
+          disabled={disabled}
         />
       </StyledFormContainer>
 
@@ -114,7 +119,7 @@ export const SettingsAIAgentForm = ({
           value={formValues.modelId}
           onChange={(value) => onFieldChange('modelId', value)}
           options={modelOptions}
-          disabled={noModelsAvailable}
+          disabled={noModelsAvailable || disabled}
         />
         {noModelsAvailable && (
           <StyledErrorMessage>
@@ -134,6 +139,7 @@ export const SettingsAIAgentForm = ({
             label: t`Select a role`,
             value: '',
           }}
+          disabled={disabled}
         />
       </StyledFormContainer>
 
@@ -145,6 +151,7 @@ export const SettingsAIAgentForm = ({
           minRows={6}
           value={formValues.prompt}
           onChange={(value) => onFieldChange('prompt', value)}
+          disabled={disabled}
         />
       </StyledFormContainer>
     </StyledFormContainer>
