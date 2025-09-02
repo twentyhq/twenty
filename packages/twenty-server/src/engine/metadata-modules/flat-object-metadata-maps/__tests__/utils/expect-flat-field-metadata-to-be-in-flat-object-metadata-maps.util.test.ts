@@ -3,7 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 
 type ExpectFlatFieldMetadataToBeInFlatObjectMetadataMapsArgs = {
@@ -21,7 +21,7 @@ export const expectFlatFieldMetadataToBeInFlatObjectMetadataMaps = ({
   jestExpectToBeDefined(matchingFlatObjectMetadata);
 
   if (
-    isFlatFieldMetadataEntityOfType(
+    isFlatFieldMetadataOfType(
       flatFieldMetadata,
       FieldMetadataType.RELATION,
     ) &&
