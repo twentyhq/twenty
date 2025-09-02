@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import isEmpty from 'lodash.isempty';
 import {
   isDefined,
   lowercaseUrlOriginAndRemoveTrailingSlash,
@@ -41,19 +42,21 @@ export const transformLinksValue = (
     },
   );
 
+  const processedSecondaryLinks = secondaryLinks?.map((link) => ({
+    ...link,
+    url: isDefined(link.url)
+      ? lowercaseUrlOriginAndRemoveTrailingSlash(link.url)
+      : link.url,
+  }));
+
   return {
     ...value,
     primaryLinkUrl: isDefined(primaryLinkUrl)
       ? lowercaseUrlOriginAndRemoveTrailingSlash(primaryLinkUrl)
       : primaryLinkUrl,
     primaryLinkLabel,
-    secondaryLinks: JSON.stringify(
-      secondaryLinks?.map((link) => ({
-        ...link,
-        url: isDefined(link.url)
-          ? lowercaseUrlOriginAndRemoveTrailingSlash(link.url)
-          : link.url,
-      })),
-    ),
+    secondaryLinks: isEmpty(processedSecondaryLinks)
+      ? null
+      : JSON.stringify(processedSecondaryLinks),
   };
 };

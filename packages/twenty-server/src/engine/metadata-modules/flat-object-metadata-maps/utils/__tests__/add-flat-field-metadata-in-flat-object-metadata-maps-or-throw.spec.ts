@@ -35,7 +35,7 @@ describe('addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow', () => {
             flatFieldMetadata: getFlatFieldMetadataMock({
               objectMetadataId: 'non-existent',
               type: FieldMetadataType.TEXT,
-              uniqueIdentifier: 'unique-id-1',
+              universalIdentifier: 'unique-id-1',
               id: 'unique-id-1',
             }),
           },
@@ -60,7 +60,7 @@ describe('addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow', () => {
             flatFieldMetadata: getFlatFieldMetadataMock({
               objectMetadataId: PET_FLAT_OBJECT_MOCK.id,
               type: FieldMetadataType.RELATION,
-              uniqueIdentifier: 'field-metadata-id',
+              universalIdentifier: 'field-metadata-id',
               id: 'field-metadata-id',
               settings: {
                 relationType: RelationType.MANY_TO_ONE,

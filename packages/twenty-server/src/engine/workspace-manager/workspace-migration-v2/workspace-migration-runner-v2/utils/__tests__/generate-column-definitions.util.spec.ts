@@ -7,7 +7,7 @@ import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspac
 
 describe('Generate Column Definitions', () => {
   const mockObjectMetadata = getFlatObjectMetadataMock({
-    uniqueIdentifier: 'person',
+    universalIdentifier: 'person',
     id: '20202020-1c25-4d02-bf25-6aeccf7ea419',
     workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
     nameSingular: 'person',
@@ -18,7 +18,7 @@ describe('Generate Column Definitions', () => {
   describe('Enum Field Schema Generation', () => {
     it('should generate deterministic enum names to prevent schema conflicts', () => {
       const enumField = getFlatFieldMetadataMock({
-        uniqueIdentifier: 'status',
+        universalIdentifier: 'status',
         objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
         type: FieldMetadataType.SELECT,
         name: 'status',
@@ -61,7 +61,7 @@ describe('Generate Column Definitions', () => {
 
     it('should handle multi-select fields with proper enum generation', () => {
       const multiSelectField = getFlatFieldMetadataMock({
-        uniqueIdentifier: 'tags',
+        universalIdentifier: 'tags',
         objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
         type: FieldMetadataType.MULTI_SELECT,
         name: 'tags',
@@ -106,7 +106,7 @@ describe('Generate Column Definitions', () => {
   describe('Relation Field Schema Generation', () => {
     it('should handle null relation settings without crashing', () => {
       const relationField = getFlatFieldMetadataMock({
-        uniqueIdentifier: 'company',
+        universalIdentifier: 'company',
         objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
         type: FieldMetadataType.RELATION,
         name: 'company',
@@ -124,7 +124,7 @@ describe('Generate Column Definitions', () => {
 
     it('should generate proper UUID foreign key columns for valid relations', () => {
       const relationField = getFlatFieldMetadataMock({
-        uniqueIdentifier: 'company',
+        universalIdentifier: 'company',
         objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
         type: FieldMetadataType.RELATION,
         name: 'company',
@@ -157,7 +157,7 @@ describe('Generate Column Definitions', () => {
   describe('Composite Field Schema Generation', () => {
     it('should generate all required columns for ADDRESS composite type', () => {
       const addressField = getFlatFieldMetadataMock({
-        uniqueIdentifier: 'address',
+        universalIdentifier: 'address',
         objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
         type: FieldMetadataType.ADDRESS,
         name: 'homeAddress',
@@ -194,7 +194,7 @@ describe('Generate Column Definitions', () => {
 
     it('should handle CURRENCY composite type properly', () => {
       const currencyField = getFlatFieldMetadataMock({
-        uniqueIdentifier: 'price',
+        universalIdentifier: 'price',
         objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
         type: FieldMetadataType.CURRENCY,
         name: 'price',
@@ -236,7 +236,7 @@ describe('Generate Column Definitions', () => {
   describe('Default Value Schema Generation', () => {
     it('should handle null and undefined default values safely', () => {
       const textField = getFlatFieldMetadataMock({
-        uniqueIdentifier: 'description',
+        universalIdentifier: 'description',
         objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
         type: FieldMetadataType.TEXT,
         name: 'description',
@@ -262,7 +262,7 @@ describe('Generate Column Definitions', () => {
 
     it('should handle boolean fields with default values', () => {
       const booleanField = getFlatFieldMetadataMock({
-        uniqueIdentifier: 'isActive',
+        universalIdentifier: 'isActive',
         objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
         type: FieldMetadataType.BOOLEAN,
         name: 'isActive',
@@ -290,7 +290,7 @@ describe('Generate Column Definitions', () => {
   describe('Field Definition Generation', () => {
     it('should handle text fields without crashing', () => {
       const textField = getFlatFieldMetadataMock({
-        uniqueIdentifier: 'content',
+        universalIdentifier: 'content',
         objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
         type: FieldMetadataType.TEXT,
         name: 'content',
@@ -315,7 +315,7 @@ describe('Generate Column Definitions', () => {
 
     it('should handle UUID fields properly', () => {
       const uuidField = getFlatFieldMetadataMock({
-        uniqueIdentifier: 'uuid',
+        universalIdentifier: 'uuid',
         objectMetadataId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
         type: FieldMetadataType.UUID,
         name: 'uuid',

@@ -17,7 +17,7 @@ export type FieldMetadataEntityRelationProperties =
 
 export type FlatFieldMetadata<T extends FieldMetadataType = FieldMetadataType> =
   Omit<FieldMetadataEntity<T>, FieldMetadataEntityRelationProperties> & {
-    uniqueIdentifier: string;
+    universalIdentifier: string;
     flatRelationTargetFieldMetadata: AssignTypeIfIsRelationFieldMetadataType<
       Omit<
         FlatFieldMetadata,

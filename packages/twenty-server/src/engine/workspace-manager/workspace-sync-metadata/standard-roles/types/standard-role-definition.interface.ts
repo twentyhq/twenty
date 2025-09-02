@@ -2,7 +2,7 @@ import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-
 
 export type StandardRoleDefinition = Omit<
   FlatRole,
-  'id' | 'workspaceId' | 'uniqueIdentifier' | 'standardId'
+  'id' | 'workspaceId' | 'universalIdentifier' | 'standardId'
 > & {
   standardId: string;
 };

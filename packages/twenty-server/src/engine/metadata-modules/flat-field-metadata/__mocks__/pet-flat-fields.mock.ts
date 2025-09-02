@@ -29,7 +29,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: 'd88d0737-e83a-47b1-b701-8edfe4a2ae2e',
     relationTargetObjectMetadataId: '12e3cb51-c3de-4192-b0d5-965d48d001c0',
-    uniqueIdentifier: '20202020-01fd-4f37-99dc-9427a444018a',
+    universalIdentifier: '20202020-01fd-4f37-99dc-9427a444018a',
     flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
       id: 'd88d0737-e83a-47b1-b701-8edfe4a2ae2e',
       standardId: '20202020-c54e-4804-8b0d-8795e5166432',
@@ -56,7 +56,7 @@ export const PET_FLAT_FIELDS_MOCK = {
       isLabelSyncedWithName: false,
       relationTargetFieldMetadataId: '98afd46e-0259-4c87-969d-16e7e660e007',
       relationTargetObjectMetadataId: 'd34e0f07-1b8c-4de0-938e-599cf05e1f7f',
-      uniqueIdentifier: '20202020-c54e-4804-8b0d-8795e5166432',
+      universalIdentifier: '20202020-c54e-4804-8b0d-8795e5166432',
     }),
   }),
   id: getFlatFieldMetadataMock({
@@ -81,7 +81,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '20202020-eda0-4cee-9577-3eb357e3c22b',
+    universalIdentifier: '20202020-eda0-4cee-9577-3eb357e3c22b',
     flatRelationTargetFieldMetadata: null,
   }),
   name: getFlatFieldMetadataMock({
@@ -106,7 +106,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '20202020-ba07-4ffd-ba63-009491f5749c',
+    universalIdentifier: '20202020-ba07-4ffd-ba63-009491f5749c',
     flatRelationTargetFieldMetadata: null,
   }),
   createdAt: getFlatFieldMetadataMock({
@@ -131,7 +131,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '20202020-66ac-4502-9975-e4d959c50311',
+    universalIdentifier: '20202020-66ac-4502-9975-e4d959c50311',
     flatRelationTargetFieldMetadata: null,
   }),
   updatedAt: getFlatFieldMetadataMock({
@@ -156,7 +156,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '20202020-d767-4622-bdcf-d8a084834d86',
+    universalIdentifier: '20202020-d767-4622-bdcf-d8a084834d86',
     flatRelationTargetFieldMetadata: null,
   }),
   deletedAt: getFlatFieldMetadataMock({
@@ -181,7 +181,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '20202020-b9a7-48d8-8387-b9a3090a50ec',
+    universalIdentifier: '20202020-b9a7-48d8-8387-b9a3090a50ec',
     flatRelationTargetFieldMetadata: null,
   }),
   createdBy: getFlatFieldMetadataMock({
@@ -206,7 +206,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '20202020-be0e-4971-865b-32ca87cbb315',
+    universalIdentifier: '20202020-be0e-4971-865b-32ca87cbb315',
     flatRelationTargetFieldMetadata: null,
   }),
   position: getFlatFieldMetadataMock({
@@ -231,7 +231,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '20202020-c2bd-4e16-bb9a-c8b0411bf49d',
+    universalIdentifier: '20202020-c2bd-4e16-bb9a-c8b0411bf49d',
     flatRelationTargetFieldMetadata: null,
   }),
   timelineActivities: getFlatFieldMetadataMock({
@@ -256,7 +256,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: '3cb86390-4ee7-42fa-bd1e-bd6326b47610',
     relationTargetObjectMetadataId: '3090f830-c4b1-41a1-8e18-815760830bec',
-    uniqueIdentifier: '20202020-f1ef-4ba4-8f33-1a4577afa477',
+    universalIdentifier: '20202020-f1ef-4ba4-8f33-1a4577afa477',
     flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
       id: '3cb86390-4ee7-42fa-bd1e-bd6326b47610',
       standardId: '20202020-d88f-4020-8c85-d6c600903762',
@@ -283,7 +283,7 @@ export const PET_FLAT_FIELDS_MOCK = {
       isLabelSyncedWithName: false,
       relationTargetFieldMetadataId: '4eb74f21-1cb4-46b5-b3bb-4e41108e70d9',
       relationTargetObjectMetadataId: 'd34e0f07-1b8c-4de0-938e-599cf05e1f7f',
-      uniqueIdentifier: '20202020-d88f-4020-8c85-d6c600903762',
+      universalIdentifier: '20202020-d88f-4020-8c85-d6c600903762',
     }),
   }),
   favorites: getFlatFieldMetadataMock({
@@ -308,7 +308,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: 'd34b4048-bf0c-4c61-8ffe-59f1838a2cc4',
     relationTargetObjectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
-    uniqueIdentifier: '20202020-a4a7-4686-b296-1c6c3482ee21',
+    universalIdentifier: '20202020-a4a7-4686-b296-1c6c3482ee21',
     flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
       id: 'd34b4048-bf0c-4c61-8ffe-59f1838a2cc4',
       standardId: '20202020-1bd7-4d10-80dc-968b9f5d1a8a',
@@ -335,7 +335,7 @@ export const PET_FLAT_FIELDS_MOCK = {
       isLabelSyncedWithName: false,
       relationTargetFieldMetadataId: '80bc4e7a-6bd1-4f2b-98b1-6333c631cc1a',
       relationTargetObjectMetadataId: 'd34e0f07-1b8c-4de0-938e-599cf05e1f7f',
-      uniqueIdentifier: '20202020-1bd7-4d10-80dc-968b9f5d1a8a',
+      universalIdentifier: '20202020-1bd7-4d10-80dc-968b9f5d1a8a',
     }),
   }),
   attachments: getFlatFieldMetadataMock({
@@ -360,7 +360,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: '317a33ef-117e-4953-86d4-c4a9670a2ce3',
     relationTargetObjectMetadataId: '819ed5ff-312f-4423-8e95-02a691cf5c27',
-    uniqueIdentifier: '20202020-8d59-46ca-b7b2-73d167712134',
+    universalIdentifier: '20202020-8d59-46ca-b7b2-73d167712134',
     flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
       id: '317a33ef-117e-4953-86d4-c4a9670a2ce3',
       standardId: '20202020-b715-4658-8b6a-5359824dbddd',
@@ -387,7 +387,7 @@ export const PET_FLAT_FIELDS_MOCK = {
       isLabelSyncedWithName: false,
       relationTargetFieldMetadataId: '231903d0-3b14-47ed-9a88-fbf11031c451',
       relationTargetObjectMetadataId: 'd34e0f07-1b8c-4de0-938e-599cf05e1f7f',
-      uniqueIdentifier: '20202020-b715-4658-8b6a-5359824dbddd',
+      universalIdentifier: '20202020-b715-4658-8b6a-5359824dbddd',
     }),
   }),
   taskTargets: getFlatFieldMetadataMock({
@@ -412,7 +412,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: '3955a4b4-1c10-4ce8-a92e-98e727ee7aec',
     relationTargetObjectMetadataId: 'bb2b29b8-7f46-4106-a8ae-3a32df9c9166',
-    uniqueIdentifier: '20202020-0860-4566-b865-bff3c626c303',
+    universalIdentifier: '20202020-0860-4566-b865-bff3c626c303',
     flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
       id: '3955a4b4-1c10-4ce8-a92e-98e727ee7aec',
       standardId: '20202020-07d9-4d04-8b73-a39ab65943f1',
@@ -439,7 +439,7 @@ export const PET_FLAT_FIELDS_MOCK = {
       isLabelSyncedWithName: false,
       relationTargetFieldMetadataId: '3cae8259-ece8-4b81-9044-f5abae5ff25c',
       relationTargetObjectMetadataId: 'd34e0f07-1b8c-4de0-938e-599cf05e1f7f',
-      uniqueIdentifier: '20202020-07d9-4d04-8b73-a39ab65943f1',
+      universalIdentifier: '20202020-07d9-4d04-8b73-a39ab65943f1',
     }),
   }),
   searchVector: getFlatFieldMetadataMock({
@@ -464,7 +464,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '70e56537-18ef-4811-b1c7-0a444006b815',
+    universalIdentifier: '70e56537-18ef-4811-b1c7-0a444006b815',
     flatRelationTargetFieldMetadata: null,
   }),
   species: getFlatFieldMetadataMock({
@@ -532,7 +532,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '0292cc51-246f-40b8-99e8-3345dac0e688',
+    universalIdentifier: '0292cc51-246f-40b8-99e8-3345dac0e688',
     flatRelationTargetFieldMetadata: null,
   }),
   traits: getFlatFieldMetadataMock({
@@ -600,7 +600,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '5aaf6be0-b9f5-4222-9810-941d5ab58527',
+    universalIdentifier: '5aaf6be0-b9f5-4222-9810-941d5ab58527',
     flatRelationTargetFieldMetadata: null,
   }),
   comments: getFlatFieldMetadataMock({
@@ -625,7 +625,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '2e726631-d80a-4594-9a5a-3cca0c2a50a9',
+    universalIdentifier: '2e726631-d80a-4594-9a5a-3cca0c2a50a9',
     flatRelationTargetFieldMetadata: null,
   }),
   age: getFlatFieldMetadataMock({
@@ -650,7 +650,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: 'ed1573cf-b29e-4d4f-a8e3-19d472d28c0d',
+    universalIdentifier: 'ed1573cf-b29e-4d4f-a8e3-19d472d28c0d',
     flatRelationTargetFieldMetadata: null,
   }),
   location: getFlatFieldMetadataMock({
@@ -684,7 +684,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '7b05e127-d0ea-422a-8f98-ef48f41d4388',
+    universalIdentifier: '7b05e127-d0ea-422a-8f98-ef48f41d4388',
     flatRelationTargetFieldMetadata: null,
   }),
   vetPhone: getFlatFieldMetadataMock({
@@ -714,7 +714,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '92c856ef-5b4b-4202-8c23-b2f22f959eda',
+    universalIdentifier: '92c856ef-5b4b-4202-8c23-b2f22f959eda',
     flatRelationTargetFieldMetadata: null,
   }),
   vetEmail: getFlatFieldMetadataMock({
@@ -739,7 +739,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '2c89697d-925a-485c-a0ed-adf2f1228e0f',
+    universalIdentifier: '2c89697d-925a-485c-a0ed-adf2f1228e0f',
     flatRelationTargetFieldMetadata: null,
   }),
   birthday: getFlatFieldMetadataMock({
@@ -764,7 +764,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '13c5b4ed-5746-494f-856b-081bdbb4a8ec',
+    universalIdentifier: '13c5b4ed-5746-494f-856b-081bdbb4a8ec',
     flatRelationTargetFieldMetadata: null,
   }),
   isGoodWithKids: getFlatFieldMetadataMock({
@@ -789,7 +789,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: 'ec3bf27e-70e6-4d4a-932e-6ef026013603',
+    universalIdentifier: 'ec3bf27e-70e6-4d4a-932e-6ef026013603',
     flatRelationTargetFieldMetadata: null,
   }),
   pictures: getFlatFieldMetadataMock({
@@ -818,7 +818,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '8aa0a700-c308-4d8b-8fbd-f545daa8980a',
+    universalIdentifier: '8aa0a700-c308-4d8b-8fbd-f545daa8980a',
     flatRelationTargetFieldMetadata: null,
   }),
   averageCostOfKibblePerMonth: getFlatFieldMetadataMock({
@@ -843,7 +843,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '37421848-b64d-4827-be33-da4e337acbb6',
+    universalIdentifier: '37421848-b64d-4827-be33-da4e337acbb6',
     flatRelationTargetFieldMetadata: null,
   }),
   makesOwnerThinkOf: getFlatFieldMetadataMock({
@@ -868,7 +868,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '84b874dc-983d-47eb-9c67-54f557a99f60',
+    universalIdentifier: '84b874dc-983d-47eb-9c67-54f557a99f60',
     flatRelationTargetFieldMetadata: null,
   }),
   soundSwag: getFlatFieldMetadataMock({
@@ -924,7 +924,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '42e6c0d2-6d00-4c77-b179-890af8c56236',
+    universalIdentifier: '42e6c0d2-6d00-4c77-b179-890af8c56236',
     flatRelationTargetFieldMetadata: null,
   }),
   bio: getFlatFieldMetadataMock({
@@ -949,7 +949,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: 'fa0ec409-0f29-4b19-b304-31d1018a2344',
+    universalIdentifier: 'fa0ec409-0f29-4b19-b304-31d1018a2344',
     flatRelationTargetFieldMetadata: null,
   }),
   interestingFacts: getFlatFieldMetadataMock({
@@ -974,7 +974,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: '2b806a74-e7a5-4ec7-b902-67cf811e8bda',
+    universalIdentifier: '2b806a74-e7a5-4ec7-b902-67cf811e8bda',
     flatRelationTargetFieldMetadata: null,
   }),
   extraData: getFlatFieldMetadataMock({
@@ -999,7 +999,7 @@ export const PET_FLAT_FIELDS_MOCK = {
     isLabelSyncedWithName: false,
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
-    uniqueIdentifier: 'a79bd7c8-c7ce-416a-9d12-a05335c9c596',
+    universalIdentifier: 'a79bd7c8-c7ce-416a-9d12-a05335c9c596',
     flatRelationTargetFieldMetadata: null,
   }),
 } as const satisfies Record<string, FlatFieldMetadata>;

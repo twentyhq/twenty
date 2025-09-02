@@ -35,7 +35,7 @@ export class StripeBillingMeterEventService {
     stripeCustomerId: string;
   }) {
     await this.stripe.billing.meterEvents.create({
-      event_name: eventName.toLowerCase(),
+      event_name: eventName,
       payload: {
         value: value.toString(),
         stripe_customer_id: stripeCustomerId,

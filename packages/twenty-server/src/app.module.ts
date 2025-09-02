@@ -17,10 +17,11 @@ import { SentryModule } from '@sentry/nestjs/setup';
 import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
 import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
-import { McpModule } from 'src/engine/api/mcp/mcp.module';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
+import { McpModule } from 'src/engine/api/mcp/mcp.module';
 import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
@@ -52,7 +53,7 @@ const MIGRATED_REST_METHODS = [
     }),
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       driver: YogaDriver,
-      imports: [GraphQLConfigModule, MetricsModule],
+      imports: [GraphQLConfigModule, MetricsModule, DataloaderModule],
       useClass: GraphQLConfigService,
     }),
     TwentyORMModule,
