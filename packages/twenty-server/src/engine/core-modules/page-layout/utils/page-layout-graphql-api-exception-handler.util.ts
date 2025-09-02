@@ -1,8 +1,6 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
-  ConflictError,
-  ForbiddenError,
   NotFoundError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -38,16 +36,6 @@ export const pageLayoutGraphqlApiExceptionHandler = (error: Error) => {
         throw new UserInputError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
-      case PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_ALREADY_EXISTS:
-        throw new ConflictError(error.message, {
-          userFriendlyMessage: error.userFriendlyMessage,
-        });
-      case PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_NOT_DELETED:
-        throw new ForbiddenError(error.message, {
-          userFriendlyMessage: error.userFriendlyMessage,
-        });
-      case PageLayoutTabExceptionCode.PAGE_LAYOUT_NOT_FOUND:
-        throw new NotFoundError(error.message);
       default: {
         return assertUnreachable(error.code);
       }

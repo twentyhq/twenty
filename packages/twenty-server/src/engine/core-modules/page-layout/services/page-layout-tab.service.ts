@@ -94,7 +94,7 @@ export class PageLayoutTabService {
         generatePageLayoutTabExceptionMessage(
           PageLayoutTabExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
         ),
-        PageLayoutTabExceptionCode.PAGE_LAYOUT_NOT_FOUND,
+        PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA,
       );
     }
 
@@ -182,7 +182,7 @@ export class PageLayoutTabService {
         generatePageLayoutTabExceptionMessage(
           PageLayoutTabExceptionMessageKey.PAGE_LAYOUT_TAB_NOT_DELETED,
         ),
-        PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_NOT_DELETED,
+        PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA,
       );
     }
 

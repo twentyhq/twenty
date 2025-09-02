@@ -5,9 +5,6 @@ import { CustomException } from 'src/utils/custom-exception';
 export enum PageLayoutTabExceptionCode {
   PAGE_LAYOUT_TAB_NOT_FOUND = 'PAGE_LAYOUT_TAB_NOT_FOUND',
   INVALID_PAGE_LAYOUT_TAB_DATA = 'INVALID_PAGE_LAYOUT_TAB_DATA',
-  PAGE_LAYOUT_TAB_ALREADY_EXISTS = 'PAGE_LAYOUT_TAB_ALREADY_EXISTS',
-  PAGE_LAYOUT_TAB_NOT_DELETED = 'PAGE_LAYOUT_TAB_NOT_DELETED',
-  PAGE_LAYOUT_NOT_FOUND = 'PAGE_LAYOUT_NOT_FOUND',
 }
 
 export enum PageLayoutTabExceptionMessageKey {
