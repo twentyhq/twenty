@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -18,6 +18,7 @@ import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-
 
 @Injectable()
 export class WorkflowRunEnqueueWorkspaceService {
+  private readonly logger = new Logger(WorkflowRunEnqueueWorkspaceService.name);
   constructor(
     private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -95,9 +96,8 @@ export class WorkflowRunEnqueueWorkspaceService {
           eventId: workspaceId,
         });
 
-        console.error(
-          'Failed to enqueue workflow runs for workspace',
-          workspaceId,
+        this.logger.error(
+          `Failed to enqueue workflow runs for workspace: ${workspaceId}`,
           error,
         );
       }

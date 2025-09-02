@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { IsNull, LessThan, Or } from 'typeorm';
 
@@ -11,6 +11,9 @@ import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-
 
 @Injectable()
 export class WorkflowHandleStaledRunsWorkspaceService {
+  private readonly logger = new Logger(
+    WorkflowHandleStaledRunsWorkspaceService.name,
+  );
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
@@ -51,9 +54,8 @@ export class WorkflowHandleStaledRunsWorkspaceService {
           workspaceId,
         );
       } catch (error) {
-        console.error(
-          'Failed to handle staled runs for workspace',
-          workspaceId,
+        this.logger.error(
+          `Failed to handle staled runs for workspace: ${workspaceId}`,
           error,
         );
       }
