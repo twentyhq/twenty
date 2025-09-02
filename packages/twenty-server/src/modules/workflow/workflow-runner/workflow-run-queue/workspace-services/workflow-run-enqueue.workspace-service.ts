@@ -1,17 +1,10 @@
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
 
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
-
-import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   WorkflowRunStatus,
@@ -23,49 +16,34 @@ import {
 } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 
-export const WORKFLOW_RUN_ENQUEUE_CRON_PATTERN = '* * * * *';
-
-@Processor(MessageQueue.cronQueue)
-export class WorkflowRunEnqueueJob {
+@Injectable()
+export class WorkflowRunEnqueueWorkspaceService {
   constructor(
-    @InjectRepository(Workspace)
-    private readonly workspaceRepository: Repository<Workspace>,
     private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly metricsService: MetricsService,
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  @Process(WorkflowRunEnqueueJob.name)
-  @SentryCronMonitor(
-    WorkflowRunEnqueueJob.name,
-    WORKFLOW_RUN_ENQUEUE_CRON_PATTERN,
-  )
-  async handle() {
-    const activeWorkspaces = await this.workspaceRepository.find({
-      where: {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
-    });
-
-    for (const activeWorkspace of activeWorkspaces) {
+  async enqueueRuns({ workspaceIds }: { workspaceIds: string[] }) {
+    for (const workspaceId of workspaceIds) {
       try {
         const workflowRunRepository =
           await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-            activeWorkspace.id,
+            workspaceId,
             WorkflowRunWorkspaceEntity,
             { shouldBypassPermissionChecks: true },
           );
 
         const remainingWorkflowRunToEnqueueCount =
           await this.workflowRunQueueWorkspaceService.getRemainingRunsToEnqueueCountFromDatabase(
-            activeWorkspace.id,
+            workspaceId,
           );
 
         if (remainingWorkflowRunToEnqueueCount <= 0) {
           await this.workflowRunQueueWorkspaceService.recomputeWorkflowRunQueuedCount(
-            activeWorkspace.id,
+            workspaceId,
           );
 
           continue;
@@ -83,7 +61,7 @@ export class WorkflowRunEnqueueJob {
 
         if (workflowRunsToEnqueue.length <= 0) {
           await this.workflowRunQueueWorkspaceService.recomputeWorkflowRunQueuedCount(
-            activeWorkspace.id,
+            workspaceId,
           );
 
           continue;
@@ -103,23 +81,23 @@ export class WorkflowRunEnqueueJob {
             RunWorkflowJob.name,
             {
               workflowRunId,
-              workspaceId: activeWorkspace.id,
+              workspaceId,
             },
           );
         }
 
         await this.workflowRunQueueWorkspaceService.recomputeWorkflowRunQueuedCount(
-          activeWorkspace.id,
+          workspaceId,
         );
       } catch (error) {
         this.metricsService.incrementCounter({
           key: MetricsKeys.WorkflowRunFailedToEnqueue,
-          eventId: activeWorkspace.id,
+          eventId: workspaceId,
         });
 
         console.error(
           'Failed to enqueue workflow runs for workspace',
-          activeWorkspace.id,
+          workspaceId,
           error,
         );
       }
