@@ -70,7 +70,7 @@ export class AgentRoleService {
     if (!role) {
       throw new AgentException(
         `Standard role with standard ID ${standardRoleId} not found in workspace`,
-        AgentExceptionCode.AGENT_NOT_FOUND,
+        AgentExceptionCode.ROLE_NOT_FOUND,
       );
     }
 
@@ -151,7 +151,7 @@ export class AgentRoleService {
     if (!role) {
       throw new AgentException(
         `Role with id ${roleId} not found in workspace`,
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AgentExceptionCode.ROLE_NOT_FOUND,
       );
     }
 
