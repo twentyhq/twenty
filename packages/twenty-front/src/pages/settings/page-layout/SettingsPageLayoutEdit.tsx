@@ -281,7 +281,7 @@ export const SettingsPageLayoutEdit = () => {
           >
             {isEmptyState ? (
               <div key="empty-placeholder" onClick={handleOpenAddWidget}>
-                <PageLayoutWidgetPlaceholder title="" isEmpty={true} />
+                <PageLayoutWidgetPlaceholder title="" isEmpty />
               </div>
             ) : (
               pageLayoutWidgets.map((widget) => (

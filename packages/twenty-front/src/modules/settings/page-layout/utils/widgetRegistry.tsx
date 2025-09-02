@@ -23,14 +23,14 @@ const widgetRenderers: Record<GraphSubType, WidgetRenderer> = {
         label: widget.data.label,
       }}
       displayType="percentage"
-      showValue={true}
+      showValue
       id={`gauge-chart-${widget.id}`}
     />
   ),
   [GraphSubType.PIE]: (widget) => (
     <GraphWidgetPieChart
       data={widget.data.items}
-      showLegend={true}
+      showLegend
       displayType="percentage"
       id={`pie-chart-${widget.id}`}
     />
@@ -42,8 +42,8 @@ const widgetRenderers: Record<GraphSubType, WidgetRenderer> = {
       keys={widget.data.keys}
       seriesLabels={widget.data.seriesLabels}
       layout={widget.data.layout}
-      showLegend={true}
-      showGrid={true}
+      showLegend
+      showGrid
       displayType="number"
       id={`bar-chart-${widget.id}`}
     />

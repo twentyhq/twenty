@@ -59,7 +59,7 @@ export const WithGaugeChart: Story = {
           label: 'Conversion rate',
         }}
         displayType="percentage"
-        showValue={true}
+        showValue
         id="gauge-chart-story"
       />
     ),
@@ -136,7 +136,7 @@ export const WithPieChart: Story = {
             to: '/leads/negotiation',
           },
         ]}
-        showLegend={true}
+        showLegend
         displayType="percentage"
         id="pie-chart-story"
       />
@@ -190,7 +190,7 @@ export const MediumWidget: Story = {
           label: 'Progress',
         }}
         displayType="percentage"
-        showValue={true}
+        showValue
         id="gauge-medium"
       />
     ),
@@ -225,7 +225,7 @@ export const LargeWidget: Story = {
           { id: 'c', value: 20, label: 'Category C', to: '/c' },
           { id: 'd', value: 10, label: 'Category D', to: '/d' },
         ]}
-        showLegend={true}
+        showLegend
         displayType="percentage"
         id="pie-large"
       />
@@ -288,7 +288,7 @@ export const TallWidget: Story = {
           label: 'Utilization',
         }}
         displayType="percentage"
-        showValue={true}
+        showValue
         id="gauge-tall"
       />
     ),
