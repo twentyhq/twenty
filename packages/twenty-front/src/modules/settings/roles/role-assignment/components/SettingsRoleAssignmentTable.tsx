@@ -17,6 +17,7 @@ import {
   type ApiKey,
   type WorkspaceMember,
 } from '~/generated-metadata/graphql';
+import { type ApiKeyForRole } from '~/generated/graphql';
 
 const StyledTable = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -173,8 +174,8 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
             }
             return (
               <SettingsRoleAssignmentApiKeyTableRow
-                key={(roleTarget as ApiKey).id}
-                apiKey={roleTarget as ApiKey}
+                key={(roleTarget as ApiKeyForRole).id}
+                apiKey={roleTarget as ApiKeyForRole}
               />
             );
           })}

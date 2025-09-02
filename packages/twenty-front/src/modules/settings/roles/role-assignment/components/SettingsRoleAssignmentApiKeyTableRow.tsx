@@ -3,7 +3,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconKey, OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { type ApiKey } from '~/generated-metadata/graphql';
+import { type ApiKeyForRole } from '~/generated/graphql';
 
 const StyledIconWrapper = styled.div`
   align-items: center;
@@ -29,13 +29,11 @@ const StyledTableCell = styled(TableCell)`
   overflow: hidden;
 `;
 
-type SettingsRoleAssignmentApiKeyTableRowProps = {
-  apiKey: ApiKey;
-};
-
 export const SettingsRoleAssignmentApiKeyTableRow = ({
   apiKey,
-}: SettingsRoleAssignmentApiKeyTableRowProps) => {
+}: {
+  apiKey: ApiKeyForRole;
+}) => {
   const theme = useTheme();
 
   return (
