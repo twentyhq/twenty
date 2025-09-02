@@ -11,7 +11,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-
 import { CreatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { UpdatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout.input';
 import { type PageLayoutDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout.dto';
