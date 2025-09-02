@@ -20,12 +20,12 @@ type RelationCreationPayloadAndObjectMetadata = {
 type ValidateMorphRelationCreationPayloadUtilArgs = {
   morphRelationCreationPayload: RelationCreationPayload[];
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
-  objectMetadataId: string
+  objectMetadataId: string;
 };
 export const validateMorphRelationCreationPayload = async ({
   existingFlatObjectMetadataMaps,
   morphRelationCreationPayload,
-  objectMetadataId
+  objectMetadataId,
 }: ValidateMorphRelationCreationPayloadUtilArgs): Promise<
   FieldInputTranspilationResult<RelationCreationPayloadAndObjectMetadata[]>
 > => {
@@ -67,8 +67,8 @@ export const validateMorphRelationCreationPayload = async ({
     ...new Set(allRelatedObjectMetadataIds),
   ];
 
-  if(allRelatedObjectMetadataIdsSet.includes(objectMetadataId)) {
-        return {
+  if (allRelatedObjectMetadataIdsSet.includes(objectMetadataId)) {
+    return {
       status: 'fail',
       error: {
         code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,

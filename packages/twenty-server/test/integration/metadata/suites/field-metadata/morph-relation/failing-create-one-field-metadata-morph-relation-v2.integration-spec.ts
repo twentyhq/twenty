@@ -8,14 +8,14 @@ import {
   type EachTestingContext,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { faker } from '@faker-js/faker';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { faker } from '@faker-js/faker';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
 type FailingTestCases = EachTestingContext<
   (args: {
@@ -464,8 +464,10 @@ describe('failing createOne FieldMetadataService morph relation fields v2 s', ()
         input: contextPayload,
         expectToFail: true,
       });
+
       expect(errors.length).toBe(1);
       const [firstError] = errors;
+
       expect(firstError).toMatchSnapshot(
         extractRecordIdsAndDatesAsExpectAny(firstError),
       );

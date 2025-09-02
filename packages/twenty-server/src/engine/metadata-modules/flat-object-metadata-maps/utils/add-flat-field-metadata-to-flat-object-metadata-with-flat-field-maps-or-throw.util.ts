@@ -35,9 +35,7 @@ export const addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMapsOrThrow =
       | FlatFieldMetadataMaps['fieldIdByJoinColumnName']
       | undefined = undefined;
 
-    if (
-     isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)
-    ) {
+    if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
       if (isDefined(flatFieldMetadata.settings.joinColumnName)) {
         updatedFieldIdByJoinColumnName = {
           [flatFieldMetadata.settings.joinColumnName]: flatFieldMetadata.id,
