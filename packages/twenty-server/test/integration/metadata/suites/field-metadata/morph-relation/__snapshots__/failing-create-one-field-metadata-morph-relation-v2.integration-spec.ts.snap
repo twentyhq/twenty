@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`failing createOne FieldMetadataService morph relation fields v2 s should fail to create a MORPH_RELATION that has several references to same object 1`] = `
+exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field that has several references to same object 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
@@ -32,7 +32,246 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 s shoul
 }
 `;
 
-exports[`failing createOne FieldMetadataService morph relation fields v2 s should fail to create a MORPH_RELATION with empty morphRelationCreationPayload 1`] = `
+exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field when targetFieldLabel contains only whitespace 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "id": "7b9ab29a-75e6-4593-85da-0214f8a1dcf3",
+          "name": "",
+          "objectMetadataId": "97d41388-5ced-4097-9cf1-eb3b1fec61c8",
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [],
+    },
+    "message": "Validation failed for 0 object(s) and 1 field(s)",
+    "summary": {
+      "invalidFields": 1,
+      "invalidObjects": 0,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field when targetFieldLabel exceeds maximum length 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too long",
+              "userFriendlyMessage": "Name is too long",
+              "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            },
+          ],
+          "id": "740679f4-23cd-49de-b8fe-6a9d44972237",
+          "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "objectMetadataId": "97d41388-5ced-4097-9cf1-eb3b1fec61c8",
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [],
+    },
+    "message": "Validation failed for 0 object(s) and 1 field(s)",
+    "summary": {
+      "invalidFields": 1,
+      "invalidObjects": 0,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field when targetFieldLabel is empty 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is too short",
+              "userFriendlyMessage": "Name is too short",
+              "value": "",
+            },
+            {
+              "code": "INVALID_FIELD_INPUT",
+              "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+              "value": "",
+            },
+          ],
+          "id": "5f46c854-1530-4165-9936-d61a9f3dc443",
+          "name": "",
+          "objectMetadataId": "97d41388-5ced-4097-9cf1-eb3b1fec61c8",
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [],
+    },
+    "message": "Validation failed for 0 object(s) and 1 field(s)",
+    "summary": {
+      "invalidFields": 1,
+      "invalidObjects": 0,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field when targetObjectMetadataId is unknown 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_RELATION_MALFORMED",
+              "message": "Morph relation input transpilation failed",
+              "userFriendlyMessage": "Invalid morph relation input",
+              "value": [
+                {
+                  "targetFieldIcon": "Icon123",
+                  "targetFieldLabel": "test",
+                  "targetObjectMetadataId": "54e57710-82d6-4111-8dac-eedf8615d273",
+                  "type": "ONE_TO_MANY",
+                },
+              ],
+            },
+          ],
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [],
+    },
+    "message": "Validation failed for 0 object(s) and 1 field(s)",
+    "summary": {
+      "invalidFields": 1,
+      "invalidObjects": 0,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field when type is a wrong value 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_RELATION_MALFORMED",
+              "message": "Morph relation input transpilation failed",
+              "userFriendlyMessage": "Invalid morph relation input",
+              "value": [
+                {
+                  "targetFieldIcon": "Icon123",
+                  "targetFieldLabel": "test",
+                  "targetObjectMetadataId": "97d41388-5ced-4097-9cf1-eb3b1fec61c8",
+                  "type": "wrong",
+                },
+              ],
+            },
+          ],
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [],
+    },
+    "message": "Validation failed for 0 object(s) and 1 field(s)",
+    "summary": {
+      "invalidFields": 1,
+      "invalidObjects": 0,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field when type is not provided 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_RELATION_MALFORMED",
+              "message": "Morph relation input transpilation failed",
+              "userFriendlyMessage": "Invalid morph relation input",
+              "value": [
+                {
+                  "targetFieldIcon": "Icon123",
+                  "targetFieldLabel": "test",
+                  "targetObjectMetadataId": "97d41388-5ced-4097-9cf1-eb3b1fec61c8",
+                },
+              ],
+            },
+          ],
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [],
+    },
+    "message": "Validation failed for 0 object(s) and 1 field(s)",
+    "summary": {
+      "invalidFields": 1,
+      "invalidObjects": 0,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating field",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field with empty morphRelationCreationPayload 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
@@ -64,7 +303,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 s shoul
 }
 `;
 
-exports[`failing createOne FieldMetadataService morph relation fields v2 s should fail to create a MORPH_RELATION with malformed morphRelationCreationPayload occurrence 1`] = `
+exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field with malformed morphRelationCreationPayload occurrence 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
@@ -96,7 +335,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 s shoul
 }
 `;
 
-exports[`failing createOne FieldMetadataService morph relation fields v2 s should fail to create a MORPH_RELATION with many relation types 1`] = `
+exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field with many relation types 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
@@ -128,7 +367,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 s shoul
 }
 `;
 
-exports[`failing createOne FieldMetadataService morph relation fields v2 s should fail to create a MORPH_RELATION with not an array morphRelationCreationPayload 1`] = `
+exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field with not an array morphRelationCreationPayload 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
@@ -163,7 +402,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 s shoul
 }
 `;
 
-exports[`failing createOne FieldMetadataService morph relation fields v2 s should fail to create a MORPH_RELATION with null morphRelationCreationPayload 1`] = `
+exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field with null morphRelationCreationPayload 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
@@ -196,7 +435,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 s shoul
 }
 `;
 
-exports[`failing createOne FieldMetadataService morph relation fields v2 s should fail to create a MORPH_RELATION with undefined morphRelationCreationPayload 1`] = `
+exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field with undefined morphRelationCreationPayload 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",

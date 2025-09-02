@@ -197,40 +197,6 @@ const morphCreationPayloadFailingIntegrityValidationFailingTestCases: FailingTes
     },
   ];
 
-const tmp = [
-  {
-    title: 'when targetFieldLabel exceeds maximum length',
-    context: {
-      targetFieldLabel: 'A'.repeat(64),
-    },
-  },
-  {
-    // Not handled gracefully should be refactored
-    title: 'when targetObjectMetadataId is unknown',
-    context: {
-      targetObjectMetadataId: faker.string.uuid(),
-    },
-  },
-  {
-    title: 'when targetFieldLabel contains only whitespace',
-    context: { targetFieldLabel: '   ' },
-  },
-  {
-    title:
-      'when targetFieldLabel conflicts with an existing field on target object metadata id',
-    context: ({ collisionFieldLabel }) => ({
-      targetFieldLabel: collisionFieldLabel,
-    }),
-  },
-  {
-    title: 'when type is not provided',
-    context: { type: undefined },
-  },
-  {
-    title: 'when type is a wrong value',
-    context: { type: 'wrong' as RelationType },
-  },
-];
 const relationCreationPayloadEdgeCasesFailingTestsCases: FailingTestCases = [
   {
     title: 'when targetFieldLabel is empty',
@@ -248,6 +214,125 @@ const relationCreationPayloadEdgeCasesFailingTestsCases: FailingTestCases = [
           targetFieldLabel: '',
           targetObjectMetadataId: createdObjectMetadataOpportunityId,
           type: RelationType.ONE_TO_MANY,
+        },
+      ],
+    }),
+  },
+  {
+    title: 'when targetFieldLabel exceeds maximum length',
+    context: ({
+      createdObjectMetadataCompanyId,
+      createdObjectMetadataOpportunityId,
+    }) => ({
+      label: 'field label',
+      name: 'fieldName',
+      objectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelationsCreationPayload: [
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'A'.repeat(64),
+          targetObjectMetadataId: createdObjectMetadataOpportunityId,
+          type: RelationType.ONE_TO_MANY,
+        },
+      ],
+    }),
+  },
+  {
+    title: 'when targetObjectMetadataId is unknown',
+    context: ({ createdObjectMetadataCompanyId }) => ({
+      label: 'field label',
+      name: 'fieldName',
+      objectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelationsCreationPayload: [
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'test',
+          targetObjectMetadataId: faker.string.uuid(),
+          type: RelationType.ONE_TO_MANY,
+        },
+      ],
+    }),
+  },
+  {
+    title: 'when targetFieldLabel contains only whitespace',
+    context: ({
+      createdObjectMetadataCompanyId,
+      createdObjectMetadataOpportunityId,
+    }) => ({
+      label: 'field label',
+      name: 'fieldName',
+      objectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelationsCreationPayload: [
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: '   ',
+          targetObjectMetadataId: createdObjectMetadataOpportunityId,
+          type: RelationType.ONE_TO_MANY,
+        },
+      ],
+    }),
+  },
+  // {
+  //   // Failing validation right now
+  //   title:
+  //     'when targetFieldLabel conflicts with an existing field on target object metadata id',
+  //   context: ({
+  //     createdObjectMetadataCompanyId,
+  //     createdObjectMetadataOpportunityId,
+  //   }) => ({
+  //     label: 'field label',
+  //     name: 'fieldName',
+  //     objectMetadataId: createdObjectMetadataCompanyId,
+  //     type: FieldMetadataType.MORPH_RELATION,
+  //     morphRelationsCreationPayload: [
+  //       {
+  //         targetFieldIcon: 'Icon123',
+  //         targetFieldLabel: 'name',
+  //         targetObjectMetadataId: createdObjectMetadataOpportunityId,
+  //         type: RelationType.ONE_TO_MANY,
+  //       },
+  //     ],
+  //   }),
+  // },
+  {
+    title: 'when type is not provided',
+    context: ({
+      createdObjectMetadataCompanyId,
+      createdObjectMetadataOpportunityId,
+    }) => ({
+      label: 'field label',
+      name: 'fieldName',
+      objectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelationsCreationPayload: [
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'test',
+          targetObjectMetadataId: createdObjectMetadataOpportunityId,
+          type: undefined as unknown as RelationType,
+        },
+      ],
+    }),
+  },
+  {
+    title: 'when type is a wrong value',
+    context: ({
+      createdObjectMetadataCompanyId,
+      createdObjectMetadataOpportunityId,
+    }) => ({
+      label: 'field label',
+      name: 'fieldName',
+      objectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelationsCreationPayload: [
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'test',
+          targetObjectMetadataId: createdObjectMetadataOpportunityId,
+          type: 'wrong' as RelationType,
         },
       ],
     }),
