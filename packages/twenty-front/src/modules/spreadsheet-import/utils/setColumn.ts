@@ -4,7 +4,7 @@ import { type SpreadsheetImportField } from '@/spreadsheet-import/types';
 import { type SpreadsheetColumn } from '@/spreadsheet-import/types/SpreadsheetColumn';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
 import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
-import { parseMultiSelectOptions } from '@/spreadsheet-import/utils/parseMultiSelectOptions';
+import { spreadsheetImportParseMultiSelectOptions } from '@/spreadsheet-import/utils/spreadsheetImportParseMultiSelectOptions';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { uniqueEntries } from './uniqueEntries';
@@ -47,6 +47,9 @@ export const setColumn = (
   if (field?.fieldType.type === 'multiSelect') {
     const fieldOptions = field.fieldType.options;
 
+    debugger;
+    console.log('fieldOptions', fieldOptions);
+
     let entries: string[] = [];
     try {
       entries = [
@@ -55,7 +58,7 @@ export const setColumn = (
             ?.flatMap((row) => {
               const value = row[oldColumn.index];
               if (!isDefined(value)) return [];
-              return parseMultiSelectOptions(value);
+              return spreadsheetImportParseMultiSelectOptions(value);
             })
             .filter((entry) => typeof entry === 'string'),
         ),
