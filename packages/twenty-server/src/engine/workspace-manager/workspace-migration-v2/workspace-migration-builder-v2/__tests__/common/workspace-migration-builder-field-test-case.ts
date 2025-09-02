@@ -32,6 +32,11 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
           universalIdentifier: 'field-metadata-unique-identifier-1',
           objectMetadataId: PET_FLAT_OBJECT_MOCK.id,
           type: FieldMetadataType.RELATION,
+          settings: {
+            relationType: RelationType.MANY_TO_ONE,
+            joinColumnName: 'whatever',
+            onDelete: undefined,
+          },
           relationTargetFieldMetadataId: targetRelationId,
           relationTargetObjectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
           flatRelationTargetFieldMetadata: undefined,
@@ -46,6 +51,11 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
           universalIdentifier: 'field-metadata-unique-identifier-2',
           objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
           type: FieldMetadataType.RELATION,
+          settings: {
+            relationType: RelationType.ONE_TO_MANY,
+            joinColumnName: 'sourceWhatever',
+            onDelete: undefined,
+          },
           relationTargetFieldMetadataId: sourceRelationId,
           relationTargetObjectMetadataId: PET_FLAT_OBJECT_MOCK.id,
           flatRelationTargetFieldMetadata: sourceRelationFlatField,

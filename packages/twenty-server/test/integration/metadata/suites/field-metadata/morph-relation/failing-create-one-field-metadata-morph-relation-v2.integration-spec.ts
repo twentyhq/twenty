@@ -345,7 +345,7 @@ const failingTestCases: FailingTestCases = [
   ...relationCreationPayloadEdgeCasesFailingTestsCases,
 ];
 
-describe('failing createOne FieldMetadataService morph relation fields v2 s', () => {
+describe('failing createOne FieldMetadataService morph relation fields v2', () => {
   let createdObjectMetadataPersonId: string;
   let createdObjectMetadataOpportunityId: string;
   let createdObjectMetadataCompanyId: string;

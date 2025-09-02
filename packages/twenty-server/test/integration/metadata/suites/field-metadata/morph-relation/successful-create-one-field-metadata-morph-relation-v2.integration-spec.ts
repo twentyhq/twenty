@@ -32,7 +32,7 @@ type EachTestingContextArray = EachTestingContext<
     Required<Pick<CreateFieldInput, 'morphRelationsCreationPayload'>>
 >[];
 
-const successfullTestCases: EachTestingContextArray = [
+const successfulTestCases: EachTestingContextArray = [
   {
     title: 'should create a MORPH_RELATION field type MANY_TO_ONE',
     context: ({
@@ -222,7 +222,7 @@ describe('successful createOne FieldMetadataService morph relation fields v2', (
     createdFieldMetadataId = undefined;
   });
 
-  it.each(eachTestingContextFilter(successfullTestCases))(
+  it.each(eachTestingContextFilter(successfulTestCases))(
     '$title',
     async ({ context }) => {
       const contextPayload = context({
