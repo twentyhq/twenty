@@ -12,7 +12,6 @@ import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadat
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { compareTwoFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata.util';
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
-import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
@@ -96,16 +95,7 @@ export class FlatFieldMetadataValidatorService {
       toFlatFieldMetadata: updatedFlatFieldMetadata,
     });
 
-    if (
-      isFlatFieldMetadataEntityOfType(
-        updatedFlatFieldMetadata,
-        FieldMetadataType.RELATION,
-      ) ||
-      isFlatFieldMetadataEntityOfType(
-        updatedFlatFieldMetadata,
-        FieldMetadataType.MORPH_RELATION,
-      )
-    ) {
+    if (isMorphOrRelationFlatFieldMetadata(updatedFlatFieldMetadata)) {
       const relationNonEditableUpdatedProperties = updates.flatMap(
         ({ property }) =>
           !FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE.includes(

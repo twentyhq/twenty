@@ -3,7 +3,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findFlatFieldMetadatasRelatedToMorphRelationOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-flat-field-metadatas-related-to-morph-relation-or-throw.util';
 import { findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata-or-throw.util';
-import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 
 export const computeFlatFieldMetadataRelatedFlatFieldMetadata = ({
@@ -14,7 +14,7 @@ export const computeFlatFieldMetadataRelatedFlatFieldMetadata = ({
   flatObjectMetadataMaps: FlatObjectMetadataMaps;
 }): FlatFieldMetadata[] => {
   if (
-    isFlatFieldMetadataEntityOfType(
+    isFlatFieldMetadataOfType(
       flatFieldMetadata,
       FieldMetadataType.RELATION,
     )
@@ -28,7 +28,7 @@ export const computeFlatFieldMetadataRelatedFlatFieldMetadata = ({
   }
 
   if (
-    isFlatFieldMetadataEntityOfType(
+    isFlatFieldMetadataOfType(
       flatFieldMetadata,
       FieldMetadataType.MORPH_RELATION,
     )
