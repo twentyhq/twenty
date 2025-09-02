@@ -1,15 +1,16 @@
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { convertUpdateViewInputToCore } from '@/views/utils/convertUpdateViewInputToCore';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useUpdateCoreViewMutation } from '~/generated/graphql';
-import { useRefreshCoreViews } from './useRefreshCoreViews';
 
 export const useUpdateView = () => {
   const [updateOneCoreView] = useUpdateCoreViewMutation();
 
-  const { refreshCoreViews } = useRefreshCoreViews();
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
@@ -26,9 +27,13 @@ export const useUpdateView = () => {
         },
       });
 
-      await refreshCoreViews(objectMetadataItem.id);
+      await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
     },
-    [objectMetadataItem.id, refreshCoreViews, updateOneCoreView],
+    [
+      objectMetadataItem.id,
+      refreshCoreViewsByObjectMetadataId,
+      updateOneCoreView,
+    ],
   );
 
   return {

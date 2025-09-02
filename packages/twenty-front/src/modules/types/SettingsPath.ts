@@ -54,5 +54,7 @@ export enum SettingsPath {
   RoleDetail = 'roles/:roleId',
   RoleObjectLevel = 'roles/:roleId/object/:objectMetadataId',
   RoleAddObjectLevel = 'roles/:roleId/add-object-permission',
-  PageLayoutEdition = 'page-layout/edition',
+  PageLayout = 'page-layout',
+  PageLayoutNew = 'page-layout/new',
+  PageLayoutEdit = 'page-layout/:id',
 }

@@ -286,7 +286,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       return createdObjectMetadata;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
       throw error;
     } finally {
@@ -450,7 +455,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       return formattedUpdatedObject;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
       throw error;
     } finally {
@@ -562,7 +572,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       return objectMetadata;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
       throw error;
     } finally {

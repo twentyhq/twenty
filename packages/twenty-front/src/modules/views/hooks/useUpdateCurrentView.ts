@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
 import { useRecoilComponentCallbackState } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackState';
-import { useRefreshCoreViews } from '@/views/hooks/useRefreshCoreViews';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { convertUpdateViewInputToCore } from '@/views/utils/convertUpdateViewInputToCore';
 import { isDefined } from 'twenty-shared/utils';
@@ -14,7 +14,8 @@ export const useUpdateCurrentView = () => {
     contextStoreCurrentViewIdComponentState,
   );
 
-  const { refreshCoreViews } = useRefreshCoreViews();
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const [updateOneCoreView] = useUpdateCoreViewMutation();
 
@@ -46,10 +47,16 @@ export const useUpdateCurrentView = () => {
               input,
             },
           });
-          await refreshCoreViews(currentView.objectMetadataId);
+          await refreshCoreViewsByObjectMetadataId(
+            currentView.objectMetadataId,
+          );
         }
       },
-    [currentViewIdCallbackState, refreshCoreViews, updateOneCoreView],
+    [
+      currentViewIdCallbackState,
+      refreshCoreViewsByObjectMetadataId,
+      updateOneCoreView,
+    ],
   );
 
   return {
