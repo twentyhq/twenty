@@ -43,10 +43,10 @@ export class PageLayoutService {
     });
   }
 
-  async findById(
+  async findByIdOrThrow(
     id: string,
     workspaceId: string,
-  ): Promise<PageLayoutEntity | null> {
+  ): Promise<PageLayoutEntity> {
     const pageLayout = await this.pageLayoutRepository.findOne({
       where: {
         id,
@@ -55,15 +55,6 @@ export class PageLayoutService {
       },
       relations: ['tabs'],
     });
-
-    return pageLayout || null;
-  }
-
-  async findByIdOrThrow(
-    id: string,
-    workspaceId: string,
-  ): Promise<PageLayoutEntity> {
-    const pageLayout = await this.findById(id, workspaceId);
 
     if (!isDefined(pageLayout)) {
       throw new PageLayoutException(

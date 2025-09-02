@@ -111,12 +111,11 @@ describe('PageLayoutService', () => {
       const workspaceId = 'workspace-id';
 
       jest
-        .spyOn(pageLayoutService, 'findById')
+        .spyOn(pageLayoutRepository, 'findOne')
         .mockResolvedValue(mockPageLayout);
 
       const result = await pageLayoutService.findByIdOrThrow(id, workspaceId);
 
-      expect(pageLayoutService.findById).toHaveBeenCalledWith(id, workspaceId);
       expect(result).toEqual(mockPageLayout);
     });
 
@@ -124,7 +123,7 @@ describe('PageLayoutService', () => {
       const id = 'non-existent-id';
       const workspaceId = 'workspace-id';
 
-      jest.spyOn(pageLayoutService, 'findById').mockResolvedValue(null);
+      jest.spyOn(pageLayoutRepository, 'findOne').mockResolvedValue(null);
 
       await expect(
         pageLayoutService.findByIdOrThrow(id, workspaceId),
