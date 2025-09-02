@@ -164,15 +164,13 @@ export const SettingsRoleAssignment = ({
     handleModalClose();
   };
 
-  const handleSelectEntity = <
-    T extends CurrentWorkspaceMember | Agent | ApiKeyForRole,
-  >(
-    entity: T,
+  const handleSelectEntity = (
+    entity: CurrentWorkspaceMember | Agent | ApiKeyForRole,
     entityType: keyof typeof ROLE_TARGET_CONFIG,
   ) => {
     const config = ROLE_TARGET_CONFIG[entityType];
     const existingRole = config.getRoleMap(roleMaps).get(entity.id);
-    const name = config.getName(entity as any);
+    const name = config.getName(entity as never);
 
     setSelectRoleTarget({
       id: entity.id,
