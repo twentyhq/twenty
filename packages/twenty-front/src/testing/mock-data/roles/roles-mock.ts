@@ -1,8 +1,8 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import {
-    type FieldPermission,
-    type ObjectPermission,
-    type Role,
+  type FieldPermission,
+  type ObjectPermission,
+  type Role,
 } from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
