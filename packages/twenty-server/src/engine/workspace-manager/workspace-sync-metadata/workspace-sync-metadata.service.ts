@@ -205,7 +205,14 @@ export class WorkspaceSyncMetadataService {
       if (!options.applyChanges) {
         this.logger.log('Running in dry run mode, rolling back transaction');
 
-        await queryRunner.rollbackTransaction();
+        if (queryRunner.isTransactionActive) {
+          try {
+            await queryRunner.rollbackTransaction();
+          } catch (error) {
+            // eslint-disable-next-line no-console
+            console.trace(`Failed to rollback transaction: ${error.message}`);
+          }
+        }
 
         await queryRunner.release();
 
@@ -239,7 +246,15 @@ export class WorkspaceSyncMetadataService {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.logger.error((error as any).detail);
       }
-      await queryRunner.rollbackTransaction();
+      if (queryRunner.isTransactionActive) {
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
+      }
+      throw error;
     } finally {
       await queryRunner.release();
       await this.workspaceMetadataVersionService.incrementMetadataVersion(

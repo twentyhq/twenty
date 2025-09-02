@@ -62,6 +62,10 @@ export const findFlatFieldMetadatasRelatedToMorphRelationOrThrow = ({
           flatObjectMetadataMaps,
         });
 
+      if (flatFieldMetadata.id === morphRelationFlatFieldMetadata.id) {
+        return [relationTargetFlatFieldMetadata];
+      }
+
       return [flatFieldMetadata, relationTargetFlatFieldMetadata];
     },
   );

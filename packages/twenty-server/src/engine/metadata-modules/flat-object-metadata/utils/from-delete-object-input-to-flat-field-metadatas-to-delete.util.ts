@@ -1,12 +1,10 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata-or-throw.util';
-import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -48,26 +46,13 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
   const flatFieldMetadatasToDelete =
     flatObjectMetadataToDelete.flatFieldMetadatas.flatMap(
       (flatFieldMetadata) => {
-        if (
-          isFlatFieldMetadataEntityOfType(
+        const relatedFlatFieldMetadata =
+          computeFlatFieldMetadataRelatedFlatFieldMetadata({
             flatFieldMetadata,
-            FieldMetadataType.RELATION,
-          ) ||
-          isFlatFieldMetadataEntityOfType(
-            flatFieldMetadata,
-            FieldMetadataType.MORPH_RELATION,
-          )
-        ) {
-          const relationTargetFlatFieldMetadata =
-            findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
-              flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-              flatFieldMetadata,
-            });
+            flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+          });
 
-          return [flatFieldMetadata, relationTargetFlatFieldMetadata];
-        }
-
-        return flatFieldMetadata;
+        return [flatFieldMetadata, ...relatedFlatFieldMetadata];
       },
     );
 
