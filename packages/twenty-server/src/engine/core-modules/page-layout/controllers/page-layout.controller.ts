@@ -11,11 +11,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 
 import { CreatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { UpdatePageLayoutInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout.input';
 import { type PageLayoutDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout.dto';
+import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/page-layout.entity';
 import { PageLayoutRestApiExceptionFilter } from 'src/engine/core-modules/page-layout/filters/page-layout-rest-api-exception.filter';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -78,12 +78,12 @@ export class PageLayoutController {
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<{ success: boolean }> {
+  ): Promise<PageLayoutEntity> {
     const deletedPageLayout = await this.pageLayoutService.delete(
       id,
       workspace.id,
     );
 
-    return { success: isDefined(deletedPageLayout) };
+    return deletedPageLayout;
   }
 }

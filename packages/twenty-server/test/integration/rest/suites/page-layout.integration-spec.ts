@@ -166,8 +166,14 @@ describe('Page Layout REST API', () => {
           bearer: API_KEY_ACCESS_TOKEN,
         });
 
-        assertRestApiSuccessfulResponse(response);
-        expect(response.body).toEqual({});
+        assertRestApiErrorResponse(
+          response,
+          404,
+          generatePageLayoutExceptionMessage(
+            PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
+            TEST_NOT_EXISTING_PAGE_LAYOUT_ID,
+          ),
+        );
       });
     });
 
@@ -279,7 +285,7 @@ describe('Page Layout REST API', () => {
         });
 
         assertRestApiSuccessfulResponse(deleteResponse);
-        expect(deleteResponse.body.success).toBe(true);
+        assertPageLayoutStructure(deleteResponse.body, pageLayout);
 
         const getResponse = await makeRestAPIRequest({
           method: 'get',
@@ -287,8 +293,14 @@ describe('Page Layout REST API', () => {
           bearer: API_KEY_ACCESS_TOKEN,
         });
 
-        assertRestApiSuccessfulResponse(getResponse);
-        expect(getResponse.body).toEqual({});
+        assertRestApiErrorResponse(
+          getResponse,
+          404,
+          generatePageLayoutExceptionMessage(
+            PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
+            pageLayout.id,
+          ),
+        );
       });
 
       it('should return 404 error when deleting non-existent page layout', async () => {

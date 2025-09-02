@@ -135,14 +135,20 @@ describe('Page Layout Resolver', () => {
   });
 
   describe('getPageLayout', () => {
-    it('should return null when page layout does not exist', async () => {
+    it('should throw when page layout does not exist', async () => {
       const operation = findPageLayoutOperationFactory({
         pageLayoutId: TEST_NOT_EXISTING_PAGE_LAYOUT_ID,
       });
       const response = await makeGraphqlAPIRequest(operation);
 
-      assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.getPageLayout).toBeNull();
+      assertGraphQLErrorResponse(
+        response,
+        ErrorCode.NOT_FOUND,
+        generatePageLayoutExceptionMessage(
+          PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
+          TEST_NOT_EXISTING_PAGE_LAYOUT_ID,
+        ),
+      );
     });
 
     it('should return page layout when it exists', async () => {
@@ -294,15 +300,24 @@ describe('Page Layout Resolver', () => {
       const deleteResponse = await makeGraphqlAPIRequest(deleteOperation);
 
       assertGraphQLSuccessfulResponse(deleteResponse);
-      expect(deleteResponse.body.data.deletePageLayout).toBe(true);
+      assertPageLayoutStructure(
+        deleteResponse.body.data.deletePageLayout,
+        pageLayout,
+      );
 
       const getOperation = findPageLayoutOperationFactory({
         pageLayoutId: pageLayout.id,
       });
       const getResponse = await makeGraphqlAPIRequest(getOperation);
 
-      assertGraphQLSuccessfulResponse(getResponse);
-      expect(getResponse.body.data.getPageLayout).toBeNull();
+      assertGraphQLErrorResponse(
+        getResponse,
+        ErrorCode.NOT_FOUND,
+        generatePageLayoutExceptionMessage(
+          PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
+          pageLayout.id,
+        ),
+      );
     });
 
     it('should throw an error when deleting non-existent page layout', async () => {
@@ -364,8 +379,9 @@ describe('Page Layout Resolver', () => {
       const deleteOperation = deletePageLayoutOperationFactory({
         pageLayoutId: pageLayout.id,
       });
+      const deleteResponse = await makeGraphqlAPIRequest(deleteOperation);
 
-      await makeGraphqlAPIRequest(deleteOperation);
+      assertGraphQLSuccessfulResponse(deleteResponse);
 
       const restoreOperation = restorePageLayoutOperationFactory({
         pageLayoutId: pageLayout.id,
@@ -386,7 +402,12 @@ describe('Page Layout Resolver', () => {
       const getResponse = await makeGraphqlAPIRequest(getOperation);
 
       assertGraphQLSuccessfulResponse(getResponse);
-      expect(getResponse.body.data.getPageLayout).not.toBeNull();
+      assertPageLayoutStructure(getResponse.body.data.getPageLayout, {
+        id: pageLayout.id,
+        name: 'Page Layout to Restore',
+        type: PageLayoutType.RECORD_INDEX,
+        deletedAt: null,
+      });
     });
 
     it('should throw an error when restoring non-existent page layout', async () => {
@@ -417,6 +438,11 @@ describe('Page Layout Resolver', () => {
         gqlFields: `
           id
           name
+          type
+          workspaceId
+          createdAt
+          updatedAt
+          deletedAt
           tabs {
             id
             title
@@ -428,8 +454,11 @@ describe('Page Layout Resolver', () => {
       const response = await makeGraphqlAPIRequest(operation);
 
       assertGraphQLSuccessfulResponse(response);
-      expect(response.body.data.getPageLayout.tabs).toBeDefined();
-      expect(Array.isArray(response.body.data.getPageLayout.tabs)).toBe(true);
+      assertPageLayoutStructure(response.body.data.getPageLayout, {
+        id: pageLayout.id,
+        name: 'Page Layout with Tabs',
+        tabs: expect.any(Array),
+      });
     });
   });
 });

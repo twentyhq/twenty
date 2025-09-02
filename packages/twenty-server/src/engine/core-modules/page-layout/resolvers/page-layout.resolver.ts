@@ -59,17 +59,17 @@ export class PageLayoutResolver {
     return this.pageLayoutService.update(id, workspace.id, input);
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => PageLayoutDTO)
   async deletePageLayout(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<boolean> {
+  ): Promise<PageLayoutDTO> {
     const deletedPageLayout = await this.pageLayoutService.delete(
       id,
       workspace.id,
     );
 
-    return isDefined(deletedPageLayout);
+    return deletedPageLayout;
   }
 
   @Mutation(() => Boolean)
