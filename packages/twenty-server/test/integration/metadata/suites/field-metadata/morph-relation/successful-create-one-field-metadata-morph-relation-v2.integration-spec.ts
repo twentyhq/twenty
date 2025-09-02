@@ -20,6 +20,74 @@ import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadat
 import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
+type EachTestingContextArray = EachTestingContext<
+  (args: {
+    createdObjectMetadataPersonId: string;
+    createdObjectMetadataOpportunityId: string;
+    createdObjectMetadataCompanyId: string;
+  }) => Omit<
+    CreateFieldInput,
+    'morphRelationsCreationPayload' | 'workspaceId'
+  > &
+    Required<Pick<CreateFieldInput, 'morphRelationsCreationPayload'>>
+>[];
+
+const successfullTestCases: EachTestingContextArray = [
+  {
+    title: 'should create a MORPH_RELATION field type MANY_TO_ONE',
+    context: ({
+      createdObjectMetadataCompanyId,
+      createdObjectMetadataOpportunityId,
+      createdObjectMetadataPersonId,
+    }) => ({
+      label: 'field label',
+      name: 'fieldName',
+      objectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelationsCreationPayload: [
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'toto',
+          targetObjectMetadataId: createdObjectMetadataOpportunityId,
+          type: RelationType.MANY_TO_ONE,
+        },
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'tata',
+          targetObjectMetadataId: createdObjectMetadataPersonId,
+          type: RelationType.MANY_TO_ONE,
+        },
+      ],
+    }),
+  },
+  {
+    title: 'should create a MORPH_RELATION field type ONE_TO_MANY',
+    context: ({
+      createdObjectMetadataCompanyId,
+      createdObjectMetadataOpportunityId,
+      createdObjectMetadataPersonId,
+    }) => ({
+      label: 'field label',
+      name: 'fieldName',
+      objectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelationsCreationPayload: [
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'toto',
+          targetObjectMetadataId: createdObjectMetadataOpportunityId,
+          type: RelationType.ONE_TO_MANY,
+        },
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'tata',
+          targetObjectMetadataId: createdObjectMetadataPersonId,
+          type: RelationType.ONE_TO_MANY,
+        },
+      ],
+    }),
+  },
+];
 describe('successful createOne FieldMetadataService morph relation fields v2', () => {
   let createdObjectMetadataPersonId: string;
   let createdObjectMetadataOpportunityId: string;
@@ -151,76 +219,7 @@ describe('successful createOne FieldMetadataService morph relation fields v2', (
     createdFieldMetadataId = undefined;
   });
 
-  type EachTestingContextArray = EachTestingContext<
-    (args: {
-      createdObjectMetadataPersonId: string;
-      createdObjectMetadataOpportunityId: string;
-      createdObjectMetadataCompanyId: string;
-    }) => Omit<
-      CreateFieldInput,
-      'morphRelationsCreationPayload' | 'workspaceId'
-    > &
-      Required<Pick<CreateFieldInput, 'morphRelationsCreationPayload'>>
-  >[];
-
-  const eachTestingContextArray: EachTestingContextArray = [
-    {
-      title: 'should create a MORPH_RELATION field type MANY_TO_ONE',
-      context: ({
-        createdObjectMetadataCompanyId,
-        createdObjectMetadataOpportunityId,
-        createdObjectMetadataPersonId,
-      }) => ({
-        label: 'field label',
-        name: 'fieldName',
-        objectMetadataId: createdObjectMetadataCompanyId,
-        type: FieldMetadataType.MORPH_RELATION,
-        morphRelationsCreationPayload: [
-          {
-            targetFieldIcon: 'Icon123',
-            targetFieldLabel: 'toto',
-            targetObjectMetadataId: createdObjectMetadataOpportunityId,
-            type: RelationType.MANY_TO_ONE,
-          },
-          {
-            targetFieldIcon: 'Icon123',
-            targetFieldLabel: 'tata',
-            targetObjectMetadataId: createdObjectMetadataPersonId,
-            type: RelationType.MANY_TO_ONE,
-          },
-        ],
-      }),
-    },
-    {
-      title: 'should create a MORPH_RELATION field type ONE_TO_MANY',
-      context: ({
-        createdObjectMetadataCompanyId,
-        createdObjectMetadataOpportunityId,
-        createdObjectMetadataPersonId,
-      }) => ({
-        label: 'field label',
-        name: 'fieldName',
-        objectMetadataId: createdObjectMetadataCompanyId,
-        type: FieldMetadataType.MORPH_RELATION,
-        morphRelationsCreationPayload: [
-          {
-            targetFieldIcon: 'Icon123',
-            targetFieldLabel: 'toto',
-            targetObjectMetadataId: createdObjectMetadataOpportunityId,
-            type: RelationType.ONE_TO_MANY,
-          },
-          {
-            targetFieldIcon: 'Icon123',
-            targetFieldLabel: 'tata',
-            targetObjectMetadataId: createdObjectMetadataPersonId,
-            type: RelationType.ONE_TO_MANY,
-          },
-        ],
-      }),
-    },
-  ];
-
-  it.each(eachTestingContextFilter(eachTestingContextArray))(
+  it.each(eachTestingContextFilter(successfullTestCases))(
     '$title',
     async ({ context }) => {
       const contextPayload = context({

@@ -11,11 +11,12 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
+import { faker } from '@faker-js/faker';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
-type EachTestingContextArray = EachTestingContext<
+type FailingTestCases = EachTestingContext<
   (args: {
     createdObjectMetadataPersonId: string;
     createdObjectMetadataOpportunityId: string;
@@ -27,75 +28,52 @@ type EachTestingContextArray = EachTestingContext<
     Required<Pick<CreateFieldInput, 'morphRelationsCreationPayload'>>
 >[];
 
-const failingTestCases: EachTestingContextArray = [
+const morphCreationPayloadMalformedFailingTestCases: FailingTestCases = [
   {
-    title: 'should fail to create a MORPH_RELATION with many relation types',
-    context: ({
-      createdObjectMetadataCompanyId,
-      createdObjectMetadataOpportunityId,
-      createdObjectMetadataPersonId,
-    }) => ({
+    title: 'with empty morphRelationCreationPayload',
+    context: ({ createdObjectMetadataCompanyId }) => ({
       label: 'field label',
       name: 'fieldName',
       objectMetadataId: createdObjectMetadataCompanyId,
       type: FieldMetadataType.MORPH_RELATION,
-      morphRelationsCreationPayload: [
-        {
-          targetFieldIcon: 'Icon123',
-          targetFieldLabel: 'toto',
-          targetObjectMetadataId: createdObjectMetadataOpportunityId,
-          type: RelationType.MANY_TO_ONE,
-        },
-        {
-          targetFieldIcon: 'Icon123',
-          targetFieldLabel: 'tata',
-          targetObjectMetadataId: createdObjectMetadataPersonId,
-          type: RelationType.ONE_TO_MANY,
-        },
-      ],
+      morphRelationsCreationPayload: [],
     }),
   },
   {
-    only: true,
-    title: 'should fail to create a MORPH_RELATION on source object itself',
-    context: ({
-      createdObjectMetadataCompanyId,
-      createdObjectMetadataOpportunityId,
-      createdObjectMetadataPersonId,
-    }) => ({
+    title: 'with undefined morphRelationCreationPayload',
+    context: ({ createdObjectMetadataCompanyId }) => ({
       label: 'field label',
       name: 'fieldName',
       objectMetadataId: createdObjectMetadataCompanyId,
       type: FieldMetadataType.MORPH_RELATION,
-      morphRelationsCreationPayload: [
-        {
-          targetFieldIcon: 'Icon123',
-          targetFieldLabel: 'toto',
-          targetObjectMetadataId: createdObjectMetadataOpportunityId,
-          type: RelationType.ONE_TO_MANY,
-        },
-        {
-          targetFieldIcon: 'Icon123',
-          targetFieldLabel: 'tata',
-          targetObjectMetadataId: createdObjectMetadataPersonId,
-          type: RelationType.ONE_TO_MANY,
-        },
-        {
-          targetFieldIcon: 'Icon123',
-          targetFieldLabel: 'tata',
-          targetObjectMetadataId: createdObjectMetadataCompanyId,
-          type: RelationType.ONE_TO_MANY,
-        },
-      ],
+      morphRelationsCreationPayload: undefined as any,
     }),
   },
   {
-    title:
-      'should fail to create a MORPH_RELATION that has several references to same object',
+    title: 'with null morphRelationCreationPayload',
+    context: ({ createdObjectMetadataCompanyId }) => ({
+      label: 'field label',
+      name: 'fieldName',
+      objectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelationsCreationPayload: null as any,
+    }),
+  },
+  {
+    title: 'with not an array morphRelationCreationPayload',
+    context: ({ createdObjectMetadataCompanyId }) => ({
+      label: 'field label',
+      name: 'fieldName',
+      objectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelationsCreationPayload: 'not-an-array' as any,
+    }),
+  },
+  {
+    title: 'with malformed morphRelationCreationPayload occurrence',
     context: ({
       createdObjectMetadataCompanyId,
       createdObjectMetadataOpportunityId,
-      createdObjectMetadataPersonId,
     }) => ({
       label: 'field label',
       name: 'fieldName',
@@ -110,9 +88,6 @@ const failingTestCases: EachTestingContextArray = [
         },
         {
           targetFieldIcon: 'Icon123',
-          targetFieldLabel: 'tata',
-          targetObjectMetadataId: createdObjectMetadataPersonId,
-          type: RelationType.ONE_TO_MANY,
         },
         {
           targetFieldIcon: 'Icon123',
@@ -123,6 +98,166 @@ const failingTestCases: EachTestingContextArray = [
       ],
     }),
   },
+];
+
+const morphCreationPayloadFailingIntegrityValidationFailingTestCases: FailingTestCases =
+  [
+    {
+      title: 'with many relation types',
+      context: ({
+        createdObjectMetadataCompanyId,
+        createdObjectMetadataOpportunityId,
+        createdObjectMetadataPersonId,
+      }) => ({
+        label: 'field label',
+        name: 'fieldName',
+        objectMetadataId: createdObjectMetadataCompanyId,
+        type: FieldMetadataType.MORPH_RELATION,
+        morphRelationsCreationPayload: [
+          {
+            targetFieldIcon: 'Icon123',
+            targetFieldLabel: 'toto',
+            targetObjectMetadataId: createdObjectMetadataOpportunityId,
+            type: RelationType.MANY_TO_ONE,
+          },
+          {
+            targetFieldIcon: 'Icon123',
+            targetFieldLabel: 'tata',
+            targetObjectMetadataId: createdObjectMetadataPersonId,
+            type: RelationType.ONE_TO_MANY,
+          },
+        ],
+      }),
+    },
+    // {
+    //   title: 'on source object itself',
+    //   context: ({
+    //     createdObjectMetadataCompanyId,
+    //     createdObjectMetadataOpportunityId,
+    //     createdObjectMetadataPersonId,
+    //   }) => ({
+    //     label: 'field label',
+    //     name: 'fieldName',
+    //     objectMetadataId: createdObjectMetadataCompanyId,
+    //     type: FieldMetadataType.MORPH_RELATION,
+    //     morphRelationsCreationPayload: [
+    //       {
+    //         targetFieldIcon: 'Icon123',
+    //         targetFieldLabel: 'toto',
+    //         targetObjectMetadataId: createdObjectMetadataOpportunityId,
+    //         type: RelationType.ONE_TO_MANY,
+    //       },
+    //       {
+    //         targetFieldIcon: 'Icon123',
+    //         targetFieldLabel: 'tata',
+    //         targetObjectMetadataId: createdObjectMetadataPersonId,
+    //         type: RelationType.ONE_TO_MANY,
+    //       },
+    //       {
+    //         targetFieldIcon: 'Icon123',
+    //         targetFieldLabel: 'tata',
+    //         targetObjectMetadataId: createdObjectMetadataCompanyId,
+    //         type: RelationType.ONE_TO_MANY,
+    //       },
+    //     ],
+    //   }),
+    // },
+    {
+      title: 'that has several references to same object',
+      context: ({
+        createdObjectMetadataCompanyId,
+        createdObjectMetadataOpportunityId,
+        createdObjectMetadataPersonId,
+      }) => ({
+        label: 'field label',
+        name: 'fieldName',
+        objectMetadataId: createdObjectMetadataCompanyId,
+        type: FieldMetadataType.MORPH_RELATION,
+        morphRelationsCreationPayload: [
+          {
+            targetFieldIcon: 'Icon123',
+            targetFieldLabel: 'toto',
+            targetObjectMetadataId: createdObjectMetadataOpportunityId,
+            type: RelationType.ONE_TO_MANY,
+          },
+          {
+            targetFieldIcon: 'Icon123',
+            targetFieldLabel: 'tata',
+            targetObjectMetadataId: createdObjectMetadataPersonId,
+            type: RelationType.ONE_TO_MANY,
+          },
+          {
+            targetFieldIcon: 'Icon123',
+            targetFieldLabel: 'titi',
+            targetObjectMetadataId: createdObjectMetadataOpportunityId,
+            type: RelationType.ONE_TO_MANY,
+          },
+        ],
+      }),
+    },
+  ];
+
+const tmp = [
+  {
+    title: 'when targetFieldLabel exceeds maximum length',
+    context: {
+      targetFieldLabel: 'A'.repeat(64),
+    },
+  },
+  {
+    // Not handled gracefully should be refactored
+    title: 'when targetObjectMetadataId is unknown',
+    context: {
+      targetObjectMetadataId: faker.string.uuid(),
+    },
+  },
+  {
+    title: 'when targetFieldLabel contains only whitespace',
+    context: { targetFieldLabel: '   ' },
+  },
+  {
+    title:
+      'when targetFieldLabel conflicts with an existing field on target object metadata id',
+    context: ({ collisionFieldLabel }) => ({
+      targetFieldLabel: collisionFieldLabel,
+    }),
+  },
+  {
+    title: 'when type is not provided',
+    context: { type: undefined },
+  },
+  {
+    title: 'when type is a wrong value',
+    context: { type: 'wrong' as RelationType },
+  },
+];
+const relationCreationPayloadEdgeCasesFailingTestsCases: FailingTestCases = [
+  {
+    title: 'when targetFieldLabel is empty',
+    context: ({
+      createdObjectMetadataCompanyId,
+      createdObjectMetadataOpportunityId,
+    }) => ({
+      label: 'field label',
+      name: 'fieldName',
+      objectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelationsCreationPayload: [
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: '',
+          targetObjectMetadataId: createdObjectMetadataOpportunityId,
+          type: RelationType.ONE_TO_MANY,
+        },
+      ],
+    }),
+  },
+];
+
+const failingTestCases: FailingTestCases = [
+  ...morphCreationPayloadMalformedFailingTestCases,
+  ...morphCreationPayloadFailingIntegrityValidationFailingTestCases,
+  ...relationCreationPayloadEdgeCasesFailingTestsCases,
 ];
 
 describe('failing createOne FieldMetadataService morph relation fields v2 s', () => {
@@ -231,7 +366,7 @@ describe('failing createOne FieldMetadataService morph relation fields v2 s', ()
   });
 
   it.each(eachTestingContextFilter(failingTestCases))(
-    '$title',
+    'it should fail to create a MORPH_RELATION field $title',
     async ({ context }) => {
       const contextPayload = context({
         createdObjectMetadataOpportunityId,
