@@ -12,6 +12,7 @@ import {
   useFindManyAgentsQuery,
   useGetApiKeysQuery,
 } from '~/generated-metadata/graphql';
+import { type ApiKeyForRole } from '~/generated/graphql';
 
 const StyledLoadingContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
@@ -45,15 +46,7 @@ const StyledEmptyState = styled.div`
 
 type EntityType = 'agent' | 'apiKey';
 
-type ApiKeyFragment = {
-  id: string;
-  name: string;
-  expiresAt: string;
-  revokedAt?: string | null;
-  role?: { id: string; label: string; icon?: string | null } | null;
-};
-
-type EntityData = Agent | ApiKeyFragment;
+type EntityData = Agent | ApiKeyForRole;
 
 type SettingsRoleAssignmentEntityPickerDropdownProps = {
   entityType: EntityType;
@@ -74,16 +67,17 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
 
   const loading = entityType === 'agent' ? agentsLoading : apiKeysLoading;
 
-  const entities =
-    (entityType === 'agent'
-      ? agentsData?.findManyAgents
-      : apiKeysData?.apiKeys) || [];
+  const entities = ((entityType === 'agent'
+    ? agentsData?.findManyAgents
+    : apiKeysData?.apiKeys) || []) as EntityData[];
 
   const getFilteredEntities = () => {
     return entities.filter((entity) => {
       const isExcluded = excludedIds.includes(entity.id);
 
-      if (isExcluded) return false;
+      if (isExcluded) {
+        return false;
+      }
 
       if (entityType === 'agent') {
         const agent = entity as Agent;
@@ -92,7 +86,7 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
           agent.label.toLowerCase().includes(searchFilter.toLowerCase())
         );
       } else {
-        const apiKey = entity as EntityData;
+        const apiKey = entity as ApiKeyForRole;
         return apiKey.name.toLowerCase().includes(searchFilter.toLowerCase());
       }
     });
@@ -102,7 +96,7 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
     if (entityType === 'agent') {
       return (entity as Agent).label;
     } else {
-      const apiKey = entity as ApiKeyFragment;
+      const apiKey = entity as ApiKeyForRole;
       return `Expires: ${
         apiKey.expiresAt
           ? new Date(apiKey.expiresAt).toLocaleDateString()
@@ -147,7 +141,7 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
           filteredEntities.map((entity) => (
             <StyledDropdownItem
               key={entity.id}
-              onClick={() => onSelect(entity)}
+              onClick={() => onSelect(entity as EntityData)}
             >
               <StyledItemName>{entity.name}</StyledItemName>
               <StyledItemSubtext>{getEntitySubtext(entity)}</StyledItemSubtext>
