@@ -133,6 +133,8 @@ const InternalTableContextProviders = ({
     }),
   );
 
+  const triggerEvent = 'CLICK';
+
   return (
     <RecordIndexContextProvider
       value={{
@@ -160,6 +162,8 @@ const InternalTableContextProviders = ({
             objectMetadataId: objectMetadataItem.id,
           }),
           visibleRecordFields,
+          onRecordIdentifierClick: () => {},
+          triggerEvent,
         }}
       >
         <RecordTableBodyContextProvider
