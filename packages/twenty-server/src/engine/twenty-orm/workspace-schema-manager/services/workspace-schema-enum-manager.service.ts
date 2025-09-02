@@ -237,8 +237,6 @@ export class WorkspaceSchemaEnumManagerService {
         }
       }
       throw error;
-    } finally {
-      await queryRunner.release();
     }
   }
 
