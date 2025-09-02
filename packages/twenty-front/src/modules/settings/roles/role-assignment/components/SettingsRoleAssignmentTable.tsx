@@ -13,11 +13,7 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { H2Title, IconSearch } from 'twenty-ui/display';
-import {
-  type Agent,
-  type ApiKey,
-  type WorkspaceMember,
-} from '~/generated-metadata/graphql';
+import { type Agent, type WorkspaceMember } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
 
 const StyledTable = styled.div`
@@ -89,42 +85,39 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
 
   const roleTargets = tableConfig[roleTargetType].roleTargets;
 
+  const getSearchableFields = (
+    roleTarget: WorkspaceMember | Agent | ApiKeyForRole,
+  ): string[] => {
+    switch (roleTargetType) {
+      case 'member': {
+        const member = roleTarget as WorkspaceMember;
+        return [
+          member.name.firstName?.toLowerCase() || '',
+          member.name.lastName?.toLowerCase() || '',
+          member.userEmail?.toLowerCase() || '',
+        ];
+      }
+      case 'agent': {
+        const agent = roleTarget as Agent;
+        return [
+          agent.name?.toLowerCase() || '',
+          agent.label?.toLowerCase() || '',
+          agent.description?.toLowerCase() || '',
+        ];
+      }
+      case 'apiKey': {
+        const apiKey = roleTarget as ApiKeyForRole;
+        return [apiKey.name?.toLowerCase() || ''];
+      }
+    }
+  };
+
   const filteredRoleTargets = !searchFilter
     ? roleTargets
     : roleTargets.filter((roleTarget) => {
         const searchTerm = searchFilter.toLowerCase();
-
-        if (roleTargetType === 'member') {
-          const member = roleTarget as WorkspaceMember;
-          const firstName = member.name.firstName?.toLowerCase() || '';
-          const lastName = member.name.lastName?.toLowerCase() || '';
-          const email = member.userEmail?.toLowerCase() || '';
-          return (
-            firstName.includes(searchTerm) ||
-            lastName.includes(searchTerm) ||
-            email.includes(searchTerm)
-          );
-        }
-
-        if (roleTargetType === 'agent') {
-          const agent = roleTarget as Agent;
-          const name = agent.name?.toLowerCase() || '';
-          const label = agent.label?.toLowerCase() || '';
-          const description = agent.description?.toLowerCase() || '';
-          return (
-            name.includes(searchTerm) ||
-            label.includes(searchTerm) ||
-            description.includes(searchTerm)
-          );
-        }
-
-        if (roleTargetType === 'apiKey') {
-          const apiKey = roleTarget as ApiKey;
-          const name = apiKey.name?.toLowerCase() || '';
-          return name.includes(searchTerm);
-        }
-
-        return false;
+        const searchableFields = getSearchableFields(roleTarget);
+        return searchableFields.some((field) => field.includes(searchTerm));
       });
 
   const createRoleTarget = (
