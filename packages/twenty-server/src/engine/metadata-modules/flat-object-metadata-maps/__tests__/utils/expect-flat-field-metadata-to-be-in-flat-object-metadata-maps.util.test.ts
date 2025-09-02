@@ -21,10 +21,7 @@ export const expectFlatFieldMetadataToBeInFlatObjectMetadataMaps = ({
   jestExpectToBeDefined(matchingFlatObjectMetadata);
 
   if (
-    isFlatFieldMetadataOfType(
-      flatFieldMetadata,
-      FieldMetadataType.RELATION,
-    ) &&
+    isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.RELATION) &&
     isDefined(flatFieldMetadata.settings.joinColumnName)
   ) {
     expect(

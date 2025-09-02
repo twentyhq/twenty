@@ -182,18 +182,12 @@ export const generateColumnDefinitions = ({
   }
 
   if (
-    isFlatFieldMetadataOfType(
-      flatFieldMetadata,
-      FieldMetadataType.TS_VECTOR,
-    )
+    isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.TS_VECTOR)
   ) {
     return [generateTsVectorColumnDefinition(flatFieldMetadata)];
   }
 
-  if (
-     isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)
-
-  ) {
+  if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
     const relationColumn = generateRelationColumnDefinition(flatFieldMetadata);
 
     return relationColumn ? [relationColumn] : [];

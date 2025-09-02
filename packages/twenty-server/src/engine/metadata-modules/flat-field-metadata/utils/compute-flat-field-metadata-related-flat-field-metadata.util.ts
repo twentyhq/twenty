@@ -14,10 +14,7 @@ export const computeFlatFieldMetadataRelatedFlatFieldMetadata = ({
   flatObjectMetadataMaps: FlatObjectMetadataMaps;
 }): FlatFieldMetadata[] => {
   if (
-    isFlatFieldMetadataOfType(
-      flatFieldMetadata,
-      FieldMetadataType.RELATION,
-    )
+    isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.RELATION)
   ) {
     return [
       findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
