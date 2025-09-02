@@ -139,6 +139,10 @@ export class PageLayoutService {
 
   async restore(id: string, workspaceId: string): Promise<PageLayoutEntity> {
     const pageLayout = await this.pageLayoutRepository.findOne({
+      select: {
+        id: true,
+        deletedAt: true,
+      },
       where: {
         id,
         workspaceId,
