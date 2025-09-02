@@ -17,11 +17,6 @@ import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMe
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
 import { ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
-import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
-import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/view-filter-group.service';
-import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
-import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
-import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/core-modules/view/utils/view-graphql-api-exception.filter';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -36,11 +31,6 @@ import { resolveObjectMetadataStandardOverride } from 'src/engine/metadata-modul
 export class ViewResolver {
   constructor(
     private readonly viewService: ViewService,
-    private readonly viewFieldService: ViewFieldService,
-    private readonly viewFilterService: ViewFilterService,
-    private readonly viewFilterGroupService: ViewFilterGroupService,
-    private readonly viewGroupService: ViewGroupService,
-    private readonly viewSortService: ViewSortService,
     private readonly i18nService: I18nService,
   ) {}
 
