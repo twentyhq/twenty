@@ -110,8 +110,6 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
             }),
         ),
       );
-    } catch (e) {
-      throw e;
     } finally {
       await updateFeatureFlag({
         expectToFail: false,
