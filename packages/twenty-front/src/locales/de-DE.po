@@ -1262,10 +1262,10 @@ msgstr "Einklappen"
 msgid "Color code"
 msgstr "Farbcode"
 
-#. js-lingui-id: 41xV/k
+#. js-lingui-id: P8gRog
 #: src/modules/spreadsheet-import/utils/setColumn.ts
-msgid "column data is not compatible with Multi-Select."
-msgstr "Spaltendaten sind nicht mit Mehrfachauswahl kompatibel."
+msgid "column data is not compatible with Multi-Select. Format required is '[\"option1\", \"option2\"]' or option1,option2."
+msgstr ""
 
 #. js-lingui-id: 93hd3e
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
