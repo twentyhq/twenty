@@ -228,7 +228,7 @@ export class WorkspaceSchemaEnumManagerService {
         await queryRunner.commitTransaction();
       }
     } catch (error) {
-      if (queryRunner.isTransactionActive) {
+      if (!isTransactionAlreadyActive) {
         try {
           await queryRunner.rollbackTransaction();
         } catch (error) {
