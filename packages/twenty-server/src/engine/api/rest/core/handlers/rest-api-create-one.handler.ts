@@ -5,9 +5,12 @@ import {
 } from '@nestjs/common';
 
 import { type Request } from 'express';
+import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
+
+import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 
 @Injectable()
 export class RestApiCreateOneHandler extends RestApiBaseHandler {
@@ -39,7 +42,24 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
         this.getAuthContextFromRequest(request),
       );
 
-    const createdRecordResult = await repository.insert(recordToCreate);
+    let selectedColumns = undefined;
+
+    if (!isEmpty(restrictedFields)) {
+      const selectableFields = getAllSelectableFields({
+        restrictedFields,
+        objectMetadata,
+      });
+
+      selectedColumns = Object.keys(selectableFields).filter(
+        (key) => selectableFields[key],
+      );
+    }
+
+    const createdRecordResult = await repository.insert(
+      recordToCreate,
+      undefined,
+      selectedColumns,
+    );
     const createdRecord = createdRecordResult.identifiers[0];
 
     const records = await this.getRecord({
