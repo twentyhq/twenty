@@ -2,7 +2,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
 import { type ViewFilterOperand as SharedViewFilterOperand } from 'twenty-shared/types';
-import { DataSource, Repository, type QueryRunner } from 'typeorm';
+import { DataSource, In, Repository, type QueryRunner } from 'typeorm';
 
 import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
@@ -22,8 +22,10 @@ import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-r
 import { type ViewSortDirection } from 'src/engine/core-modules/view/enums/view-sort-direction';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { type ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
+import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 import { type ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 import { type ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 import { type ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
@@ -128,7 +130,38 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
       withDeleted: true,
     });
 
-    if (workspaceViews.length === 0) {
+    const {
+      corruptedViewIds,
+      corruptedViewFieldIds,
+      corruptedViewFilterIds,
+      corruptedViewSortIds,
+      corruptedViewGroupIds,
+    } = await this.fetchAndDeleteCorruptedViewResources(
+      workspaceId,
+      workspaceViews,
+      queryRunner,
+      dryRun,
+    );
+
+    const workspaceViewWithoutOrphansResources = workspaceViews
+      .filter((view) => !corruptedViewIds.includes(view.id))
+      .map((view) => ({
+        ...view,
+        viewFields: view.viewFields.filter(
+          (viewField) => !corruptedViewFieldIds.includes(viewField.id),
+        ),
+        viewFilters: view.viewFilters.filter(
+          (viewFilter) => !corruptedViewFilterIds.includes(viewFilter.id),
+        ),
+        viewSorts: view.viewSorts.filter(
+          (viewSort) => !corruptedViewSortIds.includes(viewSort.id),
+        ),
+        viewGroups: view.viewGroups.filter(
+          (viewGroup) => !corruptedViewGroupIds.includes(viewGroup.id),
+        ),
+      }));
+
+    if (workspaceViewWithoutOrphansResources.length === 0) {
       this.logger.log(`No views to migrate for workspace ${workspaceId}`);
 
       return;
@@ -139,7 +172,7 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     );
 
     if (dryRun) {
-      for (const view of workspaceViews) {
+      for (const view of workspaceViewWithoutOrphansResources) {
         const deletedStatus = view.deletedAt ? ' (DELETED)' : '';
 
         this.logger.log(
@@ -152,12 +185,20 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
 
     await this.deleteExistingCoreViewObjects(workspaceId, queryRunner, dryRun);
 
-    for (const workspaceView of workspaceViews) {
+    for (const workspaceView of workspaceViewWithoutOrphansResources) {
       await this.migrateViewEntity(workspaceView, workspaceId, queryRunner);
 
       if (workspaceView.viewFields?.length > 0) {
         await this.migrateViewFields(
           workspaceView.viewFields,
+          workspaceId,
+          queryRunner,
+        );
+      }
+
+      if (workspaceView.viewFilterGroups?.length > 0) {
+        await this.migrateViewFilterGroups(
+          workspaceView.viewFilterGroups,
           workspaceId,
           queryRunner,
         );
@@ -187,20 +228,208 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
         );
       }
 
-      if (workspaceView.viewFilterGroups?.length > 0) {
-        await this.migrateViewFilterGroups(
-          workspaceView.viewFilterGroups,
-          workspaceId,
-          queryRunner,
-        );
-      }
-
       const deletedStatus = workspaceView.deletedAt ? ' (DELETED)' : '';
 
       this.logger.log(
         `Migrated view ${workspaceView.id} (${workspaceView.name})${deletedStatus} to core schema`,
       );
     }
+  }
+
+  private async fetchAndDeleteCorruptedViewResources(
+    workspaceId: string,
+    views: ViewWorkspaceEntity[],
+    queryRunner: QueryRunner,
+    dryRun: boolean,
+  ): Promise<{
+    corruptedViewIds: string[];
+    corruptedViewFieldIds: string[];
+    corruptedViewFilterIds: string[];
+    corruptedViewSortIds: string[];
+    corruptedViewGroupIds: string[];
+  }> {
+    const fieldMetadataIdsUsedInViewFields = views
+      .flatMap((view) => view.viewFields)
+      .map((viewField) => viewField.fieldMetadataId);
+
+    const fieldMetadataIdsUsedInViewFilters = views
+      .flatMap((view) => view.viewFilters)
+      .map((viewFilter) => viewFilter.fieldMetadataId);
+
+    const fieldMetadataIdsUsedInViewSorts = views
+      .flatMap((view) => view.viewSorts)
+      .map((viewSort) => viewSort.fieldMetadataId);
+
+    const fieldMetadataIdsUsedInViewGroups = views
+      .flatMap((view) => view.viewGroups)
+      .map((viewGroup) => viewGroup.fieldMetadataId);
+
+    const fieldMetadataIds = [
+      ...fieldMetadataIdsUsedInViewFields,
+      ...fieldMetadataIdsUsedInViewFilters,
+      ...fieldMetadataIdsUsedInViewSorts,
+      ...fieldMetadataIdsUsedInViewGroups,
+    ];
+
+    const fieldMetadataRepository =
+      queryRunner.manager.getRepository(FieldMetadataEntity);
+    const fieldMetadataItems = await fieldMetadataRepository.find({
+      where: {
+        id: In(fieldMetadataIds),
+      },
+    });
+
+    const existingFieldMetadataIds = fieldMetadataItems.map(
+      (fieldMetadata) => fieldMetadata.id,
+    );
+
+    const corruptedViewFieldIds = views
+      .flatMap((view) => view.viewFields)
+      .filter(
+        (viewField) =>
+          !existingFieldMetadataIds.includes(viewField.fieldMetadataId) ||
+          viewField.position === null,
+      )
+      .map((viewField) => viewField.id);
+
+    const corruptedViewFilterIds = views
+      .flatMap((view) => view.viewFilters)
+      .filter(
+        (viewFilter) =>
+          !existingFieldMetadataIds.includes(viewFilter.fieldMetadataId),
+      )
+      .map((viewFilter) => viewFilter.id);
+
+    const corruptedViewSortIds = views
+      .flatMap((view) => view.viewSorts)
+      .filter(
+        (viewSort) =>
+          !existingFieldMetadataIds.includes(viewSort.fieldMetadataId),
+      )
+      .map((viewSort) => viewSort.id);
+
+    const corruptedViewGroupIds = views
+      .flatMap((view) => view.viewGroups)
+      .filter(
+        (viewGroup) =>
+          !existingFieldMetadataIds.includes(viewGroup.fieldMetadataId),
+      )
+      .map((viewGroup) => viewGroup.id);
+
+    const workspaceViewFieldRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewFieldWorkspaceEntity>(
+        workspaceId,
+        'viewField',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    if (!dryRun) {
+      await workspaceViewFieldRepository.delete({
+        id: In(corruptedViewFieldIds),
+      });
+    }
+
+    this.logger.log(
+      `Deleted ${corruptedViewFieldIds.length} out of ${views.flatMap((view) => view.viewFields).length} view fields that have no corresponding field metadata for workspace ${workspaceId}`,
+    );
+
+    const workspaceViewFilterRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewFilterWorkspaceEntity>(
+        workspaceId,
+        'viewFilter',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    if (!dryRun) {
+      await workspaceViewFilterRepository.delete({
+        id: In(corruptedViewFilterIds),
+      });
+    }
+
+    this.logger.log(
+      `Deleted ${corruptedViewFilterIds.length} out of ${views.flatMap((view) => view.viewFilters).length} view filters that have no corresponding field metadata for workspace ${workspaceId}`,
+    );
+
+    const workspaceViewSortRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewSortWorkspaceEntity>(
+        workspaceId,
+        'viewSort',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    if (!dryRun) {
+      await workspaceViewSortRepository.delete({
+        id: In(corruptedViewSortIds),
+      });
+    }
+
+    this.logger.log(
+      `Deleted ${corruptedViewSortIds.length} out of ${views.flatMap((view) => view.viewSorts).length} view sorts that have no corresponding field metadata for workspace ${workspaceId}`,
+    );
+
+    const workspaceViewGroupRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewGroupWorkspaceEntity>(
+        workspaceId,
+        'viewGroup',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    if (!dryRun) {
+      await workspaceViewGroupRepository.delete({
+        id: In(corruptedViewGroupIds),
+      });
+    }
+
+    this.logger.log(
+      `Deleted ${corruptedViewGroupIds.length} out of ${views.flatMap((view) => view.viewGroups).length} view groups that have no corresponding field metadata for workspace ${workspaceId}`,
+    );
+
+    const objectMetadataIdsUsedInViews = views.map(
+      (view) => view.objectMetadataId,
+    );
+
+    const objectMetadataRepository =
+      queryRunner.manager.getRepository(ObjectMetadataEntity);
+    const objectMetadataItems = await objectMetadataRepository.find({
+      where: {
+        id: In(objectMetadataIdsUsedInViews),
+      },
+    });
+
+    const existingObjectMetadataIds = objectMetadataItems.map(
+      (objectMetadata) => objectMetadata.id,
+    );
+
+    const corruptedViewIds = views
+      .filter(
+        (view) => !existingObjectMetadataIds.includes(view.objectMetadataId),
+      )
+      .map((view) => view.id);
+
+    const workspaceViewRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
+        workspaceId,
+        'view',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    if (!dryRun) {
+      await workspaceViewRepository.delete({
+        id: In(corruptedViewIds),
+      });
+    }
+
+    this.logger.log(
+      `Deleted ${corruptedViewIds.length} out of ${views.length} views that have no corresponding object metadata for workspace ${workspaceId}`,
+    );
+
+    return {
+      corruptedViewIds,
+      corruptedViewFieldIds,
+      corruptedViewFilterIds,
+      corruptedViewSortIds,
+      corruptedViewGroupIds,
+    };
   }
 
   private async deleteExistingCoreViewObjects(
@@ -415,7 +644,10 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
     workspaceId: string,
     queryRunner: QueryRunner,
   ): Promise<void> {
-    for (const filterGroup of workspaceViewFilterGroups) {
+    for (const filterGroup of workspaceViewFilterGroups.sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    )) {
       const coreViewFilterGroup: Partial<ViewFilterGroupEntity> = {
         id: filterGroup.id,
         viewId: filterGroup.viewId,

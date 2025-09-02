@@ -19,6 +19,6 @@ export const fromRoleEntityToFlatRole = (role: RoleEntity): FlatRole => {
     canBeAssignedToAgents: role.canBeAssignedToAgents,
     canBeAssignedToApiKeys: role.canBeAssignedToApiKeys,
     workspaceId: role.workspaceId,
-    uniqueIdentifier: role.standardId || role.id,
+    universalIdentifier: role.standardId || role.id,
   };
 };

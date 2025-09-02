@@ -6,6 +6,9 @@ import { ViewFilterGroupLogicalOperator } from 'src/engine/core-modules/view/enu
 @InputType()
 export class CreateViewFilterGroupInput {
   @Field(() => UUIDScalarType, { nullable: true })
+  id?: string;
+
+  @Field(() => UUIDScalarType, { nullable: true })
   parentViewFilterGroupId?: string;
 
   @Field(() => ViewFilterGroupLogicalOperator, {

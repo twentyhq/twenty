@@ -56,12 +56,7 @@ msgstr "{fieldName} ve {fieldName}Id aynı anda sağlanamaz."
 #. js-lingui-id: ZkHTHm
 #: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
 msgid "{fieldType} fields cannot be unique."
-msgstr ""
-
-#. js-lingui-id: wapGcj
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
-msgid "{message}"
-msgstr ""
+msgstr "{fieldType} alanları benzersiz olamaz."
 
 #. js-lingui-id: 8haj+G
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
@@ -81,7 +76,7 @@ msgstr "Bağlı bir hesap"
 #. js-lingui-id: cOSBjW
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "A dashboard"
-msgstr ""
+msgstr "Bir gösterge paneli"
 
 #. js-lingui-id: HCoswz
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -193,13 +188,13 @@ msgstr "Şifreyi sıfırlamak için eylem gerekli"
 #. js-lingui-id: 52fA3U
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Active fields cannot be deleted"
-msgstr ""
+msgstr "Aktif alanlar silinemez"
 
 #. js-lingui-id: 0N5kF6
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Active objects cannot be deleted"
-msgstr ""
+msgstr "Aktif nesneler silinemez"
 
 #. js-lingui-id: Du6bPw
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -244,7 +239,7 @@ msgstr "Zaman çizelgesinde gösterilecek toplanmış/filtrelenmiş olay"
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
 msgid "All {objectLabelPlural}"
-msgstr ""
+msgstr "Tüm {objectLabelPlural}"
 
 #. js-lingui-id: hehnjM
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -303,7 +298,7 @@ msgstr "Atanan görevler"
 #. js-lingui-id: kZ7PLo
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me.ts
 msgid "Assigned to Me"
-msgstr ""
+msgstr "Bana Atanan"
 
 #. js-lingui-id: ojKCLU
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -314,6 +309,11 @@ msgstr "Atanan kişi"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "İlişkilendirilmiş Kullanıcı Id"
+
+#. js-lingui-id: K9efby
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "At least one relation is require"
+msgstr "En az bir ilişki gerekli"
 
 #. js-lingui-id: UY1vmE
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -479,12 +479,12 @@ msgstr "İçerik"
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
 msgid "By Stage"
-msgstr ""
+msgstr "Aşamaya Göre"
 
 #. js-lingui-id: jQX8V+
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view.ts
 msgid "By Status"
-msgstr ""
+msgstr "Duruma Göre"
 
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -552,7 +552,7 @@ msgstr "Takvim etkinlikleri"
 #. js-lingui-id: eSaCR/
 #: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
 msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
-msgstr ""
+msgstr "{connectFieldName} ile bağlantı yapılamıyor. Koşula uygun benzersiz bir kayıt bulunamadı: {formattedConnectCondition}"
 
 #. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -583,18 +583,17 @@ msgstr "Aktif olmayan iş akışı sürümü devre dışı bırakılamaz."
 #. js-lingui-id: otFZos
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
-msgstr ""
+msgstr "Mevcut yinelenen değerler nedeniyle benzersizlik etkinleştirilemiyor. Lütfen öncelikle verilerinizi (soft silinmiş kayıtlar dahil) gözden geçirip düzeltin."
 
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
 msgstr "Birden fazla aktif iş akışı sürümü olamaz."
 
-#. js-lingui-id: TkG4aS
-#. placeholder {0}: invalidUpdatedProperties.join(', ')
+#. js-lingui-id: UcdPY5
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
-msgid "Cannot update standard field properties: {0}"
-msgstr ""
+msgid "Cannot update standard field properties: {invalidProperties}"
+msgstr "Standart alan özellikleri güncellenemez: {invalidProperties}"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -755,7 +754,7 @@ msgstr "Oluşturan"
 #. js-lingui-id: 2ZhYYy
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util.ts
 msgid "Created field metadata, parent object metadata not found"
-msgstr ""
+msgstr "Alan metadatası oluşturuldu, üst nesne metadatası bulunamadı"
 
 #. js-lingui-id: wPvFAD
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -784,22 +783,22 @@ msgstr "Özel Bağlantı Parametreleri"
 #. js-lingui-id: 7p5kLi
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard"
-msgstr ""
+msgstr "Gösterge Paneli"
 
 #. js-lingui-id: Lddz0a
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard page layout"
-msgstr ""
+msgstr "Gösterge paneli sayfa düzeni"
 
 #. js-lingui-id: xGgnPh
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard title"
-msgstr ""
+msgstr "Pano başlığı"
 
 #. js-lingui-id: w6iIMm
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboards"
-msgstr ""
+msgstr "Panolar"
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -811,10 +810,25 @@ msgstr "Tarih formatı"
 msgid "Date when the record was deleted"
 msgstr "Kaydın silindiği tarih"
 
+#. js-lingui-id: GGNmm+
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default value \"{defaultValue}\" must be one of the option values"
+msgstr "Varsayılan değer \"{defaultValue}\", seçenek değerlerinden biri olmalıdır"
+
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value must be a string"
-msgstr ""
+msgstr "Varsayılan değer bir dize olmalıdır"
+
+#. js-lingui-id: sv9P4Q
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default value should be as quoted string"
+msgstr "Varsayılan değer, tırnak içine alınmış bir dize olmalıdır"
+
+#. js-lingui-id: 6pJV03
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default values must be unique"
+msgstr "Varsayılan değerler benzersiz olmalıdır"
 
 #. js-lingui-id: QN9ahV
 #: src/engine/twenty-orm/base.workspace-entity.ts
@@ -869,7 +883,7 @@ msgstr "Bitiş Tarihi"
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
-msgstr ""
+msgstr "Çift seçenek {field}"
 
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -912,7 +926,7 @@ msgstr "Bitiş Tarihi"
 #. js-lingui-id: hcogQc
 #: src/engine/core-modules/domain-manager/validator/cloudflare.validate.ts
 msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
-msgstr ""
+msgstr "Bu özelliği kullanmak için CLOUDFLARE_API_KEY ortam değişkeni tanımlanmalıdır."
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1027,6 +1041,12 @@ msgstr "Tarafından yürütüldü"
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
 msgstr "{connectFieldName} için tüm işlemlerde aynı kısıtlama alanlarının tutarlı bir şekilde kullanılması beklenir."
+
+#. js-lingui-id: 5KfWxA
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "External ID"
+msgstr ""
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1173,22 +1193,22 @@ msgstr "<b>{label}</b> ile Bağlantılı Favoriler"
 #. js-lingui-id: vngnhF
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Field already exists"
-msgstr ""
+msgstr "Alan zaten mevcut"
 
 #. js-lingui-id: Hg95ys
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field cannot be used as label identifier"
-msgstr ""
+msgstr "Alan, etiket tanımlayıcısı olarak kullanılamaz"
 
 #. js-lingui-id: F6OLoA
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field declared as image identifier not found"
-msgstr ""
+msgstr "Görüntü tanımlayıcısı olarak ilan edilen alan bulunamadı"
 
 #. js-lingui-id: 75hHpn
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field declared as label identifier not found"
-msgstr ""
+msgstr "Etiket tanımlayıcı olarak ilan edilen alan bulunamadı"
 
 #. js-lingui-id: nSFFML
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -1201,12 +1221,12 @@ msgstr "Alan Metadata Id"
 #. js-lingui-id: Ljqo/T
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Field metadata to update not found"
-msgstr ""
+msgstr "Güncellenecek alan metadatası bulunamadı"
 
 #. js-lingui-id: p3kNMz
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Field metadata to update object metadata not found"
-msgstr ""
+msgstr "Güncellenecek nesne metadatası bulunamadı"
 
 #. js-lingui-id: g+t8w9
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1217,17 +1237,17 @@ msgstr "Toplu İşlem için Kullanılan Alan Metadata"
 #. js-lingui-id: prTOhK
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Field name is not synced with field label"
-msgstr ""
+msgstr "Alan ismi, alan etiketiyle senkronize değil"
 
 #. js-lingui-id: cK8ILP
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Field to create related object not found"
-msgstr ""
+msgstr "İlişkili nesne oluşturulacak alan bulunamadı"
 
 #. js-lingui-id: K6qzz4
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Field to update not found"
-msgstr ""
+msgstr "Güncellenecek alan bulunamadı"
 
 #. js-lingui-id: J4hC2m
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts
@@ -1239,30 +1259,35 @@ msgstr "Tam Metin Araması için Kullanılan Alan"
 msgid "Field Value"
 msgstr "Alan Değeri"
 
+#. js-lingui-id: s3HtdT
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "FieldMetadataId is required"
+msgstr "FieldMetadataId gereklidir"
+
 #. js-lingui-id: Sof2+k
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
-msgstr ""
+msgstr "Bir görünüm alanı oluşturmak için AlanMetaVeriKimliği gereklidir."
 
 #. js-lingui-id: NTyTR5
 #: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "FieldMetadataId is required to create a view filter group."
-msgstr ""
+msgstr "Bir görünüm filtre grubu oluşturmak için AlanMetaVeriKimliği gereklidir."
 
 #. js-lingui-id: Ya6oU7
 #: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "FieldMetadataId is required to create a view filter."
-msgstr ""
+msgstr "Bir görünüm filtresi oluşturmak için AlanMetaVeriKimliği gereklidir."
 
 #. js-lingui-id: DU4jcg
 #: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "FieldMetadataId is required to create a view group."
-msgstr ""
+msgstr "Bir görünüm grubu oluşturmak için AlanMetaVeriKimliği gereklidir."
 
 #. js-lingui-id: snEXuU
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required to create a view sort."
-msgstr ""
+msgstr "Bir görünüm sıralaması oluşturmak için AlanMetaVeriKimliği gereklidir."
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1277,7 +1302,7 @@ msgstr "Klasör İsmi"
 #. js-lingui-id: eWmJYU
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Forbidden updated properties for relation field metadata"
-msgstr ""
+msgstr "İlişki alan metadatası için yasaklanmış güncellenmiş özellikler"
 
 #. js-lingui-id: kuN9I4
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
@@ -1361,6 +1386,11 @@ msgstr "Kimlik"
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "Ideal Müşteri Profili: Şirketin sizin için en uygun ve değerli müşteri olup olmadığını gösterir"
 
+#. js-lingui-id: YcVn4w
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "If defined default value must contain at least one value"
+msgstr "Tanımlanmışsa, varsayılan değer en az bir değer içermelidir"
+
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
 msgid "Input is too short: \"{name}\""
@@ -1414,10 +1444,15 @@ msgstr "Geçersiz dakika değeri. 0 ile 59 arasında bir tamsayı olmalıdır"
 msgid "Invalid minute value. Should be integer greater than 1"
 msgstr "Geçersiz dakika değeri. 1'den büyük bir tamsayı olmalıdır"
 
+#. js-lingui-id: sDfyvM
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Invalid morph relation input"
+msgstr "Geçersiz morph ilişki girişi"
+
 #. js-lingui-id: AXZsy/
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
 msgid "Invalid relation creation payload"
-msgstr ""
+msgstr "Geçersiz ilişki oluşturma yükü"
 
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1430,14 +1465,24 @@ msgid "Invalid trigger type for enabling workflow trigger"
 msgstr "İş akışı tetikleyicisini etkinleştirmek için geçersiz tetikleyici türü"
 
 #. js-lingui-id: 1Iyic0
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid uuid {id}"
-msgstr ""
+msgstr "Geçersiz UUID {id}"
 
 #. js-lingui-id: VEKoJx
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "Geçersiz doğrulama kodu. Lütfen tekrar deneyin."
+
+#. js-lingui-id: 8xkULN
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "Invalid view sort data"
+msgstr "Geçersiz görünüm sıralama verisi"
+
+#. js-lingui-id: I0OzaR
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "Invalid view sort data for view sort id: {id}"
+msgstr "Görünüm sıralama id'si için geçersiz sıralama verisi: {id}"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1465,6 +1510,12 @@ msgstr "Tüm Gün"
 msgid "Is Organizer"
 msgstr "Organizatör mü"
 
+#. js-lingui-id: VrHWrH
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Is Sent Folder"
+msgstr ""
+
 #. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1472,6 +1523,12 @@ msgstr "Organizatör mü"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Is Sync Enabled"
 msgstr "Senkronizasyon Etkin"
+
+#. js-lingui-id: BHCUSr
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Is Synced"
+msgstr ""
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1772,15 +1829,25 @@ msgstr "Mesaj sağlayıcı yenileme tokeni"
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "Gerekli alanlar eksik: '{connectFieldName}' için en az bir benzersiz kısıtlamanın tam olarak doldurulması gerekir."
 
+#. js-lingui-id: FqzlX4
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must have the same relation type"
+msgstr "Morph ilişki oluşturma taşıyıcılarının aynı ilişki türüne sahip olması gerekir"
+
+#. js-lingui-id: Z/Awgf
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to the same object metadata"
+msgstr "Morph ilişki oluşturma taşıyıcıları yalnızca aynı nesne meta verilerine sahip ilişki içermelidir"
+
 #. js-lingui-id: DsdcRG
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Morph relation fields are disabled for your workspace"
-msgstr ""
+msgstr "Çalışma alanınız için morf ilişki alanları devre dışı bırakıldı"
 
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
-msgstr ""
+msgstr "Çoklu seçim alanı varsayılan değeri bir dizi olmalıdır"
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1807,12 +1874,12 @@ msgstr "İlişkinin her iki tarafında da Ad \"{computedMetadataNameFromLabel}\"
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
-msgstr ""
+msgstr "İsim \"{name}\" mevcut değil"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr ""
+msgstr "İsim \"{name}\" başka bir alan tarafından kullanıldığından mevcut değil"
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -1822,12 +1889,12 @@ msgstr "İsim mevcut değil, başka bir alanın ismi ile çakışıyor olabilir.
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
-msgstr ""
+msgstr "\"\" ismi geçerli değil: küçük harfle başlamalı ve yalnızca alfanümerik harfler içermelidir"
 
 #. js-lingui-id: zjh2SJ
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is too long"
-msgstr ""
+msgstr "İsim çok uzun"
 
 #. js-lingui-id: 0MobB1
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils.ts
@@ -1837,7 +1904,7 @@ msgstr "İsim çok uzun: 63 karakter sınırını aşıyor."
 #. js-lingui-id: go/Vg1
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is too short"
-msgstr ""
+msgstr "İsim çok kısa"
 
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -1852,13 +1919,13 @@ msgstr "İş Akışı çalışmasının adı"
 #. js-lingui-id: P+jdmX
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name should be in camelCase"
-msgstr ""
+msgstr "İsim camelCase olmalı"
 
 #. js-lingui-id: Dr0xtb
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Names are not synced with labels"
-msgstr ""
+msgstr "İsimler, etiketlerle senkronize değil"
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2002,12 +2069,12 @@ msgstr "Nesne zaten mevcut"
 #. js-lingui-id: wLX74t
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "Object label is too long"
-msgstr ""
+msgstr "Nesne etiketi çok uzun"
 
 #. js-lingui-id: nmhjwk
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "Object label is too short"
-msgstr ""
+msgstr "Nesne etiketi çok kısa"
 
 #. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2017,50 +2084,50 @@ msgstr "Nesne Metaveri Kimliği"
 #. js-lingui-id: lG0Qqm
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Object related to field to delete not found"
-msgstr ""
+msgstr "Silinecek alana ilişkin nesne bulunamadı"
 
 #. js-lingui-id: E8vJ0A
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Object related to field to update not found"
-msgstr ""
+msgstr "Güncellenecek alana ilişkin nesne bulunamadı"
 
 #. js-lingui-id: MnOwTp
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Object related to updated field does not have a label identifier"
-msgstr ""
+msgstr "Güncellenen alana ilişkin nesnenin etiket tanımlayıcısı yok"
 
 #. js-lingui-id: 6unt40
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
 msgid "Object targeted by field to create not found"
-msgstr ""
+msgstr "Oluşturulacak alana hedeflenen nesne bulunamadı"
 
 #. js-lingui-id: KHK54G
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Object targeted by the relation not found"
-msgstr ""
+msgstr "İlişkiye hedeflenen nesne bulunamadı"
 
 #. js-lingui-id: bMeJkW
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Object to delete not found"
-msgstr ""
+msgstr "Silinecek nesne bulunamadı"
 
 #. js-lingui-id: pQ5dZU
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Object to update not found"
-msgstr ""
+msgstr "Güncellenecek nesne bulunamadı"
 
 #. js-lingui-id: cdjRFZ
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Object with same id already exists"
-msgstr ""
+msgstr "Aynı ID'ye sahip nesne zaten mevcut"
 
 #. js-lingui-id: 53pIyA
 #: src/engine/core-modules/view/exceptions/view.exception.ts
 msgid "ObjectMetadataId is required to create a view."
-msgstr ""
+msgstr "Bir görünüm oluşturmak için ObjeMetaVeriKimliği gereklidir."
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2132,12 +2199,12 @@ msgstr "Fırsat aşaması"
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is invalid"
-msgstr ""
+msgstr "Seçenek kimliği geçersiz"
 
 #. js-lingui-id: MniXaX
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is required"
-msgstr ""
+msgstr "Seçenek kimliği gerekli"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2154,7 +2221,7 @@ msgstr "Seçenek etiketi 63 karakteri aşıyor"
 #. js-lingui-id: h8lHqX
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label format not supported"
-msgstr ""
+msgstr "Seçenek etiket formatı desteklenmiyor"
 
 #. js-lingui-id: +E9N4m
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2166,7 +2233,7 @@ msgstr "Seçenek etiketi gerekli"
 #. js-lingui-id: dFudyC
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label must be a string of at least one character"
-msgstr ""
+msgstr "Seçenek etiketi en az bir karakter uzunluğunda bir dize olmalıdır"
 
 #. js-lingui-id: nQqNzE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2183,7 +2250,7 @@ msgstr "Seçenek değeri 63 karakteri aşıyor"
 #. js-lingui-id: zEGChV
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value format not supported"
-msgstr ""
+msgstr "Seçenek değeri formatı desteklenmiyor"
 
 #. js-lingui-id: /wsRPd
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2195,7 +2262,7 @@ msgstr "Seçenek değeri gerekli"
 #. js-lingui-id: Kub9t0
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value must be a string of at least one character"
-msgstr ""
+msgstr "Seçenek değeri en az bir karakter uzunluğunda bir dize olmalıdır"
 
 #. js-lingui-id: eLggyd
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2206,12 +2273,12 @@ msgstr "İsteğe bağlı toplu işlem"
 #. js-lingui-id: EabrTR
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Options are required for enum fields"
-msgstr ""
+msgstr "Enum alanlar için seçenekler gereklidir"
 
 #. js-lingui-id: AODALE
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Page Layout ID"
-msgstr ""
+msgstr "Sayfa Düzeni Kimliği"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
@@ -2371,14 +2438,15 @@ msgid "Related user email address"
 msgstr "İlgili kullanıcı e-posta adresi"
 
 #. js-lingui-id: +bFtT5
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util.ts
 msgid "Relation creation payload is required"
-msgstr ""
+msgstr "İlişki oluşturma yükü gereklidir"
 
 #. js-lingui-id: 5y41wK
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Relation field target metadata not found"
-msgstr ""
+msgstr "İlişki alan hedef metadatası bulunamadı"
 
 #. js-lingui-id: g87L9j
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -2389,7 +2457,7 @@ msgstr "İlişkiler"
 #. js-lingui-id: PWdFkY
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Remote objects are not production ready yet"
-msgstr ""
+msgstr "Uzaktan nesneler henüz üretime hazır değil"
 
 #. js-lingui-id: yVxtzR
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
@@ -2397,7 +2465,7 @@ msgstr ""
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Remote objects are not supported yet"
-msgstr ""
+msgstr "Uzaktan nesneler henüz desteklenmiyor"
 
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -2451,13 +2519,13 @@ msgstr "Aşama"
 #. js-lingui-id: dc5N0o
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Standard fields cannot be deleted"
-msgstr ""
+msgstr "Standart alanlar silinemez"
 
 #. js-lingui-id: Ptv+nG
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Standard objects cannot be deleted"
-msgstr ""
+msgstr "Standart nesneler silinemez"
 
 #. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2468,7 +2536,7 @@ msgstr "Başlangıç Tarihi"
 #. js-lingui-id: amGzX5
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Start of the week"
-msgstr ""
+msgstr "Haftanın başlangıcı"
 
 #. js-lingui-id: RS0o7b
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2746,7 +2814,7 @@ msgstr "Bir iş akışının ilk sürümü silinemez"
 #. js-lingui-id: YTftFF
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "The name is not available"
-msgstr ""
+msgstr "Bu isim mevcut değil"
 
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -2756,12 +2824,12 @@ msgstr "Fırsat adı"
 #. js-lingui-id: H1tAJD
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "The singular and plural labels cannot be the same for an object"
-msgstr ""
+msgstr "Bir nesne için tekil ve çoğul etiketler aynı olamaz"
 
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"
-msgstr ""
+msgstr "Bir nesne için tekil ve çoğul isimler aynı olamaz"
 
 #. js-lingui-id: 5N6QtE
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
@@ -2793,10 +2861,10 @@ msgstr "İş akışı sürüm adı"
 msgid "The workflow version status"
 msgstr "İş akışı sürüm durumu"
 
-#. js-lingui-id: NbABJb
+#. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field"
-msgstr "Bu isim başka bir alan tarafından kullanılmaktadır ve kullanılamaz."
+msgid "This name is not available as it is already used by another field."
+msgstr ""
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
@@ -2910,18 +2978,17 @@ msgstr "Tür"
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Unique field cannot have a default value"
-msgstr ""
+msgstr "Benzersiz alan varsayılan bir değere sahip olamaz"
 
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
 msgstr "Desteklenmeyen cron program türü"
 
-#. js-lingui-id: ZPqDC0
-#. placeholder {0}: flatFieldMetadataToValidate.type
+#. js-lingui-id: crxihq
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
-msgid "Unsupported field metadata type {0}"
-msgstr ""
+msgid "Unsupported field metadata type {fieldType}"
+msgstr "Desteklenmeyen alan metadata türü {fieldType}"
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2932,7 +2999,7 @@ msgstr "Güncelleme Tarihi Saati"
 #. js-lingui-id: r5C2wB
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Updated field name is not synced with label"
-msgstr ""
+msgstr "Güncellenen alan ismi, etiketle senkronize değil"
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
@@ -2963,7 +3030,7 @@ msgstr "Kullanıcının zaman dilimi"
 #. js-lingui-id: VkcC68
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User was not created with email/password"
-msgstr ""
+msgstr "Kullanıcı e-posta/şifre ile oluşturulmadı"
 
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2973,19 +3040,17 @@ msgstr "Kullanıcının tercih ettiği tarih biçimi"
 #. js-lingui-id: Uce+A8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred start day of the week"
-msgstr ""
+msgstr "Kullanıcının tercih ettiği haftanın başlangıç günü"
 
 #. js-lingui-id: kJuoKm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
 msgstr "Kullanıcının tercih ettiği saat biçimi"
 
-#. js-lingui-id: dGFKJs
-#. placeholder {0}: summary.invalidObjects
-#. placeholder {1}: summary.invalidFields
+#. js-lingui-id: ckX/Ew
 #: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
-msgid "Validation failed for {0} object(s) and {1} field(s)"
-msgstr ""
+msgid "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
+msgstr "{invalidObjects} nesne(ler) ve {invalidFields} alan(lar) için doğrulama başarısız oldu"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -2995,7 +3060,7 @@ msgstr "Değer"
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
-msgstr ""
+msgstr "Değer \"{sanitizedValue}\" UPPER_CASE olmalı ve snake_case kurallarına uymalıdır."
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -3178,10 +3243,20 @@ msgstr "Görünüm pozisyonu"
 msgid "View Sort"
 msgstr "Görünüm Sıralaması"
 
+#. js-lingui-id: znNExx
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "View sort (id: {id}) not found"
+msgstr "Görünüm sıralama (id: {id}) bulunamadı"
+
 #. js-lingui-id: 6ZUale
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort direction"
 msgstr "Görünüm sıralama yönü"
+
+#. js-lingui-id: 3zMs+f
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "View sort not found"
+msgstr "Görünüm sıralama bulunamadı"
 
 #. js-lingui-id: /rCPqN
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -3214,32 +3289,37 @@ msgstr "Görünüm tipi"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "ViewId"
-msgstr ""
+msgstr "GörünümId"
+
+#. js-lingui-id: kpQRY2
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "ViewId is required"
+msgstr "ViewId gereklidir"
 
 #. js-lingui-id: l88nXn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "ViewId is required to create a view field."
-msgstr ""
+msgstr "Bir görünüm alanı oluşturmak için GörünümKimliği gereklidir."
 
 #. js-lingui-id: 9XMTpT
 #: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "ViewId is required to create a view filter group."
-msgstr ""
+msgstr "Bir görünüm filtre grubu oluşturmak için GörünümKimliği gereklidir."
 
 #. js-lingui-id: pCCxli
 #: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "ViewId is required to create a view filter."
-msgstr ""
+msgstr "Bir görünüm filtresi oluşturmak için GörünümKimliği gereklidir."
 
 #. js-lingui-id: 1X1RW5
 #: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "ViewId is required to create a view group."
-msgstr ""
+msgstr "Bir görünüm grubu oluşturmak için GörünümKimliği gereklidir."
 
 #. js-lingui-id: uGUFcy
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "ViewId is required to create a view sort."
-msgstr ""
+msgstr "Bir görünüm sıralaması oluşturmak için GörünümKimliği gereklidir."
 
 #. js-lingui-id: 1I6UoR
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -3263,7 +3343,7 @@ msgstr "Görünür"
 #. js-lingui-id: xvV2NJ
 #: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
-msgstr ""
+msgstr "Veritabanımızla ilgili geçici bir sorun yaşıyoruz. Lütfen daha sonra tekrar deneyiniz."
 
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
@@ -3313,7 +3393,7 @@ msgstr "İş akışı çalıştırması şu tarihte sona erdi"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run enqueued at"
-msgstr ""
+msgstr "İş akışı çalıştırması şu tarihte kuyrukta:"
 
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -3463,35 +3543,40 @@ msgstr "Çalışma alanı üyesi pozisyonu"
 msgid "Workspace Members"
 msgstr "Çalışma Alanı Üyeleri"
 
+#. js-lingui-id: bBr+RW
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "WorkspaceId is required"
+msgstr "WorkspaceId gereklidir"
+
 #. js-lingui-id: kjLpTn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
-msgstr ""
+msgstr "Bir görünüm alanı oluşturmak için ÇalışmaAlanıKimliği gereklidir."
 
 #. js-lingui-id: zWj6VZ
 #: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "WorkspaceId is required to create a view filter group."
-msgstr ""
+msgstr "Bir görünüm filtre grubu oluşturmak için ÇalışmaAlanıKimliği gereklidir."
 
 #. js-lingui-id: jQMXtD
 #: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "WorkspaceId is required to create a view filter."
-msgstr ""
+msgstr "Bir görünüm filtresi oluşturmak için ÇalışmaAlanıKimliği gereklidir."
 
 #. js-lingui-id: NAoJAX
 #: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "WorkspaceId is required to create a view group."
-msgstr ""
+msgstr "Bir görünüm grubu oluşturmak için ÇalışmaAlanıKimliği gereklidir."
 
 #. js-lingui-id: hU1QaN
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required to create a view sort."
-msgstr ""
+msgstr "Bir görünüm sıralaması oluşturmak için ÇalışmaAlanıKimliği gereklidir."
 
 #. js-lingui-id: jtb/lI
 #: src/engine/core-modules/view/exceptions/view.exception.ts
 msgid "WorkspaceId is required to create a view."
-msgstr ""
+msgstr "Bir görünüm oluşturmak için ÇalışmaAlanıKimliği gereklidir."
 
 #. js-lingui-id: EtzFC0
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts

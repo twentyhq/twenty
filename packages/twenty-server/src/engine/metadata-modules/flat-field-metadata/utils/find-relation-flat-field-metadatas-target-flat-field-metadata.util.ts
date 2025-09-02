@@ -1,4 +1,3 @@
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import {
   findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow,
   type GetRelationFlatFieldMetadatasUtilArgs,
@@ -6,7 +5,11 @@ import {
 
 export const findRelationFlatFieldMetadataTargetFlatFieldMetadata = (
   args: GetRelationFlatFieldMetadatasUtilArgs,
-): FlatFieldMetadata | undefined => {
+):
+  | ReturnType<
+      typeof findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow
+    >
+  | undefined => {
   try {
     return findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow(args);
   } catch {

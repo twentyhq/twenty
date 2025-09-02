@@ -23,7 +23,7 @@ export const TASK_TARGET_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   imageIdentifierFieldMetadataId: null,
   isLabelSyncedWithName: false,
   workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-  uniqueIdentifier: '20202020-5a9a-44e8-95df-771cd06d0fb1',
+  universalIdentifier: '20202020-5a9a-44e8-95df-771cd06d0fb1',
   flatIndexMetadatas: [],
   flatFieldMetadatas: Object.values(TASKTARGET_FLAT_FIELDS_MOCK),
 });

@@ -1,11 +1,8 @@
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { useDeleteRecordFromCache } from '@/object-record/cache/hooks/useDeleteRecordFromCache';
-import { prefetchViewsState } from '@/prefetch/states/prefetchViewsState';
 import { SettingsObjectFieldActiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldActiveActionDropdown';
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
@@ -14,12 +11,10 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { type View } from '@/views/types/View';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import {
   isDefined,
   isLabelIdentifierFieldMetadataTypes,
@@ -27,7 +22,7 @@ import {
 import { IconMinus, IconPlus, useIcons } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { FeatureFlagKey, RelationType } from '~/generated-metadata/graphql';
+import { RelationType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
@@ -119,14 +114,6 @@ export const SettingsObjectFieldItemTableRow = ({
     deleteMetadataField,
   } = useFieldMetadataItem();
 
-  const prefetchViews = useRecoilValue(prefetchViewsState);
-  const deleteViewFromCache = useDeleteRecordFromCache({
-    objectNameSingular: CoreObjectNameSingular.View,
-  });
-
-  const featureFlagMap = useFeatureFlagsMap();
-  const isCoreViewEnabled = featureFlagMap[FeatureFlagKey.IS_CORE_VIEW_ENABLED];
-
   const handleDisableField = async (
     activeFieldMetadatItem: FieldMetadataItem,
   ) => {
@@ -136,19 +123,7 @@ export const SettingsObjectFieldItemTableRow = ({
     );
 
     // TODO: Add optimistic rendering for core views
-    const deletedViewIds = isCoreViewEnabled
-      ? []
-      : (prefetchViews as View[])
-          .map((view) => {
-            // TODO: replace with viewGroups.fieldMetadataId
-            if (view.kanbanFieldMetadataId === activeFieldMetadatItem.id) {
-              deleteViewFromCache(view);
-              return view.id;
-            }
-
-            return null;
-          })
-          .filter(isDefined);
+    const deletedViewIds: string[] = [];
 
     const [baseUrl, queryParams] = navigationMemorizedUrl.includes('?')
       ? navigationMemorizedUrl.split('?')

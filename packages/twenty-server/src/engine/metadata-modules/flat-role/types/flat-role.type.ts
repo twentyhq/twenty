@@ -14,5 +14,5 @@ export type FlatRole = Omit<
   RoleEntity,
   RoleEntityRelationProperties | 'createdAt' | 'updatedAt'
 > & {
-  uniqueIdentifier: string;
+  universalIdentifier: string;
 };

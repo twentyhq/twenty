@@ -19,7 +19,7 @@ const fromCachedRelationFieldMetadataEntityToFlatRelationTargetFieldMetadata = <
 ): FlatRelationTargetFieldMetadata => {
   return {
     ...cachedFieldMetadataEntity,
-    uniqueIdentifier:
+    universalIdentifier:
       cachedFieldMetadataEntity.standardId ?? cachedFieldMetadataEntity.id,
     type: cachedFieldMetadataEntity.type,
   };
@@ -83,6 +83,10 @@ export const fromCachedFieldMetadataEntityToFlatFieldMetadata = <
       !isCachedFieldMetadataEntityOfType(
         relationTargetCachedFieldMetadata,
         FieldMetadataType.RELATION,
+      ) &&
+      !isCachedFieldMetadataEntityOfType(
+        relationTargetCachedFieldMetadata,
+        FieldMetadataType.MORPH_RELATION,
       )
     ) {
       throw new WorkspaceMetadataCacheException(
@@ -98,7 +102,7 @@ export const fromCachedFieldMetadataEntityToFlatFieldMetadata = <
 
     return {
       ...cachedFieldMetadataEntity,
-      uniqueIdentifier:
+      universalIdentifier:
         cachedFieldMetadataEntity.standardId ?? cachedFieldMetadataEntity.id,
       flatRelationTargetFieldMetadata,
       flatRelationTargetObjectMetadata,
@@ -110,7 +114,7 @@ export const fromCachedFieldMetadataEntityToFlatFieldMetadata = <
 
   return {
     ...cachedFieldMetadataEntity,
-    uniqueIdentifier:
+    universalIdentifier:
       cachedFieldMetadataEntity.standardId ?? cachedFieldMetadataEntity.id,
     flatRelationTargetFieldMetadata: null,
     flatRelationTargetObjectMetadata: null,

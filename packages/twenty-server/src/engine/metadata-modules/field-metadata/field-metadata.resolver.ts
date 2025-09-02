@@ -46,8 +46,8 @@ import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-m
 import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { isMorphRelationFieldMetadataType } from 'src/engine/utils/is-morph-relation-field-metadata-type.util';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
@@ -174,7 +174,7 @@ export class FieldMetadataResolver {
     @Parent() fieldMetadata: FieldMetadataEntity<FieldMetadataType.RELATION>,
     @Context() context: { loaders: IDataloaders },
   ): Promise<RelationDTO | null | undefined> {
-    if (!isRelationFieldMetadataType(fieldMetadata.type)) {
+    if (!isMorphOrRelationFieldMetadataType(fieldMetadata.type)) {
       return null;
     }
 

@@ -14,5 +14,5 @@ export type FlatAgent = Omit<
   AgentEntity,
   AgentEntityRelationProperties | 'createdAt' | 'updatedAt' | 'deletedAt'
 > & {
-  uniqueIdentifier: string;
+  universalIdentifier: string;
 };

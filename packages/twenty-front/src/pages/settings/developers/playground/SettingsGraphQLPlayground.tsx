@@ -19,7 +19,7 @@ export const SettingsGraphQLPlayground = () => {
       : PlaygroundSchemas.CORE;
 
   const handleExitFullScreen = () => {
-    navigateSettings(SettingsPath.APIs);
+    navigateSettings(SettingsPath.ApiWebhooks);
   };
 
   const handleOnError = () => {
@@ -35,8 +35,8 @@ export const SettingsGraphQLPlayground = () => {
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: <Trans>APIs</Trans>,
-          href: getSettingsPath(SettingsPath.APIs),
+          children: <Trans>APIs & Webhooks</Trans>,
+          href: getSettingsPath(SettingsPath.ApiWebhooks),
         },
         { children: <Trans>GraphQL API Playground</Trans> },
       ]}

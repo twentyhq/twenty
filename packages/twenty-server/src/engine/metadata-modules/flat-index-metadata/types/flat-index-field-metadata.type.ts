@@ -11,5 +11,5 @@ type IndexFieldMetadataEntityRelationProperties =
 export type FlatIndexFieldMetadata = Partial<
   Omit<IndexFieldMetadataEntity, IndexFieldMetadataEntityRelationProperties>
 > & {
-  uniqueIdentifier: string;
+  universalIdentifier: string;
 };

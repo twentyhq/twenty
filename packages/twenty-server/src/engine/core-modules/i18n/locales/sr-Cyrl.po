@@ -56,12 +56,7 @@ msgstr "{fieldName} и {fieldName}Id не могу обоје бити наве�
 #. js-lingui-id: ZkHTHm
 #: src/engine/metadata-modules/index-metadata/utils/validate-can-create-unique-index.util.ts
 msgid "{fieldType} fields cannot be unique."
-msgstr ""
-
-#. js-lingui-id: wapGcj
-#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
-msgid "{message}"
-msgstr ""
+msgstr "Поља типа {fieldType} не могу бити јединствена."
 
 #. js-lingui-id: 8haj+G
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-camel-case.utils.ts
@@ -81,7 +76,7 @@ msgstr "Повезани налог"
 #. js-lingui-id: cOSBjW
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "A dashboard"
-msgstr ""
+msgstr "Табла"
 
 #. js-lingui-id: HCoswz
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -193,13 +188,13 @@ msgstr "Неопходна акција да се ресетује лозинк�
 #. js-lingui-id: 52fA3U
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Active fields cannot be deleted"
-msgstr ""
+msgstr "Активна поља не могу бити избрисана"
 
 #. js-lingui-id: 0N5kF6
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Active objects cannot be deleted"
-msgstr ""
+msgstr "Активни објекти не могу бити избрисани"
 
 #. js-lingui-id: Du6bPw
 #: src/modules/company/standard-objects/company.workspace-entity.ts
@@ -244,7 +239,7 @@ msgstr "Агрегирани / филтрирани догађај који се
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/custom-all.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/companies-all.view.ts
 msgid "All {objectLabelPlural}"
-msgstr ""
+msgstr "Сви {objectLabelPlural}"
 
 #. js-lingui-id: hehnjM
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -303,7 +298,7 @@ msgstr "Додељени задаци"
 #. js-lingui-id: kZ7PLo
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-assigned-to-me.ts
 msgid "Assigned to Me"
-msgstr ""
+msgstr "Додељено мени"
 
 #. js-lingui-id: ojKCLU
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -314,6 +309,11 @@ msgstr "Извршилац"
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Associated User Id"
 msgstr "Идентификациони број повезаног корисника"
+
+#. js-lingui-id: K9efby
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "At least one relation is require"
+msgstr "Потребно је барем једно повезивање"
 
 #. js-lingui-id: UY1vmE
 #: src/modules/attachment/standard-objects/attachment.workspace-entity.ts
@@ -479,12 +479,12 @@ msgstr "Садржај"
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-table-by-stage.view.ts
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/opportunity-by-stage.view.ts
 msgid "By Stage"
-msgstr ""
+msgstr "По фази"
 
 #. js-lingui-id: jQX8V+
 #: src/engine/workspace-manager/standard-objects-prefill-data/views/tasks-by-status.view.ts
 msgid "By Status"
-msgstr ""
+msgstr "По статусу"
 
 #. js-lingui-id: 8mVqF7
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -552,7 +552,7 @@ msgstr "Догађаји у календару"
 #. js-lingui-id: eSaCR/
 #: src/engine/twenty-orm/relation-nested-queries/utils/formatConnectRecordNotFoundErrorMessage.util.ts
 msgid "Can't connect to {connectFieldName}. No unique record found with condition: {formattedConnectCondition}"
-msgstr ""
+msgstr "Не могу да се повежем са {connectFieldName}. Нема јединственог записа са условом: {formattedConnectCondition}"
 
 #. js-lingui-id: vxbVwc
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -583,18 +583,17 @@ msgstr "Не може се онемогућити неактивна верзи�
 #. js-lingui-id: otFZos
 #: src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service.ts
 msgid "Cannot enable uniqueness due to existing duplicate values. Please review and fix your data first (including soft deleted records)."
-msgstr ""
+msgstr "Не могу омогућити јединственост због постојећих дупликата. Молимо вас да прегледате и исправите своје податке (укључујући и меко обрисане записе)."
 
 #. js-lingui-id: IDMgr/
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
 msgstr "Не може се имати више од једне активне верзије тока рада"
 
-#. js-lingui-id: TkG4aS
-#. placeholder {0}: invalidUpdatedProperties.join(', ')
+#. js-lingui-id: UcdPY5
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
-msgid "Cannot update standard field properties: {0}"
-msgstr ""
+msgid "Cannot update standard field properties: {invalidProperties}"
+msgstr "Не могу се ажурирати својства стандардног поља: {invalidProperties}"
 
 #. js-lingui-id: 4DKo3U
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
@@ -755,7 +754,7 @@ msgstr "Креирао/ла"
 #. js-lingui-id: 2ZhYYy
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-create-field-input-to-flat-field-metadatas-to-create.util.ts
 msgid "Created field metadata, parent object metadata not found"
-msgstr ""
+msgstr "Креиран метаподатак поља, метаподатак родитељског објекта није пронађен"
 
 #. js-lingui-id: wPvFAD
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -784,22 +783,22 @@ msgstr "Прилагођени параметри везе"
 #. js-lingui-id: 7p5kLi
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard"
-msgstr ""
+msgstr "Табла"
 
 #. js-lingui-id: Lddz0a
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard page layout"
-msgstr ""
+msgstr "Распоред странице табле"
 
 #. js-lingui-id: xGgnPh
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboard title"
-msgstr ""
+msgstr "Наслов контролне табле"
 
 #. js-lingui-id: w6iIMm
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Dashboards"
-msgstr ""
+msgstr "Контролне табле"
 
 #. js-lingui-id: Lhd0oQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -811,10 +810,25 @@ msgstr "Формат датума"
 msgid "Date when the record was deleted"
 msgstr "Датум када је запис избрисан"
 
+#. js-lingui-id: GGNmm+
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default value \"{defaultValue}\" must be one of the option values"
+msgstr "Подразумевана вредност \"{defaultValue}\" мора бити једна од вредности опција"
+
 #. js-lingui-id: FdUbPo
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default value must be a string"
-msgstr ""
+msgstr "Подразумевана вредност мора бити стринг"
+
+#. js-lingui-id: sv9P4Q
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default value should be as quoted string"
+msgstr "Подразумевана вредност треба бити наведена у наводницима"
+
+#. js-lingui-id: 6pJV03
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "Default values must be unique"
+msgstr "Подразумеване вредности морају бити јединствене"
 
 #. js-lingui-id: QN9ahV
 #: src/engine/twenty-orm/base.workspace-entity.ts
@@ -869,7 +883,7 @@ msgstr "Рок за испуњење"
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
-msgstr ""
+msgstr "Дуплирана опција {field}"
 
 #. js-lingui-id: BBXuRb
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -912,7 +926,7 @@ msgstr "Датум завршетка"
 #. js-lingui-id: hcogQc
 #: src/engine/core-modules/domain-manager/validator/cloudflare.validate.ts
 msgid "Environnement variable CLOUDFLARE_API_KEY must be defined to use this feature."
-msgstr ""
+msgstr "Променљива окружења CLOUDFLARE_API_KEY мора бити дефинисана да би се користила ова функција."
 
 #. js-lingui-id: k//6Xs
 #: src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
@@ -1027,6 +1041,12 @@ msgstr "Извршилац"
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
 msgstr "Очекивало се да иста поља ограничења буду доследно коришћена у свим операцијама за {connectFieldName}."
+
+#. js-lingui-id: 5KfWxA
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "External ID"
+msgstr ""
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1173,22 +1193,22 @@ msgstr "Омиљени повезани са <b>{label}</b>"
 #. js-lingui-id: vngnhF
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Field already exists"
-msgstr ""
+msgstr "Поље већ постоји"
 
 #. js-lingui-id: Hg95ys
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field cannot be used as label identifier"
-msgstr ""
+msgstr "Поље не може бити коришћено као идентификатор ознаке."
 
 #. js-lingui-id: F6OLoA
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field declared as image identifier not found"
-msgstr ""
+msgstr "Поље декларисано као идентификатор слике није пронађено."
 
 #. js-lingui-id: 75hHpn
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "Field declared as label identifier not found"
-msgstr ""
+msgstr "Поље проглашено као идентификатор ознаке није пронађено"
 
 #. js-lingui-id: nSFFML
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -1201,12 +1221,12 @@ msgstr "Идентификациони број метаподатка поља"
 #. js-lingui-id: Ljqo/T
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Field metadata to update not found"
-msgstr ""
+msgstr "Метаподатак поља за ажурирање није пронађен"
 
 #. js-lingui-id: p3kNMz
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util.ts
 msgid "Field metadata to update object metadata not found"
-msgstr ""
+msgstr "Метаподатак поља за ажурирање метаподатак објекта није пронађен"
 
 #. js-lingui-id: g+t8w9
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -1217,17 +1237,17 @@ msgstr "Метаподаци поља коришћени за агрегатну
 #. js-lingui-id: prTOhK
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Field name is not synced with field label"
-msgstr ""
+msgstr "Име поља није синхронизовано са натписом поља"
 
 #. js-lingui-id: cK8ILP
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Field to create related object not found"
-msgstr ""
+msgstr "Поље за креирање релевантног објекта није пронађено"
 
 #. js-lingui-id: K6qzz4
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Field to update not found"
-msgstr ""
+msgstr "Поље за ажурирање није пронађено"
 
 #. js-lingui-id: J4hC2m
 #: src/engine/metadata-modules/constants/search-vector-field.constants.ts
@@ -1239,30 +1259,35 @@ msgstr "Поље коришћено за текстуалну претрагу"
 msgid "Field Value"
 msgstr "Вредност поља"
 
+#. js-lingui-id: s3HtdT
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "FieldMetadataId is required"
+msgstr "FieldMetadataId је обавезно"
+
 #. js-lingui-id: Sof2+k
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "FieldMetadataId is required to create a view field."
-msgstr ""
+msgstr "FieldMetadataId је обавезан за креирање видљивог поља."
 
 #. js-lingui-id: NTyTR5
 #: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "FieldMetadataId is required to create a view filter group."
-msgstr ""
+msgstr "FieldMetadataId је обавезан за креирање групе филтера прегледа."
 
 #. js-lingui-id: Ya6oU7
 #: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "FieldMetadataId is required to create a view filter."
-msgstr ""
+msgstr "FieldMetadataId је обавезан за креирање филтера прегледа."
 
 #. js-lingui-id: DU4jcg
 #: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "FieldMetadataId is required to create a view group."
-msgstr ""
+msgstr "FieldMetadataId је обавезан за креирање групе прегледа."
 
 #. js-lingui-id: snEXuU
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "FieldMetadataId is required to create a view sort."
-msgstr ""
+msgstr "FieldMetadataId је обавезан за креирање сортирања прегледа."
 
 #. js-lingui-id: lEpDue
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
@@ -1277,7 +1302,7 @@ msgstr "Назив фолдера"
 #. js-lingui-id: eWmJYU
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Forbidden updated properties for relation field metadata"
-msgstr ""
+msgstr "Забрањене ажуриране особине за метаподатке релације поља"
 
 #. js-lingui-id: kuN9I4
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
@@ -1361,6 +1386,11 @@ msgstr "Ид"
 msgid "Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you"
 msgstr "Идеалан купачки профил: Указује на то да ли је компанија најподобнија и највреднија купац за вас"
 
+#. js-lingui-id: YcVn4w
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+msgid "If defined default value must contain at least one value"
+msgstr "Ако је дефинисано, подразумевана вредност мора садржати барем једну вредност"
+
 #. js-lingui-id: 71VJzG
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-short.utils.ts
 msgid "Input is too short: \"{name}\""
@@ -1414,10 +1444,15 @@ msgstr "Неважећа вредност минута. Требало би да
 msgid "Invalid minute value. Should be integer greater than 1"
 msgstr "Неважећа вредност минута. Требало би да буде цео број већи од 1"
 
+#. js-lingui-id: sDfyvM
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Invalid morph relation input"
+msgstr "Неисправан унос односа морфа"
+
 #. js-lingui-id: AXZsy/
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
 msgid "Invalid relation creation payload"
-msgstr ""
+msgstr "Неважећи payload за креирање релације"
 
 #. js-lingui-id: ApP70c
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -1430,14 +1465,24 @@ msgid "Invalid trigger type for enabling workflow trigger"
 msgstr "Неважећи тип покретача за омогућавање покретача ток рада"
 
 #. js-lingui-id: 1Iyic0
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Invalid uuid {id}"
-msgstr ""
+msgstr "Неважећи uuid {id}"
 
 #. js-lingui-id: VEKoJx
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter.ts
 msgid "Invalid verification code. Please try again."
 msgstr "Неважећи верификациони код. Молимо покушајте поново."
+
+#. js-lingui-id: 8xkULN
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "Invalid view sort data"
+msgstr "Неисправни подаци за сортирање приказа"
+
+#. js-lingui-id: I0OzaR
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "Invalid view sort data for view sort id: {id}"
+msgstr "Неисправни подаци за сортирање приказа за ID сортирања: {id}"
 
 #. js-lingui-id: grHYXZ
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -1465,6 +1510,12 @@ msgstr "Целодневни"
 msgid "Is Organizer"
 msgstr "Је организатор"
 
+#. js-lingui-id: VrHWrH
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Is Sent Folder"
+msgstr ""
+
 #. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1472,6 +1523,12 @@ msgstr "Је организатор"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Is Sync Enabled"
 msgstr "Омогућена синхронизација"
+
+#. js-lingui-id: BHCUSr
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Is Synced"
+msgstr ""
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1772,15 +1829,25 @@ msgstr "Токен освежавања провајдера порука"
 msgid "Missing required fields: at least one unique constraint have to be fully populated for '{connectFieldName}'."
 msgstr "Недостају обавезна поља: бар једно јединствено ограничење мора бити у потпуности попуњено за '{connectFieldName}'."
 
+#. js-lingui-id: FqzlX4
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must have the same relation type"
+msgstr "Правила креирања односа морфа морају имати исти тип односа"
+
+#. js-lingui-id: Z/Awgf
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to the same object metadata"
+msgstr "Правила креирања односа морфа морају садржати само односе са истим метаподацима објекта"
+
 #. js-lingui-id: DsdcRG
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
 msgid "Morph relation fields are disabled for your workspace"
-msgstr ""
+msgstr "Морф поља односа су онемогућени за ваш радни простор"
 
 #. js-lingui-id: Wu/pkS
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Multi-select field default value must be an array"
-msgstr ""
+msgstr "Подразумевана вредност вишеструког избора мора бити низ"
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -1807,12 +1874,12 @@ msgstr "Име \"{computedMetadataNameFromLabel}\" не може бити ист
 #. js-lingui-id: 2m6Fru
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available"
-msgstr ""
+msgstr "Име \"{name}\" није доступно"
 
 #. js-lingui-id: U8mbyw
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr ""
+msgstr "Име \"{name}\" није доступно јер га већ користи друго поље"
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -1822,12 +1889,12 @@ msgstr "Назив није доступан, вероватно дуплира 
 #. js-lingui-id: Ny5wFU
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters"
-msgstr ""
+msgstr "Наслов није важећи: мора почети малим словом и садржавати само алфанумеричка слова"
 
 #. js-lingui-id: zjh2SJ
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is too long"
-msgstr ""
+msgstr "Име је предугачко"
 
 #. js-lingui-id: 0MobB1
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-too-long.utils.ts
@@ -1837,7 +1904,7 @@ msgstr "Назив је превише дугачак: прелази лимит
 #. js-lingui-id: go/Vg1
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name is too short"
-msgstr ""
+msgstr "Наслов је превише кратак"
 
 #. js-lingui-id: EEVPOx
 #: src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity.ts
@@ -1852,13 +1919,13 @@ msgstr "Име извођења процеса"
 #. js-lingui-id: P+jdmX
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "Name should be in camelCase"
-msgstr ""
+msgstr "Наслов треба да буде у camelCase формату"
 
 #. js-lingui-id: Dr0xtb
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Names are not synced with labels"
-msgstr ""
+msgstr "Имена нису синхронизована са натписима"
 
 #. js-lingui-id: hQQZse
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
@@ -2002,12 +2069,12 @@ msgstr "Објекат већ постоји"
 #. js-lingui-id: wLX74t
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "Object label is too long"
-msgstr ""
+msgstr "Натпис објекта је предугачак"
 
 #. js-lingui-id: nmhjwk
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "Object label is too short"
-msgstr ""
+msgstr "Натпис објекта је прекратак"
 
 #. js-lingui-id: T/nPf5
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2017,50 +2084,50 @@ msgstr "Идентификатор метаподатака објекта"
 #. js-lingui-id: lG0Qqm
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Object related to field to delete not found"
-msgstr ""
+msgstr "Објекат везан за поље за брисање није пронађен"
 
 #. js-lingui-id: E8vJ0A
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Object related to field to update not found"
-msgstr ""
+msgstr "Објекат везан за поље за ажурирање није пронађен"
 
 #. js-lingui-id: MnOwTp
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Object related to updated field does not have a label identifier"
-msgstr ""
+msgstr "Објекат повезан са ажурираним пољем нема идентификатор натписа"
 
 #. js-lingui-id: 6unt40
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-creation-payload.util.ts
 msgid "Object targeted by field to create not found"
-msgstr ""
+msgstr "Објекат циљаном за креирање поља није пронађен"
 
 #. js-lingui-id: KHK54G
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Object targeted by the relation not found"
-msgstr ""
+msgstr "Објекат циљаном односом није пронађен"
 
 #. js-lingui-id: bMeJkW
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Object to delete not found"
-msgstr ""
+msgstr "Објекат за брисање није пронађен"
 
 #. js-lingui-id: pQ5dZU
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Object to update not found"
-msgstr ""
+msgstr "Објекат за ажурирање није пронађен"
 
 #. js-lingui-id: cdjRFZ
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Object with same id already exists"
-msgstr ""
+msgstr "Објекат са истим идентитетом већ постоји"
 
 #. js-lingui-id: 53pIyA
 #: src/engine/core-modules/view/exceptions/view.exception.ts
 msgid "ObjectMetadataId is required to create a view."
-msgstr ""
+msgstr "ObjectMetadataId је обавезан за креирање прегледа."
 
 #. js-lingui-id: r/A6pA
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2132,12 +2199,12 @@ msgstr "Фаза прилике"
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is invalid"
-msgstr ""
+msgstr "ИД опције је неважећи"
 
 #. js-lingui-id: MniXaX
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option id is required"
-msgstr ""
+msgstr "ИД опције је обавезан"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2154,7 +2221,7 @@ msgstr "Етикета опције превазилази 63 карактера
 #. js-lingui-id: h8lHqX
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label format not supported"
-msgstr ""
+msgstr "Формат ознаке за опцију није подржан"
 
 #. js-lingui-id: +E9N4m
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2166,7 +2233,7 @@ msgstr "Етикета опције је обавезна"
 #. js-lingui-id: dFudyC
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option label must be a string of at least one character"
-msgstr ""
+msgstr "Натпис за опцију мора бити низ од најмање једног знака"
 
 #. js-lingui-id: nQqNzE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2183,7 +2250,7 @@ msgstr "Вредност опције превазилази 63 карактер
 #. js-lingui-id: zEGChV
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value format not supported"
-msgstr ""
+msgstr "Формат вредности опције није подржан"
 
 #. js-lingui-id: /wsRPd
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2195,7 +2262,7 @@ msgstr "Вредност опције је обавезна"
 #. js-lingui-id: Kub9t0
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Option value must be a string of at least one character"
-msgstr ""
+msgstr "Вредност опције мора бити низ од најмање једног знака"
 
 #. js-lingui-id: eLggyd
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -2206,12 +2273,12 @@ msgstr "Опциона агрегатна операција"
 #. js-lingui-id: EabrTR
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Options are required for enum fields"
-msgstr ""
+msgstr "Опције су обавезне за поља енума"
 
 #. js-lingui-id: AODALE
 #: src/modules/dashboard/standard-objects/dashboard.workspace-entity.ts
 msgid "Page Layout ID"
-msgstr ""
+msgstr "ИД распореда странице"
 
 #. js-lingui-id: pDUbN1
 #: src/modules/view/standard-objects/view-filter-group.workspace-entity.ts
@@ -2371,14 +2438,15 @@ msgid "Related user email address"
 msgstr "Е-адреса повезаног корисника"
 
 #. js-lingui-id: +bFtT5
-#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util.ts
 msgid "Relation creation payload is required"
-msgstr ""
+msgstr "Payload за креирање релације је обавезан"
 
 #. js-lingui-id: 5y41wK
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-relation-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Relation field target metadata not found"
-msgstr ""
+msgstr "Мета подаци циљног поља релације нису пронађени"
 
 #. js-lingui-id: g87L9j
 #: src/modules/task/standard-objects/task.workspace-entity.ts
@@ -2389,7 +2457,7 @@ msgstr "Релације"
 #. js-lingui-id: PWdFkY
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Remote objects are not production ready yet"
-msgstr ""
+msgstr "Даљински објекти још нису спремни за производњу"
 
 #. js-lingui-id: yVxtzR
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
@@ -2397,7 +2465,7 @@ msgstr ""
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Remote objects are not supported yet"
-msgstr ""
+msgstr "Даљински објекти још нису подржани"
 
 #. js-lingui-id: pCsIQQ
 #: src/engine/core-modules/email-verification/email-verification-exception-filter.util.ts
@@ -2451,13 +2519,13 @@ msgstr "Фаза"
 #. js-lingui-id: dc5N0o
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Standard fields cannot be deleted"
-msgstr ""
+msgstr "Стандардна поља се не могу избрисати"
 
 #. js-lingui-id: Ptv+nG
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 #: src/engine/metadata-modules/flat-object-metadata/services/flat-object-metadata-validator.service.ts
 msgid "Standard objects cannot be deleted"
-msgstr ""
+msgstr "Стандардни објекти не могу бити избрисани"
 
 #. js-lingui-id: D3iCkb
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2468,7 +2536,7 @@ msgstr "Датум почетка"
 #. js-lingui-id: amGzX5
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "Start of the week"
-msgstr ""
+msgstr "Почетак недеље"
 
 #. js-lingui-id: RS0o7b
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -2746,7 +2814,7 @@ msgstr "Почетна верзија тока рада не може се из�
 #. js-lingui-id: YTftFF
 #: src/engine/metadata-modules/utils/constants/metadata-name-flat-metadata-validators.constants.ts
 msgid "The name is not available"
-msgstr ""
+msgstr "Ово име није доступно"
 
 #. js-lingui-id: DbWmKZ
 #: src/modules/opportunity/standard-objects/opportunity.workspace-entity.ts
@@ -2756,12 +2824,12 @@ msgstr "Назив прилике"
 #. js-lingui-id: H1tAJD
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
 msgid "The singular and plural labels cannot be the same for an object"
-msgstr ""
+msgstr "Једнини и множински натписи не могу бити исти за објекат"
 
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"
-msgstr ""
+msgstr "Једнина и множинска имена не могу бити иста за објекат"
 
 #. js-lingui-id: 5N6QtE
 #: src/modules/workflow/common/standard-objects/workflow-automated-trigger.workspace-entity.ts
@@ -2793,10 +2861,10 @@ msgstr "Назив верзије тока рада"
 msgid "The workflow version status"
 msgstr "Статус верзије тока рада"
 
-#. js-lingui-id: NbABJb
+#. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field"
-msgstr "Ово име није доступно јер га већ користи друго поље"
+msgid "This name is not available as it is already used by another field."
+msgstr ""
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
@@ -2910,18 +2978,17 @@ msgstr "Тип"
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 #: src/engine/metadata-modules/field-metadata/services/field-metadata.service.ts
 msgid "Unique field cannot have a default value"
-msgstr ""
+msgstr "Јединствено поље не може имати подразумањену вредност"
 
 #. js-lingui-id: EBZdX5
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Unsupported cron schedule type"
 msgstr "Неподржани тип крона распоредног распореда"
 
-#. js-lingui-id: ZPqDC0
-#. placeholder {0}: flatFieldMetadataToValidate.type
+#. js-lingui-id: crxihq
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-type-validator.service.ts
-msgid "Unsupported field metadata type {0}"
-msgstr ""
+msgid "Unsupported field metadata type {fieldType}"
+msgstr "Неподржани тип метаподатака поља {fieldType}"
 
 #. js-lingui-id: 0gY5lO
 #: src/modules/calendar/common/standard-objects/calendar-event.workspace-entity.ts
@@ -2932,7 +2999,7 @@ msgstr "Датум и време ажурирања"
 #. js-lingui-id: r5C2wB
 #: src/engine/metadata-modules/flat-field-metadata/services/flat-field-metadata-validator.service.ts
 msgid "Updated field name is not synced with label"
-msgstr ""
+msgstr "Ажурирано име поља није синхронизовано са натписом"
 
 #. js-lingui-id: l9dlVi
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.ts
@@ -2963,7 +3030,7 @@ msgstr "Временска зона корисника"
 #. js-lingui-id: VkcC68
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "User was not created with email/password"
-msgstr ""
+msgstr "Корисник није креиран путем е-поште/лозинке"
 
 #. js-lingui-id: 43zCwQ
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
@@ -2973,19 +3040,17 @@ msgstr "Предпочетени формат датума корисника"
 #. js-lingui-id: Uce+A8
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred start day of the week"
-msgstr ""
+msgstr "Корисников омиљени почетни дан у недељи"
 
 #. js-lingui-id: kJuoKm
 #: src/modules/workspace-member/standard-objects/workspace-member.workspace-entity.ts
 msgid "User's preferred time format"
 msgstr "Предпочетени формат времена корисника"
 
-#. js-lingui-id: dGFKJs
-#. placeholder {0}: summary.invalidObjects
-#. placeholder {1}: summary.invalidFields
+#. js-lingui-id: ckX/Ew
 #: src/engine/workspace-manager/workspace-migration-v2/interceptors/workspace-migration-builder-exception-v2-formatter.ts
-msgid "Validation failed for {0} object(s) and {1} field(s)"
-msgstr ""
+msgid "Validation failed for {invalidObjects} object(s) and {invalidFields} field(s)"
+msgstr "Провера није успела за {invalidObjects} објекат(а) и {invalidFields} поље(а)"
 
 #. js-lingui-id: wMHvYH
 #: src/modules/view/standard-objects/view-filter.workspace-entity.ts
@@ -2995,7 +3060,7 @@ msgstr "Вредност"
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
-msgstr ""
+msgstr "Вредност мора бити у ВЕЛИКАМ СЛОВИМА и да следи формат snake_case \"{sanitizedValue}\""
 
 #. js-lingui-id: 7aatUy
 #: src/modules/workflow/common/standard-objects/workflow-version.workspace-entity.ts
@@ -3178,10 +3243,20 @@ msgstr "Позиција приказа"
 msgid "View Sort"
 msgstr "Сортирање приказа"
 
+#. js-lingui-id: znNExx
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "View sort (id: {id}) not found"
+msgstr "Сортирање приказа (ID: {id}) није пронађено"
+
 #. js-lingui-id: 6ZUale
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
 msgid "View Sort direction"
 msgstr "Смер сортирања приказа"
+
+#. js-lingui-id: 3zMs+f
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "View sort not found"
+msgstr "Сортирање приказа није пронађено"
 
 #. js-lingui-id: /rCPqN
 #: src/modules/view/standard-objects/view-sort.workspace-entity.ts
@@ -3214,32 +3289,37 @@ msgstr "Тип приказа"
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "ViewId"
-msgstr ""
+msgstr "Виев ИД"
+
+#. js-lingui-id: kpQRY2
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "ViewId is required"
+msgstr "ViewId је обавезан"
 
 #. js-lingui-id: l88nXn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "ViewId is required to create a view field."
-msgstr ""
+msgstr "ViewId је обавезан за креирање поља прегледа."
 
 #. js-lingui-id: 9XMTpT
 #: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "ViewId is required to create a view filter group."
-msgstr ""
+msgstr "ViewId је обавезан за креирање групе филтера прегледа."
 
 #. js-lingui-id: pCCxli
 #: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "ViewId is required to create a view filter."
-msgstr ""
+msgstr "ViewId је обавезан за креирање филтера прегледа."
 
 #. js-lingui-id: 1X1RW5
 #: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "ViewId is required to create a view group."
-msgstr ""
+msgstr "ViewId је обавезан за креирање групе прегледа."
 
 #. js-lingui-id: uGUFcy
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "ViewId is required to create a view sort."
-msgstr ""
+msgstr "ViewId је обавезан за креирање сортирања прегледа."
 
 #. js-lingui-id: 1I6UoR
 #: src/modules/view/standard-objects/view.workspace-entity.ts
@@ -3263,7 +3343,7 @@ msgstr "Видљив"
 #. js-lingui-id: xvV2NJ
 #: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
-msgstr ""
+msgstr "Искусили смо привремени проблем са нашом базом података. Молимо вас покушајте поново касније."
 
 #. js-lingui-id: TVkCrJ
 #: src/engine/core-modules/email-verification/services/email-verification.service.ts
@@ -3313,7 +3393,7 @@ msgstr "Извршавање тока рада завршено у"
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
 msgid "Workflow run enqueued at"
-msgstr ""
+msgstr "Извршење Workflows је стављено у ред за обраду у"
 
 #. js-lingui-id: IUaK6s
 #: src/modules/workflow/common/standard-objects/workflow-run.workspace-entity.ts
@@ -3463,35 +3543,40 @@ msgstr "Позиција члана простора за рад"
 msgid "Workspace Members"
 msgstr "Чланови простора за рад"
 
+#. js-lingui-id: bBr+RW
+#: src/engine/core-modules/view/exceptions/view-sort.exception.ts
+msgid "WorkspaceId is required"
+msgstr "WorkspaceId је обавезан"
+
 #. js-lingui-id: kjLpTn
 #: src/engine/core-modules/view/exceptions/view-field.exception.ts
 msgid "WorkspaceId is required to create a view field."
-msgstr ""
+msgstr "WorkspaceId је обавезан за креирање поља прегледа."
 
 #. js-lingui-id: zWj6VZ
 #: src/engine/core-modules/view/exceptions/view-filter-group.exception.ts
 msgid "WorkspaceId is required to create a view filter group."
-msgstr ""
+msgstr "WorkspaceId је обавезан за креирање групе филтера прегледа."
 
 #. js-lingui-id: jQMXtD
 #: src/engine/core-modules/view/exceptions/view-filter.exception.ts
 msgid "WorkspaceId is required to create a view filter."
-msgstr ""
+msgstr "WorkspaceId је обавезан за креирање филтера прегледа."
 
 #. js-lingui-id: NAoJAX
 #: src/engine/core-modules/view/exceptions/view-group.exception.ts
 msgid "WorkspaceId is required to create a view group."
-msgstr ""
+msgstr "WorkspaceId је обавезан за креирање групе прегледа."
 
 #. js-lingui-id: hU1QaN
 #: src/engine/core-modules/view/exceptions/view-sort.exception.ts
 msgid "WorkspaceId is required to create a view sort."
-msgstr ""
+msgstr "WorkspaceId је обавезан за креирање сортирања прегледа."
 
 #. js-lingui-id: jtb/lI
 #: src/engine/core-modules/view/exceptions/view.exception.ts
 msgid "WorkspaceId is required to create a view."
-msgstr ""
+msgstr "WorkspaceId је обавезан за креирање прегледа."
 
 #. js-lingui-id: EtzFC0
 #: src/modules/blocklist/standard-objects/blocklist.workspace-entity.ts

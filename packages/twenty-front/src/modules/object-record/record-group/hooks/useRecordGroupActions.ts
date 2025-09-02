@@ -6,6 +6,7 @@ import { recordGroupFieldMetadataComponentState } from '@/object-record/record-g
 import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { type RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPath } from '@/types/SettingsPath';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
@@ -34,6 +35,7 @@ type UseRecordGroupActionsParams = {
 export const useRecordGroupActions = ({
   viewType,
 }: UseRecordGroupActionsParams) => {
+  const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
   const navigate = useNavigateSettings();
   const location = useLocation();
 
@@ -66,7 +68,7 @@ export const useRecordGroupActions = ({
   );
 
   const { reorderRecordGroups } = useReorderRecordGroups({
-    viewBarId: objectMetadataItem.id,
+    recordIndexId,
     viewType,
   });
 

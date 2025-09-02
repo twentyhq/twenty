@@ -12,6 +12,7 @@ import { deleteFieldFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadat
 import { deleteObjectFromFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/delete-object-from-flat-object-metadata-maps-or-throw.util';
 import { getSubFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-or-throw.util';
 import { getSubFlatObjectMetadataMapsOutOfFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/get-sub-flat-object-metadata-maps-out-of-flat-field-metadatas-or-throw.util';
+import { replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-field-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/replace-flat-object-metadata-in-flat-object-metadata-maps-or-throw.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
@@ -55,22 +56,37 @@ export class ObjectMetadataServiceV2 {
         },
       );
 
-    const optimisticallyUpdatedFlatObjectMetadata =
-      fromUpdateObjectInputToFlatObjectMetadata({
-        existingFlatObjectMetadataMaps,
-        updateObjectInput,
-      });
+    const {
+      flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
+      otherObjectFlatFieldMetadatas,
+    } = fromUpdateObjectInputToFlatObjectMetadata({
+      existingFlatObjectMetadataMaps,
+      updateObjectInput,
+    });
 
+    const impactedObjectMetadataIds = [
+      ...new Set([
+        optimisticallyUpdatedFlatObjectMetadata.id,
+        ...otherObjectFlatFieldMetadatas.map(
+          (flatFieldMetadata) => flatFieldMetadata.objectMetadataId,
+        ),
+      ]),
+    ];
     const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      objectMetadataIds: [optimisticallyUpdatedFlatObjectMetadata.id],
+      objectMetadataIds: impactedObjectMetadataIds,
     });
-    const toFlatObjectMetadataMaps =
+    const toFlatObjectMetadataMaps = otherObjectFlatFieldMetadatas.reduce(
+      (flatObjectMetadataMaps, flatFieldMetadata) =>
+        replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+          flatFieldMetadata,
+          flatObjectMetadataMaps,
+        }),
       replaceFlatObjectMetadataInFlatObjectMetadataMapsOrThrow({
         flatObjectMetadata: optimisticallyUpdatedFlatObjectMetadata,
         flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
-      });
-
+      }),
+    );
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {

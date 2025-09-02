@@ -3,27 +3,35 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { JsonContains, Repository } from 'typeorm';
 
+import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
-import { type BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
+import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
 
 @Injectable()
 export class BillingSubscriptionItemService {
   constructor(
     @InjectRepository(BillingSubscriptionItem)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
+    @InjectRepository(BillingPrice)
+    private readonly billingPriceRepository: Repository<BillingPrice>,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly stripeSubscriptionService: StripeSubscriptionService,
   ) {}
 
-  async getMeteredSubscriptionItemDetails(subscriptionId: string) {
-    const meteredSubscriptionItems =
-      await this.billingSubscriptionItemRepository.find({
+  async updateMeteredSubscriptionItemPrice(
+    subscriptionId: string,
+    newPriceId: string,
+  ) {
+    const subscriptionItem =
+      await this.billingSubscriptionItemRepository.findOne({
         where: {
           billingSubscriptionId: subscriptionId,
           billingProduct: {
@@ -35,27 +43,104 @@ export class BillingSubscriptionItemService {
         relations: ['billingProduct', 'billingProduct.billingPrices'],
       });
 
-    return meteredSubscriptionItems.map((item) => {
-      const price = this.findMatchingPrice(item);
+    if (!subscriptionItem) {
+      throw new BillingException(
+        `Cannot find subscription item for subscription ${subscriptionId}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND,
+      );
+    }
 
-      const stripeMeterId = price.stripeMeterId;
+    const currentBillingPrice = subscriptionItem
+      ? this.findMatchingPrice(subscriptionItem)
+      : null;
 
-      if (!stripeMeterId) {
-        throw new BillingException(
-          `Stripe meter ID not found for product ${item.billingProduct.metadata.productKey}`,
-          BillingExceptionCode.BILLING_METER_NOT_FOUND,
-        );
-      }
+    if (!currentBillingPrice) {
+      throw new BillingException(
+        `Cannot find price for product ${subscriptionItem.stripeProductId}`,
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+      );
+    }
 
-      return {
-        stripeSubscriptionItemId: item.stripeSubscriptionItemId,
-        productKey: item.billingProduct.metadata.productKey,
-        stripeMeterId,
-        freeTierQuantity: this.getFreeTierQuantity(price),
-        freeTrialQuantity: this.getFreeTrialQuantity(item),
-        unitPriceCents: this.getUnitPrice(price),
-      };
+    const newPrice = await this.billingPriceRepository.findOne({
+      where: { stripePriceId: newPriceId },
     });
+
+    if (!newPrice) {
+      throw new BillingException(
+        `Cannot find price with id ${newPriceId}`,
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+        { userFriendlyMessage: 'Price not found' },
+      );
+    }
+
+    if (
+      !this.isFirstPriceTiersLowerThatSecondPriceTier(
+        currentBillingPrice,
+        newPrice,
+      )
+    ) {
+      throw new BillingException(
+        'Cannot update price of subscription item because the new tier is lower than the current tier.',
+        BillingExceptionCode.BILLING_PRICE_UPDATE_REQUIRES_INCREASE,
+      );
+    }
+
+    await this.stripeSubscriptionService.updateSubscriptionItems(
+      subscriptionItem.stripeSubscriptionId,
+      [
+        {
+          ...subscriptionItem,
+          stripePriceId: newPriceId,
+        },
+      ],
+    );
+  }
+
+  async getMeteredSubscriptionItemDetails(subscriptionId: string) {
+    const meteredSubscriptionItems =
+      await this.billingSubscriptionItemRepository.find({
+        where: {
+          billingSubscriptionId: subscriptionId,
+        },
+        relations: ['billingProduct', 'billingProduct.billingPrices'],
+      });
+
+    return meteredSubscriptionItems.reduce(
+      (acc, item) => {
+        const price = this.findMatchingPrice(item);
+
+        if (!price.stripeMeterId) {
+          return acc;
+        }
+
+        return acc.concat({
+          stripeSubscriptionItemId: item.stripeSubscriptionItemId,
+          productKey: item.billingProduct.metadata.productKey,
+          stripeMeterId: price.stripeMeterId,
+          tierQuantity: this.getTierQuantity(price),
+          freeTrialQuantity: this.getFreeTrialQuantity(item),
+          unitPriceCents: this.getUnitPrice(price),
+        });
+      },
+      [] as Array<{
+        stripeSubscriptionItemId: string;
+        productKey: BillingProductKey;
+        stripeMeterId: string;
+        tierQuantity: number;
+        freeTrialQuantity: number;
+        unitPriceCents: number;
+      }>,
+    );
+  }
+
+  private isFirstPriceTiersLowerThatSecondPriceTier(
+    price1: BillingPrice,
+    price2: BillingPrice,
+  ) {
+    billingValidator.assertIsMeteredTiersSchemaOrThrow(price1.tiers);
+    billingValidator.assertIsMeteredTiersSchemaOrThrow(price2.tiers);
+
+    return price1.tiers[0].up_to < price2.tiers[0].up_to;
   }
 
   private findMatchingPrice(item: BillingSubscriptionItem): BillingPrice {
@@ -73,8 +158,10 @@ export class BillingSubscriptionItemService {
     return matchingPrice;
   }
 
-  private getFreeTierQuantity(price: BillingPrice): number {
-    return price.tiers?.find((tier) => tier.unit_amount === 0)?.up_to || 0;
+  private getTierQuantity(price: BillingPrice): number {
+    billingValidator.assertIsMeteredTiersSchemaOrThrow(price.tiers);
+
+    return price.tiers[0].up_to;
   }
 
   private getFreeTrialQuantity(item: BillingSubscriptionItem): number {
@@ -92,9 +179,8 @@ export class BillingSubscriptionItemService {
   }
 
   private getUnitPrice(price: BillingPrice): number {
-    return Number(
-      price.tiers?.find((tier) => tier.up_to === null)?.unit_amount_decimal ||
-        0,
-    );
+    billingValidator.assertIsMeteredTiersSchemaOrThrow(price.tiers);
+
+    return Number(price.tiers[1].unit_amount_decimal);
   }
 }

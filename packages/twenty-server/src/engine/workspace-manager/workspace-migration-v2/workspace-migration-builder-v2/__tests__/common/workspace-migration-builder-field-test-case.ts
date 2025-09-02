@@ -29,7 +29,7 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
         const sourceRelationId = faker.string.uuid();
         const sourceRelationFlatField = getFlatFieldMetadataMock({
           id: sourceRelationId,
-          uniqueIdentifier: 'field-metadata-unique-identifier-1',
+          universalIdentifier: 'field-metadata-unique-identifier-1',
           objectMetadataId: PET_FLAT_OBJECT_MOCK.id,
           type: FieldMetadataType.RELATION,
           relationTargetFieldMetadataId: targetRelationId,
@@ -43,7 +43,7 @@ const relationTestCases: WorkspaceMigrationBuilderTestCase[] = [
 
         const targetRelationFlatField = getFlatFieldMetadataMock({
           id: targetRelationId,
-          uniqueIdentifier: 'field-metadata-unique-identifier-2',
+          universalIdentifier: 'field-metadata-unique-identifier-2',
           objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
           type: FieldMetadataType.RELATION,
           relationTargetFieldMetadataId: sourceRelationId,
@@ -135,7 +135,7 @@ const basicCrudTestCases: WorkspaceMigrationBuilderTestCase[] = [
         toFlatObjectMetadataMaps:
           addFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
             flatFieldMetadata: getFlatFieldMetadataMock({
-              uniqueIdentifier: 'field-metadata-unique-identifier-1',
+              universalIdentifier: 'field-metadata-unique-identifier-1',
               type: FieldMetadataType.TEXT,
               objectMetadataId: ROCKET_FLAT_OBJECT_MOCK.id,
             }),

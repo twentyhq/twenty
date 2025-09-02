@@ -7,7 +7,7 @@ import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-me
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 
 const getReservedCompositeFieldNames = (
   flatObjectMetadata: FlatObjectMetadata,
@@ -47,7 +47,8 @@ export const validateFlatFieldMetadataNameAvailability = ({
     flatObjectMetadata.flatFieldMetadatas.some(
       (field) =>
         field.name === name ||
-        (isRelationFieldMetadataType(field.type) && `${field.name}Id` === name),
+        (isMorphOrRelationFieldMetadataType(field.type) &&
+          `${field.name}Id` === name),
     )
   ) {
     errors.push({

@@ -90,7 +90,7 @@ const generateSourceFlatFieldMetadata = ({
     standardId,
     standardOverrides: null,
     type: FieldMetadataType.RELATION,
-    uniqueIdentifier: standardId,
+    universalIdentifier: standardId,
     workspaceId,
   };
 };
@@ -152,7 +152,7 @@ const generateTargetFlatFieldMetadata = ({
     relationTargetFieldMetadataId: sourceFlatFieldMetadata.id,
     relationTargetObjectMetadataId: sourceFlatObjectMetadata.id,
     standardOverrides: null,
-    uniqueIdentifier: standardId,
+    universalIdentifier: standardId,
   };
 };
 

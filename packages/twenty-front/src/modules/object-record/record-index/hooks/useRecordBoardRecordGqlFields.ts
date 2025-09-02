@@ -3,8 +3,9 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { generateDepthOneWithoutRelationsRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneWithoutRelationsRecordGqlFields';
-import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
+import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -15,10 +16,13 @@ export const useRecordBoardRecordGqlFields = ({
   recordBoardId: string;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const visibleFieldDefinitions = useRecoilComponentValue(
-    recordBoardVisibleFieldDefinitionsComponentSelector,
+  const visibleRecordFields = useRecoilComponentValue(
+    visibleRecordFieldsComponentSelector,
     recordBoardId,
   );
+
+  const { fieldMetadataItemByFieldMetadataItemId } =
+    useRecordIndexContextOrThrow();
 
   const recordGroupFieldMetadata = useRecoilComponentValue(
     recordGroupFieldMetadataComponentState,
@@ -40,11 +44,20 @@ export const useRecordBoardRecordGqlFields = ({
       objectMetadataItem,
     });
 
+  const visibleFieldMetadataItems = visibleRecordFields
+    .map(
+      (recordField) =>
+        fieldMetadataItemByFieldMetadataItemId[
+          recordField.fieldMetadataItemId
+        ] ?? null,
+    )
+    .filter(isDefined);
+
   const recordGqlFields: Record<string, any> = {
     ...allDepthOneWithoutRelationsRecordGqlFields,
     ...Object.fromEntries(
-      visibleFieldDefinitions.map((visibleFieldDefinition) => [
-        visibleFieldDefinition.metadata.fieldName,
+      visibleFieldMetadataItems.map((visibleFieldMetadataItem) => [
+        visibleFieldMetadataItem.name,
         true,
       ]),
     ),
