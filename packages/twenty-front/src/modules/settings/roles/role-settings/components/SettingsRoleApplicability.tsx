@@ -27,32 +27,41 @@ const StyledCheckboxLabel = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-type SettingsRoleApplicabilityProps<T> = {
-  values: T;
-  onApplicabilityChange: (key: keyof T, value: boolean) => void;
+type SettingsRoleApplicabilityValues = {
+  canBeAssignedToUsers: boolean;
+  canBeAssignedToAgents: boolean;
+  canBeAssignedToApiKeys: boolean;
+};
+
+type SettingsRoleApplicabilityProps = {
+  values: SettingsRoleApplicabilityValues;
+  onApplicabilityChange: (
+    key: keyof SettingsRoleApplicabilityValues,
+    value: boolean,
+  ) => void;
   isEditable: boolean;
 };
 
-export const SettingsRoleApplicability = <T extends Record<string, boolean>>({
+export const SettingsRoleApplicability = ({
   values,
   onApplicabilityChange,
   isEditable,
-}: SettingsRoleApplicabilityProps<T>) => {
+}: SettingsRoleApplicabilityProps) => {
   const theme = useTheme();
 
   const options = [
     {
-      key: 'canBeAssignedToUsers',
+      key: 'canBeAssignedToUsers' as const,
       label: t`Assignable to team members`,
       Icon: IconUsers,
     },
     {
-      key: 'canBeAssignedToAgents',
+      key: 'canBeAssignedToAgents' as const,
       label: t`Assignable to Agents`,
       Icon: IconRobot,
     },
     {
-      key: 'canBeAssignedToApiKeys',
+      key: 'canBeAssignedToApiKeys' as const,
       label: t`Assignable to API Keys`,
       Icon: IconKey,
     },
