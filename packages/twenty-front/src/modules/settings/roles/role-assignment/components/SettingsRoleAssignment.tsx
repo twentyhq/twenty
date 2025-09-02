@@ -35,6 +35,7 @@ import {
   type Role,
   type WorkspaceMember,
 } from '~/generated-metadata/graphql';
+import { type ApiKeyForRole } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '../constants/RoleAssignmentConfirmationModalId';
 
@@ -103,7 +104,7 @@ export const SettingsRoleAssignment = ({
     role.agents?.forEach((agent: Agent) => {
       agentRoleMap.set(agent.id, { id: role.id, label: role.label });
     });
-    role.apiKeys?.forEach((apiKey: ApiKey) => {
+    role.apiKeys?.forEach((apiKey: ApiKeyForRole) => {
       apiKeyRoleMap.set(apiKey.id, { id: role.id, label: role.label });
     });
   });
@@ -219,7 +220,7 @@ export const SettingsRoleAssignment = ({
   };
 
   const handleSelectEntity = <
-    T extends CurrentWorkspaceMember | Agent | ApiKey,
+    T extends CurrentWorkspaceMember | Agent | ApiKeyForRole,
   >(
     entity: T,
     entityType: 'workspaceMember' | 'agent' | 'apiKey',
