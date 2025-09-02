@@ -39,7 +39,8 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
         this.getAuthContextFromRequest(request),
       );
 
-    const createdRecord = await repository.save(recordToCreate);
+    const createdRecordResult = await repository.insert(recordToCreate);
+    const createdRecord = createdRecordResult.identifiers[0];
 
     const records = await this.getRecord({
       recordIds: [createdRecord.id],

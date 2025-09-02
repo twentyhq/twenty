@@ -34,13 +34,12 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
       objectMetadataMapItem: objectMetadata.objectMetadataMapItem,
     });
 
-    const updatedRecord = await repository.save({
-      id: recordId,
-      ...overriddenBody,
-    });
+    const updatedRecord = await repository.update(recordId, overriddenBody);
+
+    const updatedRecordId = updatedRecord.generatedMaps[0].id;
 
     const records = await this.getRecord({
-      recordIds: [updatedRecord.id],
+      recordIds: [updatedRecordId],
       repository,
       objectMetadata,
       depth: this.depthInputFactory.create(request),

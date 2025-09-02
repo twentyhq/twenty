@@ -56,10 +56,13 @@ export class RestApiCreateManyHandler extends RestApiBaseHandler {
         this.getAuthContextFromRequest(request),
       );
 
-    const createdRecords = await repository.save(recordsToCreate);
+    const createdRecords = await repository.insert(recordsToCreate);
+    const createdRecordsIds = createdRecords.identifiers.map(
+      (record) => record.id,
+    );
 
     const records = await this.getRecord({
-      recordIds: createdRecords.map((record) => record.id),
+      recordIds: createdRecordsIds,
       repository,
       objectMetadata,
       depth: this.depthInputFactory.create(request),
