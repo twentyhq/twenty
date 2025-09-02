@@ -29,6 +29,10 @@ export class AgentService {
       order: { createdAt: 'DESC' },
     });
 
+    if (agents.length === 0) {
+      return [];
+    }
+
     const roleTargets = await this.roleTargetsRepository.find({
       where: {
         workspaceId,
