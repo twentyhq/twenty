@@ -1,5 +1,3 @@
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateFeatureFlagFactory } from 'test/integration/graphql/utils/update-feature-flag-factory.util';
 import { OBJECT_METADATA_LABEL_FAILING_TEST_CASES } from 'test/integration/metadata/suites/object-metadata/common/object-metadata-label-failing-tests-cases';
 import { OBJECT_METADATA_NAMES_FAILING_TEST_CASES } from 'test/integration/metadata/suites/object-metadata/common/object-metadata-names-failing-tests-cases';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -9,6 +7,7 @@ import { eachTestingContextFilter } from 'twenty-shared/testing';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 
 const allTestsUseCases = [
   ...OBJECT_METADATA_NAMES_FAILING_TEST_CASES,
@@ -17,23 +16,21 @@ const allTestsUseCases = [
 
 describe('Object metadata creation should fail v2', () => {
   beforeAll(async () => {
-    const enableWorkspaceMigrationV2 = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      true,
-    );
-
-    await makeGraphqlAPIRequest(enableWorkspaceMigrationV2);
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: true,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
   });
 
   afterAll(async () => {
-    const enablePermissionsQuery = updateFeatureFlagFactory(
-      SEED_APPLE_WORKSPACE_ID,
-      FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      false,
-    );
-
-    await makeGraphqlAPIRequest(enablePermissionsQuery);
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: false,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
   });
   it.each(eachTestingContextFilter(allTestsUseCases))(
     '$title',
