@@ -5,7 +5,7 @@ import {
 } from '@/spreadsheet-import/types';
 import { type SpreadsheetColumns } from '@/spreadsheet-import/types/SpreadsheetColumns';
 import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetColumnType';
-import { spreadsheetImportParseMultiSelectOptions } from '@/spreadsheet-import/utils/spreadsheetImportParseMultiSelectOptions';
+import { spreadsheetImportParseMultiSelectOptionsOrThrow } from '@/spreadsheet-import/utils/spreadsheetImportParseMultiSelectOptionsOrThrow';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { normalizeCheckboxValue } from './normalizeCheckboxValue';
@@ -62,7 +62,7 @@ export const normalizeTableData = (
 
           if (field.fieldType.type === 'multiSelect' && isDefined(curr)) {
             const currentOptionsSchema = z.preprocess((value) => {
-              return spreadsheetImportParseMultiSelectOptions(value);
+              return spreadsheetImportParseMultiSelectOptionsOrThrow(value);
             }, z.array(z.unknown()));
 
             const rawCurrentOptions = currentOptionsSchema.safeParse(curr).data;

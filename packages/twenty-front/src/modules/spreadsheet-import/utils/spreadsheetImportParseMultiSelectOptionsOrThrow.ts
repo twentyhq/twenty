@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
-export const spreadsheetImportParseMultiSelectOptions = (value: unknown) => {
+export const spreadsheetImportParseMultiSelectOptionsOrThrow = (
+  value: unknown,
+) => {
   try {
     return JSON.parse(z.string().parse(value));
   } catch {
