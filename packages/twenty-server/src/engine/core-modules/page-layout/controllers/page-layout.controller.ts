@@ -48,7 +48,7 @@ export class PageLayoutController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutDTO | null> {
-    return this.pageLayoutService.findById(id, workspace.id);
+    return this.pageLayoutService.findByIdOrThrow(id, workspace.id);
   }
 
   @Post()

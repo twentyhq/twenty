@@ -105,37 +105,38 @@ describe('PageLayoutService', () => {
     });
   });
 
-  describe('findById', () => {
+  describe('findByIdOrThrow', () => {
     it('should return a page layout by id', async () => {
       const id = 'page-layout-id';
       const workspaceId = 'workspace-id';
 
       jest
-        .spyOn(pageLayoutRepository, 'findOne')
+        .spyOn(pageLayoutService, 'findById')
         .mockResolvedValue(mockPageLayout);
 
-      const result = await pageLayoutService.findById(id, workspaceId);
+      const result = await pageLayoutService.findByIdOrThrow(id, workspaceId);
 
-      expect(pageLayoutRepository.findOne).toHaveBeenCalledWith({
-        where: {
-          id,
-          workspaceId,
-          deletedAt: IsNull(),
-        },
-        relations: ['tabs'],
-      });
+      expect(pageLayoutService.findById).toHaveBeenCalledWith(id, workspaceId);
       expect(result).toEqual(mockPageLayout);
     });
 
-    it('should return null when page layout is not found', async () => {
+    it('should throw exception when page layout is not found', async () => {
       const id = 'non-existent-id';
       const workspaceId = 'workspace-id';
 
-      jest.spyOn(pageLayoutRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(pageLayoutService, 'findById').mockResolvedValue(null);
 
-      const result = await pageLayoutService.findById(id, workspaceId);
-
-      expect(result).toBeNull();
+      await expect(
+        pageLayoutService.findByIdOrThrow(id, workspaceId),
+      ).rejects.toThrow(
+        new PageLayoutException(
+          generatePageLayoutExceptionMessage(
+            PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
+            id,
+          ),
+          PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
+        ),
+      );
     });
   });
 
@@ -192,7 +193,7 @@ describe('PageLayoutService', () => {
       const updatedPageLayout = { ...mockPageLayout, ...updateData };
 
       jest
-        .spyOn(pageLayoutService, 'findById')
+        .spyOn(pageLayoutService, 'findByIdOrThrow')
         .mockResolvedValue(mockPageLayout);
       jest
         .spyOn(pageLayoutRepository, 'save')
@@ -204,7 +205,10 @@ describe('PageLayoutService', () => {
         updateData,
       );
 
-      expect(pageLayoutService.findById).toHaveBeenCalledWith(id, workspaceId);
+      expect(pageLayoutService.findByIdOrThrow).toHaveBeenCalledWith(
+        id,
+        workspaceId,
+      );
       expect(pageLayoutRepository.save).toHaveBeenCalledWith({
         ...mockPageLayout,
         ...updateData,
@@ -217,7 +221,17 @@ describe('PageLayoutService', () => {
       const workspaceId = 'workspace-id';
       const updateData = { name: 'Updated Page Layout' };
 
-      jest.spyOn(pageLayoutService, 'findById').mockResolvedValue(null);
+      jest
+        .spyOn(pageLayoutService, 'findByIdOrThrow')
+        .mockRejectedValue(
+          new PageLayoutException(
+            generatePageLayoutExceptionMessage(
+              PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
+              id,
+            ),
+            PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
+          ),
+        );
 
       await expect(
         pageLayoutService.update(id, workspaceId, updateData),
@@ -239,7 +253,7 @@ describe('PageLayoutService', () => {
       const workspaceId = 'workspace-id';
 
       jest
-        .spyOn(pageLayoutService, 'findById')
+        .spyOn(pageLayoutService, 'findByIdOrThrow')
         .mockResolvedValue(mockPageLayout);
       jest
         .spyOn(pageLayoutRepository, 'softDelete')
@@ -247,7 +261,10 @@ describe('PageLayoutService', () => {
 
       const result = await pageLayoutService.delete(id, workspaceId);
 
-      expect(pageLayoutService.findById).toHaveBeenCalledWith(id, workspaceId);
+      expect(pageLayoutService.findByIdOrThrow).toHaveBeenCalledWith(
+        id,
+        workspaceId,
+      );
       expect(pageLayoutRepository.softDelete).toHaveBeenCalledWith(id);
       expect(result).toEqual(mockPageLayout);
     });
@@ -256,7 +273,17 @@ describe('PageLayoutService', () => {
       const id = 'non-existent-id';
       const workspaceId = 'workspace-id';
 
-      jest.spyOn(pageLayoutService, 'findById').mockResolvedValue(null);
+      jest
+        .spyOn(pageLayoutService, 'findByIdOrThrow')
+        .mockRejectedValue(
+          new PageLayoutException(
+            generatePageLayoutExceptionMessage(
+              PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
+              id,
+            ),
+            PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
+          ),
+        );
 
       await expect(pageLayoutService.delete(id, workspaceId)).rejects.toThrow(
         new PageLayoutException(
@@ -290,14 +317,24 @@ describe('PageLayoutService', () => {
         withDeleted: true,
       });
       expect(pageLayoutRepository.delete).toHaveBeenCalledWith(id);
-      expect(result).toEqual(true);
+      expect(result).toEqual(mockPageLayout);
     });
 
     it('should throw exception when page layout is not found', async () => {
       const id = 'non-existent-id';
       const workspaceId = 'workspace-id';
 
-      jest.spyOn(pageLayoutRepository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(pageLayoutRepository, 'findOne')
+        .mockRejectedValue(
+          new PageLayoutException(
+            generatePageLayoutExceptionMessage(
+              PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
+              id,
+            ),
+            PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
+          ),
+        );
 
       await expect(pageLayoutService.destroy(id, workspaceId)).rejects.toThrow(
         new PageLayoutException(
@@ -322,7 +359,7 @@ describe('PageLayoutService', () => {
         .mockResolvedValue(deletedPageLayout);
       jest.spyOn(pageLayoutRepository, 'restore').mockResolvedValue({} as any);
       jest
-        .spyOn(pageLayoutService, 'findById')
+        .spyOn(pageLayoutService, 'findByIdOrThrow')
         .mockResolvedValue(mockPageLayout);
 
       const result = await pageLayoutService.restore(id, workspaceId);
@@ -335,7 +372,10 @@ describe('PageLayoutService', () => {
         withDeleted: true,
       });
       expect(pageLayoutRepository.restore).toHaveBeenCalledWith(id);
-      expect(pageLayoutService.findById).toHaveBeenCalledWith(id, workspaceId);
+      expect(pageLayoutService.findByIdOrThrow).toHaveBeenCalledWith(
+        id,
+        workspaceId,
+      );
       expect(result).toEqual(mockPageLayout);
     });
 

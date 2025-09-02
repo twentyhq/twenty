@@ -59,6 +59,25 @@ export class PageLayoutService {
     return pageLayout || null;
   }
 
+  async findByIdOrThrow(
+    id: string,
+    workspaceId: string,
+  ): Promise<PageLayoutEntity> {
+    const pageLayout = await this.findById(id, workspaceId);
+
+    if (!isDefined(pageLayout)) {
+      throw new PageLayoutException(
+        generatePageLayoutExceptionMessage(
+          PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
+          id,
+        ),
+        PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
+      );
+    }
+
+    return pageLayout;
+  }
+
   async create(
     pageLayoutData: Partial<PageLayoutEntity>,
     workspaceId: string,
@@ -85,17 +104,7 @@ export class PageLayoutService {
     workspaceId: string,
     updateData: Partial<PageLayoutEntity>,
   ): Promise<PageLayoutEntity> {
-    const existingPageLayout = await this.findById(id, workspaceId);
-
-    if (!isDefined(existingPageLayout)) {
-      throw new PageLayoutException(
-        generatePageLayoutExceptionMessage(
-          PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
-          id,
-        ),
-        PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
-      );
-    }
+    const existingPageLayout = await this.findByIdOrThrow(id, workspaceId);
 
     const updatedPageLayout = await this.pageLayoutRepository.save({
       ...existingPageLayout,
@@ -106,24 +115,14 @@ export class PageLayoutService {
   }
 
   async delete(id: string, workspaceId: string): Promise<PageLayoutEntity> {
-    const pageLayout = await this.findById(id, workspaceId);
-
-    if (!isDefined(pageLayout)) {
-      throw new PageLayoutException(
-        generatePageLayoutExceptionMessage(
-          PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
-          id,
-        ),
-        PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
-      );
-    }
+    const pageLayout = await this.findByIdOrThrow(id, workspaceId);
 
     await this.pageLayoutRepository.softDelete(id);
 
     return pageLayout;
   }
 
-  async destroy(id: string, workspaceId: string): Promise<boolean> {
+  async destroy(id: string, workspaceId: string): Promise<PageLayoutEntity> {
     const pageLayout = await this.pageLayoutRepository.findOne({
       where: {
         id,
@@ -144,7 +143,7 @@ export class PageLayoutService {
 
     await this.pageLayoutRepository.delete(id);
 
-    return true;
+    return pageLayout;
   }
 
   async restore(id: string, workspaceId: string): Promise<PageLayoutEntity> {
@@ -175,8 +174,8 @@ export class PageLayoutService {
 
     await this.pageLayoutRepository.restore(id);
 
-    const restoredPageLayout = await this.findById(id, workspaceId);
+    const restoredPageLayout = await this.findByIdOrThrow(id, workspaceId);
 
-    return restoredPageLayout!;
+    return restoredPageLayout;
   }
 }

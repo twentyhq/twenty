@@ -39,7 +39,7 @@ export class PageLayoutResolver {
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutDTO | null> {
-    return this.pageLayoutService.findById(id, workspace.id);
+    return this.pageLayoutService.findByIdOrThrow(id, workspace.id);
   }
 
   @Mutation(() => PageLayoutDTO)
