@@ -47,10 +47,7 @@ export class PageLayoutResolver {
     @Args('input') input: CreatePageLayoutInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutDTO> {
-    return this.pageLayoutService.create({
-      ...input,
-      workspaceId: workspace.id,
-    });
+    return this.pageLayoutService.create(input, workspace.id);
   }
 
   @Mutation(() => PageLayoutDTO)

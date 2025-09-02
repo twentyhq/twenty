@@ -61,6 +61,7 @@ export class PageLayoutService {
 
   async create(
     pageLayoutData: Partial<PageLayoutEntity>,
+    workspaceId: string,
   ): Promise<PageLayoutEntity> {
     if (!isDefined(pageLayoutData.workspaceId)) {
       throw new PageLayoutException(
@@ -80,7 +81,10 @@ export class PageLayoutService {
       );
     }
 
-    const pageLayout = this.pageLayoutRepository.create(pageLayoutData);
+    const pageLayout = this.pageLayoutRepository.create({
+      ...pageLayoutData,
+      workspaceId,
+    });
 
     return this.pageLayoutRepository.save(pageLayout);
   }

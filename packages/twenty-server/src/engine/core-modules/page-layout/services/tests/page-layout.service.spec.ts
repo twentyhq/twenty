@@ -142,7 +142,6 @@ describe('PageLayoutService', () => {
   describe('create', () => {
     const validPageLayoutData = {
       name: 'Test Page Layout',
-      workspaceId: 'workspace-id',
       type: PageLayoutType.RECORD_PAGE,
       objectMetadataId: 'object-metadata-id',
     };
@@ -155,7 +154,10 @@ describe('PageLayoutService', () => {
         .spyOn(pageLayoutRepository, 'save')
         .mockResolvedValue(mockPageLayout);
 
-      const result = await pageLayoutService.create(validPageLayoutData);
+      const result = await pageLayoutService.create(
+        validPageLayoutData,
+        'workspace-id',
+      );
 
       expect(pageLayoutRepository.create).toHaveBeenCalledWith(
         validPageLayoutData,
@@ -165,9 +167,10 @@ describe('PageLayoutService', () => {
     });
 
     it('should throw exception when workspaceId is missing', async () => {
-      const invalidData = { ...validPageLayoutData, workspaceId: undefined };
-
-      await expect(pageLayoutService.create(invalidData)).rejects.toThrow(
+      await expect(
+        // @ts-expect-error - workspaceId is not defined
+        pageLayoutService.create(validPageLayoutData, undefined),
+      ).rejects.toThrow(
         new PageLayoutException(
           generatePageLayoutExceptionMessage(
             PageLayoutExceptionMessageKey.WORKSPACE_ID_REQUIRED,
@@ -179,8 +182,11 @@ describe('PageLayoutService', () => {
 
     it('should throw exception when name is missing', async () => {
       const invalidData = { ...validPageLayoutData, name: undefined };
+      const workspaceId = 'workspace-id';
 
-      await expect(pageLayoutService.create(invalidData)).rejects.toThrow(
+      await expect(
+        pageLayoutService.create(invalidData, workspaceId),
+      ).rejects.toThrow(
         new PageLayoutException(
           generatePageLayoutExceptionMessage(
             PageLayoutExceptionMessageKey.NAME_REQUIRED,
