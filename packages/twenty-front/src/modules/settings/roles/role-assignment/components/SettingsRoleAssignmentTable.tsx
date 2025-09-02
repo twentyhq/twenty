@@ -164,7 +164,7 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
             />
           ))}
 
-          {roleTargets.length === 0 && (
+          {filteredRoleTargets.length === 0 && (
             <StyledNoMembers>
               {tableConfig[roleTargetType].emptyStateText}
             </StyledNoMembers>
