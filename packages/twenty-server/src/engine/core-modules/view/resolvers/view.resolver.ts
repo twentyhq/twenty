@@ -45,8 +45,8 @@ export class ViewResolver {
     private readonly viewFieldService: ViewFieldService,
     private readonly viewFilterService: ViewFilterService,
     private readonly viewFilterGroupService: ViewFilterGroupService,
-    private readonly viewGroupService: ViewGroupService,
     private readonly viewSortService: ViewSortService,
+    private readonly viewGroupService: ViewGroupService,
     private readonly i18nService: I18nService,
   ) {}
 
