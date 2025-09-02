@@ -222,9 +222,10 @@ export class MessagingMessageListFetchService {
         `messageChannelId: ${messageChannel.id} launching workspace thread cleanup`,
       );
 
-      await this.messagingMessageCleanerService.cleanWorkspaceThreads(
-        workspaceId,
-      );
+      // TODO: Re-enable this after we have a way to clean up threads without impacting the message import
+      // await this.messagingMessageCleanerService.cleanWorkspaceThreads(
+      //   workspaceId,
+      // );
 
       this.logger.log(
         `messageChannelId: ${messageChannel.id} Total messages to import count: ${totalMessagesToImportCount}`,
