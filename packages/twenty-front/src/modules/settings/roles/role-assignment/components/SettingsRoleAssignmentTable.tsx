@@ -26,11 +26,8 @@ const StyledTable = styled.div`
 
 const StyledTableRows = styled.div`
   gap: ${({ theme }) => theme.spacing(0.5)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-block: ${({ theme }) => theme.spacing(2)};
 `;
-
-type RoleTargetType = 'member' | 'agent' | 'apiKey';
 
 const StyledNoMembers = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -47,16 +44,16 @@ const StyledSearchInput = styled(SettingsTextInput)`
   }
 `;
 
+type RoleTargetType = 'member' | 'agent' | 'apiKey';
+
 type SettingsRoleAssignmentTableProps<T extends RoleTargetType> = {
   roleTargetType: T;
   roleId: string;
-  emptyText?: string;
 };
 
 export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
   roleTargetType,
   roleId,
-  emptyText,
 }: SettingsRoleAssignmentTableProps<T>) => {
   const settingsDraftRole = useRecoilValue(
     settingsDraftRoleFamilyState(roleId),
@@ -67,32 +64,30 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
     setSearchFilter(text);
   };
 
-  const tableColumns: Record<RoleTargetType, [string, string]> = {
-    member: [t`Name`, t`Email`],
-    agent: [t`Name`, t`Description`],
-    apiKey: [t`Name`, t`Expires`],
+  const tableConfig = {
+    member: {
+      columns: [t`Name`, t`Email`],
+      displayName: t`Members`,
+      emptyStateText: t`No members assigned`,
+      roleTargets: settingsDraftRole.workspaceMembers,
+    },
+    agent: {
+      columns: [t`Name`, t`Description`],
+      displayName: t`Agents`,
+      emptyStateText: t`No agents assigned`,
+      roleTargets: settingsDraftRole.agents,
+    },
+    apiKey: {
+      columns: [t`Name`, t`Expires`],
+      displayName: t`API keys`,
+      emptyStateText: t`No API keys assigned`,
+      roleTargets: settingsDraftRole.apiKeys,
+    },
   };
 
-  const roleTargetLabels: Record<RoleTargetType, string> = {
-    member: 'members',
-    agent: 'agents',
-    apiKey: 'API keys',
-  };
+  const roleTargetDisplayName = tableConfig[roleTargetType].displayName;
 
-  const roleTargetLabel = roleTargetLabels[roleTargetType];
-
-  const defaultEmptyText: Record<RoleTargetType, string> = {
-    member: t`No members assigned`,
-    agent: t`No agents assigned`,
-    apiKey: t`No API keys assigned`,
-  };
-
-  const roleTargets =
-    roleTargetType === 'member'
-      ? settingsDraftRole.workspaceMembers
-      : roleTargetType === 'agent'
-        ? settingsDraftRole.agents
-        : settingsDraftRole.apiKeys;
+  const roleTargets = tableConfig[roleTargetType].roleTargets;
 
   const filteredRoleTargets = !searchFilter
     ? roleTargets
@@ -148,15 +143,15 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
   return (
     <>
       <H2Title
-        title={t`Assigned ${roleTargetLabel}`}
-        description={t`This role is assigned to these ${roleTargetLabel}.`}
+        title={t`Assigned ${roleTargetDisplayName}`}
+        description={t`This role is assigned to these ${roleTargetDisplayName}.`}
       />
       <StyledSearchContainer>
         <StyledSearchInput
           instanceId="role-assignment-member-search"
           value={searchFilter}
           onChange={handleSearchChange}
-          placeholder={t`Search an assigned ${roleTargetLabel}...`}
+          placeholder={t`Search an assigned ${roleTargetDisplayName}...`}
           fullWidth
           LeftIcon={IconSearch}
           sizeVariant="lg"
@@ -164,7 +159,7 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
       </StyledSearchContainer>
       <StyledTable>
         <TableRow gridAutoColumns="2fr 4fr">
-          {tableColumns[roleTargetType].map((column) => (
+          {tableConfig[roleTargetType].columns.map((column) => (
             <TableHeader key={column}>{column}</TableHeader>
           ))}
         </TableRow>
@@ -178,7 +173,7 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
 
           {roleTargets.length === 0 && (
             <StyledNoMembers>
-              {emptyText ?? defaultEmptyText[roleTargetType]}
+              {tableConfig[roleTargetType].emptyStateText}
             </StyledNoMembers>
           )}
         </StyledTableRows>
