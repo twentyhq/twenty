@@ -19,8 +19,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 import { useUpdateWorkspaceMutation } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SettingsCustomDomain } from '~/pages/settings/workspace/SettingsCustomDomain';
-import { SettingsSubdomain } from '~/pages/settings/workspace/SettingsSubdomain';
+import { SettingsCustomDomain } from '@/settings/domains/components/SettingsCustomDomain';
+import { SettingsSubdomain } from '@/settings/domains/components/SettingsSubdomain';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
 export const SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID =

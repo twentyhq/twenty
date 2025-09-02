@@ -1,8 +1,8 @@
-import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
 import { useCheckCustomDomainValidRecordsMutation } from '~/generated-metadata/graphql';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { customDomainRecordsState } from '@/settings/domains/states/customDomainRecordsState';
 
 export const useCheckCustomDomainValidRecords = () => {
   const [checkCustomDomainValidRecords] =

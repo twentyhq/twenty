@@ -13,10 +13,10 @@ import {
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { capitalize } from 'twenty-shared/utils';
 import { useRecoilValue } from 'recoil';
-import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { Status } from 'twenty-ui/display';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { customDomainRecordsState } from '@/settings/domains/states/customDomainRecordsState';
 
 const StyledTable = styled(Table)`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};

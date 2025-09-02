@@ -21,8 +21,9 @@ export enum SettingsPath {
   ServerlessFunctionDetail = 'functions/:serverlessFunctionId',
   WorkspaceMembersPage = 'members',
   Workspace = 'general',
-  Domain = 'general/domain',
   Domains = 'domains',
+  Domain = 'domains/domain',
+  NewApprovedAccessDomain = 'domains/approved-access-domain/new',
   Releases = 'releases',
   AI = 'ai',
   AINewAgent = 'ai/new-agent',
@@ -42,7 +43,6 @@ export enum SettingsPath {
   IntegrationNewDatabaseConnection = 'integrations/:databaseKey/new',
   Security = 'security',
   NewSSOIdentityProvider = 'security/sso/new',
-  NewApprovedAccessDomain = 'security/approved-access-domain/new',
 
   AdminPanel = 'admin-panel',
   AdminPanelHealthStatus = 'admin-panel#health-status',
