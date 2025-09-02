@@ -1,8 +1,8 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import {
-  type FieldPermission,
-  type ObjectPermission,
-  type Role,
+    type FieldPermission,
+    type ObjectPermission,
+    type Role,
 } from '~/generated/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
@@ -59,9 +59,14 @@ export const BASE_ROLE_MOCK_GRANTS_ALL: Role = {
   canSoftDeleteAllObjectRecords: true,
   canDestroyAllObjectRecords: true,
   canUpdateAllSettings: true,
+  canBeAssignedToUsers: true,
+  canBeAssignedToAgents: true,
+  canBeAssignedToApiKeys: true,
   id: MOCK_ROLE_ID_GRANTS_ALL,
   isEditable: true,
   label: 'Role grants all',
+  agents: [],
+  apiKeys: [],
   workspaceMembers: [],
   fieldPermissions: [
     { ...BASE_FIELD_PERMISSION, roleId: MOCK_ROLE_ID_GRANTS_ALL },
@@ -84,9 +89,14 @@ export const BASE_ROLE_MOCK_REVOKES_ALL: Role = {
   canSoftDeleteAllObjectRecords: false,
   canDestroyAllObjectRecords: false,
   canUpdateAllSettings: true,
+  canBeAssignedToUsers: true,
+  canBeAssignedToAgents: true,
+  canBeAssignedToApiKeys: true,
   id: MOCK_ROLE_ID_REVOKES_ALL,
   isEditable: true,
   label: 'Role revokes all',
+  agents: [],
+  apiKeys: [],
   workspaceMembers: [],
   fieldPermissions: [
     { ...BASE_FIELD_PERMISSION, roleId: MOCK_ROLE_ID_REVOKES_ALL },
