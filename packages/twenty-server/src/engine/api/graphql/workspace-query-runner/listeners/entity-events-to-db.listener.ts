@@ -19,6 +19,8 @@ import { CallWebhookJobsJob } from 'src/engine/core-modules/webhook/jobs/call-we
 import { type ObjectRecordEventForWebhook } from 'src/engine/core-modules/webhook/types/object-record-event-for-webhook.type';
 import { CallDatabaseEventTriggerJobsJob } from 'src/engine/metadata-modules/trigger/jobs/call-database-event-trigger-jobs.job';
 import { SubscriptionsService } from 'src/engine/subscriptions/subscriptions.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 
 @Injectable()
 export class EntityEventsToDbListener {
@@ -30,6 +32,7 @@ export class EntityEventsToDbListener {
     @InjectMessageQueue(MessageQueue.triggerQueue)
     private readonly triggerQueueService: MessageQueueService,
     private readonly subscriptionsService: SubscriptionsService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -78,13 +81,14 @@ export class EntityEventsToDbListener {
         },
       }));
 
-    await Promise.all([
+    const isDatabaseEventTriggerEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_DATABASE_EVENT_TRIGGER_ENABLED,
+        batchEvent.workspaceId,
+      );
+
+    const promises = [
       this.subscriptionsService.publish(batchEvent),
-      this.triggerQueueService.add<WorkspaceEventBatch<T>>(
-        CallDatabaseEventTriggerJobsJob.name,
-        batchEvent,
-        { retryLimit: 3 },
-      ),
       this.webhookQueueService.add<
         WorkspaceEventBatch<ObjectRecordEventForWebhook>
       >(
@@ -94,27 +98,41 @@ export class EntityEventsToDbListener {
           retryLimit: 3,
         },
       ),
-      ...(auditLogsEvents.length > 0
-        ? [
-            this.entityEventsToDbQueueService.add<WorkspaceEventBatch<T>>(
-              CreateAuditLogFromInternalEvent.name,
-              {
-                ...batchEvent,
-                events: auditLogsEvents,
-              },
-            ),
-          ]
-        : []),
-      ...(action !== DatabaseEventAction.DESTROYED && auditLogsEvents.length > 0
-        ? [
-            this.entityEventsToDbQueueService.add<
-              WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>
-            >(UpsertTimelineActivityFromInternalEvent.name, {
-              ...batchEvent,
-              events: auditLogsEvents,
-            }),
-          ]
-        : []),
-    ]);
+    ];
+
+    if (isDatabaseEventTriggerEnabled) {
+      promises.push(
+        this.triggerQueueService.add<WorkspaceEventBatch<T>>(
+          CallDatabaseEventTriggerJobsJob.name,
+          batchEvent,
+          { retryLimit: 3 },
+        ),
+      );
+    }
+
+    if (auditLogsEvents.length > 0) {
+      promises.push(
+        this.entityEventsToDbQueueService.add<WorkspaceEventBatch<T>>(
+          CreateAuditLogFromInternalEvent.name,
+          {
+            ...batchEvent,
+            events: auditLogsEvents,
+          },
+        ),
+      );
+
+      if (action !== DatabaseEventAction.DESTROYED) {
+        promises.push(
+          this.entityEventsToDbQueueService.add<
+            WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>
+          >(UpsertTimelineActivityFromInternalEvent.name, {
+            ...batchEvent,
+            events: auditLogsEvents,
+          }),
+        );
+      }
+    }
+
+    await Promise.all(promises);
   }
 }
