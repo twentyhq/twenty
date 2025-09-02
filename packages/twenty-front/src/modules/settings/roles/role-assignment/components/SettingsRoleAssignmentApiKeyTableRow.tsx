@@ -43,7 +43,7 @@ export const SettingsRoleAssignmentApiKeyTableRow = ({
       <StyledTableCell>
         <StyledNameContainer>
           <StyledIconWrapper>
-            <IconKey size={theme.icon.size.lg} />
+            <IconKey size={theme.icon.size.md} />
           </StyledIconWrapper>
           <StyledNameCell>
             <OverflowingTextWithTooltip text={apiKey.name} />

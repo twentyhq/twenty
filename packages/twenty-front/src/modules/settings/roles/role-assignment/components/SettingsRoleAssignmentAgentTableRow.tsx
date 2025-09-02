@@ -45,7 +45,7 @@ export const SettingsRoleAssignmentAgentTableRow = ({
       <StyledTableCell>
         <StyledNameContainer>
           <StyledIconWrapper>
-            <Icon size={theme.icon.size.lg} />
+            <Icon size={theme.icon.size.md} />
           </StyledIconWrapper>
           <StyledNameCell>
             <OverflowingTextWithTooltip text={agent.label} />
