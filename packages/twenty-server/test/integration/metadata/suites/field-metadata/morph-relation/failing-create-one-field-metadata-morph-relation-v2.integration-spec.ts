@@ -464,4 +464,90 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
       expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
     },
   );
+
+  it('it should fail to create a field with name than result in existing morph relation field join column', async () => {
+    const morphRelationCreateFieldInput: Omit<CreateFieldInput, 'workspaceId'> =
+      {
+        label: 'field label',
+        name: 'fieldName',
+        objectMetadataId: createdObjectMetadataCompanyId,
+        type: FieldMetadataType.MORPH_RELATION,
+        morphRelationsCreationPayload: [
+          {
+            targetFieldIcon: 'Icon123',
+            targetFieldLabel: 'toto',
+            targetObjectMetadataId: createdObjectMetadataOpportunityId,
+            type: RelationType.MANY_TO_ONE,
+          },
+          {
+            targetFieldIcon: 'Icon123',
+            targetFieldLabel: 'tata',
+            targetObjectMetadataId: createdObjectMetadataPersonId,
+            type: RelationType.MANY_TO_ONE,
+          },
+        ],
+      };
+
+    const {
+      data: { createOneField },
+    } = await createOneFieldMetadata({
+      input: morphRelationCreateFieldInput,
+      expectToFail: false,
+      gqlFields: `
+      id
+      name
+      `,
+    });
+
+    expect(createOneField.name).toBe(morphRelationCreateFieldInput.name);
+
+    const { errors } = await createOneFieldMetadata({
+      input: {
+        label: 'colliding field label',
+        name: `fieldNamePersonForMorphRelationSecondId`,
+        objectMetadataId: createdObjectMetadataPersonId,
+        type: FieldMetadataType.TEXT,
+      },
+      expectToFail: true,
+    });
+
+    expect(errors).toMatchSnapshot(extractRecordIdsAndDatesAsExpectAny(errors));
+  });
+
+  it('it should fail to create a field with name than result in existing morph relation field join column', async () => {
+    const morphRelationCreateFieldInput: Omit<CreateFieldInput, 'workspaceId'> =
+      {
+        label: 'field label',
+        name: 'relationTestFieldName',
+        objectMetadataId: createdObjectMetadataCompanyId,
+        type: FieldMetadataType.MORPH_RELATION,
+        morphRelationsCreationPayload: [
+          {
+            targetFieldIcon: 'Icon123',
+            targetFieldLabel: 'toto',
+            targetObjectMetadataId: createdObjectMetadataOpportunityId,
+            type: RelationType.ONE_TO_MANY,
+          },
+          {
+            targetFieldIcon: 'Icon123',
+            targetFieldLabel: 'tata',
+            targetObjectMetadataId: createdObjectMetadataPersonId,
+            type: RelationType.ONE_TO_MANY,
+          },
+        ],
+      };
+
+    const {
+      errors,
+    } = await createOneFieldMetadata({
+      input: morphRelationCreateFieldInput,
+      expectToFail: true,
+      gqlFields: `
+      id
+      name
+      `,
+    });
+
+    expect(errors).toMatchSnapshot(extractRecordIdsAndDatesAsExpectAny(errors));
+  });
 });

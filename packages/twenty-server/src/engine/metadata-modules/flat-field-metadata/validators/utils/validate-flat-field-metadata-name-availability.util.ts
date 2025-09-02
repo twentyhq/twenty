@@ -1,18 +1,15 @@
 import { t } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  computeMorphRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 const getReservedCompositeFieldNames = (
@@ -50,6 +47,9 @@ export const validateFlatFieldMetadataNameAvailability = ({
   const reservedCompositeFieldsNames =
     getReservedCompositeFieldNames(flatObjectMetadata);
 
+  if (flatFieldMetadata.name === 'fieldNamePersonForMorphRelationSecondId') {
+    console.log('SALUT');
+  }
   const flatFieldMetadataName = flatFieldMetadata.name;
 
   if (
@@ -61,29 +61,20 @@ export const validateFlatFieldMetadataNameAvailability = ({
       const firstDegreeCollision =
         existingFlatFieldMetadata.name === flatFieldMetadataName;
       const relationJoinColumnCollision =
-        isFlatFieldMetadataOfType(
-          existingFlatFieldMetadata,
-          FieldMetadataType.RELATION,
-        ) &&
-        computeRelationFieldJoinColumnName(existingFlatFieldMetadata) ===
-          flatFieldMetadataName;
-      const morphRelationJoinColumnCollision =
-        isFlatFieldMetadataOfType(
-          existingFlatFieldMetadata,
-          FieldMetadataType.MORPH_RELATION,
-        ) &&
-        computeMorphRelationFieldJoinColumnName({
-          name: existingFlatFieldMetadata.name,
-          targetObjectMetadataNameSingular:
-            existingFlatFieldMetadata.flatRelationTargetObjectMetadata
-              .nameSingular,
-        }) === flatFieldMetadataName;
-
-      return (
-        firstDegreeCollision ||
-        relationJoinColumnCollision ||
-        morphRelationJoinColumnCollision
-      );
+        isMorphOrRelationFlatFieldMetadata(existingFlatFieldMetadata) &&
+        existingFlatFieldMetadata.flatRelationTargetFieldMetadata.settings
+          .joinColumnName === flatFieldMetadataName;
+      if (
+        isMorphOrRelationFlatFieldMetadata(existingFlatFieldMetadata) &&
+        flatFieldMetadata.name === 'fieldNamePersonForMorphRelationSecondId'
+      ) {
+        console.log(
+          'salut',
+          existingFlatFieldMetadata.flatRelationTargetFieldMetadata.settings
+            .joinColumnName,
+        );
+      }
+      return firstDegreeCollision || relationJoinColumnCollision;
     })
   ) {
     errors.push({
