@@ -5,31 +5,50 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
   Relation,
-  Index,
+  UpdateDateColumn,
+  Unique,
 } from 'typeorm';
 
 import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/interfaces/syncable-entity.interface';
 
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
-export type CronTriggerSettings = {
-  pattern: string;
-};
+export enum HTTPMethod {
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  PATCH = 'PATCH',
+  DELETE = 'DELETE',
+}
 
-@Entity({ name: 'cronTrigger', schema: 'core' })
-@Index('IDX_CRON_TRIGGER_WORKSPACE_ID', ['workspaceId'])
-export class CronTrigger extends SyncableEntity {
+@Entity({ name: 'route', schema: 'core' })
+@Unique('IDX_ROUTE_PATH_HTTP_METHOD_WORKSPACE_ID_UNIQUE', [
+  'path',
+  'httpMethod',
+  'workspaceId',
+])
+export class Route extends SyncableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false, type: 'jsonb' })
-  settings: CronTriggerSettings;
+  @Column({ nullable: false })
+  path: string;
+
+  @Column({ nullable: false, default: true })
+  isAuthRequired: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: HTTPMethod,
+    default: HTTPMethod.GET,
+    nullable: false,
+  })
+  httpMethod: HTTPMethod;
 
   @ManyToOne(
     () => ServerlessFunctionEntity,
-    (serverlessFunction) => serverlessFunction.cronTriggers,
+    (serverlessFunction) => serverlessFunction.routes,
     { onDelete: 'CASCADE' },
   )
   @JoinColumn({ name: 'serverlessFunctionId' })

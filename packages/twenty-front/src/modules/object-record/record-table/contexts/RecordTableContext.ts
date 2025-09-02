@@ -10,6 +10,8 @@ type RecordTableContextValue = {
   objectMetadataItem: ObjectMetadataItem;
   objectPermissions: ObjectPermission;
   visibleRecordFields: RecordField[];
+  onRecordIdentifierClick?: (rowIndex: number, recordId: string) => void;
+  triggerEvent: 'CLICK' | 'MOUSE_DOWN';
 };
 
 export const [RecordTableContextProvider, useRecordTableContextOrThrow] =

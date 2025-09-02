@@ -4,10 +4,12 @@ import {
   type CountryCallingCode,
   parsePhoneNumberWithError,
 } from 'libphonenumber-js';
+import isEmpty from 'lodash.isempty';
 import {
   getCountryCodesForCallingCode,
   isDefined,
   isValidCountryCode,
+  parseJson,
   removeUndefinedFields,
 } from 'twenty-shared/utils';
 
@@ -23,7 +25,7 @@ import {
 export type PhonesFieldGraphQLInput =
   | Partial<
       Omit<PhonesMetadata, 'additionalPhones'> & {
-        additionalPhones: Partial<AdditionalPhoneMetadata>[];
+        additionalPhones: string | null;
       }
     >
   | null
@@ -194,12 +196,20 @@ export const transformPhonesValue = ({
     number: primary.primaryPhoneNumber,
   });
 
-  const parsedAdditionalPhones = isArray(additionalPhones)
-    ? additionalPhones
-    : [];
+  const parsedAdditionalPhones = isNonEmptyString(additionalPhones)
+    ? (parseJson<Partial<AdditionalPhoneMetadata>[]>(additionalPhones) ?? [])
+    : isArray(additionalPhones)
+      ? additionalPhones
+      : [];
+
+  const validatedAdditionalPhones = parsedAdditionalPhones.map(
+    validateAndInferPhoneInput,
+  );
 
   return removeUndefinedFields({
-    additionalPhones: parsedAdditionalPhones.map(validateAndInferPhoneInput),
+    additionalPhones: isEmpty(validatedAdditionalPhones)
+      ? null
+      : JSON.stringify(validatedAdditionalPhones),
     primaryPhoneCallingCode,
     primaryPhoneCountryCode,
     primaryPhoneNumber,

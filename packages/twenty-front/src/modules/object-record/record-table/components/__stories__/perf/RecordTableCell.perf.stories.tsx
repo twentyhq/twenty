@@ -161,6 +161,8 @@ const meta: Meta = {
                   objectMetadataId: mockPerformance.objectMetadataItem.id,
                 },
                 visibleRecordFields,
+                onRecordIdentifierClick: () => {},
+                triggerEvent: 'CLICK',
               }}
             >
               <RecordTableComponentInstance recordTableId={'recordTableId'}>
