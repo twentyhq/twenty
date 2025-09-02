@@ -31,7 +31,6 @@ import {
   useFindManyAgentsQuery,
   useGetApiKeysQuery,
   type Agent,
-  type ApiKey,
   type Role,
   type WorkspaceMember,
 } from '~/generated-metadata/graphql';
@@ -203,13 +202,8 @@ export const SettingsRoleAssignment = ({
             throw new Error('API key not found');
           }
 
-          const apiKey = {
-            ...apiKeyData,
-            workspaceId: '',
-          } as ApiKey;
-
           updateApiKeyRoleDraftState({
-            apiKey,
+            apiKey: apiKeyData as ApiKeyForRole,
           });
           break;
         }
@@ -245,7 +239,7 @@ export const SettingsRoleAssignment = ({
         break;
       }
       case 'apiKey': {
-        const apiKey = entity as ApiKey;
+        const apiKey = entity as ApiKeyForRole;
         existingRole = apiKeyRoleMap.get(apiKey.id);
         name = apiKey.name;
         dropdownIdToClose = apiKeyDropdownId;

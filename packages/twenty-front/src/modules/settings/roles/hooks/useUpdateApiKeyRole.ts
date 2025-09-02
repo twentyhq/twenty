@@ -1,16 +1,14 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useRecoilState } from 'recoil';
-import {
-  useAssignRoleToApiKeyMutation,
-  type ApiKey,
-} from '~/generated-metadata/graphql';
+import { useAssignRoleToApiKeyMutation } from '~/generated-metadata/graphql';
+import { type ApiKeyForRole } from '~/generated/graphql';
 
 type AddApiKeyToRoleAndUpdateStateParams = {
   apiKeyId: string;
 };
 
 type UpdateApiKeyRoleDraftStateParams = {
-  apiKey: ApiKey;
+  apiKey: ApiKeyForRole;
 };
 
 export const useUpdateApiKeyRole = (roleId: string) => {
