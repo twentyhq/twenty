@@ -16,7 +16,6 @@ import {
 import { type ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { type MergeManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import { type CompositeType } from 'src/engine/metadata-modules/field-metadata/interfaces/composite-type.interface';
 import { type FieldMetadataRelationSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -27,11 +26,8 @@ import {
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
-import { isNonNullObject } from 'src/engine/api/graphql/graphql-query-runner/utils/is-non-null-object';
+import { mergeFieldValues } from 'src/engine/api/graphql/graphql-query-runner/utils/merge-field-values.util';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import { type LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
-import { type AdditionalPhoneMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
@@ -198,30 +194,20 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
           objectMetadataItemWithFieldMaps.fieldsById,
         ).find((field) => field?.name === fieldName);
 
-        if (fieldMetadata && isCompositeFieldMetadataType(fieldMetadata.type)) {
-          const mergedComposite = this.mergeCompositeField(
-            fieldName,
-            recordsWithValues,
-            priorityRecordId,
-            objectMetadataItemWithFieldMaps,
-          );
-
-          mergedResult[fieldName] = mergedComposite;
-        } else if (fieldMetadata && this.isArrayLikeField(fieldMetadata.type)) {
-          const mergedArray = this.mergeArrayLikeField(recordsWithValues);
-
-          mergedResult[fieldName] = mergedArray;
-        } else {
-          const priorityValue = recordsWithValues.find(
-            (item) => item.recordId === priorityRecordId,
-          );
-
-          if (priorityValue && hasRecordFieldValue(priorityValue.value)) {
-            mergedResult[fieldName] = priorityValue.value;
-          } else {
-            mergedResult[fieldName] = recordsWithValues[0].value;
-          }
+        if (!fieldMetadata) {
+          return;
         }
+
+        const isCompositeField = isCompositeFieldMetadataType(
+          fieldMetadata.type,
+        );
+
+        mergedResult[fieldName] = mergeFieldValues(
+          fieldMetadata.type,
+          isCompositeField,
+          recordsWithValues,
+          priorityRecordId,
+        );
       }
     });
 
@@ -236,243 +222,7 @@ export class GraphqlQueryMergeManyResolverService extends GraphqlQueryBaseResolv
       objectMetadataItemWithFieldMaps.fieldsById,
     ).find((field) => field?.name === fieldName);
 
-    if (fieldMetadata?.isSystem) {
-      return true;
-    }
-
-    return false;
-  }
-
-  private mergeCompositeField(
-    fieldName: string,
-    recordsWithValues: { value: unknown; recordId: string }[],
-    priorityRecordId: string,
-    objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
-  ): Record<string, unknown> | null {
-    const fieldMetadata = Object.values(
-      objectMetadataItemWithFieldMaps.fieldsById,
-    ).find((field) => field?.name === fieldName);
-
-    if (!fieldMetadata || !isCompositeFieldMetadataType(fieldMetadata.type)) {
-      return null;
-    }
-
-    const compositeDefinition = compositeTypeDefinitions.get(
-      fieldMetadata.type,
-    );
-
-    if (!compositeDefinition) {
-      return null;
-    }
-
-    const mergedComposite: Record<string, unknown> = {};
-    const priorityRecord = recordsWithValues.find(
-      (item) => item.recordId === priorityRecordId,
-    );
-
-    compositeDefinition.properties.forEach((property) => {
-      const propertyName = property.name;
-
-      if (property.isIncludedInUniqueConstraint) {
-        mergedComposite[propertyName] = this.getUniqueConstraintValue(
-          priorityRecord,
-          propertyName,
-          recordsWithValues,
-        );
-
-        return;
-      }
-
-      if (property.isArray || property.type === FieldMetadataType.RAW_JSON) {
-        mergedComposite[propertyName] = this.mergeArrayProperty(
-          recordsWithValues,
-          propertyName,
-          compositeDefinition,
-        );
-
-        return;
-      }
-
-      mergedComposite[propertyName] = this.mergeSimplePropertyFromAllRecords(
-        priorityRecord,
-        recordsWithValues,
-        propertyName,
-      );
-    });
-
-    return mergedComposite;
-  }
-
-  private getUniqueConstraintValue(
-    priorityRecord: { value: unknown; recordId: string } | undefined,
-    propertyName: string,
-    recordsWithValues?: { value: unknown; recordId: string }[],
-  ): unknown {
-    const priorityValue = priorityRecord?.value as Record<
-      string,
-      unknown
-    > | null;
-
-    const priorityFieldValue = priorityValue?.[propertyName];
-
-    if (hasRecordFieldValue(priorityFieldValue)) {
-      return priorityFieldValue;
-    }
-
-    if (recordsWithValues) {
-      for (const record of recordsWithValues) {
-        const recordValue = record.value as Record<string, unknown> | null;
-        const fieldValue = recordValue?.[propertyName];
-
-        if (hasRecordFieldValue(fieldValue)) {
-          return fieldValue;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  private mergeArrayProperty(
-    recordsWithValues: { value: unknown; recordId: string }[],
-    propertyName: string,
-    compositeDefinition: CompositeType,
-  ): unknown[] | null {
-    const allArrays: unknown[] = [];
-
-    recordsWithValues.forEach((record) => {
-      const recordValue = record.value as Record<string, unknown> | null;
-      const arrayValue = recordValue?.[propertyName];
-
-      if (Array.isArray(arrayValue)) {
-        allArrays.push(...arrayValue);
-      }
-    });
-
-    const uniqueArrays = this.deduplicateCompositeArrayItems(
-      allArrays,
-      compositeDefinition,
-    );
-
-    return uniqueArrays.length > 0 ? uniqueArrays : null;
-  }
-
-  private mergeSimplePropertyFromAllRecords(
-    priorityRecord: { value: unknown; recordId: string } | undefined,
-    recordsWithValues: { value: unknown; recordId: string }[],
-    propertyName: string,
-  ): unknown {
-    const priorityValue = priorityRecord?.value as Record<
-      string,
-      unknown
-    > | null;
-
-    const priorityFieldValue = priorityValue?.[propertyName];
-
-    if (hasRecordFieldValue(priorityFieldValue)) {
-      return priorityFieldValue;
-    }
-
-    for (const record of recordsWithValues) {
-      const recordValue = record.value as Record<string, unknown> | null;
-      const fieldValue = recordValue?.[propertyName];
-
-      if (hasRecordFieldValue(fieldValue)) {
-        return fieldValue;
-      }
-    }
-
-    return null;
-  }
-
-  private isArrayLikeField(fieldType: FieldMetadataType): boolean {
-    return [FieldMetadataType.MULTI_SELECT, FieldMetadataType.ARRAY].includes(
-      fieldType,
-    );
-  }
-
-  private mergeArrayLikeField(
-    recordsWithValues: { value: unknown; recordId: string }[],
-  ): unknown[] | null {
-    const allValues: unknown[] = [];
-
-    recordsWithValues.forEach((record) => {
-      const fieldValue = record.value;
-
-      if (Array.isArray(fieldValue)) {
-        fieldValue.forEach((value) => {
-          if (hasRecordFieldValue(value)) {
-            allValues.push(value);
-          }
-        });
-      }
-    });
-
-    const uniqueValues = allValues.filter((value, index, array) => {
-      const firstIndex = array.findIndex(
-        (item) => JSON.stringify(item) === JSON.stringify(value),
-      );
-
-      return firstIndex === index;
-    });
-
-    return uniqueValues.length > 0 ? uniqueValues : null;
-  }
-
-  private deduplicateCompositeArrayItems(
-    array: unknown[],
-    compositeDefinition?: CompositeType,
-  ): unknown[] {
-    if (!Array.isArray(array) || array.length === 0) {
-      return [];
-    }
-
-    const seenKeys = new Set<string>();
-
-    return array.filter((item) => {
-      if (!item) {
-        return false;
-      }
-
-      const uniqueKey =
-        this.extractUniqueKeyFromCompositeItem(item, compositeDefinition) ||
-        JSON.stringify(item);
-
-      if (seenKeys.has(uniqueKey)) {
-        return false;
-      }
-
-      seenKeys.add(uniqueKey);
-
-      return true;
-    });
-  }
-
-  private extractUniqueKeyFromCompositeItem(
-    item: unknown,
-    compositeDefinition?: CompositeType,
-  ): string | null {
-    if (!compositeDefinition) {
-      return null;
-    }
-
-    const { type: compositeType } = compositeDefinition;
-
-    switch (compositeType) {
-      case FieldMetadataType.LINKS:
-        return isNonNullObject(item) ? (item as LinkMetadata).url : null;
-
-      case FieldMetadataType.PHONES:
-        return isNonNullObject(item)
-          ? (item as AdditionalPhoneMetadata).number
-          : null;
-
-      case FieldMetadataType.EMAILS:
-        return typeof item === 'string' ? item : null;
-
-      default:
-        return null;
-    }
+    return fieldMetadata?.isSystem ?? false;
   }
 
   private createDryRunResponse(

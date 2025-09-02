@@ -127,14 +127,14 @@ describe('findPersonByPrimaryOrAdditionalEmail', () => {
         id: 'person-1',
         emails: {
           primaryEmail: 'other@example.com',
-          additionalEmails: [],
+          additionalEmails: null,
         },
       },
       {
         id: 'person-2',
         emails: {
           primaryEmail: 'test@example.com',
-          additionalEmails: [],
+          additionalEmails: null,
         },
       },
     ] as PersonWorkspaceEntity[];
