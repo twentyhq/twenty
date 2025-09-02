@@ -1,0 +1,252 @@
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import {
+  eachTestingContextFilter,
+  type EachTestingContext,
+} from 'twenty-shared/testing';
+import { FieldMetadataType } from 'twenty-shared/types';
+
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+
+type EachTestingContextArray = EachTestingContext<
+  (args: {
+    createdObjectMetadataPersonId: string;
+    createdObjectMetadataOpportunityId: string;
+    createdObjectMetadataCompanyId: string;
+  }) => Omit<
+    CreateFieldInput,
+    'morphRelationsCreationPayload' | 'workspaceId'
+  > &
+    Required<Pick<CreateFieldInput, 'morphRelationsCreationPayload'>>
+>[];
+
+const failingTestCases: EachTestingContextArray = [
+  {
+    title: 'should fail to create a MORPH_RELATION with many relation types',
+    context: ({
+      createdObjectMetadataCompanyId,
+      createdObjectMetadataOpportunityId,
+      createdObjectMetadataPersonId,
+    }) => ({
+      label: 'field label',
+      name: 'fieldName',
+      objectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelationsCreationPayload: [
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'toto',
+          targetObjectMetadataId: createdObjectMetadataOpportunityId,
+          type: RelationType.MANY_TO_ONE,
+        },
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'tata',
+          targetObjectMetadataId: createdObjectMetadataPersonId,
+          type: RelationType.ONE_TO_MANY,
+        },
+      ],
+    }),
+  },
+  {
+    only: true,
+    title: 'should fail to create a MORPH_RELATION on source object itself',
+    context: ({
+      createdObjectMetadataCompanyId,
+      createdObjectMetadataOpportunityId,
+      createdObjectMetadataPersonId,
+    }) => ({
+      label: 'field label',
+      name: 'fieldName',
+      objectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelationsCreationPayload: [
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'toto',
+          targetObjectMetadataId: createdObjectMetadataOpportunityId,
+          type: RelationType.ONE_TO_MANY,
+        },
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'tata',
+          targetObjectMetadataId: createdObjectMetadataPersonId,
+          type: RelationType.ONE_TO_MANY,
+        },
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'tata',
+          targetObjectMetadataId: createdObjectMetadataCompanyId,
+          type: RelationType.ONE_TO_MANY,
+        },
+      ],
+    }),
+  },
+  {
+    title:
+      'should fail to create a MORPH_RELATION that has several references to same object',
+    context: ({
+      createdObjectMetadataCompanyId,
+      createdObjectMetadataOpportunityId,
+      createdObjectMetadataPersonId,
+    }) => ({
+      label: 'field label',
+      name: 'fieldName',
+      objectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelationsCreationPayload: [
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'toto',
+          targetObjectMetadataId: createdObjectMetadataOpportunityId,
+          type: RelationType.ONE_TO_MANY,
+        },
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'tata',
+          targetObjectMetadataId: createdObjectMetadataPersonId,
+          type: RelationType.ONE_TO_MANY,
+        },
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'titi',
+          targetObjectMetadataId: createdObjectMetadataOpportunityId,
+          type: RelationType.ONE_TO_MANY,
+        },
+      ],
+    }),
+  },
+];
+
+describe('failing createOne FieldMetadataService morph relation fields v2 s', () => {
+  let createdObjectMetadataPersonId: string;
+  let createdObjectMetadataOpportunityId: string;
+  let createdObjectMetadataCompanyId: string;
+
+  beforeAll(async () => {
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: true,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
+
+    const {
+      data: {
+        createOneObject: { id: objectMetadataPersonId },
+      },
+    } = await createOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        nameSingular: 'personForMorphRelationSecond',
+        namePlural: 'peopleForMorphRelationSecond',
+        labelSingular: 'Person For Morph Relation',
+        labelPlural: 'People For Morph Relation',
+        icon: 'IconPerson',
+      },
+    });
+
+    createdObjectMetadataPersonId = objectMetadataPersonId;
+
+    const {
+      data: {
+        createOneObject: { id: objectMetadataCompanyId },
+      },
+    } = await createOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        nameSingular: 'companyForMorphRelationSecond',
+        namePlural: 'companiesForMorphRelationSecond',
+        labelSingular: 'Company For Morph Relation',
+        labelPlural: 'Companies For Morph Relation',
+        icon: 'IconCompany',
+      },
+    });
+
+    createdObjectMetadataCompanyId = objectMetadataCompanyId;
+
+    const {
+      data: {
+        createOneObject: { id: objectMetadataOpportunityId },
+      },
+    } = await createOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        nameSingular: 'opportunityForMorphRelationSecond',
+        namePlural: 'opportunitiesForMorphRelationSecond',
+        labelSingular: 'Opportunity For Morph Relation',
+        labelPlural: 'Opportunities For Morph Relation',
+        icon: 'IconOpportunity',
+      },
+    });
+
+    createdObjectMetadataOpportunityId = objectMetadataOpportunityId;
+  });
+
+  afterAll(async () => {
+    await Promise.all(
+      [
+        createdObjectMetadataPersonId,
+        createdObjectMetadataOpportunityId,
+        createdObjectMetadataCompanyId,
+      ].map(
+        async (objectMetadataId) =>
+          await updateOneObjectMetadata({
+            expectToFail: false,
+            input: {
+              idToUpdate: objectMetadataId,
+              updatePayload: { isActive: false },
+            },
+          }),
+      ),
+    );
+
+    await Promise.all(
+      [
+        createdObjectMetadataPersonId,
+        createdObjectMetadataOpportunityId,
+        createdObjectMetadataCompanyId,
+      ].map(
+        async (objectMetadataId) =>
+          await deleteOneObjectMetadata({
+            expectToFail: false,
+            input: { idToDelete: objectMetadataId },
+          }),
+      ),
+    );
+
+    await updateFeatureFlag({
+      expectToFail: false,
+      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+      value: false,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
+  });
+
+  it.each(eachTestingContextFilter(failingTestCases))(
+    '$title',
+    async ({ context }) => {
+      const contextPayload = context({
+        createdObjectMetadataOpportunityId,
+        createdObjectMetadataPersonId,
+        createdObjectMetadataCompanyId,
+      });
+
+      const { errors } = await createOneFieldMetadata({
+        input: contextPayload,
+        expectToFail: true,
+      });
+      expect(errors.length).toBe(1);
+      const [firstError] = errors;
+      expect(firstError).toMatchSnapshot();
+      expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
+    },
+  );
+});
