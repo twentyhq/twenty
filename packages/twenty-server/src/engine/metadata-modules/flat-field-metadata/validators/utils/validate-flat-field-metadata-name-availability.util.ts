@@ -1,9 +1,9 @@
 import { t } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   computeMorphRelationFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -60,7 +60,6 @@ export const validateFlatFieldMetadataNameAvailability = ({
     flatObjectMetadata.flatFieldMetadatas.some((existingFlatFieldMetadata) => {
       const firstDegreeCollision =
         existingFlatFieldMetadata.name === flatFieldMetadataName;
-      // Redundant for v2 validation
       const relationJoinColumnCollision =
         isFlatFieldMetadataOfType(
           existingFlatFieldMetadata,
@@ -79,7 +78,6 @@ export const validateFlatFieldMetadataNameAvailability = ({
             existingFlatFieldMetadata.flatRelationTargetObjectMetadata
               .nameSingular,
         }) === flatFieldMetadataName;
-      ///
 
       return (
         firstDegreeCollision ||
