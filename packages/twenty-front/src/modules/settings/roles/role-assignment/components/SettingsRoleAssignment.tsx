@@ -6,44 +6,27 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
 import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
+import { RoleAssignmentSection } from '@/settings/roles/role-assignment/components/RoleAssignmentSection';
 import { SettingsRoleAssignmentConfirmationModal } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal';
-
-import { SettingsRoleAssignmentEntityPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown';
-import { SettingsRoleAssignmentTable } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentTable';
-import { SettingsRoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown';
 import { type SettingsRoleAssignmentConfirmationModalSelectedRoleTarget } from '@/settings/roles/role-assignment/types/SettingsRoleAssignmentConfirmationModalSelectedRoleTarget';
 import { settingsAllRolesSelector } from '@/settings/roles/states/settingsAllRolesSelector';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
-import styled from '@emotion/styled';
-import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { AppTooltip, IconPlus, TooltipDelay } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
 import {
   useFindManyAgentsQuery,
   useGetApiKeysQuery,
   type Agent,
-  type Role,
-  type WorkspaceMember,
 } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '../constants/RoleAssignmentConfirmationModalId';
-
-const StyledAssignToMemberContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding-top: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-`;
+import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '../constants/role-assignment-confirmation-modal-id';
+import { ROLE_TARGET_CONFIG } from '../constants/role-target-config';
+import { buildRoleMaps } from '../utils/build-role-maps';
 
 type SettingsRoleAssignmentProps = {
   roleId: string;
@@ -79,38 +62,14 @@ export const SettingsRoleAssignment = ({
       null,
     );
 
-  const dropdownId = 'role-member-select';
-  const agentDropdownId = 'role-agent-select';
-  const apiKeyDropdownId = 'role-api-key-select';
-
-  const { closeDropdown } = useCloseDropdown();
   const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-
   const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
 
-  const workspaceMemberRoleMap = new Map<
-    string,
-    { id: string; label: string }
-  >();
-  const agentRoleMap = new Map<string, { id: string; label: string }>();
-  const apiKeyRoleMap = new Map<string, { id: string; label: string }>();
+  const roleMaps = buildRoleMaps(settingsAllRoles);
 
-  settingsAllRoles.forEach((role: Role) => {
-    role.workspaceMembers.forEach((member: WorkspaceMember) => {
-      workspaceMemberRoleMap.set(member.id, { id: role.id, label: role.label });
-    });
-    role.agents?.forEach((agent: Agent) => {
-      agentRoleMap.set(agent.id, { id: role.id, label: role.label });
-    });
-    role.apiKeys?.forEach((apiKey: ApiKeyForRole) => {
-      apiKeyRoleMap.set(apiKey.id, { id: role.id, label: role.label });
-    });
-  });
-
-  const assignedWorkspaceMemberIds = settingsDraftRole.workspaceMembers.map(
-    (workspaceMember) => workspaceMember.id,
-  );
+  const assignedWorkspaceMemberIds =
+    ROLE_TARGET_CONFIG.member.getAssignedIds(settingsDraftRole);
 
   const assignableWorkspaceMembers = currentWorkspaceMembers.filter(
     (member) => member.id !== currentWorkspaceMember?.id,
@@ -119,14 +78,6 @@ export const SettingsRoleAssignment = ({
   const allWorkspaceMembersHaveThisRole = assignableWorkspaceMembers.every(
     (member) => assignedWorkspaceMemberIds.includes(member.id),
   );
-
-  const agents = settingsDraftRole.agents || [];
-
-  const assignedAgentIds = agents.map((agent) => agent.id);
-
-  const apiKeys = settingsDraftRole.apiKeys || [];
-
-  const assignedApiKeyIds = apiKeys.map((apiKey) => apiKey.id);
 
   const handleModalClose = () => {
     setSelectRoleTarget(null);
@@ -142,7 +93,7 @@ export const SettingsRoleAssignment = ({
 
     if (!isCreateMode) {
       switch (selectedRoleTarget.entityType) {
-        case 'workspaceMember':
+        case 'member':
           await addWorkspaceMemberToRoleAndUpdateState({
             workspaceMemberId: selectedRoleTarget.id,
           });
@@ -160,19 +111,19 @@ export const SettingsRoleAssignment = ({
       }
     } else {
       switch (selectedRoleTarget.entityType) {
-        case 'workspaceMember': {
-          const workspaceMember = currentWorkspaceMembers.find(
+        case 'member': {
+          const member = currentWorkspaceMembers.find(
             (member) => member.id === selectedRoleTarget.id,
           );
 
-          if (!workspaceMember) {
+          if (!member) {
             throw new Error('Workspace member not found');
           }
 
           updateWorkspaceMemberRoleDraftState({
             workspaceMember: {
-              id: workspaceMember.id,
-              name: workspaceMember.name,
+              id: member.id,
+              name: member.name,
               colorScheme: '',
               userEmail: '',
             },
@@ -217,44 +168,20 @@ export const SettingsRoleAssignment = ({
     T extends CurrentWorkspaceMember | Agent | ApiKeyForRole,
   >(
     entity: T,
-    entityType: 'workspaceMember' | 'agent' | 'apiKey',
+    entityType: keyof typeof ROLE_TARGET_CONFIG,
   ) => {
-    let existingRole: { id: string; label: string } | undefined;
-    let name: string;
-    let dropdownIdToClose: string;
-
-    switch (entityType) {
-      case 'workspaceMember': {
-        const workspaceMember = entity as CurrentWorkspaceMember;
-        existingRole = workspaceMemberRoleMap.get(workspaceMember.id);
-        name = `${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`;
-        dropdownIdToClose = dropdownId;
-        break;
-      }
-      case 'agent': {
-        const agent = entity as Agent;
-        existingRole = agentRoleMap.get(agent.id);
-        name = agent.label;
-        dropdownIdToClose = agentDropdownId;
-        break;
-      }
-      case 'apiKey': {
-        const apiKey = entity as ApiKeyForRole;
-        existingRole = apiKeyRoleMap.get(apiKey.id);
-        name = apiKey.name;
-        dropdownIdToClose = apiKeyDropdownId;
-        break;
-      }
-    }
+    const config = ROLE_TARGET_CONFIG[entityType];
+    const existingRole = config.getRoleMap(roleMaps).get(entity.id);
+    const name = config.getName(entity as any);
 
     setSelectRoleTarget({
       id: entity.id,
       name,
       role: existingRole,
-      entityType,
+      entityType: entityType as 'member' | 'agent' | 'apiKey',
     });
+
     openModal(ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID);
-    closeDropdown(dropdownIdToClose);
   };
 
   const handleRoleClick = (roleId: string) => {
@@ -269,108 +196,25 @@ export const SettingsRoleAssignment = ({
 
   return (
     <>
-      {settingsDraftRole.canBeAssignedToUsers && (
-        <Section>
-          <SettingsRoleAssignmentTable
-            roleId={roleId}
-            roleTargetType="member"
-          />
-
-          <StyledAssignToMemberContainer>
-            <Dropdown
-              dropdownId="role-member-select"
-              dropdownOffset={{ x: 0, y: 4 }}
-              clickableComponent={
-                <>
-                  <div id="assign-member">
-                    <Button
-                      Icon={IconPlus}
-                      title={t`Assign to member`}
-                      variant="secondary"
-                      size="small"
-                      disabled={allWorkspaceMembersHaveThisRole}
-                    />
-                  </div>
-                  <AppTooltip
-                    anchorSelect="#assign-member"
-                    content={t`The workspace needs at least one Admin`}
-                    delay={TooltipDelay.noDelay}
-                    hidden={!allWorkspaceMembersHaveThisRole}
-                  />
-                </>
-              }
-              dropdownComponents={
-                <SettingsRoleAssignmentWorkspaceMemberPickerDropdown
-                  excludedWorkspaceMemberIds={[
-                    ...assignedWorkspaceMemberIds,
-                    currentWorkspaceMember?.id,
-                  ]}
-                  onSelect={(workspaceMember: CurrentWorkspaceMember) =>
-                    handleSelectEntity(workspaceMember, 'workspaceMember')
-                  }
-                />
-              }
-            />
-          </StyledAssignToMemberContainer>
-        </Section>
-      )}
-
-      {settingsDraftRole.canBeAssignedToAgents && (
-        <Section>
-          <SettingsRoleAssignmentTable roleId={roleId} roleTargetType="agent" />
-          <StyledAssignToMemberContainer>
-            <Dropdown
-              dropdownId={agentDropdownId}
-              dropdownOffset={{ x: 0, y: 4 }}
-              clickableComponent={
-                <Button
-                  Icon={IconPlus}
-                  title={t`Assign to agent`}
-                  variant="secondary"
-                  size="small"
-                />
-              }
-              dropdownComponents={
-                <SettingsRoleAssignmentEntityPickerDropdown
-                  entityType="agent"
-                  excludedIds={assignedAgentIds}
-                  onSelect={(agent) => handleSelectEntity(agent, 'agent')}
-                />
-              }
-            />
-          </StyledAssignToMemberContainer>
-        </Section>
-      )}
-
-      {settingsDraftRole.canBeAssignedToApiKeys && (
-        <Section>
-          <SettingsRoleAssignmentTable
-            roleId={roleId}
-            roleTargetType="apiKey"
-          />
-          <StyledAssignToMemberContainer>
-            <Dropdown
-              dropdownId={apiKeyDropdownId}
-              dropdownOffset={{ x: 0, y: 4 }}
-              clickableComponent={
-                <Button
-                  Icon={IconPlus}
-                  title={t`Assign to API key`}
-                  variant="secondary"
-                  size="small"
-                />
-              }
-              dropdownComponents={
-                <SettingsRoleAssignmentEntityPickerDropdown
-                  entityType="apiKey"
-                  excludedIds={assignedApiKeyIds}
-                  onSelect={(apiKey) => handleSelectEntity(apiKey, 'apiKey')}
-                />
-              }
-            />
-          </StyledAssignToMemberContainer>
-        </Section>
-      )}
+      {Object.keys(ROLE_TARGET_CONFIG).map((roleTargetType) => (
+        <RoleAssignmentSection
+          key={roleTargetType}
+          roleTargetType={roleTargetType as keyof typeof ROLE_TARGET_CONFIG}
+          roleId={roleId}
+          settingsDraftRole={settingsDraftRole}
+          currentWorkspaceMember={
+            roleTargetType === 'member'
+              ? currentWorkspaceMember || undefined
+              : undefined
+          }
+          onSelect={handleSelectEntity}
+          allWorkspaceMembersHaveThisRole={
+            roleTargetType === 'member'
+              ? allWorkspaceMembersHaveThisRole
+              : undefined
+          }
+        />
+      ))}
 
       {selectedRoleTarget && (
         <SettingsRoleAssignmentConfirmationModal
