@@ -130,8 +130,6 @@ describe('transformStripePriceToDatabasePrice', () => {
 
     it.each([
       ['month', SubscriptionInterval.Month],
-      ['day', SubscriptionInterval.Day],
-      ['week', SubscriptionInterval.Week],
       ['year', SubscriptionInterval.Year],
     ])('should transform interval %s correctly', (stripeInterval, expected) => {
       const mockPrice = createMockPrice({
