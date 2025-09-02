@@ -1,9 +1,9 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { usePageLayoutIframeWidgetCreate } from '@/settings/page-layout/hooks/usePageLayoutIframeWidgetCreate';
 import { usePageLayoutWidgetUpdate } from '@/settings/page-layout/hooks/usePageLayoutWidgetUpdate';
 import { pageLayoutEditingWidgetIdState } from '@/settings/page-layout/states/pageLayoutEditingWidgetIdState';
 import { pageLayoutWidgetsState } from '@/settings/page-layout/states/pageLayoutWidgetsState';
-import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -115,22 +115,19 @@ export const CommandMenuPageLayoutIframeConfig = () => {
         {isEditMode ? 'Edit iFrame Widget' : 'Configure iFrame Widget'}
       </StyledSectionTitle>
 
-      <TextInput
+      <FormTextFieldInput
         label="Widget Title"
         placeholder="e.g., Analytics Dashboard"
-        value={title}
+        defaultValue={title}
         onChange={setTitle}
-        fullWidth
-        autoFocus
       />
 
-      <TextInput
+      <FormTextFieldInput
         label="URL to Embed"
         placeholder="https://example.com/embed"
-        value={url}
+        defaultValue={url}
         onChange={handleUrlChange}
         error={urlError}
-        fullWidth
       />
 
       <StyledButtonContainer>
