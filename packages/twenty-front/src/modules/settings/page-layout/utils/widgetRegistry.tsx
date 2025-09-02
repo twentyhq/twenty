@@ -17,11 +17,9 @@ export const renderWidget = (widget: Widget): ReactNode => {
       );
 
     case WidgetType.VIEW:
-      // TODO: Implement view widget rendering
       return null;
 
     case WidgetType.FIELDS:
-      // TODO: Implement fields widget rendering
       return null;
 
     default:

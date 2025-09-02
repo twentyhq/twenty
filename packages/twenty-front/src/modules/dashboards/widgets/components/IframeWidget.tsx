@@ -65,13 +65,11 @@ const StyledErrorUrl = styled.div`
 export type IframeWidgetProps = {
   url: string;
   title?: string;
-  height?: string;
 };
 
 export const IframeWidget = ({
   url,
   title = 'Embedded Content',
-  height = '100%',
 }: IframeWidgetProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -110,7 +108,7 @@ export const IframeWidget = ({
   }
 
   return (
-    <StyledContainer style={{ height }}>
+    <StyledContainer>
       {isLoading && (
         <StyledLoadingContainer className={!isLoading ? 'loaded' : ''}>
           <IconLoader size="large" />

@@ -4,8 +4,6 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPageFullWidthContainer';
 import { PageLayoutInitializationEffect } from '@/settings/page-layout/components/PageLayoutInitializationEffect';
 import { PageLayoutWidgetPlaceholder } from '@/settings/page-layout/components/PageLayoutWidgetPlaceholder';
-import { WidgetType } from '@/settings/page-layout/mocks/mockWidgets';
-import { pageLayoutEditingWidgetIdState } from '@/settings/page-layout/states/pageLayoutEditingWidgetIdState';
 import { EMPTY_LAYOUT } from '@/settings/page-layout/constants/EmptyLayout';
 import {
   PAGE_LAYOUT_CONFIG,
@@ -16,8 +14,10 @@ import { usePageLayoutDragSelection } from '@/settings/page-layout/hooks/usePage
 import { usePageLayoutHandleLayoutChange } from '@/settings/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import { usePageLayoutSaveHandler } from '@/settings/page-layout/hooks/usePageLayoutSaveHandler';
 import { usePageLayoutWidgetDelete } from '@/settings/page-layout/hooks/usePageLayoutWidgetDelete';
+import { WidgetType } from '@/settings/page-layout/mocks/mockWidgets';
 import { pageLayoutCurrentBreakpointState } from '@/settings/page-layout/states/pageLayoutCurrentBreakpointState';
 import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
+import { pageLayoutEditingWidgetIdState } from '@/settings/page-layout/states/pageLayoutEditingWidgetIdState';
 import { pageLayoutSelectedCellsState } from '@/settings/page-layout/states/pageLayoutSelectedCellsState';
 import { pageLayoutWidgetsState } from '@/settings/page-layout/states/pageLayoutWidgetsState';
 import { calculateTotalGridRows } from '@/settings/page-layout/utils/calculateTotalGridRows';
@@ -165,7 +165,6 @@ export const SettingsPageLayoutEdit = () => {
 
       setPageLayoutEditingWidgetId(widgetId);
 
-      // Open the appropriate command menu page based on widget type
       if (widget.type === WidgetType.IFRAME) {
         navigateCommandMenu({
           page: CommandMenuPages.PageLayoutIframeConfig,
@@ -174,7 +173,6 @@ export const SettingsPageLayoutEdit = () => {
           resetNavigationStack: true,
         });
       }
-      // TODO: Add other widget types when they support editing
     },
     [pageLayoutWidgets, setPageLayoutEditingWidgetId, navigateCommandMenu],
   );
