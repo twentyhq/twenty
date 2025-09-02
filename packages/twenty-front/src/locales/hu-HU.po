@@ -357,6 +357,11 @@ msgstr "Átadás hozzáadása"
 msgid "Add inputs to your form"
 msgstr "Adj hozzá bemeneteket az űrlaphoz"
 
+#. js-lingui-id: rejvy6
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
+msgid "Add layout"
+msgstr ""
+
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
 msgid "Add new"
@@ -435,6 +440,11 @@ msgstr "Hozzáadás a kedvencekhez"
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "Add view"
 msgstr "Nézet hozzáadása"
+
+#. js-lingui-id: iRpDWj
+#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
+msgid "Add Widget"
+msgstr ""
 
 #. js-lingui-id: m2qDV8
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
@@ -2623,6 +2633,11 @@ msgstr "Nem-professzionális emailek kizárása"
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "Zárja ki a következő embereket és domaineket az e-mail szinkronizálásomból. A belső beszélgetések nem lesznek importálva"
 
+#. js-lingui-id: uwM4yU
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
+msgid "Existing layouts"
+msgstr ""
+
 #. js-lingui-id: fV7V51
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Existing objects"
@@ -3716,11 +3731,15 @@ msgid "Launch"
 msgstr "Indítás"
 
 #. js-lingui-id: rdU729
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Layout"
 msgstr "Elrendezés"
+
+#. js-lingui-id: A/oBX5
+#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
+msgid "Layout Name"
+msgstr ""
 
 #. js-lingui-id: 8QyoLb
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -4028,6 +4047,7 @@ msgstr "érvényes e-maileket tartalmazó tömbnek kell lennie"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -4593,10 +4613,13 @@ msgstr "Csapatunk segíthet az Ön munkaterületének beállításában, hogy az
 msgid "Output Field {fieldNumber}"
 msgstr "Kimeneti mező {fieldNumber}"
 
-#. js-lingui-id: nITdXs
-#: src/pages/settings/page-layout/PageLayoutEdition.tsx
-msgid "Page Layout"
-msgstr "Oldal Elrendezés"
+#. js-lingui-id: lXe6vt
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
+#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Page Layouts"
+msgstr ""
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -5546,7 +5569,7 @@ msgid "Setting up your database..."
 msgstr "Az adatbázis beállítása..."
 
 #. js-lingui-id: Tz0i8g
-#: src/pages/settings/page-layout/PageLayoutEdition.tsx
+#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -6332,6 +6355,7 @@ msgid "Two-factor authentication setup completed successfully!"
 msgstr "Kétfaktoros hitelesítési beállítás sikeresen befejezve!"
 
 #. js-lingui-id: +zy2Nq
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
@@ -6703,6 +6727,11 @@ msgstr "Mikor fog lejárni az API kulcs."
 msgid "When the key will be disabled"
 msgstr "Mikor kerül kikapcsolásra a kulcs"
 
+#. js-lingui-id: tL6W2K
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
+msgid "Widgets"
+msgstr ""
+
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Workflows"
@@ -6717,6 +6746,7 @@ msgstr "Munkafolyamatok"
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
