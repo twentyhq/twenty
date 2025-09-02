@@ -16,37 +16,57 @@ import {
 } from 'src/engine/metadata-modules/route/route.entity';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 
 @Injectable()
 export class RouteService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly serverlessFunctionService: ServerlessFunctionService,
+    private domainManagerService: DomainManagerService,
     @InjectRepository(Route)
     private readonly routeRepository: Repository<Route>,
   ) {}
 
   private async getOneRouteWithPathParamsOrFail({
-    workspaceId,
     request,
     httpMethod,
   }: {
-    workspaceId: string;
     request: Request;
     httpMethod: HTTPMethod;
   }): Promise<{
     route: Route;
     pathParams: Partial<Record<string, string | string[]>>;
   }> {
+    const host = `${request.protocol}://${request.get('host')}`;
+
+    const workspace =
+      await this.domainManagerService.getWorkspaceByOriginOrDefaultWorkspace(
+        host,
+      );
+
+    workspaceValidator.assertIsDefinedOrThrow(
+      workspace,
+      new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
+
     const routes = await this.routeRepository.find({
       where: {
         httpMethod,
-        workspaceId,
+        workspaceId: workspace.id,
       },
       relations: ['serverlessFunction'],
     });
 
-    const requestPath = request.path.replace(`/s/${workspaceId}/`, '');
+    const requestPath = request.path.replace(/^\/s\//, '/');
 
     for (const route of routes) {
       const routeMatcher = match(route.path, { decode: decodeURIComponent });
@@ -83,16 +103,13 @@ export class RouteService {
   }
 
   async handle({
-    workspaceId,
     request,
     httpMethod,
   }: {
-    workspaceId: string;
     request: Request;
     httpMethod: HTTPMethod;
   }) {
     const routeWithPathParams = await this.getOneRouteWithPathParamsOrFail({
-      workspaceId,
       request,
       httpMethod,
     });
