@@ -29,7 +29,6 @@ export class ViewController {
   constructor(private readonly viewService: ViewService) {}
 
   @Get()
-  @UseGuards(WorkspaceAuthGuard)
   async findMany(
     @AuthWorkspace() workspace: Workspace,
     @Query('objectMetadataId') objectMetadataId?: string,

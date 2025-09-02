@@ -139,6 +139,7 @@ describe('WorkspaceEntityManager', () => {
         IS_PAGE_LAYOUT_ENABLED: false,
         IS_MESSAGE_FOLDER_CONTROL_ENABLED: false,
         IS_WORKFLOW_ITERATOR_ENABLED: false,
+        IS_DATABASE_EVENT_TRIGGER_ENABLED: false,
       },
       eventEmitterService: {
         emitMutationEvent: jest.fn(),

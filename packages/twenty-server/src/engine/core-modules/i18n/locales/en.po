@@ -1866,15 +1866,15 @@ msgstr "Name"
 msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 msgstr "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 
-#. js-lingui-id: 2m6Fru
+#. js-lingui-id: Ge9TXE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available"
-msgstr "Name \"{name}\" is not available"
+msgid "Name \"{flatFieldMetadataName}\" is not available"
+msgstr "Name \"{flatFieldMetadataName}\" is not available"
 
-#. js-lingui-id: U8mbyw
+#. js-lingui-id: h8ic2G
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr "Name \"{name}\" is not available as it is already used by another field"
+msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
+msgstr "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts

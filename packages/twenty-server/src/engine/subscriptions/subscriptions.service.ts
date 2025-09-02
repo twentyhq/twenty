@@ -1,21 +1,17 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordEvent } from 'src/engine/core-modules/event-emitter/types/object-record-event.event';
-import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { removeSecretFromWebhookRecord } from 'src/utils/remove-secret-from-webhook-record';
 
-@Processor(MessageQueue.subscriptionsQueue)
-export class SubscriptionsJob {
+@Injectable()
+export class SubscriptionsService {
   constructor(@Inject('PUB_SUB') private readonly pubSub: RedisPubSub) {}
 
-  @Process(SubscriptionsJob.name)
-  async handle(
+  async publish(
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
   ): Promise<void> {
     for (const eventData of workspaceEventBatch.events) {

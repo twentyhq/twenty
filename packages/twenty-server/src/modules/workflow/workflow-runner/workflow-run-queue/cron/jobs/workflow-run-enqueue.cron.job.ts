@@ -4,26 +4,20 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  WorkflowRunEnqueuePerWorkspaceJob,
-  type WorkflowRunEnqueuePerWorkspaceJobData,
-} from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-run-enqueue-per-workspace.job';
+import { WorkflowRunEnqueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-enqueue.workspace-service';
 
-export const WORKFLOW_RUN_ENQUEUE_CRON_PATTERN = '* * * * *';
+export const WORKFLOW_RUN_ENQUEUE_CRON_PATTERN = '*/5 * * * *';
 
 @Processor(MessageQueue.cronQueue)
 export class WorkflowRunEnqueueJob {
   constructor(
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectMessageQueue(MessageQueue.workflowQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly workflowRunEnqueueWorkspaceService: WorkflowRunEnqueueWorkspaceService,
   ) {}
 
   @Process(WorkflowRunEnqueueJob.name)
@@ -38,13 +32,8 @@ export class WorkflowRunEnqueueJob {
       },
     });
 
-    for (const activeWorkspace of activeWorkspaces) {
-      await this.messageQueueService.add<WorkflowRunEnqueuePerWorkspaceJobData>(
-        WorkflowRunEnqueuePerWorkspaceJob.name,
-        {
-          workspaceId: activeWorkspace.id,
-        },
-      );
-    }
+    await this.workflowRunEnqueueWorkspaceService.enqueueRuns({
+      workspaceIds: activeWorkspaces.map((workspace) => workspace.id),
+    });
   }
 }

@@ -4,10 +4,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { useFindManyCoreViewsLazyQuery } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const useRefreshCoreViews = () => {
+export const useRefreshCoreViewsByObjectMetadataId = () => {
   const [findManyCoreViewsLazy] = useFindManyCoreViewsLazyQuery();
 
-  const refreshCoreViews = useRecoilCallback(
+  const refreshCoreViewsByObjectMetadataId = useRecoilCallback(
     ({ snapshot, set }) =>
       async (objectMetadataId: string) => {
         const result = await findManyCoreViewsLazy({
@@ -37,6 +37,6 @@ export const useRefreshCoreViews = () => {
   );
 
   return {
-    refreshCoreViews,
+    refreshCoreViewsByObjectMetadataId,
   };
 };
