@@ -283,13 +283,19 @@ describe('PageLayoutService', () => {
       const workspaceId = 'workspace-id';
 
       jest
-        .spyOn(pageLayoutService, 'findById')
+        .spyOn(pageLayoutRepository, 'findOne')
         .mockResolvedValue(mockPageLayout);
       jest.spyOn(pageLayoutRepository, 'delete').mockResolvedValue({} as any);
 
       const result = await pageLayoutService.destroy(id, workspaceId);
 
-      expect(pageLayoutService.findById).toHaveBeenCalledWith(id, workspaceId);
+      expect(pageLayoutRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          id,
+          workspaceId,
+        },
+        withDeleted: true,
+      });
       expect(pageLayoutRepository.delete).toHaveBeenCalledWith(id);
       expect(result).toEqual(true);
     });
@@ -298,7 +304,7 @@ describe('PageLayoutService', () => {
       const id = 'non-existent-id';
       const workspaceId = 'workspace-id';
 
-      jest.spyOn(pageLayoutService, 'findById').mockResolvedValue(null);
+      jest.spyOn(pageLayoutRepository, 'findOne').mockResolvedValue(null);
 
       await expect(pageLayoutService.destroy(id, workspaceId)).rejects.toThrow(
         new PageLayoutException(
@@ -316,16 +322,27 @@ describe('PageLayoutService', () => {
     it('should restore a page layout successfully', async () => {
       const id = 'page-layout-id';
       const workspaceId = 'workspace-id';
+      const deletedPageLayout = { ...mockPageLayout, deletedAt: new Date() };
 
+      jest
+        .spyOn(pageLayoutRepository, 'findOne')
+        .mockResolvedValue(deletedPageLayout);
+      jest.spyOn(pageLayoutRepository, 'restore').mockResolvedValue({} as any);
       jest
         .spyOn(pageLayoutService, 'findById')
         .mockResolvedValue(mockPageLayout);
-      jest.spyOn(pageLayoutRepository, 'restore').mockResolvedValue({} as any);
 
       const result = await pageLayoutService.restore(id, workspaceId);
 
-      expect(pageLayoutService.findById).toHaveBeenCalledWith(id, workspaceId);
+      expect(pageLayoutRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          id,
+          workspaceId,
+        },
+        withDeleted: true,
+      });
       expect(pageLayoutRepository.restore).toHaveBeenCalledWith(id);
+      expect(pageLayoutService.findById).toHaveBeenCalledWith(id, workspaceId);
       expect(result).toEqual(mockPageLayout);
     });
 
@@ -333,7 +350,7 @@ describe('PageLayoutService', () => {
       const id = 'non-existent-id';
       const workspaceId = 'workspace-id';
 
-      jest.spyOn(pageLayoutService, 'findById').mockResolvedValue(null);
+      jest.spyOn(pageLayoutRepository, 'findOne').mockResolvedValue(null);
 
       await expect(pageLayoutService.restore(id, workspaceId)).rejects.toThrow(
         new PageLayoutException(
