@@ -11,7 +11,7 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { type Agent, type Role } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
-import { ROLE_TARGET_CONFIG } from '../constants/role-target-config';
+import { ROLE_TARGET_CONFIG } from '../constants/RoleTargetConfig';
 
 const StyledAssignToMemberContainer = styled.div`
   display: flex;

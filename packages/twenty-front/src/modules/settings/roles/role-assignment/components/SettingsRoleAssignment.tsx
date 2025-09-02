@@ -24,8 +24,8 @@ import {
 } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '../constants/role-assignment-confirmation-modal-id';
-import { ROLE_TARGET_CONFIG } from '../constants/role-target-config';
+import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '../constants/RoleAssignmentConfirmationModalId';
+import { ROLE_TARGET_CONFIG } from '../constants/RoleTargetConfig';
 import { buildRoleMaps } from '../utils/build-role-maps';
 
 type SettingsRoleAssignmentProps = {
