@@ -1,6 +1,7 @@
-import { SettingsRoleAssignmentAgentTableRow } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentAgentTableRow';
-import { SettingsRoleAssignmentApiKeyTableRow } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentApiKeyTableRow';
-import { SettingsRoleAssignmentTableRow } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentTableRow';
+import {
+  SettingsRoleAssignmentTableRow,
+  type RoleTarget,
+} from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentTableRow';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -131,6 +132,19 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
         return false;
       });
 
+  const createRoleTarget = (
+    roleTarget: WorkspaceMember | Agent | ApiKeyForRole,
+  ): RoleTarget => {
+    switch (roleTargetType) {
+      case 'member':
+        return { type: roleTargetType, data: roleTarget as WorkspaceMember };
+      case 'agent':
+        return { type: roleTargetType, data: roleTarget as Agent };
+      case 'apiKey':
+        return { type: roleTargetType, data: roleTarget as ApiKeyForRole };
+    }
+  };
+
   return (
     <>
       <H2Title
@@ -155,30 +169,12 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
           ))}
         </TableRow>
         <StyledTableRows>
-          {filteredRoleTargets.map((roleTarget) => {
-            if (roleTargetType === 'member') {
-              return (
-                <SettingsRoleAssignmentTableRow
-                  key={(roleTarget as WorkspaceMember).id}
-                  workspaceMember={roleTarget as WorkspaceMember}
-                />
-              );
-            }
-            if (roleTargetType === 'agent') {
-              return (
-                <SettingsRoleAssignmentAgentTableRow
-                  key={(roleTarget as Agent).id}
-                  agent={roleTarget as Agent}
-                />
-              );
-            }
-            return (
-              <SettingsRoleAssignmentApiKeyTableRow
-                key={(roleTarget as ApiKeyForRole).id}
-                apiKey={roleTarget as ApiKeyForRole}
-              />
-            );
-          })}
+          {filteredRoleTargets.map((roleTarget) => (
+            <SettingsRoleAssignmentTableRow
+              key={roleTarget.id}
+              roleTarget={createRoleTarget(roleTarget)}
+            />
+          ))}
 
           {roleTargets.length === 0 && (
             <StyledNoMembers>
