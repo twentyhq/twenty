@@ -16,17 +16,22 @@ import { isDefined } from 'twenty-shared/utils';
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/core-modules/view/dtos/inputs/update-view.input';
 import { type ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
+import { type ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
 import { ViewRestApiExceptionFilter } from 'src/engine/core-modules/view/filters/view-rest-api-exception.filter';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 
 @Controller('rest/metadata/views')
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(ViewRestApiExceptionFilter)
 export class ViewController {
-  constructor(private readonly viewService: ViewService) {}
+  constructor(
+    private readonly viewService: ViewService,
+    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
+  ) {}
 
   @Get()
   @UseGuards(WorkspaceAuthGuard)
@@ -34,14 +39,14 @@ export class ViewController {
     @AuthWorkspace() workspace: Workspace,
     @Query('objectMetadataId') objectMetadataId?: string,
   ): Promise<ViewDTO[]> {
-    if (objectMetadataId) {
-      return this.viewService.findByObjectMetadataId(
-        workspace.id,
-        objectMetadataId,
-      );
-    }
+    const views = objectMetadataId
+      ? await this.viewService.findByObjectMetadataId(
+          workspace.id,
+          objectMetadataId,
+        )
+      : await this.viewService.findByWorkspaceId(workspace.id);
 
-    return this.viewService.findByWorkspaceId(workspace.id);
+    return this.replaceViewTemplates(views, workspace.id);
   }
 
   @Get(':id')
@@ -49,7 +54,15 @@ export class ViewController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewDTO | null> {
-    return this.viewService.findById(id, workspace.id);
+    const view = await this.viewService.findById(id, workspace.id);
+
+    if (!view) {
+      return null;
+    }
+
+    const replacedViews = await this.replaceViewTemplates([view], workspace.id);
+
+    return replacedViews[0];
   }
 
   @Post()
@@ -57,10 +70,14 @@ export class ViewController {
     @Body() input: CreateViewInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<ViewDTO> {
-    return this.viewService.create({
+    const view = await this.viewService.create({
       ...input,
       workspaceId: workspace.id,
     });
+
+    const replacedViews = await this.replaceViewTemplates([view], workspace.id);
+
+    return replacedViews[0];
   }
 
   @Patch(':id')
@@ -71,7 +88,12 @@ export class ViewController {
   ): Promise<ViewDTO> {
     const updatedView = await this.viewService.update(id, workspace.id, input);
 
-    return updatedView;
+    const replacedViews = await this.replaceViewTemplates(
+      [updatedView],
+      workspace.id,
+    );
+
+    return replacedViews[0];
   }
 
   @Delete(':id')
@@ -82,6 +104,46 @@ export class ViewController {
     const deletedView = await this.viewService.delete(id, workspace.id);
 
     return { success: isDefined(deletedView) };
+  }
+
+  private async replaceViewTemplates(
+    views: ViewEntity[],
+    workspaceId: string,
+  ): Promise<ViewEntity[]> {
+    const hasTemplates = views.some((view) =>
+      view.name.includes('{objectLabelPlural}'),
+    );
+
+    if (!hasTemplates) {
+      return views;
+    }
+
+    const { objectMetadataMaps } =
+      await this.workspaceMetadataCacheService.getExistingOrRecomputeMetadataMaps(
+        {
+          workspaceId,
+        },
+      );
+
+    return views.map((view) => {
+      if (view.name.includes('{objectLabelPlural}')) {
+        const objectMetadata = objectMetadataMaps.byId[view.objectMetadataId];
+
+        if (!objectMetadata) {
+          return view;
+        }
+
+        return {
+          ...view,
+          name: view.name.replace(
+            '{objectLabelPlural}',
+            objectMetadata.labelPlural,
+          ),
+        };
+      }
+
+      return view;
+    });
   }
 
   // TODO: the destroy endpoint will be implemented when we settle on a strategy
