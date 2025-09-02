@@ -79,37 +79,26 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
   });
 
   afterAll(async () => {
-    try {
-      await Promise.all(
-        [
-          createdObjectMetadataPersonId,
-          createdObjectMetadataOpportunityId,
-          createdObjectMetadataCompanyId,
-        ].map(
-          async (objectMetadataId) =>
-            await updateOneObjectMetadata({
-              expectToFail: false,
-              input: {
-                idToUpdate: objectMetadataId,
-                updatePayload: { isActive: false },
-              },
-            }),
-        ),
-      );
+    const createdObjectMetadataIds = [
+      createdObjectMetadataPersonId,
+      createdObjectMetadataOpportunityId,
+      createdObjectMetadataCompanyId,
+    ];
 
-      await Promise.all(
-        [
-          createdObjectMetadataPersonId,
-          createdObjectMetadataOpportunityId,
-          createdObjectMetadataCompanyId,
-        ].map(
-          async (objectMetadataId) =>
-            await deleteOneObjectMetadata({
-              expectToFail: false,
-              input: { idToDelete: objectMetadataId },
-            }),
-        ),
-      );
+    try {
+      for (const objectMetadataId of createdObjectMetadataIds) {
+        await updateOneObjectMetadata({
+          expectToFail: false,
+          input: {
+            idToUpdate: objectMetadataId,
+            updatePayload: { isActive: false },
+          },
+        });
+        await deleteOneObjectMetadata({
+          expectToFail: false,
+          input: { idToDelete: objectMetadataId },
+        });
+      }
     } finally {
       await updateFeatureFlag({
         expectToFail: false,

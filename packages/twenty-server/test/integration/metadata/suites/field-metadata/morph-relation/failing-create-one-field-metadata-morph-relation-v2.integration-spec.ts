@@ -411,43 +411,34 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
   });
 
   afterAll(async () => {
-    await Promise.all(
-      [
-        createdObjectMetadataPersonId,
-        createdObjectMetadataOpportunityId,
-        createdObjectMetadataCompanyId,
-      ].map(
-        async (objectMetadataId) =>
-          await updateOneObjectMetadata({
-            expectToFail: false,
-            input: {
-              idToUpdate: objectMetadataId,
-              updatePayload: { isActive: false },
-            },
-          }),
-      ),
-    );
+    const createdObjectMetadataIds = [
+      createdObjectMetadataPersonId,
+      createdObjectMetadataOpportunityId,
+      createdObjectMetadataCompanyId,
+    ];
 
-    await Promise.all(
-      [
-        createdObjectMetadataPersonId,
-        createdObjectMetadataOpportunityId,
-        createdObjectMetadataCompanyId,
-      ].map(
-        async (objectMetadataId) =>
-          await deleteOneObjectMetadata({
-            expectToFail: false,
-            input: { idToDelete: objectMetadataId },
-          }),
-      ),
-    );
-
-    await updateFeatureFlag({
-      expectToFail: false,
-      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      value: false,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
+    try {
+      for (const objectMetadataId of createdObjectMetadataIds) {
+        await updateOneObjectMetadata({
+          expectToFail: false,
+          input: {
+            idToUpdate: objectMetadataId,
+            updatePayload: { isActive: false },
+          },
+        });
+        await deleteOneObjectMetadata({
+          expectToFail: false,
+          input: { idToDelete: objectMetadataId },
+        });
+      }
+    } finally {
+      await updateFeatureFlag({
+        expectToFail: false,
+        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        value: false,
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
+    }
   });
 
   it.each(eachTestingContextFilter(failingTestCases))(
