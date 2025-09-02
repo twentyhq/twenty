@@ -5,7 +5,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { type ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import {
   type Agent,
   useFindManyAgentsQuery,
@@ -38,12 +38,10 @@ const StyledEmptyState = styled.div`
   text-align: center;
 `;
 
-type EntityType = 'agent' | 'apiKey';
-
 type EntityData = Agent | ApiKeyForRole;
 
 type SettingsRoleAssignmentEntityPickerDropdownProps = {
-  entityType: EntityType;
+  entityType: 'agent' | 'apiKey';
   excludedIds: string[];
   onSelect: (entity: EntityData) => void;
 };
@@ -56,37 +54,20 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
   const [searchFilter, setSearchFilter] = useState('');
   const { t } = useLingui();
 
-  const { data: agentsData, loading: agentsLoading } = useFindManyAgentsQuery();
-  const { data: apiKeysData, loading: apiKeysLoading } = useGetApiKeysQuery();
-
   const isAgent = entityType === 'agent';
+
+  const { data: agentsData, loading: agentsLoading } = useFindManyAgentsQuery({
+    skip: !isAgent,
+  });
+  const { data: apiKeysData, loading: apiKeysLoading } = useGetApiKeysQuery({
+    skip: isAgent,
+  });
 
   const loading = isAgent ? agentsLoading : apiKeysLoading;
 
   const entities = ((isAgent
     ? agentsData?.findManyAgents.filter((agent) => agent.isCustom)
     : apiKeysData?.apiKeys) || []) as EntityData[];
-
-  const getFilteredEntities = () => {
-    return entities.filter((entity) => {
-      const isExcluded = excludedIds.includes(entity.id);
-
-      if (isExcluded) {
-        return false;
-      }
-
-      if (isAgent) {
-        const agent = entity as Agent;
-        return (
-          agent.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
-          agent.label.toLowerCase().includes(searchFilter.toLowerCase())
-        );
-      } else {
-        const apiKey = entity as ApiKeyForRole;
-        return apiKey.name.toLowerCase().includes(searchFilter.toLowerCase());
-      }
-    });
-  };
 
   const placeholder = isAgent ? t`Search agents` : t`Search API keys`;
 
@@ -100,17 +81,31 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
     }
   };
 
-  const handleSearchFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearchFilter(event.target.value);
-  };
+  const filteredEntities = entities.filter((entity) => {
+    const isExcluded = excludedIds.includes(entity.id);
 
-  const filteredEntities = getFilteredEntities();
+    if (isExcluded) {
+      return false;
+    }
+
+    if (isAgent) {
+      const agent = entity as Agent;
+      return (
+        agent.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
+        agent.label.toLowerCase().includes(searchFilter.toLowerCase())
+      );
+    } else {
+      return (entity as ApiKeyForRole).name
+        .toLowerCase()
+        .includes(searchFilter.toLowerCase());
+    }
+  });
 
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
       <DropdownMenuSearchInput
         value={searchFilter}
-        onChange={handleSearchFilterChange}
+        onChange={(event) => setSearchFilter(event.target.value)}
         placeholder={placeholder}
       />
       <DropdownMenuSeparator />
