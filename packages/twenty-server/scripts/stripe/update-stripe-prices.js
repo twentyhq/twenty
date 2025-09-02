@@ -1,4 +1,4 @@
-// Usage: STRIPE_API_KEY=sk_live_xxx PRODUCT_ID=prod_xxx node create-and-archive-prices.js
+// Usage: STRIPE_API_KEY=sk_live_xxx PRODUCT_ID=prod_xxx node update-stripe-prices.js
 
 import crypto from 'crypto';
 import Stripe from 'stripe';
@@ -15,7 +15,7 @@ if (!process.env.STRIPE_API_KEY || !process.env.PRODUCT_ID) {
 const productId = process.env.PRODUCT_ID;
 const currency = 'usd';
 
-const rows = [
+const prices = [
   // Monthly
   { interval: 'month', monthlyUSD: 0, credits: 5000, pricePer1kAbove: 8.0 },
   { interval: 'month', monthlyUSD: 29, credits: 10000, pricePer1kAbove: 4.35 },
@@ -74,21 +74,21 @@ if (!meter) {
   throw new Error('Meter not found');
 }
 
-const formatCredits = (credits) => credits.toLocaleString('de-DE'); // exemple: 7.500.000
+const formatCredits = (credits) => credits.toLocaleString('de-DE'); // example: 7.500.000
 
-const makeNickname = (r) => `${formatCredits(r.credits)} Credits`;
+const makeNickname = (price) => `${formatCredits(price.credits)} Credits`;
 
-const makeIdemKey = (r) =>
+const makeIdemKey = (price) =>
   'price_' +
   crypto
     .createHash('sha256')
     .update(
       [
-        r.interval,
-        r.monthlyUSD,
-        r.credits,
+        price.interval,
+        price.monthlyUSD,
+        price.credits,
         currency,
-        r.pricePer1kAbove,
+        price.pricePer1kAbove,
         productId,
         meter.id,
       ].join('_'),
@@ -99,18 +99,18 @@ const makeIdemKey = (r) =>
 const main = async () => {
   const createdNicknames = [];
 
-  for (const r of rows) {
-    const flatAmountCents = toCents(r.monthlyUSD);
-    const idemKey = makeIdemKey(r);
-    const nickname = makeNickname(r);
+  for (const price of prices) {
+    const flatAmountCents = toCents(price.monthlyUSD);
+    const idemKey = makeIdemKey(price);
+    const nickname = makeNickname(price);
     createdNicknames.push(nickname);
 
     const unitAmountPerCreditCentsDecimal = perCreditCentsDecimal(
-      r.pricePer1kAbove,
+      price.pricePer1kAbove,
     );
 
     try {
-      const price = await stripe.prices.create(
+      const priceCreated = await stripe.prices.create(
         {
           product: productId,
           currency,
@@ -118,13 +118,13 @@ const main = async () => {
           billing_scheme: 'tiered',
           tiers_mode: 'graduated',
           recurring: {
-            interval: r.interval,
+            interval: priceCreated.interval,
             usage_type: 'metered',
             meter: meter.id,
           },
           tiers: [
             {
-              up_to: r.credits,
+              up_to: priceCreated.credits,
               flat_amount: flatAmountCents,
             },
             {
@@ -136,7 +136,7 @@ const main = async () => {
         { idempotencyKey: idemKey },
       );
 
-      console.log(`Created/exists: ${price.id} -> ${nickname}`);
+      console.log(`Created/exists: ${priceCreated.id} -> ${nickname}`);
     } catch (e) {
       console.error(`Failed: ${nickname}`);
       console.error(e);
