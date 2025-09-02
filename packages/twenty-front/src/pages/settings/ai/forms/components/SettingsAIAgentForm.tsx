@@ -53,7 +53,7 @@ export const SettingsAIAgentForm = ({
   const rolesOptions =
     rolesData?.getRoles?.reduce<Array<{ label: string; value: string }>>(
       (acc, role) => {
-        if (role.canBeAssignedToAgents === true) {
+        if (role.canBeAssignedToAgents) {
           acc.push({
             label: role.label,
             value: role.id,
