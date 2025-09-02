@@ -402,9 +402,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       return updatedFieldMetadata;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
-
       throw error;
     } finally {
       await queryRunner.release();
@@ -615,9 +619,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       return fieldMetadata;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
-
       throw error;
     } finally {
       await queryRunner.release();
@@ -802,9 +810,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       return createdFieldMetadatas;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
-
       throw error;
     } finally {
       await queryRunner.release();
