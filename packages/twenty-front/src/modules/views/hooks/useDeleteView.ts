@@ -1,12 +1,13 @@
 import { prefetchViewFromViewIdFamilySelector } from '@/prefetch/states/selector/prefetchViewFromViewIdFamilySelector';
-import { useRefreshCoreViews } from '@/views/hooks/useRefreshCoreViews';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { useDeleteCoreViewMutation } from '~/generated/graphql';
 
 export const useDeleteView = () => {
   const [deleteCoreViewMutation] = useDeleteCoreViewMutation();
-  const { refreshCoreViews } = useRefreshCoreViews();
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const deleteView = useRecoilCallback(
     ({ snapshot }) =>
@@ -29,9 +30,9 @@ export const useDeleteView = () => {
           },
         });
 
-        await refreshCoreViews(currentView.objectMetadataId);
+        await refreshCoreViewsByObjectMetadataId(currentView.objectMetadataId);
       },
-    [deleteCoreViewMutation, refreshCoreViews],
+    [deleteCoreViewMutation, refreshCoreViewsByObjectMetadataId],
   );
 
   return { deleteView };
