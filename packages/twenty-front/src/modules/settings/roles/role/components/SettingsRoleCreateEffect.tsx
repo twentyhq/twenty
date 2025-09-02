@@ -52,6 +52,8 @@ export const SettingsRoleCreateEffect = ({
       canBeAssignedToApiKeys: true,
       isEditable: true,
       workspaceMembers: [],
+      apiKeys: [],
+      agents: [],
     };
 
     setSettingsPersistedRole(undefined);
