@@ -87,6 +87,7 @@ export const SettingsRoleApplicability = ({
             <Checkbox
               checked={values[option.key]}
               onChange={(event) => {
+                event.stopPropagation();
                 onApplicabilityChange(option.key, event.target.checked);
               }}
               disabled={!isEditable}
