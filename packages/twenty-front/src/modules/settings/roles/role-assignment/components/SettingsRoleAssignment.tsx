@@ -378,6 +378,7 @@ export const SettingsRoleAssignment = ({
           onClose={handleModalClose}
           onConfirm={handleConfirm}
           onRoleClick={handleRoleClick}
+          newRoleName={settingsDraftRole.label}
         />
       )}
     </>

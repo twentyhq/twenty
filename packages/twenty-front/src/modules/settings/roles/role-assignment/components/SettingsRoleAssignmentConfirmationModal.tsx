@@ -9,6 +9,7 @@ type SettingsRoleAssignmentConfirmationModalProps = {
   onClose: () => void;
   onConfirm: () => void;
   onRoleClick: (roleId: string) => void;
+  newRoleName: string;
 };
 
 export const SettingsRoleAssignmentConfirmationModal = ({
@@ -16,21 +17,24 @@ export const SettingsRoleAssignmentConfirmationModal = ({
   onClose,
   onConfirm,
   onRoleClick,
+  newRoleName,
 }: SettingsRoleAssignmentConfirmationModalProps) => {
-  const workspaceMemberName = selectedRoleTarget.name;
+  const roleTargetName = selectedRoleTarget.name;
 
-  const title = t`Assign ${workspaceMemberName}?`;
+  const title = t`Assign ${roleTargetName}?`;
 
   return (
     <ConfirmationModal
       modalId={ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID}
       title={title}
       subtitle={
-        selectedRoleTarget.role && (
+        selectedRoleTarget.role ? (
           <SettingsRoleAssignmentConfirmationModalSubtitle
             selectedRoleTarget={selectedRoleTarget}
             onRoleClick={onRoleClick}
           />
+        ) : (
+          t`${roleTargetName} will be assigned to the "${newRoleName}" role.`
         )
       }
       onClose={onClose}
