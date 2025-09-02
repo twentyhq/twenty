@@ -6,7 +6,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import {
   CLEAN_WORKFLOW_RUN_CRON_PATTERN,
   WorkflowCleanWorkflowRunsJob,
-} from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-clean-workflow-runs.cron.job';
+} from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-clean-workflow-runs.job';
 
 @Command({
   name: 'cron:workflow:clean-workflow-runs',

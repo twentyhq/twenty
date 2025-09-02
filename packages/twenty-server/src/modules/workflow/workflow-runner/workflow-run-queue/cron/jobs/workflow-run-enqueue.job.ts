@@ -9,11 +9,19 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
-  WorkflowRunEnqueuePerWorkspaceJob,
-  type WorkflowRunEnqueuePerWorkspaceJobData,
-} from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-run-enqueue-per-workspace.job';
+  WorkflowRunStatus,
+  WorkflowRunWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import {
+  RunWorkflowJob,
+  RunWorkflowJobData,
+} from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
+import { WorkflowRunQueueWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-queue.workspace-service';
 
 export const WORKFLOW_RUN_ENQUEUE_CRON_PATTERN = '* * * * *';
 
@@ -22,8 +30,11 @@ export class WorkflowRunEnqueueJob {
   constructor(
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
+    private readonly workflowRunQueueWorkspaceService: WorkflowRunQueueWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly metricsService: MetricsService,
+    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   @Process(WorkflowRunEnqueueJob.name)
@@ -39,12 +50,79 @@ export class WorkflowRunEnqueueJob {
     });
 
     for (const activeWorkspace of activeWorkspaces) {
-      await this.messageQueueService.add<WorkflowRunEnqueuePerWorkspaceJobData>(
-        WorkflowRunEnqueuePerWorkspaceJob.name,
-        {
-          workspaceId: activeWorkspace.id,
-        },
-      );
+      try {
+        const workflowRunRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+            activeWorkspace.id,
+            WorkflowRunWorkspaceEntity,
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const remainingWorkflowRunToEnqueueCount =
+          await this.workflowRunQueueWorkspaceService.getRemainingRunsToEnqueueCountFromDatabase(
+            activeWorkspace.id,
+          );
+
+        if (remainingWorkflowRunToEnqueueCount <= 0) {
+          await this.workflowRunQueueWorkspaceService.recomputeWorkflowRunQueuedCount(
+            activeWorkspace.id,
+          );
+
+          continue;
+        }
+
+        const workflowRunsToEnqueue = await workflowRunRepository.find({
+          where: {
+            status: WorkflowRunStatus.NOT_STARTED,
+          },
+          order: {
+            createdAt: 'ASC',
+          },
+          take: remainingWorkflowRunToEnqueueCount,
+        });
+
+        if (workflowRunsToEnqueue.length <= 0) {
+          await this.workflowRunQueueWorkspaceService.recomputeWorkflowRunQueuedCount(
+            activeWorkspace.id,
+          );
+
+          continue;
+        }
+
+        const workflowRunIds = workflowRunsToEnqueue.map(
+          (workflowRun: WorkflowRunWorkspaceEntity) => workflowRun.id,
+        );
+
+        await workflowRunRepository.update(workflowRunIds, {
+          enqueuedAt: new Date().toISOString(),
+          status: WorkflowRunStatus.ENQUEUED,
+        });
+
+        for (const workflowRunId of workflowRunIds) {
+          await this.messageQueueService.add<RunWorkflowJobData>(
+            RunWorkflowJob.name,
+            {
+              workflowRunId,
+              workspaceId: activeWorkspace.id,
+            },
+          );
+        }
+
+        await this.workflowRunQueueWorkspaceService.recomputeWorkflowRunQueuedCount(
+          activeWorkspace.id,
+        );
+      } catch (error) {
+        this.metricsService.incrementCounter({
+          key: MetricsKeys.WorkflowRunFailedToEnqueue,
+          eventId: activeWorkspace.id,
+        });
+
+        console.error(
+          'Failed to enqueue workflow runs for workspace',
+          activeWorkspace.id,
+          error,
+        );
+      }
     }
   }
 }
