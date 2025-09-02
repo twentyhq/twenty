@@ -269,46 +269,51 @@ export const SettingsRoleAssignment = ({
 
   return (
     <>
-      <Section>
-        <SettingsRoleAssignmentTable roleId={roleId} roleTargetType="member" />
-
-        <StyledAssignToMemberContainer>
-          <Dropdown
-            dropdownId="role-member-select"
-            dropdownOffset={{ x: 0, y: 4 }}
-            clickableComponent={
-              <>
-                <div id="assign-member">
-                  <Button
-                    Icon={IconPlus}
-                    title={t`Assign to member`}
-                    variant="secondary"
-                    size="small"
-                    disabled={allWorkspaceMembersHaveThisRole}
-                  />
-                </div>
-                <AppTooltip
-                  anchorSelect="#assign-member"
-                  content={t`The workspace needs at least one Admin`}
-                  delay={TooltipDelay.noDelay}
-                  hidden={!allWorkspaceMembersHaveThisRole}
-                />
-              </>
-            }
-            dropdownComponents={
-              <SettingsRoleAssignmentWorkspaceMemberPickerDropdown
-                excludedWorkspaceMemberIds={[
-                  ...assignedWorkspaceMemberIds,
-                  currentWorkspaceMember?.id,
-                ]}
-                onSelect={(workspaceMember: CurrentWorkspaceMember) =>
-                  handleSelectEntity(workspaceMember, 'workspaceMember')
-                }
-              />
-            }
+      {settingsDraftRole.canBeAssignedToUsers && (
+        <Section>
+          <SettingsRoleAssignmentTable
+            roleId={roleId}
+            roleTargetType="member"
           />
-        </StyledAssignToMemberContainer>
-      </Section>
+
+          <StyledAssignToMemberContainer>
+            <Dropdown
+              dropdownId="role-member-select"
+              dropdownOffset={{ x: 0, y: 4 }}
+              clickableComponent={
+                <>
+                  <div id="assign-member">
+                    <Button
+                      Icon={IconPlus}
+                      title={t`Assign to member`}
+                      variant="secondary"
+                      size="small"
+                      disabled={allWorkspaceMembersHaveThisRole}
+                    />
+                  </div>
+                  <AppTooltip
+                    anchorSelect="#assign-member"
+                    content={t`The workspace needs at least one Admin`}
+                    delay={TooltipDelay.noDelay}
+                    hidden={!allWorkspaceMembersHaveThisRole}
+                  />
+                </>
+              }
+              dropdownComponents={
+                <SettingsRoleAssignmentWorkspaceMemberPickerDropdown
+                  excludedWorkspaceMemberIds={[
+                    ...assignedWorkspaceMemberIds,
+                    currentWorkspaceMember?.id,
+                  ]}
+                  onSelect={(workspaceMember: CurrentWorkspaceMember) =>
+                    handleSelectEntity(workspaceMember, 'workspaceMember')
+                  }
+                />
+              }
+            />
+          </StyledAssignToMemberContainer>
+        </Section>
+      )}
 
       {settingsDraftRole.canBeAssignedToAgents && (
         <Section>
