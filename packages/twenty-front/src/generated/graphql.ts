@@ -141,6 +141,14 @@ export type ApiKey = {
   workspaceId: Scalars['UUID'];
 };
 
+export type ApiKeyForRole = {
+  __typename?: 'ApiKeyForRole';
+  expiresAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  revokedAt?: Maybe<Scalars['DateTime']>;
+};
+
 export type ApiKeyToken = {
   __typename?: 'ApiKeyToken';
   token: Scalars['String'];
@@ -2708,7 +2716,7 @@ export type RevokeApiKeyDto = {
 export type Role = {
   __typename?: 'Role';
   agents: Array<Agent>;
-  apiKeys: Array<ApiKey>;
+  apiKeys: Array<ApiKeyForRole>;
   canAccessAllTools: Scalars['Boolean'];
   canBeAssignedToAgents: Scalars['Boolean'];
   canBeAssignedToApiKeys: Scalars['Boolean'];

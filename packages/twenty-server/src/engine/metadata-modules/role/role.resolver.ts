@@ -10,7 +10,6 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/api-key-role.service';
-import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -42,7 +41,10 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role-input.dto';
-import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
+import {
+  ApiKeyForRoleDTO,
+  RoleDTO,
+} from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role-input.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -317,16 +319,21 @@ export class RoleResolver {
     return agents;
   }
 
-  @ResolveField('apiKeys', () => [ApiKey])
+  @ResolveField('apiKeys', () => [ApiKeyForRoleDTO])
   async getApiKeysAssignedToRole(
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ApiKey[]> {
+  ): Promise<ApiKeyForRoleDTO[]> {
     const apiKeys = await this.apiKeyRoleService.getApiKeysAssignedToRole(
       role.id,
       workspace.id,
     );
 
-    return apiKeys;
+    return apiKeys.map((apiKey) => ({
+      id: apiKey.id,
+      name: apiKey.name,
+      expiresAt: apiKey.expiresAt,
+      revokedAt: apiKey.revokedAt,
+    }));
   }
 }
