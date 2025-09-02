@@ -13,11 +13,14 @@ import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/wo
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import { useConnectionState } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useConnectionState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
+import { Position } from '@xyflow/react';
 import { useState } from 'react';
 import { capitalize } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledAddStepButtonContainer = styled.div<{
   shouldDisplay: boolean;
@@ -56,6 +59,10 @@ export const WorkflowDiagramStepNodeEditableContent = ({
   onDelete: () => void;
   onClick?: () => void;
 }) => {
+  const isWorkflowBranchEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
+  );
+
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => {
@@ -128,6 +135,9 @@ export const WorkflowDiagramStepNodeEditableContent = ({
       )}
 
       <WorkflowDiagramHandleSource
+        type="source"
+        position={Position.Bottom}
+        disableHoverEffect={!isWorkflowBranchEnabled}
         selected={
           isSourceSelected(id) ||
           selected ||

@@ -1,6 +1,5 @@
 import { WorkflowDiagramCreateStepElement } from '@/workflow/workflow-diagram/components/WorkflowDiagramCreateStepElement';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
-import { useStartNodeCreation } from '@/workflow/workflow-diagram/hooks/useStartNodeCreation';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { WorkflowDiagramEdgeLabel } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramEdgeLabel';
 import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/useEdgeState';
@@ -14,12 +13,15 @@ import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/wo
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import { useConnectionState } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useConnectionState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
+import { Position } from '@xyflow/react';
 import { useState } from 'react';
 import { capitalize } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledAddStepButtonContainer = styled.div<{
   shouldDisplay: boolean;
@@ -60,6 +62,10 @@ export const WorkflowDiagramIteratorNodeEditableContent = ({
 }) => {
   const { t } = useLingui();
 
+  const isWorkflowBranchEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_BRANCH_ENABLED,
+  );
+
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => {
@@ -69,8 +75,6 @@ export const WorkflowDiagramIteratorNodeEditableContent = ({
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
-
-  const { isNodeCreationStarted } = useStartNodeCreation();
 
   const { isConnectable, isSourceConnected, isInProgressConnection } =
     useConnectionState(data.nodeType);
@@ -131,6 +135,8 @@ export const WorkflowDiagramIteratorNodeEditableContent = ({
       )}
 
       <WorkflowDiagramHandleSource
+        type="source"
+        position={Position.Bottom}
         selected={
           isSourceSelected(id) ||
           selected ||
@@ -138,6 +144,21 @@ export const WorkflowDiagramIteratorNodeEditableContent = ({
           (isConnectable(id) && isHovered)
         }
         hovered={isSourceHovered(id) || isHovered}
+        disableHoverEffect={!isWorkflowBranchEnabled}
+      />
+
+      <WorkflowDiagramHandleSource
+        id="loop"
+        type="source"
+        position={Position.Right}
+        selected={
+          isSourceSelected(id) ||
+          selected ||
+          isSourceConnected(id) ||
+          (isConnectable(id) && isHovered)
+        }
+        hovered={isSourceHovered(id) || isHovered}
+        disableHoverEffect={!isWorkflowBranchEnabled}
       />
     </>
   );
