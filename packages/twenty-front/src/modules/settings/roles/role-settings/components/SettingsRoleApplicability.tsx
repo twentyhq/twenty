@@ -6,7 +6,7 @@ import { H2Title, IconKey, IconRobot, IconUsers } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
-const StyledCheckboxContainer = styled.div`
+const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -14,7 +14,7 @@ const StyledCheckboxContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   transition: background-color
     ${({ theme }) => theme.animation.duration.normal}s ease;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 
   &:hover {
     background-color: ${({ theme }) => theme.background.transparent.light};
@@ -75,8 +75,10 @@ export const SettingsRoleApplicability = ({
       <div>
         {options.map((option) => (
           <StyledCheckboxContainer
+            disabled={!isEditable}
             key={option.key}
             onClick={() =>
+              isEditable &&
               onApplicabilityChange(option.key, !values[option.key])
             }
           >
