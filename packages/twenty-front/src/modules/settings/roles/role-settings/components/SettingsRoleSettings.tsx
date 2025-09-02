@@ -94,11 +94,9 @@ export const SettingsRoleSettings = ({
 
       <SettingsRoleApplicability
         values={{
-          canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers ?? true,
-          canBeAssignedToAgents:
-            settingsDraftRole.canBeAssignedToAgents ?? true,
-          canBeAssignedToApiKeys:
-            settingsDraftRole.canBeAssignedToApiKeys ?? true,
+          canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers,
+          canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
+          canBeAssignedToApiKeys: settingsDraftRole.canBeAssignedToApiKeys,
         }}
         onApplicabilityChange={(key, value) => {
           setSettingsDraftRole({
