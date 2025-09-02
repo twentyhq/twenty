@@ -300,9 +300,9 @@ msgid "Activate Workflow"
 msgstr "Активувати процеси роботи"
 
 #. js-lingui-id: F6pfE9
-#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Active"
 msgstr "Активний"
 
@@ -1100,7 +1100,7 @@ msgid "Change Plan"
 msgstr "Змінити план"
 
 #. js-lingui-id: EYSFEW
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Change subdomain?"
 msgstr "Установити новий піддомен?"
 
@@ -1719,12 +1719,12 @@ msgid "Custom"
 msgstr "Спеціальний"
 
 #. js-lingui-id: XQ681Q
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "Домашній домен"
 
 #. js-lingui-id: 1GTWIA
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Custom domain updated"
 msgstr "Користувацький домен оновлено"
 
@@ -1745,7 +1745,7 @@ msgid "Customization"
 msgstr "Налаштування"
 
 #. js-lingui-id: CMhr4u
-#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Customize Domain"
 msgstr "Налаштувати домен"
 
@@ -2185,17 +2185,17 @@ msgid "Doesn't contain"
 msgstr "Не містить"
 
 #. js-lingui-id: EoKe5U
-#: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Domain"
 msgstr "Домен"
 
 #. js-lingui-id: AZ4xlc
-#: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Domains"
 msgstr "Домени"
@@ -3333,9 +3333,9 @@ msgid "Importing Data ..."
 msgstr "Імпорт даних ..."
 
 #. js-lingui-id: NoNwIX
-#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Inactive"
 msgstr "Неактивний"
 
@@ -3400,12 +3400,12 @@ msgid "Invalid auth provider"
 msgstr "Недійсний провайдер авторизації"
 
 #. js-lingui-id: P3qQyo
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
 msgstr "Неприпустимий користувацький домен. Будь ласка, включіть принаймні один субдомен (наприклад, sub.example.com)."
 
 #. js-lingui-id: u3hwhx
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Недійсний домен. Домен має бути коротшим за 256 символів, не може бути IP-адресою, не може містити пробіли, не може містити спеціальні символи такі як _~`!@#$%^*()=+{}[]|\\;:'\",<>/? та не може починатися або закінчуватися символом '-'."
 
@@ -3432,7 +3432,7 @@ msgid "Invalid File"
 msgstr "Недійсний файл"
 
 #. js-lingui-id: QdoUFL
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Недійсні значення форми"
 
@@ -4233,7 +4233,7 @@ msgid "No available fields to select"
 msgstr "Немає доступних полів для вибору"
 
 #. js-lingui-id: OTe3RI
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "No change detected"
 msgstr "Змін не виявлено"
 
@@ -4959,7 +4959,7 @@ msgid "Releases"
 msgstr "Релізи"
 
 #. js-lingui-id: HpK/8d
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Reload"
 msgstr "Перезавантажити"
 
@@ -5554,12 +5554,12 @@ msgid "Set global workspace preferences"
 msgstr "Установити загальні параметри робочого простору"
 
 #. js-lingui-id: qNbuWB
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Встановіть ім'я вашого домашнього домену та налаштуйте записи DNS."
 
 #. js-lingui-id: tn41zE
-#: src/pages/settings/workspace/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Set the name of your subdomain"
 msgstr "Встановіть назву вашого субдомену"
 
@@ -5816,28 +5816,28 @@ msgid "Sub-Fields"
 msgstr "Підполя"
 
 #. js-lingui-id: ku9TbG
-#: src/pages/settings/workspace/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Subdomain"
 msgstr "Субдомен"
 
 #. js-lingui-id: omhc+7
-#: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain already taken"
 msgstr "Субдомен вже зайнятий"
 
 #. js-lingui-id: OlC/tU
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "Субдомен не може бути довшим за 30 символів"
 
 #. js-lingui-id: ZETwlU
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Субдомен не може бути коротшим за 3 символи"
 
 #. js-lingui-id: DTG2nE
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain updated"
 msgstr "Піддомен оновлено"
 
@@ -6474,7 +6474,7 @@ msgid "Use authenticator apps and browser extensions like 1Password, Authy, Micr
 msgstr "Використовуйте додатки для аутентифікації та розширення браузера, такі як 1Password, Authy, Microsoft Authenticator для генерації одноразових паролів"
 
 #. js-lingui-id: oTTQsc
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
 msgstr "Використовуйте тільки літери, цифри та тире. Починайте та закінчуйте літерою або цифрою"
 
@@ -6741,7 +6741,6 @@ msgstr "Робочі процеси"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsBilling.tsx
-#: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -6750,6 +6749,7 @@ msgstr "Робочі процеси"
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
@@ -6885,7 +6885,7 @@ msgid "You will lose all your mappings."
 msgstr "Ви втратите всі свої зіставлення."
 
 #. js-lingui-id: Cl+hUj
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "Ви збираєтесь змінити піддомен вашого робочого простору. Ця дія призведе до виходу всіх користувачів."
 
