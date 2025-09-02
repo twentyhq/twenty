@@ -6,6 +6,7 @@ export class AddRoleApplicabilityFields1756434280823
   name = 'AddRoleApplicabilityFields1756434280823';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    // Add the new columns with default values
     await queryRunner.query(
       `ALTER TABLE "core"."role" ADD "canBeAssignedToUsers" boolean NOT NULL DEFAULT true`,
     );
@@ -14,6 +15,10 @@ export class AddRoleApplicabilityFields1756434280823
     );
     await queryRunner.query(
       `ALTER TABLE "core"."role" ADD "canBeAssignedToApiKeys" boolean NOT NULL DEFAULT true`,
+    );
+
+    await queryRunner.query(
+      `UPDATE "core"."role" SET "canBeAssignedToUsers" = true, "canBeAssignedToAgents" = true, "canBeAssignedToApiKeys" = true`,
     );
   }
 
