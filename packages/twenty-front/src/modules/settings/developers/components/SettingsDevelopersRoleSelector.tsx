@@ -1,7 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Select } from '@/ui/input/components/Select';
 import { useRecoilValue } from 'recoil';
-import { useIcons } from 'twenty-ui/display';
+import { type IconComponent, useIcons } from 'twenty-ui/display';
 import { type Role } from '~/generated-metadata/graphql';
 
 type SettingsDevelopersRoleSelectorProps = {
@@ -40,11 +40,20 @@ export const SettingsDevelopersRoleSelector = ({
     return null;
   }
 
-  const options = roles.map((role) => ({
-    label: role.label,
-    value: role.id,
-    Icon: getIcon(role.icon) ?? undefined,
-  }));
+  const options = roles.reduce<
+    Array<{ label: string; value: string; Icon?: IconComponent }>
+  >((acc, role) => {
+    {
+      if (role.canBeAssignedToApiKeys) {
+        acc.push({
+          label: role.label,
+          value: role.id,
+          Icon: getIcon(role.icon) ?? undefined,
+        });
+      }
+      return acc;
+    }
+  }, []);
 
   const selectValue =
     value || (doesDefaultRoleExistInRoles ? defaultRole?.id : roles[0].id);
