@@ -294,7 +294,7 @@ describe('AgentRoleService', () => {
           roleId: nonExistentRoleId,
         }),
       ).rejects.toMatchObject({
-        code: AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        code: AgentExceptionCode.ROLE_NOT_FOUND,
         message: `Role with id ${nonExistentRoleId} not found in workspace`,
       });
     });
