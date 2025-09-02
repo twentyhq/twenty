@@ -15,23 +15,7 @@ export const useUpdateAgentRole = (roleId: string) => {
   const updateAgentRoleDraftState = ({ agent }: { agent: Agent }) => {
     setSettingsDraftRole({
       ...settingsDraftRole,
-      agents: [
-        ...settingsDraftRole.agents,
-        {
-          id: agent.id,
-          name: agent.name,
-          label: agent.label,
-          description: agent.description,
-          icon: agent.icon,
-          prompt: agent.prompt,
-          modelId: agent.modelId,
-          responseFormat: agent.responseFormat,
-          roleId: agent.roleId,
-          isCustom: agent.isCustom,
-          createdAt: agent.createdAt,
-          updatedAt: agent.updatedAt,
-        },
-      ],
+      agents: [...settingsDraftRole.agents, agent],
     });
   };
 
