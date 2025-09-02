@@ -28,7 +28,7 @@ export class RouteService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    private domainManagerService: DomainManagerService,
+    private readonly domainManagerService: DomainManagerService,
     @InjectRepository(Route)
     private readonly routeRepository: Repository<Route>,
   ) {}
