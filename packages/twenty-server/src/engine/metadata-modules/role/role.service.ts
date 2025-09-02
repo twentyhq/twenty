@@ -83,6 +83,9 @@ export class RoleService {
       canUpdateAllObjectRecords: input.canUpdateAllObjectRecords,
       canSoftDeleteAllObjectRecords: input.canSoftDeleteAllObjectRecords,
       canDestroyAllObjectRecords: input.canDestroyAllObjectRecords,
+      canBeAssignedToUsers: input.canBeAssignedToUsers,
+      canBeAssignedToAgents: input.canBeAssignedToAgents,
+      canBeAssignedToApiKeys: input.canBeAssignedToApiKeys,
       isEditable: true,
       workspaceId,
     });
