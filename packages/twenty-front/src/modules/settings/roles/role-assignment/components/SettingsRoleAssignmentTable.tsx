@@ -141,7 +141,7 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
       />
       <StyledSearchContainer>
         <StyledSearchInput
-          instanceId="role-assignment-member-search"
+          instanceId={`role-assignment-${roleTargetType}-search`}
           value={searchFilter}
           onChange={handleSearchChange}
           placeholder={t`Search an assigned ${roleTargetDisplayName}...`}
