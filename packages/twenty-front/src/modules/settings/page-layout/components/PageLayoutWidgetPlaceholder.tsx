@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { type ReactNode } from 'react';
-import { IconGripVertical, IconX } from 'twenty-ui/display';
+import { IconGripVertical, IconPencil, IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
@@ -66,6 +66,7 @@ const StyledContent = styled.div`
 type PageLayoutWidgetPlaceholderProps = {
   title?: string;
   onRemove?: () => void;
+  onEdit?: () => void;
   children?: ReactNode;
   isEmpty?: boolean;
 };
@@ -73,6 +74,7 @@ type PageLayoutWidgetPlaceholderProps = {
 export const PageLayoutWidgetPlaceholder = ({
   title = 'Graph Title',
   onRemove,
+  onEdit,
   children,
   isEmpty = false,
 }: PageLayoutWidgetPlaceholderProps) => {
@@ -116,6 +118,14 @@ export const PageLayoutWidgetPlaceholder = ({
           size="small"
         />
         <StyledTitle>{title}</StyledTitle>
+        {onEdit && (
+          <IconButton
+            onClick={onEdit}
+            Icon={IconPencil}
+            variant="tertiary"
+            size="small"
+          />
+        )}
         {onRemove && (
           <IconButton
             onClick={onRemove}

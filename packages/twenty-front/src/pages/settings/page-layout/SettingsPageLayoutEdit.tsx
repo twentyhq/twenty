@@ -4,6 +4,8 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageFullWidthContainer } from '@/settings/components/SettingsPageFullWidthContainer';
 import { PageLayoutInitializationEffect } from '@/settings/page-layout/components/PageLayoutInitializationEffect';
 import { PageLayoutWidgetPlaceholder } from '@/settings/page-layout/components/PageLayoutWidgetPlaceholder';
+import { WidgetType } from '@/settings/page-layout/mocks/mockWidgets';
+import { pageLayoutEditingWidgetIdState } from '@/settings/page-layout/states/pageLayoutEditingWidgetIdState';
 import { EMPTY_LAYOUT } from '@/settings/page-layout/constants/EmptyLayout';
 import {
   PAGE_LAYOUT_CONFIG,
@@ -36,7 +38,7 @@ import {
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { useParams } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconAppWindow, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -134,6 +136,9 @@ export const SettingsPageLayoutEdit = () => {
   );
   const pageLayoutWidgets = useRecoilValue(pageLayoutWidgetsState);
   const { navigateCommandMenu } = useNavigateCommandMenu();
+  const setPageLayoutEditingWidgetId = useSetRecoilState(
+    pageLayoutEditingWidgetIdState,
+  );
 
   const {
     handleDragSelectionStart,
@@ -152,6 +157,27 @@ export const SettingsPageLayoutEdit = () => {
 
   const { handleRemoveWidget } = usePageLayoutWidgetDelete();
   const { handleLayoutChange } = usePageLayoutHandleLayoutChange();
+
+  const handleEditWidget = useCallback(
+    (widgetId: string) => {
+      const widget = pageLayoutWidgets.find((w) => w.id === widgetId);
+      if (!widget) return;
+
+      setPageLayoutEditingWidgetId(widgetId);
+
+      // Open the appropriate command menu page based on widget type
+      if (widget.type === WidgetType.IFRAME) {
+        navigateCommandMenu({
+          page: CommandMenuPages.PageLayoutIframeConfig,
+          pageTitle: 'Edit iFrame',
+          pageIcon: IconAppWindow,
+          resetNavigationStack: true,
+        });
+      }
+      // TODO: Add other widget types when they support editing
+    },
+    [pageLayoutWidgets, setPageLayoutEditingWidgetId, navigateCommandMenu],
+  );
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
@@ -289,6 +315,7 @@ export const SettingsPageLayoutEdit = () => {
                   <PageLayoutWidgetPlaceholder
                     title={widget.title}
                     onRemove={() => handleRemoveWidget(widget.id)}
+                    onEdit={() => handleEditWidget(widget.id)}
                   >
                     {renderWidget(widget)}
                   </PageLayoutWidgetPlaceholder>

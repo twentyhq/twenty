@@ -45,7 +45,7 @@ const widgetTypeOptions = [
     type: WidgetType.IFRAME,
     icon: IconFrame,
     title: 'Add an iframe',
-    disabled: true,
+    disabled: false,
   },
 ];
 
@@ -61,6 +61,12 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
         page: CommandMenuPages.PageLayoutGraphTypeSelect,
         pageTitle: 'Select Graph Type',
         pageIcon: IconChartPie,
+      });
+    } else if (widgetType === WidgetType.IFRAME) {
+      navigateCommandMenu({
+        page: CommandMenuPages.PageLayoutIframeConfig,
+        pageTitle: 'Configure iFrame',
+        pageIcon: IconFrame,
       });
     } else {
       setPageLayoutDraggedArea(null);
