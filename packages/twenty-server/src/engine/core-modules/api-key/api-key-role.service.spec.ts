@@ -55,6 +55,9 @@ describe('ApiKeyRoleService', () => {
     canUpdateAllObjectRecords: true,
     canSoftDeleteAllObjectRecords: true,
     canDestroyAllObjectRecords: true,
+    canBeAssignedToAgents: false,
+    canBeAssignedToUsers: true,
+    canBeAssignedToApiKeys: true,
   };
 
   const mockNewRole: Partial<RoleEntity> = {
