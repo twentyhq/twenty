@@ -50,11 +50,6 @@ import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-import {
-  AssignRoleToEntityInput,
-  EntityType,
-} from './dtos/assign-role-to-entity.input';
-
 @Resolver(() => RoleDTO)
 @UsePipes(ResolverValidationPipe)
 @UseGuards(
@@ -237,57 +232,6 @@ export class RoleResolver {
       agentId,
       workspaceId,
     });
-
-    return true;
-  }
-
-  @Mutation(() => Boolean)
-  async assignRoleToEntity(
-    @Args('input') input: AssignRoleToEntityInput,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<boolean> {
-    switch (input.entityType) {
-      case EntityType.WORKSPACE_MEMBER:
-        {
-          const workspaceMember =
-            await this.userWorkspaceService.getWorkspaceMemberOrThrow({
-              workspaceMemberId: input.entityId,
-              workspaceId: workspace.id,
-            });
-
-          const userWorkspace =
-            await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
-              userId: workspaceMember.userId,
-              workspaceId: workspace.id,
-            });
-
-          await this.userRoleService.assignRoleToUserWorkspace({
-            userWorkspaceId: userWorkspace.id,
-            workspaceId: workspace.id,
-            roleId: input.roleId,
-          });
-        }
-        break;
-
-      case EntityType.AGENT:
-        await this.agentRoleService.assignRoleToAgent({
-          agentId: input.entityId,
-          roleId: input.roleId,
-          workspaceId: workspace.id,
-        });
-        break;
-
-      case EntityType.API_KEY:
-        await this.apiKeyRoleService.assignRoleToApiKey({
-          apiKeyId: input.entityId,
-          roleId: input.roleId,
-          workspaceId: workspace.id,
-        });
-        break;
-
-      default:
-        throw new Error(`Unsupported entity type: ${input.entityType}`);
-    }
 
     return true;
   }
