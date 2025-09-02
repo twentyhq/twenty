@@ -15,11 +15,11 @@ import { SyncableEntity } from 'src/engine/workspace-manager/workspace-sync/inte
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 export enum HTTPMethod {
-  Get = 'Get',
-  Post = 'Post',
-  Put = 'Put',
-  Patch = 'Patch',
-  Delete = 'Delete',
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  PATCH = 'PATCH',
+  DELETE = 'DELETE',
 }
 
 @Entity({ name: 'route', schema: 'core' })
@@ -41,7 +41,7 @@ export class Route extends SyncableEntity {
   @Column({
     type: 'enum',
     enum: HTTPMethod,
-    default: HTTPMethod.Get,
+    default: HTTPMethod.GET,
     nullable: false,
   })
   httpMethod: HTTPMethod;

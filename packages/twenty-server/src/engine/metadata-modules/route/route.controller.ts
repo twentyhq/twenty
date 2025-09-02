@@ -32,7 +32,7 @@ export class RouteController {
     return await this.routeService.handle({
       workspaceId,
       request,
-      httpMethod: HTTPMethod.Get,
+      httpMethod: HTTPMethod.GET,
     });
   }
 
@@ -44,7 +44,7 @@ export class RouteController {
     return await this.routeService.handle({
       workspaceId,
       request,
-      httpMethod: HTTPMethod.Post,
+      httpMethod: HTTPMethod.POST,
     });
   }
 
@@ -56,7 +56,7 @@ export class RouteController {
     return await this.routeService.handle({
       workspaceId,
       request,
-      httpMethod: HTTPMethod.Put,
+      httpMethod: HTTPMethod.PUT,
     });
   }
 
@@ -68,7 +68,7 @@ export class RouteController {
     return await this.routeService.handle({
       workspaceId,
       request,
-      httpMethod: HTTPMethod.Patch,
+      httpMethod: HTTPMethod.PATCH,
     });
   }
 
@@ -80,7 +80,7 @@ export class RouteController {
     return await this.routeService.handle({
       workspaceId,
       request,
-      httpMethod: HTTPMethod.Delete,
+      httpMethod: HTTPMethod.DELETE,
     });
   }
 }
