@@ -156,43 +156,47 @@ describe('successful createOne FieldMetadataService morph relation fields v2', (
   });
 
   afterAll(async () => {
-    await Promise.all(
-      [
-        createdObjectMetadataPersonId,
-        createdObjectMetadataOpportunityId,
-        createdObjectMetadataCompanyId,
-      ].map(
-        async (objectMetadataId) =>
-          await updateOneObjectMetadata({
-            expectToFail: false,
-            input: {
-              idToUpdate: objectMetadataId,
-              updatePayload: { isActive: false },
-            },
-          }),
-      ),
-    );
+    try {
+      await Promise.all(
+        [
+          createdObjectMetadataPersonId,
+          createdObjectMetadataOpportunityId,
+          createdObjectMetadataCompanyId,
+        ].map(
+          async (objectMetadataId) =>
+            await updateOneObjectMetadata({
+              expectToFail: false,
+              input: {
+                idToUpdate: objectMetadataId,
+                updatePayload: { isActive: false },
+              },
+            }),
+        ),
+      );
 
-    await Promise.all(
-      [
-        createdObjectMetadataPersonId,
-        createdObjectMetadataOpportunityId,
-        createdObjectMetadataCompanyId,
-      ].map(
-        async (objectMetadataId) =>
-          await deleteOneObjectMetadata({
-            expectToFail: false,
-            input: { idToDelete: objectMetadataId },
-          }),
-      ),
-    );
-
-    await updateFeatureFlag({
-      expectToFail: false,
-      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      value: false,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
+      await Promise.all(
+        [
+          createdObjectMetadataPersonId,
+          createdObjectMetadataOpportunityId,
+          createdObjectMetadataCompanyId,
+        ].map(
+          async (objectMetadataId) =>
+            await deleteOneObjectMetadata({
+              expectToFail: false,
+              input: { idToDelete: objectMetadataId },
+            }),
+        ),
+      );
+    } catch (e) {
+      throw e;
+    } finally {
+      await updateFeatureFlag({
+        expectToFail: false,
+        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        value: false,
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
+    }
   });
 
   afterEach(async () => {
