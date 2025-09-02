@@ -13,6 +13,7 @@ import {
 import { InputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/input-schema.type';
 import { CronTrigger } from 'src/engine/metadata-modules/trigger/entities/cron-trigger.entity';
 import { DatabaseEventTrigger } from 'src/engine/metadata-modules/trigger/entities/database-event-trigger.entity';
+import { Route } from 'src/engine/metadata-modules/route/route.entity';
 
 const DEFAULT_SERVERLESS_TIMEOUT_SECONDS = 300; // 5 minutes
 
@@ -72,6 +73,11 @@ export class ServerlessFunctionEntity {
     },
   )
   databaseEventTriggers: DatabaseEventTrigger[];
+
+  @OneToMany(() => Route, (route) => route.serverlessFunction, {
+    cascade: true,
+  })
+  routes: Route[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
