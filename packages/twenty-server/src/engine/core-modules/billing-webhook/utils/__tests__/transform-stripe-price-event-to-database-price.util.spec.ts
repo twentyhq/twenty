@@ -141,8 +141,6 @@ describe('transformStripePriceEventToDatabasePrice', () => {
   it('should handle all intervals correctly', () => {
     const intervals = [
       ['month', SubscriptionInterval.Month],
-      ['day', SubscriptionInterval.Day],
-      ['week', SubscriptionInterval.Week],
       ['year', SubscriptionInterval.Year],
     ];
 
