@@ -84,7 +84,7 @@ export class ApiKeyRoleService {
       workspaceId,
     });
 
-    await manager.insert(RoleTargetsEntity, roleTarget);
+    await manager.save(roleTarget);
   }
 
   async getRoleIdForApiKey(
