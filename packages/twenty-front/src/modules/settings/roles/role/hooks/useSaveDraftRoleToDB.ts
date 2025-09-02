@@ -1,4 +1,6 @@
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
+import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
+import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
 import { useRemoveFieldPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/field-permissions/hooks/useRemoveFieldPermissionInDraftRole';
 import { newFieldPermissionsFilter } from '@/settings/roles/role/hooks/utils/newFieldPermissionsFilter.util';
@@ -48,6 +50,8 @@ export const useSaveDraftRoleToDB = ({
   const [upsertObjectPermissions] = useUpsertObjectPermissionsMutation();
   const [upsertFieldPermissions] = useUpsertFieldPermissionsMutation();
   const { addWorkspaceMembersToRole } = useUpdateWorkspaceMemberRole(roleId);
+  const { addAgentsToRole } = useUpdateAgentRole(roleId);
+  const { addApiKeysToRole } = useUpdateApiKeyRole(roleId);
   const navigateSettings = useNavigateSettings();
 
   const settingsPersistedRole = useRecoilValue(
@@ -197,12 +201,35 @@ export const useSaveDraftRoleToDB = ({
         });
       }
 
-      if (isDefined(dirtyFields.workspaceMembers)) {
+      if (
+        isDefined(dirtyFields.workspaceMembers) &&
+        settingsDraftRole.canBeAssignedToUsers
+      ) {
         await addWorkspaceMembersToRole({
           roleId: data.createOneRole.id,
           workspaceMemberIds: settingsDraftRole.workspaceMembers.map(
             (member) => member.id,
           ),
+        });
+      }
+
+      if (
+        isDefined(dirtyFields.agents) &&
+        settingsDraftRole.canBeAssignedToAgents
+      ) {
+        await addAgentsToRole({
+          roleId: data.createOneRole.id,
+          agentIds: settingsDraftRole.agents.map((agent) => agent.id),
+        });
+      }
+
+      if (
+        isDefined(dirtyFields.apiKeys) &&
+        settingsDraftRole.canBeAssignedToApiKeys
+      ) {
+        await addApiKeysToRole({
+          roleId: data.createOneRole.id,
+          apiKeyIds: settingsDraftRole.apiKeys.map((apiKey) => apiKey.id),
         });
       }
 

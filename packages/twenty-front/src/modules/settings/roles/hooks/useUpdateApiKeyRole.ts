@@ -38,8 +38,28 @@ export const useUpdateApiKeyRole = (roleId: string) => {
     return data?.assignRoleToApiKey;
   };
 
+  const addApiKeysToRole = async ({
+    roleId,
+    apiKeyIds,
+  }: {
+    roleId: string;
+    apiKeyIds: string[];
+  }) => {
+    await Promise.all(
+      apiKeyIds.map((apiKeyId) =>
+        assignRoleToApiKeyMutation({
+          variables: {
+            roleId,
+            apiKeyId,
+          },
+        }),
+      ),
+    );
+  };
+
   return {
     addApiKeyToRoleAndUpdateState,
     updateApiKeyRoleDraftState,
+    addApiKeysToRole,
   };
 };

@@ -36,8 +36,28 @@ export const useUpdateAgentRole = (roleId: string) => {
     return data?.assignRoleToAgent;
   };
 
+  const addAgentsToRole = async ({
+    roleId,
+    agentIds,
+  }: {
+    roleId: string;
+    agentIds: string[];
+  }) => {
+    await Promise.all(
+      agentIds.map((agentId) =>
+        assignRoleToAgentMutation({
+          variables: {
+            roleId,
+            agentId,
+          },
+        }),
+      ),
+    );
+  };
+
   return {
     addAgentToRoleAndUpdateState,
     updateAgentRoleDraftState,
+    addAgentsToRole,
   };
 };
