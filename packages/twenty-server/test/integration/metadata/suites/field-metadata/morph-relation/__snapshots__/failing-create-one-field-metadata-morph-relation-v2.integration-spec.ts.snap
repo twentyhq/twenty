@@ -1,5 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field on source object itself 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "FIELD_METADATA_RELATION_MALFORMED",
+              "message": "Morph relation creation payloads must not target source object metadata",
+              "userFriendlyMessage": "Morph relation creation payloads must only contain relation to other object metadata",
+            },
+          ],
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [],
+    },
+    "message": "Validation failed for 0 object(s) and 1 field(s)",
+    "summary": {
+      "invalidFields": 1,
+      "invalidObjects": 0,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating field",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field that has several references to same object 1`] = `
 {
   "extensions": {
@@ -53,9 +85,9 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 s it sh
               "value": "",
             },
           ],
-          "id": "7b9ab29a-75e6-4593-85da-0214f8a1dcf3",
+          "id": Any<String>,
           "name": "",
-          "objectMetadataId": "97d41388-5ced-4097-9cf1-eb3b1fec61c8",
+          "objectMetadataId": Any<String>,
           "operation": "create_field",
         },
       ],
@@ -89,9 +121,9 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 s it sh
               "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             },
           ],
-          "id": "740679f4-23cd-49de-b8fe-6a9d44972237",
+          "id": Any<String>,
           "name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "objectMetadataId": "97d41388-5ced-4097-9cf1-eb3b1fec61c8",
+          "objectMetadataId": Any<String>,
           "operation": "create_field",
         },
       ],
@@ -131,9 +163,9 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 s it sh
               "value": "",
             },
           ],
-          "id": "5f46c854-1530-4165-9936-d61a9f3dc443",
+          "id": Any<String>,
           "name": "",
-          "objectMetadataId": "97d41388-5ced-4097-9cf1-eb3b1fec61c8",
+          "objectMetadataId": Any<String>,
           "operation": "create_field",
         },
       ],
@@ -168,7 +200,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 s it sh
                 {
                   "targetFieldIcon": "Icon123",
                   "targetFieldLabel": "test",
-                  "targetObjectMetadataId": "54e57710-82d6-4111-8dac-eedf8615d273",
+                  "targetObjectMetadataId": Any<String>,
                   "type": "ONE_TO_MANY",
                 },
               ],
@@ -208,7 +240,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 s it sh
                 {
                   "targetFieldIcon": "Icon123",
                   "targetFieldLabel": "test",
-                  "targetObjectMetadataId": "97d41388-5ced-4097-9cf1-eb3b1fec61c8",
+                  "targetObjectMetadataId": Any<String>,
                   "type": "wrong",
                 },
               ],
@@ -248,7 +280,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 s it sh
                 {
                   "targetFieldIcon": "Icon123",
                   "targetFieldLabel": "test",
-                  "targetObjectMetadataId": "97d41388-5ced-4097-9cf1-eb3b1fec61c8",
+                  "targetObjectMetadataId": Any<String>,
                 },
               ],
             },

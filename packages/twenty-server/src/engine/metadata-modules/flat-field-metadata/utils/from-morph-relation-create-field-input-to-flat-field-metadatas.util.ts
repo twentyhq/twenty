@@ -55,6 +55,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
     await validateMorphRelationCreationPayload({
       existingFlatObjectMetadataMaps,
       morphRelationCreationPayload: rawMorphCreationPayload,
+      objectMetadataId: sourceFlatObjectMetadata.id,
     });
 
   if (morphRelationCreationPayloadValidation.status === 'fail') {
