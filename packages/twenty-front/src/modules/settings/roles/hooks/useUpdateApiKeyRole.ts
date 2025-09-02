@@ -3,14 +3,6 @@ import { useRecoilState } from 'recoil';
 import { useAssignRoleToApiKeyMutation } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
 
-type AddApiKeyToRoleAndUpdateStateParams = {
-  apiKeyId: string;
-};
-
-type UpdateApiKeyRoleDraftStateParams = {
-  apiKey: ApiKeyForRole;
-};
-
 export const useUpdateApiKeyRole = (roleId: string) => {
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
@@ -20,7 +12,9 @@ export const useUpdateApiKeyRole = (roleId: string) => {
 
   const updateApiKeyRoleDraftState = ({
     apiKey,
-  }: UpdateApiKeyRoleDraftStateParams) => {
+  }: {
+    apiKey: ApiKeyForRole;
+  }) => {
     setSettingsDraftRole({
       ...settingsDraftRole,
       apiKeys: [...settingsDraftRole.apiKeys, apiKey],
@@ -29,7 +23,9 @@ export const useUpdateApiKeyRole = (roleId: string) => {
 
   const addApiKeyToRoleAndUpdateState = async ({
     apiKeyId,
-  }: AddApiKeyToRoleAndUpdateStateParams) => {
+  }: {
+    apiKeyId: string;
+  }) => {
     const { data } = await assignRoleToApiKeyMutation({
       variables: {
         apiKeyId,
