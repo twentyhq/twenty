@@ -9,7 +9,6 @@ const StyledIconWrapper = styled.div`
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledNameCell = styled.div`
@@ -23,6 +22,7 @@ const StyledNameContainer = styled.div`
   display: flex;
   overflow: hidden;
   width: 100%;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTableCell = styled(TableCell)`
@@ -48,7 +48,7 @@ export const SettingsRoleAssignmentAgentTableRow = ({
             <Icon size={theme.icon.size.lg} />
           </StyledIconWrapper>
           <StyledNameCell>
-            <OverflowingTextWithTooltip text={agent.name} />
+            <OverflowingTextWithTooltip text={agent.label} />
           </StyledNameCell>
         </StyledNameContainer>
       </StyledTableCell>
