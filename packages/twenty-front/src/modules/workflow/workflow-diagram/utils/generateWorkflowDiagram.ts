@@ -4,7 +4,6 @@ import {
 } from '@/workflow/types/Workflow';
 import { FIRST_NODE_POSITION } from '@/workflow/workflow-diagram/constants/FirstNodePosition';
 import { VERTICAL_DISTANCE_BETWEEN_TWO_NODES } from '@/workflow/workflow-diagram/constants/VerticalDistanceBetweenTwoNodes';
-import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowVisualizerEdgeDefaultConfiguration';
 import {
   type WorkflowDiagram,
   type WorkflowDiagramEdge,
@@ -13,6 +12,7 @@ import {
   type WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils/getWorkflowDiagramTriggerNode';
+import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowVisualizerEdgeDefaultConfiguration';
 
 import { WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyTriggerNodeDefinition';
 import { getRootStepIds } from '@/workflow/workflow-trigger/utils/getRootStepIds';
@@ -23,12 +23,14 @@ import { v4 } from 'uuid';
 export const generateWorkflowDiagram = ({
   trigger,
   steps,
-  defaultEdgeType,
+  getEdgeType,
   isWorkflowBranchEnabled = false,
 }: {
   trigger: WorkflowTrigger | undefined;
   steps: Array<WorkflowStep>;
-  defaultEdgeType: WorkflowDiagramEdgeType;
+  getEdgeType: (params: {
+    incomingNode: WorkflowDiagramNode;
+  }) => WorkflowDiagramEdgeType;
   isWorkflowBranchEnabled?: boolean;
 }): WorkflowDiagram => {
   const nodes: Array<WorkflowDiagramNode> = [];
@@ -82,27 +84,37 @@ export const generateWorkflowDiagram = ({
   }
 
   for (const stepLinkToTriggerId of trigger?.nextStepIds ?? []) {
+    const edgeType = getEdgeType({
+      // TODO: clean
+      incomingNode: nodes.find((node) => node.id === TRIGGER_STEP_ID)!,
+    });
+
     edges.push({
       ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-      type: defaultEdgeType,
+      type: edgeType,
       id: v4(),
       source: TRIGGER_STEP_ID,
       target: stepLinkToTriggerId,
-      ...(defaultEdgeType.includes('editable')
+      ...(edgeType.includes('editable')
         ? { deletable: true, selectable: true }
         : {}),
     });
   }
 
   for (const step of steps) {
+    const edgeType = getEdgeType({
+      // TODO: clean
+      incomingNode: nodes.find((node) => node.id === step.id)!,
+    });
+
     step.nextStepIds?.forEach((child) => {
       edges.push({
         ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-        type: defaultEdgeType,
+        type: edgeType,
         id: v4(),
         source: step.id,
         target: child,
-        ...(defaultEdgeType.includes('editable')
+        ...(edgeType.includes('editable')
           ? { deletable: true, selectable: true }
           : {}),
       });

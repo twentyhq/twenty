@@ -101,4 +101,6 @@ export type WorkflowDiagramEdgeType =
   | 'empty-filter--run'
   | 'filter--editable'
   | 'filter--readonly'
-  | 'filter--run';
+  | 'filter--run'
+  | 'iterator-completed--empty-filter--editable'
+  | 'iterator-completed--filter--editable';

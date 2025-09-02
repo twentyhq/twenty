@@ -11,12 +11,14 @@ export const transformFilterNodesAsEdges = <
 >({
   nodes,
   edges,
-  defaultFilterEdgeType,
+  getFilterEdgeType,
   isWorkflowBranchEnabled,
 }: {
   nodes: T[];
   edges: U[];
-  defaultFilterEdgeType: WorkflowDiagramEdgeType;
+  getFilterEdgeType: (params: {
+    incomingNode: T | undefined;
+  }) => WorkflowDiagramEdgeType;
   isWorkflowBranchEnabled: boolean;
 }): { nodes: T[]; edges: U[] } => {
   const filterNodes = nodes.filter(
@@ -41,6 +43,7 @@ export const transformFilterNodesAsEdges = <
   for (const filterNode of filterNodes) {
     const incomingEdge = edges.find((edge) => edge.target === filterNode.id);
     const outgoingEdge = edges.find((edge) => edge.source === filterNode.id);
+    const incomingNode = nodes.find((node) => node.id === incomingEdge?.source);
 
     if (isDefined(incomingEdge) && isDefined(outgoingEdge)) {
       if (
@@ -52,7 +55,9 @@ export const transformFilterNodesAsEdges = <
 
       const newEdge: U = {
         ...incomingEdge,
-        type: defaultFilterEdgeType,
+        type: getFilterEdgeType({
+          incomingNode: incomingNode,
+        }),
         id: `${incomingEdge.source}-${outgoingEdge.target}-filter-${filterNode.id}`,
         target: outgoingEdge.target,
         selectable: isWorkflowBranchEnabled === true,

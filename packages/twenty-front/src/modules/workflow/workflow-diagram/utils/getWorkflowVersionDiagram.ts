@@ -36,16 +36,42 @@ export const getWorkflowVersionDiagram = ({
   const diagram = generateWorkflowDiagram({
     trigger: workflowVersion.trigger ?? undefined,
     steps: workflowVersion.steps ?? [],
-    defaultEdgeType: getEdgeTypeToCreateByDefault({
-      isEditable,
-    }),
+    getEdgeType: ({ incomingNode }) => {
+      if (!isEditable) {
+        // TODO: special design probably for iterators
+        return 'empty-filter--readonly';
+      }
+
+      if (
+        incomingNode?.data.nodeType === 'action' &&
+        incomingNode.data.actionType === 'ITERATOR'
+      ) {
+        return 'iterator-completed--empty-filter--editable';
+      }
+
+      return 'empty-filter--editable';
+    },
     isWorkflowBranchEnabled,
   });
 
   return transformFilterNodesAsEdges({
     nodes: diagram.nodes,
     edges: diagram.edges,
-    defaultFilterEdgeType: isEditable ? 'filter--editable' : 'filter--readonly',
+    getFilterEdgeType: ({ incomingNode }) => {
+      if (!isEditable) {
+        // TODO: special design probably for iterators
+        return 'filter--readonly';
+      }
+
+      if (
+        incomingNode?.data.nodeType === 'action' &&
+        incomingNode.data.actionType === 'ITERATOR'
+      ) {
+        return 'iterator-completed--filter--editable';
+      }
+
+      return 'filter--editable';
+    },
     isWorkflowBranchEnabled: isWorkflowBranchEnabled === true,
   });
 };
