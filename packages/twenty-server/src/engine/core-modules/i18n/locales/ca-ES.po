@@ -2861,10 +2861,10 @@ msgstr "El nom de la versió del flux de treball"
 msgid "The workflow version status"
 msgstr "L'estat de la versió del flux de treball"
 
-#. js-lingui-id: NbABJb
+#. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field"
-msgstr "Aquest nom no està disponible ja que ja és utilitzat per un altre camp"
+msgid "This name is not available as it is already used by another field."
+msgstr ""
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts

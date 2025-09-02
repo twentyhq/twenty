@@ -2861,10 +2861,10 @@ msgstr "Navnet på workflow versionen"
 msgid "The workflow version status"
 msgstr "Status for workflow versionen"
 
-#. js-lingui-id: NbABJb
+#. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field"
-msgstr "\"Dette navn er ikke tilgængeligt, da det allerede er brugt af et andet felt\""
+msgid "This name is not available as it is already used by another field."
+msgstr ""
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts

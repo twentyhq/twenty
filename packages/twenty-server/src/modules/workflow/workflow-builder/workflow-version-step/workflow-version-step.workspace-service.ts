@@ -654,6 +654,20 @@ export class WorkflowVersionStepWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.ITERATOR: {
+        return {
+          ...baseStep,
+          name: 'Iterator',
+          type: WorkflowActionType.ITERATOR,
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: {
+              items: [],
+              initialLoopStepIds: [],
+            },
+          },
+        };
+      }
       default:
         throw new WorkflowVersionStepException(
           `WorkflowActionType '${type}' unknown`,

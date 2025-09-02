@@ -188,7 +188,33 @@ describe('Custom object renaming', () => {
     });
   });
 
-  it('3. should delete custom object', async () => {
+  it('3. should fail when trying to rename object to "name"', async () => {
+    // Act & Assert
+    const { errors } = await updateOneObjectMetadata({
+      gqlFields: `
+        nameSingular
+        labelSingular
+        namePlural
+        labelPlural
+        `,
+      input: {
+        idToUpdate: listingObjectId,
+        updatePayload: {
+          nameSingular: 'name',
+        },
+      },
+      expectToFail: true,
+    });
+
+    // Assert that an error was thrown
+    expect(errors).toBeDefined();
+    expect(errors).toHaveLength(1);
+    expect(errors[0].extensions.userFriendlyMessage).toContain(
+      'Name "name" is not available',
+    );
+  });
+
+  it('4. should delete custom object', async () => {
     const { data } = await deleteOneObjectMetadata({
       input: {
         idToDelete: listingObjectId,
