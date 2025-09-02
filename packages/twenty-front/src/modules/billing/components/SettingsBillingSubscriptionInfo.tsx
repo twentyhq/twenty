@@ -1,5 +1,5 @@
 import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
-import { SubscriptionInfoRowContainer } from '@/billing/components/SubscriptionInfoRowContainer';
+import { SubscriptionInfoRowContainer } from '@/billing/components/internal/SubscriptionInfoRowContainer';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { formatMonthlyPrices } from '@/billing/utils/formatMonthlyPrices';
