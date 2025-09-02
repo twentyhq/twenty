@@ -15,6 +15,7 @@ import { faker } from '@faker-js/faker';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
 type FailingTestCases = EachTestingContext<
   (args: {
@@ -129,39 +130,39 @@ const morphCreationPayloadFailingIntegrityValidationFailingTestCases: FailingTes
         ],
       }),
     },
-    // {
-    //   title: 'on source object itself',
-    //   context: ({
-    //     createdObjectMetadataCompanyId,
-    //     createdObjectMetadataOpportunityId,
-    //     createdObjectMetadataPersonId,
-    //   }) => ({
-    //     label: 'field label',
-    //     name: 'fieldName',
-    //     objectMetadataId: createdObjectMetadataCompanyId,
-    //     type: FieldMetadataType.MORPH_RELATION,
-    //     morphRelationsCreationPayload: [
-    //       {
-    //         targetFieldIcon: 'Icon123',
-    //         targetFieldLabel: 'toto',
-    //         targetObjectMetadataId: createdObjectMetadataOpportunityId,
-    //         type: RelationType.ONE_TO_MANY,
-    //       },
-    //       {
-    //         targetFieldIcon: 'Icon123',
-    //         targetFieldLabel: 'tata',
-    //         targetObjectMetadataId: createdObjectMetadataPersonId,
-    //         type: RelationType.ONE_TO_MANY,
-    //       },
-    //       {
-    //         targetFieldIcon: 'Icon123',
-    //         targetFieldLabel: 'tata',
-    //         targetObjectMetadataId: createdObjectMetadataCompanyId,
-    //         type: RelationType.ONE_TO_MANY,
-    //       },
-    //     ],
-    //   }),
-    // },
+    {
+      title: 'on source object itself',
+      context: ({
+        createdObjectMetadataCompanyId,
+        createdObjectMetadataOpportunityId,
+        createdObjectMetadataPersonId,
+      }) => ({
+        label: 'field label',
+        name: 'fieldName',
+        objectMetadataId: createdObjectMetadataCompanyId,
+        type: FieldMetadataType.MORPH_RELATION,
+        morphRelationsCreationPayload: [
+          {
+            targetFieldIcon: 'Icon123',
+            targetFieldLabel: 'toto',
+            targetObjectMetadataId: createdObjectMetadataOpportunityId,
+            type: RelationType.ONE_TO_MANY,
+          },
+          {
+            targetFieldIcon: 'Icon123',
+            targetFieldLabel: 'tata',
+            targetObjectMetadataId: createdObjectMetadataPersonId,
+            type: RelationType.ONE_TO_MANY,
+          },
+          {
+            targetFieldIcon: 'Icon123',
+            targetFieldLabel: 'tata',
+            targetObjectMetadataId: createdObjectMetadataCompanyId,
+            type: RelationType.ONE_TO_MANY,
+          },
+        ],
+      }),
+    },
     {
       title: 'that has several references to same object',
       context: ({
@@ -465,7 +466,9 @@ describe('failing createOne FieldMetadataService morph relation fields v2 s', ()
       });
       expect(errors.length).toBe(1);
       const [firstError] = errors;
-      expect(firstError).toMatchSnapshot();
+      expect(firstError).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny(firstError),
+      );
       expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
     },
   );
