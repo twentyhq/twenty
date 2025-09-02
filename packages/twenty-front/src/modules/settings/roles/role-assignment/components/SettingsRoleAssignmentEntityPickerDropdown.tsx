@@ -6,7 +6,6 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import {
   type Agent,
   useFindManyAgentsQuery,
@@ -22,7 +21,6 @@ const StyledLoadingContainer = styled.div`
 const StyledDropdownItem = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
   cursor: pointer;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 
   &:hover {
     background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -30,12 +28,8 @@ const StyledDropdownItem = styled.div`
 `;
 
 const StyledItemName = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-`;
-
-const StyledItemSubtext = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.xs};
 `;
 
 const StyledEmptyState = styled.div`
@@ -65,10 +59,12 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
   const { data: agentsData, loading: agentsLoading } = useFindManyAgentsQuery();
   const { data: apiKeysData, loading: apiKeysLoading } = useGetApiKeysQuery();
 
-  const loading = entityType === 'agent' ? agentsLoading : apiKeysLoading;
+  const isAgent = entityType === 'agent';
 
-  const entities = ((entityType === 'agent'
-    ? agentsData?.findManyAgents
+  const loading = isAgent ? agentsLoading : apiKeysLoading;
+
+  const entities = ((isAgent
+    ? agentsData?.findManyAgents.filter((agent) => agent.isCustom)
     : apiKeysData?.apiKeys) || []) as EntityData[];
 
   const getFilteredEntities = () => {
@@ -79,7 +75,7 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
         return false;
       }
 
-      if (entityType === 'agent') {
+      if (isAgent) {
         const agent = entity as Agent;
         return (
           agent.name.toLowerCase().includes(searchFilter.toLowerCase()) ||
@@ -92,31 +88,15 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
     });
   };
 
-  const getEntitySubtext = (entity: EntityData) => {
-    if (entityType === 'agent') {
-      return (entity as Agent).label;
-    } else {
-      const apiKey = entity as ApiKeyForRole;
-      return `Expires: ${
-        apiKey.expiresAt
-          ? new Date(apiKey.expiresAt).toLocaleDateString()
-          : 'Never'
-      }`;
-    }
-  };
-
-  const placeholder =
-    entityType === 'agent' ? t`Search agents` : t`Search API keys`;
+  const placeholder = isAgent ? t`Search agents` : t`Search API keys`;
 
   const getEmptyStateMessage = () => {
-    if (isDefined(searchFilter)) {
-      return entityType === 'agent'
+    if (searchFilter !== '') {
+      return isAgent
         ? t`No agents match your search`
         : t`No API keys match your search`;
     } else {
-      return entityType === 'agent'
-        ? t`No agents available`
-        : t`No API keys available`;
+      return isAgent ? t`No agents available` : t`No API keys available`;
     }
   };
 
@@ -143,8 +123,9 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
               key={entity.id}
               onClick={() => onSelect(entity as EntityData)}
             >
-              <StyledItemName>{entity.name}</StyledItemName>
-              <StyledItemSubtext>{getEntitySubtext(entity)}</StyledItemSubtext>
+              <StyledItemName>
+                {isAgent ? (entity as Agent).label : entity.name}
+              </StyledItemName>
             </StyledDropdownItem>
           ))
         ) : (
