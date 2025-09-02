@@ -25,7 +25,7 @@ const StyledTableRows = styled.div`
   padding-block: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledNoMembers = styled(TableCell)`
+const StyledEmptyState = styled(TableCell)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
@@ -165,9 +165,9 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
           ))}
 
           {filteredRoleTargets.length === 0 && (
-            <StyledNoMembers>
+            <StyledEmptyState>
               {tableConfig[roleTargetType].emptyStateText}
-            </StyledNoMembers>
+            </StyledEmptyState>
           )}
         </StyledTableRows>
       </StyledTable>
