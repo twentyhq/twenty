@@ -64,6 +64,42 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 s it sh
 }
 `;
 
+exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field when targetFieldLabel conflicts with an existing field on target object metadata id 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "name" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "name" is not available as it is already used by another field",
+              "value": "name",
+            },
+          ],
+          "id": Any<String>,
+          "name": "name",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [],
+    },
+    "message": "Validation failed for 0 object(s) and 1 field(s)",
+    "summary": {
+      "invalidFields": 1,
+      "invalidObjects": 0,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`failing createOne FieldMetadataService morph relation fields v2 s it should fail to create a MORPH_RELATION field when targetFieldLabel contains only whitespace 1`] = `
 {
   "extensions": {

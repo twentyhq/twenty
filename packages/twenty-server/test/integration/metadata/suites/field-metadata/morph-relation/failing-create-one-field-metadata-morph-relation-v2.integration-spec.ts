@@ -1,15 +1,15 @@
+import { faker } from '@faker-js/faker';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import {
   eachTestingContextFilter,
   type EachTestingContext,
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { faker } from '@faker-js/faker';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -276,28 +276,27 @@ const relationCreationPayloadEdgeCasesFailingTestsCases: FailingTestCases = [
       ],
     }),
   },
-  // {
-  //   // Failing validation right now
-  //   title:
-  //     'when targetFieldLabel conflicts with an existing field on target object metadata id',
-  //   context: ({
-  //     createdObjectMetadataCompanyId,
-  //     createdObjectMetadataOpportunityId,
-  //   }) => ({
-  //     label: 'field label',
-  //     name: 'fieldName',
-  //     objectMetadataId: createdObjectMetadataCompanyId,
-  //     type: FieldMetadataType.MORPH_RELATION,
-  //     morphRelationsCreationPayload: [
-  //       {
-  //         targetFieldIcon: 'Icon123',
-  //         targetFieldLabel: 'name',
-  //         targetObjectMetadataId: createdObjectMetadataOpportunityId,
-  //         type: RelationType.ONE_TO_MANY,
-  //       },
-  //     ],
-  //   }),
-  // },
+  {
+    title:
+      'when targetFieldLabel has a first degree conflicts with an existing field on target object metadata id',
+    context: ({
+      createdObjectMetadataCompanyId,
+      createdObjectMetadataOpportunityId,
+    }) => ({
+      label: 'field label',
+      name: 'fieldName',
+      objectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelationsCreationPayload: [
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'name',
+          targetObjectMetadataId: createdObjectMetadataOpportunityId,
+          type: RelationType.ONE_TO_MANY,
+        },
+      ],
+    }),
+  },
   {
     title: 'when type is not provided',
     context: ({
