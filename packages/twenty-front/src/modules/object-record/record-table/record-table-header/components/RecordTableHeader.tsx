@@ -27,21 +27,21 @@ const StyledTableHead = styled.thead`
     th:nth-of-type(1) {
       position: sticky;
       left: 0;
-      z-index: ${TABLE_Z_INDEX.header.default};
+      z-index: ${TABLE_Z_INDEX.header.stickyColumn};
       transition: 0.3s ease;
     }
 
     th:nth-of-type(2) {
       position: sticky;
       left: 11px;
-      z-index: ${TABLE_Z_INDEX.header.default};
+      z-index: ${TABLE_Z_INDEX.header.stickyColumn};
       transition: 0.3s ease;
     }
 
     th:nth-of-type(3) {
       position: sticky;
       left: 39px;
-      z-index: ${TABLE_Z_INDEX.header.default};
+      z-index: ${TABLE_Z_INDEX.header.stickyColumn};
       transition: 0.3s ease;
 
       &::after {
@@ -66,7 +66,7 @@ const StyledTableHead = styled.thead`
     th {
       position: sticky;
       top: 0;
-      z-index: ${TABLE_Z_INDEX.header.default};
+      z-index: ${TABLE_Z_INDEX.header.stickyColumn};
     }
   }
 
