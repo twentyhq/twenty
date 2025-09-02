@@ -105,10 +105,6 @@ const getBillingPriceInterval = (data: Stripe.Price.Recurring.Interval) => {
   switch (data) {
     case 'month':
       return SubscriptionInterval.Month;
-    case 'day':
-      return SubscriptionInterval.Day;
-    case 'week':
-      return SubscriptionInterval.Week;
     case 'year':
       return SubscriptionInterval.Year;
   }
