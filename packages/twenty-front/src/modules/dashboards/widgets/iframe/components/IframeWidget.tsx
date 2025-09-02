@@ -1,6 +1,8 @@
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { IconLoader } from 'twenty-ui/display';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.transparent.lighter};
@@ -26,17 +28,11 @@ const StyledLoadingContainer = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: ${({ theme }) => theme.background.transparent.lighter};
+  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  background: ${({ theme }) => theme.background.primary};
   pointer-events: none;
-  transition: opacity 0.3s ease;
-  opacity: 1;
-
-  &.loaded {
-    opacity: 0;
-  }
+  z-index: 1;
 `;
 
 const StyledErrorContainer = styled.div`
@@ -71,6 +67,7 @@ export const IframeWidget = ({
   url,
   title = 'Embedded Content',
 }: IframeWidgetProps) => {
+  const theme = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
@@ -82,19 +79,6 @@ export const IframeWidget = ({
     setIsLoading(false);
     setHasError(true);
   };
-
-  if (!url) {
-    return (
-      <StyledContainer>
-        <StyledErrorContainer>
-          <StyledErrorMessage>No URL configured</StyledErrorMessage>
-          <StyledErrorUrl>
-            Please configure a URL for this widget
-          </StyledErrorUrl>
-        </StyledErrorContainer>
-      </StyledContainer>
-    );
-  }
 
   if (hasError) {
     return (
@@ -110,8 +94,17 @@ export const IframeWidget = ({
   return (
     <StyledContainer>
       {isLoading && (
-        <StyledLoadingContainer className={!isLoading ? 'loaded' : ''}>
-          <IconLoader size="large" />
+        <StyledLoadingContainer>
+          <SkeletonTheme
+            baseColor={theme.background.tertiary}
+            highlightColor={theme.background.transparent.lighter}
+            borderRadius={4}
+          >
+            <Skeleton
+              width={120}
+              height={SKELETON_LOADER_HEIGHT_SIZES.standard.m}
+            />
+          </SkeletonTheme>
         </StyledLoadingContainer>
       )}
       <StyledIframe
@@ -119,9 +112,9 @@ export const IframeWidget = ({
         title={title}
         onLoad={handleIframeLoad}
         onError={handleIframeError}
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups" // open question - I am sure some of these props should be configurable and should have user control -- should we keep it simple now and add more complexity later?
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" // same here
+        allowFullScreen //same here
       />
     </StyledContainer>
   );
