@@ -159,25 +159,12 @@ describe('PageLayoutService', () => {
         'workspace-id',
       );
 
-      expect(pageLayoutRepository.create).toHaveBeenCalledWith(
-        validPageLayoutData,
-      );
+      expect(pageLayoutRepository.create).toHaveBeenCalledWith({
+        ...validPageLayoutData,
+        workspaceId: 'workspace-id',
+      });
       expect(pageLayoutRepository.save).toHaveBeenCalledWith(mockPageLayout);
       expect(result).toEqual(mockPageLayout);
-    });
-
-    it('should throw exception when workspaceId is missing', async () => {
-      await expect(
-        // @ts-expect-error - workspaceId is not defined
-        pageLayoutService.create(validPageLayoutData, undefined),
-      ).rejects.toThrow(
-        new PageLayoutException(
-          generatePageLayoutExceptionMessage(
-            PageLayoutExceptionMessageKey.WORKSPACE_ID_REQUIRED,
-          ),
-          PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
-        ),
-      );
     });
 
     it('should throw exception when name is missing', async () => {

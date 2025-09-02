@@ -63,15 +63,6 @@ export class PageLayoutService {
     pageLayoutData: Partial<PageLayoutEntity>,
     workspaceId: string,
   ): Promise<PageLayoutEntity> {
-    if (!isDefined(pageLayoutData.workspaceId)) {
-      throw new PageLayoutException(
-        generatePageLayoutExceptionMessage(
-          PageLayoutExceptionMessageKey.WORKSPACE_ID_REQUIRED,
-        ),
-        PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA,
-      );
-    }
-
     if (!isDefined(pageLayoutData.name)) {
       throw new PageLayoutException(
         generatePageLayoutExceptionMessage(

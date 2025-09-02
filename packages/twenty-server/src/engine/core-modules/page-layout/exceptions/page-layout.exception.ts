@@ -9,7 +9,6 @@ export enum PageLayoutExceptionCode {
 
 export enum PageLayoutExceptionMessageKey {
   PAGE_LAYOUT_NOT_FOUND = 'PAGE_LAYOUT_NOT_FOUND',
-  WORKSPACE_ID_REQUIRED = 'WORKSPACE_ID_REQUIRED',
   NAME_REQUIRED = 'NAME_REQUIRED',
 }
 
@@ -22,8 +21,6 @@ export const generatePageLayoutExceptionMessage = (
   switch (key) {
     case PageLayoutExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND:
       return `Page layout with ID "${value}" not found`;
-    case PageLayoutExceptionMessageKey.WORKSPACE_ID_REQUIRED:
-      return 'Workspace ID is required';
     case PageLayoutExceptionMessageKey.NAME_REQUIRED:
       return 'Page layout name is required';
     default:
