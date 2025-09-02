@@ -1,8 +1,10 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { UserContext } from '@/users/contexts/UserContext';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
   Avatar,
@@ -12,6 +14,8 @@ import {
 } from 'twenty-ui/display';
 import { type Agent, type WorkspaceMember } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { formatDateString } from '~/utils/string/formatDateString';
 
 const StyledIconWrapper = styled.div`
   align-items: center;
@@ -52,6 +56,8 @@ export const SettingsRoleAssignmentTableRow = ({
   const theme = useTheme();
   const currentWorkspaceMembers = useRecoilValue(currentWorkspaceMembersState);
   const { getIcon } = useIcons();
+  const { dateFormat, timeZone } = useContext(UserContext);
+  const dateLocale = useRecoilValue(dateLocaleState);
 
   const renderIcon = () => {
     switch (roleTarget.type) {
@@ -98,7 +104,12 @@ export const SettingsRoleAssignmentTableRow = ({
         return roleTarget.data.description;
       case 'apiKey':
         return roleTarget.data.expiresAt
-          ? new Date(roleTarget.data.expiresAt).toLocaleDateString()
+          ? formatDateString({
+              value: roleTarget.data.expiresAt,
+              timeZone,
+              dateFormat,
+              localeCatalog: dateLocale.localeCatalog,
+            })
           : 'Never expires';
     }
   };
