@@ -5,11 +5,13 @@ import {
 } from '@nestjs/common';
 
 import { type Request } from 'express';
+import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RestApiBaseHandler } from 'src/engine/api/rest/core/interfaces/rest-api-base.handler';
 
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
+import { getAllSelectableFields } from 'src/engine/api/utils/get-all-selectable-fields.utils';
 
 @Injectable()
 export class RestApiUpdateOneHandler extends RestApiBaseHandler {
@@ -34,7 +36,25 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
       objectMetadataMapItem: objectMetadata.objectMetadataMapItem,
     });
 
-    const updatedRecord = await repository.update(recordId, overriddenBody);
+    let selectOptions = undefined;
+
+    if (!isEmpty(restrictedFields)) {
+      const selectableFields = getAllSelectableFields({
+        restrictedFields,
+        objectMetadata,
+      });
+
+      selectOptions = Object.keys(selectableFields).filter(
+        (key) => selectableFields[key],
+      );
+    }
+
+    const updatedRecord = await repository.update(
+      recordId,
+      overriddenBody,
+      undefined,
+      selectOptions,
+    );
 
     const updatedRecordId = updatedRecord.generatedMaps[0].id;
 
