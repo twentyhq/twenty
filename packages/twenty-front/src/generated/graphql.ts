@@ -179,12 +179,6 @@ export type ApprovedAccessDomain = {
   isValidated: Scalars['Boolean'];
 };
 
-export type AssignRoleToEntityInput = {
-  entityId: Scalars['UUID'];
-  entityType: EntityType;
-  roleId: Scalars['UUID'];
-};
-
 export type AuthProviders = {
   __typename?: 'AuthProviders';
   google: Scalars['Boolean'];
@@ -922,13 +916,6 @@ export type EmailPasswordResetLink = {
   success: Scalars['Boolean'];
 };
 
-/** The type of entity to assign a role to */
-export enum EntityType {
-  AGENT = 'AGENT',
-  API_KEY = 'API_KEY',
-  WORKSPACE_MEMBER = 'WORKSPACE_MEMBER'
-}
-
 export type ExecuteServerlessFunctionInput = {
   /** Id of the serverless function to execute */
   id: Scalars['UUID'];
@@ -1325,7 +1312,6 @@ export type Mutation = {
   activateWorkspace: Workspace;
   assignRoleToAgent: Scalars['Boolean'];
   assignRoleToApiKey: Scalars['Boolean'];
-  assignRoleToEntity: Scalars['Boolean'];
   authorizeApp: AuthorizeApp;
   checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
   checkoutSession: BillingSessionOutput;
@@ -1476,11 +1462,6 @@ export type MutationAssignRoleToAgentArgs = {
 export type MutationAssignRoleToApiKeyArgs = {
   apiKeyId: Scalars['UUID'];
   roleId: Scalars['UUID'];
-};
-
-
-export type MutationAssignRoleToEntityArgs = {
-  input: AssignRoleToEntityInput;
 };
 
 
