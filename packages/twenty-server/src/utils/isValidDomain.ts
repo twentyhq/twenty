@@ -5,7 +5,9 @@ export const isValidDomain = (domain: string) => {
 
   if (domain.includes('*') || domain.endsWith('.')) return false;
 
-  return /^(?:(?:_?[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?|xn--[a-z0-9]+)\.)+(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?|xn--[a-z0-9]+)$/i.test(
+  const DOMAIN_REGEX = /^(?:(?:_?[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?|xn--[a-z0-9]+)\.)+(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?|xn--[a-z0-9]+)$/i;
+
+  return DOMAIN_REGEX.test(
     domain,
   );
 };
