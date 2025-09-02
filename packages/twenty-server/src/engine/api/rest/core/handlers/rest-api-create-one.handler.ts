@@ -42,7 +42,7 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
         this.getAuthContextFromRequest(request),
       );
 
-    let selectOptions = undefined;
+    let selectedColumns = undefined;
 
     if (!isEmpty(restrictedFields)) {
       const selectableFields = getAllSelectableFields({
@@ -50,7 +50,7 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
         objectMetadata,
       });
 
-      selectOptions = Object.keys(selectableFields).filter(
+      selectedColumns = Object.keys(selectableFields).filter(
         (key) => selectableFields[key],
       );
     }
@@ -58,7 +58,7 @@ export class RestApiCreateOneHandler extends RestApiBaseHandler {
     const createdRecordResult = await repository.insert(
       recordToCreate,
       undefined,
-      selectOptions,
+      selectedColumns,
     );
     const createdRecord = createdRecordResult.identifiers[0];
 

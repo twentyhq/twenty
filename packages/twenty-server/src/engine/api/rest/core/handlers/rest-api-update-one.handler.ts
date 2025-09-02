@@ -36,7 +36,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
       objectMetadataMapItem: objectMetadata.objectMetadataMapItem,
     });
 
-    let selectOptions = undefined;
+    let selectedColumns = undefined;
 
     if (!isEmpty(restrictedFields)) {
       const selectableFields = getAllSelectableFields({
@@ -44,7 +44,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
         objectMetadata,
       });
 
-      selectOptions = Object.keys(selectableFields).filter(
+      selectedColumns = Object.keys(selectableFields).filter(
         (key) => selectableFields[key],
       );
     }
@@ -53,7 +53,7 @@ export class RestApiUpdateOneHandler extends RestApiBaseHandler {
       recordId,
       overriddenBody,
       undefined,
-      selectOptions,
+      selectedColumns,
     );
 
     const updatedRecordId = updatedRecord.generatedMaps[0].id;
