@@ -5,14 +5,6 @@ import {
   type Agent,
 } from '~/generated-metadata/graphql';
 
-type AddAgentToRoleAndUpdateStateParams = {
-  agentId: string;
-};
-
-type UpdateAgentRoleDraftStateParams = {
-  agent: Agent;
-};
-
 export const useUpdateAgentRole = (roleId: string) => {
   const [settingsDraftRole, setSettingsDraftRole] = useRecoilState(
     settingsDraftRoleFamilyState(roleId),
@@ -20,9 +12,7 @@ export const useUpdateAgentRole = (roleId: string) => {
 
   const [assignRoleToAgentMutation] = useAssignRoleToAgentMutation();
 
-  const updateAgentRoleDraftState = ({
-    agent,
-  }: UpdateAgentRoleDraftStateParams) => {
+  const updateAgentRoleDraftState = ({ agent }: { agent: Agent }) => {
     setSettingsDraftRole({
       ...settingsDraftRole,
       agents: [
@@ -47,7 +37,9 @@ export const useUpdateAgentRole = (roleId: string) => {
 
   const addAgentToRoleAndUpdateState = async ({
     agentId,
-  }: AddAgentToRoleAndUpdateStateParams) => {
+  }: {
+    agentId: string;
+  }) => {
     const { data } = await assignRoleToAgentMutation({
       variables: {
         agentId,
