@@ -8,10 +8,10 @@ import { useRecoilValue } from 'recoil';
 import { H2Title, IconReload, IconTrash } from 'twenty-ui/display';
 import { Button, ButtonGroup } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { CheckCustomDomainValidRecordsEffect } from '~/pages/settings/workspace/CheckCustomDomainValidRecordsEffect';
-import { SettingsCustomDomainRecords } from '~/pages/settings/workspace/SettingsCustomDomainRecords';
-import { useCheckCustomDomainValidRecords } from '~/pages/settings/workspace/hooks/useCheckCustomDomainValidRecords';
-import { customDomainRecordsState } from '~/pages/settings/workspace/states/customDomainRecordsState';
+import { SettingsCustomDomainRecords } from '@/settings/domains/components/SettingsCustomDomainRecords';
+import { CheckCustomDomainValidRecordsEffect } from '@/settings/domains/CheckCustomDomainValidRecordsEffect';
+import { useCheckCustomDomainValidRecords } from '@/settings/domains/hooks/useCheckCustomDomainValidRecords';
+import { customDomainRecordsState } from '@/settings/domains/states/customDomainRecordsState';
 
 const StyledDomainFormWrapper = styled.div`
   display: flex;
