@@ -47,9 +47,6 @@ export const setColumn = (
   if (field?.fieldType.type === 'multiSelect') {
     const fieldOptions = field.fieldType.options;
 
-    debugger;
-    console.log('fieldOptions', fieldOptions);
-
     let entries: string[] = [];
     try {
       entries = [
