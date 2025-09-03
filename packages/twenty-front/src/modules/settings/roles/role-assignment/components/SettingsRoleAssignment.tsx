@@ -1,6 +1,6 @@
 import {
-  currentWorkspaceMemberState,
-  type CurrentWorkspaceMember,
+    currentWorkspaceMemberState,
+    type CurrentWorkspaceMember,
 } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
 import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
@@ -18,9 +18,9 @@ import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/ho
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
-  useFindManyAgentsQuery,
-  useGetApiKeysQuery,
-  type Agent,
+    useFindManyAgentsQuery,
+    useGetApiKeysQuery,
+    type Agent,
 } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -209,7 +209,7 @@ export const SettingsRoleAssignment = ({
           allWorkspaceMembersHaveThisRole={
             roleTargetType === 'member'
               ? allWorkspaceMembersHaveThisRole
-              : undefined
+              : false
           }
         />
       ))}

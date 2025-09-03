@@ -26,6 +26,13 @@ export const ROLE_TARGET_CONFIG = {
       settingsDraftRole.canBeAssignedToUsers,
     buttonTitle: () => t`Assign to member`,
     dropdownComponent: SettingsRoleAssignmentWorkspaceMemberPickerDropdown,
+    // Tooltip configuration for member type
+    tooltip: {
+      anchorId: 'assign-member',
+      content: () => t`All workspace members already have this role`,
+      shouldShow: (allWorkspaceMembersHaveThisRole?: boolean) =>
+        allWorkspaceMembersHaveThisRole ?? false,
+    },
   },
   agent: {
     dropdownId: 'role-agent-select',
@@ -38,6 +45,8 @@ export const ROLE_TARGET_CONFIG = {
       settingsDraftRole.canBeAssignedToAgents,
     buttonTitle: () => t`Assign to agent`,
     dropdownComponent: SettingsRoleAssignmentEntityPickerDropdown,
+    // No tooltip for agent type
+    tooltip: null,
   },
   apiKey: {
     dropdownId: 'role-api-key-select',
@@ -52,5 +61,7 @@ export const ROLE_TARGET_CONFIG = {
       settingsDraftRole.canBeAssignedToApiKeys,
     buttonTitle: () => t`Assign to API key`,
     dropdownComponent: SettingsRoleAssignmentEntityPickerDropdown,
+    // No tooltip for apiKey type
+    tooltip: null,
   },
 } as const;
