@@ -465,9 +465,12 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
     },
   );
 
-  it('it should fail to create a field with name than result in existing morph relation field join column', async () => {
-    const morphRelationCreateFieldInput: Omit<CreateFieldInput, 'workspaceId'> =
-      {
+  describe('Morh relation collision tests suite', () => {
+    beforeAll(async () => {
+      const morphRelationCreateFieldInput: Omit<
+        CreateFieldInput,
+        'workspaceId'
+      > = {
         label: 'field label',
         name: 'fieldName',
         objectMetadataId: createdObjectMetadataCompanyId,
@@ -488,37 +491,42 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
         ],
       };
 
-    const {
-      data: { createOneField },
-    } = await createOneFieldMetadata({
-      input: morphRelationCreateFieldInput,
-      expectToFail: false,
-      gqlFields: `
+      await createOneFieldMetadata({
+        input: morphRelationCreateFieldInput,
+        expectToFail: false,
+        gqlFields: `
       id
       name
       `,
+      });
     });
 
-    expect(createOneField.name).toBe(morphRelationCreateFieldInput.name);
+    it('it should fail to create a field with name than result in existing morph relation field join column', async () => {
+      const { errors } = await createOneFieldMetadata({
+        input: {
+          label: 'colliding field label',
+          name: `fieldNamePersonForMorphRelationSecondId`,
+          objectMetadataId: createdObjectMetadataPersonId,
+          type: FieldMetadataType.TEXT,
+        },
+        expectToFail: true,
+      });
 
-    const { errors } = await createOneFieldMetadata({
-      input: {
-        label: 'colliding field label',
-        name: `fieldNamePersonForMorphRelationSecondId`,
-        objectMetadataId: createdObjectMetadataPersonId,
-        type: FieldMetadataType.TEXT,
-      },
-      expectToFail: true,
+      expect(errors.length).toBe(1);
+      const [firstError] = errors;
+      expect(firstError).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny(firstError),
+      );
+      expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
     });
 
-    expect(errors).toMatchSnapshot(extractRecordIdsAndDatesAsExpectAny(errors));
-  });
-
-  it('it should fail to create a field with name than result in existing morph relation field join column', async () => {
-    const morphRelationCreateFieldInput: Omit<CreateFieldInput, 'workspaceId'> =
-      {
+    it('it should fail to create a already existing morph relation with samefield', async () => {
+      const morphRelationCreateFieldInput: Omit<
+        CreateFieldInput,
+        'workspaceId'
+      > = {
         label: 'field label',
-        name: 'relationTestFieldName',
+        name: 'differentFromExisting',
         objectMetadataId: createdObjectMetadataCompanyId,
         type: FieldMetadataType.MORPH_RELATION,
         morphRelationsCreationPayload: [
@@ -537,17 +545,21 @@ describe('failing createOne FieldMetadataService morph relation fields v2', () =
         ],
       };
 
-    const {
-      errors,
-    } = await createOneFieldMetadata({
-      input: morphRelationCreateFieldInput,
-      expectToFail: true,
-      gqlFields: `
+      const { errors } = await createOneFieldMetadata({
+        input: morphRelationCreateFieldInput,
+        expectToFail: true,
+        gqlFields: `
       id
       name
       `,
-    });
+      });
 
-    expect(errors).toMatchSnapshot(extractRecordIdsAndDatesAsExpectAny(errors));
+      expect(errors.length).toBe(1);
+      const [firstError] = errors;
+      expect(firstError).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny(firstError),
+      );
+      expect(firstError.extensions.code).not.toBe('INTERNAL_SERVER_ERROR');
+    });
   });
 });
