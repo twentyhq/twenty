@@ -110,14 +110,27 @@ export class PageLayoutTabService {
     workspaceId: string,
     updateData: QueryDeepPartialEntity<PageLayoutTabEntity>,
   ): Promise<PageLayoutTabEntity> {
-    await this.pageLayoutTabRepository.update(
-      { id, pageLayout: { workspaceId } },
-      updateData,
-    );
+    const existingTab = await this.pageLayoutTabRepository.findOne({
+      where: {
+        id,
+        pageLayout: { workspaceId },
+      },
+      relations: ['pageLayout'],
+    });
 
-    const updatedPageLayoutTab = await this.findByIdOrThrow(id, workspaceId);
+    if (!isDefined(existingTab)) {
+      throw new PageLayoutTabException(
+        generatePageLayoutTabExceptionMessage(
+          PageLayoutTabExceptionMessageKey.PAGE_LAYOUT_TAB_NOT_FOUND,
+          id,
+        ),
+        PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_NOT_FOUND,
+      );
+    }
 
-    return updatedPageLayoutTab;
+    await this.pageLayoutTabRepository.update({ id }, updateData);
+
+    return this.findByIdOrThrow(id, workspaceId);
   }
 
   async delete(id: string, workspaceId: string): Promise<PageLayoutTabEntity> {
