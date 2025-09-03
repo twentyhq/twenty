@@ -1,9 +1,9 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddMorphIdColumnToFieldMetadata1756900416105
+export class AddConstraintToFieldMetadataMorphIdColumn1756908577915
   implements MigrationInterface
 {
-  name = 'AddMorphIdColumnToFieldMetadata1756900416105';
+  name = 'AddConstraintToFieldMetadataMorphIdColumn1756908577915';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
