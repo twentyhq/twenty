@@ -42,6 +42,7 @@ describe('PageLayoutService', () => {
             findOne: jest.fn(),
             create: jest.fn(),
             save: jest.fn(),
+            update: jest.fn(),
             softDelete: jest.fn(),
             delete: jest.fn(),
             restore: jest.fn(),
@@ -191,11 +192,9 @@ describe('PageLayoutService', () => {
       const updateData = { name: 'Updated Page Layout' };
       const updatedPageLayout = { ...mockPageLayout, ...updateData };
 
+      jest.spyOn(pageLayoutRepository, 'update').mockResolvedValue({} as any);
       jest
         .spyOn(pageLayoutService, 'findByIdOrThrow')
-        .mockResolvedValue(mockPageLayout);
-      jest
-        .spyOn(pageLayoutRepository, 'save')
         .mockResolvedValue(updatedPageLayout);
 
       const result = await pageLayoutService.update(
@@ -204,14 +203,14 @@ describe('PageLayoutService', () => {
         updateData,
       );
 
+      expect(pageLayoutRepository.update).toHaveBeenCalledWith(
+        { id, workspaceId },
+        updateData,
+      );
       expect(pageLayoutService.findByIdOrThrow).toHaveBeenCalledWith(
         id,
         workspaceId,
       );
-      expect(pageLayoutRepository.save).toHaveBeenCalledWith({
-        ...mockPageLayout,
-        ...updateData,
-      });
       expect(result).toEqual(updatedPageLayout);
     });
 
@@ -364,6 +363,10 @@ describe('PageLayoutService', () => {
       const result = await pageLayoutService.restore(id, workspaceId);
 
       expect(pageLayoutRepository.findOne).toHaveBeenCalledWith({
+        select: {
+          id: true,
+          deletedAt: true,
+        },
         where: {
           id,
           workspaceId,
