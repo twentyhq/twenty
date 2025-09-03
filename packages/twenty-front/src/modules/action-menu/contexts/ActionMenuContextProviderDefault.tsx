@@ -7,8 +7,12 @@ import {
 import { useRegisteredActions } from '@/action-menu/hooks/useRegisteredActions';
 import { useShouldActionBeRegisteredParams } from '@/action-menu/hooks/useShouldActionBeRegisteredParams';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { getSelectedRecordIdsFromTargetedRecordsRule } from '@/context-store/utils/getSelectedRecordIdsFromTargetedRecordsRule';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilValue } from 'recoil';
 
 export const ActionMenuContextProviderDefault = ({
   objectMetadataItem,
@@ -37,9 +41,20 @@ export const ActionMenuContextProviderDefault = ({
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const isRecordSelection =
-    contextStoreTargetedRecordsRule.mode === 'selection' &&
-    contextStoreTargetedRecordsRule.selectedRecordIds.length > 0;
+  const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
+
+  const allRecordIds = useRecoilValue(
+    recordIndexAllRecordIdsComponentSelector.selectorFamily({
+      instanceId: recordIndexId,
+    }),
+  );
+
+  const actualSelectedRecordIds = getSelectedRecordIdsFromTargetedRecordsRule(
+    contextStoreTargetedRecordsRule,
+    allRecordIds,
+  );
+
+  const isRecordSelection = actualSelectedRecordIds.length > 0;
 
   const runWorkflowRecordActions = useRunWorkflowRecordActions({
     objectMetadataItem,
