@@ -4,6 +4,7 @@ import {
   computeMorphRelationFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -14,7 +15,6 @@ import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadat
 import { validateMorphRelationCreationPayload } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { v4 } from 'uuid';
 
 type FromMorphRelationCreateFieldInputToFlatFieldMetadatasArgs = {
   createFieldInput: Omit<CreateFieldInput, 'workspaceId'> & {
@@ -84,7 +84,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
         sourceFlatObjectMetadata,
         targetFlatObjectMetadata,
         workspaceId,
-        morphId
+        morphId,
       });
     },
   );

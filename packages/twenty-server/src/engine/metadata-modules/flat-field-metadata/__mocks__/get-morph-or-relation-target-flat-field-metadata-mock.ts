@@ -1,5 +1,8 @@
 import { faker } from '@faker-js/faker';
-import { FieldMetadataType, type NonNullableRequired } from 'twenty-shared/types';
+import {
+  type FieldMetadataType,
+  type NonNullableRequired,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatRelationTargetFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-relation-target-field-metadata.type';
