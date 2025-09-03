@@ -12,6 +12,10 @@ import {
   PageLayoutTabExceptionMessageKey,
   generatePageLayoutTabExceptionMessage,
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-tab.exception';
+import {
+  PageLayoutException,
+  PageLayoutExceptionCode,
+} from 'src/engine/core-modules/page-layout/exceptions/page-layout.exception';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
 
 @Injectable()
@@ -85,24 +89,30 @@ export class PageLayoutTabService {
       );
     }
 
-    const pageLayout = await this.pageLayoutService.findByIdOrThrow(
-      pageLayoutTabData.pageLayoutId,
-      workspaceId,
-    );
-
-    if (!isDefined(pageLayout)) {
-      throw new PageLayoutTabException(
-        generatePageLayoutTabExceptionMessage(
-          PageLayoutTabExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
-        ),
-        PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA,
+    try {
+      await this.pageLayoutService.findByIdOrThrow(
+        pageLayoutTabData.pageLayoutId,
+        workspaceId,
       );
+
+      const pageLayoutTab =
+        this.pageLayoutTabRepository.create(pageLayoutTabData);
+
+      return this.pageLayoutTabRepository.save(pageLayoutTab);
+    } catch (error) {
+      if (
+        error instanceof PageLayoutException &&
+        error.code === PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND
+      ) {
+        throw new PageLayoutTabException(
+          generatePageLayoutTabExceptionMessage(
+            PageLayoutTabExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
+          ),
+          PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA,
+        );
+      }
+      throw error;
     }
-
-    const pageLayoutTab =
-      this.pageLayoutTabRepository.create(pageLayoutTabData);
-
-    return this.pageLayoutTabRepository.save(pageLayoutTab);
   }
 
   async update(
