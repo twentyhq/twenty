@@ -49,7 +49,7 @@ export const SettingsDataModelFieldPreviewWidget = ({
           pluralizeLabel={pluralizeLabel}
         />
         <SettingsDataModelFieldPreview
-          objectMetadataItem={objectMetadataItem}
+          objectNameSingular={objectNameSingular}
           fieldMetadataItem={{
             label: fieldMetadataItem.label,
             icon: fieldMetadataItem.icon,
