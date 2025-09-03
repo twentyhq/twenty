@@ -125,8 +125,14 @@ const SettingsWorkspace = lazy(() =>
 );
 
 const SettingsDomains = lazy(() =>
-  import('~/pages/settings/domains').then((module) => ({
+  import('~/pages/settings/domains/SettingsDomains').then((module) => ({
     default: module.SettingsDomains,
+  })),
+);
+
+const SettingsDomain = lazy(() =>
+  import('~/pages/settings/domains/SettingsDomain').then((module) => ({
+    default: module.SettingsDomain,
   })),
 );
 
@@ -145,12 +151,6 @@ const SettingsAI = lazy(() =>
 const SettingsAgentForm = lazy(() =>
   import('~/pages/settings/ai/SettingsAgentForm').then((module) => ({
     default: module.SettingsAgentForm,
-  })),
-);
-
-const SettingsDomain = lazy(() =>
-  import('~/pages/settings/workspace/SettingsDomain').then((module) => ({
-    default: module.SettingsDomain,
   })),
 );
 

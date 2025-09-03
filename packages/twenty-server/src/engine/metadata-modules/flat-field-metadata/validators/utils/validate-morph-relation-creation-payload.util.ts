@@ -20,10 +20,12 @@ type RelationCreationPayloadAndObjectMetadata = {
 type ValidateMorphRelationCreationPayloadUtilArgs = {
   morphRelationCreationPayload: RelationCreationPayload[];
   existingFlatObjectMetadataMaps: FlatObjectMetadataMaps;
+  objectMetadataId: string;
 };
 export const validateMorphRelationCreationPayload = async ({
   existingFlatObjectMetadataMaps,
   morphRelationCreationPayload,
+  objectMetadataId,
 }: ValidateMorphRelationCreationPayloadUtilArgs): Promise<
   FieldInputTranspilationResult<RelationCreationPayloadAndObjectMetadata[]>
 > => {
@@ -64,6 +66,18 @@ export const validateMorphRelationCreationPayload = async ({
   const allRelatedObjectMetadataIdsSet = [
     ...new Set(allRelatedObjectMetadataIds),
   ];
+
+  if (allRelatedObjectMetadataIdsSet.includes(objectMetadataId)) {
+    return {
+      status: 'fail',
+      error: {
+        code: FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+        message:
+          'Morph relation creation payloads must not target source object metadata',
+        userFriendlyMessage: t`Morph relation creation payloads must only contain relation to other object metadata`,
+      },
+    };
+  }
 
   if (
     allRelatedObjectMetadataIds.length !== allRelatedObjectMetadataIdsSet.length

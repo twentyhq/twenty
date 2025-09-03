@@ -4,6 +4,7 @@ import { DateDisplayFormat } from 'src/engine/metadata-modules/field-metadata/in
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getMorphOrRelationTargetFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-morph-or-relation-target-flat-field-metadata-mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 
@@ -181,33 +182,34 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: 'fabbe669-b8fc-49fe-8010-f13d01eb61f1',
     relationTargetObjectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     universalIdentifier: '20202020-b5e3-4b42-8af2-03cd4fd2e4d2',
-    flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
-      id: 'fabbe669-b8fc-49fe-8010-f13d01eb61f1',
-      standardId: '20202020-f658-4d12-8b4d-248356aa4bd9',
-      objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
-      type: FieldMetadataType.RELATION,
-      name: 'favoriteFolder',
-      label: 'Favorite Folder',
-      defaultValue: null,
-      description: 'The folder this favorite belongs to',
-      icon: 'IconFolder',
-      standardOverrides: null,
-      options: null,
-      settings: {
-        onDelete: RelationOnDeleteAction.SET_NULL,
-        relationType: RelationType.MANY_TO_ONE,
-        joinColumnName: 'favoriteFolderId',
-      },
-      isCustom: false,
-      isActive: true,
-      isSystem: true,
-      isNullable: true,
-      isUnique: false,
-      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-      isLabelSyncedWithName: true,
-      relationTargetFieldMetadataId: '71b95076-6b8d-45c9-9a7c-ab981b81bd1b',
-      relationTargetObjectMetadataId: '35763b74-1abe-4c4b-9eab-27693f0ee06d',
-      universalIdentifier: '20202020-f658-4d12-8b4d-248356aa4bd9',
-    }),
+    flatRelationTargetFieldMetadata:
+      getMorphOrRelationTargetFlatFieldMetadataMock({
+        id: 'fabbe669-b8fc-49fe-8010-f13d01eb61f1',
+        standardId: '20202020-f658-4d12-8b4d-248356aa4bd9',
+        objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
+        type: FieldMetadataType.RELATION,
+        name: 'favoriteFolder',
+        label: 'Favorite Folder',
+        defaultValue: null,
+        description: 'The folder this favorite belongs to',
+        icon: 'IconFolder',
+        standardOverrides: null,
+        options: null,
+        settings: {
+          onDelete: RelationOnDeleteAction.SET_NULL,
+          relationType: RelationType.MANY_TO_ONE,
+          joinColumnName: 'favoriteFolderId',
+        },
+        isCustom: false,
+        isActive: true,
+        isSystem: true,
+        isNullable: true,
+        isUnique: false,
+        workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+        isLabelSyncedWithName: true,
+        relationTargetFieldMetadataId: '71b95076-6b8d-45c9-9a7c-ab981b81bd1b',
+        relationTargetObjectMetadataId: '35763b74-1abe-4c4b-9eab-27693f0ee06d',
+        universalIdentifier: '20202020-f658-4d12-8b4d-248356aa4bd9',
+      }),
   }),
 } as const satisfies Record<string, FlatFieldMetadata>;

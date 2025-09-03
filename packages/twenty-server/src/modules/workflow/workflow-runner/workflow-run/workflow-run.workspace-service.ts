@@ -424,6 +424,11 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
-    await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);
+    await workflowRunRepository.update(
+      workflowRunToUpdate.id,
+      partialUpdate,
+      undefined,
+      ['id'],
+    );
   }
 }

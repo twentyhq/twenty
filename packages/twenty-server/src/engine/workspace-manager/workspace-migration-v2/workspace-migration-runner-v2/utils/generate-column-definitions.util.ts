@@ -11,7 +11,8 @@ import {
 import { getCompositeTypeOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/get-composite-type-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isCompositeFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
-import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadataWithoutFields } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
@@ -181,24 +182,12 @@ export const generateColumnDefinitions = ({
   }
 
   if (
-    isFlatFieldMetadataEntityOfType(
-      flatFieldMetadata,
-      FieldMetadataType.TS_VECTOR,
-    )
+    isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.TS_VECTOR)
   ) {
     return [generateTsVectorColumnDefinition(flatFieldMetadata)];
   }
 
-  if (
-    isFlatFieldMetadataEntityOfType(
-      flatFieldMetadata,
-      FieldMetadataType.RELATION,
-    ) ||
-    isFlatFieldMetadataEntityOfType(
-      flatFieldMetadata,
-      FieldMetadataType.MORPH_RELATION,
-    )
-  ) {
+  if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
     const relationColumn = generateRelationColumnDefinition(flatFieldMetadata);
 
     return relationColumn ? [relationColumn] : [];

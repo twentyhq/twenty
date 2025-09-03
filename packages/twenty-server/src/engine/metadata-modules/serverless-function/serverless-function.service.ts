@@ -214,7 +214,7 @@ export class ServerlessFunctionService {
     if (!isDefined(publishedServerlessFunction.latestVersion)) {
       throw new WorkflowVersionStepException(
         `Fail to publish serverlessFunction ${publishedServerlessFunction.id}.Received latest version ${publishedServerlessFunction.latestVersion}`,
-        WorkflowVersionStepExceptionCode.FAILURE,
+        WorkflowVersionStepExceptionCode.CODE_STEP_FAILURE,
       );
     }
 

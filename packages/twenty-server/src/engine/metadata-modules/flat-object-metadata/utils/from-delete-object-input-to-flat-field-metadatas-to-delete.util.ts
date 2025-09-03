@@ -4,7 +4,8 @@ import {
 } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { computeFlatFieldMetadataRelatedFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-flat-field-metadata-related-flat-field-metadata.util';
+import { findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata-or-throw.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { findFlatObjectMetadataInFlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/utils/find-flat-object-metadata-in-flat-object-metadata-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -46,13 +47,17 @@ export const fromDeleteObjectInputToFlatFieldMetadatasToDelete = ({
   const flatFieldMetadatasToDelete =
     flatObjectMetadataToDelete.flatFieldMetadatas.flatMap(
       (flatFieldMetadata) => {
-        const relatedFlatFieldMetadata =
-          computeFlatFieldMetadataRelatedFlatFieldMetadata({
-            flatFieldMetadata,
-            flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-          });
+        if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
+          const relationTargetFlatFieldMetadata =
+            findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow({
+              flatFieldMetadata,
+              flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
+            });
 
-        return [flatFieldMetadata, ...relatedFlatFieldMetadata];
+          return [flatFieldMetadata, relationTargetFlatFieldMetadata];
+        }
+
+        return [flatFieldMetadata];
       },
     );
 

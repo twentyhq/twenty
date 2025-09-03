@@ -1,11 +1,11 @@
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -79,43 +79,34 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
   });
 
   afterAll(async () => {
-    await Promise.all(
-      [
-        createdObjectMetadataPersonId,
-        createdObjectMetadataOpportunityId,
-        createdObjectMetadataCompanyId,
-      ].map(
-        async (objectMetadataId) =>
-          await updateOneObjectMetadata({
-            expectToFail: false,
-            input: {
-              idToUpdate: objectMetadataId,
-              updatePayload: { isActive: false },
-            },
-          }),
-      ),
-    );
+    const createdObjectMetadataIds = [
+      createdObjectMetadataPersonId,
+      createdObjectMetadataOpportunityId,
+      createdObjectMetadataCompanyId,
+    ];
 
-    await Promise.all(
-      [
-        createdObjectMetadataPersonId,
-        createdObjectMetadataOpportunityId,
-        createdObjectMetadataCompanyId,
-      ].map(
-        async (objectMetadataId) =>
-          await deleteOneObjectMetadata({
-            expectToFail: false,
-            input: { idToDelete: objectMetadataId },
-          }),
-      ),
-    );
-
-    await updateFeatureFlag({
-      expectToFail: false,
-      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      value: false,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
+    try {
+      for (const objectMetadataId of createdObjectMetadataIds) {
+        await updateOneObjectMetadata({
+          expectToFail: false,
+          input: {
+            idToUpdate: objectMetadataId,
+            updatePayload: { isActive: false },
+          },
+        });
+        await deleteOneObjectMetadata({
+          expectToFail: false,
+          input: { idToDelete: objectMetadataId },
+        });
+      }
+    } finally {
+      await updateFeatureFlag({
+        expectToFail: false,
+        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        value: false,
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
+    }
   });
 
   beforeEach(async () => {
