@@ -12,8 +12,6 @@ import { SettingsDataModelLabelIdentifierPreviewContextWrapper } from '@/setting
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
 import { SettingsDataModelSetLabelIdentifierRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetLabelIdentifierRecordEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
-import { usePreviewRecord } from '@/settings/data-model/fields/preview/hooks/usePreviewRecord';
-import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -76,15 +74,7 @@ export const SettingsDataModelFieldPreview = ({
     fieldMetadataItem,
   });
 
-  const recordPreviewForLabelIdentifier = usePreviewRecord({
-    objectNameSingular: objectNameSingular,
-    skip: !isLabelIdentifier,
-  });
-
-  const recordId =
-    isLabelIdentifier && isDefined(recordPreviewForLabelIdentifier?.id)
-      ? recordPreviewForLabelIdentifier.id
-      : `${objectNameSingular}-${fieldName}-preview`;
+  const recordId = `${objectNameSingular}-${fieldName}-preview`;
 
   const metadata = {
     fieldName,
@@ -104,9 +94,10 @@ export const SettingsDataModelFieldPreview = ({
             instanceId: 'record-field-component-instance-id',
           }}
         >
-          {isLabelIdentifier && isDefined(recordPreviewForLabelIdentifier) ? (
+          {isLabelIdentifier ? (
             <SettingsDataModelSetLabelIdentifierRecordEffect
-              record={recordPreviewForLabelIdentifier}
+              objectNameSingular={objectNameSingular}
+              recordId={recordId}
             />
           ) : (
             <SettingsDataModelSetFieldValueEffect

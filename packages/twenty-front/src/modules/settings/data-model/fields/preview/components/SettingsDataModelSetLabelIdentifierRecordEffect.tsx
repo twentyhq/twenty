@@ -1,20 +1,26 @@
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { usePreviewRecord } from '@/settings/data-model/fields/preview/hooks/usePreviewRecord';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 type SettingsDataModelSetLabelIdentifierRecordEffectProps = {
-  record: ObjectRecord;
+  objectNameSingular: string;
+  recordId: string;
 };
 
 export const SettingsDataModelSetLabelIdentifierRecordEffect = ({
-  record,
+  objectNameSingular,
+  recordId,
 }: SettingsDataModelSetLabelIdentifierRecordEffectProps) => {
-  const setRecord = useSetRecoilState(recordStoreFamilyState(record.id));
+  const recordPreviewForLabelIdentifier = usePreviewRecord({
+    objectNameSingular: objectNameSingular,
+  });
+
+  const setRecord = useSetRecoilState(recordStoreFamilyState(recordId));
 
   useEffect(() => {
-    setRecord(record);
-  }, [record, setRecord]);
+    setRecord(recordPreviewForLabelIdentifier);
+  }, [recordPreviewForLabelIdentifier, setRecord, recordId]);
 
   return null;
 };
