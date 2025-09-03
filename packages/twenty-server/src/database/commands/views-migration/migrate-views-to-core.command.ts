@@ -8,7 +8,6 @@ import {
   ActiveOrSuspendedWorkspacesMigrationCommandRunner,
   type RunOnWorkspaceArgs,
 } from 'src/database/commands/command-runners/active-or-suspended-workspaces-migration.command-runner';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
 import { ViewFilterGroupEntity } from 'src/engine/core-modules/view/entities/view-filter-group.entity';
@@ -77,11 +76,10 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
 
         if (options.dryRun) {
           this.logger.log(
-            `DRY RUN: Would enable IS_CORE_VIEW_SYNCING_ENABLED feature flag for workspace ${workspaceId}`,
+            `DRY RUN: Would migrate views to core schema for workspace ${workspaceId}`,
           );
         } else {
           await queryRunner.commitTransaction();
-          await this.enableCoreViewSyncingFeatureFlag(workspaceId);
           this.logger.log(
             `Successfully migrated views to core schema for workspace ${workspaceId}`,
           );
@@ -669,18 +667,5 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
 
       await repository.insert(coreViewFilterGroup);
     }
-  }
-
-  private async enableCoreViewSyncingFeatureFlag(
-    workspaceId: string,
-  ): Promise<void> {
-    await this.featureFlagService.enableFeatureFlags(
-      [FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED],
-      workspaceId,
-    );
-
-    this.logger.log(
-      `Enabled IS_CORE_VIEW_SYNCING_ENABLED feature flag for workspace ${workspaceId}`,
-    );
   }
 }
