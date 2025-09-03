@@ -16,10 +16,10 @@ import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/s
 import { AI_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/AiActions';
 import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/CoreActions';
 import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
+import { OTHER_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/OtherActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIcon';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -88,9 +88,10 @@ export const CommandMenuWorkflowSelectActionContent = ({
     );
   };
 
-  const theme = useTheme();
-
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+  const isIteratorEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
+  );
 
   const { t } = useLingui();
 
@@ -99,23 +100,50 @@ export const CommandMenuWorkflowSelectActionContent = ({
       <RightDrawerWorkflowSelectStepTitle>
         {t`Data`}
       </RightDrawerWorkflowSelectStepTitle>
-      {WorkflowActionMenuItems(RECORD_ACTIONS, theme, handleCreateStep)}
+      <WorkflowActionMenuItems
+        actions={RECORD_ACTIONS}
+        onClick={handleCreateStep}
+      />
+
       {isAiEnabled && (
         <>
           <RightDrawerWorkflowSelectStepTitle>
             {t`AI`}
           </RightDrawerWorkflowSelectStepTitle>
-          {WorkflowActionMenuItems(AI_ACTIONS, theme, handleCreateStep)}
+          <WorkflowActionMenuItems
+            actions={AI_ACTIONS}
+            onClick={handleCreateStep}
+          />
         </>
       )}
+
       <RightDrawerWorkflowSelectStepTitle>
         {t`Core`}
       </RightDrawerWorkflowSelectStepTitle>
-      {WorkflowActionMenuItems(CORE_ACTIONS, theme, handleCreateStep)}
+      <WorkflowActionMenuItems
+        actions={CORE_ACTIONS}
+        onClick={handleCreateStep}
+      />
+
       <RightDrawerWorkflowSelectStepTitle>
         {t`Human Input`}
       </RightDrawerWorkflowSelectStepTitle>
-      {WorkflowActionMenuItems(HUMAN_INPUT_ACTIONS, theme, handleCreateStep)}
+      <WorkflowActionMenuItems
+        actions={HUMAN_INPUT_ACTIONS}
+        onClick={handleCreateStep}
+      />
+
+      {isIteratorEnabled && (
+        <>
+          <RightDrawerWorkflowSelectStepTitle>
+            {t`Others`}
+          </RightDrawerWorkflowSelectStepTitle>
+          <WorkflowActionMenuItems
+            actions={OTHER_ACTIONS}
+            onClick={handleCreateStep}
+          />
+        </>
+      )}
     </RightDrawerStepListContainer>
   );
 };

@@ -1834,6 +1834,11 @@ msgstr "Campi richiesti mancanti: almeno un vincolo unico deve essere completame
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "I payload di creazione di relazioni morfologiche devono avere lo stesso tipo di relazione"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr ""
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
@@ -1871,15 +1876,15 @@ msgstr "Nome"
 msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 msgstr "Il nome \"{computedMetadataNameFromLabel}\" non può essere lo stesso su entrambi i lati della relazione"
 
-#. js-lingui-id: 2m6Fru
+#. js-lingui-id: Ge9TXE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available"
-msgstr "Il nome \"{name}\" non è disponibile"
+msgid "Name \"{flatFieldMetadataName}\" is not available"
+msgstr ""
 
-#. js-lingui-id: U8mbyw
+#. js-lingui-id: h8ic2G
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr "Il nome \"{name}\" non è disponibile poiché è già utilizzato da un altro campo"
+msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
+msgstr ""
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2861,10 +2866,10 @@ msgstr "Il nome della versione del workflow"
 msgid "The workflow version status"
 msgstr "Lo stato della versione del workflow"
 
-#. js-lingui-id: NbABJb
+#. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field"
-msgstr "Questo nome non è disponibile poiché è già utilizzato da un altro campo"
+msgid "This name is not available as it is already used by another field."
+msgstr ""
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts

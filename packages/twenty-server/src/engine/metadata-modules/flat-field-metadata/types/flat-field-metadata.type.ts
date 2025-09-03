@@ -2,6 +2,7 @@ import { type FieldMetadataType } from 'twenty-shared/types';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type AssignTypeIfIsRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-relation-field-metadata-type.type';
+import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { type FlatObjectMetadataWithoutFields } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const fieldMetadataRelationProperties = [
@@ -20,7 +21,7 @@ export type FlatFieldMetadata<T extends FieldMetadataType = FieldMetadataType> =
     universalIdentifier: string;
     flatRelationTargetFieldMetadata: AssignTypeIfIsRelationFieldMetadataType<
       Omit<
-        FlatFieldMetadata,
+        FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
         'flatRelationTargetFieldMetadata' | 'flatRelationTargetObjectMetadata'
       >,
       T

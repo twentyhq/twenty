@@ -229,7 +229,12 @@ export class WorkspaceSchemaEnumManagerService {
       }
     } catch (error) {
       if (!isTransactionAlreadyActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
       throw error;
     }

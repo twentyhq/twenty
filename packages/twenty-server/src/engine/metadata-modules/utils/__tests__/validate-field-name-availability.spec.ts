@@ -64,14 +64,14 @@ describe('validateFieldNameAvailabilityOrThrow', () => {
         expect(() =>
           validateFieldNameAvailabilityOrThrow({
             name: input,
-            objectMetadata: objectMetadataMapItemMock,
+            fieldMetadataMapById: objectMetadataMapItemMock.fieldsById,
           }),
         ).not.toThrow();
       } else {
         expect(() =>
           validateFieldNameAvailabilityOrThrow({
             name: input,
-            objectMetadata: objectMetadataMapItemMock,
+            fieldMetadataMapById: objectMetadataMapItemMock.fieldsById,
           }),
         ).toThrowErrorMatchingSnapshot();
       }

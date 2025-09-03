@@ -255,6 +255,38 @@ export class WorkflowRunWorkspaceService {
   }
 
   @WithLock('workflowRunId')
+  async updateWorkflowRunStepInfos({
+    stepInfos,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepInfos: Record<string, WorkflowRunStepInfo>;
+    workflowRunId: string;
+    workspaceId: string;
+  }) {
+    const workflowRunToUpdate = await this.getWorkflowRunOrFail({
+      workflowRunId,
+      workspaceId,
+    });
+
+    const partialUpdate = {
+      state: {
+        ...workflowRunToUpdate.state,
+        stepInfos: {
+          ...workflowRunToUpdate.state?.stepInfos,
+          ...stepInfos,
+        },
+      },
+    };
+
+    await this.updateWorkflowRun({
+      workflowRunId,
+      workspaceId,
+      partialUpdate,
+    });
+  }
+
+  @WithLock('workflowRunId')
   async updateWorkflowRunStep({
     workflowRunId,
     step,
@@ -392,6 +424,11 @@ export class WorkflowRunWorkspaceService {
       );
     }
 
-    await workflowRunRepository.update(workflowRunToUpdate.id, partialUpdate);
+    await workflowRunRepository.update(
+      workflowRunToUpdate.id,
+      partialUpdate,
+      undefined,
+      ['id'],
+    );
   }
 }

@@ -300,9 +300,9 @@ msgid "Activate Workflow"
 msgstr "Workflow activeren"
 
 #. js-lingui-id: F6pfE9
-#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Active"
 msgstr "Actief"
 
@@ -356,6 +356,11 @@ msgstr "Handoff toevoegen"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormEmptyMessage.tsx
 msgid "Add inputs to your form"
 msgstr "Voeg invoervelden toe aan uw formulier"
+
+#. js-lingui-id: rejvy6
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
+msgid "Add layout"
+msgstr ""
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
@@ -435,6 +440,11 @@ msgstr "Toevoegen aan favorieten"
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "Add view"
 msgstr "Weergave toevoegen"
+
+#. js-lingui-id: iRpDWj
+#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
+msgid "Add Widget"
+msgstr ""
 
 #. js-lingui-id: m2qDV8
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
@@ -1090,7 +1100,7 @@ msgid "Change Plan"
 msgstr "Plan wijzigen"
 
 #. js-lingui-id: EYSFEW
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Change subdomain?"
 msgstr "Subdomeinnaam wijzigen?"
 
@@ -1252,10 +1262,10 @@ msgstr "Uitvouwen"
 msgid "Color code"
 msgstr "Kleurcode"
 
-#. js-lingui-id: 41xV/k
+#. js-lingui-id: P8gRog
 #: src/modules/spreadsheet-import/utils/setColumn.ts
-msgid "column data is not compatible with Multi-Select."
-msgstr "kolomgegevens zijn niet compatibel met Multi-Select."
+msgid "column data is not compatible with Multi-Select. Format required is '[\"option1\", \"option2\"]' or option1,option2."
+msgstr ""
 
 #. js-lingui-id: 93hd3e
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -1709,12 +1719,12 @@ msgid "Custom"
 msgstr "Aangepast"
 
 #. js-lingui-id: XQ681Q
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "Aangepast domein"
 
 #. js-lingui-id: 1GTWIA
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Custom domain updated"
 msgstr "Aangepast domein bijgewerkt"
 
@@ -1735,7 +1745,7 @@ msgid "Customization"
 msgstr "Aanpassen"
 
 #. js-lingui-id: CMhr4u
-#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Customize Domain"
 msgstr "Domein aanpassen"
 
@@ -2175,17 +2185,17 @@ msgid "Doesn't contain"
 msgstr "Bevat niet"
 
 #. js-lingui-id: EoKe5U
-#: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Domain"
 msgstr "Domein"
 
 #. js-lingui-id: AZ4xlc
-#: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Domains"
 msgstr "Domeinen"
@@ -2464,6 +2474,16 @@ msgstr "Voer een waarde in die in de database moet worden opgeslagen"
 msgid "Enter agent name*"
 msgstr "Voer agentnaam in*"
 
+#. js-lingui-id: kOybqX
+#: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
+msgid "Enter array of items or variable expression"
+msgstr ""
+
+#. js-lingui-id: uyFQs5
+#: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
+msgid "Enter array of step IDs"
+msgstr ""
+
 #. js-lingui-id: 9/30HU
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
 msgid "Enter in <0>Unicode</0> format"
@@ -2612,6 +2632,11 @@ msgstr "Niet-professionele e-mails uitsluiten"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "Sluit de volgende mensen en domeinen uit van mijn e-mailsynchronisatie. Interne gesprekken worden niet geïmporteerd"
+
+#. js-lingui-id: uwM4yU
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
+msgid "Existing layouts"
+msgstr ""
 
 #. js-lingui-id: fV7V51
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -3308,9 +3333,9 @@ msgid "Importing Data ..."
 msgstr "Data importeren ..."
 
 #. js-lingui-id: NoNwIX
-#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Inactive"
 msgstr "Inactief"
 
@@ -3318,6 +3343,11 @@ msgstr "Inactief"
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 msgid "Indexes"
 msgstr "Indexen"
+
+#. js-lingui-id: T6szT2
+#: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
+msgid "Initial loop step IDs"
+msgstr ""
 
 #. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -3370,12 +3400,12 @@ msgid "Invalid auth provider"
 msgstr "Ongeldige authenticatieprovider"
 
 #. js-lingui-id: P3qQyo
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
 msgstr "Ongeldig aangepast domein. Voeg ten minste één subdomein toe (bijv. sub.example.com)."
 
 #. js-lingui-id: u3hwhx
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Ongeldig domein. Domeinen moeten kleiner zijn dan 256 karakters in lengte, kunnen geen IP-adressen zijn, kunnen geen spaties bevatten, kunnen geen speciale tekens bevatten zoals _~`!@#$%^*()=+{}[]|\\;:'\",<>/? en kunnen niet beginnen of eindigen met een '-' karakter."
 
@@ -3402,7 +3432,7 @@ msgid "Invalid File"
 msgstr "Ongeldig bestand"
 
 #. js-lingui-id: QdoUFL
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "''"
 
@@ -3572,6 +3602,16 @@ msgstr "Uitgever URI"
 msgid "Italian"
 msgstr "Italiaans"
 
+#. js-lingui-id: +qz/bj
+#: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
+msgid "Items to iterate over"
+msgstr ""
+
+#. js-lingui-id: E08FMd
+#: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+msgid "Iterator"
+msgstr ""
+
 #. js-lingui-id: dFtidv
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Japanese"
@@ -3691,11 +3731,15 @@ msgid "Launch"
 msgstr "Starten"
 
 #. js-lingui-id: rdU729
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Layout"
 msgstr "Lay-out"
+
+#. js-lingui-id: A/oBX5
+#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
+msgid "Layout Name"
+msgstr ""
 
 #. js-lingui-id: 8QyoLb
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -4003,6 +4047,7 @@ msgstr "moet een array zijn van geldige e-mails"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -4188,7 +4233,7 @@ msgid "No available fields to select"
 msgstr "Geen beschikbare velden om te selecteren"
 
 #. js-lingui-id: OTe3RI
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "No change detected"
 msgstr "Geen verandering gedetecteerd"
 
@@ -4553,6 +4598,11 @@ msgstr "Overige"
 msgid "Other workspaces"
 msgstr "Andere werkruimtes"
 
+#. js-lingui-id: NuKR0h
+#: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
+msgid "Others"
+msgstr ""
+
 #. js-lingui-id: p5ufK6
 #: src/pages/onboarding/BookCallDecision.tsx
 msgid "Our team can help you set up your workspace to match your specific needs and workflows."
@@ -4563,10 +4613,13 @@ msgstr "Ons team kan u helpen uw werkruimte in te richten, zodat deze aansluit b
 msgid "Output Field {fieldNumber}"
 msgstr "Uitvoerveld {fieldNumber}"
 
-#. js-lingui-id: nITdXs
-#: src/pages/settings/page-layout/PageLayoutEdition.tsx
-msgid "Page Layout"
-msgstr "Pagina-indeling"
+#. js-lingui-id: lXe6vt
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
+#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Page Layouts"
+msgstr ""
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -4906,7 +4959,7 @@ msgid "Releases"
 msgstr "Uitgaven"
 
 #. js-lingui-id: HpK/8d
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Reload"
 msgstr "Herladen"
 
@@ -5501,12 +5554,12 @@ msgid "Set global workspace preferences"
 msgstr "Stel globale werkruimtevoorkeuren in"
 
 #. js-lingui-id: qNbuWB
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Stel de naam van je aangepaste domein in en configureer je DNS-records."
 
 #. js-lingui-id: tn41zE
-#: src/pages/settings/workspace/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Set the name of your subdomain"
 msgstr "Stel de naam van je subdomein in"
 
@@ -5516,7 +5569,7 @@ msgid "Setting up your database..."
 msgstr "Uw database opzetten..."
 
 #. js-lingui-id: Tz0i8g
-#: src/pages/settings/page-layout/PageLayoutEdition.tsx
+#: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/modules/sign-in-background-mock/components/SignInAppNavigationDrawerMock.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -5763,28 +5816,28 @@ msgid "Sub-Fields"
 msgstr "Sub-velden"
 
 #. js-lingui-id: ku9TbG
-#: src/pages/settings/workspace/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Subdomain"
 msgstr "Subdomein"
 
 #. js-lingui-id: omhc+7
-#: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain already taken"
 msgstr "Subdomein is reeds in gebruik"
 
 #. js-lingui-id: OlC/tU
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "Subdomein mag niet langer zijn dan 30 karakters"
 
 #. js-lingui-id: ZETwlU
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "Subdomein mag niet korter zijn dan 3 karakters"
 
 #. js-lingui-id: DTG2nE
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain updated"
 msgstr "Subdomein bijgewerkt"
 
@@ -6302,6 +6355,7 @@ msgid "Two-factor authentication setup completed successfully!"
 msgstr "Two-factor authenticatie setup met succes voltooid!"
 
 #. js-lingui-id: +zy2Nq
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
@@ -6420,7 +6474,7 @@ msgid "Use authenticator apps and browser extensions like 1Password, Authy, Micr
 msgstr "Gebruik authenticatore-apps en browserextensies zoals 1Password, Authy, Microsoft Authenticator om eenmalige wachtwoorden te genereren"
 
 #. js-lingui-id: oTTQsc
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
 msgstr "Gebruik alleen letter, nummer en streepje. Begin en eindig met een letter of een nummer"
 
@@ -6673,6 +6727,11 @@ msgstr "Wanneer de API-sleutel zal verlopen."
 msgid "When the key will be disabled"
 msgstr "Wanneer de sleutel wordt uitgeschakeld"
 
+#. js-lingui-id: tL6W2K
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
+msgid "Widgets"
+msgstr ""
+
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
 msgid "Workflows"
@@ -6682,14 +6741,15 @@ msgstr "Workstrooms"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsBilling.tsx
-#: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
@@ -6825,7 +6885,7 @@ msgid "You will lose all your mappings."
 msgstr "Je verliest al je koppelingen."
 
 #. js-lingui-id: Cl+hUj
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "U staat op het punt de subdomeinnaam van uw werkruimte te wijzigen. Deze actie zal alle gebruikers uitloggen."
 

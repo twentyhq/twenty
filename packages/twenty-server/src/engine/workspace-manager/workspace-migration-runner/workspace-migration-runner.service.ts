@@ -109,7 +109,14 @@ export class WorkspaceMigrationRunnerService {
         `Error executing migration: ${error.message}`,
         error.stack,
       );
-      await queryRunner.rollbackTransaction();
+      if (queryRunner.isTransactionActive) {
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
+      }
       throw error;
     } finally {
       await queryRunner.release();

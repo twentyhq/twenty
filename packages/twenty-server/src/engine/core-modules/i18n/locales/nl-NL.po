@@ -1834,6 +1834,11 @@ msgstr "Ontbrekende vereiste velden: minstens één unieke beperking moet volled
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "Payloads voor morfologierelatiecreatie moeten hetzelfde relatietype hebben"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr ""
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
@@ -1871,15 +1876,15 @@ msgstr "Naam"
 msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 msgstr "Naam \"{computedMetadataNameFromLabel}\" kan niet hetzelfde zijn aan beide zijden van de relatie"
 
-#. js-lingui-id: 2m6Fru
+#. js-lingui-id: Ge9TXE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available"
-msgstr "Naam \"{name}\" is niet beschikbaar"
+msgid "Name \"{flatFieldMetadataName}\" is not available"
+msgstr ""
 
-#. js-lingui-id: U8mbyw
+#. js-lingui-id: h8ic2G
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr "Naam \"{name}\" is niet beschikbaar omdat deze al door een ander veld wordt gebruikt"
+msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
+msgstr ""
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2861,10 +2866,10 @@ msgstr "De naam van de workflowversie"
 msgid "The workflow version status"
 msgstr "De status van de workflowversie"
 
-#. js-lingui-id: NbABJb
+#. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field"
-msgstr "Deze naam is niet beschikbaar omdat deze al door een ander veld wordt gebruikt"
+msgid "This name is not available as it is already used by another field."
+msgstr ""
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts

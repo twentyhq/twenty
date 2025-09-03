@@ -695,6 +695,12 @@ export type CreateOneObjectInput = {
   object: CreateObjectInput;
 };
 
+export type CreatePageLayoutInput = {
+  name: Scalars['String'];
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  type?: InputMaybe<PageLayoutType>;
+};
+
 export type CreateRemoteServerInput = {
   foreignDataWrapperOptions: Scalars['JSON'];
   foreignDataWrapperType: Scalars['String'];
@@ -970,6 +976,7 @@ export enum FeatureFlagKey {
   IS_API_KEY_ROLES_ENABLED = 'IS_API_KEY_ROLES_ENABLED',
   IS_CORE_VIEW_ENABLED = 'IS_CORE_VIEW_ENABLED',
   IS_CORE_VIEW_SYNCING_ENABLED = 'IS_CORE_VIEW_SYNCING_ENABLED',
+  IS_DATABASE_EVENT_TRIGGER_ENABLED = 'IS_DATABASE_EVENT_TRIGGER_ENABLED',
   IS_IMAP_SMTP_CALDAV_ENABLED = 'IS_IMAP_SMTP_CALDAV_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_MESSAGE_FOLDER_CONTROL_ENABLED = 'IS_MESSAGE_FOLDER_CONTROL_ENABLED',
@@ -980,6 +987,7 @@ export enum FeatureFlagKey {
   IS_STRIPE_INTEGRATION_ENABLED = 'IS_STRIPE_INTEGRATION_ENABLED',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
   IS_WORKFLOW_BRANCH_ENABLED = 'IS_WORKFLOW_BRANCH_ENABLED',
+  IS_WORKFLOW_ITERATOR_ENABLED = 'IS_WORKFLOW_ITERATOR_ENABLED',
   IS_WORKSPACE_MIGRATION_V2_ENABLED = 'IS_WORKSPACE_MIGRATION_V2_ENABLED'
 }
 
@@ -1369,6 +1377,7 @@ export type Mutation = {
   createOneRemoteServer: RemoteServer;
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
+  createPageLayout: PageLayout;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWebhook: Webhook;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
@@ -1390,6 +1399,7 @@ export type Mutation = {
   deleteOneRemoteServer: RemoteServer;
   deleteOneRole: Scalars['String'];
   deleteOneServerlessFunction: ServerlessFunction;
+  deletePageLayout: PageLayout;
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
@@ -1403,6 +1413,7 @@ export type Mutation = {
   destroyCoreViewFilterGroup: Scalars['Boolean'];
   destroyCoreViewGroup: Scalars['Boolean'];
   destroyCoreViewSort: Scalars['Boolean'];
+  destroyPageLayout: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -1426,6 +1437,7 @@ export type Mutation = {
   renewToken: AuthTokens;
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
+  restorePageLayout: PageLayout;
   revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: WorkflowRun;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
@@ -1458,6 +1470,7 @@ export type Mutation = {
   updateOneRemoteServer: RemoteServer;
   updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
+  updatePageLayout: PageLayout;
   updatePasswordViaResetToken: InvalidatePassword;
   updateSubscriptionItemPrice: BillingUpdateOutput;
   updateWebhook?: Maybe<Webhook>;
@@ -1636,6 +1649,11 @@ export type MutationCreateOneServerlessFunctionArgs = {
 };
 
 
+export type MutationCreatePageLayoutArgs = {
+  input: CreatePageLayoutInput;
+};
+
+
 export type MutationCreateSamlIdentityProviderArgs = {
   input: SetupSamlSsoInput;
 };
@@ -1736,6 +1754,11 @@ export type MutationDeleteOneServerlessFunctionArgs = {
 };
 
 
+export type MutationDeletePageLayoutArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationDeleteSsoIdentityProviderArgs = {
   input: DeleteSsoInput;
 };
@@ -1792,6 +1815,11 @@ export type MutationDestroyCoreViewGroupArgs = {
 
 
 export type MutationDestroyCoreViewSortArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyPageLayoutArgs = {
   id: Scalars['String'];
 };
 
@@ -1902,6 +1930,11 @@ export type MutationResendEmailVerificationTokenArgs = {
 
 export type MutationResendWorkspaceInvitationArgs = {
   appTokenId: Scalars['String'];
+};
+
+
+export type MutationRestorePageLayoutArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -2065,6 +2098,12 @@ export type MutationUpdateOneRoleArgs = {
 
 export type MutationUpdateOneServerlessFunctionArgs = {
   input: UpdateServerlessFunctionInput;
+};
+
+
+export type MutationUpdatePageLayoutArgs = {
+  id: Scalars['String'];
+  input: UpdatePageLayoutInput;
 };
 
 
@@ -2334,6 +2373,36 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['ConnectionCursor']>;
 };
 
+export type PageLayout = {
+  __typename?: 'PageLayout';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  objectMetadataId?: Maybe<Scalars['UUID']>;
+  tabs?: Maybe<Array<PageLayoutTab>>;
+  type: PageLayoutType;
+  updatedAt: Scalars['DateTime'];
+  workspaceId: Scalars['UUID'];
+};
+
+export type PageLayoutTab = {
+  __typename?: 'PageLayoutTab';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['UUID'];
+  pageLayoutId: Scalars['UUID'];
+  position: Scalars['Float'];
+  title: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export enum PageLayoutType {
+  DASHBOARD = 'DASHBOARD',
+  RECORD_INDEX = 'RECORD_INDEX',
+  RECORD_PAGE = 'RECORD_PAGE'
+}
+
 export type PermissionFlag = {
   __typename?: 'PermissionFlag';
   flag: PermissionFlagType;
@@ -2452,6 +2521,8 @@ export type Query = {
   getDatabaseConfigVariable: ConfigVariable;
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
+  getPageLayout?: Maybe<PageLayout>;
+  getPageLayouts: Array<PageLayout>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
   getQueueMetrics: QueueMetricsData;
@@ -2657,6 +2728,16 @@ export type QueryGetDatabaseConfigVariableArgs = {
 
 export type QueryGetIndicatorHealthStatusArgs = {
   indicatorId: HealthIndicatorId;
+};
+
+
+export type QueryGetPageLayoutArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetPageLayoutsArgs = {
+  objectMetadataId?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -3269,6 +3350,12 @@ export type UpdateOneObjectInput = {
   /** The id of the object to update */
   id: Scalars['UUID'];
   update: UpdateObjectPayload;
+};
+
+export type UpdatePageLayoutInput = {
+  name?: InputMaybe<Scalars['String']>;
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  type?: InputMaybe<PageLayoutType>;
 };
 
 export type UpdateRemoteServerInput = {

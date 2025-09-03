@@ -164,7 +164,7 @@ export class WorkflowVersionStepWorkspaceService {
     if (!isDefined(workflowVersion.steps)) {
       throw new WorkflowVersionStepException(
         "Can't update step from undefined steps",
-        WorkflowVersionStepExceptionCode.UNDEFINED,
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
       );
     }
 
@@ -227,7 +227,7 @@ export class WorkflowVersionStepWorkspaceService {
     if (!isDeletingTrigger && !isDefined(workflowVersion.steps)) {
       throw new WorkflowVersionStepException(
         "Can't delete step from undefined steps",
-        WorkflowVersionStepExceptionCode.UNDEFINED,
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
       );
     }
 
@@ -342,7 +342,7 @@ export class WorkflowVersionStepWorkspaceService {
     if (step.type !== WorkflowActionType.FORM) {
       throw new WorkflowVersionStepException(
         'Step is not a form',
-        WorkflowVersionStepExceptionCode.INVALID,
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
         {
           userFriendlyMessage: t`Step is not a form`,
         },
@@ -478,7 +478,7 @@ export class WorkflowVersionStepWorkspaceService {
         if (!isDefined(newServerlessFunction)) {
           throw new WorkflowVersionStepException(
             'Fail to create Code Step',
-            WorkflowVersionStepExceptionCode.FAILURE,
+            WorkflowVersionStepExceptionCode.CODE_STEP_FAILURE,
           );
         }
 
@@ -654,10 +654,24 @@ export class WorkflowVersionStepWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.ITERATOR: {
+        return {
+          ...baseStep,
+          name: 'Iterator',
+          type: WorkflowActionType.ITERATOR,
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: {
+              items: [],
+              initialLoopStepIds: [],
+            },
+          },
+        };
+      }
       default:
         throw new WorkflowVersionStepException(
           `WorkflowActionType '${type}' unknown`,
-          WorkflowVersionStepExceptionCode.UNKNOWN,
+          WorkflowVersionStepExceptionCode.INVALID_REQUEST,
         );
     }
   }

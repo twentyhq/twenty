@@ -1834,6 +1834,11 @@ msgstr "Λείπουν απαραίτητα πεδία: τουλάχιστον �
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "Τα φορτία δημιουργίας σχέσεων μορφής πρέπει να έχουν τον ίδιο τύπο σχέσης"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr ""
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
@@ -1871,15 +1876,15 @@ msgstr "Όνομα"
 msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 msgstr "Το όνομα \"{computedMetadataNameFromLabel}\" δεν μπορεί να είναι το ίδιο και στις δύο πλευρές της σχέσης"
 
-#. js-lingui-id: 2m6Fru
+#. js-lingui-id: Ge9TXE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available"
-msgstr "Το όνομα \"{name}\" δεν είναι διαθέσιμο"
+msgid "Name \"{flatFieldMetadataName}\" is not available"
+msgstr ""
 
-#. js-lingui-id: U8mbyw
+#. js-lingui-id: h8ic2G
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr "Το όνομα \"{name}\" δεν είναι διαθέσιμο καθώς χρησιμοποιείται ήδη από άλλο πεδίο"
+msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
+msgstr ""
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2861,10 +2866,10 @@ msgstr "Το όνομα της έκδοσης της εργασίας"
 msgid "The workflow version status"
 msgstr "Η κατάσταση της έκδοσης της εργασίας"
 
-#. js-lingui-id: NbABJb
+#. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field"
-msgstr "Αυτό το όνομα δεν είναι διαθέσιμο καθώς χρησιμοποιείται ήδη από άλλο πεδίο"
+msgid "This name is not available as it is already used by another field."
+msgstr ""
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts

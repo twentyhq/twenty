@@ -80,6 +80,16 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
+      },
+      {
+        key: FeatureFlagKey.IS_DATABASE_EVENT_TRIGGER_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
+      },
     ])
     .execute();
 };

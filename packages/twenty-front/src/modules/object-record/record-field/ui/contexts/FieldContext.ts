@@ -21,12 +21,11 @@ export type RecordUpdateHook = () => [
 ];
 
 export type GenericFieldContextType = {
+  fieldMetadataItemId?: string;
+  recordId: string;
   fieldDefinition: FieldDefinition<FieldMetadata>;
   useUpdateRecord?: RecordUpdateHook;
-  recordId: string;
   isLabelIdentifier: boolean;
-  isLabelIdentifierCompact?: boolean;
-  labelIdentifierLink?: string;
   clearable?: boolean;
   maxWidth?: number;
   isCentered?: boolean;
