@@ -1,1 +1,0 @@
-export { SettingsDomains } from './SettingsDomains';

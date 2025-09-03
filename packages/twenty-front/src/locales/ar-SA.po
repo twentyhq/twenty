@@ -300,9 +300,9 @@ msgid "Activate Workflow"
 msgstr "تفعيل سير العمل"
 
 #. js-lingui-id: F6pfE9
-#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Active"
 msgstr "نشط"
 
@@ -1100,7 +1100,7 @@ msgid "Change Plan"
 msgstr "تغيير الخطة"
 
 #. js-lingui-id: EYSFEW
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Change subdomain?"
 msgstr "تغيير النطاق الفرعي؟"
 
@@ -1719,12 +1719,12 @@ msgid "Custom"
 msgstr "مخصص"
 
 #. js-lingui-id: XQ681Q
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "نطاق مخصص"
 
 #. js-lingui-id: 1GTWIA
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Custom domain updated"
 msgstr "النطاق المخصص محدث"
 
@@ -1745,7 +1745,7 @@ msgid "Customization"
 msgstr "تخصيص"
 
 #. js-lingui-id: CMhr4u
-#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Customize Domain"
 msgstr "تخصيص النطاق"
 
@@ -2185,17 +2185,17 @@ msgid "Doesn't contain"
 msgstr "لا يحتوي على"
 
 #. js-lingui-id: EoKe5U
-#: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Domain"
 msgstr "النطاق"
 
 #. js-lingui-id: AZ4xlc
-#: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Domains"
 msgstr "النطاقات"
@@ -3333,9 +3333,9 @@ msgid "Importing Data ..."
 msgstr "استيراد البيانات ..."
 
 #. js-lingui-id: NoNwIX
-#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Inactive"
 msgstr "غير نشط"
 
@@ -3400,12 +3400,12 @@ msgid "Invalid auth provider"
 msgstr "مزود تفويض غير صالح"
 
 #. js-lingui-id: P3qQyo
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
 msgstr "نطاق مخصص غير صالح. يُرجى تضمين نطاق فرعي واحد على الأقل (مثال: sub.example.com)."
 
 #. js-lingui-id: u3hwhx
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "نطاق غير صالح. يجب أن تكون النطاقات أقل من 256 حرفًا في الطول، ولا يمكن أن تكون عناوين IP، ولا يمكن أن تحتوي على مسافات، ولا يمكن أن تحتوي على أي أحرف خاصة مثل _~`!@#$%^*()=+{}[]|\\;:'\\\",<>/? ولا يمكن أن تبدأ أو تنتهي برمز '-'."
 
@@ -3432,7 +3432,7 @@ msgid "Invalid File"
 msgstr "ملف غير صالح"
 
 #. js-lingui-id: QdoUFL
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "قيم النموذج غير صالحة"
 
@@ -4233,7 +4233,7 @@ msgid "No available fields to select"
 msgstr "لا توجد حقول متاحة للاختيار"
 
 #. js-lingui-id: OTe3RI
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "No change detected"
 msgstr "لم يتم الكشف عن أي تغيير"
 
@@ -4959,7 +4959,7 @@ msgid "Releases"
 msgstr "\\\\"
 
 #. js-lingui-id: HpK/8d
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Reload"
 msgstr "إعادة تحميل"
 
@@ -5554,12 +5554,12 @@ msgid "Set global workspace preferences"
 msgstr "تعيين تفضيلات مساحة العمل العامة"
 
 #. js-lingui-id: qNbuWB
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "عيّن اسم النطاق المخصص لديك وقم بتكوين سجلات DNS الخاصة بك."
 
 #. js-lingui-id: tn41zE
-#: src/pages/settings/workspace/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Set the name of your subdomain"
 msgstr "\\\\"
 
@@ -5816,28 +5816,28 @@ msgid "Sub-Fields"
 msgstr "الحقول الفرعية"
 
 #. js-lingui-id: ku9TbG
-#: src/pages/settings/workspace/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Subdomain"
 msgstr "النطاق الفرعي"
 
 #. js-lingui-id: omhc+7
-#: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain already taken"
 msgstr "النطاق الفرعي مأخوذ بالفعل"
 
 #. js-lingui-id: OlC/tU
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "لا يمكن أن يكون طول النطاق الفرعي أطول من 30 حرفاً"
 
 #. js-lingui-id: ZETwlU
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "لا يمكن أن يقل طول النطاق الفرعي عن 3 أحرف"
 
 #. js-lingui-id: DTG2nE
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain updated"
 msgstr "تم تحديث النطاق الفرعي"
 
@@ -6474,7 +6474,7 @@ msgid "Use authenticator apps and browser extensions like 1Password, Authy, Micr
 msgstr "استخدم تطبيقات المصادقة وملحقات المتصفح مثل 1Password، Authy، Microsoft Authenticator لإنشاء كلمات مرور لمرة واحدة"
 
 #. js-lingui-id: oTTQsc
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
 msgstr "استخدم حروفاً وأرقاماً وشرطة فقط. ابدأ وانتهي بحرف أو رقم"
 
@@ -6741,7 +6741,6 @@ msgstr "سير العمل"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsBilling.tsx
-#: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -6750,6 +6749,7 @@ msgstr "سير العمل"
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
@@ -6885,7 +6885,7 @@ msgid "You will lose all your mappings."
 msgstr "ستفقد جميع التعيينات الخاصة بك."
 
 #. js-lingui-id: Cl+hUj
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "أنت على وشك تغيير النطاق الفرعي لمساحة العمل الخاصة بك. سيؤدي هذا الإجراء إلى تسجيل خروج جميع المستخدمين."
 

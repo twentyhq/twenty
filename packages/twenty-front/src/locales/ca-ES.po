@@ -300,9 +300,9 @@ msgid "Activate Workflow"
 msgstr "Activa el flux de treball"
 
 #. js-lingui-id: F6pfE9
-#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Active"
 msgstr "Actiu"
 
@@ -1100,7 +1100,7 @@ msgid "Change Plan"
 msgstr "Canviar Pla"
 
 #. js-lingui-id: EYSFEW
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Change subdomain?"
 msgstr "Canviar el subdomini?"
 
@@ -1719,12 +1719,12 @@ msgid "Custom"
 msgstr "Personalitzat"
 
 #. js-lingui-id: XQ681Q
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Custom Domain"
 msgstr "Domini Personalitzat"
 
 #. js-lingui-id: 1GTWIA
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Custom domain updated"
 msgstr "Domini personalitzat actualitzat"
 
@@ -1745,7 +1745,7 @@ msgid "Customization"
 msgstr "Personalització"
 
 #. js-lingui-id: CMhr4u
-#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Customize Domain"
 msgstr "Personalitza el Domini"
 
@@ -2185,17 +2185,17 @@ msgid "Doesn't contain"
 msgstr "No conté"
 
 #. js-lingui-id: EoKe5U
-#: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Domain"
 msgstr "Domini"
 
 #. js-lingui-id: AZ4xlc
-#: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Domains"
 msgstr "Dominis"
@@ -3333,9 +3333,9 @@ msgid "Importing Data ..."
 msgstr "Important dades ..."
 
 #. js-lingui-id: NoNwIX
-#: src/pages/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
+#: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
 msgid "Inactive"
 msgstr "Inactiu"
 
@@ -3400,12 +3400,12 @@ msgid "Invalid auth provider"
 msgstr "Proveïdor d'autenticació no vàlid"
 
 #. js-lingui-id: P3qQyo
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Invalid custom domain. Please include at least one subdomain (e.g., sub.example.com)."
 msgstr "Domini personalitzat no vàlid. Si us plau, inclogueu almenys un subdomini (p. ex., sub.example.com)."
 
 #. js-lingui-id: u3hwhx
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Invalid domain. Domains have to be smaller than 256 characters in length, cannot be IP addresses, cannot contain spaces, cannot contain any special characters such as _~`!@#$%^*()=+{}[]|\\;:'\",<>/? and cannot begin or end with a '-' character."
 msgstr "Domini invàlid. Els dominis han de ser més curts de 256 caràcters, no poden ser adreces IP, no poden contenir espais, ni cap caràcter especial com _~`!@#$%^*()=+{}[]|\\;:'\",<>/? i no poden començar o acabar amb el caràcter '-'."
 
@@ -3432,7 +3432,7 @@ msgid "Invalid File"
 msgstr "Fitxer invàlid"
 
 #. js-lingui-id: QdoUFL
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Invalid form values"
 msgstr "Valors del formulari no vàlids"
 
@@ -4233,7 +4233,7 @@ msgid "No available fields to select"
 msgstr "No hi ha camps disponibles per seleccionar"
 
 #. js-lingui-id: OTe3RI
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "No change detected"
 msgstr "No s'ha detectat cap canvi"
 
@@ -4959,7 +4959,7 @@ msgid "Releases"
 msgstr "Versions"
 
 #. js-lingui-id: HpK/8d
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Reload"
 msgstr "Tornar a carregar"
 
@@ -5554,12 +5554,12 @@ msgid "Set global workspace preferences"
 msgstr "Definir preferències globals de l'espai de treball"
 
 #. js-lingui-id: qNbuWB
-#: src/pages/settings/workspace/SettingsCustomDomain.tsx
+#: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 msgid "Set the name of your custom domain and configure your DNS records."
 msgstr "Estableix el nom del teu domini personalitzat i configura els teus registres DNS."
 
 #. js-lingui-id: tn41zE
-#: src/pages/settings/workspace/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Set the name of your subdomain"
 msgstr "Estableix el nom del teu subdomini"
 
@@ -5816,28 +5816,28 @@ msgid "Sub-Fields"
 msgstr "Sub-camps"
 
 #. js-lingui-id: ku9TbG
-#: src/pages/settings/workspace/SettingsSubdomain.tsx
+#: src/modules/settings/domains/components/SettingsSubdomain.tsx
 msgid "Subdomain"
 msgstr "Subdomini"
 
 #. js-lingui-id: omhc+7
-#: src/pages/settings/workspace/SettingsDomain.tsx
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain already taken"
 msgstr "Subdomini ja ocupat"
 
 #. js-lingui-id: OlC/tU
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain can not be longer than 30 characters"
 msgstr "El subdomini no pot tenir més de 30 caràcters"
 
 #. js-lingui-id: ZETwlU
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain can not be shorter than 3 characters"
 msgstr "El subdomini no pot tenir menys de 3 caràcters"
 
 #. js-lingui-id: DTG2nE
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Subdomain updated"
 msgstr "Subdomini actualitzat"
 
@@ -6474,7 +6474,7 @@ msgid "Use authenticator apps and browser extensions like 1Password, Authy, Micr
 msgstr "Utilitza aplicacions d'autenticació i extensions de navegador com 1Password, Authy, Microsoft Authenticator per generar contrasenyes d'un sol ús"
 
 #. js-lingui-id: oTTQsc
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "Use letter, number and dash only. Start and finish with a letter or a number"
 msgstr "Utilitzeu només lletres, números i guions. Comenceu i acabeu amb una lletra o un número"
 
@@ -6741,7 +6741,6 @@ msgstr "Fluxos de treball"
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsBilling.tsx
-#: src/pages/settings/workspace/SettingsDomain.tsx
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -6750,6 +6749,7 @@ msgstr "Fluxos de treball"
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/pages/settings/domains/SettingsDomains.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
@@ -6885,7 +6885,7 @@ msgid "You will lose all your mappings."
 msgstr "Perdràs tots els teus mapatges."
 
 #. js-lingui-id: Cl+hUj
-#: src/pages/settings/workspace/SettingsDomain.tsx
+#: src/pages/settings/domains/SettingsDomain.tsx
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "Esteu a punt de canviar el subdomini de l'espai de treball. Aquesta acció farà que tots els usuaris es tanquin la sessió."
 
