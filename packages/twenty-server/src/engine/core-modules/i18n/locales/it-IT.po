@@ -1834,6 +1834,11 @@ msgstr "Campi richiesti mancanti: almeno un vincolo unico deve essere completame
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "I payload di creazione di relazioni morfologiche devono avere lo stesso tipo di relazione"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr ""
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"

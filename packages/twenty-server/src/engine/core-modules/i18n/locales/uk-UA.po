@@ -1834,6 +1834,11 @@ msgstr "Не всі заповнено обов'язкові поля: прин�
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "Під час створення відношення морфу всі відношення мають бути одного типу"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr ""
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"

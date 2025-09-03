@@ -1834,6 +1834,11 @@ msgstr "Câmpuri obligatorii lipsă: cel puțin o constrângere unică trebuie s
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "Payload-urile pentru crearea relațiilor morfice trebuie să aibă același tip de relație"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr ""
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
