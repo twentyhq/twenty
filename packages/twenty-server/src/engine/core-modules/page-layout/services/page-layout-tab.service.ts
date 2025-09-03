@@ -99,10 +99,8 @@ export class PageLayoutTabService {
       );
     }
 
-    const pageLayoutTab = this.pageLayoutTabRepository.create({
-      ...pageLayoutTabData,
-      position: pageLayoutTabData.position ?? 0,
-    });
+    const pageLayoutTab =
+      this.pageLayoutTabRepository.create(pageLayoutTabData);
 
     return this.pageLayoutTabRepository.save(pageLayoutTab);
   }
