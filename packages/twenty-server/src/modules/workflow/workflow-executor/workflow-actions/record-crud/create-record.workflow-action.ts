@@ -103,7 +103,7 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
         objectMetadataMapItem: objectMetadataItemWithFieldsMaps,
       });
 
-    const objectRecord = await repository.save({
+    const insertResult = await repository.insert({
       ...transformedObjectRecord,
       position,
       createdBy: {
@@ -112,8 +112,10 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
       },
     });
 
+    const [createdRecord] = insertResult.generatedMaps;
+
     return {
-      result: objectRecord,
+      result: createdRecord,
     };
   }
 }

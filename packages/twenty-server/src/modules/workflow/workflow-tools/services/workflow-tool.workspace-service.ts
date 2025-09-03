@@ -418,16 +418,16 @@ This is the most efficient way for AI to create workflows as it handles all the 
         workspaceId,
       });
 
-    const workflow = workflowRepository.create({
+    const workflow = {
       id: uuidv4(),
       name,
       statuses: [WorkflowStatus.DRAFT],
       position: workflowPosition,
-    });
+    };
 
-    const savedWorkflow = await workflowRepository.save(workflow);
+    await workflowRepository.insert(workflow);
 
-    return savedWorkflow.id;
+    return workflow.id;
   }
 
   private async createWorkflowVersion({
@@ -460,7 +460,7 @@ This is the most efficient way for AI to create workflows as it handles all the 
         workspaceId,
       });
 
-    const workflowVersion = workflowVersionRepository.create({
+    const workflowVersion = {
       id: uuidv4(),
       workflowId,
       name: 'v1',
@@ -468,12 +468,11 @@ This is the most efficient way for AI to create workflows as it handles all the 
       trigger,
       steps,
       position: versionPosition,
-    });
+    };
 
-    const savedWorkflowVersion =
-      await workflowVersionRepository.save(workflowVersion);
+    await workflowVersionRepository.insert(workflowVersion);
 
-    return savedWorkflowVersion.id;
+    return workflowVersion.id;
   }
 
   private async updateWorkflowStatus({

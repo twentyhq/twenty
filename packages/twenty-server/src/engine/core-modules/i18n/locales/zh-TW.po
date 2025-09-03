@@ -1834,6 +1834,11 @@ msgstr "缺少必需字段：至少要為 '{connectFieldName}' 完整填入一�
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "形變關係創建載體必須有相同的關係類型"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr ""
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"

@@ -30,8 +30,8 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
       {aggregateOperations.map((operation) => (
         <MenuItem
           key={operation}
-          onClick={() => {
-            updateViewFieldAggregateOperation(operation);
+          onClick={async () => {
+            await updateViewFieldAggregateOperation(operation);
             closeDropdown(dropdownId);
           }}
           text={getAggregateOperationLabel(operation)}
@@ -46,8 +46,8 @@ export const RecordTableColumnAggregateFooterAggregateOperationMenuItems = ({
       {children}
       <MenuItem
         key={'none'}
-        onClick={() => {
-          updateViewFieldAggregateOperation(null);
+        onClick={async () => {
+          await updateViewFieldAggregateOperation(null);
           resetContent();
           closeDropdown(dropdownId);
         }}

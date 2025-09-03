@@ -1834,6 +1834,11 @@ msgstr "Thiếu các trường bắt buộc: ít nhất một ràng buộc duy n
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "Payloads tạo mối quan hệ dạng lỗi phải có cùng loại mối quan hệ"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr ""
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
