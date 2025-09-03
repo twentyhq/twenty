@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { RecordTableColumnFooterWithDropdown } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterWithDropdown';
-import { findById, isDefined } from 'twenty-shared/utils';
+import { findByProperty, isDefined } from 'twenty-shared/utils';
 
 const COLUMN_MIN_WIDTH = 104;
 
@@ -64,7 +64,9 @@ export const RecordTableAggregateFooterCell = ({
     RecordTableColumnAggregateFooterCellContext,
   );
 
-  const recordField = visibleRecordFields.find(findById(fieldMetadataId));
+  const recordField = visibleRecordFields.find(
+    findByProperty('fieldMetadataItemId', fieldMetadataId),
+  );
 
   if (!isDefined(recordField)) {
     return null;
