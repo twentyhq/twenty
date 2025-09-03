@@ -38,7 +38,7 @@ export const useCreateOneObjectMetadataItem = () => {
       );
     }
 
-    return createdObjectMetadata.data?.createOneObject;
+    return createdObjectMetadata;
   };
 
   return {

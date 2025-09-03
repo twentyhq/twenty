@@ -76,31 +76,6 @@ const fieldRelationMetadataItem: FieldMetadataItem = {
 const mocks = [
   {
     request: {
-      query: queries.findManyViewsQuery,
-      variables: {
-        filter: {
-          objectMetadataId: { eq: '25611fce-6637-4089-b0ca-91afeec95784' },
-        },
-      },
-    },
-    result: jest.fn(() => ({
-      data: {
-        views: {
-          __typename: 'ViewConnection',
-          totalCount: 0,
-          pageInfo: {
-            __typename: 'PageInfo',
-            hasNextPage: false,
-            startCursor: '',
-            endCursor: '',
-          },
-          edges: [],
-        },
-      },
-    })),
-  },
-  {
-    request: {
       query: GET_CURRENT_USER,
       variables: {},
     },
