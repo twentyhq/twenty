@@ -69,7 +69,6 @@ export const SettingsDataModelFieldPreview = ({
     labelIdentifierFieldMetadataItem?.name === fieldMetadataItem.name;
 
   const fieldName = fieldMetadataItem.name;
-
   const recordId = `${objectNameSingular}-${fieldName}-preview`;
 
   const fieldPreviewValue = useFieldPreviewValue({
