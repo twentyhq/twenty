@@ -1,3 +1,4 @@
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { type StandardRoleDefinition } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-roles/types/standard-role-definition.interface';
 
 export const WORKFLOW_MANAGER_ROLE: StandardRoleDefinition = {
@@ -15,4 +16,5 @@ export const WORKFLOW_MANAGER_ROLE: StandardRoleDefinition = {
   canBeAssignedToUsers: false,
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: false,
+  permissionFlags: [PermissionFlagType.WORKFLOWS],
 };
