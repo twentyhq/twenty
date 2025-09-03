@@ -1,5 +1,6 @@
-import { type FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -25,13 +26,9 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
 
 @Entity('fieldMetadata')
-@Index(
-  'IDX_FIELD_METADATA_NAME_OBJMID_WORKSPACE_ID_EXCEPT_MORPH_UNIQUE',
-  ['name', 'objectMetadataId', 'workspaceId'],
-  {
-    unique: true,
-    where: `"type" <> ''MORPH_RELATION''`,
-  },
+@Check(
+  'CHK_FIELD_METADATA_MORPH_RELATION_REQUIRES_MORPH_ID',
+  `("type" != 'MORPH_RELATION') OR ("type" = 'MORPH_RELATION' AND "morphId" IS NOT NULL)`,
 )
 @Index('IDX_FIELD_METADATA_RELATION_TARGET_FIELD_METADATA_ID', [
   'relationTargetFieldMetadataId',
