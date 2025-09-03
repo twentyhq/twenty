@@ -18,7 +18,7 @@ export type Widget = {
   id: string;
   type: WidgetType;
   title: string;
-  configuration?: Record<string, unknown>;
+  configuration?: Record<string, string>;
   data?: any;
 };
 
