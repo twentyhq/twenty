@@ -23,6 +23,7 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     updatedAt: createdAt,
     defaultValue: null,
     options: null,
+    morphId: null,
     settings: null,
     description: 'default flat field metadata description',
     icon: 'icon',

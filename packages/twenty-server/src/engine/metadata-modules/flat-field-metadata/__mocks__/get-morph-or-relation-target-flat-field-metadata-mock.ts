@@ -1,13 +1,12 @@
 import { faker } from '@faker-js/faker';
-import { type NonNullableRequired } from 'twenty-shared/types';
+import { FieldMetadataType, type NonNullableRequired } from 'twenty-shared/types';
 
-import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatRelationTargetFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-relation-target-field-metadata.type';
 
 type GetMorphOrRelationFlatFieldMetadataMockArgs = NonNullableRequired<
   Pick<
-    FlatFieldMetadata<MorphOrRelationFieldMetadataType>,
+    FlatFieldMetadata<FieldMetadataType.RELATION>,
     | 'universalIdentifier'
     | 'objectMetadataId'
     | 'type'
@@ -18,7 +17,7 @@ type GetMorphOrRelationFlatFieldMetadataMockArgs = NonNullableRequired<
 > &
   Partial<FlatFieldMetadata>;
 
-export const getMorphOrRelationTargetFlatFieldMetadataMock = ({
+export const getRelationTargetFlatFieldMetadataMock = ({
   objectMetadataId,
   settings,
   type,
@@ -53,6 +52,7 @@ export const getMorphOrRelationTargetFlatFieldMetadataMock = ({
     settings,
     relationTargetFieldMetadataId,
     relationTargetObjectMetadataId,
+    morphId: null,
     ...overrides,
     defaultValue: null,
     options: null,
