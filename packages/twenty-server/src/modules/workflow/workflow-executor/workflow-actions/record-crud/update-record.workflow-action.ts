@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import deepEqual from 'deep-equal';
 import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
+import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -105,6 +106,18 @@ export class UpdateRecordWorkflowAction implements WorkflowAction {
         workflowActionInput.objectName,
         workspaceId,
       );
+
+    if (
+      !canObjectBeManagedByWorkflow({
+        nameSingular: objectMetadataItemWithFieldsMaps.nameSingular,
+        isSystem: objectMetadataItemWithFieldsMaps.isSystem,
+      })
+    ) {
+      throw new RecordCRUDActionException(
+        'Failed to update: Object cannot be updated by workflow',
+        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+      );
+    }
 
     const objectRecordWithFilteredFields = Object.keys(
       workflowActionInput.objectRecord,

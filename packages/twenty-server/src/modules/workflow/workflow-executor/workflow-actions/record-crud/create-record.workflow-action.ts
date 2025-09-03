@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'class-validator';
 import { resolveInput } from 'twenty-shared/utils';
+import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 import { Repository } from 'typeorm';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
@@ -66,30 +67,29 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
         { shouldBypassPermissionChecks: true },
       );
 
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: {
-        nameSingular: workflowActionInput.objectName,
-      },
-    });
+    const { objectMetadataItemWithFieldsMaps } =
+      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
+        workflowActionInput.objectName,
+        workspaceId,
+      );
 
-    if (!objectMetadata) {
+    if (
+      !canObjectBeManagedByWorkflow({
+        nameSingular: objectMetadataItemWithFieldsMaps.nameSingular,
+        isSystem: objectMetadataItemWithFieldsMaps.isSystem,
+      })
+    ) {
       throw new RecordCRUDActionException(
-        'Failed to create: Object metadata not found',
+        'Failed to create: Object cannot be created by workflow',
         RecordCRUDActionExceptionCode.INVALID_REQUEST,
       );
     }
 
     const position = await this.recordPositionService.buildRecordPosition({
       value: 'first',
-      objectMetadata,
+      objectMetadata: objectMetadataItemWithFieldsMaps,
       workspaceId,
     });
-
-    const { objectMetadataItemWithFieldsMaps } =
-      await this.workflowCommonWorkspaceService.getObjectMetadataItemWithFieldsMaps(
-        workflowActionInput.objectName,
-        workspaceId,
-      );
 
     const validObjectRecord = Object.fromEntries(
       Object.entries(workflowActionInput.objectRecord).filter(([key]) =>
