@@ -42,6 +42,7 @@ export class ObjectMetadataRelatedRecordsService {
       name: `All ${objectMetadata.labelPlural}`,
       key: ViewKey.INDEX,
       icon: 'IconList',
+      workspaceId: objectMetadata.workspaceId,
     });
   }
 
@@ -57,6 +58,7 @@ export class ObjectMetadataRelatedRecordsService {
         isVisible: true,
         size: 180,
         viewId: viewId,
+        workspaceId: objectMetadata.workspaceId,
       }));
 
     for (const viewField of viewFields) {

@@ -93,6 +93,7 @@ export class FieldMetadataRelatedRecordsService {
           position: maxPosition + index,
           isVisible: true,
           viewId: view.id,
+          workspaceId: newFieldMetadata.workspaceId,
         });
       }
 
@@ -238,6 +239,7 @@ export class FieldMetadataRelatedRecordsService {
         position: maxPosition + 1,
         isVisible: true,
         viewId: view.id,
+        workspaceId: fieldMetadata.workspaceId,
       });
     } else if (!fieldMetadata.isNullable && noValueGroup) {
       await this.viewGroupService.delete(
@@ -341,6 +343,7 @@ export class FieldMetadataRelatedRecordsService {
             isVisible,
             size: 180,
             viewId: view.id,
+            workspaceId: createdFieldMetadata.workspaceId,
           });
         }
       }
