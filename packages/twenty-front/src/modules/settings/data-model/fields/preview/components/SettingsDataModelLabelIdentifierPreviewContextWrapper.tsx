@@ -1,20 +1,24 @@
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { type ReactNode } from 'react';
 
 type SettingsDataModelLabelIdentifierPreviewContextWrapperProps = {
   children: ReactNode;
-  objectMetadataItem: ObjectMetadataItem;
+  objectNameSingular: string;
   labelIdentifierFieldMetadataItem: FieldMetadataItem | undefined;
 };
 
 export const SettingsDataModelLabelIdentifierPreviewContextWrapper = ({
   children,
-  objectMetadataItem,
+  objectNameSingular,
   labelIdentifierFieldMetadataItem,
 }: SettingsDataModelLabelIdentifierPreviewContextWrapperProps) => {
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: objectNameSingular,
+  });
+
   return (
     <RecordTableComponentInstanceContext.Provider
       value={{

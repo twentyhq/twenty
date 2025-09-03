@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { BooleanFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/BooleanFieldInput';
@@ -22,7 +21,7 @@ type SettingsDataModelFieldPreviewProps = {
     FieldMetadataItem,
     'name' | 'icon' | 'label' | 'type' | 'defaultValue' | 'options' | 'settings'
   >;
-  objectMetadataItem: ObjectMetadataItem;
+  objectNameSingular: string;
   shrink?: boolean;
   withFieldLabel?: boolean;
 };
@@ -54,14 +53,14 @@ const StyledFieldLabel = styled.div`
 
 export const SettingsDataModelFieldPreview = ({
   fieldMetadataItem,
-  objectMetadataItem,
+  objectNameSingular,
   shrink,
   withFieldLabel = true,
 }: SettingsDataModelFieldPreviewProps) => {
   const theme = useTheme();
   const { labelIdentifierFieldMetadataItem } =
     useLabelIdentifierFieldMetadataItem({
-      objectNameSingular: objectMetadataItem.nameSingular,
+      objectNameSingular: objectNameSingular,
     });
 
   const { getIcon } = useIcons();
@@ -77,14 +76,14 @@ export const SettingsDataModelFieldPreview = ({
   });
 
   const recordPreviewForLabelIdentifier = usePreviewRecord({
-    objectNameSingular: objectMetadataItem.nameSingular,
+    objectNameSingular: objectNameSingular,
     skip: !isLabelIdentifier,
   });
 
   const recordId =
     isLabelIdentifier && isDefined(recordPreviewForLabelIdentifier?.id)
       ? recordPreviewForLabelIdentifier.id
-      : `${objectMetadataItem.nameSingular}-${fieldName}-preview`;
+      : `${objectNameSingular}-${fieldName}-preview`;
 
   const fieldPreviewValue = isLabelIdentifier
     ? recordPreviewForLabelIdentifier?.[fieldMetadataItem.name]
@@ -92,7 +91,7 @@ export const SettingsDataModelFieldPreview = ({
 
   const metadata = {
     fieldName,
-    objectMetadataNameSingular: objectMetadataItem.nameSingular,
+    objectMetadataNameSingular: objectNameSingular,
     options: fieldMetadataItem.options ?? [],
     settings: fieldMetadataItem.settings,
   };
@@ -100,7 +99,7 @@ export const SettingsDataModelFieldPreview = ({
   return (
     <>
       <SettingsDataModelLabelIdentifierPreviewContextWrapper
-        objectMetadataItem={objectMetadataItem}
+        objectNameSingular={objectNameSingular}
         labelIdentifierFieldMetadataItem={labelIdentifierFieldMetadataItem}
       >
         <RecordFieldComponentInstanceContext.Provider
