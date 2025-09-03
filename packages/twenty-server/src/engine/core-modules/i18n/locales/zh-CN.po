@@ -1834,6 +1834,11 @@ msgstr "缺少必需字段：至少一个唯一约束需要完全填充用于'{c
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "形态关系创建的负载必须具有相同的关系类型"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr ""
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"

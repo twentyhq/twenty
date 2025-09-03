@@ -1834,6 +1834,11 @@ msgstr "Falten camps obligatoris: almenys una restricció única ha d'estar comp
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "Les càrregues útils de creació de relacions de morfologia han de tenir el mateix tipus de relació"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr ""
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"

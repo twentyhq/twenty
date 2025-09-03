@@ -1829,6 +1829,11 @@ msgstr "Missing required fields: at least one unique constraint have to be fully
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "Morph relation creation payloads must have the same relation type"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr "Morph relation creation payloads must only contain relation to other object metadata"
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
