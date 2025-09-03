@@ -12,6 +12,7 @@ import {
   generateViewExceptionMessage,
   generateViewUserFriendlyExceptionMessage,
 } from 'src/engine/core-modules/view/exceptions/view.exception';
+import { ViewDTO } from 'src/engine/core-modules/view/dtos/view.dto';
 
 @Injectable()
 export class ViewService {
@@ -80,7 +81,7 @@ export class ViewService {
     return view || null;
   }
 
-  async create(viewData: Partial<ViewEntity>): Promise<ViewEntity> {
+  async create(viewData: Partial<ViewEntity>): Promise<ViewDTO> {
     if (!isDefined(viewData.workspaceId)) {
       throw new ViewException(
         generateViewExceptionMessage(

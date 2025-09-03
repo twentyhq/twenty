@@ -145,8 +145,8 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
             !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
-          label: t`Layout`,
-          path: SettingsPath.PageLayoutEdition,
+          label: t`Page Layouts`,
+          path: SettingsPath.PageLayout,
           Icon: IconLayout,
           isHidden:
             !isPageLayoutEnabled ||

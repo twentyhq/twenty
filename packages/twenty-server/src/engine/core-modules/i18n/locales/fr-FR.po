@@ -1834,6 +1834,11 @@ msgstr "Champs requis manquants : au moins une contrainte unique doit être enti
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "Les charges utiles de création de relations morphologiques doivent avoir le même type de relation"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr ""
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
@@ -1871,15 +1876,15 @@ msgstr "Nom"
 msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 msgstr "Le nom \"{computedMetadataNameFromLabel}\" ne peut pas être le même des deux côtés de la relation"
 
-#. js-lingui-id: 2m6Fru
+#. js-lingui-id: Ge9TXE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available"
-msgstr "Le nom \"{name}\" n'est pas disponible"
+msgid "Name \"{flatFieldMetadataName}\" is not available"
+msgstr ""
 
-#. js-lingui-id: U8mbyw
+#. js-lingui-id: h8ic2G
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr "Le nom \"{name}\" n'est pas disponible car il est déjà utilisé par un autre champ"
+msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
+msgstr ""
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts

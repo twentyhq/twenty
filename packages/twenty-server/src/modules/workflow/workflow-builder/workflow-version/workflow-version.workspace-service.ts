@@ -84,12 +84,15 @@ export class WorkflowVersionWorkspaceService {
         workspaceId,
       });
 
-      draftWorkflowVersion = await workflowVersionRepository.save({
+      const insertResult = await workflowVersionRepository.insert({
         workflowId,
         name: `v${workflowVersionsCount + 1}`,
         status: WorkflowVersionStatus.DRAFT,
         position,
       });
+
+      draftWorkflowVersion = insertResult
+        .generatedMaps[0] as WorkflowVersionWorkspaceEntity;
     }
 
     assertWorkflowVersionIsDraft(draftWorkflowVersion);

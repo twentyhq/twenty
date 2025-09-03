@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata-or-throw.util';
-import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import {
   FlatObjectMetadataMapsException,
   FlatObjectMetadataMapsExceptionCode,
@@ -47,7 +47,7 @@ export const findFlatFieldMetadatasRelatedToMorphRelationOrThrow = ({
   return flatObjectMetadataWithFlatFieldMaps.flatFieldMetadatas.flatMap(
     (flatFieldMetadata) => {
       if (
-        !isFlatFieldMetadataEntityOfType(
+        !isFlatFieldMetadataOfType(
           flatFieldMetadata,
           FieldMetadataType.MORPH_RELATION,
         ) ||
@@ -61,6 +61,10 @@ export const findFlatFieldMetadatasRelatedToMorphRelationOrThrow = ({
           flatFieldMetadata,
           flatObjectMetadataMaps,
         });
+
+      if (flatFieldMetadata.id === morphRelationFlatFieldMetadata.id) {
+        return [relationTargetFlatFieldMetadata];
+      }
 
       return [flatFieldMetadata, relationTargetFlatFieldMetadata];
     },

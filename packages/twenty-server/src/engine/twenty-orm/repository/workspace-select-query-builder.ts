@@ -156,6 +156,8 @@ export class WorkspaceSelectQueryBuilder<
         this.internalContext,
       );
 
+      this.take(1);
+
       const result = await super.getOne();
 
       const formattedResult = formatResult<T>(
