@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 
 import { settings } from 'src/engine/constants/settings';
 import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
@@ -118,6 +119,30 @@ export class FieldMetadataRelatedRecordsService {
     }
   }
 
+  public async resetViewKanbanAggregateOperation(
+    fieldMetadata: Pick<
+      FieldMetadataEntity,
+      'id' | 'workspaceId' | 'objectMetadataId'
+    >,
+  ): Promise<void> {
+    const views = await this.viewService.findByObjectMetadataId(
+      fieldMetadata.workspaceId,
+      fieldMetadata.objectMetadataId,
+    );
+
+    const viewsHavingFieldAsAggregateOperation = views.filter(
+      (view) =>
+        view.kanbanAggregateOperationFieldMetadataId === fieldMetadata.id,
+    );
+
+    for (const view of viewsHavingFieldAsAggregateOperation) {
+      await this.viewService.update(view.id, fieldMetadata.workspaceId, {
+        kanbanAggregateOperationFieldMetadataId: null,
+        kanbanAggregateOperation: null,
+      });
+    }
+  }
+
   public async updateRelatedViewFilters(
     oldFieldMetadata: SelectOrMultiSelectFieldMetadataEntity,
     newFieldMetadata: SelectOrMultiSelectFieldMetadataEntity,
@@ -160,15 +185,19 @@ export class FieldMetadataRelatedRecordsService {
           continue;
         }
 
-        // Note below assertion could be removed after https://github.com/twentyhq/core-team-issues/issues/1009 completion
-        if (!isDefined(viewFilter.value) || !Array.isArray(viewFilter.value)) {
+        // TODO: all view filter value should be stored as JSON, this is ongoing work (we are missing a command to migrate the data)
+        const parsedValue = isNonEmptyString(viewFilter.value)
+          ? parseJson(viewFilter.value)
+          : viewFilter.value;
+
+        if (!isDefined(parsedValue) || !Array.isArray(parsedValue)) {
           throw new FieldMetadataException(
             `Unexpected invalid view filter value for filter ${viewFilter.id}`,
             FieldMetadataExceptionCode.INTERNAL_SERVER_ERROR,
           );
         }
 
-        const viewFilterOptions = viewFilter.value
+        const viewFilterOptions = parsedValue
           .map((value) => {
             if (!isDefined(oldFieldMetadata.options)) {
               return undefined;
@@ -206,8 +235,8 @@ export class FieldMetadataRelatedRecordsService {
               : viewFilterOption;
           });
 
-        const value = JSON.stringify(
-          afterUpdateAndDeleteViewFilterOptions.map((option) => option.value),
+        const value = afterUpdateAndDeleteViewFilterOptions.map(
+          (option) => option.value,
         );
 
         await this.viewFilterService.update(
@@ -306,25 +335,27 @@ export class FieldMetadataRelatedRecordsService {
     createdFieldMetadatas: FieldMetadataEntity[],
     workspaceId: string,
   ) {
-    const views = await this.viewService.findByObjectMetadataId(
-      workspaceId,
-      createdFieldMetadatas[0].objectMetadataId,
-    );
-
-    if (views.length === 0) {
-      return;
-    }
-
-    const view = views.find((view) => view.key === ViewKey.INDEX);
-
-    if (!isDefined(view)) {
-      return;
-    }
+    const views = await this.viewService.findByWorkspaceId(workspaceId);
 
     for (const createdFieldMetadata of createdFieldMetadatas) {
-      const isVisible = view.viewFields.length < settings.maxVisibleViewFields;
+      const objectViews = views.filter(
+        (view) =>
+          view.objectMetadataId === createdFieldMetadata.objectMetadataId,
+      );
 
-      const createdFieldIsAlreadyInView = view.viewFields.some(
+      if (objectViews.length === 0) {
+        return;
+      }
+
+      const indexView = objectViews.find((view) => view.key === ViewKey.INDEX);
+
+      if (!indexView) {
+        return;
+      }
+      const isVisible =
+        indexView.viewFields.length < settings.maxVisibleViewFields;
+
+      const createdFieldIsAlreadyInView = indexView.viewFields.some(
         (existingViewField) =>
           existingViewField.fieldMetadataId === createdFieldMetadata.id,
       );
@@ -333,7 +364,7 @@ export class FieldMetadataRelatedRecordsService {
         continue;
       }
 
-      const lastPosition = view.viewFields
+      const lastPosition = indexView.viewFields
         .map((viewField) => viewField.position)
         .reduce((acc, position) => {
           if (position > acc) {
@@ -348,7 +379,7 @@ export class FieldMetadataRelatedRecordsService {
         position: lastPosition + 1,
         isVisible,
         size: 180,
-        viewId: view.id,
+        viewId: indexView.id,
         workspaceId: createdFieldMetadata.workspaceId,
       });
     }

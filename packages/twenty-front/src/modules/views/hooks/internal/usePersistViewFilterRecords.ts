@@ -16,7 +16,7 @@ import { type ViewFilter } from '@/views/types/ViewFilter';
 import { convertViewFilterOperandToCore } from '@/views/utils/convertViewFilterOperandToCore';
 import { useApolloClient } from '@apollo/client';
 import { isNull } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 import { type CoreViewFilter } from '~/generated/graphql';
 
 export const usePersistViewFilterRecords = () => {
@@ -86,7 +86,7 @@ export const usePersistViewFilterRecords = () => {
             variables: {
               id: viewFilter.id,
               input: {
-                value: viewFilter.value,
+                value: parseJson(viewFilter.value),
                 operand: convertViewFilterOperandToCore(viewFilter.operand),
                 positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
                 viewFilterGroupId: viewFilter.viewFilterGroupId,

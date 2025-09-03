@@ -28,6 +28,10 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
           fetchPolicy: 'network-only',
         });
 
+        if (!isDefined(result.data?.getCoreViews)) {
+          return;
+        }
+
         const objectMetadataItems = snapshot
           .getLoadable(objectMetadataItemsState)
           .getValue();
@@ -45,10 +49,6 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
             coreViewsByObjectMetadataIdFamilySelector(objectMetadataId),
           )
           .getValue();
-
-        if (!isDefined(result.data?.getCoreViews)) {
-          return;
-        }
 
         if (
           isDeeplyEqual(coreViewsForObjectMetadataId, result.data.getCoreViews)

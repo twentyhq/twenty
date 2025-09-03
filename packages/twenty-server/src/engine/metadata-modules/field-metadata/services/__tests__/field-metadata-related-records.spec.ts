@@ -3,7 +3,6 @@ import { type EachTestingContext } from 'twenty-shared/testing';
 import { type ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
 import { type ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
 import { type ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
-import { type ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
 import { type ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { type FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
@@ -27,7 +26,6 @@ describe('FieldMetadataRelatedRecordsService', () => {
     let service: FieldMetadataRelatedRecordsService;
     let viewService: ViewService = {} as ViewService;
     let viewFieldService: ViewFieldService = {} as ViewFieldService;
-    let viewSortService: ViewSortService = {} as ViewSortService;
     let viewFilterService: ViewFilterService = {} as ViewFilterService;
     let viewGroupService: ViewGroupService = {} as ViewGroupService;
 
@@ -35,7 +33,6 @@ describe('FieldMetadataRelatedRecordsService', () => {
       service = new FieldMetadataRelatedRecordsService(
         viewService,
         viewFieldService,
-        viewSortService,
         viewFilterService,
         viewGroupService,
       );
