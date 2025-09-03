@@ -1,5 +1,91 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`failing createOne FieldMetadataService morph relation fields v2 Morh relation collision tests suite it should fail to create a already existing morph relation with samefield 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "toto" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "toto" is not available as it is already used by another field",
+              "value": "toto",
+            },
+          ],
+          "id": Any<String>,
+          "name": "toto",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "tata" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "tata" is not available as it is already used by another field",
+              "value": "tata",
+            },
+          ],
+          "id": Any<String>,
+          "name": "tata",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [],
+    },
+    "message": "Validation failed for 0 object(s) and 2 field(s)",
+    "summary": {
+      "invalidFields": 2,
+      "invalidObjects": 0,
+      "totalErrors": 2,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 2 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`failing createOne FieldMetadataService morph relation fields v2 Morh relation collision tests suite it should fail to create a field with name than result in existing morph relation field join column 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "errors": {
+      "fieldMetadata": [
+        {
+          "errors": [
+            {
+              "code": "NOT_AVAILABLE",
+              "message": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by another field",
+              "userFriendlyMessage": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by another field",
+              "value": "fieldNamePersonForMorphRelationSecondId",
+            },
+          ],
+          "id": Any<String>,
+          "name": "fieldNamePersonForMorphRelationSecondId",
+          "objectMetadataId": Any<String>,
+          "operation": "create_field",
+        },
+      ],
+      "objectMetadata": [],
+    },
+    "message": "Validation failed for 0 object(s) and 1 field(s)",
+    "summary": {
+      "invalidFields": 1,
+      "invalidObjects": 0,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
+  },
+  "message": "Multiple validation errors occurred while creating fields",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a MORPH_RELATION field on source object itself 1`] = `
 {
   "extensions": {
@@ -533,42 +619,4 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
   "message": "Multiple validation errors occurred while creating field",
   "name": "GraphQLError",
 }
-`;
-
-exports[`failing createOne FieldMetadataService morph relation fields v2 it should fail to create a field with name than result in existing morph relation field join column 1`] = `
-[
-  {
-    "extensions": {
-      "code": "BAD_USER_INPUT",
-      "errors": {
-        "fieldMetadata": [
-          {
-            "errors": [
-              {
-                "code": "NOT_AVAILABLE",
-                "message": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by another field",
-                "userFriendlyMessage": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by another field",
-                "value": "fieldNamePersonForMorphRelationSecondId",
-              },
-            ],
-            "id": Any<String>,
-            "name": "fieldNamePersonForMorphRelationSecondId",
-            "objectMetadataId": Any<String>,
-            "operation": "create_field",
-          },
-        ],
-        "objectMetadata": [],
-      },
-      "message": "Validation failed for 0 object(s) and 1 field(s)",
-      "summary": {
-        "invalidFields": 1,
-        "invalidObjects": 0,
-        "totalErrors": 1,
-      },
-      "userFriendlyMessage": "Validation failed for 0 object(s) and 1 field(s)",
-    },
-    "message": "Multiple validation errors occurred while creating fields",
-    "name": "GraphQLError",
-  },
-]
 `;

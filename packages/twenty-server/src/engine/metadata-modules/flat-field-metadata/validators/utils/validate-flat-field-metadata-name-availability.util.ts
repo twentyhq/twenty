@@ -46,10 +46,6 @@ export const validateFlatFieldMetadataNameAvailability = ({
   const errors: FlatFieldMetadataValidationError[] = [];
   const reservedCompositeFieldsNames =
     getReservedCompositeFieldNames(flatObjectMetadata);
-
-  if (flatFieldMetadata.name === 'fieldNamePersonForMorphRelationSecondId') {
-    console.log('SALUT');
-  }
   const flatFieldMetadataName = flatFieldMetadata.name;
 
   if (
@@ -64,16 +60,7 @@ export const validateFlatFieldMetadataNameAvailability = ({
         isMorphOrRelationFlatFieldMetadata(existingFlatFieldMetadata) &&
         existingFlatFieldMetadata.flatRelationTargetFieldMetadata.settings
           .joinColumnName === flatFieldMetadataName;
-      if (
-        isMorphOrRelationFlatFieldMetadata(existingFlatFieldMetadata) &&
-        flatFieldMetadata.name === 'fieldNamePersonForMorphRelationSecondId'
-      ) {
-        console.log(
-          'salut',
-          existingFlatFieldMetadata.flatRelationTargetFieldMetadata.settings
-            .joinColumnName,
-        );
-      }
+
       return firstDegreeCollision || relationJoinColumnCollision;
     })
   ) {
