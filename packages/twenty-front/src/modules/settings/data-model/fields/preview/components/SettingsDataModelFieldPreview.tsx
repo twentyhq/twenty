@@ -70,11 +70,12 @@ export const SettingsDataModelFieldPreview = ({
 
   const fieldName = fieldMetadataItem.name;
 
+  const recordId = `${objectNameSingular}-${fieldName}-preview`;
+
   const fieldPreviewValue = useFieldPreviewValue({
     fieldMetadataItem,
+    skip: isLabelIdentifier,
   });
-
-  const recordId = `${objectNameSingular}-${fieldName}-preview`;
 
   const metadata = {
     fieldName,
