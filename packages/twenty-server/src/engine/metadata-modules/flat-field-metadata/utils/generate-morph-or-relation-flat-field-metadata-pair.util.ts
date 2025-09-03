@@ -40,6 +40,7 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
       Pick<CreateFieldInput, 'relationCreationPayload' | 'type' | 'name'>
     > & { type: MorphOrRelationFieldMetadataType };
   workspaceId: string;
+  morphId?: string | null;
 };
 export const generateMorphOrRelationFlatFieldMetadataPair = ({
   createFieldInput,
@@ -47,6 +48,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   targetFlatObjectMetadata,
   workspaceId,
   sourceFlatObjectMetadataJoinColumnName,
+  morphId = null,
 }: GenerateMorphOrRelationFlatFieldMetadataPairArgs): FlatFieldMetadata<MorphOrRelationFieldMetadataType>[] => {
   const { relationCreationPayload } = createFieldInput;
 
@@ -66,6 +68,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       workspaceId,
       fieldMetadataId: sourceRelationTargetFieldMetadataId,
     }),
+    morphId,
     objectMetadataId: sourceFlatObjectMetadata.id,
     icon: createFieldInput.icon ?? 'IconRelationOneToMany',
     type: createFieldInput.type,
