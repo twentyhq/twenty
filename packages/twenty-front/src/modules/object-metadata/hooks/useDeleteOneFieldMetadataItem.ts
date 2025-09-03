@@ -5,11 +5,12 @@ import {
   type DeleteOneFieldMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { useRecoilState } from 'recoil';
+import { isDefined } from 'twenty-shared/utils';
 import { DELETE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
 
 export const useDeleteOneFieldMetadataItem = () => {
@@ -20,13 +21,13 @@ export const useDeleteOneFieldMetadataItem = () => {
 
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const [
     recordIndexKanbanAggregateOperation,
     setRecordIndexKanbanAggregateOperation,
   ] = useRecoilState(recordIndexKanbanAggregateOperationState);
-
-  const apolloCoreClient = useApolloCoreClient();
 
   const resetRecordIndexKanbanAggregateOperation = async (
     idToDelete: DeleteOneFieldMetadataItemMutationVariables['idToDelete'],
@@ -37,9 +38,6 @@ export const useDeleteOneFieldMetadataItem = () => {
         fieldMetadataId: null,
       });
     }
-    await apolloCoreClient.refetchQueries({
-      include: ['FindManyViews'],
-    });
   };
 
   const deleteOneFieldMetadataItem = async (
@@ -54,6 +52,11 @@ export const useDeleteOneFieldMetadataItem = () => {
     await resetRecordIndexKanbanAggregateOperation(idToDelete);
 
     await refreshObjectMetadataItems();
+    if (isDefined(result.data?.deleteOneField?.object?.id)) {
+      await refreshCoreViewsByObjectMetadataId(
+        result.data.deleteOneField.object.id,
+      );
+    }
 
     return result;
   };

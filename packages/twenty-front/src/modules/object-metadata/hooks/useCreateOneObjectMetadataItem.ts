@@ -9,18 +9,14 @@ import {
 import { CREATE_ONE_OBJECT_METADATA_ITEM } from '../graphql/mutations';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
-import { useRefreshCoreViews } from '@/views/hooks/useRefreshCoreViews';
-import { useRefreshCachedViews } from '@/views/hooks/useRefreshViews';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
-import { FeatureFlagKey } from '~/generated/graphql';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useCreateOneObjectMetadataItem = () => {
-  const featureFlagMap = useFeatureFlagsMap();
-  const isCoreViewEnabled = featureFlagMap[FeatureFlagKey.IS_CORE_VIEW_ENABLED];
-  const { refreshCachedViews } = useRefreshCachedViews();
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
-  const { refreshCoreViews } = useRefreshCoreViews();
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const [mutate] = useMutation<
     CreateOneObjectMetadataItemMutation,
@@ -35,14 +31,12 @@ export const useCreateOneObjectMetadataItem = () => {
     });
 
     await refreshObjectMetadataItems();
-    await refreshCachedViews();
-    if (
-      isCoreViewEnabled &&
-      createdObjectMetadata.data?.createOneObject?.id !== undefined
-    ) {
-      await refreshCoreViews(createdObjectMetadata.data.createOneObject.id);
+
+    if (isDefined(createdObjectMetadata.data?.createOneObject?.id)) {
+      await refreshCoreViewsByObjectMetadataId(
+        createdObjectMetadata.data.createOneObject.id,
+      );
     }
-    return createdObjectMetadata;
   };
 
   return {
