@@ -1,4 +1,4 @@
-import { useApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 
 import {
   type UpdateOneFieldMetadataItemMutation,
@@ -11,7 +11,6 @@ import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefres
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 
 export const useUpdateOneFieldMetadataItem = () => {
-  const apolloClient = useApolloClient();
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
 
