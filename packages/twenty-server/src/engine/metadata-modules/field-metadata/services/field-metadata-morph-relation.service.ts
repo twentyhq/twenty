@@ -65,7 +65,7 @@ export class FieldMetadataMorphRelationService {
     }
 
     const fieldsCreated: FieldMetadataEntity[] = [];
-
+    const morphId = v4();
     for (const relation of morphRelationsCreationPayload) {
       const targetObjectMetadata =
         objectMetadataMaps.byId[relation.targetObjectMetadataId];
@@ -99,8 +99,8 @@ export class FieldMetadataMorphRelationService {
         },
       );
 
-      const createdFieldMetadataItem = await fieldMetadataRepository.save(
-        omit(relationFieldMetadataForCreate, 'id'),
+      const createdMorphFieldMetadataItemWithoutTargetField = await fieldMetadataRepository.save(
+        omit({ ...relationFieldMetadataForCreate, morphId }, 'id'),
       );
 
       const targetFieldMetadataName = computeMetadataNameFromLabel(
@@ -146,12 +146,12 @@ export class FieldMetadataMorphRelationService {
 
       const targetFieldMetadata = await fieldMetadataRepository.save({
         ...targetFieldMetadataToCreateWithRelationWithId,
-        relationTargetFieldMetadataId: createdFieldMetadataItem.id,
+        relationTargetFieldMetadataId: createdMorphFieldMetadataItemWithoutTargetField.id,
       });
 
       const createdFieldMetadataItemUpdated =
         await fieldMetadataRepository.save({
-          ...createdFieldMetadataItem,
+          ...createdMorphFieldMetadataItemWithoutTargetField,
           relationTargetFieldMetadataId: targetFieldMetadata.id,
         });
 

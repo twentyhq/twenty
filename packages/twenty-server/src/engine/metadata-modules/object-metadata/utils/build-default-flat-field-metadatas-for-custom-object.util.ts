@@ -47,6 +47,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     settings: null,
+    morphId: null,
   };
 
   const nameField: FlatFieldMetadata<FieldMetadataType.TEXT> = {
@@ -78,6 +79,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     settings: null,
+    morphId: null,
   };
 
   const createdAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
@@ -109,6 +111,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     settings: null,
+    morphId: null,
   };
 
   const updatedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
@@ -140,6 +143,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     settings: null,
+    morphId: null,
   };
 
   const deletedAtField: FlatFieldMetadata<FieldMetadataType.DATE_TIME> = {
@@ -171,6 +175,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     settings: null,
+    morphId: null,
   };
 
   const createdByField: FlatFieldMetadata<FieldMetadataType.ACTOR> = {
@@ -202,6 +207,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     settings: null,
+    morphId: null,
   };
 
   const positionField: FlatFieldMetadata<FieldMetadataType.POSITION> = {
@@ -233,6 +239,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
     relationTargetFieldMetadataId: null,
     relationTargetObjectMetadataId: null,
     settings: null,
+    morphId: null,
   };
 
   const searchVectorField: FlatFieldMetadata<FieldMetadataType.TS_VECTOR> = {
@@ -267,6 +274,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
       asExpression: getTsVectorColumnExpressionFromFields([nameField]),
       generatedType: 'STORED',
     },
+    morphId: null,
   };
 
   return {
