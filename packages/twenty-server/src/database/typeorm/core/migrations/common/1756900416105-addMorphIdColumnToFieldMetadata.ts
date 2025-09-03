@@ -3,7 +3,7 @@ import { type MigrationInterface, type QueryRunner } from 'typeorm';
 export class AddMorphIdColumnToFieldMetadata1756900416105
   implements MigrationInterface
 {
-  name = 'AddMorphIdColumnToFieldMetadata';
+  name = 'AddMorphIdColumnToFieldMetadata1756900416105';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
