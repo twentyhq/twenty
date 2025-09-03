@@ -10,6 +10,10 @@ import {
   PageLayoutTabException,
   PageLayoutTabExceptionCode,
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-tab.exception';
+import {
+  PageLayoutException,
+  PageLayoutExceptionCode,
+} from 'src/engine/core-modules/page-layout/exceptions/page-layout.exception';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutService } from 'src/engine/core-modules/page-layout/services/page-layout.service';
 
@@ -289,6 +293,15 @@ describe('PageLayoutTabService', () => {
         pageLayoutId: 'non-existent-page-layout-id',
       };
 
+      jest
+        .spyOn(pageLayoutService, 'findByIdOrThrow')
+        .mockRejectedValue(
+          new PageLayoutException(
+            'Page layout not found',
+            PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
+          ),
+        );
+
       await expect(
         pageLayoutTabService.create(pageLayoutTabData, workspaceId),
       ).rejects.toThrow(PageLayoutTabException);
@@ -324,6 +337,10 @@ describe('PageLayoutTabService', () => {
       const updateData = { title: 'Updated Tab' };
       const updatedTab = { ...mockPageLayoutTab, title: 'Updated Tab' };
 
+      jest
+        .spyOn(pageLayoutTabRepository, 'findOne')
+        .mockResolvedValue(mockPageLayoutTab);
+
       jest.spyOn(pageLayoutTabRepository, 'update').mockResolvedValue({
         affected: 1,
         generatedMaps: [],
@@ -340,7 +357,7 @@ describe('PageLayoutTabService', () => {
       );
 
       expect(pageLayoutTabRepository.update).toHaveBeenCalledWith(
-        { id, pageLayout: { workspaceId } },
+        { id },
         updateData,
       );
       expect(result).toEqual(updatedTab);
