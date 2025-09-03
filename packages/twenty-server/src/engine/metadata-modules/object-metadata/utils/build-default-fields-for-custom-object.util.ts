@@ -39,7 +39,7 @@ export const buildDefaultFieldsForCustomObject = (
     isCustom: false,
     isUIReadOnly: false,
     workspaceId,
-    defaultValue: "'Untitled'",
+    defaultValue: "''",
   },
   {
     id: v4(),
