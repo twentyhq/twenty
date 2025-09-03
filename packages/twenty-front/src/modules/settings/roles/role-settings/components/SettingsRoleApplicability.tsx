@@ -1,3 +1,4 @@
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
@@ -5,6 +6,7 @@ import { t } from '@lingui/core/macro';
 import { H2Title, IconKey, IconRobot, IconUsers } from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { FeatureFlagKey } from '~/generated/graphql';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`
   display: flex;
@@ -49,6 +51,8 @@ export const SettingsRoleApplicability = ({
 }: SettingsRoleApplicabilityProps) => {
   const theme = useTheme();
 
+  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+
   const options = [
     {
       key: 'canBeAssignedToUsers' as const,
@@ -60,11 +64,15 @@ export const SettingsRoleApplicability = ({
       label: t`Assignable to Agents`,
       Icon: IconRobot,
     },
-    {
-      key: 'canBeAssignedToApiKeys' as const,
-      label: t`Assignable to API Keys`,
-      Icon: IconKey,
-    },
+    ...(isAiEnabled
+      ? [
+          {
+            key: 'canBeAssignedToApiKeys' as const,
+            label: t`Assignable to API Keys`,
+            Icon: IconKey,
+          },
+        ]
+      : []),
   ];
   return (
     <Section>

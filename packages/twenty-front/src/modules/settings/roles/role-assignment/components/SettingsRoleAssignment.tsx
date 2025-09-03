@@ -15,6 +15,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
@@ -22,7 +23,7 @@ import {
   useGetApiKeysQuery,
   type Agent,
 } from '~/generated-metadata/graphql';
-import { type ApiKeyForRole } from '~/generated/graphql';
+import { FeatureFlagKey, type ApiKeyForRole } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '../constants/RoleAssignmentConfirmationModalId';
 import { ROLE_TARGET_CONFIG } from '../constants/RoleTargetConfig';
@@ -37,6 +38,8 @@ export const SettingsRoleAssignment = ({
   roleId,
   isCreateMode,
 }: SettingsRoleAssignmentProps) => {
+  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+
   const settingsDraftRole = useRecoilValue(
     settingsDraftRoleFamilyState(roleId),
   );
@@ -194,25 +197,28 @@ export const SettingsRoleAssignment = ({
 
   return (
     <>
-      {Object.keys(ROLE_TARGET_CONFIG).map((roleTargetType) => (
-        <RoleAssignmentSection
-          key={roleTargetType}
-          roleTargetType={roleTargetType as keyof typeof ROLE_TARGET_CONFIG}
-          roleId={roleId}
-          settingsDraftRole={settingsDraftRole}
-          currentWorkspaceMember={
-            roleTargetType === 'member'
-              ? currentWorkspaceMember || undefined
-              : undefined
-          }
-          onSelect={handleSelectEntity}
-          allWorkspaceMembersHaveThisRole={
-            roleTargetType === 'member'
-              ? allWorkspaceMembersHaveThisRole
-              : false
-          }
-        />
-      ))}
+      {Object.keys(ROLE_TARGET_CONFIG).map(
+        (roleTargetType) =>
+          (isAiEnabled || roleTargetType !== 'agent') && (
+            <RoleAssignmentSection
+              key={roleTargetType}
+              roleTargetType={roleTargetType as keyof typeof ROLE_TARGET_CONFIG}
+              roleId={roleId}
+              settingsDraftRole={settingsDraftRole}
+              currentWorkspaceMember={
+                roleTargetType === 'member'
+                  ? currentWorkspaceMember || undefined
+                  : undefined
+              }
+              onSelect={handleSelectEntity}
+              allWorkspaceMembersHaveThisRole={
+                roleTargetType === 'member'
+                  ? allWorkspaceMembersHaveThisRole
+                  : false
+              }
+            />
+          ),
+      )}
 
       {selectedRoleTarget && (
         <SettingsRoleAssignmentConfirmationModal
