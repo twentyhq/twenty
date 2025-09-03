@@ -49,13 +49,11 @@ export class WorkflowCreateOnePostQueryHook
       workspaceId: workspace.id,
     });
 
-    const workflowVersionToCreate = workflowVersionRepository.create({
+    await workflowVersionRepository.insert({
       workflowId: workflow.id,
       status: WorkflowVersionStatus.DRAFT,
       name: 'v1',
       position,
     });
-
-    await workflowVersionRepository.save(workflowVersionToCreate);
   }
 }

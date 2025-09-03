@@ -115,7 +115,7 @@ export class WorkflowRunWorkspaceService {
       ? parseInt(workflowRunCountMatch[1], 10)
       : 0;
 
-    const workflowRun = workflowRunRepository.create({
+    const workflowRun = {
       id: workflowRunId ?? v4(),
       name: `#${workflowRunCount + 1} - ${workflow.name}`,
       workflowVersionId,
@@ -124,9 +124,8 @@ export class WorkflowRunWorkspaceService {
       status,
       position,
       state: initState,
-      enqueuedAt:
-        status === WorkflowRunStatus.ENQUEUED ? new Date().toISOString() : null,
-    });
+      enqueuedAt: status === WorkflowRunStatus.ENQUEUED ? new Date() : null,
+    };
 
     await workflowRunRepository.insert(workflowRun);
 
