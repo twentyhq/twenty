@@ -1834,6 +1834,11 @@ msgstr "Saknas obligatoriska fält: minst en unik begränsning måste vara fulls
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "Morfrelationen skapelse-payloads måste ha samma relationstyp"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr ""
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"

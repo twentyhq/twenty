@@ -1834,6 +1834,11 @@ msgstr "חסרים שדות דרושים: יש למלא לפחות אילוץ י
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "מטען יצירת קשרים מורפיים חייב להיות בעל אותו סוג קשר"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr ""
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
