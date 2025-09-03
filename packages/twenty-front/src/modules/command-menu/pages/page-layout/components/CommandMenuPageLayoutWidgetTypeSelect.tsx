@@ -56,20 +56,24 @@ export const CommandMenuPageLayoutWidgetTypeSelect = () => {
   );
 
   const handleSelectWidget = (widgetType: WidgetType) => {
-    if (widgetType === WidgetType.GRAPH) {
-      navigateCommandMenu({
-        page: CommandMenuPages.PageLayoutGraphTypeSelect,
-        pageTitle: 'Select Graph Type',
-        pageIcon: IconChartPie,
-      });
-    } else if (widgetType === WidgetType.IFRAME) {
-      navigateCommandMenu({
-        page: CommandMenuPages.PageLayoutIframeConfig,
-        pageTitle: 'Configure iFrame',
-        pageIcon: IconFrame,
-      });
-    } else {
-      setPageLayoutDraggedArea(null);
+    switch (widgetType) {
+      case WidgetType.GRAPH:
+        navigateCommandMenu({
+          page: CommandMenuPages.PageLayoutGraphTypeSelect,
+          pageTitle: 'Select Graph Type',
+          pageIcon: IconChartPie,
+        });
+        break;
+      case WidgetType.IFRAME:
+        navigateCommandMenu({
+          page: CommandMenuPages.PageLayoutIframeConfig,
+          pageTitle: 'Configure iFrame',
+          pageIcon: IconFrame,
+        });
+        break;
+      default:
+        setPageLayoutDraggedArea(null);
+        break;
     }
   };
 

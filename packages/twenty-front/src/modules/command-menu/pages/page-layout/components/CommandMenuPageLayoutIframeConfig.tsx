@@ -1,13 +1,13 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { usePageLayoutIframeWidgetCreate } from '@/settings/page-layout/hooks/usePageLayoutIframeWidgetCreate';
+import { useCreatePageLayoutIframeWidget } from '@/settings/page-layout/hooks/useCreatePageLayoutIframeWidget';
 import { usePageLayoutWidgetUpdate } from '@/settings/page-layout/hooks/usePageLayoutWidgetUpdate';
 import { pageLayoutEditingWidgetIdState } from '@/settings/page-layout/states/pageLayoutEditingWidgetIdState';
 import { pageLayoutWidgetsState } from '@/settings/page-layout/states/pageLayoutWidgetsState';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
+import { isValidUrl } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
@@ -32,7 +32,7 @@ const StyledButtonContainer = styled.div`
 
 export const CommandMenuPageLayoutIframeConfig = () => {
   const { closeCommandMenu } = useCommandMenu();
-  const { handleCreateIframeWidget } = usePageLayoutIframeWidgetCreate();
+  const { createPageLayoutIframeWidget } = useCreatePageLayoutIframeWidget();
   const { handleUpdateWidget } = usePageLayoutWidgetUpdate();
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
     useRecoilState(pageLayoutEditingWidgetIdState);
@@ -44,38 +44,24 @@ export const CommandMenuPageLayoutIframeConfig = () => {
   const isEditMode = !!editingWidget;
 
   const [title, setTitle] = useState(editingWidget?.title || '');
-  const [url, setUrl] = useState(
-    editingWidget?.configuration?.url || editingWidget?.data?.url || '',
-  );
+  const [url, setUrl] = useState(editingWidget?.configuration?.url || '');
   const [urlError, setUrlError] = useState('');
 
   const validateUrl = (urlString: string): boolean => {
-    if (!urlString) {
-      setUrlError('URL is required');
-      return false;
-    }
+    const trimmedUrl = urlString.trim();
 
-    try {
-      const urlObj = new URL(urlString);
-      if (!['http:', 'https:'].includes(urlObj.protocol)) {
-        setUrlError('URL must start with http:// or https://');
-        return false;
-      }
-      setUrlError('');
-      return true;
-    } catch {
+    if (!isValidUrl(trimmedUrl)) {
       setUrlError('Please enter a valid URL');
       return false;
     }
+
+    setUrlError('');
+    return true;
   };
 
   const handleUrlChange = (value: string) => {
     setUrl(value);
-    if (isDefined(value)) {
-      validateUrl(value);
-    } else {
-      setUrlError('');
-    }
+    validateUrl(value);
   };
 
   const handleSubmit = () => {
@@ -94,14 +80,10 @@ export const CommandMenuPageLayoutIframeConfig = () => {
           ...editingWidget?.configuration,
           url: url.trim(),
         },
-        data: {
-          ...editingWidget?.data,
-          url: url.trim(),
-        },
       });
       setPageLayoutEditingWidgetId(null);
     } else {
-      handleCreateIframeWidget(title.trim(), url.trim());
+      createPageLayoutIframeWidget(title.trim(), url.trim());
     }
 
     closeCommandMenu();

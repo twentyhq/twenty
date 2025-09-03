@@ -112,9 +112,9 @@ export const IframeWidget = ({
         title={title}
         onLoad={handleIframeLoad}
         onError={handleIframeError}
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups" // open question - I am sure some of these props should be configurable and should have user control -- should we keep it simple now and add more complexity later?
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" // same here
-        allowFullScreen //same here
+        sandbox="allow-scripts allow-forms allow-popups"
+        allow="encrypted-media"
+        allowFullScreen
       />
     </StyledContainer>
   );

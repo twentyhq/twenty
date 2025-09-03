@@ -23,7 +23,7 @@ export type SavedPageLayout = {
       rowSpan: number;
       columnSpan: number;
     };
-    configuration?: Record<string, unknown>;
+    configuration?: Record<string, string>;
     data?: any; // TODO: Remove when backend connected - data will be fetched dynamically
   }>;
 };

@@ -11,7 +11,7 @@ export const renderWidget = (widget: Widget): ReactNode => {
     case WidgetType.IFRAME:
       return (
         <IframeWidget
-          url={widget.configuration?.url || widget.data?.url || ''}
+          url={widget.configuration?.url ?? ''}
           title={widget.title}
         />
       );

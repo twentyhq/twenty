@@ -7,8 +7,8 @@ import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState
 import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
 import { getDefaultWidgetPosition } from '../utils/getDefaultWidgetPosition';
 
-export const usePageLayoutIframeWidgetCreate = () => {
-  const handleCreateIframeWidget = useRecoilCallback(
+export const useCreatePageLayoutIframeWidget = () => {
+  const createPageLayoutIframeWidget = useRecoilCallback(
     ({ snapshot, set }) =>
       (title: string, url: string) => {
         const pageLayoutWidgets = snapshot
@@ -26,9 +26,6 @@ export const usePageLayoutIframeWidgetCreate = () => {
           type: WidgetType.IFRAME,
           title,
           configuration: {
-            url,
-          },
-          data: {
             url,
           },
         };
@@ -79,5 +76,5 @@ export const usePageLayoutIframeWidgetCreate = () => {
     [],
   );
 
-  return { handleCreateIframeWidget };
+  return { createPageLayoutIframeWidget };
 };
