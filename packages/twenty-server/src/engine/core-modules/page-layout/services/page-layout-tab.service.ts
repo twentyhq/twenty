@@ -124,6 +124,7 @@ export class PageLayoutTabService {
       where: {
         id,
         pageLayout: { workspaceId },
+        deletedAt: IsNull(),
       },
       relations: ['pageLayout'],
     });

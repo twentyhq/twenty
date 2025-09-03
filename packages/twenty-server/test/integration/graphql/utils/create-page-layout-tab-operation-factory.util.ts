@@ -5,13 +5,13 @@ import { type CreatePageLayoutTabInput } from 'src/engine/core-modules/page-layo
 
 type CreatePageLayoutTabOperationFactoryParams = {
   gqlFields?: string;
-  data?: CreatePageLayoutTabInput;
+  data: CreatePageLayoutTabInput;
 };
 
 export const createPageLayoutTabOperationFactory = ({
   gqlFields = PAGE_LAYOUT_TAB_GQL_FIELDS,
-  data = {} as CreatePageLayoutTabInput,
-}: CreatePageLayoutTabOperationFactoryParams = {}) => ({
+  data,
+}: CreatePageLayoutTabOperationFactoryParams) => ({
   query: gql`
     mutation CreatePageLayoutTab($input: CreatePageLayoutTabInput!) {
       createPageLayoutTab(input: $input) {

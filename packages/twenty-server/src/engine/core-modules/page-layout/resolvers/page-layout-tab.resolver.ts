@@ -29,7 +29,7 @@ export class PageLayoutTabResolver {
     );
   }
 
-  @Query(() => PageLayoutTabDTO, { nullable: true })
+  @Query(() => PageLayoutTabDTO)
   async getPageLayoutTab(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: Workspace,
