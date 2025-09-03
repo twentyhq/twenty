@@ -6,6 +6,8 @@ import Cloudflare from 'cloudflare';
 import { type CustomHostnameCreateParams } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { t } from '@lingui/core/macro';
+import { RedirectRule } from 'cloudflare/resources/rulesets/rules';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
@@ -65,11 +67,117 @@ export class CustomDomainService {
       );
     }
 
-    return await this.cloudflareClient.customHostnames.create({
+    return this.cloudflareClient.customHostnames.create({
       zone_id: this.twentyConfigService.get('CLOUDFLARE_ZONE_ID'),
       hostname: customDomain,
       ssl: this.sslParams,
     });
+  }
+
+  private async getOrCreateRuleset(zoneId: string) {
+    domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
+
+    const rulesetPhase = 'http_request_dynamic_redirect';
+
+    const phaseEntry = await this.cloudflareClient.rulesets.phases.get(
+      rulesetPhase,
+      {
+        zone_id: zoneId,
+      },
+    );
+
+    try {
+      return await this.cloudflareClient.rulesets.get(phaseEntry.id, {
+        zone_id: zoneId,
+      });
+    } catch {
+      return this.cloudflareClient.rulesets.create({
+        zone_id: zoneId,
+        phase: rulesetPhase,
+        kind: 'root',
+        name: 'Public hostnames redirect',
+        description: 'Redirect public hostnames to base domain with /s prefix',
+        rules: [],
+      });
+    }
+  }
+
+  private getRedirectRuleId(publicDomain: string) {
+    return `public-domain-redirect-rule-${publicDomain}`;
+  }
+
+  async registerRedirectRule(publicDomain: string) {
+    domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
+
+    if (!isDefined(await this.getCustomDomainDetails(publicDomain))) {
+      throw new DomainManagerException(
+        'Hostname should be registered',
+        DomainManagerExceptionCode.HOSTNAME_NOT_REGISTERED,
+        { userFriendlyMessage: 'Hostname should be registered' },
+      );
+    }
+
+    if (publicDomain !== publicDomain.trim().toLowerCase()) {
+      throw new DomainManagerException(
+        'publicDomain should be trimmed and lowercase',
+        DomainManagerExceptionCode.INVALID_INPUT_DATA,
+        {
+          userFriendlyMessage: t`publicDomain should be trimmed and lowercase`,
+        },
+      );
+    }
+
+    const zoneId = this.twentyConfigService.get('CLOUDFLARE_ZONE_ID');
+
+    const ruleset = await this.getOrCreateRuleset(zoneId);
+
+    const baseHost = this.domainManagerService.getBaseUrl().hostname;
+
+    const expression = [
+      `(http.host eq "${publicDomain}")`,
+      `not starts_with(http.request.uri.path, "/.well-known/")`,
+      `not starts_with(http.request.uri.path, "/cdn-cgi/")`,
+    ].join(' and ');
+
+    const targetExpression =
+      `concat("https://${baseHost}/s", ` +
+      `http.request.uri.path, ` +
+      `if(len(http.request.uri.query) > 0, concat("?", http.request.uri.query), ""))`;
+
+    const payload: RedirectRule = {
+      action: 'redirect',
+      id: this.getRedirectRuleId(publicDomain),
+      enabled: true,
+      expression,
+      description: `PublicDomain → base /s (${publicDomain})`,
+      action_parameters: {
+        from_value: {
+          status_code: 301,
+          target_url: { expression: targetExpression },
+        },
+      },
+      version: '1',
+      last_updated: new Date().toISOString(),
+    };
+
+    await this.cloudflareClient.rulesets.rules.create(ruleset.id, payload);
+  }
+
+  async deleteRedirectRuleSilently(publicDomain: string): Promise<void> {
+    domainManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
+
+    try {
+      const zoneId = this.twentyConfigService.get('CLOUDFLARE_ZONE_ID');
+
+      const ruleset = await this.getOrCreateRuleset(zoneId);
+
+      await this.cloudflareClient.rulesets.rules.delete(
+        ruleset.id,
+        this.getRedirectRuleId(publicDomain),
+      );
+    } catch {
+      return;
+    }
   }
 
   async getCustomDomainDetails(

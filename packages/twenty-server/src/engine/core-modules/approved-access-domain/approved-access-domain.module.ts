@@ -6,11 +6,12 @@ import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/doma
 import { ApprovedAccessDomainResolver } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.resolver';
 import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-access-domain/services/approved-access-domain.service';
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 
 @Module({
   imports: [
     DomainManagerModule,
-    NestjsQueryTypeOrmModule.forFeature([ApprovedAccessDomain]),
+    NestjsQueryTypeOrmModule.forFeature([ApprovedAccessDomain, PublicDomain]),
   ],
   exports: [ApprovedAccessDomainService],
   providers: [ApprovedAccessDomainService, ApprovedAccessDomainResolver],
