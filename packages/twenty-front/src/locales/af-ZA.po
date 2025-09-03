@@ -1210,7 +1210,7 @@ msgid "Click on the checkmark to apply your changes."
 msgstr "Klik op die regmerkie om jou veranderinge toe te pas."
 
 #. js-lingui-id: d0rtA5
-#: src/modules/dashboards/graphs/components/GraphWidgetTooltip.tsx
+#: src/modules/dashboards/widgets/graph/components/GraphWidgetTooltip.tsx
 msgid "Click to see data"
 msgstr "Klik om data te sien"
 
