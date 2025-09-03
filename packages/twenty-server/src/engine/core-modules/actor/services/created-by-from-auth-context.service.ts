@@ -45,12 +45,24 @@ export class CreatedByFromAuthContextService {
         },
       );
 
+    this.logger.log(
+      `Injecting createdBy from auth context for object ${objectMetadataNameSingular} and workspace ${workspace.id}`,
+    );
+
     const objectMetadata = getObjectMetadataMapItemByNameSingular(
       objectMetadataMaps,
       objectMetadataNameSingular,
     );
 
+    this.logger.log(
+      `Object metadata found with fields: ${Object.keys(objectMetadata?.fieldIdByName ?? {})}`,
+    );
+
     if (!isDefined(objectMetadata?.fieldIdByName['createdBy'])) {
+      this.logger.log(
+        `CreatedBy field not found in object metadata, skipping injection`,
+      );
+
       return records;
     }
 
