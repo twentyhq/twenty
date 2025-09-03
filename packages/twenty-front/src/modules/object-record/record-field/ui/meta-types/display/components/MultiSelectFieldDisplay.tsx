@@ -17,8 +17,9 @@ export const MultiSelectFieldDisplay = () => {
 
   if (!selectedOptions) return null;
 
-  return isFocused ? (
-    <ExpandableList isChipCountDisplayed={isFocused}>
+  // When focused, show all options (no chip count). When not focused, show chip count for overflow.
+  return (
+    <ExpandableList isChipCountDisplayed={!isFocused}>
       {selectedOptions.map((selectedOption, index) => (
         <Tag
           key={index}
@@ -27,10 +28,5 @@ export const MultiSelectFieldDisplay = () => {
         />
       ))}
     </ExpandableList>
-  ) : (
-    <MultiSelectDisplay
-      values={fieldValue}
-      options={fieldDefinition.metadata.options}
-    />
   );
 };
