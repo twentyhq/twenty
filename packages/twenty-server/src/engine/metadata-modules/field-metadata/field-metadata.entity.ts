@@ -18,7 +18,7 @@ import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { type FieldStandardOverridesDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-standard-overrides.dto';
-import { AssignTypeIfIsRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-relation-field-metadata-type.type';
+import { AssignTypeIfIsMorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-type-if-is-morph-or-relation-field-metadata-type.type';
 import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
@@ -122,7 +122,7 @@ export class FieldMetadataEntity<
   isLabelSyncedWithName: boolean;
 
   @Column({ nullable: true, type: 'uuid' })
-  relationTargetFieldMetadataId: AssignTypeIfIsRelationFieldMetadataType<
+  relationTargetFieldMetadataId: AssignTypeIfIsMorphOrRelationFieldMetadataType<
     string,
     T
   >;
@@ -134,13 +134,13 @@ export class FieldMetadataEntity<
     { nullable: true },
   )
   @JoinColumn({ name: 'relationTargetFieldMetadataId' })
-  relationTargetFieldMetadata: AssignTypeIfIsRelationFieldMetadataType<
+  relationTargetFieldMetadata: AssignTypeIfIsMorphOrRelationFieldMetadataType<
     Relation<FieldMetadataEntity>,
     T
   >;
 
   @Column({ nullable: true, type: 'uuid' })
-  relationTargetObjectMetadataId: AssignTypeIfIsRelationFieldMetadataType<
+  relationTargetObjectMetadataId: AssignTypeIfIsMorphOrRelationFieldMetadataType<
     string,
     T
   >;
@@ -152,10 +152,13 @@ export class FieldMetadataEntity<
     { onDelete: 'CASCADE', nullable: true },
   )
   @JoinColumn({ name: 'relationTargetObjectMetadataId' })
-  relationTargetObjectMetadata: AssignTypeIfIsRelationFieldMetadataType<
+  relationTargetObjectMetadata: AssignTypeIfIsMorphOrRelationFieldMetadataType<
     Relation<ObjectMetadataEntity>,
     T
   >;
+
+  // @Column({ nullable: true, type: 'uuid' })
+  // morphId: AssignTypeIfIsMorphOrRelationFieldMetadataType<string, T>;
 
   @OneToMany(
     () => IndexFieldMetadataEntity,
