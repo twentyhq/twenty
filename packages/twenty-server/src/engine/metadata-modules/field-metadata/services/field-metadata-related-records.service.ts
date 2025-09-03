@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { settings } from 'src/engine/constants/settings';
 import { ViewGroupEntity } from 'src/engine/core-modules/view/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/core-modules/view/entities/view.entity';
+import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
 import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
 import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
@@ -316,37 +317,42 @@ export class FieldMetadataRelatedRecordsService {
       return;
     }
 
-    for (const view of views) {
-      for (const createdFieldMetadata of createdFieldMetadatas) {
-        const isVisible =
-          view.viewFields.length < settings.maxVisibleViewFields;
+    const view = views.find((view) => view.key === ViewKey.INDEX);
 
-        const createdFieldIsAlreadyInView = view.viewFields.some(
-          (existingViewField) =>
-            existingViewField.fieldMetadataId === createdFieldMetadata.id,
-        );
+    if (!view) {
+      return;
+    }
 
-        if (!createdFieldIsAlreadyInView) {
-          const lastPosition = view.viewFields
-            .map((viewField) => viewField.position)
-            .reduce((acc, position) => {
-              if (position > acc) {
-                return position;
-              }
+    for (const createdFieldMetadata of createdFieldMetadatas) {
+      const isVisible = view.viewFields.length < settings.maxVisibleViewFields;
 
-              return acc;
-            }, -1);
+      const createdFieldIsAlreadyInView = view.viewFields.some(
+        (existingViewField) =>
+          existingViewField.fieldMetadataId === createdFieldMetadata.id,
+      );
 
-          await this.viewFieldService.create({
-            fieldMetadataId: createdFieldMetadata.id,
-            position: lastPosition + 1,
-            isVisible,
-            size: 180,
-            viewId: view.id,
-            workspaceId: createdFieldMetadata.workspaceId,
-          });
-        }
+      if (createdFieldIsAlreadyInView) {
+        continue;
       }
+
+      const lastPosition = view.viewFields
+        .map((viewField) => viewField.position)
+        .reduce((acc, position) => {
+          if (position > acc) {
+            return position;
+          }
+
+          return acc;
+        }, -1);
+
+      await this.viewFieldService.create({
+        fieldMetadataId: createdFieldMetadata.id,
+        position: lastPosition + 1,
+        isVisible,
+        size: 180,
+        viewId: view.id,
+        workspaceId: createdFieldMetadata.workspaceId,
+      });
     }
   }
 }
