@@ -1,6 +1,7 @@
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
@@ -10,7 +11,6 @@ import {
 } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -20,7 +20,76 @@ import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadat
 import { type RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
-describe('createOne FieldMetadataService morph relation fields', () => {
+type EachTestingContextArray = EachTestingContext<
+  (args: {
+    createdObjectMetadataPersonId: string;
+    createdObjectMetadataOpportunityId: string;
+    createdObjectMetadataCompanyId: string;
+  }) => Omit<
+    CreateFieldInput,
+    'morphRelationsCreationPayload' | 'workspaceId'
+  > &
+    Required<Pick<CreateFieldInput, 'morphRelationsCreationPayload'>>
+>[];
+
+const successfulTestCases: EachTestingContextArray = [
+  {
+    title: 'should create a MORPH_RELATION field type MANY_TO_ONE',
+    context: ({
+      createdObjectMetadataCompanyId,
+      createdObjectMetadataOpportunityId,
+      createdObjectMetadataPersonId,
+    }) => ({
+      label: 'field label',
+      name: 'fieldName',
+      objectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelationsCreationPayload: [
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'toto',
+          targetObjectMetadataId: createdObjectMetadataOpportunityId,
+          type: RelationType.MANY_TO_ONE,
+        },
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'tata',
+          targetObjectMetadataId: createdObjectMetadataPersonId,
+          type: RelationType.MANY_TO_ONE,
+        },
+      ],
+    }),
+  },
+  {
+    title: 'should create a MORPH_RELATION field type ONE_TO_MANY',
+    context: ({
+      createdObjectMetadataCompanyId,
+      createdObjectMetadataOpportunityId,
+      createdObjectMetadataPersonId,
+    }) => ({
+      label: 'field label',
+      name: 'fieldName',
+      objectMetadataId: createdObjectMetadataCompanyId,
+      type: FieldMetadataType.MORPH_RELATION,
+      morphRelationsCreationPayload: [
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'toto',
+          targetObjectMetadataId: createdObjectMetadataOpportunityId,
+          type: RelationType.ONE_TO_MANY,
+        },
+        {
+          targetFieldIcon: 'Icon123',
+          targetFieldLabel: 'tata',
+          targetObjectMetadataId: createdObjectMetadataPersonId,
+          type: RelationType.ONE_TO_MANY,
+        },
+      ],
+    }),
+  },
+];
+
+describe('successful createOne FieldMetadataService morph relation fields v2', () => {
   let createdObjectMetadataPersonId: string;
   let createdObjectMetadataOpportunityId: string;
   let createdObjectMetadataCompanyId: string;
@@ -87,43 +156,34 @@ describe('createOne FieldMetadataService morph relation fields', () => {
   });
 
   afterAll(async () => {
-    await Promise.all(
-      [
-        createdObjectMetadataPersonId,
-        createdObjectMetadataOpportunityId,
-        createdObjectMetadataCompanyId,
-      ].map(
-        async (objectMetadataId) =>
-          await updateOneObjectMetadata({
-            expectToFail: false,
-            input: {
-              idToUpdate: objectMetadataId,
-              updatePayload: { isActive: false },
-            },
-          }),
-      ),
-    );
+    const createdObjectMetadataIds = [
+      createdObjectMetadataPersonId,
+      createdObjectMetadataOpportunityId,
+      createdObjectMetadataCompanyId,
+    ];
 
-    await Promise.all(
-      [
-        createdObjectMetadataPersonId,
-        createdObjectMetadataOpportunityId,
-        createdObjectMetadataCompanyId,
-      ].map(
-        async (objectMetadataId) =>
-          await deleteOneObjectMetadata({
-            expectToFail: false,
-            input: { idToDelete: objectMetadataId },
-          }),
-      ),
-    );
-
-    await updateFeatureFlag({
-      expectToFail: false,
-      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      value: false,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
+    try {
+      for (const objectMetadataId of createdObjectMetadataIds) {
+        await updateOneObjectMetadata({
+          expectToFail: false,
+          input: {
+            idToUpdate: objectMetadataId,
+            updatePayload: { isActive: false },
+          },
+        });
+        await deleteOneObjectMetadata({
+          expectToFail: false,
+          input: { idToDelete: objectMetadataId },
+        });
+      }
+    } finally {
+      await updateFeatureFlag({
+        expectToFail: false,
+        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        value: false,
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
+    }
   });
 
   afterEach(async () => {
@@ -151,76 +211,7 @@ describe('createOne FieldMetadataService morph relation fields', () => {
     createdFieldMetadataId = undefined;
   });
 
-  type EachTestingContextArray = EachTestingContext<
-    (args: {
-      createdObjectMetadataPersonId: string;
-      createdObjectMetadataOpportunityId: string;
-      createdObjectMetadataCompanyId: string;
-    }) => Omit<
-      CreateFieldInput,
-      'morphRelationsCreationPayload' | 'workspaceId'
-    > &
-      Required<Pick<CreateFieldInput, 'morphRelationsCreationPayload'>>
-  >[];
-
-  const eachTestingContextArray: EachTestingContextArray = [
-    {
-      title: 'should create a MORPH_RELATION field type MANY_TO_ONE',
-      context: ({
-        createdObjectMetadataCompanyId,
-        createdObjectMetadataOpportunityId,
-        createdObjectMetadataPersonId,
-      }) => ({
-        label: 'field label',
-        name: 'fieldName',
-        objectMetadataId: createdObjectMetadataCompanyId,
-        type: FieldMetadataType.MORPH_RELATION,
-        morphRelationsCreationPayload: [
-          {
-            targetFieldIcon: 'Icon123',
-            targetFieldLabel: 'toto',
-            targetObjectMetadataId: createdObjectMetadataOpportunityId,
-            type: RelationType.MANY_TO_ONE,
-          },
-          {
-            targetFieldIcon: 'Icon123',
-            targetFieldLabel: 'tata',
-            targetObjectMetadataId: createdObjectMetadataPersonId,
-            type: RelationType.MANY_TO_ONE,
-          },
-        ],
-      }),
-    },
-    {
-      title: 'should create a MORPH_RELATION field type ONE_TO_MANY',
-      context: ({
-        createdObjectMetadataCompanyId,
-        createdObjectMetadataOpportunityId,
-        createdObjectMetadataPersonId,
-      }) => ({
-        label: 'field label',
-        name: 'fieldName',
-        objectMetadataId: createdObjectMetadataCompanyId,
-        type: FieldMetadataType.MORPH_RELATION,
-        morphRelationsCreationPayload: [
-          {
-            targetFieldIcon: 'Icon123',
-            targetFieldLabel: 'toto',
-            targetObjectMetadataId: createdObjectMetadataOpportunityId,
-            type: RelationType.ONE_TO_MANY,
-          },
-          {
-            targetFieldIcon: 'Icon123',
-            targetFieldLabel: 'tata',
-            targetObjectMetadataId: createdObjectMetadataPersonId,
-            type: RelationType.ONE_TO_MANY,
-          },
-        ],
-      }),
-    },
-  ];
-
-  it.each(eachTestingContextFilter(eachTestingContextArray))(
+  it.each(eachTestingContextFilter(successfulTestCases))(
     '$title',
     async ({ context }) => {
       const contextPayload = context({

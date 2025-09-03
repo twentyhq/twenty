@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -7,9 +8,9 @@ import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-me
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 
 const getReservedCompositeFieldNames = (
   flatObjectMetadata: FlatObjectMetadata,
@@ -45,17 +46,23 @@ export const validateFlatFieldMetadataNameAvailability = ({
   const errors: FlatFieldMetadataValidationError[] = [];
   const reservedCompositeFieldsNames =
     getReservedCompositeFieldNames(flatObjectMetadata);
-
   const flatFieldMetadataName = flatFieldMetadata.name;
 
   if (
-    !isMorphOrRelationFlatFieldMetadata(flatFieldMetadata) &&
-    flatObjectMetadata.flatFieldMetadatas.some(
-      (field) =>
-        field.name === flatFieldMetadataName ||
-        (isMorphOrRelationFieldMetadataType(field.type) &&
-          `${field.name}Id` === flatFieldMetadataName),
-    )
+    !isFlatFieldMetadataOfType(
+      flatFieldMetadata,
+      FieldMetadataType.MORPH_RELATION,
+    ) &&
+    flatObjectMetadata.flatFieldMetadatas.some((existingFlatFieldMetadata) => {
+      const firstDegreeCollision =
+        existingFlatFieldMetadata.name === flatFieldMetadataName;
+      const relationJoinColumnCollision =
+        isMorphOrRelationFlatFieldMetadata(existingFlatFieldMetadata) &&
+        existingFlatFieldMetadata.flatRelationTargetFieldMetadata.settings
+          .joinColumnName === flatFieldMetadataName;
+
+      return firstDegreeCollision || relationJoinColumnCollision;
+    })
   ) {
     errors.push({
       code: FieldMetadataExceptionCode.NOT_AVAILABLE,
