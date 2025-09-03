@@ -33,7 +33,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
           .getValue();
 
         const objectMetadataItem = objectMetadataItems.find(
-          (o) => o.id === objectMetadataId,
+          (objectMetadataItem) => objectMetadataItem.id === objectMetadataId,
         );
 
         if (!isDefined(objectMetadataItem)) {
@@ -63,7 +63,8 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
 
         for (const coreView of result.data.getCoreViews) {
           const existingView = coreViewsForObjectMetadataId.find(
-            (v) => v.id === coreView.id,
+            (coreViewForObjectMetadata) =>
+              coreViewForObjectMetadata.id === coreView.id,
           );
 
           if (!isDefined(existingView)) {
@@ -81,7 +82,7 @@ export const useRefreshCoreViewsByObjectMetadataId = () => {
               }),
               view.viewFields
                 .filter(isDefined)
-                .map((v) => mapViewFieldToRecordField(v)),
+                .map((viewField) => mapViewFieldToRecordField(viewField)),
             );
           }
 

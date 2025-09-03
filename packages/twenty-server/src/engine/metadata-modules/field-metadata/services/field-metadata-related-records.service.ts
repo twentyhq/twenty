@@ -9,7 +9,6 @@ import { ViewKey } from 'src/engine/core-modules/view/enums/view-key.enum';
 import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
 import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
 import { ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
-import { ViewSortService } from 'src/engine/core-modules/view/services/view-sort.service';
 import { ViewService } from 'src/engine/core-modules/view/services/view.service';
 import {
   type FieldMetadataComplexOption,
@@ -38,7 +37,6 @@ export class FieldMetadataRelatedRecordsService {
   constructor(
     private readonly viewService: ViewService,
     private readonly viewFieldService: ViewFieldService,
-    private readonly viewSortService: ViewSortService,
     private readonly viewFilterService: ViewFilterService,
     private readonly viewGroupService: ViewGroupService,
   ) {}
@@ -319,7 +317,7 @@ export class FieldMetadataRelatedRecordsService {
 
     const view = views.find((view) => view.key === ViewKey.INDEX);
 
-    if (!view) {
+    if (!isDefined(view)) {
       return;
     }
 
