@@ -5,9 +5,11 @@ import { useUpdateView } from '@/views/hooks/useUpdateView';
 import { renderHook } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
 import { useUpdateViewAggregate } from '../useUpdateViewAggregate';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 
 jest.mock('@/ui/utilities/state/component-state/hooks/useRecoilComponentValue');
 jest.mock('@/views/hooks/useUpdateView');
+jest.mock('@/views/hooks/useRefreshCoreViewsByObjectMetadataId');
 jest.mock('recoil');
 
 describe('useUpdateViewAggregate', () => {
@@ -24,6 +26,9 @@ describe('useUpdateViewAggregate', () => {
     (useSetRecoilState as jest.Mock).mockReturnValue(
       mockSetRecordIndexKanbanAggregateOperationState,
     );
+    (useRefreshCoreViewsByObjectMetadataId as jest.Mock).mockReturnValue({
+      refreshCoreViewsByObjectMetadataId: jest.fn(),
+    });
   });
 
   describe('Aggregate operations on dates', () => {
@@ -33,6 +38,7 @@ describe('useUpdateViewAggregate', () => {
       result.current.updateViewAggregate({
         kanbanAggregateOperationFieldMetadataId: 'test-field-id',
         kanbanAggregateOperation: DateAggregateOperations.EARLIEST,
+        objectMetadataId: 'test-object-metadata-id',
       });
 
       // updateView is called with 'EARLIEST' converted to 'MIN'
