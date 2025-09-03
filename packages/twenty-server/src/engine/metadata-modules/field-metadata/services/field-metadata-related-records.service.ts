@@ -86,15 +86,15 @@ export class FieldMetadataRelatedRecordsService {
       }
       const maxPosition = this.getMaxPosition(view.viewGroups);
 
-      created.map((option, index) =>
+      for (const [index, option] of created.entries()) {
         this.viewGroupService.create({
           fieldMetadataId: newFieldMetadata.id,
           fieldValue: option.value,
           position: maxPosition + index,
           isVisible: true,
           viewId: view.id,
-        }),
-      );
+        });
+      }
 
       for (const { old: oldOption, new: newOption } of updated) {
         const existingViewGroup = view.viewGroups.find(
