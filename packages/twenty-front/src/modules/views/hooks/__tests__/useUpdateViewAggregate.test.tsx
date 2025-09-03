@@ -33,6 +33,7 @@ describe('useUpdateViewAggregate', () => {
       result.current.updateViewAggregate({
         kanbanAggregateOperationFieldMetadataId: 'test-field-id',
         kanbanAggregateOperation: DateAggregateOperations.EARLIEST,
+        objectMetadataId: 'test-object-metadata-id',
       });
 
       // updateView is called with 'EARLIEST' converted to 'MIN'
