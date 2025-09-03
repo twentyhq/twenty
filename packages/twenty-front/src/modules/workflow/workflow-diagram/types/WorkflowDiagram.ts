@@ -65,9 +65,19 @@ export type WorkflowDiagramEmptyTriggerNodeData = {
   };
 };
 
+export type WorkflowDiagramIteratorEmptyActionNodeData = {
+  nodeType: 'iterator-empty-action';
+  parentIteratorStepId: string;
+  position: {
+    x: number;
+    y: number;
+  };
+};
+
 export type WorkflowDiagramNodeData =
   | WorkflowDiagramStepNodeData
-  | WorkflowDiagramEmptyTriggerNodeData;
+  | WorkflowDiagramEmptyTriggerNodeData
+  | WorkflowDiagramIteratorEmptyActionNodeData;
 
 export type WorkflowRunDiagramNodeData = Exclude<
   WorkflowDiagramStepNodeData,
@@ -92,7 +102,10 @@ export type WorkflowDiagramEdgeData =
   | WorkflowDiagramFilterEdgeData
   | WorkflowDiagramDefaultEdgeData;
 
-export type WorkflowDiagramNodeType = 'default' | 'empty-trigger';
+export type WorkflowDiagramNodeType =
+  | 'default'
+  | 'empty-trigger'
+  | 'iterator-empty-action';
 
 export type WorkflowDiagramEdgeType =
   | 'blank'
@@ -103,4 +116,6 @@ export type WorkflowDiagramEdgeType =
   | 'filter--readonly'
   | 'filter--run'
   | 'iterator-completed--empty-filter--editable'
-  | 'iterator-completed--filter--editable';
+  | 'iterator-completed--filter--editable'
+  | 'iterator-loop--empty-filter--editable'
+  | 'iterator-loop--filter--editable';

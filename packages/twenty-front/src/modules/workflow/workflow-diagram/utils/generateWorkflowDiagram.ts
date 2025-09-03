@@ -8,6 +8,7 @@ import {
   type WorkflowDiagram,
   type WorkflowDiagramEdge,
   type WorkflowDiagramEdgeType,
+  type WorkflowDiagramIteratorEmptyActionNodeData,
   type WorkflowDiagramNode,
   type WorkflowDiagramStepNodeData,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
@@ -16,6 +17,7 @@ import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workf
 
 import { WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyTriggerNodeDefinition';
 import { getRootStepIds } from '@/workflow/workflow-trigger/utils/getRootStepIds';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
@@ -106,6 +108,80 @@ export const generateWorkflowDiagram = ({
       // TODO: clean
       incomingNode: nodes.find((node) => node.id === step.id)!,
     });
+
+    if (step.type === 'ITERATOR') {
+      const initialLoopStepIds = Array.isArray(
+        step.settings.input.initialLoopStepIds,
+      )
+        ? step.settings.input.initialLoopStepIds
+        : isNonEmptyString(step.settings.input.initialLoopStepIds)
+          ? [step.settings.input.initialLoopStepIds]
+          : [];
+
+      if (isNonEmptyArray(initialLoopStepIds)) {
+        for (const initialLoopStepId of initialLoopStepIds) {
+          edges.push({
+            ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
+            type: edgeType,
+            id: v4(),
+            source: step.id,
+            sourceHandle: 'loop',
+            target: initialLoopStepId,
+            ...(edgeType.includes('editable')
+              ? { deletable: true, selectable: true }
+              : {}),
+          });
+        }
+      } else {
+        const emptyNodeId = `${step.id}-empty-loop`;
+        const iteratorNode = nodes.find((n) => n.id === step.id);
+
+        if (!isDefined(iteratorNode)) {
+          throw new Error('Iterator node is expected to be found');
+        }
+
+        nodes.push({
+          id: emptyNodeId,
+          type: 'iterator-empty-action',
+          data: {
+            nodeType: 'iterator-empty-action',
+            parentIteratorStepId: step.id,
+            position: {
+              x: iteratorNode.position.x + 175,
+              y: iteratorNode.position.y + 75,
+            },
+          } satisfies WorkflowDiagramIteratorEmptyActionNodeData,
+          position: {
+            x: iteratorNode.position.x + 175,
+            y: iteratorNode.position.y + 75,
+          },
+          draggable: false,
+        });
+
+        edges.push({
+          ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
+          type: 'iterator-loop--empty-filter--editable',
+          id: v4(),
+          source: step.id,
+          sourceHandle: 'loop',
+          target: emptyNodeId,
+          ...('empty-filter--editable'.includes('editable')
+            ? { deletable: true, selectable: true }
+            : {}),
+        });
+
+        edges.push({
+          ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
+          type: 'empty-filter--editable',
+          id: v4(),
+          source: emptyNodeId,
+          target: step.id,
+          ...('empty-filter--editable'.includes('editable')
+            ? { deletable: true, selectable: true }
+            : {}),
+        });
+      }
+    }
 
     step.nextStepIds?.forEach((child) => {
       edges.push({

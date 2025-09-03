@@ -15,7 +15,9 @@ import { WorkflowDiagramBlankEdge } from '@/workflow/workflow-diagram/workflow-e
 import { WorkflowDiagramDefaultEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramDefaultEdgeEditable';
 import { WorkflowDiagramFilterEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable';
 import { WorkflowDiagramIteratorCompletedEmptyTriggerEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramIteratorCompletedEmptyTriggerEdgeEditable';
+import { WorkflowDiagramIteratorLoopEmptyTriggerEdgeEditable } from '@/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramIteratorLoopEmptyTriggerEdgeEditable';
 import { WorkflowDiagramEmptyTriggerEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable';
+import { WorkflowDiagramIteratorEmptyActionEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramIteratorEmptyActionEditable';
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeEditable';
 import { useCreateEdge } from '@/workflow/workflow-steps/hooks/useCreateEdge';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
@@ -122,6 +124,7 @@ export const WorkflowDiagramCanvasEditable = () => {
         nodeTypes={{
           default: WorkflowDiagramStepNodeEditable,
           'empty-trigger': WorkflowDiagramEmptyTriggerEditable,
+          'iterator-empty-action': WorkflowDiagramIteratorEmptyActionEditable,
         }}
         edgeTypes={{
           blank: WorkflowDiagramBlankEdge,
@@ -129,6 +132,8 @@ export const WorkflowDiagramCanvasEditable = () => {
           'filter--editable': WorkflowDiagramFilterEdgeEditable,
           'iterator-completed--empty-filter--editable':
             WorkflowDiagramIteratorCompletedEmptyTriggerEdgeEditable,
+          'iterator-loop--empty-filter--editable':
+            WorkflowDiagramIteratorLoopEmptyTriggerEdgeEditable,
         }}
         tagContainerTestId="workflow-visualizer-status"
         tagColor={tagProps.color}
