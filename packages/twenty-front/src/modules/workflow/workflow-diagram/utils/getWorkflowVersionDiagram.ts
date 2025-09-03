@@ -36,21 +36,12 @@ export const getWorkflowVersionDiagram = ({
   const diagram = generateWorkflowDiagram({
     trigger: workflowVersion.trigger ?? undefined,
     steps: workflowVersion.steps ?? [],
-    getEdgeType: ({ incomingNode }) => {
-      if (!isEditable) {
-        // TODO: special design probably for iterators
-        return 'empty-filter--readonly';
-      }
-
-      if (
-        incomingNode?.data.nodeType === 'action' &&
-        incomingNode.data.actionType === 'ITERATOR'
-      ) {
-        return 'iterator-completed--empty-filter--editable';
-      }
-
-      return 'empty-filter--editable';
-    },
+    edgeTypeBetweenTwoDefaultNodes: isEditable
+      ? 'empty-filter--editable'
+      : 'empty-filter--readonly',
+    edgeTypeForIteratorCompletedBranch:
+      'iterator-completed--empty-filter--editable',
+    edgeTypeForIteratorLoopBranch: 'iterator-loop--empty-filter--editable',
     isWorkflowBranchEnabled,
   });
 

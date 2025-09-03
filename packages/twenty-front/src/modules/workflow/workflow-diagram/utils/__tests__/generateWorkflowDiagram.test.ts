@@ -19,7 +19,10 @@ describe('generateWorkflowDiagram', () => {
     const result = generateWorkflowDiagram({
       trigger,
       steps,
-      defaultEdgeType: 'empty-filter--editable',
+      edgeTypeBetweenTwoDefaultNodes: 'empty-filter--editable',
+      edgeTypeForIteratorCompletedBranch:
+        'iterator-completed--empty-filter--editable',
+      edgeTypeForIteratorLoopBranch: 'iterator-loop--empty-filter--editable',
     });
 
     expect(result.nodes).toHaveLength(1);
@@ -86,7 +89,10 @@ describe('generateWorkflowDiagram', () => {
     const result = generateWorkflowDiagram({
       trigger,
       steps,
-      defaultEdgeType: 'empty-filter--editable',
+      edgeTypeBetweenTwoDefaultNodes: 'empty-filter--editable',
+      edgeTypeForIteratorCompletedBranch:
+        'iterator-completed--empty-filter--editable',
+      edgeTypeForIteratorLoopBranch: 'iterator-loop--empty-filter--editable',
     });
 
     expect(result.nodes).toHaveLength(steps.length + 1); // All steps + trigger
@@ -165,7 +171,10 @@ describe('generateWorkflowDiagram', () => {
     const result = generateWorkflowDiagram({
       trigger,
       steps,
-      defaultEdgeType: 'empty-filter--editable',
+      edgeTypeBetweenTwoDefaultNodes: 'empty-filter--editable',
+      edgeTypeForIteratorCompletedBranch:
+        'iterator-completed--empty-filter--editable',
+      edgeTypeForIteratorLoopBranch: 'iterator-loop--empty-filter--editable',
     });
 
     expect(result.edges.length).toEqual(2);
@@ -232,7 +241,10 @@ describe('generateWorkflowDiagram', () => {
     const result = generateWorkflowDiagram({
       trigger,
       steps,
-      defaultEdgeType: 'empty-filter--editable',
+      edgeTypeBetweenTwoDefaultNodes: 'empty-filter--editable',
+      edgeTypeForIteratorCompletedBranch:
+        'iterator-completed--empty-filter--editable',
+      edgeTypeForIteratorLoopBranch: 'iterator-loop--empty-filter--editable',
     });
 
     expect(result.edges.length).toEqual(2);
@@ -318,7 +330,10 @@ describe('generateWorkflowDiagram', () => {
     const result = generateWorkflowDiagram({
       trigger,
       steps,
-      defaultEdgeType: 'empty-filter--editable',
+      edgeTypeBetweenTwoDefaultNodes: 'empty-filter--editable',
+      edgeTypeForIteratorCompletedBranch:
+        'iterator-completed--empty-filter--editable',
+      edgeTypeForIteratorLoopBranch: 'iterator-loop--empty-filter--editable',
     });
 
     expect(result.edges.length).toEqual(4);

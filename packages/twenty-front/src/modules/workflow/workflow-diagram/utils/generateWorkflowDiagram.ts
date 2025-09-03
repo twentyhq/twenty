@@ -25,14 +25,16 @@ import { v4 } from 'uuid';
 export const generateWorkflowDiagram = ({
   trigger,
   steps,
-  getEdgeType,
+  edgeTypeBetweenTwoDefaultNodes,
+  edgeTypeForIteratorLoopBranch,
+  edgeTypeForIteratorCompletedBranch,
   isWorkflowBranchEnabled = false,
 }: {
   trigger: WorkflowTrigger | undefined;
   steps: Array<WorkflowStep>;
-  getEdgeType: (params: {
-    incomingNode: WorkflowDiagramNode;
-  }) => WorkflowDiagramEdgeType;
+  edgeTypeBetweenTwoDefaultNodes: WorkflowDiagramEdgeType;
+  edgeTypeForIteratorLoopBranch: WorkflowDiagramEdgeType;
+  edgeTypeForIteratorCompletedBranch: WorkflowDiagramEdgeType;
   isWorkflowBranchEnabled?: boolean;
 }): WorkflowDiagram => {
   const nodes: Array<WorkflowDiagramNode> = [];
@@ -86,28 +88,23 @@ export const generateWorkflowDiagram = ({
   }
 
   for (const stepLinkToTriggerId of trigger?.nextStepIds ?? []) {
-    const edgeType = getEdgeType({
-      // TODO: clean
-      incomingNode: nodes.find((node) => node.id === TRIGGER_STEP_ID)!,
-    });
-
     edges.push({
       ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-      type: edgeType,
+      type: edgeTypeBetweenTwoDefaultNodes,
       id: v4(),
       source: TRIGGER_STEP_ID,
       target: stepLinkToTriggerId,
-      ...(edgeType.includes('editable')
+      ...(edgeTypeBetweenTwoDefaultNodes.includes('editable')
         ? { deletable: true, selectable: true }
         : {}),
     });
   }
 
   for (const step of steps) {
-    const edgeType = getEdgeType({
-      // TODO: clean
-      incomingNode: nodes.find((node) => node.id === step.id)!,
-    });
+    let edgeType =
+      step.type === 'ITERATOR'
+        ? edgeTypeForIteratorCompletedBranch
+        : edgeTypeBetweenTwoDefaultNodes;
 
     if (step.type === 'ITERATOR') {
       const initialLoopStepIds = Array.isArray(
@@ -122,12 +119,12 @@ export const generateWorkflowDiagram = ({
         for (const initialLoopStepId of initialLoopStepIds) {
           edges.push({
             ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-            type: edgeType,
+            type: edgeTypeForIteratorLoopBranch,
             id: v4(),
             source: step.id,
             sourceHandle: 'loop',
             target: initialLoopStepId,
-            ...(edgeType.includes('editable')
+            ...(edgeTypeForIteratorLoopBranch.includes('editable')
               ? { deletable: true, selectable: true }
               : {}),
           });
@@ -160,23 +157,23 @@ export const generateWorkflowDiagram = ({
 
         edges.push({
           ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-          type: 'iterator-loop--empty-filter--editable',
+          type: edgeTypeForIteratorLoopBranch,
           id: v4(),
           source: step.id,
           sourceHandle: 'loop',
           target: emptyNodeId,
-          ...('empty-filter--editable'.includes('editable')
+          ...(edgeTypeForIteratorLoopBranch.includes('editable')
             ? { deletable: true, selectable: true }
             : {}),
         });
 
         edges.push({
           ...WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION,
-          type: 'empty-filter--editable',
+          type: edgeTypeBetweenTwoDefaultNodes,
           id: v4(),
           source: emptyNodeId,
           target: step.id,
-          ...('empty-filter--editable'.includes('editable')
+          ...(edgeTypeBetweenTwoDefaultNodes.includes('editable')
             ? { deletable: true, selectable: true }
             : {}),
         });
@@ -190,7 +187,7 @@ export const generateWorkflowDiagram = ({
         id: v4(),
         source: step.id,
         target: child,
-        ...(edgeType.includes('editable')
+        ...(edgeTypeBetweenTwoDefaultNodes.includes('editable')
           ? { deletable: true, selectable: true }
           : {}),
       });
