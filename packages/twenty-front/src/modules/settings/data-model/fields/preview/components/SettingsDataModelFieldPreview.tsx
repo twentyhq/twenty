@@ -10,6 +10,7 @@ import { RatingFieldInput } from '@/object-record/record-field/ui/meta-types/inp
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { SettingsDataModelLabelIdentifierPreviewContextWrapper } from '@/settings/data-model/fields/preview/components/SettingsDataModelLabelIdentifierPreviewContextWrapper';
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
+import { SettingsDataModelSetLabelIdentifierRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetLabelIdentifierRecordEfect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
 import { usePreviewRecord } from '@/settings/data-model/fields/preview/hooks/usePreviewRecord';
 import { isDefined } from 'twenty-shared/utils';
@@ -71,7 +72,7 @@ export const SettingsDataModelFieldPreview = ({
 
   const fieldName = fieldMetadataItem.name;
 
-  const mockFieldValue = useFieldPreviewValue({
+  const fieldPreviewValue = useFieldPreviewValue({
     fieldMetadataItem,
   });
 
@@ -84,10 +85,6 @@ export const SettingsDataModelFieldPreview = ({
     isLabelIdentifier && isDefined(recordPreviewForLabelIdentifier?.id)
       ? recordPreviewForLabelIdentifier.id
       : `${objectNameSingular}-${fieldName}-preview`;
-
-  const fieldPreviewValue = isLabelIdentifier
-    ? recordPreviewForLabelIdentifier?.[fieldMetadataItem.name]
-    : mockFieldValue;
 
   const metadata = {
     fieldName,
@@ -107,11 +104,17 @@ export const SettingsDataModelFieldPreview = ({
             instanceId: 'record-field-component-instance-id',
           }}
         >
-          <SettingsDataModelSetFieldValueEffect
-            recordId={recordId}
-            gqlFieldName={fieldMetadataItem.name ?? ''}
-            value={fieldPreviewValue}
-          />
+          {isLabelIdentifier && isDefined(recordPreviewForLabelIdentifier) ? (
+            <SettingsDataModelSetLabelIdentifierRecordEffect
+              record={recordPreviewForLabelIdentifier}
+            />
+          ) : (
+            <SettingsDataModelSetFieldValueEffect
+              recordId={recordId}
+              gqlFieldName={fieldMetadataItem.name ?? ''}
+              value={fieldPreviewValue}
+            />
+          )}
           <StyledFieldPreview shrink={shrink}>
             {!!withFieldLabel && (
               <StyledFieldLabel>
