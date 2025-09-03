@@ -256,10 +256,9 @@ describe('PageLayoutTabService', () => {
         pageLayoutTabData.pageLayoutId,
         workspaceId,
       );
-      expect(pageLayoutTabRepository.create).toHaveBeenCalledWith({
-        ...pageLayoutTabData,
-        position: pageLayoutTabData.position,
-      });
+      expect(pageLayoutTabRepository.create).toHaveBeenCalledWith(
+        pageLayoutTabData,
+      );
       expect(pageLayoutTabRepository.save).toHaveBeenCalledWith(
         mockPageLayoutTab,
       );
@@ -283,7 +282,7 @@ describe('PageLayoutTabService', () => {
       );
     });
 
-    it('should throw an exception when pageLayoutId is not provided', async () => {
+    it('should throw an exception when page layout does not exist', async () => {
       const workspaceId = 'workspace-id';
       const pageLayoutTabData = {
         title: 'New Tab',

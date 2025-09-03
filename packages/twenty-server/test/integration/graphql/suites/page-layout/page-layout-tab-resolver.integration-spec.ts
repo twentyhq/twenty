@@ -108,7 +108,8 @@ describe('Page Layout Tab Resolver', () => {
       expect(response.body.data.getPageLayoutTabs).toHaveLength(2);
 
       const tabs = response.body.data.getPageLayoutTabs.sort(
-        (a: any, b: any) => a.position - b.position,
+        (a: { position: number }, b: { position: number }) =>
+          a.position - b.position,
       );
 
       assertPageLayoutTabStructure(tabs[0], {

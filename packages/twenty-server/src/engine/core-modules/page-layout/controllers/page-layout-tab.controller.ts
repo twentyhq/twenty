@@ -16,7 +16,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { CreatePageLayoutTabInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-tab.input';
 import { UpdatePageLayoutTabInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-tab.input';
 import { type PageLayoutTabDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout-tab.dto';
-import { PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-tab.entity';
 import {
   generatePageLayoutTabExceptionMessage,
   PageLayoutTabException,
@@ -90,7 +89,7 @@ export class PageLayoutTabController {
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<PageLayoutTabEntity> {
+  ): Promise<PageLayoutTabDTO> {
     const deletedPageLayoutTab = await this.pageLayoutTabService.delete(
       id,
       workspace.id,
