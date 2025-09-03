@@ -229,6 +229,7 @@ export class ApiKeyRoleService {
       where: {
         id: In(apiKeyIds),
         workspaceId,
+        revokedAt: IsNull(),
       },
     });
 
