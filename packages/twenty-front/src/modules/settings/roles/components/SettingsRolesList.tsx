@@ -11,6 +11,7 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import {
   H2Title,
@@ -21,6 +22,7 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { FeatureFlagKey } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
@@ -49,6 +51,7 @@ export const SettingsRolesList = () => {
   );
 
   const settingsAllRoles = useRecoilValue(settingsAllRolesSelector);
+  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
   const sortedSettingsAllRoles = [...settingsAllRoles].sort((a, b) =>
     sortByAscString(a.label, b.label),
@@ -73,11 +76,15 @@ export const SettingsRolesList = () => {
       title: t`User Roles`,
       Icon: IconUser,
     },
-    {
-      id: ROLES_LIST_TABS.TABS_IDS.AGENT_ROLES,
-      title: t`Agent Roles`,
-      Icon: IconRobot,
-    },
+    ...(isAiEnabled
+      ? [
+          {
+            id: ROLES_LIST_TABS.TABS_IDS.AGENT_ROLES,
+            title: t`Agent Roles`,
+            Icon: IconRobot,
+          },
+        ]
+      : []),
     {
       id: ROLES_LIST_TABS.TABS_IDS.API_KEY_ROLES,
       title: t`API Key Roles`,
@@ -85,12 +92,13 @@ export const SettingsRolesList = () => {
     },
   ];
 
+  const description = isAiEnabled
+    ? t`Manage roles and permissions for team members, agents, and API keys`
+    : t`Manage roles and permissions for team members and API keys`;
+
   return (
     <Section>
-      <H2Title
-        title={t`All roles`}
-        description={t`Manage roles and permissions for team members, agents, and API keys`}
-      />
+      <H2Title title={t`All roles`} description={description} />
 
       <TabList
         tabs={tabs}
