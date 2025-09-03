@@ -194,7 +194,10 @@ describe('useFieldMetadataItem', () => {
     });
 
     await act(async () => {
-      const res = await result.current.deleteMetadataField(fieldMetadataItem);
+      const res = await result.current.deleteMetadataField({
+        idToDelete: fieldMetadataItem.id,
+        objectMetadataId,
+      });
 
       expect(res.data).toEqual({
         deleteOneField: responseData.default,
@@ -208,9 +211,10 @@ describe('useFieldMetadataItem', () => {
     });
 
     await act(async () => {
-      const res = await result.current.deleteMetadataField(
-        fieldRelationMetadataItem,
-      );
+      const res = await result.current.deleteMetadataField({
+        idToDelete: fieldRelationMetadataItem.id,
+        objectMetadataId,
+      });
 
       expect(res.data).toEqual({
         deleteOneField: responseData.fieldRelation,

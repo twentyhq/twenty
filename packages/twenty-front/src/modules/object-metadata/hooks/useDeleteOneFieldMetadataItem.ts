@@ -10,7 +10,6 @@ import { recordIndexKanbanAggregateOperationState } from '@/object-record/record
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { useRecoilState } from 'recoil';
-import { isDefined } from 'twenty-shared/utils';
 import { DELETE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
 
 export const useDeleteOneFieldMetadataItem = () => {
@@ -40,9 +39,13 @@ export const useDeleteOneFieldMetadataItem = () => {
     }
   };
 
-  const deleteOneFieldMetadataItem = async (
-    idToDelete: DeleteOneFieldMetadataItemMutationVariables['idToDelete'],
-  ) => {
+  const deleteOneFieldMetadataItem = async ({
+    idToDelete,
+    objectMetadataId,
+  }: {
+    idToDelete: DeleteOneFieldMetadataItemMutationVariables['idToDelete'];
+    objectMetadataId: string;
+  }) => {
     const result = await mutate({
       variables: {
         idToDelete,
@@ -52,11 +55,7 @@ export const useDeleteOneFieldMetadataItem = () => {
     await resetRecordIndexKanbanAggregateOperation(idToDelete);
 
     await refreshObjectMetadataItems();
-    if (isDefined(result.data?.deleteOneField?.object?.id)) {
-      await refreshCoreViewsByObjectMetadataId(
-        result.data.deleteOneField.object.id,
-      );
-    }
+    await refreshCoreViewsByObjectMetadataId(objectMetadataId);
 
     return result;
   };
