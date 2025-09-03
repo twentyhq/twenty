@@ -2467,7 +2467,7 @@ export type Query = {
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPageLayout?: Maybe<PageLayout>;
-  getPageLayoutTab?: Maybe<PageLayoutTab>;
+  getPageLayoutTab: PageLayoutTab;
   getPageLayoutTabs: Array<PageLayoutTab>;
   getPageLayouts: Array<PageLayout>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
