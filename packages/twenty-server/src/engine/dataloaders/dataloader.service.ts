@@ -31,14 +31,7 @@ export type RelationMetadataLoaderPayload = {
 
 export type RelationLoaderPayload = {
   workspaceId: string;
-  fieldMetadata: Pick<
-    FieldMetadataEntity,
-    | 'type'
-    | 'id'
-    | 'objectMetadataId'
-    | 'relationTargetFieldMetadataId'
-    | 'relationTargetObjectMetadataId'
-  >;
+  flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION>;
 };
 
 export type MorphRelationLoaderPayload = {
@@ -98,41 +91,37 @@ export class DataloaderService {
   private createRelationLoader() {
     return new DataLoader<RelationLoaderPayload, RelationDTO>(
       async (dataLoaderParams: RelationLoaderPayload[]) => {
-        const workspaceId = dataLoaderParams[0].workspaceId;
-        const fieldMetadataItems = dataLoaderParams.map(
-          (dataLoaderParam) => dataLoaderParam.fieldMetadata,
+        return await Promise.all(
+          dataLoaderParams.map(
+            async ({ flatFieldMetadata, workspaceId }) =>
+              await this.fieldMetadataRelationService.findCachedFieldMetadataRelation(
+                {
+                  flatFieldMetadata,
+                  workspaceId,
+                },
+              ),
+          ),
         );
-
-        const fieldMetadataRelationCollection =
-          await this.fieldMetadataRelationService.findCachedFieldMetadataRelation(
-            fieldMetadataItems,
-            workspaceId,
-          );
-
-        return fieldMetadataRelationCollection;
       },
     );
   }
 
   private createMorphRelationLoader() {
-    return new DataLoader<
-      MorphRelationLoaderPayload,
-      RelationDTO[]
-    >(async (dataLoaderParams: MorphRelationLoaderPayload[]) => {
-      const workspaceId = dataLoaderParams[0].workspaceId;
-
-      return await Promise.all(
-        dataLoaderParams.map(
-          async ({ flatFieldMetadata }) =>
-            await this.fieldMetadataMorphRelationService.findCachedFieldMetadataMorphRelation(
-              {
-                flatFieldMetadata,
-                workspaceId,
-              },
-            ),
-        ),
-      );
-    });
+    return new DataLoader<MorphRelationLoaderPayload, RelationDTO[]>(
+      async (dataLoaderParams: MorphRelationLoaderPayload[]) => {
+        return await Promise.all(
+          dataLoaderParams.map(
+            async ({ flatFieldMetadata, workspaceId }) =>
+              await this.fieldMetadataMorphRelationService.findCachedFieldMetadataMorphRelation(
+                {
+                  flatFieldMetadata,
+                  workspaceId,
+                },
+              ),
+          ),
+        );
+      },
+    );
   }
 
   private createIndexMetadataLoader() {
