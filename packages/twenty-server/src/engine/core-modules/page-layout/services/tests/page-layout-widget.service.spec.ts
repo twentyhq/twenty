@@ -108,7 +108,7 @@ describe('PageLayoutWidgetService', () => {
       expect(pageLayoutWidgetRepository.find).toHaveBeenCalledWith({
         where: {
           pageLayoutTabId,
-          pageLayoutTab: { pageLayout: { workspaceId } },
+          workspaceId,
           deletedAt: IsNull(),
         },
         order: { createdAt: 'ASC' },
@@ -148,7 +148,7 @@ describe('PageLayoutWidgetService', () => {
       expect(pageLayoutWidgetRepository.findOne).toHaveBeenCalledWith({
         where: {
           id,
-          pageLayoutTab: { pageLayout: { workspaceId } },
+          workspaceId,
           deletedAt: IsNull(),
         },
       });
@@ -203,9 +203,10 @@ describe('PageLayoutWidgetService', () => {
         validPageLayoutWidgetData.pageLayoutTabId,
         workspaceId,
       );
-      expect(pageLayoutWidgetRepository.create).toHaveBeenCalledWith(
-        validPageLayoutWidgetData,
-      );
+      expect(pageLayoutWidgetRepository.create).toHaveBeenCalledWith({
+        ...validPageLayoutWidgetData,
+        workspaceId,
+      });
       expect(pageLayoutWidgetRepository.save).toHaveBeenCalledWith(
         mockPageLayoutWidget,
       );
@@ -334,9 +335,8 @@ describe('PageLayoutWidgetService', () => {
       expect(pageLayoutWidgetRepository.findOne).toHaveBeenCalledWith({
         where: {
           id,
-          pageLayoutTab: { pageLayout: { workspaceId } },
+          workspaceId,
         },
-        relations: ['pageLayoutTab'],
       });
       expect(pageLayoutWidgetRepository.update).toHaveBeenCalledWith(
         { id },
@@ -426,10 +426,9 @@ describe('PageLayoutWidgetService', () => {
       expect(pageLayoutWidgetRepository.findOne).toHaveBeenCalledWith({
         where: {
           id,
-          pageLayoutTab: { pageLayout: { workspaceId } },
+          workspaceId,
         },
         withDeleted: true,
-        relations: ['pageLayoutTab'],
       });
       expect(pageLayoutWidgetRepository.delete).toHaveBeenCalledWith(id);
       expect(result).toBe(true);
@@ -478,7 +477,7 @@ describe('PageLayoutWidgetService', () => {
         },
         where: {
           id,
-          pageLayoutTab: { pageLayout: { workspaceId } },
+          workspaceId,
         },
         withDeleted: true,
       });

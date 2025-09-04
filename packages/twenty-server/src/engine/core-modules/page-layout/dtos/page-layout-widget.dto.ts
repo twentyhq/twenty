@@ -1,11 +1,11 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { GraphQLJSON } from 'graphql-type-json';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { GraphQLJSON } from 'graphql-type-json';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 import { GridPosition } from 'src/engine/core-modules/page-layout/types/grid-position.type';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 registerEnumType(WidgetType, { name: 'WidgetType' });
 
@@ -31,6 +31,9 @@ export class PageLayoutWidgetDTO {
 
   @Field(() => UUIDScalarType, { nullable: false })
   pageLayoutTabId: string;
+
+  @Field(() => UUIDScalarType, { nullable: false })
+  workspaceId: string;
 
   @Field({ nullable: false })
   title: string;

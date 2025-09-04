@@ -33,7 +33,7 @@ export class PageLayoutWidgetService {
     return this.pageLayoutWidgetRepository.find({
       where: {
         pageLayoutTabId,
-        pageLayoutTab: { pageLayout: { workspaceId } },
+        workspaceId,
         deletedAt: IsNull(),
       },
       order: { createdAt: 'ASC' },
@@ -47,7 +47,7 @@ export class PageLayoutWidgetService {
     const pageLayoutWidget = await this.pageLayoutWidgetRepository.findOne({
       where: {
         id,
-        pageLayoutTab: { pageLayout: { workspaceId } },
+        workspaceId,
         deletedAt: IsNull(),
       },
     });
@@ -102,8 +102,10 @@ export class PageLayoutWidgetService {
         workspaceId,
       );
 
-      const pageLayoutWidget =
-        this.pageLayoutWidgetRepository.create(pageLayoutWidgetData);
+      const pageLayoutWidget = this.pageLayoutWidgetRepository.create({
+        ...pageLayoutWidgetData,
+        workspaceId,
+      });
 
       return this.pageLayoutWidgetRepository.save(pageLayoutWidget);
     } catch (error) {
@@ -130,9 +132,8 @@ export class PageLayoutWidgetService {
     const existingWidget = await this.pageLayoutWidgetRepository.findOne({
       where: {
         id,
-        pageLayoutTab: { pageLayout: { workspaceId } },
+        workspaceId,
       },
-      relations: ['pageLayoutTab'],
     });
 
     if (!isDefined(existingWidget)) {
@@ -165,10 +166,9 @@ export class PageLayoutWidgetService {
     const pageLayoutWidget = await this.pageLayoutWidgetRepository.findOne({
       where: {
         id,
-        pageLayoutTab: { pageLayout: { workspaceId } },
+        workspaceId,
       },
       withDeleted: true,
-      relations: ['pageLayoutTab'],
     });
 
     if (!isDefined(pageLayoutWidget)) {
@@ -197,7 +197,7 @@ export class PageLayoutWidgetService {
       },
       where: {
         id,
-        pageLayoutTab: { pageLayout: { workspaceId } },
+        workspaceId,
       },
       withDeleted: true,
     });
