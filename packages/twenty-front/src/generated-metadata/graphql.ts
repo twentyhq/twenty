@@ -711,7 +711,7 @@ export type CreatePageLayoutInput = {
 
 export type CreatePageLayoutTabInput = {
   pageLayoutId: Scalars['UUID'];
-  position?: Scalars['Float'];
+  position?: InputMaybe<Scalars['Float']>;
   title: Scalars['String'];
 };
 
@@ -3424,7 +3424,7 @@ export type UpdatePageLayoutInput = {
 };
 
 export type UpdatePageLayoutTabInput = {
-  position?: Scalars['Float'];
+  position?: InputMaybe<Scalars['Float']>;
   title?: InputMaybe<Scalars['String']>;
 };
 
