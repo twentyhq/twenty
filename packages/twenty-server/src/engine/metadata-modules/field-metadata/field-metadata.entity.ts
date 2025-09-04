@@ -11,6 +11,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   Relation,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -35,6 +36,11 @@ import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permis
 ])
 @Index('IDX_FIELD_METADATA_RELATION_TARGET_OBJECT_METADATA_ID', [
   'relationTargetObjectMetadataId',
+])
+@Unique('IDX_FIELD_METADATA_NAME_OBJECT_METADATA_ID_WORKSPACE_ID_UNIQUE', [
+  'name',
+  'objectMetadataId',
+  'workspaceId',
 ])
 @Index('IDX_FIELD_METADATA_OBJECT_METADATA_ID_WORKSPACE_ID', [
   'objectMetadataId',
