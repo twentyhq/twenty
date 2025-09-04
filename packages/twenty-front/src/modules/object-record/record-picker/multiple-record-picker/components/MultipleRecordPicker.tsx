@@ -59,9 +59,6 @@ export const MultipleRecordPicker = ({
       componentInstanceId,
     );
 
-  const hasObjectReadOnlyPermissionOnObjectForCreate =
-    useObjectPermissionsForObject(objectMetadataItemIdForCreate ?? '');
-
   const resetState = useRecoilCallback(
     ({ set }) => {
       return () => {
@@ -109,8 +106,12 @@ export const MultipleRecordPicker = ({
     [multipleRecordPickerSearchFilterState, onCreate],
   );
 
+  const hasCreatePermissionOnObjectForCreate = useObjectPermissionsForObject(
+    objectMetadataItemIdForCreate ?? '',
+  ).canUpdateObjectRecords;
+
   const createNewButtonSection =
-    isDefined(onCreate) && !hasObjectReadOnlyPermissionOnObjectForCreate ? (
+    isDefined(onCreate) && hasCreatePermissionOnObjectForCreate ? (
       <DropdownMenuItemsContainer scrollable={false}>
         <CreateNewButton
           onClick={handleCreateNewButtonClick}
