@@ -8,6 +8,7 @@ import { DateFormat } from '@/localization/constants/DateFormat';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CustomError } from '@/error-handler/CustomError';
+import { i18n } from '@lingui/core';
 import { logError } from './logError';
 
 export const DEFAULT_DATE_LOCALE = 'en-EN';
@@ -206,23 +207,13 @@ export const formatISOStringToHumanReadableDate = (date: string) => {
 export const formatToHumanReadableDate = (date: Date | string) => {
   const parsedJSDate = parseDate(date).toJSDate();
 
-  return new Intl.DateTimeFormat(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(parsedJSDate);
+  return i18n.date(parsedJSDate, { dateStyle: 'medium' });
 };
 
 export const formatToHumanReadableDateTime = (date: Date | string) => {
   const parsedJSDate = parseDate(date).toJSDate();
 
-  return new Intl.DateTimeFormat(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-  }).format(parsedJSDate);
+  return i18n.date(parsedJSDate, { dateStyle: 'medium', timeStyle: 'short' });
 };
 
 export const getDateFormatString = (
