@@ -6,10 +6,11 @@ import { PublicDomainService } from 'src/engine/core-modules/public-domain/publi
 import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { PublicDomainResolver } from 'src/engine/core-modules/public-domain/public-domain.resolver';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Module({
   imports: [
-    NestjsQueryTypeOrmModule.forFeature([PublicDomain]),
+    NestjsQueryTypeOrmModule.forFeature([PublicDomain, Workspace]),
     DnsManagerModule,
   ],
   providers: [PublicDomainService, PublicDomainResolver],

@@ -28,7 +28,7 @@ export class PublicDomainResolver {
   ): Promise<PublicDomainDTO> {
     return this.publicDomainService.createPublicDomain({
       domain,
-      workspaceId: currentWorkspace.id,
+      workspace: currentWorkspace,
     });
   }
 
@@ -39,7 +39,7 @@ export class PublicDomainResolver {
   ): Promise<boolean> {
     await this.publicDomainService.deletePublicDomain({
       domain,
-      workspaceId: currentWorkspace.id,
+      workspace: currentWorkspace,
     });
 
     return true;

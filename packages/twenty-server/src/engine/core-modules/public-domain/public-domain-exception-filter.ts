@@ -13,7 +13,6 @@ export class PublicDomainExceptionFilter implements ExceptionFilter {
   catch(exception: PublicDomainException) {
     switch (exception.code) {
       case PublicDomainExceptionCode.PUBLIC_DOMAIN_ALREADY_REGISTERED:
-      case PublicDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_REGISTERED:
         throw new ForbiddenError(exception);
       default:
         assertUnreachable(exception.code);

@@ -33,6 +33,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceAutoResolverOpts } from 'src/engine/core-modules/workspace/workspace.auto-resolver-opts';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
+import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 
 @Module({
   imports: [
@@ -46,7 +47,12 @@ import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
         TokenModule,
         FileUploadModule,
         WorkspaceMetadataCacheModule,
-        NestjsQueryTypeOrmModule.forFeature([User, Workspace, UserWorkspace]),
+        NestjsQueryTypeOrmModule.forFeature([
+          User,
+          Workspace,
+          UserWorkspace,
+          PublicDomain,
+        ]),
         UserWorkspaceModule,
         WorkspaceManagerModule,
         FeatureFlagModule,

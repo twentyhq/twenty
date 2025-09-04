@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { t } from '@lingui/core/macro';
 import { Repository } from 'typeorm';
 
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PublicDomainDTO } from 'src/engine/core-modules/public-domain/dtos/public-domain.dto';
 import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import {
@@ -18,31 +19,58 @@ export class PublicDomainService {
     private readonly dnsManagerService: DnsManagerService,
     @InjectRepository(PublicDomain)
     private readonly publicDomainRepository: Repository<PublicDomain>,
+    @InjectRepository(Workspace)
+    private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
   async deletePublicDomain({
     domain,
-    workspaceId,
+    workspace,
   }: {
     domain: string;
-    workspaceId: string;
+    workspace: Workspace;
   }): Promise<void> {
-    await this.dnsManagerService.deleteHeaderTransformRuleSilently(domain);
-    await this.dnsManagerService.deleteHostnameSilently(domain);
-    await this.publicDomainRepository.delete({ domain, workspaceId });
+    const formattedDomain = domain.trim().toLowerCase();
+
+    await this.dnsManagerService.deleteHeaderTransformRuleSilently(
+      formattedDomain,
+    );
+
+    await this.dnsManagerService.deleteHostnameSilently(formattedDomain);
+
+    await this.publicDomainRepository.delete({
+      domain: formattedDomain,
+      workspaceId: workspace.id,
+    });
   }
 
   async createPublicDomain({
     domain,
-    workspaceId,
+    workspace,
   }: {
     domain: string;
-    workspaceId: string;
+    workspace: Workspace;
   }): Promise<PublicDomainDTO> {
+    const formattedDomain = domain.trim().toLowerCase();
+
+    if (
+      await this.workspaceRepository.findOneBy({
+        customDomain: formattedDomain,
+      })
+    ) {
+      throw new PublicDomainException(
+        'Domain already used for workspace custom domain',
+        PublicDomainExceptionCode.PUBLIC_DOMAIN_ALREADY_REGISTERED,
+        {
+          userFriendlyMessage: t`Domain already used for workspace custom domain`,
+        },
+      );
+    }
+
     if (
       await this.publicDomainRepository.findOneBy({
-        domain,
-        workspaceId,
+        domain: formattedDomain,
+        workspaceId: workspace.id,
       })
     ) {
       throw new PublicDomainException(
@@ -55,19 +83,21 @@ export class PublicDomainService {
     }
 
     const publicDomain = this.publicDomainRepository.create({
-      domain,
-      workspaceId,
+      domain: formattedDomain,
+      workspaceId: workspace.id,
     });
 
-    await this.dnsManagerService.registerHostname(domain);
+    await this.dnsManagerService.registerHostname(formattedDomain);
 
-    await this.dnsManagerService.registerHeaderTransformRule(domain);
+    await this.dnsManagerService.registerHeaderTransformRule(formattedDomain);
 
     try {
       await this.publicDomainRepository.insert(publicDomain);
     } catch (error) {
-      await this.dnsManagerService.deleteHeaderTransformRuleSilently(domain);
-      await this.dnsManagerService.deleteHostnameSilently(domain);
+      await this.dnsManagerService.deleteHeaderTransformRuleSilently(
+        formattedDomain,
+      );
+      await this.dnsManagerService.deleteHostnameSilently(formattedDomain);
 
       throw error;
     }

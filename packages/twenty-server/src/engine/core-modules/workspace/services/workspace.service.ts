@@ -7,6 +7,7 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
+import { t } from '@lingui/core/macro';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -46,6 +47,7 @@ import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/
 import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
 import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -56,6 +58,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(PublicDomain)
+    private readonly publicDomainRepository: Repository<PublicDomain>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(UserWorkspace)
@@ -117,6 +121,20 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       throw new WorkspaceException(
         'Domain already taken',
         WorkspaceExceptionCode.DOMAIN_ALREADY_TAKEN,
+      );
+    }
+
+    if (
+      await this.publicDomainRepository.findOneBy({
+        domain: customDomain,
+      })
+    ) {
+      throw new WorkspaceException(
+        'Domain is already registered as public domain',
+        WorkspaceExceptionCode.DOMAIN_ALREADY_TAKEN,
+        {
+          userFriendlyMessage: t`Domain is already registered as public domain`,
+        },
       );
     }
 

@@ -7,7 +7,6 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -17,10 +16,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'publicDomain', schema: 'core' })
 @ObjectType()
-@Unique('IDX_PUBLIC_DOMAIN_DOMAIN_WORKSPACE_ID_UNIQUE', [
-  'domain',
-  'workspaceId',
-])
 export class PublicDomain {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -31,7 +26,7 @@ export class PublicDomain {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'varchar', nullable: false, unique: true })
   domain: string;
 
   @Column({ type: 'boolean', default: false, nullable: false })
