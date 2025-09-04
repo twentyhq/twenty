@@ -9,6 +9,7 @@ export const USER_GUIDE_INDEX = {
     ],
     'Data Model': [
       { fileName: 'data-model' },
+      { fileName: 'customize-your-data-model' },
       { fileName: 'standard-objects' },
       { fileName: 'fields' },
       { fileName: 'creating-records' },
