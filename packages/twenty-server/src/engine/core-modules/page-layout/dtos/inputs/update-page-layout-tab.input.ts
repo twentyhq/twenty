@@ -9,7 +9,7 @@ export class UpdatePageLayoutTabInput {
   @IsOptional()
   title?: string;
 
-  @Field(() => Float, { nullable: false, defaultValue: 0 })
+  @Field(() => Float, { nullable: true })
   @IsNumber()
   @IsOptional()
   position?: number;

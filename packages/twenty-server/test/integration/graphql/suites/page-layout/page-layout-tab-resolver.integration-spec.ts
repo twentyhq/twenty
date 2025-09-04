@@ -244,10 +244,8 @@ describe('Page Layout Tab Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
       assertPageLayoutTabStructure(response.body.data.updatePageLayoutTab, {
-        title: updateInput.title,
-        position: 1,
-        pageLayoutId: input.pageLayoutId,
-        deletedAt: null,
+        ...input,
+        ...updateInput,
       });
     });
 
