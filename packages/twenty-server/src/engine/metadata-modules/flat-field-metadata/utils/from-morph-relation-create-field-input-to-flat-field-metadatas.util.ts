@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import {
+  capitalize,
   computeMorphRelationFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
@@ -68,6 +69,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
   const morphId = v4();
   const flatFieldMetadatas = morphRelationCreationPayload.flatMap(
     ({ relationCreationPayload, targetFlatObjectMetadata }) => {
+      const currentMorphRelationFieldName = `${createFieldInput.name}${capitalize(targetFlatObjectMetadata.nameSingular)}`;
       const sourceFlatObjectMetadataJoinColumnName =
         computeMorphRelationFieldJoinColumnName({
           name: createFieldInput.name,
@@ -79,6 +81,7 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
         createFieldInput: {
           ...createFieldInput,
           relationCreationPayload,
+          name: currentMorphRelationFieldName,
         },
         sourceFlatObjectMetadataJoinColumnName,
         sourceFlatObjectMetadata,

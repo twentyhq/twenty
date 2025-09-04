@@ -1,20 +1,12 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { isFieldMetadataTypeMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-morph-relation.util';
-import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 
-export const areFieldMetadatasTypeRelationOrMorphRelation = (
+export const areFieldMetadatasOfType = <T extends FieldMetadataType>(
   fieldMetadatas: FieldMetadataEntity[],
-): fieldMetadatas is Array<
-  FieldMetadataEntity &
-    FieldMetadataEntity<
-      FieldMetadataType.MORPH_RELATION | FieldMetadataType.RELATION
-    >
-> => {
-  return fieldMetadatas.every(
-    (fieldMetadata) =>
-      isFieldMetadataTypeRelation(fieldMetadata) ||
-      isFieldMetadataTypeMorphRelation(fieldMetadata),
+  fieldMetadataType: T,
+): fieldMetadatas is Array<FieldMetadataEntity & FieldMetadataEntity<T>> =>
+  fieldMetadatas.every((fieldMetadata) =>
+    isFlatFieldMetadataOfType(fieldMetadata, fieldMetadataType),
   );
-};

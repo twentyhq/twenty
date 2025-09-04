@@ -51,7 +51,7 @@ export const findFlatFieldMetadatasRelatedToMorphRelationOrThrow = ({
           flatFieldMetadata,
           FieldMetadataType.MORPH_RELATION,
         ) ||
-        flatFieldMetadata.name !== morphRelationFlatFieldMetadata.name
+        flatFieldMetadata.morphId !== morphRelationFlatFieldMetadata.morphId
       ) {
         return [];
       }

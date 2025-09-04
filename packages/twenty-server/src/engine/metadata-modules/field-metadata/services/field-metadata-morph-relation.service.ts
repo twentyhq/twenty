@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import omit from 'lodash.omit';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
+  capitalize,
   computeMorphRelationFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
@@ -67,9 +68,9 @@ export class FieldMetadataMorphRelationService {
     const fieldsCreated: FieldMetadataEntity[] = [];
     const morphId = v4();
 
-    for (const relation of morphRelationsCreationPayload) {
+    for (const relationCreationPayload of morphRelationsCreationPayload) {
       const targetObjectMetadata =
-        objectMetadataMaps.byId[relation.targetObjectMetadataId];
+        objectMetadataMaps.byId[relationCreationPayload.targetObjectMetadataId];
 
       if (!isDefined(targetObjectMetadata)) {
         throw new FieldMetadataException(
@@ -81,8 +82,11 @@ export class FieldMetadataMorphRelationService {
       const relationFieldMetadataForCreate =
         this.fieldMetadataRelationService.computeCustomRelationFieldMetadataForCreation(
           {
-            fieldMetadataInput: fieldMetadataForCreate,
-            relationCreationPayload: relation,
+            fieldMetadataInput: {
+              ...fieldMetadataForCreate,
+              name: `${fieldMetadataForCreate.name}${capitalize(targetObjectMetadata.nameSingular)}`,
+            },
+            relationCreationPayload: relationCreationPayload,
             joinColumnName: computeMorphRelationFieldJoinColumnName({
               name: fieldMetadataForCreate.name,
               targetObjectMetadataNameSingular:
@@ -106,16 +110,16 @@ export class FieldMetadataMorphRelationService {
         );
 
       const targetFieldMetadataName = computeMetadataNameFromLabel(
-        relation.targetFieldLabel,
+        relationCreationPayload.targetFieldLabel,
       );
 
       const targetFieldMetadataToCreate = prepareCustomFieldMetadataForCreation(
         {
-          objectMetadataId: relation.targetObjectMetadataId,
+          objectMetadataId: relationCreationPayload.targetObjectMetadataId,
           type: FieldMetadataType.RELATION,
           name: targetFieldMetadataName,
-          label: relation.targetFieldLabel,
-          icon: relation.targetFieldIcon,
+          label: relationCreationPayload.targetFieldLabel,
+          icon: relationCreationPayload.targetFieldIcon,
           workspaceId: fieldMetadataForCreate.workspaceId,
           settings: fieldMetadataForCreate.settings,
         },
@@ -130,7 +134,7 @@ export class FieldMetadataMorphRelationService {
               targetFieldLabel: fieldMetadataForCreate.label,
               targetFieldIcon: fieldMetadataForCreate.icon ?? 'Icon123',
               type:
-                relation.type === RelationType.ONE_TO_MANY
+                relationCreationPayload.type === RelationType.ONE_TO_MANY
                   ? RelationType.MANY_TO_ONE
                   : RelationType.ONE_TO_MANY,
             },
