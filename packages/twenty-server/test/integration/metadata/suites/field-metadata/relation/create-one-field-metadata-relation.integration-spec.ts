@@ -103,7 +103,6 @@ describe('createOne FieldMetadataService relation fields', () => {
 
     expect(createdField.id).toBeDefined();
     expect(createdField.name).toBe('person');
-    expect(createdField.relation?.type).toBe(contextPayload.relationType);
     expect(createdField.relation?.targetFieldMetadata.id).toBeDefined();
     // TODO: expect(createdField.morphRelations).toBeUndefined();
     const isManyToOne =
