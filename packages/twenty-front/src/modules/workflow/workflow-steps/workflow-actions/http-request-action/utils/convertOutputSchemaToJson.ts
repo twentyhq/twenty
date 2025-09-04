@@ -1,7 +1,7 @@
-import { type BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type BaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
 
 export const convertOutputSchemaToJson = (
-  schema: BaseOutputSchema,
+  schema: BaseOutputSchemaV2,
 ): Record<string, unknown> | unknown[] => {
   const keys = Object.keys(schema);
 
@@ -17,7 +17,7 @@ export const convertOutputSchemaToJson = (
       if (entry.isLeaf) {
         return entry.value;
       }
-      return convertOutputSchemaToJson(entry.value as BaseOutputSchema);
+      return convertOutputSchemaToJson(entry.value as BaseOutputSchemaV2);
     });
   }
 
@@ -27,7 +27,9 @@ export const convertOutputSchemaToJson = (
     if (entry.isLeaf) {
       result[key] = entry.value;
     } else {
-      result[key] = convertOutputSchemaToJson(entry.value as BaseOutputSchema);
+      result[key] = convertOutputSchemaToJson(
+        entry.value as BaseOutputSchemaV2,
+      );
     }
   });
 

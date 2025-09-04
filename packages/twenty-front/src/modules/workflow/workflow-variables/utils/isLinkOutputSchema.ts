@@ -1,10 +1,13 @@
-import {
-  type LinkOutputSchema,
-  type OutputSchema,
-} from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type LinkOutputSchema } from '@/workflow/workflow-variables/types/LinkOutputSchema';
+import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { isObject } from '@sniptt/guards';
 
 export const isLinkOutputSchema = (
-  outputSchema: OutputSchema,
+  outputSchema: OutputSchemaV2,
 ): outputSchema is LinkOutputSchema => {
-  return outputSchema._outputSchemaType === 'LINK';
+  return (
+    isObject(outputSchema) &&
+    '_outputSchemaType' in outputSchema &&
+    outputSchema._outputSchemaType === 'LINK'
+  );
 };

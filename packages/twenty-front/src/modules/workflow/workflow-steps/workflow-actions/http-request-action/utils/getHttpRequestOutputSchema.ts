@@ -1,5 +1,5 @@
 import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
-import { type BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type BaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
 
 const getValueType = (value: unknown): InputSchemaPropertyType => {
   if (value === null || value === undefined) {
@@ -25,12 +25,12 @@ const getValueType = (value: unknown): InputSchemaPropertyType => {
 
 export const getHttpRequestOutputSchema = (
   responseData: unknown,
-): BaseOutputSchema => {
+): BaseOutputSchemaV2 => {
   if (typeof responseData !== 'object' || responseData === null) {
     return {};
   }
 
-  const schema: BaseOutputSchema = {};
+  const schema: BaseOutputSchemaV2 = {};
   Object.entries(responseData).forEach(([key, value]) => {
     const type = getValueType(value);
 
@@ -41,7 +41,6 @@ export const getHttpRequestOutputSchema = (
           type: 'string',
           label: key,
           value,
-          icon: 'IconAbc',
         };
         break;
       case 'number':
@@ -50,7 +49,6 @@ export const getHttpRequestOutputSchema = (
           type: 'number',
           label: key,
           value,
-          icon: 'IconText',
         };
         break;
       case 'boolean':
@@ -59,16 +57,22 @@ export const getHttpRequestOutputSchema = (
           type: 'boolean',
           label: key,
           value,
-          icon: 'IconCheckbox',
         };
         break;
       case 'array':
+        schema[key] = {
+          isLeaf: true,
+          label: key,
+          type: 'array',
+          value,
+        };
+        break;
       case 'object':
         schema[key] = {
           isLeaf: false,
           label: key,
           value: getHttpRequestOutputSchema(value),
-          icon: 'IconBox',
+          type: 'object',
         };
         break;
       case 'unknown':
@@ -78,7 +82,6 @@ export const getHttpRequestOutputSchema = (
           type: 'unknown',
           label: key,
           value: value === null ? null : String(value),
-          icon: 'IconQuestionMark',
         };
         break;
     }

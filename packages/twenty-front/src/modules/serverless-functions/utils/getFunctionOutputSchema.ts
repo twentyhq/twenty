@@ -1,9 +1,11 @@
-import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
-import { type BaseOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import {
+  type BaseOutputSchemaV2,
+  type LeafType,
+} from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
 import { isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-const getValueType = (value: any): InputSchemaPropertyType => {
+const getValueType = (value: any): LeafType => {
   if (!isDefined(value) || value === null) {
     return 'unknown';
   }
@@ -19,20 +21,18 @@ const getValueType = (value: any): InputSchemaPropertyType => {
   if (Array.isArray(value)) {
     return 'array';
   }
-  if (isObject(value)) {
-    return 'object';
-  }
   return 'unknown';
 };
 
 export const getFunctionOutputSchema = (testResult: object) => {
   return testResult
     ? Object.entries(testResult).reduce(
-        (acc: BaseOutputSchema, [key, value]) => {
+        (acc: BaseOutputSchemaV2, [key, value]) => {
           if (isObject(value) && !Array.isArray(value)) {
             acc[key] = {
               isLeaf: false,
-              icon: 'IconVariable',
+              type: 'object',
+              label: key,
               value: getFunctionOutputSchema(value),
             };
           } else {
@@ -40,7 +40,6 @@ export const getFunctionOutputSchema = (testResult: object) => {
               isLeaf: true,
               value,
               type: getValueType(value),
-              icon: 'IconVariable',
               label: key,
             };
           }

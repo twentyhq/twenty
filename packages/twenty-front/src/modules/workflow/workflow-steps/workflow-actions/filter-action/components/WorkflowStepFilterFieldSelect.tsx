@@ -7,8 +7,8 @@ import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/workflow-ac
 import { WorkflowVariablesDropdownWorkflowStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownWorkflowStepItems';
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
+import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 
-import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 import { extractRawVariableNamePart } from '@/workflow/workflow-variables/utils/extractRawVariableNamePart';
 import { useTheme } from '@emotion/react';
 import { useLingui } from '@lingui/react/macro';
@@ -51,7 +51,7 @@ export const WorkflowStepFilterFieldSelect = ({
       : undefined;
 
   const [selectedStep, setSelectedStep] = useState<
-    StepOutputSchema | undefined
+    StepOutputSchemaV2 | undefined
   >(initialStep);
 
   const stepId = extractRawVariableNamePart({

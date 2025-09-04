@@ -6,13 +6,15 @@ const isManyToOneRelationField = (field: FieldMetadataEntity) =>
   (field as FieldMetadataEntity<FieldMetadataType.RELATION>).settings
     ?.relationType === 'MANY_TO_ONE';
 
+const EXCLUDED_SYSTEM_FIELDS = ['searchVector', 'position'];
+
 // TODO refactor
 export const shouldGenerateFieldFakeValue = <T extends FieldMetadataType>(
   field: FieldMetadataEntity<T>,
 ) => {
   return (
     field.isActive &&
-    field.name !== 'searchVector' &&
+    !(EXCLUDED_SYSTEM_FIELDS.includes(field.name) && field.isSystem) &&
     (field.type !== FieldMetadataType.RELATION ||
       isManyToOneRelationField(field as unknown as FieldMetadataEntity))
   );

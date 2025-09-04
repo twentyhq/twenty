@@ -2,11 +2,11 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
 
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
 import {
   IconChevronLeft,
@@ -17,7 +17,7 @@ import { MenuItemSelect } from 'twenty-ui/navigation';
 import { useVariableDropdown } from '../hooks/useVariableDropdown';
 
 type WorkflowVariablesDropdownFieldItemsProps = {
-  step: StepOutputSchema;
+  step: StepOutputSchemaV2;
   onSelect: (value: string) => void;
   onBack: () => void;
 };

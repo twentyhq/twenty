@@ -10,7 +10,7 @@ import { WorkflowVariablesDropdownWorkflowStepItems } from '@/workflow/workflow-
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/workflow-variables/constants/SearchVariablesDropdownId';
 
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
-import { type StepOutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
@@ -73,7 +73,7 @@ export const WorkflowVariablesDropdown = ({
       : undefined;
 
   const [selectedStep, setSelectedStep] = useState<
-    StepOutputSchema | undefined
+    StepOutputSchemaV2 | undefined
   >(initialStep);
 
   const handleStepSelect = (stepId: string) => {
