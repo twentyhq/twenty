@@ -230,7 +230,7 @@ export class FieldMetadataRelationService {
       >
     >,
     workspaceId: string,
-  ): Promise<Omit<RelationDTO, 'type'>[]> {
+  ): Promise<RelationDTO[]> {
     const objectMetadataMaps =
       await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
         workspaceId,
@@ -302,6 +302,7 @@ export class FieldMetadataRelationService {
         : targetFieldMetadata;
 
       return {
+        type: RelationType.MANY_TO_ONE, // does not make sense like that, we cannot know which settings was used to create relation pair
         sourceObjectMetadata: fromObjectMetadataEntityToObjectMetadataDto(
           getObjectMetadataFromObjectMetadataItemWithFieldMaps(
             sourceObjectMetadata,

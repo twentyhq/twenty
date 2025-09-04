@@ -96,7 +96,7 @@ export class DataloaderService {
   }
 
   private createRelationLoader() {
-    return new DataLoader<RelationLoaderPayload, Omit<RelationDTO, 'type'>>(
+    return new DataLoader<RelationLoaderPayload, RelationDTO>(
       async (dataLoaderParams: RelationLoaderPayload[]) => {
         const workspaceId = dataLoaderParams[0].workspaceId;
         const fieldMetadataItems = dataLoaderParams.map(
@@ -117,7 +117,7 @@ export class DataloaderService {
   private createMorphRelationLoader() {
     return new DataLoader<
       MorphRelationLoaderPayload,
-      Omit<RelationDTO, 'type'>[]
+      RelationDTO[]
     >(async (dataLoaderParams: MorphRelationLoaderPayload[]) => {
       const workspaceId = dataLoaderParams[0].workspaceId;
 
