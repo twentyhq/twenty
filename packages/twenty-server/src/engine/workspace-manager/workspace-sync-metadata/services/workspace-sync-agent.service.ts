@@ -9,6 +9,8 @@ import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspac
 import { AgentRoleService } from 'src/engine/metadata-modules/agent-role/agent-role.service';
 import { AgentEntity } from 'src/engine/metadata-modules/agent/agent.entity';
 import { transformAgentEntityToFlatAgent } from 'src/engine/metadata-modules/flat-agent/utils/transform-agent-entity-to-flat-agent.util';
+import { RoleTargetsEntity } from 'src/engine/metadata-modules/role/role-targets.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { AGENT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agents.util';
 import {
   SEED_APPLE_WORKSPACE_ID,
@@ -77,17 +79,36 @@ export class WorkspaceSyncAgentService {
           );
 
           if (agentDefinition?.standardRoleId) {
-            this.agentRoleService
-              .assignStandardRoleToAgent({
-                workspaceId: context.workspaceId,
+            try {
+              const roleRepository = manager.getRepository(RoleEntity);
+              const role = await roleRepository.findOne({
+                where: {
+                  standardId: agentDefinition.standardRoleId,
+                  workspaceId: context.workspaceId,
+                },
+              });
+
+              if (!role) {
+                throw new Error(
+                  `Standard role with standard ID ${agentDefinition.standardRoleId} not found in workspace`,
+                );
+              }
+
+              const roleTargetsRepository =
+                manager.getRepository(RoleTargetsEntity);
+
+              await roleTargetsRepository.save({
+                roleId: role.id,
                 agentId: createdAgent.id,
-                standardRoleId: agentDefinition.standardRoleId,
-              })
-              .catch(() =>
-                this.logger.warn(
-                  `Failed to assign standard role ${agentDefinition.standardRoleId} to agent ${createdAgent.id}.`,
-                ),
+                workspaceId: context.workspaceId,
+              });
+            } catch (error) {
+              this.logger.error(
+                `Failed to assign standard role ${agentDefinition.standardRoleId} to agent ${createdAgent.id}: ${error.message}`,
+                error.stack,
               );
+              throw error;
+            }
           }
 
           if (createdAgent.standardId === WORKFLOW_CREATION_AGENT.standardId) {
@@ -107,9 +128,47 @@ export class WorkspaceSyncAgentService {
             'id',
             'universalIdentifier',
             'workspaceId',
+            'standardRoleId' as keyof typeof agentToUpdate,
           ]);
 
           await agentRepository.update({ id: agentToUpdate.id }, flatAgentData);
+
+          const agentDefinition = standardAgentDefinitions.find(
+            (def) => def.standardId === agentToUpdate.standardId,
+          );
+
+          if (agentDefinition?.standardRoleId) {
+            try {
+              const roleRepository = manager.getRepository(RoleEntity);
+              const role = await roleRepository.findOne({
+                where: {
+                  standardId: agentDefinition.standardRoleId,
+                  workspaceId: context.workspaceId,
+                },
+              });
+
+              if (!role) {
+                throw new Error(
+                  `Standard role with standard ID ${agentDefinition.standardRoleId} not found in workspace`,
+                );
+              }
+
+              const roleTargetsRepository =
+                manager.getRepository(RoleTargetsEntity);
+
+              await roleTargetsRepository.save({
+                roleId: role.id,
+                agentId: agentToUpdate.id,
+                workspaceId: context.workspaceId,
+              });
+            } catch (error) {
+              this.logger.error(
+                `Failed to assign standard role ${agentDefinition.standardRoleId} to agent ${agentToUpdate.id}: ${error.message}`,
+                error.stack,
+              );
+              throw error;
+            }
+          }
           break;
         }
 
