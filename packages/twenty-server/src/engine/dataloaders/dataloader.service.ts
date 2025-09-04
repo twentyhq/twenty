@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
@@ -22,7 +23,6 @@ import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadat
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 export type RelationMetadataLoaderPayload = {
   workspaceId: string;
