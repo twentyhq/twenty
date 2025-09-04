@@ -188,7 +188,7 @@ export const generateWorkflowDiagram = ({
         id: v4(),
         source: step.id,
         target: child,
-        ...(edgeTypeBetweenTwoDefaultNodes.includes('editable')
+        ...(edgeType.includes('editable')
           ? { deletable: true, selectable: true }
           : {}),
       });
