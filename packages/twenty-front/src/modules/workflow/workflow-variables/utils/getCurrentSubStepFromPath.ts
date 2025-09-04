@@ -1,20 +1,20 @@
 import {
-  type OutputSchema,
-  type StepOutputSchema,
-} from '@/workflow/workflow-variables/types/StepOutputSchema';
-import { isBaseOutputSchema } from '@/workflow/workflow-variables/utils/isBaseOutputSchema';
-import { isRecordOutputSchema } from '@/workflow/workflow-variables/utils/isRecordOutputSchema';
+  type OutputSchemaV2,
+  type StepOutputSchemaV2,
+} from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { isBaseOutputSchemaV2 } from '@/workflow/workflow-variables/utils/isBaseOutputSchemaV2';
+import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/utils/isRecordOutputSchemaV2';
 
 export const getCurrentSubStepFromPath = (
-  step: StepOutputSchema,
+  step: StepOutputSchemaV2,
   path: string[],
-): OutputSchema => {
+): OutputSchemaV2 => {
   let currentSubStep = step.outputSchema;
 
   for (const key of path) {
-    if (isRecordOutputSchema(currentSubStep)) {
+    if (isRecordOutputSchemaV2(currentSubStep)) {
       currentSubStep = currentSubStep.fields[key]?.value;
-    } else if (isBaseOutputSchema(currentSubStep)) {
+    } else if (isBaseOutputSchemaV2(currentSubStep)) {
       currentSubStep = currentSubStep[key]?.value;
     }
   }

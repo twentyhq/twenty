@@ -5,9 +5,9 @@ import { getActionIcon } from '@/workflow/workflow-steps/workflow-actions/utils/
 import { getTriggerDefaultLabel } from '@/workflow/workflow-trigger/utils/getTriggerDefaultLabel';
 import { getTriggerIcon } from '@/workflow/workflow-trigger/utils/getTriggerIcon';
 import {
-  type OutputSchema,
-  type StepOutputSchema,
-} from '@/workflow/workflow-variables/types/StepOutputSchema';
+  type OutputSchemaV2,
+  type StepOutputSchemaV2,
+} from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
@@ -17,11 +17,12 @@ export const useStepsOutputSchema = () => {
     ({ set }) =>
       (workflowVersion: WorkflowVersion) => {
         workflowVersion.steps?.forEach((step) => {
-          const stepOutputSchema: StepOutputSchema = {
+          const stepOutputSchema: StepOutputSchemaV2 = {
             id: step.id,
             name: step.name,
+            type: step.type,
             icon: getActionIcon(step.type),
-            outputSchema: step.settings?.outputSchema as OutputSchema,
+            outputSchema: step.settings?.outputSchema as OutputSchemaV2,
           };
 
           set(
@@ -37,13 +38,14 @@ export const useStepsOutputSchema = () => {
         if (isDefined(trigger)) {
           const triggerIconKey = getTriggerIcon(trigger);
 
-          const triggerOutputSchema: StepOutputSchema = {
+          const triggerOutputSchema: StepOutputSchemaV2 = {
             id: TRIGGER_STEP_ID,
             name: isDefined(trigger.name)
               ? trigger.name
               : getTriggerDefaultLabel(trigger),
+            type: trigger.type,
             icon: triggerIconKey,
-            outputSchema: trigger.settings?.outputSchema as OutputSchema,
+            outputSchema: trigger.settings?.outputSchema as OutputSchemaV2,
           };
 
           set(

@@ -1,4 +1,5 @@
-import { type OutputSchema } from '@/workflow/workflow-variables/types/StepOutputSchema';
+import { type BaseOutputSchemaV2 } from '@/workflow/workflow-variables/types/BaseOutputSchemaV2';
+import { type RecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/RecordOutputSchemaV2';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { filterOutputSchema } from '../filterOutputSchema';
 
@@ -6,19 +7,17 @@ describe('filterOutputSchema', () => {
   const createRecordSchema = (
     nameSingular: string,
     fields = {},
-  ): OutputSchema => ({
+  ): RecordOutputSchemaV2 => ({
     _outputSchemaType: 'RECORD',
     object: {
-      nameSingular,
-      fieldIdName: 'id',
-      isLeaf: true,
-      value: 'Fake value',
+      label: nameSingular,
       objectMetadataId: '123',
+      isRelationField: false,
     },
     fields,
   });
 
-  const createBaseSchema = (fields = {}): OutputSchema => ({
+  const createBaseSchema = (fields = {}): BaseOutputSchemaV2 => ({
     ...fields,
   });
 

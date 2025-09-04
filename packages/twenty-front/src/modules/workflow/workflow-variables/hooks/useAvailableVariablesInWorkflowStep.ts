@@ -5,9 +5,9 @@ import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { getPreviousSteps } from '@/workflow/workflow-steps/utils/getWorkflowPreviousSteps';
 import {
-  type OutputSchema,
-  type StepOutputSchema,
-} from '@/workflow/workflow-variables/types/StepOutputSchema';
+  type OutputSchemaV2,
+  type StepOutputSchemaV2,
+} from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { filterOutputSchema } from '@/workflow/workflow-variables/utils/filterOutputSchema';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,7 +22,7 @@ export const useAvailableVariablesInWorkflowStep = ({
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
   fieldTypesToExclude?: InputSchemaPropertyType[];
-}): StepOutputSchema[] => {
+}): StepOutputSchemaV2[] => {
   const workflowSelectedNode = useRecoilComponentValue(
     workflowSelectedNodeComponentState,
   );
@@ -33,7 +33,7 @@ export const useAvailableVariablesInWorkflowStep = ({
     ? getPreviousSteps(steps, workflowSelectedNode).map((step) => step.id)
     : [];
 
-  const availableStepsOutputSchema: StepOutputSchema[] = useRecoilValue(
+  const availableStepsOutputSchema: StepOutputSchemaV2[] = useRecoilValue(
     stepsOutputSchemaFamilySelector({
       workflowVersionId: flow.workflowVersionId,
       stepIds: [TRIGGER_STEP_ID, ...previousStepIds],
@@ -47,7 +47,7 @@ export const useAvailableVariablesInWorkflowStep = ({
         shouldDisplayRecordObjects,
         outputSchema: stepOutputSchema.outputSchema,
         fieldTypesToExclude,
-      }) as OutputSchema;
+      }) as OutputSchemaV2;
 
       if (!isDefined(outputSchema) || isEmptyObject(outputSchema)) {
         return undefined;
@@ -57,6 +57,7 @@ export const useAvailableVariablesInWorkflowStep = ({
         id: stepOutputSchema.id,
         name: stepOutputSchema.name,
         icon: stepOutputSchema.icon,
+        type: stepOutputSchema.type,
         outputSchema,
       };
     })
