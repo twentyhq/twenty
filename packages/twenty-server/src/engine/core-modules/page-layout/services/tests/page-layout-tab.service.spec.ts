@@ -262,9 +262,10 @@ describe('PageLayoutTabService', () => {
         pageLayoutTabData.pageLayoutId,
         workspaceId,
       );
-      expect(pageLayoutTabRepository.create).toHaveBeenCalledWith(
-        pageLayoutTabData,
-      );
+      expect(pageLayoutTabRepository.create).toHaveBeenCalledWith({
+        ...pageLayoutTabData,
+        workspaceId,
+      });
       expect(pageLayoutTabRepository.save).toHaveBeenCalledWith(
         mockPageLayoutTab,
       );

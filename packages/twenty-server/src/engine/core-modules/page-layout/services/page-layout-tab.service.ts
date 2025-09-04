@@ -95,8 +95,10 @@ export class PageLayoutTabService {
         workspaceId,
       );
 
-      const pageLayoutTab =
-        this.pageLayoutTabRepository.create(pageLayoutTabData);
+      const pageLayoutTab = this.pageLayoutTabRepository.create({
+        ...pageLayoutTabData,
+        workspaceId,
+      });
 
       return this.pageLayoutTabRepository.save(pageLayoutTab);
     } catch (error) {
