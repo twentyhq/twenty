@@ -8,28 +8,28 @@ import { type Response } from 'express';
 
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import {
-  PageLayoutException,
-  PageLayoutExceptionCode,
-} from 'src/engine/core-modules/page-layout/exceptions/page-layout.exception';
+  PageLayoutTabException,
+  PageLayoutTabExceptionCode,
+} from 'src/engine/core-modules/page-layout/exceptions/page-layout-tab.exception';
 
-@Catch(PageLayoutException)
-export class PageLayoutRestApiExceptionFilter implements ExceptionFilter {
+@Catch(PageLayoutTabException)
+export class PageLayoutTabRestApiExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly httpExceptionHandlerService: HttpExceptionHandlerService,
   ) {}
 
-  catch(exception: PageLayoutException, host: ArgumentsHost) {
+  catch(exception: PageLayoutTabException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
     switch (exception.code) {
-      case PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND:
+      case PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_NOT_FOUND:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,
           404,
         );
-      case PageLayoutExceptionCode.INVALID_PAGE_LAYOUT_DATA:
+      case PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,

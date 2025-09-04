@@ -709,6 +709,12 @@ export type CreatePageLayoutInput = {
   type?: InputMaybe<PageLayoutType>;
 };
 
+export type CreatePageLayoutTabInput = {
+  pageLayoutId: Scalars['UUID'];
+  position?: InputMaybe<Scalars['Float']>;
+  title: Scalars['String'];
+};
+
 export type CreateRemoteServerInput = {
   foreignDataWrapperOptions: Scalars['JSON'];
   foreignDataWrapperType: Scalars['String'];
@@ -1389,6 +1395,7 @@ export type Mutation = {
   createOneRole: Role;
   createOneServerlessFunction: ServerlessFunction;
   createPageLayout: PageLayout;
+  createPageLayoutTab: PageLayoutTab;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWebhook: Webhook;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
@@ -1411,6 +1418,7 @@ export type Mutation = {
   deleteOneRole: Scalars['String'];
   deleteOneServerlessFunction: ServerlessFunction;
   deletePageLayout: PageLayout;
+  deletePageLayoutTab: Scalars['Boolean'];
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
@@ -1425,6 +1433,7 @@ export type Mutation = {
   destroyCoreViewGroup: Scalars['Boolean'];
   destroyCoreViewSort: Scalars['Boolean'];
   destroyPageLayout: Scalars['Boolean'];
+  destroyPageLayoutTab: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -1449,6 +1458,7 @@ export type Mutation = {
   resendEmailVerificationToken: ResendEmailVerificationTokenOutput;
   resendWorkspaceInvitation: SendInvitationsOutput;
   restorePageLayout: PageLayout;
+  restorePageLayoutTab: PageLayoutTab;
   revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: WorkflowRun;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
@@ -1482,6 +1492,7 @@ export type Mutation = {
   updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
   updatePageLayout: PageLayout;
+  updatePageLayoutTab: PageLayoutTab;
   updatePasswordViaResetToken: InvalidatePassword;
   updateSubscriptionItemPrice: BillingUpdateOutput;
   updateWebhook?: Maybe<Webhook>;
@@ -1665,6 +1676,11 @@ export type MutationCreatePageLayoutArgs = {
 };
 
 
+export type MutationCreatePageLayoutTabArgs = {
+  input: CreatePageLayoutTabInput;
+};
+
+
 export type MutationCreateSamlIdentityProviderArgs = {
   input: SetupSamlSsoInput;
 };
@@ -1770,6 +1786,11 @@ export type MutationDeletePageLayoutArgs = {
 };
 
 
+export type MutationDeletePageLayoutTabArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationDeleteSsoIdentityProviderArgs = {
   input: DeleteSsoInput;
 };
@@ -1831,6 +1852,11 @@ export type MutationDestroyCoreViewSortArgs = {
 
 
 export type MutationDestroyPageLayoutArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyPageLayoutTabArgs = {
   id: Scalars['String'];
 };
 
@@ -1945,6 +1971,11 @@ export type MutationResendWorkspaceInvitationArgs = {
 
 
 export type MutationRestorePageLayoutArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationRestorePageLayoutTabArgs = {
   id: Scalars['String'];
 };
 
@@ -2115,6 +2146,12 @@ export type MutationUpdateOneServerlessFunctionArgs = {
 export type MutationUpdatePageLayoutArgs = {
   id: Scalars['String'];
   input: UpdatePageLayoutInput;
+};
+
+
+export type MutationUpdatePageLayoutTabArgs = {
+  id: Scalars['String'];
+  input: UpdatePageLayoutTabInput;
 };
 
 
@@ -2406,6 +2443,7 @@ export type PageLayoutTab = {
   position: Scalars['Float'];
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
+  workspaceId: Scalars['UUID'];
 };
 
 export enum PageLayoutType {
@@ -2533,6 +2571,8 @@ export type Query = {
   getIndicatorHealthStatus: AdminPanelHealthServiceData;
   getMeteredProductsUsage: Array<BillingMeteredProductUsageOutput>;
   getPageLayout?: Maybe<PageLayout>;
+  getPageLayoutTab: PageLayoutTab;
+  getPageLayoutTabs: Array<PageLayoutTab>;
   getPageLayouts: Array<PageLayout>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
@@ -2744,6 +2784,16 @@ export type QueryGetIndicatorHealthStatusArgs = {
 
 export type QueryGetPageLayoutArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryGetPageLayoutTabArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetPageLayoutTabsArgs = {
+  pageLayoutId: Scalars['String'];
 };
 
 
@@ -3372,6 +3422,11 @@ export type UpdatePageLayoutInput = {
   name?: InputMaybe<Scalars['String']>;
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
   type?: InputMaybe<PageLayoutType>;
+};
+
+export type UpdatePageLayoutTabInput = {
+  position?: InputMaybe<Scalars['Float']>;
+  title?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateRemoteServerInput = {
