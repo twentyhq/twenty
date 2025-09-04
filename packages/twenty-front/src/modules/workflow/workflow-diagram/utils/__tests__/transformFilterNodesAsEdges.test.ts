@@ -45,7 +45,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter--editable',
+      getFilterEdgeType: () => 'filter--editable',
       isWorkflowBranchEnabled: true,
     });
 
@@ -112,7 +112,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter--editable',
+      getFilterEdgeType: () => 'filter--editable',
       isWorkflowBranchEnabled: true,
     });
 
@@ -258,7 +258,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter--editable',
+      getFilterEdgeType: () => 'filter--editable',
       isWorkflowBranchEnabled: true,
     });
 
@@ -351,7 +351,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter--editable',
+      getFilterEdgeType: () => 'filter--editable',
       isWorkflowBranchEnabled: true,
     });
 
@@ -434,7 +434,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter--editable',
+      getFilterEdgeType: () => 'filter--editable',
       isWorkflowBranchEnabled: true,
     });
 
@@ -545,7 +545,7 @@ describe('transformFilterNodesAsEdges', () => {
     const result = transformFilterNodesAsEdges({
       nodes: diagram.nodes,
       edges: diagram.edges,
-      defaultFilterEdgeType: 'filter--editable',
+      getFilterEdgeType: () => 'filter--editable',
       isWorkflowBranchEnabled: false,
     });
 
