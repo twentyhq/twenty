@@ -5,7 +5,7 @@ const StyledContainer = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.strong};
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   box-sizing: border-box;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
