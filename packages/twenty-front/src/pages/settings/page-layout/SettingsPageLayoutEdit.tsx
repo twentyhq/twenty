@@ -14,8 +14,10 @@ import { usePageLayoutDragSelection } from '@/settings/page-layout/hooks/usePage
 import { usePageLayoutHandleLayoutChange } from '@/settings/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import { usePageLayoutSaveHandler } from '@/settings/page-layout/hooks/usePageLayoutSaveHandler';
 import { usePageLayoutWidgetDelete } from '@/settings/page-layout/hooks/usePageLayoutWidgetDelete';
+import { WidgetType } from '@/settings/page-layout/mocks/mockWidgets';
 import { pageLayoutCurrentBreakpointState } from '@/settings/page-layout/states/pageLayoutCurrentBreakpointState';
 import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
+import { pageLayoutEditingWidgetIdState } from '@/settings/page-layout/states/pageLayoutEditingWidgetIdState';
 import { pageLayoutSelectedCellsState } from '@/settings/page-layout/states/pageLayoutSelectedCellsState';
 import { pageLayoutWidgetsState } from '@/settings/page-layout/states/pageLayoutWidgetsState';
 import { calculateTotalGridRows } from '@/settings/page-layout/utils/calculateTotalGridRows';
@@ -36,7 +38,7 @@ import {
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { useParams } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconAppWindow, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -134,6 +136,9 @@ export const SettingsPageLayoutEdit = () => {
   );
   const pageLayoutWidgets = useRecoilValue(pageLayoutWidgetsState);
   const { navigateCommandMenu } = useNavigateCommandMenu();
+  const setPageLayoutEditingWidgetId = useSetRecoilState(
+    pageLayoutEditingWidgetIdState,
+  );
 
   const {
     handleDragSelectionStart,
@@ -152,6 +157,25 @@ export const SettingsPageLayoutEdit = () => {
 
   const { handleRemoveWidget } = usePageLayoutWidgetDelete();
   const { handleLayoutChange } = usePageLayoutHandleLayoutChange();
+
+  const handleEditWidget = useCallback(
+    (widgetId: string) => {
+      const widget = pageLayoutWidgets.find((w) => w.id === widgetId);
+      if (!widget) return;
+
+      setPageLayoutEditingWidgetId(widgetId);
+
+      if (widget.type === WidgetType.IFRAME) {
+        navigateCommandMenu({
+          page: CommandMenuPages.PageLayoutIframeConfig,
+          pageTitle: 'Edit iFrame',
+          pageIcon: IconAppWindow,
+          resetNavigationStack: true,
+        });
+      }
+    },
+    [pageLayoutWidgets, setPageLayoutEditingWidgetId, navigateCommandMenu],
+  );
 
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
@@ -289,6 +313,7 @@ export const SettingsPageLayoutEdit = () => {
                   <PageLayoutWidgetPlaceholder
                     title={widget.title}
                     onRemove={() => handleRemoveWidget(widget.id)}
+                    onEdit={() => handleEditWidget(widget.id)}
                   >
                     {renderWidget(widget)}
                   </PageLayoutWidgetPlaceholder>

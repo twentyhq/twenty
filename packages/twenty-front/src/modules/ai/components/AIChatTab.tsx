@@ -118,6 +118,8 @@ export const AIChatTab = ({
               placeholder={t`Enter a question...`}
               value={input}
               onChange={handleInputChange}
+              minRows={1}
+              maxRows={20}
             />
             <StyledButtonsContainer>
               {!isWorkflowAgentNodeChat && (

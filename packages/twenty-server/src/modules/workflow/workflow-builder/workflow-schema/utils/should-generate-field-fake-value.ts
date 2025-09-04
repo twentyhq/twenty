@@ -12,7 +12,7 @@ export const shouldGenerateFieldFakeValue = <T extends FieldMetadataType>(
 ) => {
   return (
     field.isActive &&
-    (!field.isSystem || field.name === 'id' || field.name === 'userEmail') &&
+    field.name !== 'searchVector' &&
     (field.type !== FieldMetadataType.RELATION ||
       isManyToOneRelationField(field as unknown as FieldMetadataEntity))
   );

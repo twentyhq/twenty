@@ -39,6 +39,7 @@ type SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRowProps = {
   objectMetadataItem: ObjectMetadataItem;
   fieldPermissions: FieldPermission[];
   roleId: string;
+  isLabelIdentifier: boolean;
 };
 
 export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
@@ -47,6 +48,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
     fieldPermissions,
     objectMetadataItem,
     roleId,
+    isLabelIdentifier,
   }: SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRowProps) => {
     const theme = useTheme();
     const { getIcon } = useIcons();
@@ -132,7 +134,8 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
 
     const isReadRestricted =
       hasRestriction &&
-      fieldPermissionForThisFieldMetadataItem?.canReadFieldValue === false;
+      fieldPermissionForThisFieldMetadataItem?.canReadFieldValue === false &&
+      !isLabelIdentifier;
 
     const isUpdateRestricted =
       hasRestriction &&
@@ -184,7 +187,9 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
           {shouldShowSeeTableHeader && (
             <TableCell>
               <OverridableCheckbox
-                disabled={fieldMetadataItem.isUIReadOnly ?? false}
+                disabled={
+                  (fieldMetadataItem.isUIReadOnly || isLabelIdentifier) ?? false
+                }
                 checked={true}
                 onChange={handleSeeChange}
                 type={isReadRestricted ? 'override' : 'default'}
