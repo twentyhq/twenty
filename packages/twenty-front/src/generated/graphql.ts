@@ -2354,6 +2354,7 @@ export type PageLayoutTab = {
   position: Scalars['Float'];
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
+  workspaceId: Scalars['UUID'];
 };
 
 export enum PageLayoutType {
