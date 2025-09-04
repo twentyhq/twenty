@@ -16,6 +16,7 @@ import { getWorkflowDiagramTriggerNode } from '@/workflow/workflow-diagram/utils
 import { WORKFLOW_VISUALIZER_EDGE_DEFAULT_CONFIGURATION } from '@/workflow/workflow-diagram/workflow-edges/constants/WorkflowVisualizerEdgeDefaultConfiguration';
 
 import { WORKFLOW_DIAGRAM_EMPTY_TRIGGER_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyTriggerNodeDefinition';
+import { WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramIteratorNodeLoopHandleId';
 import { getRootStepIds } from '@/workflow/workflow-trigger/utils/getRootStepIds';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
@@ -122,7 +123,7 @@ export const generateWorkflowDiagram = ({
             type: edgeTypeForIteratorLoopBranch,
             id: v4(),
             source: step.id,
-            sourceHandle: 'loop',
+            sourceHandle: WORKFLOW_DIAGRAM_ITERATOR_NODE_LOOP_HANDLE_ID,
             target: initialLoopStepId,
             ...(edgeTypeForIteratorLoopBranch.includes('editable')
               ? { deletable: true, selectable: true }
