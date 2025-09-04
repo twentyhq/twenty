@@ -50,7 +50,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
   ) {
     let gqlMorphField = '';
     for (const morphRelation of fieldMetadata.morphRelations ?? []) {
-      const relationFieldName = fieldMetadata.name;
+      const relationFieldName = morphRelation.sourceFieldMetadata.name;
       const relationMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>
           objectMetadataItem.id === morphRelation.targetObjectMetadata.id,
