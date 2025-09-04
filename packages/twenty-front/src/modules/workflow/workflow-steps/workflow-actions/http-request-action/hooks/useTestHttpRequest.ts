@@ -5,9 +5,7 @@ import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/htt
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { resolveInput } from 'twenty-shared/utils';
-import {
-  parseDataFromContentType
-} from 'twenty-shared/workflow';
+import { parseDataFromContentType } from 'twenty-shared/workflow';
 import { type HttpRequestBody } from '../constants/HttpRequest';
 
 const convertFlatVariablesToNestedContext = (flatVariables: {
