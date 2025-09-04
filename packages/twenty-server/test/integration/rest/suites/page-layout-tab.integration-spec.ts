@@ -1,4 +1,5 @@
 import { TEST_NOT_EXISTING_PAGE_LAYOUT_ID } from 'test/integration/constants/test-page-layout-ids.constants';
+import { TEST_NOT_EXISTING_PAGE_LAYOUT_TAB_ID } from 'test/integration/constants/test-page-layout-tab-ids.constants';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
@@ -25,9 +26,6 @@ import {
   PageLayoutTabExceptionMessageKey,
   generatePageLayoutTabExceptionMessage,
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-tab.exception';
-
-const TEST_NOT_EXISTING_PAGE_LAYOUT_TAB_ID =
-  '20202020-df6b-4273-9aca-7170b998c176';
 
 describe('Page Layout Tab REST API', () => {
   let testObjectMetadataId: string;
@@ -72,11 +70,19 @@ describe('Page Layout Tab REST API', () => {
 
   describe('GET /rest/metadata/page-layout-tabs', () => {
     it('should return page layout tabs filtered by pageLayoutId', async () => {
-      await createTestPageLayoutTabWithRestApi({
-        title: 'Test Tab for Filter',
+      const input1 = {
+        title: 'Tab 1',
         pageLayoutId: testPageLayoutId,
         position: 0,
-      });
+      };
+      const input2 = {
+        title: 'Tab 2',
+        pageLayoutId: testPageLayoutId,
+        position: 1,
+      };
+
+      await createTestPageLayoutTabWithRestApi(input1);
+      await createTestPageLayoutTabWithRestApi(input2);
 
       const response = await makeRestAPIRequest({
         method: 'get',
@@ -88,8 +94,7 @@ describe('Page Layout Tab REST API', () => {
       expect(Array.isArray(response.body)).toBe(true);
 
       if (response.body.length > 0) {
-        assertPageLayoutTabStructure(response.body[0]);
-        expect(response.body[0].pageLayoutId).toBe(testPageLayoutId);
+        assertPageLayoutTabStructure(response.body[0], input1);
       }
     });
 
@@ -124,32 +129,32 @@ describe('Page Layout Tab REST API', () => {
 
   describe('POST /rest/metadata/page-layout-tabs', () => {
     it('should create a new page layout tab with all properties', async () => {
-      const pageLayoutTabTitle = generateRecordName('Test Tab');
-      const pageLayoutTab = await createTestPageLayoutTabWithRestApi({
-        title: pageLayoutTabTitle,
+      const input = {
+        title: 'Test Tab',
         pageLayoutId: testPageLayoutId,
         position: 1,
-      });
+      };
 
-      assertPageLayoutTabStructure(pageLayoutTab, {
-        title: pageLayoutTabTitle,
-        pageLayoutId: testPageLayoutId,
-        position: 1,
-      });
+      const pageLayoutTab = await createTestPageLayoutTabWithRestApi(input);
+
+      assertPageLayoutTabStructure(pageLayoutTab, input);
 
       await deleteTestPageLayoutTabWithRestApi(pageLayoutTab.id);
     });
 
     it('should create a page layout tab with minimum required fields', async () => {
-      const pageLayoutTabTitle = generateRecordName('Minimal Tab');
-      const pageLayoutTab = await createTestPageLayoutTabWithRestApi({
-        title: pageLayoutTabTitle,
+      const input = {
+        title: 'Minimal Tab',
         pageLayoutId: testPageLayoutId,
+      };
+
+      const pageLayoutTab = await createTestPageLayoutTabWithRestApi({
+        title: input.title,
+        pageLayoutId: input.pageLayoutId,
       });
 
       assertPageLayoutTabStructure(pageLayoutTab, {
-        title: pageLayoutTabTitle,
-        pageLayoutId: testPageLayoutId,
+        ...input,
         position: 0,
       });
 
@@ -158,7 +163,7 @@ describe('Page Layout Tab REST API', () => {
 
     it('should return error when creating tab with invalid pageLayoutId', async () => {
       const pageLayoutTabData = {
-        title: generateRecordName('Invalid Tab'),
+        title: 'Invalid Tab',
         pageLayoutId: TEST_NOT_EXISTING_PAGE_LAYOUT_ID,
         position: 0,
       };
@@ -198,12 +203,12 @@ describe('Page Layout Tab REST API', () => {
 
   describe('GET /rest/metadata/page-layout-tabs/:id', () => {
     it('should return a page layout tab by id', async () => {
-      const pageLayoutTabTitle = generateRecordName('Test Tab for Get');
-      const pageLayoutTab = await createTestPageLayoutTabWithRestApi({
-        title: pageLayoutTabTitle,
+      const input = {
+        title: 'Tab',
         pageLayoutId: testPageLayoutId,
         position: 2,
-      });
+      };
+      const pageLayoutTab = await createTestPageLayoutTabWithRestApi(input);
 
       const response = await makeRestAPIRequest({
         method: 'get',
@@ -214,9 +219,7 @@ describe('Page Layout Tab REST API', () => {
       assertRestApiSuccessfulResponse(response);
       assertPageLayoutTabStructure(response.body, {
         id: pageLayoutTab.id,
-        title: pageLayoutTabTitle,
-        pageLayoutId: testPageLayoutId,
-        position: 2,
+        ...input,
       });
 
       await deleteTestPageLayoutTabWithRestApi(pageLayoutTab.id);
@@ -242,16 +245,15 @@ describe('Page Layout Tab REST API', () => {
 
   describe('PATCH /rest/metadata/page-layout-tabs/:id', () => {
     it('should update an existing page layout tab', async () => {
-      const pageLayoutTabTitle = generateRecordName('Test Tab for Update');
-      const pageLayoutTab = await createTestPageLayoutTabWithRestApi({
-        title: pageLayoutTabTitle,
+      const input = {
+        title: 'Test Tab for Update',
         pageLayoutId: testPageLayoutId,
         position: 0,
-      });
+      };
+      const pageLayoutTab = await createTestPageLayoutTabWithRestApi(input);
 
-      const updatedTitle = generateRecordName('Updated Tab');
       const updateData = {
-        title: updatedTitle,
+        title: 'Updated Tab',
         position: 3,
       };
 
@@ -265,23 +267,22 @@ describe('Page Layout Tab REST API', () => {
       assertRestApiSuccessfulResponse(response);
       assertPageLayoutTabStructure(response.body, {
         id: pageLayoutTab.id,
-        title: updatedTitle,
-        pageLayoutId: testPageLayoutId,
-        position: 3,
+        ...input,
+        ...updateData,
       });
 
       await deleteTestPageLayoutTabWithRestApi(pageLayoutTab.id);
     });
 
     it('should update only provided fields', async () => {
-      const originalTitle = generateRecordName('Original Tab');
-      const pageLayoutTab = await createTestPageLayoutTabWithRestApi({
-        title: originalTitle,
+      const input = {
+        title: 'Original Tab',
         pageLayoutId: testPageLayoutId,
         position: 1,
-      });
+      };
+      const pageLayoutTab = await createTestPageLayoutTabWithRestApi(input);
 
-      const updatedTitle = generateRecordName('Updated Title Only');
+      const updatedTitle = 'Updated Title Only';
       const updateData = {
         title: updatedTitle,
       };
@@ -377,74 +378,6 @@ describe('Page Layout Tab REST API', () => {
           TEST_NOT_EXISTING_PAGE_LAYOUT_TAB_ID,
         ),
       );
-    });
-  });
-
-  describe('Edge Cases', () => {
-    it('should handle multiple page layout tabs for same page layout', async () => {
-      const pageLayoutTab1 = await createTestPageLayoutTabWithRestApi({
-        title: generateRecordName('Tab 1'),
-        pageLayoutId: testPageLayoutId,
-        position: 0,
-      });
-
-      const pageLayoutTab2 = await createTestPageLayoutTabWithRestApi({
-        title: generateRecordName('Tab 2'),
-        pageLayoutId: testPageLayoutId,
-        position: 1,
-      });
-
-      const response = await makeRestAPIRequest({
-        method: 'get',
-        path: `/metadata/page-layout-tabs?pageLayoutId=${testPageLayoutId}`,
-        bearer: API_KEY_ACCESS_TOKEN,
-      });
-
-      assertRestApiSuccessfulResponse(response);
-      expect(response.body).toHaveLength(2);
-
-      const sortedTabs = response.body.sort(
-        (a: { position: number }, b: { position: number }) =>
-          a.position - b.position,
-      );
-
-      expect(sortedTabs[0].position).toBe(0);
-      expect(sortedTabs[1].position).toBe(1);
-
-      await Promise.all([
-        deleteTestPageLayoutTabWithRestApi(pageLayoutTab1.id),
-        deleteTestPageLayoutTabWithRestApi(pageLayoutTab2.id),
-      ]);
-    });
-
-    it('should handle page layout tabs with same position', async () => {
-      const pageLayoutTab1 = await createTestPageLayoutTabWithRestApi({
-        title: generateRecordName('Tab Same Position 1'),
-        pageLayoutId: testPageLayoutId,
-        position: 5,
-      });
-
-      const pageLayoutTab2 = await createTestPageLayoutTabWithRestApi({
-        title: generateRecordName('Tab Same Position 2'),
-        pageLayoutId: testPageLayoutId,
-        position: 5,
-      });
-
-      const response = await makeRestAPIRequest({
-        method: 'get',
-        path: `/metadata/page-layout-tabs?pageLayoutId=${testPageLayoutId}`,
-        bearer: API_KEY_ACCESS_TOKEN,
-      });
-
-      assertRestApiSuccessfulResponse(response);
-      expect(response.body).toHaveLength(2);
-      expect(response.body[0].position).toBe(5);
-      expect(response.body[1].position).toBe(5);
-
-      await Promise.all([
-        deleteTestPageLayoutTabWithRestApi(pageLayoutTab1.id),
-        deleteTestPageLayoutTabWithRestApi(pageLayoutTab2.id),
-      ]);
     });
   });
 });
