@@ -54,4 +54,4 @@ export type {
 } from './types/WorkflowRunStateStepInfos';
 export { StepStatus } from './types/WorkflowRunStateStepInfos';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
-export { parseDataFromBodyType } from './utils/parseDataFromBodyType';
+export { parseDataFromContentType } from './utils/parseDataFromContentType';

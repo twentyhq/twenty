@@ -3,13 +3,10 @@ import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workfl
 import { type HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { resolveInput } from 'twenty-shared/utils';
-import {
-  type BodyType,
-  CONTENT_TYPE_VALUES_HTTP_REQUEST,
-  parseDataFromBodyType,
-} from 'twenty-shared/workflow';
+import { isDefined, resolveInput } from 'twenty-shared/utils';
+import { parseDataFromContentType } from 'twenty-shared/workflow';
 import { type HttpRequestBody } from '../constants/HttpRequest';
+import { isMethodWithBody } from '../utils/isMethodWithBody';
 
 const convertFlatVariablesToNestedContext = (flatVariables: {
   [variablePath: string]: any;
@@ -33,17 +30,7 @@ const convertFlatVariablesToNestedContext = (flatVariables: {
 
   return result;
 };
-const getBodyTypeFromContentType = (contentType?: string): BodyType => {
-  if (contentType === CONTENT_TYPE_VALUES_HTTP_REQUEST.FormData) {
-    return 'FormData';
-  } else if (contentType === CONTENT_TYPE_VALUES_HTTP_REQUEST.keyValue) {
-    return 'keyValue';
-  } else if (contentType === CONTENT_TYPE_VALUES_HTTP_REQUEST.Text) {
-    return 'Text';
-  } else {
-    return 'rawJson';
-  }
-};
+
 export const useTestHttpRequest = (actionId: string) => {
   const [isTesting, setIsTesting] = useState(false);
   const [httpRequestTestData, setHttpRequestTestData] = useRecoilState(
@@ -61,18 +48,15 @@ export const useTestHttpRequest = (actionId: string) => {
       headers: headers,
     };
 
-    if (['POST', 'PUT', 'PATCH'].includes(method)) {
-      if (body !== undefined) {
-        const contentType = headers['content-type'];
-        const bodyType = getBodyTypeFromContentType(contentType);
+    if (isMethodWithBody(method) && isDefined(body)) {
+      const contentType = headers['content-type'];
 
-        requestOptions.body = parseDataFromBodyType(bodyType, body);
+      requestOptions.body = parseDataFromContentType(body, contentType);
 
-        if (bodyType === 'FormData') {
-          const headersCopy = { ...headers };
-          delete headersCopy['content-type'];
-          requestOptions.headers = { ...headersCopy };
-        }
+      if (contentType === 'multipart/form-data') {
+        const headersCopy = { ...headers };
+        delete headersCopy['content-type'];
+        requestOptions.headers = { ...headersCopy };
       }
     }
 

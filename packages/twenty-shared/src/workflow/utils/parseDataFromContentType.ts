@@ -1,19 +1,15 @@
-import { BodyType } from '@/workflow/types/workflowHttpRequestStep';
-
 type InputData = Record<string, any> | string;
 
 const parseUrlEncoded = (data: InputData): string => {
-  let parsed: InputData;
+  let parsedData = data;
   if (typeof data === 'string') {
     try {
-      parsed = JSON.parse(data);
+      parsedData = JSON.parse(data);
     } catch {
-      parsed = data;
+      parsedData = data;
     }
-  } else {
-    parsed = data;
   }
-  return new URLSearchParams(parsed).toString();
+  return new URLSearchParams(parsedData).toString();
 };
 
 const parseFormData = (data: InputData): FormData => {
@@ -35,31 +31,37 @@ const parseFormData = (data: InputData): FormData => {
 };
 
 const parseJson = (data: InputData): string => {
-  if (typeof data === 'string') return data;
+  if (typeof data === 'string') {
+    return data;
+  }
   return JSON.stringify(data);
 };
 
 const parseText = (data: InputData): string => {
-  if (typeof data === 'string') return data;
+  if (typeof data === 'string') {
+    return data;
+  }
 
   return Object.entries(data)
     .map(([key, val]) => `${key}=${val}`)
     .join('\n');
 };
 
-export const parseDataFromBodyType = (
-  bodyType: BodyType | undefined,
+export const parseDataFromContentType = (
   data: InputData,
+  contentType?: string,
 ) => {
-  if (bodyType === undefined) return parseJson(data);
-  switch (bodyType) {
-    case 'keyValue':
+  if (contentType === undefined) {
+    return parseJson(data);
+  }
+  switch (contentType) {
+    case 'application/x-www-form-urlencoded':
       return parseUrlEncoded(data);
-    case 'FormData':
+    case 'multipart/form-data':
       return parseFormData(data);
-    case 'rawJson':
+    case 'application/json':
       return parseJson(data);
-    case 'Text':
+    case 'text/plain':
       return parseText(data);
     default:
       return parseJson(data);
