@@ -1,14 +1,13 @@
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
-import { findManyFieldsMetadataQueryFactory } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata-query-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { findManyFieldsMetadata } from 'test/integration/metadata/suites/field-metadata/utils/find-many-fields-metadata.util';
 
 describe('createOne FieldMetadataService relation fields', () => {
   let createdObjectMetadataPersonId = '';
@@ -103,6 +102,7 @@ describe('createOne FieldMetadataService relation fields', () => {
 
     expect(createdField.id).toBeDefined();
     expect(createdField.name).toBe('person');
+    expect(createdField.relation?.type).toBe(contextPayload.relationType);
     expect(createdField.relation?.targetFieldMetadata.id).toBeDefined();
     // TODO: expect(createdField.morphRelations).toBeUndefined();
     const isManyToOne =
@@ -154,7 +154,14 @@ const findFieldMetadata = async ({
 }: {
   fieldMetadataId: string;
 }) => {
-  const operation = findManyFieldsMetadataQueryFactory({
+  const { fields } = await findManyFieldsMetadata({
+    input: {
+      filter: {
+        id: { eq: fieldMetadataId },
+      },
+      paging: { first: 10 },
+    },
+    expectToFail: false,
     gqlFields: `
         id
         name
@@ -173,16 +180,8 @@ const findFieldMetadata = async ({
         }
         settings
     `,
-    input: {
-      filter: {
-        id: { eq: fieldMetadataId },
-      },
-      paging: { first: 10 },
-    },
   });
-
-  const fields = await makeMetadataAPIRequest(operation);
-  const field = fields.body.data.fields.edges?.[0]?.node;
+  const field = fields[0]?.node;
 
   return field;
 };

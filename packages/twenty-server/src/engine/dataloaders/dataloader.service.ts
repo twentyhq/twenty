@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import DataLoader from 'dataloader';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-metadata/interfaces/index-metadata.interface';
 
@@ -96,7 +96,7 @@ export class DataloaderService {
   }
 
   private createRelationLoader() {
-    return new DataLoader<RelationLoaderPayload, RelationDTO>(
+    return new DataLoader<RelationLoaderPayload, Omit<RelationDTO, 'type'>>(
       async (dataLoaderParams: RelationLoaderPayload[]) => {
         const workspaceId = dataLoaderParams[0].workspaceId;
         const fieldMetadataItems = dataLoaderParams.map(
@@ -115,23 +115,24 @@ export class DataloaderService {
   }
 
   private createMorphRelationLoader() {
-    return new DataLoader<MorphRelationLoaderPayload, RelationDTO[]>(
-      async (dataLoaderParams: MorphRelationLoaderPayload[]) => {
-        const workspaceId = dataLoaderParams[0].workspaceId;
+    return new DataLoader<
+      MorphRelationLoaderPayload,
+      Omit<RelationDTO, 'type'>[]
+    >(async (dataLoaderParams: MorphRelationLoaderPayload[]) => {
+      const workspaceId = dataLoaderParams[0].workspaceId;
 
-        return await Promise.all(
-          dataLoaderParams.map(
-            async ({ flatFieldMetadata }) =>
-              await this.fieldMetadataMorphRelationService.findCachedFieldMetadataMorphRelation(
-                {
-                  flatFieldMetadata,
-                  workspaceId,
-                },
-              ),
-          ),
-        );
-      },
-    );
+      return await Promise.all(
+        dataLoaderParams.map(
+          async ({ flatFieldMetadata }) =>
+            await this.fieldMetadataMorphRelationService.findCachedFieldMetadataMorphRelation(
+              {
+                flatFieldMetadata,
+                workspaceId,
+              },
+            ),
+        ),
+      );
+    });
   }
 
   private createIndexMetadataLoader() {
