@@ -26,6 +26,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
@@ -47,6 +48,12 @@ describe('WorkspaceService', () => {
             findOne: jest.fn(),
             softDelete: jest.fn(),
             delete: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(PublicDomain),
+          useValue: {
+            findOneBy: jest.fn(),
           },
         },
         {
