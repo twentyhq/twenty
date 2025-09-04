@@ -24,7 +24,7 @@ export class PageLayoutTabEntity implements Required<PageLayoutTabEntity> {
   @Column({ nullable: false })
   title: string;
 
-  @Column({ nullable: false, type: 'int', default: 0 })
+  @Column({ nullable: false, type: 'float', default: 0 })
   position: number;
 
   @Column({ nullable: false, type: 'uuid' })

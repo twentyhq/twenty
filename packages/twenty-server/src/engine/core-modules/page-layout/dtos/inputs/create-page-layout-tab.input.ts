@@ -1,12 +1,11 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
+import { Field, Float, InputType } from '@nestjs/graphql';
 
 import {
-  IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
-  Min,
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -18,9 +17,8 @@ export class CreatePageLayoutTabInput {
   @IsNotEmpty()
   title: string;
 
-  @Field(() => Int, { nullable: true, defaultValue: 0 })
-  @IsInt()
-  @Min(0)
+  @Field(() => Float, { nullable: false, defaultValue: 0 })
+  @IsNumber()
   @IsOptional()
   position?: number;
 

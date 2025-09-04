@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Float, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
@@ -12,7 +12,7 @@ export class PageLayoutTabDTO {
   @Field({ nullable: false })
   title: string;
 
-  @Field({ nullable: false, defaultValue: 0 })
+  @Field(() => Float, { nullable: false, defaultValue: 0 })
   position: number;
 
   @Field(() => UUIDScalarType, { nullable: false })

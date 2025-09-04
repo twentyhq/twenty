@@ -1,6 +1,6 @@
-import { Field, InputType, Int } from '@nestjs/graphql';
+import { Field, Float, InputType } from '@nestjs/graphql';
 
-import { IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class UpdatePageLayoutTabInput {
@@ -9,9 +9,8 @@ export class UpdatePageLayoutTabInput {
   @IsOptional()
   title?: string;
 
-  @Field(() => Int, { nullable: true })
-  @IsInt()
-  @Min(0)
+  @Field(() => Float, { nullable: false, defaultValue: 0 })
+  @IsNumber()
   @IsOptional()
   position?: number;
 }
