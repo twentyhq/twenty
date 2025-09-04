@@ -5,7 +5,6 @@ import { t } from '@lingui/core/macro';
 import { Repository } from 'typeorm';
 
 import { PublicDomainDTO } from 'src/engine/core-modules/public-domain/dtos/public-domain.dto';
-import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import {
   PublicDomainException,
@@ -17,8 +16,6 @@ import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/
 export class PublicDomainService {
   constructor(
     private readonly dnsManagerService: DnsManagerService,
-    @InjectRepository(ApprovedAccessDomain)
-    private readonly approvedAccessDomainRepository: Repository<ApprovedAccessDomain>,
     @InjectRepository(PublicDomain)
     private readonly publicDomainRepository: Repository<PublicDomain>,
   ) {}
@@ -30,7 +27,7 @@ export class PublicDomainService {
     domain: string;
     workspaceId: string;
   }): Promise<void> {
-    await this.dnsManagerService.deleteRedirectRuleSilently(domain);
+    await this.dnsManagerService.deleteHeaderTransformRuleSilently(domain);
     await this.dnsManagerService.deleteHostnameSilently(domain);
     await this.publicDomainRepository.delete({ domain, workspaceId });
   }
@@ -57,21 +54,6 @@ export class PublicDomainService {
       );
     }
 
-    if (
-      await this.approvedAccessDomainRepository.findOneBy({
-        domain,
-        workspaceId,
-      })
-    ) {
-      throw new PublicDomainException(
-        'Domain already registered as an approved access domain.',
-        PublicDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_REGISTERED,
-        {
-          userFriendlyMessage: t`Domain already registered as an approved access domain.`,
-        },
-      );
-    }
-
     const publicDomain = this.publicDomainRepository.create({
       domain,
       workspaceId,
@@ -79,12 +61,12 @@ export class PublicDomainService {
 
     await this.dnsManagerService.registerHostname(domain);
 
-    await this.dnsManagerService.registerRedirectRule(domain);
+    await this.dnsManagerService.registerHeaderTransformRule(domain);
 
     try {
       await this.publicDomainRepository.insert(publicDomain);
     } catch (error) {
-      await this.dnsManagerService.deleteRedirectRuleSilently(domain);
+      await this.dnsManagerService.deleteHeaderTransformRuleSilently(domain);
       await this.dnsManagerService.deleteHostnameSilently(domain);
 
       throw error;

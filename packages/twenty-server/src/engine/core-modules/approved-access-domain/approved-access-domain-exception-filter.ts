@@ -13,7 +13,6 @@ export class ApprovedAccessDomainExceptionFilter implements ExceptionFilter {
   catch(exception: ApprovedAccessDomainException) {
     switch (exception.code) {
       case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_NOT_FOUND:
-      case ApprovedAccessDomainExceptionCode.PUBLIC_DOMAIN_ALREADY_REGISTERED:
       case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_VERIFIED:
       case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_REGISTERED:
       case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_DOES_NOT_MATCH_DOMAIN_EMAIL:

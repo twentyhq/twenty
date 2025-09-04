@@ -4,5 +4,4 @@ export class PublicDomainException extends CustomException<PublicDomainException
 
 export enum PublicDomainExceptionCode {
   PUBLIC_DOMAIN_ALREADY_REGISTERED = 'PUBLIC_DOMAIN_ALREADY_REGISTERED',
-  APPROVED_ACCESS_DOMAIN_ALREADY_REGISTERED = 'APPROVED_ACCESS_DOMAIN_ALREADY_REGISTERED',
 }

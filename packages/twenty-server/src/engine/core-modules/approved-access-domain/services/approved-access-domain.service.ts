@@ -20,15 +20,12 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { isWorkDomain } from 'src/utils/is-work-email';
-import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 
 @Injectable()
 export class ApprovedAccessDomainService {
   constructor(
     @InjectRepository(ApprovedAccessDomainEntity)
     private readonly approvedAccessDomainRepository: Repository<ApprovedAccessDomainEntity>,
-    @InjectRepository(PublicDomain)
-    private readonly publicDomainRepository: Repository<PublicDomain>,
     private readonly emailService: EmailService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly domainManagerService: DomainManagerService,
@@ -172,21 +169,6 @@ export class ApprovedAccessDomainService {
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_REGISTERED,
         {
           userFriendlyMessage: t`Approved access domain already registered.`,
-        },
-      );
-    }
-
-    if (
-      await this.publicDomainRepository.findOneBy({
-        domain,
-        workspaceId: inWorkspace.id,
-      })
-    ) {
-      throw new ApprovedAccessDomainException(
-        'Domain already registered as a public domain.',
-        ApprovedAccessDomainExceptionCode.PUBLIC_DOMAIN_ALREADY_REGISTERED,
-        {
-          userFriendlyMessage: t`Domain already registered as a public domain.`,
         },
       );
     }

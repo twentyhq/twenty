@@ -5,7 +5,9 @@ import Cloudflare from 'cloudflare';
 import { type CustomHostnameCreateParams } from 'cloudflare/resources/custom-hostnames/custom-hostnames';
 import { isDefined } from 'twenty-shared/utils';
 import { t } from '@lingui/core/macro';
-import { RedirectRule } from 'cloudflare/resources/rulesets/rules';
+import { Phase } from 'cloudflare/resources/rulesets/rulesets';
+import { PhaseGetResponse } from 'cloudflare/src/resources/rulesets/phases/phases';
+import { RewriteRule } from 'cloudflare/src/resources/rulesets/rules';
 
 import {
   DnsManagerException,
@@ -15,6 +17,8 @@ import { DomainManagerService } from 'src/engine/core-modules/domain-manager/ser
 import { dnsManagerValidator } from 'src/engine/core-modules/dns-manager/validator/cloudflare.validate';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type HostnameValidRecords } from 'src/engine/core-modules/dns-manager/dtos/hostname-valid-records';
+
+const PUBLIC_DOMAIN_HEADER_NAME = 'X-Twenty-Public-Domain';
 
 @Injectable()
 export class DnsManagerService {
@@ -63,112 +67,6 @@ export class DnsManagerService {
       hostname: customDomain,
       ssl: this.sslParams,
     });
-  }
-
-  private async getOrCreateRuleset(zoneId: string) {
-    dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
-
-    const rulesetPhase = 'http_request_dynamic_redirect';
-
-    const phaseEntry = await this.cloudflareClient.rulesets.phases.get(
-      rulesetPhase,
-      {
-        zone_id: zoneId,
-      },
-    );
-
-    try {
-      return await this.cloudflareClient.rulesets.get(phaseEntry.id, {
-        zone_id: zoneId,
-      });
-    } catch {
-      return this.cloudflareClient.rulesets.create({
-        zone_id: zoneId,
-        phase: rulesetPhase,
-        kind: 'root',
-        name: 'Public hostnames redirect',
-        description: 'Redirect public hostnames to base domain with /s prefix',
-        rules: [],
-      });
-    }
-  }
-
-  private getRedirectRuleId(publicDomain: string) {
-    return `public-domain-redirect-rule-${publicDomain}`;
-  }
-
-  async registerRedirectRule(publicDomain: string) {
-    dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
-
-    if (!isDefined(await this.getHostnameDetails(publicDomain))) {
-      throw new DnsManagerException(
-        'Hostname should be registered',
-        DnsManagerExceptionCode.HOSTNAME_NOT_REGISTERED,
-        { userFriendlyMessage: 'Hostname should be registered' },
-      );
-    }
-
-    if (publicDomain !== publicDomain.trim().toLowerCase()) {
-      throw new DnsManagerException(
-        'publicDomain should be trimmed and lowercase',
-        DnsManagerExceptionCode.INVALID_INPUT_DATA,
-        {
-          userFriendlyMessage: t`publicDomain should be trimmed and lowercase`,
-        },
-      );
-    }
-
-    const zoneId = this.twentyConfigService.get('CLOUDFLARE_ZONE_ID');
-
-    const ruleset = await this.getOrCreateRuleset(zoneId);
-
-    const baseHost = this.domainManagerService.getBaseUrl().hostname;
-
-    const expression = [
-      `(http.host eq "${publicDomain}")`,
-      `not starts_with(http.request.uri.path, "/.well-known/")`,
-      `not starts_with(http.request.uri.path, "/cdn-cgi/")`,
-    ].join(' and ');
-
-    const targetExpression =
-      `concat("https://${baseHost}/s", ` +
-      `http.request.uri.path, ` +
-      `if(len(http.request.uri.query) > 0, concat("?", http.request.uri.query), ""))`;
-
-    const payload: RedirectRule = {
-      action: 'redirect',
-      id: this.getRedirectRuleId(publicDomain),
-      enabled: true,
-      expression,
-      description: `PublicDomain → base /s (${publicDomain})`,
-      action_parameters: {
-        from_value: {
-          status_code: 301,
-          target_url: { expression: targetExpression },
-        },
-      },
-      version: '1',
-      last_updated: new Date().toISOString(),
-    };
-
-    await this.cloudflareClient.rulesets.rules.create(ruleset.id, payload);
-  }
-
-  async deleteRedirectRuleSilently(publicDomain: string): Promise<void> {
-    dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
-
-    try {
-      const zoneId = this.twentyConfigService.get('CLOUDFLARE_ZONE_ID');
-
-      const ruleset = await this.getOrCreateRuleset(zoneId);
-
-      await this.cloudflareClient.rulesets.rules.delete(
-        ruleset.id,
-        this.getRedirectRuleId(publicDomain),
-      );
-    } catch {
-      return;
-    }
   }
 
   async getHostnameDetails(
@@ -285,5 +183,95 @@ export class DnsManagerService {
     }
 
     return hostnameDetails.records.every(({ status }) => status === 'success');
+  }
+
+  private async getOrCreateRuleset(zoneId: string, phase: Phase) {
+    dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
+
+    let phaseEntry: PhaseGetResponse;
+
+    try {
+      phaseEntry = await this.cloudflareClient.rulesets.phases.get(phase, {
+        zone_id: zoneId,
+      });
+    } catch {
+      phaseEntry = await this.cloudflareClient.rulesets.phases.update(phase, {
+        zone_id: zoneId,
+        description: `${phase} Ruleset`,
+        rules: [],
+      });
+    }
+
+    return phaseEntry;
+  }
+
+  private getRuleId(publicDomain: string, phase: Phase) {
+    return `${phase}-${publicDomain}`;
+  }
+
+  async registerHeaderTransformRule(publicDomain: string) {
+    dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
+
+    if (!isDefined(await this.getHostnameDetails(publicDomain))) {
+      throw new DnsManagerException(
+        'Hostname should be registered',
+        DnsManagerExceptionCode.HOSTNAME_NOT_REGISTERED,
+        { userFriendlyMessage: 'Hostname should be registered' },
+      );
+    }
+
+    if (publicDomain !== publicDomain.trim().toLowerCase()) {
+      throw new DnsManagerException(
+        'hostname should be trimmed and lowercase',
+        DnsManagerExceptionCode.INVALID_INPUT_DATA,
+        {
+          userFriendlyMessage: t`hostname should be trimmed and lowercase`,
+        },
+      );
+    }
+
+    const phase = 'http_request_late_transform';
+
+    const zoneId = this.twentyConfigService.get('CLOUDFLARE_ZONE_ID');
+
+    const ruleset = await this.getOrCreateRuleset(zoneId, phase);
+
+    const payload: RewriteRule = {
+      id: this.getRuleId(publicDomain, phase),
+      action: 'rewrite',
+      description: `Set ${PUBLIC_DOMAIN_HEADER_NAME} for ${publicDomain}`,
+      expression: `(http.host eq "${publicDomain}")`,
+      action_parameters: {
+        headers: {
+          [PUBLIC_DOMAIN_HEADER_NAME]: {
+            operation: 'set',
+            value: '1',
+          },
+        },
+      },
+      version: '1',
+      last_updated: new Date().toISOString(),
+    };
+
+    await this.cloudflareClient.rulesets.rules.create(ruleset.id, payload);
+  }
+
+  async deleteHeaderTransformRuleSilently(publicDomain: string): Promise<void> {
+    dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
+
+    try {
+      const phase = 'http_request_late_transform';
+
+      const zoneId = this.twentyConfigService.get('CLOUDFLARE_ZONE_ID');
+
+      const ruleset = await this.getOrCreateRuleset(zoneId, phase);
+
+      await this.cloudflareClient.rulesets.rules.delete(
+        ruleset.id,
+        this.getRuleId(publicDomain, phase),
+      );
+    } catch {
+      return;
+    }
   }
 }
