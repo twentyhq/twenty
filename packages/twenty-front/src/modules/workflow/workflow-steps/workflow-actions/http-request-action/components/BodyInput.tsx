@@ -6,17 +6,18 @@ import { Select } from '@/ui/input/components/Select';
 import {
   DEFAULT_JSON_BODY_PLACEHOLDER,
   type HttpRequestBody,
+  type HttpRequestFormData,
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import {
-  type KeyValuePair,
   useKeyValuePairs,
+  type KeyValuePair,
 } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useKeyValuePairs';
 import { getBodyTypeFromHeaders } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/getBodyTypeFromHeaders';
 import { parseHttpJsonBodyWithoutVariablesOrThrow } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/parseHttpJsonBodyWithoutVariablesOrThrow';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import styled from '@emotion/styled';
 import { isString } from '@sniptt/guards';
-import { type Dispatch, type SetStateAction, useState } from 'react';
+import { useState, type Dispatch, type SetStateAction } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import {
   CONTENT_TYPE_VALUES_HTTP_REQUEST,
@@ -48,7 +49,7 @@ type BodyInputProps = {
   defaultValue?: HttpRequestBody | string;
   onChange: (
     value?: string | Record<string, string> | undefined,
-    isHeaders?: boolean,
+    type?: keyof HttpRequestFormData,
   ) => void;
   readonly?: boolean;
   headers?: Record<string, string>;
@@ -65,7 +66,7 @@ export const BodyInput = ({
   const defaultValueParsed = isString(defaultValue)
     ? (parseJson<JsonValue>(defaultValue) ?? {})
     : defaultValue;
-  const { pairs, setPairs } = useKeyValuePairs(
+  const { keyValuePairs, setKeyValuePairs } = useKeyValuePairs(
     defaultValueParsed as Record<string, string>,
   );
   const [jsonString, setJsonString] = useState<string | null>(
@@ -136,7 +137,7 @@ export const BodyInput = ({
         setHeadersPairs?.((prevValue) =>
           prevValue.filter((value) => value.key !== 'content-type'),
         );
-        onChange(headersCopy, true);
+        onChange(headersCopy, 'headers');
       }
     } else {
       setHeadersPairs?.((prevValuePairs) => {
@@ -166,7 +167,7 @@ export const BodyInput = ({
         (bodyTypeValue === 'FormData' || bodyTypeValue === 'keyValue') &&
         getBodyTypeFromHeaders(headers) !== bodyTypeValue
       ) {
-        setPairs([
+        setKeyValuePairs([
           {
             key: '',
             value: '',
@@ -178,7 +179,7 @@ export const BodyInput = ({
         ...headers,
         'content-type': CONTENT_TYPE_VALUES_HTTP_REQUEST[bodyTypeValue],
       };
-      onChange(newHeaders, true);
+      onChange(newHeaders, 'headers');
     }
   };
 
@@ -224,8 +225,8 @@ export const BodyInput = ({
             readonly={readonly}
             keyPlaceholder="Property name"
             valuePlaceholder="Property value"
-            pairs={pairs}
-            setPairs={setPairs}
+            pairs={keyValuePairs}
+            setPairs={setKeyValuePairs}
           />
         ) : getBodyTypeFromHeaders(headers) === 'FormData' ? (
           <KeyValuePairInput
@@ -235,8 +236,8 @@ export const BodyInput = ({
             readonly={readonly}
             keyPlaceholder="Property name"
             valuePlaceholder="Property value"
-            pairs={pairs}
-            setPairs={setPairs}
+            pairs={keyValuePairs}
+            setPairs={setKeyValuePairs}
           />
         ) : getBodyTypeFromHeaders(headers) === 'Text' ? (
           <FormTextFieldInput

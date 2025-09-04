@@ -9,7 +9,7 @@ export type KeyValuePair = {
 export const useKeyValuePairs = (
   defaultValue?: Record<string, string> | Array<string>,
 ) => {
-  const [pairs, setPairs] = useState<KeyValuePair[]>(() => {
+  const [keyValuePairs, setKeyValuePairs] = useState<KeyValuePair[]>(() => {
     const initialPairs = defaultValue
       ? Object.entries(defaultValue).map(([key, value]) => ({
           id: v4(),
@@ -22,5 +22,5 @@ export const useKeyValuePairs = (
       : [{ id: v4(), key: '', value: '' }];
   });
 
-  return { pairs, setPairs };
+  return { keyValuePairs, setKeyValuePairs };
 };

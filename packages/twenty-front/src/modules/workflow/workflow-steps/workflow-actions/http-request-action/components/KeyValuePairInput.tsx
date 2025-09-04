@@ -5,6 +5,7 @@ import { type KeyValuePair } from '@/workflow/workflow-steps/workflow-actions/ht
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { v4 } from 'uuid';
@@ -36,7 +37,7 @@ export type KeyValuePairInputProps = {
   readonly?: boolean;
   keyPlaceholder?: string;
   valuePlaceholder?: string;
-  uniqueNotEditableKey?: string;
+  uniqueNotEditableKeys?: string[];
   pairs: KeyValuePair[];
   setPairs: (value: KeyValuePair[]) => void;
 };
@@ -47,7 +48,7 @@ export const KeyValuePairInput = ({
   readonly,
   keyPlaceholder = 'Key',
   valuePlaceholder = 'Value',
-  uniqueNotEditableKey,
+  uniqueNotEditableKeys,
   pairs,
   setPairs,
 }: KeyValuePairInputProps) => {
@@ -58,7 +59,7 @@ export const KeyValuePairInput = ({
   ) => {
     const index = pairs.findIndex((p) => p.id === pairId);
     const newPairs = [...pairs];
-    if (field === 'key' && newValue.trim() === uniqueNotEditableKey) {
+    if (field === 'key' && uniqueNotEditableKeys?.includes(newValue.trim())) {
       newPairs.splice(index, 1);
     } else {
       newPairs[index] = { ...newPairs[index], [field]: newValue };
@@ -89,13 +90,19 @@ export const KeyValuePairInput = ({
   const handleRemovePair = (pairId: string) => {
     const pairToRemove = pairs.find((p) => p.id === pairId);
 
-    if (pairToRemove?.key.trim() === uniqueNotEditableKey) {
+    if (
+      isDefined(pairToRemove) &&
+      uniqueNotEditableKeys?.includes(pairToRemove?.key.trim())
+    ) {
       return;
     }
     const newPairs = pairs.filter((pair) => pair.id !== pairId);
     if (
       newPairs.length === 0 ||
-      (newPairs.length === 1 && newPairs[0].key.trim() === uniqueNotEditableKey)
+      (newPairs.length === uniqueNotEditableKeys?.length &&
+        newPairs.every((pair) =>
+          uniqueNotEditableKeys.includes(pair.key.trim()),
+        ))
     ) {
       newPairs.push({ id: v4(), key: '', value: '' });
     }
@@ -120,7 +127,7 @@ export const KeyValuePairInput = ({
       <StyledContainer>
         {pairs.map(
           (pair) =>
-            pair.key !== uniqueNotEditableKey && (
+            !uniqueNotEditableKeys?.includes(pair.key) && (
               <StyledKeyValueContainer key={pair.id} readonly={readonly}>
                 <FormTextFieldInput
                   placeholder={keyPlaceholder}

@@ -21,8 +21,7 @@ import { useEffect } from 'react';
 import { IconPlayerPlay, IconSettings, useIcons } from 'twenty-ui/display';
 import {
   HTTP_METHODS,
-  type HttpRequestBody,
-  JSON_RESPONSE_PLACEHOLDER,
+  JSON_RESPONSE_PLACEHOLDER
 } from '../constants/HttpRequest';
 import { WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID } from '../constants/WorkflowHttpRequestTabListComponentId';
 import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
@@ -114,16 +113,10 @@ export const WorkflowEditActionHttpRequest = ({
       onActionUpdate: actionOptions.onActionUpdate,
       readonly: actionOptions.readonly === true,
     });
-  const onBodyChange = (value: string | HttpRequestBody | undefined) => {
-    handleFieldChange('body', value);
-  };
-  const onHeadersChange = (value?: Record<string, string>) => {
-    handleFieldChange('headers', value);
-  };
   const { testHttpRequest, isTesting, httpRequestTestData } =
     useTestHttpRequest(action.id);
 
-  const { pairs, setPairs } = useKeyValuePairs(
+   const { keyValuePairs, setKeyValuePairs } = useKeyValuePairs(
     formData.headers as Record<string, string>,
   );
   const handleTestRequest = async () => {
@@ -193,22 +186,19 @@ export const WorkflowEditActionHttpRequest = ({
               readonly={actionOptions.readonly}
               keyPlaceholder="Header name"
               valuePlaceholder="Header value"
-              uniqueNotEditableKey="content-type"
-              pairs={pairs}
-              setPairs={setPairs}
+              uniqueNotEditableKeys={["content-type"]}
+              pairs={keyValuePairs}
+              setPairs={setKeyValuePairs}
             />
 
             {isMethodWithBody(formData.method) && (
               <BodyInput
                 defaultValue={formData.body}
-                onChange={(value, isHeaders) =>
-                  isHeaders
-                    ? onHeadersChange(value as Record<string, string>)
-                    : onBodyChange(value)
+                onChange={(value,type="body") =>handleFieldChange(type,value)
                 }
                 readonly={actionOptions.readonly}
                 headers={formData.headers}
-                setHeadersPairs={setPairs}
+                setHeadersPairs={setKeyValuePairs}
               />
             )}
 
