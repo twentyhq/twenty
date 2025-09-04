@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
+  ObjectsPermissions,
   type ObjectsPermissionsByRoleIdDeprecated,
   type ObjectsPermissionsDeprecated,
   type RestrictedFieldsPermissions,
@@ -192,7 +193,8 @@ export class WorkspacePermissionsCacheService {
     const permissionsByRoleId: ObjectsPermissionsByRoleIdDeprecated = {};
 
     for (const role of roles) {
-      const objectRecordsPermissions: ObjectsPermissionsDeprecated = {};
+      const objectRecordsPermissions: ObjectsPermissionsDeprecated &
+        ObjectsPermissions = {};
 
       for (const objectMetadata of workspaceObjectMetadataCollection) {
         const { id: objectMetadataId, isSystem, standardId } = objectMetadata;
@@ -266,6 +268,10 @@ export class WorkspacePermissionsCacheService {
           canUpdate,
           canSoftDelete,
           canDestroy,
+          canReadObjectRecords: canRead,
+          canUpdateObjectRecords: canUpdate,
+          canSoftDeleteObjectRecords: canSoftDelete,
+          canDestroyObjectRecords: canDestroy,
           restrictedFields,
         };
 
