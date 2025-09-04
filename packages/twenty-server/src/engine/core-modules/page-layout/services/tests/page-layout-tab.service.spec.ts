@@ -28,6 +28,8 @@ describe('PageLayoutTabService', () => {
     position: 0,
     pageLayoutId: 'page-layout-id',
     pageLayout: {} as any,
+    workspaceId: 'workspace-id',
+    workspace: {} as any,
     widgets: [],
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -212,7 +214,7 @@ describe('PageLayoutTabService', () => {
       expect(pageLayoutTabRepository.findOne).toHaveBeenCalledWith({
         where: {
           id,
-          pageLayout: { workspaceId },
+          workspaceId,
           deletedAt: expect.anything(),
         },
         relations: ['widgets'],
@@ -260,9 +262,10 @@ describe('PageLayoutTabService', () => {
         pageLayoutTabData.pageLayoutId,
         workspaceId,
       );
-      expect(pageLayoutTabRepository.create).toHaveBeenCalledWith(
-        pageLayoutTabData,
-      );
+      expect(pageLayoutTabRepository.create).toHaveBeenCalledWith({
+        ...pageLayoutTabData,
+        workspaceId,
+      });
       expect(pageLayoutTabRepository.save).toHaveBeenCalledWith(
         mockPageLayoutTab,
       );
@@ -442,10 +445,9 @@ describe('PageLayoutTabService', () => {
       expect(pageLayoutTabRepository.findOne).toHaveBeenCalledWith({
         where: {
           id,
-          pageLayout: { workspaceId },
+          workspaceId,
         },
         withDeleted: true,
-        relations: ['pageLayout'],
       });
       expect(pageLayoutTabRepository.delete).toHaveBeenCalledWith(id);
       expect(result).toBe(true);
@@ -494,7 +496,7 @@ describe('PageLayoutTabService', () => {
         },
         where: {
           id,
-          pageLayout: { workspaceId },
+          workspaceId,
         },
         withDeleted: true,
       });

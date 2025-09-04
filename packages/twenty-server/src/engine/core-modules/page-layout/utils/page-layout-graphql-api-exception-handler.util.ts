@@ -9,13 +9,13 @@ import {
   PageLayoutTabExceptionCode,
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-tab.exception';
 import {
-  PageLayoutException,
-  PageLayoutExceptionCode,
-} from 'src/engine/core-modules/page-layout/exceptions/page-layout.exception';
-import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-widget.exception';
+import {
+  PageLayoutException,
+  PageLayoutExceptionCode,
+} from 'src/engine/core-modules/page-layout/exceptions/page-layout.exception';
 
 export const pageLayoutGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof PageLayoutException) {

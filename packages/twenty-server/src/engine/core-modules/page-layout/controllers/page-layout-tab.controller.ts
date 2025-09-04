@@ -76,13 +76,7 @@ export class PageLayoutTabController {
     @Body() input: UpdatePageLayoutTabInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutTabDTO> {
-    const updatedPageLayoutTab = await this.pageLayoutTabService.update(
-      id,
-      workspace.id,
-      input,
-    );
-
-    return updatedPageLayoutTab;
+    return this.pageLayoutTabService.update(id, workspace.id, input);
   }
 
   @Delete(':id')
@@ -90,11 +84,6 @@ export class PageLayoutTabController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutTabDTO> {
-    const deletedPageLayoutTab = await this.pageLayoutTabService.delete(
-      id,
-      workspace.id,
-    );
-
-    return deletedPageLayoutTab;
+    return this.pageLayoutTabService.delete(id, workspace.id);
   }
 }

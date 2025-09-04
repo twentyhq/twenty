@@ -1,5 +1,6 @@
 import { keyframes, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 import { Avatar, IconDotsVertical, IconSparkles } from 'twenty-ui/display';
 
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
@@ -8,6 +9,7 @@ import { AgentChatMessageRole } from '@/ai/constants/AgentChatMessageRole';
 import { LightCopyIconButton } from '@/object-record/record-field/ui/components/LightCopyIconButton';
 
 import { type AgentChatMessage } from '~/generated/graphql';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledMessageBubble = styled.div<{ isUser?: boolean }>`
@@ -174,6 +176,7 @@ export const AIChatMessage = ({
   agentStreamingMessage: { streamingText: string; toolCall: string };
 }) => {
   const theme = useTheme();
+  const { localeCatalog } = useRecoilValue(dateLocaleState);
 
   const markdownRender = (text: string) => {
     return <LazyMarkdownRenderer text={text} />;
@@ -248,7 +251,12 @@ export const AIChatMessage = ({
           )}
           {message.content && (
             <StyledMessageFooter className="message-footer">
-              <span>{beautifyPastDateRelativeToNow(message.createdAt)}</span>
+              <span>
+                {beautifyPastDateRelativeToNow(
+                  message.createdAt,
+                  localeCatalog,
+                )}
+              </span>
               <LightCopyIconButton copyText={message.content} />
             </StyledMessageFooter>
           )}
