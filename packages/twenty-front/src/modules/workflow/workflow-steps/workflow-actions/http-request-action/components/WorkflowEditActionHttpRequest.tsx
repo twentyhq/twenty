@@ -21,7 +21,7 @@ import { useEffect } from 'react';
 import { IconPlayerPlay, IconSettings, useIcons } from 'twenty-ui/display';
 import {
   HTTP_METHODS,
-  JSON_RESPONSE_PLACEHOLDER
+  JSON_RESPONSE_PLACEHOLDER,
 } from '../constants/HttpRequest';
 import { WORKFLOW_HTTP_REQUEST_TAB_LIST_COMPONENT_ID } from '../constants/WorkflowHttpRequestTabListComponentId';
 import { useHttpRequestForm } from '../hooks/useHttpRequestForm';
@@ -116,7 +116,7 @@ export const WorkflowEditActionHttpRequest = ({
   const { testHttpRequest, isTesting, httpRequestTestData } =
     useTestHttpRequest(action.id);
 
-   const { keyValuePairs, setKeyValuePairs } = useKeyValuePairs(
+  const { keyValuePairs, setKeyValuePairs } = useKeyValuePairs(
     formData.headers as Record<string, string>,
   );
   const handleTestRequest = async () => {
@@ -186,7 +186,7 @@ export const WorkflowEditActionHttpRequest = ({
               readonly={actionOptions.readonly}
               keyPlaceholder="Header name"
               valuePlaceholder="Header value"
-              uniqueNotEditableKeys={["content-type"]}
+              uniqueNotEditableKeys={['content-type']}
               pairs={keyValuePairs}
               setPairs={setKeyValuePairs}
             />
@@ -194,7 +194,8 @@ export const WorkflowEditActionHttpRequest = ({
             {isMethodWithBody(formData.method) && (
               <BodyInput
                 defaultValue={formData.body}
-                onChange={(value,type="body") =>handleFieldChange(type,value)
+                onChange={(value, type = 'body') =>
+                  handleFieldChange(type, value)
                 }
                 readonly={actionOptions.readonly}
                 headers={formData.headers}

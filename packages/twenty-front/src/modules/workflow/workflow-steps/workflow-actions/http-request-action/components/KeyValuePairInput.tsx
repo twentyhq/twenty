@@ -59,7 +59,10 @@ export const KeyValuePairInput = ({
   ) => {
     const index = pairs.findIndex((p) => p.id === pairId);
     const newPairs = [...pairs];
-    if (field === 'key' && uniqueNotEditableKeys?.includes(newValue.trim())) {
+    if (
+      field === 'key' &&
+      uniqueNotEditableKeys?.includes(newValue.trim()) === true
+    ) {
       newPairs.splice(index, 1);
     } else {
       newPairs[index] = { ...newPairs[index], [field]: newValue };
@@ -92,7 +95,7 @@ export const KeyValuePairInput = ({
 
     if (
       isDefined(pairToRemove) &&
-      uniqueNotEditableKeys?.includes(pairToRemove?.key.trim())
+      uniqueNotEditableKeys?.includes(pairToRemove?.key.trim()) === true
     ) {
       return;
     }
@@ -127,7 +130,7 @@ export const KeyValuePairInput = ({
       <StyledContainer>
         {pairs.map(
           (pair) =>
-            !uniqueNotEditableKeys?.includes(pair.key) && (
+            !uniqueNotEditableKeys?.includes(pair.key.trim()) && (
               <StyledKeyValueContainer key={pair.id} readonly={readonly}>
                 <FormTextFieldInput
                   placeholder={keyPlaceholder}
