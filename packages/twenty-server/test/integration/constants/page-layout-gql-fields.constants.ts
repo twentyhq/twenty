@@ -18,3 +18,21 @@ export const PAGE_LAYOUT_TAB_GQL_FIELDS = `
   updatedAt
   deletedAt
 `;
+
+export const PAGE_LAYOUT_WIDGET_GQL_FIELDS = `
+  id
+  title
+  type
+  pageLayoutTabId
+  objectMetadataId
+  gridPosition {
+    row
+    column
+    rowSpan
+    columnSpan
+  }
+  configuration
+  createdAt
+  updatedAt
+  deletedAt
+`;
