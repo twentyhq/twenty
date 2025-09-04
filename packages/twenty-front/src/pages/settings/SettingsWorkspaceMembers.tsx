@@ -399,7 +399,7 @@ export const SettingsWorkspaceMembers = () => {
             </StyledTableRows>
             {hasNextPage && (
               <TableRow
-                gridAutoColumns="150px 1fr 1fr"
+                gridAutoColumns="250px 1fr 1fr"
                 mobileGridAutoColumns="100px 1fr 1fr"
               >
                 <TableCell>

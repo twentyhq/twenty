@@ -11,14 +11,11 @@ export const USER_DATA_SEED_IDS = {
   PHIL: '20202020-7169-42cf-bc47-1cfef15264b8',
 };
 
-// Generate random users data
 const { users: randomUsers, userIds: randomUserIds } = generateRandomUsers();
 
-// Export random user IDs for use in other seed files
 export const RANDOM_USER_IDS = randomUserIds;
 
 export const seedUsers = async (dataSource: DataSource, schemaName: string) => {
-  // Prepare original users
   const originalUsers = [
     {
       id: USER_DATA_SEED_IDS.TIM,
@@ -66,7 +63,6 @@ export const seedUsers = async (dataSource: DataSource, schemaName: string) => {
     },
   ];
 
-  // Combine original users with random users
   const allUsers = [...originalUsers, ...randomUsers];
 
   await dataSource

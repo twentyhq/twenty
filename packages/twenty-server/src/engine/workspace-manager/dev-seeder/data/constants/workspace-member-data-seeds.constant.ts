@@ -29,16 +29,13 @@ export const WORKSPACE_MEMBER_DATA_SEED_IDS = {
   JANE: '20202020-463f-435b-828c-107e007a2711',
 };
 
-// Generate random workspace members data
 const {
   workspaceMembers: randomWorkspaceMembers,
   workspaceMemberIds: randomWorkspaceMemberIds,
 } = generateRandomUsers();
 
-// Export random workspace member IDs for use in other seed files
 export const RANDOM_WORKSPACE_MEMBER_IDS = randomWorkspaceMemberIds;
 
-// Original workspace members
 const originalWorkspaceMembers: WorkspaceMemberDataSeed[] = [
   {
     id: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
@@ -78,7 +75,6 @@ const originalWorkspaceMembers: WorkspaceMemberDataSeed[] = [
   },
 ];
 
-// Combine original workspace members with random workspace members
 export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
   ...originalWorkspaceMembers,
   ...randomWorkspaceMembers,
