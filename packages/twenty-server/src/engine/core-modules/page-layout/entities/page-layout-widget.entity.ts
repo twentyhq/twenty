@@ -18,8 +18,11 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 @Entity({ name: 'pageLayoutWidget', schema: 'core' })
-@Index('IDX_PAGE_LAYOUT_WIDGET_PAGE_LAYOUT_TAB_ID', ['pageLayoutTabId'])
-@Index('IDX_PAGE_LAYOUT_WIDGET_WORKSPACE_ID', ['workspaceId'])
+@Index(
+  'IDX_PAGE_LAYOUT_WIDGET_WORKSPACE_ID_PAGE_LAYOUT_TAB_ID',
+  ['workspaceId', 'pageLayoutTabId'],
+  { where: '"deletedAt" IS NULL' },
+)
 export class PageLayoutWidgetEntity
   implements Required<PageLayoutWidgetEntity>
 {

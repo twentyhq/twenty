@@ -17,8 +17,11 @@ import { PageLayoutEntity } from 'src/engine/core-modules/page-layout/entities/p
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'pageLayoutTab', schema: 'core' })
-@Index('IDX_PAGE_LAYOUT_TAB_PAGE_LAYOUT_ID', ['pageLayoutId'])
-@Index('IDX_PAGE_LAYOUT_TAB_WORKSPACE_ID', ['workspaceId'])
+@Index(
+  'IDX_PAGE_LAYOUT_TAB_WORKSPACE_ID_PAGE_LAYOUT_ID',
+  ['workspaceId', 'pageLayoutId'],
+  { where: '"deletedAt" IS NULL' },
+)
 export class PageLayoutTabEntity implements Required<PageLayoutTabEntity> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
