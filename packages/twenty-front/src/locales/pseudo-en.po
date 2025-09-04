@@ -102,6 +102,11 @@ msgstr ""
 msgid "{roleLabel} can't {humanReadableAction} {objectLabel} records"
 msgstr ""
 
+#. js-lingui-id: uHZWwU
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
+msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
+msgstr ""
+
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
@@ -521,8 +526,14 @@ msgstr ""
 msgid "Agent not found"
 msgstr ""
 
+#. js-lingui-id: jJT5pC
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Agent Roles"
+msgstr ""
+
 #. js-lingui-id: 8Uv5e6
 #: src/pages/settings/ai/SettingsAI.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Agents"
 msgstr ""
 
@@ -601,6 +612,11 @@ msgstr ""
 #. js-lingui-id: XuuWVF
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "All the standard objects"
+msgstr ""
+
+#. js-lingui-id: XLzFVD
+#: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
+msgid "All workspace members already have this role"
 msgstr ""
 
 #. js-lingui-id: MLmnB2
@@ -703,8 +719,14 @@ msgstr ""
 msgid "API Key copied to clipboard"
 msgstr ""
 
+#. js-lingui-id: K84VsN
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "API Key Roles"
+msgstr ""
+
 #. js-lingui-id: 5h8ooz
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "API keys"
 msgstr ""
 
@@ -761,6 +783,11 @@ msgstr ""
 msgid "Appearance"
 msgstr ""
 
+#. js-lingui-id: d7+zQ6
+#: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
+msgid "Applicability"
+msgstr ""
+
 #. js-lingui-id: UDlRcx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
 msgid "Approved access domain validated"
@@ -806,24 +833,44 @@ msgstr ""
 msgid "Ask AI"
 msgstr ""
 
-#. js-lingui-id: 9ch9Mz
+#. js-lingui-id: OBqG7p
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
-msgid "Assign {workspaceMemberName}?"
+msgid "Assign {roleTargetName}?"
 msgstr ""
 
-#. js-lingui-id: 17M/rH
-#: src/modules/settings/roles/components/SettingsRolesList.tsx
-msgid "Assign roles to manage each member’s access and permissions"
+#. js-lingui-id: krsgB0
+#: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
+msgid "Assign to agent"
+msgstr ""
+
+#. js-lingui-id: ngx6hS
+#: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
+msgid "Assign to API key"
 msgstr ""
 
 #. js-lingui-id: 2y2quh
-#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
 msgid "Assign to member"
 msgstr ""
 
-#. js-lingui-id: OItM/o
-#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "Assigned members"
+#. js-lingui-id: sqEW29
+#: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
+msgid "Assignable to Agents"
+msgstr ""
+
+#. js-lingui-id: kOksfH
+#: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
+msgid "Assignable to API Keys"
+msgstr ""
+
+#. js-lingui-id: 6cOTMx
+#: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
+msgid "Assignable to team members"
+msgstr ""
+
+#. js-lingui-id: 7qh2Hx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+msgid "Assigned {roleTargetDisplayName}"
 msgstr ""
 
 #. js-lingui-id: lxQ+5m
@@ -1443,6 +1490,11 @@ msgstr ""
 #. js-lingui-id: XgMEX4
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Control which folders are synced"
+msgstr ""
+
+#. js-lingui-id: +iFqZW
+#: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
+msgid "Control which types of entities this role can be assigned to"
 msgstr ""
 
 #. js-lingui-id: FxVG/l
@@ -2101,6 +2153,7 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Description"
 msgstr ""
@@ -2323,6 +2376,7 @@ msgstr ""
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Email"
 msgstr ""
@@ -2687,6 +2741,11 @@ msgstr ""
 #. js-lingui-id: M1RnFv
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Expired"
+msgstr ""
+
+#. js-lingui-id: KnN1Tu
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+msgid "Expires"
 msgstr ""
 
 #. js-lingui-id: i9qiyR
@@ -3790,6 +3849,7 @@ msgstr ""
 #. js-lingui-id: Z3FXyt
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 #: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Loading..."
@@ -3846,6 +3906,16 @@ msgstr ""
 #. js-lingui-id: T6YjCk
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 msgid "Manage Members"
+msgstr ""
+
+#. js-lingui-id: GzInS6
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Manage roles and permissions for team members and API keys"
+msgstr ""
+
+#. js-lingui-id: wMlk+o
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "Manage roles and permissions for team members, agents, and API keys"
 msgstr ""
 
 #. js-lingui-id: eGGH1l
@@ -3912,6 +3982,7 @@ msgstr ""
 #. js-lingui-id: wlQNTg
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Members"
@@ -4057,6 +4128,9 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableHeader.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -4217,9 +4291,39 @@ msgstr ""
 msgid "No Agent"
 msgstr ""
 
+#. js-lingui-id: f9b1sj
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+msgid "No agents assigned"
+msgstr ""
+
+#. js-lingui-id: 2jU+NX
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
+msgid "No agents available"
+msgstr ""
+
 #. js-lingui-id: pC+mOo
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
 msgid "No agents available for handoff"
+msgstr ""
+
+#. js-lingui-id: mU1OkO
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
+msgid "No agents match your search"
+msgstr ""
+
+#. js-lingui-id: 9mx36q
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+msgid "No API keys assigned"
+msgstr ""
+
+#. js-lingui-id: QnvikC
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
+msgid "No API keys available"
+msgstr ""
+
+#. js-lingui-id: wZT6U/
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
+msgid "No API keys match your search"
 msgstr ""
 
 #. js-lingui-id: tFxVHz
@@ -4298,13 +4402,12 @@ msgid "No members"
 msgstr ""
 
 #. js-lingui-id: Y4qK8/
-#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "No members assigned"
 msgstr ""
 
 #. js-lingui-id: /nLvVj
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
-#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
 msgid "No members match your search"
 msgstr ""
 
@@ -5211,14 +5314,19 @@ msgstr ""
 msgid "Search a type"
 msgstr ""
 
+#. js-lingui-id: +7s4fw
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
+msgid "Search agents"
+msgstr ""
+
 #. js-lingui-id: 4fd0q+
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
 msgid "Search an agent..."
 msgstr ""
 
-#. js-lingui-id: x55IVv
-#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "Search an assigned team member..."
+#. js-lingui-id: kdagxk
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+msgid "Search an assigned {roleTargetDisplayName}..."
 msgstr ""
 
 #. js-lingui-id: k7kp5/
@@ -5238,6 +5346,11 @@ msgstr ""
 #: src/modules/views/components/AnyFieldSearchDropdownContentMenuHeader.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownAnyFieldSearchInput.tsx
 msgid "Search any field"
+msgstr ""
+
+#. js-lingui-id: FzcOoG
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
+msgid "Search API keys"
 msgstr ""
 
 #. js-lingui-id: 3UPqHL
@@ -6118,11 +6231,6 @@ msgstr ""
 msgid "The whole event details will be shared with your team."
 msgstr ""
 
-#. js-lingui-id: MssRHl
-#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "The workspace needs at least one Admin"
-msgstr ""
-
 #. js-lingui-id: FEr96N
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 msgid "Theme"
@@ -6183,9 +6291,9 @@ msgstr ""
 msgid "This role can {humanReadableAction} all records"
 msgstr ""
 
-#. js-lingui-id: xPfDRx
-#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignment.tsx
-msgid "This role is assigned to these workspace members."
+#. js-lingui-id: BifDEA
+#: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
+msgid "This role is assigned to these {roleTargetDisplayName}."
 msgstr ""
 
 #. js-lingui-id: C/wr0z
@@ -6505,6 +6613,11 @@ msgstr ""
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "User is not logged in"
+msgstr ""
+
+#. js-lingui-id: LVecP9
+#: src/modules/settings/roles/components/SettingsRolesList.tsx
+msgid "User Roles"
 msgstr ""
 
 #. js-lingui-id: Sxm8rQ

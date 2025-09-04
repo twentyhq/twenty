@@ -13,5 +13,8 @@ export const ROLE_FRAGMENT = gql`
     canUpdateAllObjectRecords
     canSoftDeleteAllObjectRecords
     canDestroyAllObjectRecords
+    canBeAssignedToUsers
+    canBeAssignedToAgents
+    canBeAssignedToApiKeys
   }
 `;
