@@ -14,7 +14,6 @@ import { RelationTypeV2Factory } from 'src/engine/api/graphql/workspace-schema-b
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
 import { objectContainsRelationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/object-contains-relation-field';
-import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-name.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
@@ -169,16 +168,7 @@ export class ExtendObjectTypeDefinitionV2Factory {
         );
       }
 
-      const fieldName =
-        fieldMetadata.type === FieldMetadataType.MORPH_RELATION
-          ? computeMorphRelationFieldName({
-              fieldName: fieldMetadata.name,
-              relationDirection: fieldMetadata.settings.relationType,
-              targetObjectMetadata: objectMetadataTarget,
-            })
-          : fieldMetadata.name;
-
-      fields[fieldName] = {
+      fields[fieldMetadata.name] = {
         type: relationType,
         args: argsType,
         description: fieldMetadata.description,

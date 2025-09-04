@@ -17,7 +17,6 @@ import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-q
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-relation-field-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isFieldMetadataTypeMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-morph-relation.util';
 import { isFieldMetadataTypeRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-relation.util';
@@ -255,27 +254,21 @@ export class ObjectRecordsToGraphqlConnectionHelper {
           continue;
         }
 
-        const morphRelationFieldName = computeMorphRelationFieldName({
-          fieldName: fieldMetadata.name,
-          relationDirection: fieldMetadata.settings.relationType,
-          targetObjectMetadata,
-        });
-
-        const fieldMetadataNameWithId = `${morphRelationFieldName}Id`;
+        const fieldMetadataNameWithId = `${fieldMetadata.name}Id`;
 
         if (isDefined(objectRecord[fieldMetadataNameWithId])) {
           processedObjectRecord[fieldMetadataNameWithId] =
             objectRecord[fieldMetadataNameWithId];
         }
 
-        const objectValue = objectRecord[morphRelationFieldName];
+        const objectValue = objectRecord[fieldMetadata.name];
 
         if (!isDefined(objectValue)) {
           continue;
         }
 
         if (Array.isArray(objectValue)) {
-          processedObjectRecord[morphRelationFieldName] = this.createConnection(
+          processedObjectRecord[fieldMetadata.name] = this.createConnection(
             {
               objectRecords: objectValue,
               parentObjectRecord: objectRecord,
@@ -300,7 +293,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
             this.objectMetadataMaps,
           );
 
-          processedObjectRecord[morphRelationFieldName] = this.processRecord({
+          processedObjectRecord[fieldMetadata.name] = this.processRecord({
             objectRecord: objectValue,
             objectRecordsAggregatedValues:
               objectRecordsAggregatedValues[fieldMetadata.name],
