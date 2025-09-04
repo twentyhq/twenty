@@ -34,9 +34,10 @@ export type RelationLoaderPayload = {
   flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION>;
 };
 
+// 
 export type MorphRelationLoaderPayload = {
   workspaceId: string;
-  flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
+  flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>; // Not accurate what is this in reality ?
 };
 
 export type FieldMetadataLoaderPayload = {
@@ -91,17 +92,20 @@ export class DataloaderService {
   private createRelationLoader() {
     return new DataLoader<RelationLoaderPayload, RelationDTO>(
       async (dataLoaderParams: RelationLoaderPayload[]) => {
-        return await Promise.all(
-          dataLoaderParams.map(
-            async ({ flatFieldMetadata, workspaceId }) =>
-              await this.fieldMetadataRelationService.findCachedFieldMetadataRelation(
-                {
-                  flatFieldMetadata,
-                  workspaceId,
-                },
-              ),
-          ),
-        );
+        const relationDtos: RelationDTO[] = [];
+
+        for (const { flatFieldMetadata, workspaceId } of dataLoaderParams) {
+          relationDtos.push(
+            await this.fieldMetadataRelationService.findCachedFieldMetadataRelation(
+              {
+                flatFieldMetadata,
+                workspaceId,
+              },
+            ),
+          );
+        }
+
+        return relationDtos;
       },
     );
   }
@@ -109,17 +113,20 @@ export class DataloaderService {
   private createMorphRelationLoader() {
     return new DataLoader<MorphRelationLoaderPayload, RelationDTO[]>(
       async (dataLoaderParams: MorphRelationLoaderPayload[]) => {
-        return await Promise.all(
-          dataLoaderParams.map(
-            async ({ flatFieldMetadata, workspaceId }) =>
-              await this.fieldMetadataMorphRelationService.findCachedFieldMetadataMorphRelation(
-                {
-                  flatFieldMetadata,
-                  workspaceId,
-                },
-              ),
-          ),
-        );
+        const relationDtos: Array<RelationDTO[]> = [];
+
+        for (const { flatFieldMetadata, workspaceId } of dataLoaderParams) {
+          relationDtos.push(
+            await this.fieldMetadataMorphRelationService.findCachedFieldMetadataMorphRelation(
+              {
+                flatFieldMetadata,
+                workspaceId,
+              },
+            ),
+          );
+        }
+
+        return relationDtos;
       },
     );
   }
