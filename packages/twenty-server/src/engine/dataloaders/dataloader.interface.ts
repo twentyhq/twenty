@@ -15,9 +15,9 @@ import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadat
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export interface IDataloaders {
-  relationLoader: DataLoader<RelationLoaderPayload, RelationDTO>;
+  relationLoader: DataLoader<RelationLoaderPayload, Omit<RelationDTO, 'type'>>;
 
-  morphRelationLoader: DataLoader<MorphRelationLoaderPayload, RelationDTO[]>;
+  morphRelationLoader: DataLoader<MorphRelationLoaderPayload, Omit<RelationDTO, 'type'>[]>;
 
   fieldMetadataLoader: DataLoader<
     FieldMetadataLoaderPayload,

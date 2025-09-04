@@ -1,6 +1,6 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty } from 'class-validator';
 import { Relation } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -15,6 +15,11 @@ registerEnumType(RelationType, {
 
 @ObjectType('Relation')
 export class RelationDTO {
+  @IsEnum(RelationType)
+  @IsNotEmpty()
+  @Field(() => RelationType)
+  type: RelationType;
+
   @IsNotEmpty()
   @Field(() => ObjectMetadataDTO)
   sourceObjectMetadata: Relation<ObjectMetadataDTO>;

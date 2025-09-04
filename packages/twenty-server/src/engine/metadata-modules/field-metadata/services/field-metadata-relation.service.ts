@@ -230,7 +230,7 @@ export class FieldMetadataRelationService {
       >
     >,
     workspaceId: string,
-  ): Promise<RelationDTO[]> {
+  ): Promise<Omit<RelationDTO, 'type'>[]> {
     const objectMetadataMaps =
       await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
         workspaceId,

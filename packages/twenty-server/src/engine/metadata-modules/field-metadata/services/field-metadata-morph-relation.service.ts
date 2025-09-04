@@ -181,7 +181,7 @@ export class FieldMetadataMorphRelationService {
   }: {
     flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
     workspaceId: string;
-  }): Promise<RelationDTO[]> {
+  }): Promise<Omit<RelationDTO, 'type'>[]> {
     const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
         {
