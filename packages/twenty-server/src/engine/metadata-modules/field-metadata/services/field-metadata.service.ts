@@ -472,6 +472,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       if (isFieldMetadataTypeRelation(fieldMetadata)) {
         const fieldMetadataIdsToDelete: string[] = [];
+
         fieldMetadataIdsToDelete.push(
           fieldMetadata.id,
           fieldMetadata.relationTargetFieldMetadataId,

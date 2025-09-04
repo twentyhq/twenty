@@ -15,7 +15,6 @@ registerEnumType(RelationType, {
 
 @ObjectType('Relation')
 export class RelationDTO {
-
   @IsNotEmpty()
   @Field(() => ObjectMetadataDTO)
   sourceObjectMetadata: Relation<ObjectMetadataDTO>;
