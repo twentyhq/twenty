@@ -83,20 +83,20 @@ describe('Page Layout Tab Resolver', () => {
     });
 
     it('should return all page layout tabs for a specific page layout', async () => {
-      const tabTitle1 = 'Overview Tab';
-      const tabTitle2 = 'Details Tab';
+      const input1 = {
+        title: 'Tab 1',
+        position: 0,
+        pageLayoutId: testPageLayoutId,
+      };
+      const input2 = {
+        title: 'Tab 2',
+        position: 1,
+        pageLayoutId: testPageLayoutId,
+      };
 
       await Promise.all([
-        createTestPageLayoutTabWithGraphQL({
-          title: tabTitle1,
-          position: 0,
-          pageLayoutId: testPageLayoutId,
-        }),
-        createTestPageLayoutTabWithGraphQL({
-          title: tabTitle2,
-          position: 1,
-          pageLayoutId: testPageLayoutId,
-        }),
+        createTestPageLayoutTabWithGraphQL(input1),
+        createTestPageLayoutTabWithGraphQL(input2),
       ]);
 
       const operation = findPageLayoutTabsOperationFactory({
@@ -112,16 +112,8 @@ describe('Page Layout Tab Resolver', () => {
           a.position - b.position,
       );
 
-      assertPageLayoutTabStructure(tabs[0], {
-        title: tabTitle1,
-        position: 0,
-        pageLayoutId: testPageLayoutId,
-      });
-      assertPageLayoutTabStructure(tabs[1], {
-        title: tabTitle2,
-        position: 1,
-        pageLayoutId: testPageLayoutId,
-      });
+      assertPageLayoutTabStructure(tabs[0], input1);
+      assertPageLayoutTabStructure(tabs[1], input2);
     });
   });
 
@@ -143,13 +135,15 @@ describe('Page Layout Tab Resolver', () => {
     });
 
     it('should return page layout tab when it exists', async () => {
-      const tabTitle = 'Test Tab for Get';
+      const tabTitle = 'Tab';
 
-      const tab = await createTestPageLayoutTabWithGraphQL({
+      const input = {
         title: tabTitle,
         position: 2,
         pageLayoutId: testPageLayoutId,
-      });
+      };
+
+      const tab = await createTestPageLayoutTabWithGraphQL(input);
 
       const operation = findPageLayoutTabOperationFactory({
         pageLayoutTabId: tab.id,
@@ -157,12 +151,7 @@ describe('Page Layout Tab Resolver', () => {
       const response = await makeGraphqlAPIRequest(operation);
 
       assertGraphQLSuccessfulResponse(response);
-      assertPageLayoutTabStructure(response.body.data.getPageLayoutTab, {
-        id: tab.id,
-        title: tabTitle,
-        position: 2,
-        pageLayoutId: testPageLayoutId,
-      });
+      assertPageLayoutTabStructure(response.body.data.getPageLayoutTab, input);
     });
   });
 
@@ -181,12 +170,7 @@ describe('Page Layout Tab Resolver', () => {
 
       const createdTab = response.body.data.createPageLayoutTab;
 
-      assertPageLayoutTabStructure(createdTab, {
-        title: input.title,
-        position: input.position,
-        pageLayoutId: input.pageLayoutId,
-        deletedAt: null,
-      });
+      assertPageLayoutTabStructure(createdTab, input);
     });
 
     it('should create a page layout tab with minimum required fields', async () => {
@@ -213,11 +197,13 @@ describe('Page Layout Tab Resolver', () => {
 
   describe('updatePageLayoutTab', () => {
     it('should update an existing page layout tab', async () => {
-      const tab = await createTestPageLayoutTabWithGraphQL({
+      const input = {
         title: 'Original Tab',
         position: 1,
         pageLayoutId: testPageLayoutId,
-      });
+      };
+
+      const tab = await createTestPageLayoutTabWithGraphQL(input);
 
       const updateInput = {
         title: 'Updated Tab',
@@ -231,21 +217,20 @@ describe('Page Layout Tab Resolver', () => {
       const response = await makeGraphqlAPIRequest(operation);
 
       assertGraphQLSuccessfulResponse(response);
-      assertPageLayoutTabStructure(response.body.data.updatePageLayoutTab, {
-        id: tab.id,
-        title: updateInput.title,
-        position: updateInput.position,
-        pageLayoutId: testPageLayoutId,
-        deletedAt: null,
-      });
+      assertPageLayoutTabStructure(
+        response.body.data.updatePageLayoutTab,
+        updateInput,
+      );
     });
 
     it('should update only provided fields', async () => {
-      const tab = await createTestPageLayoutTabWithGraphQL({
+      const input = {
         title: 'Original Tab',
         position: 1,
         pageLayoutId: testPageLayoutId,
-      });
+      };
+
+      const tab = await createTestPageLayoutTabWithGraphQL(input);
 
       const updateInput = {
         title: 'Updated Title Only',
@@ -259,10 +244,9 @@ describe('Page Layout Tab Resolver', () => {
 
       assertGraphQLSuccessfulResponse(response);
       assertPageLayoutTabStructure(response.body.data.updatePageLayoutTab, {
-        id: tab.id,
         title: updateInput.title,
         position: 1,
-        pageLayoutId: testPageLayoutId,
+        pageLayoutId: input.pageLayoutId,
         deletedAt: null,
       });
     });
@@ -367,11 +351,13 @@ describe('Page Layout Tab Resolver', () => {
 
   describe('restorePageLayoutTab', () => {
     it('should restore a soft deleted page layout tab', async () => {
-      const tab = await createTestPageLayoutTabWithGraphQL({
+      const input = {
         title: 'Tab to Restore',
         position: 2,
         pageLayoutId: testPageLayoutId,
-      });
+      };
+
+      const tab = await createTestPageLayoutTabWithGraphQL(input);
 
       const deleteOperation = deletePageLayoutTabOperationFactory({
         pageLayoutTabId: tab.id,
@@ -388,13 +374,7 @@ describe('Page Layout Tab Resolver', () => {
       assertGraphQLSuccessfulResponse(restoreResponse);
       assertPageLayoutTabStructure(
         restoreResponse.body.data.restorePageLayoutTab,
-        {
-          id: tab.id,
-          title: 'Tab to Restore',
-          position: 2,
-          pageLayoutId: testPageLayoutId,
-          deletedAt: null,
-        },
+        input,
       );
 
       const getOperation = findPageLayoutTabOperationFactory({
@@ -403,13 +383,10 @@ describe('Page Layout Tab Resolver', () => {
       const getResponse = await makeGraphqlAPIRequest(getOperation);
 
       assertGraphQLSuccessfulResponse(getResponse);
-      assertPageLayoutTabStructure(getResponse.body.data.getPageLayoutTab, {
-        id: tab.id,
-        title: 'Tab to Restore',
-        position: 2,
-        pageLayoutId: testPageLayoutId,
-        deletedAt: null,
-      });
+      assertPageLayoutTabStructure(
+        getResponse.body.data.getPageLayoutTab,
+        input,
+      );
     });
 
     it('should throw an error when restoring non-existent page layout tab', async () => {
