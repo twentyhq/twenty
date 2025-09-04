@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { t } from '@lingui/core/macro';
 import { useRecoilState } from 'recoil';
 
+import { SettingsRoleApplicability } from '@/settings/roles/role-settings/components/SettingsRoleApplicability';
 import { SettingsRoleSettingsDeleteRoleConfirmationModal } from '@/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModal';
 import { ROLE_SETTINGS_DELETE_ROLE_CONFIRMATION_MODAL_ID } from '@/settings/roles/role-settings/components/constants/RoleSettingsDeleteRoleConfirmationModalId';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
@@ -90,6 +91,21 @@ export const SettingsRoleSettings = ({
           disabled={!isEditable}
         />
       </Section>
+
+      <SettingsRoleApplicability
+        values={{
+          canBeAssignedToUsers: settingsDraftRole.canBeAssignedToUsers,
+          canBeAssignedToAgents: settingsDraftRole.canBeAssignedToAgents,
+          canBeAssignedToApiKeys: settingsDraftRole.canBeAssignedToApiKeys,
+        }}
+        onApplicabilityChange={(key, value) => {
+          setSettingsDraftRole({
+            ...settingsDraftRole,
+            [key]: value,
+          });
+        }}
+        isEditable={isEditable}
+      />
 
       {!isCreateMode && (
         <>

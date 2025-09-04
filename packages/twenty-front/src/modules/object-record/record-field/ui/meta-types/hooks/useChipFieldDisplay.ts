@@ -7,22 +7,29 @@ import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { isFieldActor } from '@/object-record/record-field/ui/types/guards/isFieldActor';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { isDefined } from 'twenty-shared/utils';
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useChipFieldDisplay = () => {
   const {
+    fieldMetadataItemId,
     recordId,
     fieldDefinition,
-    isLabelIdentifier,
-    labelIdentifierLink,
-    isLabelIdentifierCompact,
     disableChipClick,
     maxWidth,
     triggerEvent,
     onRecordChipClick,
   } = useContext(FieldContext);
+
+  const { indexIdentifierUrl, labelIdentifierFieldMetadataItem } =
+    useRecordIndexContextOrThrow();
+
+  const isLabelIdentifier =
+    labelIdentifierFieldMetadataItem?.id === fieldMetadataItemId;
+
+  const labelIdentifierLink = indexIdentifierUrl(recordId);
 
   const { chipGeneratorPerObjectPerField } = useContext(
     PreComputedChipGeneratorsContext,
@@ -51,7 +58,6 @@ export const useChipFieldDisplay = () => {
     recordValue,
     isLabelIdentifier,
     labelIdentifierLink,
-    isLabelIdentifierCompact,
     disableChipClick,
     maxWidth,
     triggerEvent,

@@ -1,0 +1,24 @@
+import { type Role } from '~/generated-metadata/graphql';
+import { type RoleMaps } from '../types/role-maps';
+
+export const buildRoleMaps = (roles: Role[]): RoleMaps => {
+  const maps: RoleMaps = {
+    member: new Map(),
+    agent: new Map(),
+    apiKey: new Map(),
+  };
+
+  roles.forEach((role) => {
+    role.workspaceMembers.forEach((member) => {
+      maps.member.set(member.id, { id: role.id, label: role.label });
+    });
+    role.agents?.forEach((agent) => {
+      maps.agent.set(agent.id, { id: role.id, label: role.label });
+    });
+    role.apiKeys?.forEach((apiKey) => {
+      maps.apiKey.set(apiKey.id, { id: role.id, label: role.label });
+    });
+  });
+
+  return maps;
+};

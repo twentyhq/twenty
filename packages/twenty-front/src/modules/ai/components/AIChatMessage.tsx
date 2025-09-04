@@ -43,7 +43,57 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
     isUser ? theme.font.color.light : theme.font.color.primary};
   font-weight: ${({ isUser }) => (isUser ? 500 : 400)};
   width: fit-content;
-  white-space: pre-line;
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+
+  code {
+    overflow: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-width: 100%;
+    line-height: 1.4;
+    padding: ${({ theme }) => theme.spacing(1)};
+    border-radius: ${({ theme }) => theme.border.radius.sm};
+    background: ${({ theme }) => theme.background.tertiary};
+  }
+
+  pre {
+    background: ${({ theme }) => theme.background.tertiary};
+    padding: ${({ theme }) => theme.spacing(2)};
+    border-radius: ${({ theme }) => theme.border.radius.sm};
+    overflow-x: auto;
+    max-width: 100%;
+
+    code {
+      padding: 0;
+      border-radius: 0;
+      background: none;
+    }
+  }
+
+  p {
+    margin: ${({ theme }) => theme.spacing(1)} 0;
+    line-height: 1.5;
+  }
+
+  ul,
+  ol {
+    margin: ${({ theme }) => theme.spacing(1)} 0;
+    padding-left: ${({ theme }) => theme.spacing(4)};
+  }
+
+  li {
+    margin: ${({ theme }) => theme.spacing(0.5)} 0;
+  }
+
+  blockquote {
+    border-left: 3px solid ${({ theme }) => theme.border.color.medium};
+    margin: ${({ theme }) => theme.spacing(2)} 0;
+    padding-left: ${({ theme }) => theme.spacing(2)};
+    color: ${({ theme }) => theme.font.color.secondary};
+  }
 `;
 
 const StyledMessageFooter = styled.div`

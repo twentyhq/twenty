@@ -145,6 +145,10 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
               fieldPermissions={fieldPermissions}
               objectMetadataItem={objectMetadataItem}
               roleId={roleId}
+              isLabelIdentifier={
+                objectMetadataItem.labelIdentifierFieldMetadataId ===
+                fieldMetadataItem.id
+              }
             />
           ))}
       </Table>

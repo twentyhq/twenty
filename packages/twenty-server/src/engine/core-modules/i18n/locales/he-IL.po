@@ -1834,6 +1834,11 @@ msgstr "חסרים שדות דרושים: יש למלא לפחות אילוץ י
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "מטען יצירת קשרים מורפיים חייב להיות בעל אותו סוג קשר"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr ""
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
@@ -1871,15 +1876,15 @@ msgstr "\\"
 msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 msgstr "השם \"{computedMetadataNameFromLabel}\" אינו יכול להיות זהה בשני הצדדים של היחס"
 
-#. js-lingui-id: 2m6Fru
+#. js-lingui-id: Ge9TXE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available"
-msgstr "השם \"{name}\" אינו זמין"
+msgid "Name \"{flatFieldMetadataName}\" is not available"
+msgstr ""
 
-#. js-lingui-id: U8mbyw
+#. js-lingui-id: h8ic2G
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr "שם זה \"{name}\" אינו זמין שכן כבר בשימוש על ידי שדה אחר"
+msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
+msgstr ""
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts

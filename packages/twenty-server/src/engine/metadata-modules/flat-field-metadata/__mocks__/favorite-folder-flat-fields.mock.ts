@@ -4,6 +4,7 @@ import { DateDisplayFormat } from 'src/engine/metadata-modules/field-metadata/in
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getRelationTargetFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-morph-or-relation-target-flat-field-metadata-mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 
@@ -181,7 +182,7 @@ export const FAVORITE_FOLDER_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: 'fabbe669-b8fc-49fe-8010-f13d01eb61f1',
     relationTargetObjectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',
     universalIdentifier: '20202020-b5e3-4b42-8af2-03cd4fd2e4d2',
-    flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
+    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
       id: 'fabbe669-b8fc-49fe-8010-f13d01eb61f1',
       standardId: '20202020-f658-4d12-8b4d-248356aa4bd9',
       objectMetadataId: 'f4749ffb-dde8-44ff-8b01-d3fc82df0ba2',

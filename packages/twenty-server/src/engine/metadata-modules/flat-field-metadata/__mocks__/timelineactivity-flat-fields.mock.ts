@@ -4,6 +4,7 @@ import { DateDisplayFormat } from 'src/engine/metadata-modules/field-metadata/in
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { getRelationTargetFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-morph-or-relation-target-flat-field-metadata-mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 
@@ -285,7 +286,7 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: 'b2172f26-093d-4c9f-86c3-f0bcfaf54ad6',
     relationTargetObjectMetadataId: '7d8264db-2b55-4b74-81ff-b7064ed43840',
     universalIdentifier: '20202020-af23-4479-9a30-868edc474b36',
-    flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
+    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
       id: 'b2172f26-093d-4c9f-86c3-f0bcfaf54ad6',
       standardId: '20202020-e15b-47b8-94fe-8200e3c66615',
       objectMetadataId: '7d8264db-2b55-4b74-81ff-b7064ed43840',
@@ -337,7 +338,7 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: 'b1457347-545b-4a42-9c68-bc655952229a',
     relationTargetObjectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
     universalIdentifier: '20202020-c414-45b9-a60a-ac27aa96229f',
-    flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
+    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
       id: 'b1457347-545b-4a42-9c68-bc655952229a',
       standardId: '20202020-a43e-4873-9c23-e522de906ce5',
       objectMetadataId: '843e0b67-9619-4628-91c4-2fa62256a611',
@@ -389,7 +390,7 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: 'cc78390f-f570-4c2c-9f19-2a8fef67f4f6',
     relationTargetObjectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
     universalIdentifier: '20202020-04ad-4221-a744-7a8278a5ce21',
-    flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
+    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
       id: 'cc78390f-f570-4c2c-9f19-2a8fef67f4f6',
       standardId: '20202020-0414-4daf-9c0d-64fe7b27f89f',
       objectMetadataId: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
@@ -441,7 +442,7 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: '7826944b-3b21-4448-892e-5a2a68161313',
     relationTargetObjectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
     universalIdentifier: '20202020-7664-4a35-a3df-580d389fd527',
-    flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
+    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
       id: '7826944b-3b21-4448-892e-5a2a68161313',
       standardId: '20202020-30e2-421f-96c7-19c69d1cf631',
       objectMetadataId: 'e6996bbf-dd41-423a-9324-8546f5b22fa7',
@@ -493,7 +494,7 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: '1207d260-db2c-41d4-bb09-34ea1188978f',
     relationTargetObjectMetadataId: '1253e3e5-5b00-4a34-93b8-02f3dc6e2b7c',
     universalIdentifier: '20202020-ec55-4135-8da5-3a20badc0156',
-    flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
+    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
       id: '1207d260-db2c-41d4-bb09-34ea1188978f',
       standardId: '20202020-7030-42f8-929c-1a57b25d6bce',
       objectMetadataId: '1253e3e5-5b00-4a34-93b8-02f3dc6e2b7c',
@@ -545,7 +546,7 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: '3536b3af-76a2-44f5-9d89-1961a0a0a763',
     relationTargetObjectMetadataId: '3186920d-2a15-4b5f-96c7-2bf6567024b0',
     universalIdentifier: '20202020-b2f5-415c-9135-a31dfe49501b',
-    flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
+    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
       id: '3536b3af-76a2-44f5-9d89-1961a0a0a763',
       standardId: '20202020-c778-4278-99ee-23a2837aee64',
       objectMetadataId: '3186920d-2a15-4b5f-96c7-2bf6567024b0',
@@ -597,7 +598,7 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: '384db7b5-3551-4774-9258-7082b26b502a',
     relationTargetObjectMetadataId: '664c19a5-0693-45d4-a4e5-76c3717db83c',
     universalIdentifier: '20202020-616c-4ad3-a2e9-c477c341e295',
-    flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
+    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
       id: '384db7b5-3551-4774-9258-7082b26b502a',
       standardId: '20202020-906e-486a-a798-131a5f081faf',
       objectMetadataId: '664c19a5-0693-45d4-a4e5-76c3717db83c',
@@ -649,7 +650,7 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: '767ab66d-f3d7-4bac-b0be-f738f8c6fda7',
     relationTargetObjectMetadataId: '99cf5f27-b41d-4f25-a23b-9e47d27dae9b',
     universalIdentifier: '20202020-74f1-4711-a129-e14ca0ecd744',
-    flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
+    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
       id: '767ab66d-f3d7-4bac-b0be-f738f8c6fda7',
       standardId: '20202020-fcb0-4695-b17e-3b43a421c633',
       objectMetadataId: '99cf5f27-b41d-4f25-a23b-9e47d27dae9b',
@@ -701,7 +702,7 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: 'c17fe20f-fcd1-4b21-ac5c-c595473a3af8',
     relationTargetObjectMetadataId: '06d95e96-b050-443f-946e-dd276d291a2f',
     universalIdentifier: '20202020-96f0-401b-9186-a3a0759225ac',
-    flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
+    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
       id: 'c17fe20f-fcd1-4b21-ac5c-c595473a3af8',
       standardId: '20202020-af4d-4eb0-babc-eb960a45b356',
       objectMetadataId: '06d95e96-b050-443f-946e-dd276d291a2f',
@@ -753,7 +754,7 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: '53a223cc-a445-420d-8698-1a9137039448',
     relationTargetObjectMetadataId: 'd78ec657-74a4-4652-a350-1f44ff62970a',
     universalIdentifier: '20202020-0be6-444e-88f0-12e0c64ac27d',
-    flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
+    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
       id: '53a223cc-a445-420d-8698-1a9137039448',
       standardId: '20202020-f1ef-4ba4-8f33-1a4577afa477',
       objectMetadataId: 'd78ec657-74a4-4652-a350-1f44ff62970a',
@@ -805,7 +806,7 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: '4eb74f21-1cb4-46b5-b3bb-4e41108e70d9',
     relationTargetObjectMetadataId: 'd34e0f07-1b8c-4de0-938e-599cf05e1f7f',
     universalIdentifier: '20202020-d88f-4020-8c85-d6c600903762',
-    flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
+    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
       id: '4eb74f21-1cb4-46b5-b3bb-4e41108e70d9',
       standardId: '20202020-f1ef-4ba4-8f33-1a4577afa477',
       objectMetadataId: 'd34e0f07-1b8c-4de0-938e-599cf05e1f7f',
@@ -857,7 +858,7 @@ export const TIMELINEACTIVITY_FLAT_FIELDS_MOCK = {
     relationTargetFieldMetadataId: 'd544ccb4-b0df-43bb-b70c-57ae477838c4',
     relationTargetObjectMetadataId: '713da753-0340-49b5-b1fa-add34d2dc9a8',
     universalIdentifier: '20202020-d13a-4342-8df0-df48bd783787',
-    flatRelationTargetFieldMetadata: getFlatFieldMetadataMock({
+    flatRelationTargetFieldMetadata: getRelationTargetFlatFieldMetadataMock({
       id: 'd544ccb4-b0df-43bb-b70c-57ae477838c4',
       standardId: '20202020-f1ef-4ba4-8f33-1a4577afa477',
       objectMetadataId: '713da753-0340-49b5-b1fa-add34d2dc9a8',

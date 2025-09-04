@@ -19,5 +19,10 @@ export const settingsDraftRoleFamilyState = createFamilyState<Role, string>({
     permissionFlags: [],
     objectPermissions: [],
     fieldPermissions: [],
+    canBeAssignedToAgents: false,
+    canBeAssignedToApiKeys: false,
+    canBeAssignedToUsers: false,
+    agents: [],
+    apiKeys: [],
   },
 });

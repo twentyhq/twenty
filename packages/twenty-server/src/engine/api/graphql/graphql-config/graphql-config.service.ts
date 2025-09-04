@@ -28,6 +28,7 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type User } from 'src/engine/core-modules/user/user.entity';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 import { handleExceptionAndConvertToGraphQLError } from 'src/engine/utils/global-exception-handler.util';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
 
@@ -45,6 +46,7 @@ export class GraphQLConfigService
     private readonly twentyConfigService: TwentyConfigService,
     private readonly moduleRef: ModuleRef,
     private readonly metricsService: MetricsService,
+    private readonly dataloaderService: DataloaderService,
   ) {}
 
   createGqlOptions(): YogaDriverConfig {
@@ -145,6 +147,9 @@ export class GraphQLConfigService
       },
       resolvers: { JSON: GraphQLJSON },
       plugins: plugins,
+      context: () => ({
+        loaders: this.dataloaderService.createLoaders(),
+      }),
     };
 
     if (isDebugMode) {

@@ -1,6 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatRelationTargetFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-relation-target-field-metadata.type';
 import { fromObjectMetadataItemWithFieldMapsToFlatObjectMetadataWithoutFields } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-object-metadata-item-with-field-maps-to-flat-object-metadata-without-fields.util';
@@ -12,10 +13,8 @@ import {
 } from 'src/engine/metadata-modules/workspace-metadata-cache/exceptions/workspace-metadata-cache.exception';
 import { isCachedFieldMetadataEntityOfType } from 'src/engine/utils/is-cached-field-metadata-of-type.util';
 
-const fromCachedRelationFieldMetadataEntityToFlatRelationTargetFieldMetadata = <
-  T extends FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION,
->(
-  cachedFieldMetadataEntity: CachedFieldMetadataEntity<T>,
+const fromCachedRelationFieldMetadataEntityToFlatRelationTargetFieldMetadata = (
+  cachedFieldMetadataEntity: CachedFieldMetadataEntity<MorphOrRelationFieldMetadataType>,
 ): FlatRelationTargetFieldMetadata => {
   return {
     ...cachedFieldMetadataEntity,

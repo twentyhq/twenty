@@ -81,9 +81,11 @@ export class DevSeederMetadataService {
   public async seed({
     dataSourceMetadata,
     workspaceId,
+    featureFlags,
   }: {
     dataSourceMetadata: DataSourceEntity;
     workspaceId: string;
+    featureFlags?: Record<string, boolean>;
   }) {
     const config = this.workspaceConfigs[workspaceId];
 
@@ -117,7 +119,7 @@ export class DevSeederMetadataService {
       });
     }
 
-    await this.seedCoreViews({ workspaceId, dataSourceMetadata });
+    await this.seedCoreViews({ workspaceId, dataSourceMetadata, featureFlags });
   }
 
   private async seedCustomObject({
@@ -168,9 +170,11 @@ export class DevSeederMetadataService {
   private async seedCoreViews({
     workspaceId,
     dataSourceMetadata,
+    featureFlags,
   }: {
     workspaceId: string;
     dataSourceMetadata: DataSourceEntity;
+    featureFlags?: Record<string, boolean>;
   }): Promise<void> {
     const createdObjectMetadata =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
@@ -180,6 +184,7 @@ export class DevSeederMetadataService {
       workspaceId,
       objectMetadataItems: createdObjectMetadata,
       schemaName: dataSourceMetadata.schema,
+      featureFlags,
     });
   }
 

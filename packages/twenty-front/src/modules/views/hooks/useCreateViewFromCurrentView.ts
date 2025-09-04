@@ -13,7 +13,7 @@ import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePers
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
-import { useRefreshCoreViews } from '@/views/hooks/useRefreshCoreViews';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 import { isPersistingViewFieldsState } from '@/views/states/isPersistingViewFieldsState';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { type ViewGroup } from '@/views/types/ViewGroup';
@@ -54,7 +54,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
-  const { refreshCoreViews } = useRefreshCoreViews();
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const currentRecordFilterGroups = useRecoilComponentValue(
     currentRecordFilterGroupsComponentState,
@@ -212,7 +213,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           await createViewSortRecords(viewSortsToCreate, { id: newViewId });
         }
 
-        await refreshCoreViews(objectMetadataItem.id);
+        await refreshCoreViewsByObjectMetadataId(objectMetadataItem.id);
 
         set(isPersistingViewFieldsState, false);
         return newViewId;
@@ -231,7 +232,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       createViewFilterGroupRecords,
       createViewFilterRecords,
       createViewSortRecords,
-      refreshCoreViews,
+      refreshCoreViewsByObjectMetadataId,
     ],
   );
 
