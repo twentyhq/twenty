@@ -12,6 +12,7 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { filterMorphRelationDuplicateFieldsDTO } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -19,10 +20,11 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { computeRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-relation-field-join-column-name.util';
+import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
+import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
 import { isFieldMetadataTypeMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-morph-relation.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload-or-throw.util';
-import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -215,6 +217,7 @@ export class FieldMetadataRelationService {
     return fieldMetadataInput;
   }
 
+  // TODO refactor
   async findCachedFieldMetadataRelation(
     fieldMetadataItems: Array<
       Pick<
@@ -227,14 +230,7 @@ export class FieldMetadataRelationService {
       >
     >,
     workspaceId: string,
-  ): Promise<
-    Array<{
-      sourceObjectMetadata: ObjectMetadataEntity;
-      sourceFieldMetadata: FieldMetadataEntity;
-      targetObjectMetadata: ObjectMetadataEntity;
-      targetFieldMetadata: FieldMetadataEntity;
-    }>
-  > {
+  ): Promise<RelationDTO[]> {
     const objectMetadataMaps =
       await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
         workspaceId,
@@ -306,16 +302,21 @@ export class FieldMetadataRelationService {
         : targetFieldMetadata;
 
       return {
-        sourceObjectMetadata:
+        sourceObjectMetadata: fromObjectMetadataEntityToObjectMetadataDto(
           getObjectMetadataFromObjectMetadataItemWithFieldMaps(
             sourceObjectMetadata,
-          ) as ObjectMetadataEntity,
-        sourceFieldMetadata: sourceFieldMetadata as FieldMetadataEntity,
-        targetObjectMetadata:
+          ),
+        ),
+        sourceFieldMetadata:
+          fromFieldMetadataEntityToFieldMetadataDto(sourceFieldMetadata),
+        targetObjectMetadata: fromObjectMetadataEntityToObjectMetadataDto(
           getObjectMetadataFromObjectMetadataItemWithFieldMaps(
             targetObjectMetadata,
-          ) as ObjectMetadataEntity,
-        targetFieldMetadata: targetFieldMetadataOverride as FieldMetadataEntity,
+          ),
+        ),
+        targetFieldMetadata: fromFieldMetadataEntityToFieldMetadataDto(
+          targetFieldMetadataOverride,
+        ),
       };
     });
   }

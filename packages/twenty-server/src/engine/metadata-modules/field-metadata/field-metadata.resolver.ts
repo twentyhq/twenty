@@ -8,7 +8,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 
-import { type FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -34,20 +34,15 @@ import {
   type UpdateFieldInput,
 } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import {
-  FieldMetadataException,
-  FieldMetadataExceptionCode,
-} from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { BeforeUpdateOneField } from 'src/engine/metadata-modules/field-metadata/hooks/before-update-one-field.hook';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
 import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
-import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
-import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
-import { isMorphRelationFieldMetadataType } from 'src/engine/utils/is-morph-relation-field-metadata-type.util';
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
@@ -173,42 +168,18 @@ export class FieldMetadataResolver {
     @AuthWorkspace() workspace: Workspace,
     @Parent() fieldMetadata: FieldMetadataEntity<FieldMetadataType.RELATION>,
     @Context() context: { loaders: IDataloaders },
-  ): Promise<RelationDTO | null | undefined> {
+  ): Promise<RelationDTO | null> {
     if (!isMorphOrRelationFieldMetadataType(fieldMetadata.type)) {
       return null;
     }
 
     try {
-      const {
-        sourceObjectMetadata,
-        targetObjectMetadata,
-        sourceFieldMetadata,
-        targetFieldMetadata,
-      } = await context.loaders.relationLoader.load({
+      return await context.loaders.relationLoader.load({
         fieldMetadata,
         workspaceId: workspace.id,
       });
-
-      if (!isDefined(fieldMetadata.settings)) {
-        throw new FieldMetadataException(
-          'Relation settings are required',
-          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        );
-      }
-
-      return {
-        type: fieldMetadata.settings.relationType,
-        sourceObjectMetadata:
-          fromObjectMetadataEntityToObjectMetadataDto(sourceObjectMetadata),
-        targetObjectMetadata:
-          fromObjectMetadataEntityToObjectMetadataDto(targetObjectMetadata),
-        sourceFieldMetadata:
-          fromFieldMetadataEntityToFieldMetadataDto(sourceFieldMetadata),
-        targetFieldMetadata:
-          fromFieldMetadataEntityToFieldMetadataDto(targetFieldMetadata),
-      };
     } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(error);
+      return fieldMetadataGraphqlApiExceptionHandler(error);
     }
   }
 
@@ -216,46 +187,25 @@ export class FieldMetadataResolver {
   async morphRelations(
     @AuthWorkspace() workspace: Workspace,
     @Parent()
-    fieldMetadata: FieldMetadataEntity<FieldMetadataType.MORPH_RELATION>,
+    flatFieldMetadata: FlatFieldMetadata,
     @Context() context: { loaders: IDataloaders },
-  ): Promise<RelationDTO[] | null | undefined> {
-    if (!isMorphRelationFieldMetadataType(fieldMetadata.type)) {
+  ): Promise<RelationDTO[] | null> {
+    if (
+      !isFlatFieldMetadataOfType(
+        flatFieldMetadata,
+        FieldMetadataType.MORPH_RELATION,
+      )
+    ) {
       return null;
     }
 
     try {
-      const morphRelations = await context.loaders.morphRelationLoader.load({
-        fieldMetadata,
+      return await context.loaders.morphRelationLoader.load({
+        flatFieldMetadata,
         workspaceId: workspace.id,
       });
-
-      // typescript issue, it's not possible to use the fieldMetadata.settings directly in morphRelations.map
-      const settings = fieldMetadata.settings;
-
-      if (!isDefined(settings) || !isDefined(settings.relationType)) {
-        throw new FieldMetadataException(
-          `Morph relation settings ${isDefined(settings) && 'relationType'} are required`,
-          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        );
-      }
-
-      return morphRelations.map<RelationDTO>((morphRelation) => ({
-        type: settings.relationType,
-        sourceObjectMetadata: fromObjectMetadataEntityToObjectMetadataDto(
-          morphRelation.sourceObjectMetadata,
-        ),
-        targetObjectMetadata: fromObjectMetadataEntityToObjectMetadataDto(
-          morphRelation.targetObjectMetadata,
-        ),
-        sourceFieldMetadata: fromFieldMetadataEntityToFieldMetadataDto(
-          morphRelation.sourceFieldMetadata,
-        ),
-        targetFieldMetadata: fromFieldMetadataEntityToFieldMetadataDto(
-          morphRelation.targetFieldMetadata,
-        ),
-      }));
     } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(error);
+      return fieldMetadataGraphqlApiExceptionHandler(error);
     }
   }
 }

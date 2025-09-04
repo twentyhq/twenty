@@ -10,16 +10,19 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { filterMorphRelationDuplicateFieldsDTO } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
+import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataMorphRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-morph-relation.service';
 import { FieldMetadataRelationService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-relation.service';
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
 import { resolveFieldMetadataStandardOverride } from 'src/engine/metadata-modules/field-metadata/utils/resolve-field-metadata-standard-override.util';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { type IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 export type RelationMetadataLoaderPayload = {
   workspaceId: string;
@@ -40,15 +43,7 @@ export type RelationLoaderPayload = {
 
 export type MorphRelationLoaderPayload = {
   workspaceId: string;
-  fieldMetadata: Pick<
-    FieldMetadataEntity,
-    | 'type'
-    | 'id'
-    | 'objectMetadataId'
-    | 'relationTargetFieldMetadataId'
-    | 'relationTargetObjectMetadataId'
-    | 'name'
-  >;
+  flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
 };
 
 export type FieldMetadataLoaderPayload = {
@@ -101,60 +96,42 @@ export class DataloaderService {
   }
 
   private createRelationLoader() {
-    return new DataLoader<
-      RelationLoaderPayload,
-      {
-        sourceObjectMetadata: ObjectMetadataEntity;
-        targetObjectMetadata: ObjectMetadataEntity;
-        sourceFieldMetadata: FieldMetadataEntity;
-        targetFieldMetadata: FieldMetadataEntity;
-      }
-    >(async (dataLoaderParams: RelationLoaderPayload[]) => {
-      const workspaceId = dataLoaderParams[0].workspaceId;
-      const fieldMetadataItems = dataLoaderParams.map(
-        (dataLoaderParam) => dataLoaderParam.fieldMetadata,
-      );
-
-      const fieldMetadataRelationCollection =
-        await this.fieldMetadataRelationService.findCachedFieldMetadataRelation(
-          fieldMetadataItems,
-          workspaceId,
+    return new DataLoader<RelationLoaderPayload, RelationDTO>(
+      async (dataLoaderParams: RelationLoaderPayload[]) => {
+        const workspaceId = dataLoaderParams[0].workspaceId;
+        const fieldMetadataItems = dataLoaderParams.map(
+          (dataLoaderParam) => dataLoaderParam.fieldMetadata,
         );
 
-      return fieldMetadataRelationCollection;
-    });
+        const fieldMetadataRelationCollection =
+          await this.fieldMetadataRelationService.findCachedFieldMetadataRelation(
+            fieldMetadataItems,
+            workspaceId,
+          );
+
+        return fieldMetadataRelationCollection;
+      },
+    );
   }
 
   private createMorphRelationLoader() {
-    return new DataLoader<
-      MorphRelationLoaderPayload,
-      {
-        sourceObjectMetadata: ObjectMetadataEntity;
-        targetObjectMetadata: ObjectMetadataEntity;
-        sourceFieldMetadata: FieldMetadataEntity;
-        targetFieldMetadata: FieldMetadataEntity;
-      }[]
-    >(async (dataLoaderParams: MorphRelationLoaderPayload[]) => {
-      const workspaceId = dataLoaderParams[0].workspaceId;
+    return new DataLoader<MorphRelationLoaderPayload, RelationDTO[]>(
+      async (dataLoaderParams: MorphRelationLoaderPayload[]) => {
+        const workspaceId = dataLoaderParams[0].workspaceId;
 
-      const fieldMetadataItems = dataLoaderParams.map(
-        (dataLoaderParam) => dataLoaderParam.fieldMetadata,
-      );
-
-      const fieldMetadataMorphRelationCollection =
-        await this.fieldMetadataMorphRelationService.findCachedFieldMetadataMorphRelation(
-          fieldMetadataItems,
-          workspaceId,
+        return await Promise.all(
+          dataLoaderParams.map(
+            async ({ flatFieldMetadata }) =>
+              await this.fieldMetadataMorphRelationService.findCachedFieldMetadataMorphRelation(
+                {
+                  flatFieldMetadata,
+                  workspaceId,
+                },
+              ),
+          ),
         );
-
-      return fieldMetadataItems.map((fieldMetadataItem) => {
-        return fieldMetadataMorphRelationCollection.filter(
-          (fieldMetadataMorphRelation) =>
-            fieldMetadataItem.name ===
-            fieldMetadataMorphRelation.sourceFieldMetadata.name,
-        );
-      });
-    });
+      },
+    );
   }
 
   private createIndexMetadataLoader() {
