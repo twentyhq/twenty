@@ -8,7 +8,6 @@ import { isNonCompositeField } from '@/object-record/object-filter-dropdown/util
 import { type ObjectPermissions } from 'twenty-shared/types';
 import {
   computeMorphRelationFieldJoinColumnName,
-  computeMorphRelationFieldName,
   isDefined,
 } from 'twenty-shared/utils';
 import { type FieldMetadataItem } from '../types/FieldMetadataItem';
@@ -51,12 +50,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
   ) {
     let gqlMorphField = '';
     for (const morphRelation of fieldMetadata.morphRelations ?? []) {
-      const relationFieldName = computeMorphRelationFieldName({
-        fieldName: fieldMetadata.name,
-        relationDirection: fieldMetadata.settings?.relationType,
-        nameSingular: morphRelation.targetObjectMetadata.nameSingular,
-        namePlural: morphRelation.targetObjectMetadata.namePlural,
-      });
+      const relationFieldName = fieldMetadata.name;
       const relationMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>
           objectMetadataItem.id === morphRelation.targetObjectMetadata.id,

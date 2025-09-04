@@ -5,7 +5,7 @@ import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueri
 import { type RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
 import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 type MapObjectMetadataToGraphQLQueryArgs = {
   objectMetadataItems: ObjectMetadataItem[];
@@ -54,29 +54,26 @@ export const mapObjectMetadataToGraphQLQuery = ({
     .filter((field) => isDefined(field.settings?.joinColumnName));
 
   const manyToOneRelationGqlFieldWithFieldMetadata =
-    manyToOneRelationFields.flatMap((field) => {
-      const isMorphRelation = field.type === FieldMetadataType.MORPH_RELATION;
+    manyToOneRelationFields.flatMap((fieldMetadata) => {
+      const isMorphRelation =
+        fieldMetadata.type === FieldMetadataType.MORPH_RELATION;
       if (!isMorphRelation) {
         return {
-          gqlField: field.settings?.joinColumnName,
-          fieldMetadata: field,
+          gqlField: fieldMetadata.settings?.joinColumnName,
+          fieldMetadata: fieldMetadata,
         };
       }
 
-      if (!isDefined(field.morphRelations)) {
+      if (!isDefined(fieldMetadata.morphRelations)) {
         throw new Error(
-          `Field ${field.name} is missing, please refresh the page. If the problem persists, please contact support.`,
+          `Field ${fieldMetadata.name} is missing, please refresh the page. If the problem persists, please contact support.`,
         );
       }
 
-      return field.morphRelations.map((morphRelation) => ({
-        gqlField: computeMorphRelationFieldName({
-          fieldName: field.name,
-          relationDirection: morphRelation.type,
-          nameSingular: morphRelation.targetObjectMetadata.nameSingular,
-          namePlural: morphRelation.targetObjectMetadata.namePlural,
-        }),
-        fieldMetadata: field,
+      // TODO DOUBLE CHECK HERE NECESSITY TO HAVE AN ARAY AND RETURN TYPE
+      return fieldMetadata.morphRelations.map((morphRelation) => ({
+        gqlField: morphRelation.sourceFieldMetadata.name,
+        fieldMetadata: fieldMetadata,
       }));
     });
 
@@ -103,12 +100,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
     }
 
     return fieldMetadata.morphRelations.map((morphRelation) => ({
-      gqlField: computeMorphRelationFieldName({
-        fieldName: fieldMetadata.name,
-        relationDirection: morphRelation.type,
-        nameSingular: morphRelation.targetObjectMetadata.nameSingular,
-        namePlural: morphRelation.targetObjectMetadata.namePlural,
-      }),
+      gqlField: morphRelation.sourceFieldMetadata.name,
       fieldMetadata,
     }));
   });

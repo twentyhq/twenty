@@ -9,7 +9,6 @@ import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldCont
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
-import { computeMorphRelationFieldName } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -118,16 +117,7 @@ export const SettingsDataModelRelationFieldPreview = ({
       >
         <SettingsDataModelSetFieldValueEffect
           recordId={recordId}
-          gqlFieldName={
-            fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION
-              ? computeMorphRelationFieldName({
-                  fieldName: fieldName ?? '',
-                  relationDirection: fieldMetadataItem.settings?.relationType,
-                  nameSingular: relationTargetObjectNameSingular,
-                  namePlural: relationTargetObjectMetadataItem.namePlural,
-                })
-              : fieldName
-          }
+          gqlFieldName={fieldName}
           value={fieldPreviewValue}
         />
         <StyledFieldPreview shrink={shrink}>

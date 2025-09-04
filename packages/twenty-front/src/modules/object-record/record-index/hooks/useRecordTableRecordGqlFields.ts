@@ -7,7 +7,7 @@ import { visibleRecordFieldsComponentSelector } from '@/object-record/record-fie
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordTableRecordGqlFields = ({
   objectMetadataItem,
@@ -58,12 +58,7 @@ export const useRecordTableRecordGqlFields = ({
       }
 
       return fieldMetadataItem.morphRelations.map((morphRelation) => [
-        computeMorphRelationFieldName({
-          fieldName: fieldMetadataItem.name,
-          relationDirection: morphRelation.type,
-          nameSingular: morphRelation.targetObjectMetadata.nameSingular,
-          namePlural: morphRelation.targetObjectMetadata.namePlural,
-        }),
+        morphRelation.sourceFieldMetadata.name,
         true,
       ]);
     }),

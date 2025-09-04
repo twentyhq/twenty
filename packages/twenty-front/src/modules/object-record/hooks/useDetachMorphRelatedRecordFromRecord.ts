@@ -13,7 +13,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useDetachMorphRelatedRecordFromRecord = () => {
   const apolloCoreClient = useApolloCoreClient();
@@ -61,15 +61,8 @@ export const useDetachMorphRelatedRecordFromRecord = () => {
 
         if (isDefined(parentRecord)) {
           relatedObjectMetadataItems.forEach((relatedObjectMetadataItem) => {
-            const computedFieldName = computeMorphRelationFieldName({
-              fieldName: fieldDefinition.metadata.fieldName,
-              relationDirection: fieldDefinition.metadata.relationType,
-              nameSingular: relatedObjectMetadataItem.nameSingular,
-              namePlural: relatedObjectMetadataItem.namePlural,
-            });
-
             const currentMorphFieldValue = parentRecord[
-              computedFieldName
+              fieldDefinition.metadata.fieldName
             ] as ObjectRecord[];
 
             const objectRecordFromCache = getRecordFromCache({
@@ -87,9 +80,10 @@ export const useDetachMorphRelatedRecordFromRecord = () => {
             if (Array.isArray(currentMorphFieldValue)) {
               set(recordStoreFamilyState(recordId), {
                 ...parentRecord,
-                [computedFieldName]: currentMorphFieldValue.filter(
-                  (record) => record.id !== relatedRecordId,
-                ),
+                [fieldDefinition.metadata.fieldName]:
+                  currentMorphFieldValue.filter(
+                    (record) => record.id !== relatedRecordId,
+                  ),
               });
             }
           });
