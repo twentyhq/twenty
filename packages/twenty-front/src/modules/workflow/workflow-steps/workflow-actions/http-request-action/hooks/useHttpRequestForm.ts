@@ -50,20 +50,17 @@ export const useHttpRequestForm = ({
   ) => {
     let newFormData = { ...formData, [field]: value };
 
-    if (
-      (field === 'method' && !isMethodWithBody(value as string)) ||
-      (field === 'headers' &&
-        typeof value === 'object' &&
-        formData.headers?.['content-type'] !== value?.['content-type'])
+    if (field === 'method' && !isMethodWithBody(value as string)) {
+      const headersCopy = { ...formData.headers };
+      delete headersCopy?.['content-type'];
+      newFormData = { ...newFormData, body: undefined, headers: headersCopy };
+    } else if (
+      field === 'headers' &&
+      typeof value === 'object' &&
+      formData.headers?.['content-type'] !== value?.['content-type']
     ) {
       newFormData = { ...newFormData, body: undefined };
-      if (field === 'method') {
-        const headersCopy = { ...formData.headers };
-        delete headersCopy?.['content-type'];
-        newFormData = { ...newFormData, headers: headersCopy };
-      }
     }
-
     setFormData(newFormData);
     saveAction(newFormData);
   };

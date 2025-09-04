@@ -4,6 +4,7 @@ import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/c
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Select } from '@/ui/input/components/Select';
 import {
+  BODY_TYPES,
   DEFAULT_JSON_BODY_PLACEHOLDER,
   type HttpRequestBody,
   type HttpRequestFormData,
@@ -38,17 +39,16 @@ const StyledSelectDropdown = styled(Select)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 const StyledNoBodyMessage = styled.div`
-  font-size: 14px;
+  font-size: ${({ theme }) => theme.font.size.md};
   padding: ${({ theme }) => theme.spacing(2)};
   text-align: left;
-  opacity: 1;
 `;
 
 type BodyInputProps = {
   label?: string;
   defaultValue?: HttpRequestBody | string;
   onChange: (
-    value?: string | Record<string, string> | undefined,
+    value?: string | Record<string, string>,
     type?: keyof HttpRequestFormData,
   ) => void;
   readonly?: boolean;
@@ -70,7 +70,7 @@ export const BodyInput = ({
     defaultValueParsed as Record<string, string>,
   );
   const [jsonString, setJsonString] = useState<string | null>(
-    getBodyTypeFromHeaders(headers) === 'rawJson'
+    getBodyTypeFromHeaders(headers) === BODY_TYPES.RAW_JSON
       ? isString(defaultValue)
         ? defaultValue
         : JSON.stringify(defaultValue, null, 2)
@@ -78,7 +78,8 @@ export const BodyInput = ({
   );
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [textValue, setTextValue] = useState<string | undefined>(
-    getBodyTypeFromHeaders(headers) === 'Text' && isString(defaultValue)
+    getBodyTypeFromHeaders(headers) === BODY_TYPES.TEXT &&
+      isString(defaultValue)
       ? defaultValue
       : undefined,
   );
@@ -128,63 +129,74 @@ export const BodyInput = ({
       // Do nothing, validation will happen on blur
     }
   };
+  const resetBodyStateValue = (bodyTypeValue: BodyType) => {
+    if (
+      bodyTypeValue === BODY_TYPES.FORM_DATA ||
+      bodyTypeValue === BODY_TYPES.KEY_VALUE
+    ) {
+      setKeyValuePairs([{ key: '', value: '', id: v4() }]);
+    } else if (bodyTypeValue === BODY_TYPES.RAW_JSON && isDefined(jsonString)) {
+      setJsonString(null);
+      setErrorMessage(undefined);
+    } else if (bodyTypeValue === BODY_TYPES.TEXT && isDefined(textValue)) {
+      setTextValue(undefined);
+    }
+  };
+  const getNewHeadersPairValues = (
+    headersValue: KeyValuePair[],
+    bodyTypeValue: BodyType,
+  ) => {
+    const pairIndex = headersValue.findIndex(
+      (value) => value.key === 'content-type',
+    );
+    if (pairIndex === -1 || !isDefined(headers?.['content-type'])) {
+      return [
+        ...headersValue,
+        {
+          key: 'content-type',
+          value: CONTENT_TYPE_VALUES_HTTP_REQUEST[bodyTypeValue],
+          id: v4(),
+        },
+      ];
+    }
+    const newPairs = [...headersValue];
 
+    newPairs[pairIndex] = {
+      ...newPairs[pairIndex],
+      value: CONTENT_TYPE_VALUES_HTTP_REQUEST[bodyTypeValue],
+    };
+    return newPairs;
+  };
   const handleModeChange = (bodyTypeValue: BodyType) => {
-    if (bodyTypeValue === 'None') {
-      if (isDefined(headers?.['content-type'])) {
-        const headersCopy = { ...headers };
-        delete headersCopy['content-type'];
-        setHeadersPairs?.((prevValue) =>
-          prevValue.filter((value) => value.key !== 'content-type'),
-        );
-        onChange(headersCopy, 'headers');
-      }
-    } else {
+    if (
+      bodyTypeValue === BODY_TYPES.NONE &&
+      isDefined(headers?.['content-type'])
+    ) {
+      const headersCopy = { ...headers };
+      delete headersCopy['content-type'];
+      setHeadersPairs?.((prevValue) =>
+        prevValue.filter((value) => value.key !== 'content-type'),
+      );
+      onChange(headersCopy, 'headers');
+    } else if (
+      bodyTypeValue !== BODY_TYPES.NONE &&
+      getBodyTypeFromHeaders(headers) !== bodyTypeValue
+    ) {
       setHeadersPairs?.((prevValuePairs) => {
-        const pairIndex = prevValuePairs.findIndex(
-          (value) => value.key === 'content-type',
-        );
-        if (pairIndex === -1 || !isDefined(headers?.['content-type'])) {
-          return [
-            ...prevValuePairs,
-            {
-              key: 'content-type',
-              value: CONTENT_TYPE_VALUES_HTTP_REQUEST[bodyTypeValue],
-              id: v4(),
-            },
-          ];
-        } else {
-          const newPairs = [...prevValuePairs];
-
-          newPairs[pairIndex] = {
-            ...newPairs[pairIndex],
-            value: CONTENT_TYPE_VALUES_HTTP_REQUEST[bodyTypeValue],
-          };
-          return newPairs;
-        }
+        return getNewHeadersPairValues(prevValuePairs, bodyTypeValue);
       });
-      if (
-        (bodyTypeValue === 'FormData' || bodyTypeValue === 'keyValue') &&
-        getBodyTypeFromHeaders(headers) !== bodyTypeValue
-      ) {
-        setKeyValuePairs([
-          {
-            key: '',
-            value: '',
-            id: v4(),
-          },
-        ]);
-      }
+
       const newHeaders = {
         ...headers,
         'content-type': CONTENT_TYPE_VALUES_HTTP_REQUEST[bodyTypeValue],
       };
+      resetBodyStateValue(bodyTypeValue);
       onChange(newHeaders, 'headers');
     }
   };
 
   const handleBlur = () => {
-    if (getBodyTypeFromHeaders(headers) === 'rawJson') {
+    if (getBodyTypeFromHeaders(headers) === BODY_TYPES.RAW_JSON) {
       validateJson(jsonString);
     }
   };
@@ -194,20 +206,20 @@ export const BodyInput = ({
       <InputLabel>Body Input</InputLabel>
       <StyledSelectDropdown
         options={[
-          { label: 'Key/Value', value: 'keyValue', Icon: IconKey },
-          { label: 'Raw JSON', value: 'rawJson', Icon: IconFileText },
-          { label: 'Form Data', value: 'FormData', Icon: IconKey },
-          { label: 'Text', value: 'Text', Icon: IconFileText },
-          { label: 'None', value: 'None', Icon: IconFileText },
+          { label: 'Key/Value', value: BODY_TYPES.KEY_VALUE, Icon: IconKey },
+          { label: 'Raw JSON', value: BODY_TYPES.RAW_JSON, Icon: IconFileText },
+          { label: 'Form Data', value: BODY_TYPES.FORM_DATA, Icon: IconKey },
+          { label: 'Text', value: BODY_TYPES.TEXT, Icon: IconFileText },
+          { label: 'None', value: BODY_TYPES.NONE, Icon: IconFileText },
         ]}
         dropdownId="body-input-mode"
-        value={getBodyTypeFromHeaders(headers) || 'None'}
+        value={getBodyTypeFromHeaders(headers) || BODY_TYPES.NONE}
         onChange={(value) => handleModeChange(value as BodyType)}
         disabled={readonly}
       />
 
       <StyledContainer>
-        {getBodyTypeFromHeaders(headers) === 'rawJson' ? (
+        {getBodyTypeFromHeaders(headers) === BODY_TYPES.RAW_JSON ? (
           <FormRawJsonFieldInput
             placeholder={DEFAULT_JSON_BODY_PLACEHOLDER}
             readonly={readonly}
@@ -217,7 +229,7 @@ export const BodyInput = ({
             onChange={handleJsonChange}
             VariablePicker={WorkflowVariablePicker}
           />
-        ) : getBodyTypeFromHeaders(headers) === 'keyValue' ? (
+        ) : getBodyTypeFromHeaders(headers) === BODY_TYPES.KEY_VALUE ? (
           <KeyValuePairInput
             key={'keyValuePair'}
             defaultValue={defaultValueParsed as Record<string, string>}
@@ -228,7 +240,7 @@ export const BodyInput = ({
             pairs={keyValuePairs}
             setPairs={setKeyValuePairs}
           />
-        ) : getBodyTypeFromHeaders(headers) === 'FormData' ? (
+        ) : getBodyTypeFromHeaders(headers) === BODY_TYPES.FORM_DATA ? (
           <KeyValuePairInput
             key={'FormDataPair'}
             defaultValue={defaultValueParsed as Record<string, string>}
@@ -239,9 +251,9 @@ export const BodyInput = ({
             pairs={keyValuePairs}
             setPairs={setKeyValuePairs}
           />
-        ) : getBodyTypeFromHeaders(headers) === 'Text' ? (
+        ) : getBodyTypeFromHeaders(headers) === BODY_TYPES.TEXT ? (
           <FormTextFieldInput
-            placeholder={'enter text'}
+            placeholder={'Enter text'}
             readonly={readonly}
             defaultValue={textValue}
             onChange={(value: string) => handleChangeTextValue(value)}

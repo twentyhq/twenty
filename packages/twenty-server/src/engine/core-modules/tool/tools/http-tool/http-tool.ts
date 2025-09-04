@@ -4,8 +4,7 @@ import axios, { type AxiosRequestConfig } from 'axios';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type BodyType,
-  CONTENT_TYPE_VALUES_HTTP_REQUEST,
-  parseDataFromBodyType,
+  parseDataFromContentType,
 } from 'twenty-shared/workflow';
 
 import { HttpToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/http-tool/http-tool.schema';
@@ -33,19 +32,9 @@ export class HttpTool implements Tool {
 
       if (isMethodForBody && body) {
         const contentType = headers?.['content-type'];
-        let bodyType: BodyType | undefined;
 
-        if (contentType === CONTENT_TYPE_VALUES_HTTP_REQUEST.FormData) {
-          bodyType = 'FormData';
-        } else if (contentType === CONTENT_TYPE_VALUES_HTTP_REQUEST.keyValue) {
-          bodyType = 'keyValue';
-        } else if (contentType === CONTENT_TYPE_VALUES_HTTP_REQUEST.Text) {
-          bodyType = 'Text';
-        } else {
-          bodyType = 'rawJson';
-        }
-        axiosConfig.data = parseDataFromBodyType(bodyType, body);
-        if (isDefined(headersCopy) && bodyType === 'FormData') {
+        axiosConfig.data = parseDataFromContentType(body, contentType);
+        if (isDefined(headersCopy) && contentType === 'multipart/form-data') {
           delete headersCopy['content-type'];
         }
       }

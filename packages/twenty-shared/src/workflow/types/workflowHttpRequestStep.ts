@@ -1,1 +1,1 @@
-export type BodyType = 'keyValue' | 'rawJson' | 'FormData' | 'Text' | 'None';
+export type BodyType = 'keyValue' | 'rawJson' | 'formData' | 'text' | 'none';

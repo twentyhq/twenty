@@ -21,4 +21,4 @@ export type {
 } from './types/WorkflowRunStateStepInfos';
 export { canObjectBeManagedByWorkflow } from './utils/canObjectBeManagedByWorkflow';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
-
+export { parseDataFromContentType } from './utils/parseDataFromContentType';
