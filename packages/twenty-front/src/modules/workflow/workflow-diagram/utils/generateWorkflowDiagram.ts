@@ -102,11 +102,6 @@ export const generateWorkflowDiagram = ({
   }
 
   for (const step of steps) {
-    let edgeType =
-      step.type === 'ITERATOR'
-        ? edgeTypeForIteratorCompletedBranch
-        : edgeTypeBetweenTwoDefaultNodes;
-
     if (step.type === 'ITERATOR') {
       const initialLoopStepIds = Array.isArray(
         step.settings.input.initialLoopStepIds,
@@ -180,6 +175,11 @@ export const generateWorkflowDiagram = ({
         });
       }
     }
+
+    const edgeType =
+      step.type === 'ITERATOR'
+        ? edgeTypeForIteratorCompletedBranch
+        : edgeTypeBetweenTwoDefaultNodes;
 
     step.nextStepIds?.forEach((child) => {
       edges.push({
