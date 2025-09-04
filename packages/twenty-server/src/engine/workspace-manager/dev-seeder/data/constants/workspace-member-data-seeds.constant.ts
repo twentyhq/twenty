@@ -1,3 +1,4 @@
+import { generateRandomUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-random-users.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 type WorkspaceMemberDataSeed = {
@@ -28,7 +29,17 @@ export const WORKSPACE_MEMBER_DATA_SEED_IDS = {
   JANE: '20202020-463f-435b-828c-107e007a2711',
 };
 
-export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
+// Generate random workspace members data
+const {
+  workspaceMembers: randomWorkspaceMembers,
+  workspaceMemberIds: randomWorkspaceMemberIds,
+} = generateRandomUsers();
+
+// Export random workspace member IDs for use in other seed files
+export const RANDOM_WORKSPACE_MEMBER_IDS = randomWorkspaceMemberIds;
+
+// Original workspace members
+const originalWorkspaceMembers: WorkspaceMemberDataSeed[] = [
   {
     id: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
     nameFirstName: 'Tim',
@@ -65,4 +76,10 @@ export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
     userEmail: 'jane.austen@apple.dev',
     userId: USER_DATA_SEED_IDS.JANE,
   },
+];
+
+// Combine original workspace members with random workspace members
+export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
+  ...originalWorkspaceMembers,
+  ...randomWorkspaceMembers,
 ];

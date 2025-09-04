@@ -1,5 +1,7 @@
 import { type DataSource } from 'typeorm';
 
+import { generateRandomUsers } from './generate-random-users.util';
+
 const tableName = 'user';
 
 export const USER_DATA_SEED_IDS = {
@@ -9,7 +11,64 @@ export const USER_DATA_SEED_IDS = {
   PHIL: '20202020-7169-42cf-bc47-1cfef15264b8',
 };
 
+// Generate random users data
+const { users: randomUsers, userIds: randomUserIds } = generateRandomUsers();
+
+// Export random user IDs for use in other seed files
+export const RANDOM_USER_IDS = randomUserIds;
+
 export const seedUsers = async (dataSource: DataSource, schemaName: string) => {
+  // Prepare original users
+  const originalUsers = [
+    {
+      id: USER_DATA_SEED_IDS.TIM,
+      firstName: 'Tim',
+      lastName: 'Apple',
+      email: 'tim@apple.dev',
+      passwordHash:
+        '$2b$10$3LwXjJRtLsfx4hLuuXhxt.3mWgismTiZFCZSG3z9kDrSfsrBl0fT6', // tim@apple.dev
+      canImpersonate: true,
+      canAccessFullAdminPanel: true,
+      isEmailVerified: true,
+    },
+    {
+      id: USER_DATA_SEED_IDS.JONY,
+      firstName: 'Jony',
+      lastName: 'Ive',
+      email: 'jony.ive@apple.dev',
+      passwordHash:
+        '$2b$10$3LwXjJRtLsfx4hLuuXhxt.3mWgismTiZFCZSG3z9kDrSfsrBl0fT6', // tim@apple.dev
+      canImpersonate: true,
+      canAccessFullAdminPanel: true,
+      isEmailVerified: true,
+    },
+    {
+      id: USER_DATA_SEED_IDS.PHIL,
+      firstName: 'Phil',
+      lastName: 'Schiler',
+      email: 'phil.schiler@apple.dev',
+      passwordHash:
+        '$2b$10$3LwXjJRtLsfx4hLuuXhxt.3mWgismTiZFCZSG3z9kDrSfsrBl0fT6', // tim@apple.dev
+      canImpersonate: true,
+      canAccessFullAdminPanel: true,
+      isEmailVerified: true,
+    },
+    {
+      id: USER_DATA_SEED_IDS.JANE,
+      firstName: 'Jane',
+      lastName: 'Austen',
+      email: 'jane.austen@apple.dev',
+      passwordHash:
+        '$2b$10$3LwXjJRtLsfx4hLuuXhxt.3mWgismTiZFCZSG3z9kDrSfsrBl0fT6', // tim@apple.dev
+      canImpersonate: true,
+      canAccessFullAdminPanel: true,
+      isEmailVerified: true,
+    },
+  ];
+
+  // Combine original users with random users
+  const allUsers = [...originalUsers, ...randomUsers];
+
   await dataSource
     .createQueryBuilder()
     .insert()
@@ -24,51 +83,6 @@ export const seedUsers = async (dataSource: DataSource, schemaName: string) => {
       'isEmailVerified',
     ])
     .orIgnore()
-    .values([
-      {
-        id: USER_DATA_SEED_IDS.TIM,
-        firstName: 'Tim',
-        lastName: 'Apple',
-        email: 'tim@apple.dev',
-        passwordHash:
-          '$2b$10$3LwXjJRtLsfx4hLuuXhxt.3mWgismTiZFCZSG3z9kDrSfsrBl0fT6', // tim@apple.dev
-        canImpersonate: true,
-        canAccessFullAdminPanel: true,
-        isEmailVerified: true,
-      },
-      {
-        id: USER_DATA_SEED_IDS.JONY,
-        firstName: 'Jony',
-        lastName: 'Ive',
-        email: 'jony.ive@apple.dev',
-        passwordHash:
-          '$2b$10$3LwXjJRtLsfx4hLuuXhxt.3mWgismTiZFCZSG3z9kDrSfsrBl0fT6', // tim@apple.dev
-        canImpersonate: true,
-        canAccessFullAdminPanel: true,
-        isEmailVerified: true,
-      },
-      {
-        id: USER_DATA_SEED_IDS.PHIL,
-        firstName: 'Phil',
-        lastName: 'Schiler',
-        email: 'phil.schiler@apple.dev',
-        passwordHash:
-          '$2b$10$3LwXjJRtLsfx4hLuuXhxt.3mWgismTiZFCZSG3z9kDrSfsrBl0fT6', // tim@apple.dev
-        canImpersonate: true,
-        canAccessFullAdminPanel: true,
-        isEmailVerified: true,
-      },
-      {
-        id: USER_DATA_SEED_IDS.JANE,
-        firstName: 'Jane',
-        lastName: 'Austen',
-        email: 'jane.austen@apple.dev',
-        passwordHash:
-          '$2b$10$3LwXjJRtLsfx4hLuuXhxt.3mWgismTiZFCZSG3z9kDrSfsrBl0fT6', // tim@apple.dev
-        canImpersonate: true,
-        canAccessFullAdminPanel: true,
-        isEmailVerified: true,
-      },
-    ])
+    .values(allUsers)
     .execute();
 };
