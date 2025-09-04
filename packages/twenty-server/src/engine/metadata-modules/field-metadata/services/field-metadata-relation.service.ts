@@ -25,6 +25,7 @@ import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata
 import { isFieldMetadataTypeMorphRelation } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-type-morph-relation.util';
 import { prepareCustomFieldMetadataForCreation } from 'src/engine/metadata-modules/field-metadata/utils/prepare-field-metadata-for-creation.util';
 import { validateRelationCreationPayloadOrThrow } from 'src/engine/metadata-modules/field-metadata/utils/validate-relation-creation-payload-or-throw.util';
+import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-on-delete-action.type';
 import { type ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { type ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -218,108 +219,106 @@ export class FieldMetadataRelationService {
   }
 
   // TODO refactor
-  async findCachedFieldMetadataRelation(
-    fieldMetadataItems: Array<
-      Pick<
-        FieldMetadataEntity,
-        | 'id'
-        | 'type'
-        | 'objectMetadataId'
-        | 'relationTargetFieldMetadataId'
-        | 'relationTargetObjectMetadataId'
-      >
-    >,
-    workspaceId: string,
-  ): Promise<RelationDTO[]> {
+  async findCachedFieldMetadataRelation({
+    flatFieldMetadata,
+    workspaceId,
+  }: {
+    flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION>;
+    workspaceId: string;
+  }): Promise<RelationDTO> {
     const objectMetadataMaps =
       await this.workspaceCacheStorageService.getObjectMetadataMapsOrThrow(
         workspaceId,
       );
 
-    return fieldMetadataItems.map((fieldMetadataItem) => {
-      const {
-        id,
-        objectMetadataId,
-        relationTargetFieldMetadataId,
-        relationTargetObjectMetadataId,
-      } = fieldMetadataItem;
+    const {
+      id: fieldMetadataId,
+      objectMetadataId,
+      relationTargetFieldMetadataId,
+      relationTargetObjectMetadataId,
+    } = flatFieldMetadata;
 
-      if (!relationTargetObjectMetadataId || !relationTargetFieldMetadataId) {
-        throw new FieldMetadataException(
-          `Relation target object metadata id or relation target field metadata id not found for field metadata ${id}`,
-          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        );
-      }
-
-      const sourceObjectMetadata = objectMetadataMaps.byId[objectMetadataId];
-      const targetObjectMetadata =
-        objectMetadataMaps.byId[relationTargetObjectMetadataId];
-      const sourceFieldMetadata = sourceObjectMetadata?.fieldsById[id];
-      const targetFieldMetadata =
-        targetObjectMetadata?.fieldsById[relationTargetFieldMetadataId];
-
-      if (
-        !sourceObjectMetadata ||
-        !targetObjectMetadata ||
-        !sourceFieldMetadata ||
-        !targetFieldMetadata
-      ) {
-        throw new FieldMetadataException(
-          `Field relation metadata not found for field metadata ${id}`,
-          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        );
-      }
-
-      // Morph relation specific:
-      // to keep the fieldMetadata API simple
-      // we decided to override the targetFieldMetadata with the existing one
-      // in case the relation target is a morph relation
-      const isRelationTargetMorphRelation =
-        isFieldMetadataTypeMorphRelation(targetFieldMetadata);
-
-      const targetObjectMetadataFields = Object.values(
-        targetObjectMetadata.fieldsById,
+    if (
+      !isDefined(relationTargetObjectMetadataId) ||
+      !isDefined(relationTargetFieldMetadataId)
+    ) {
+      throw new FieldMetadataException(
+        `Relation target object metadata id or relation target field metadata id not found for field metadata ${fieldMetadataId}`,
+        FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
       );
+    }
 
-      const targetObjectMetadataWithoutDuplicates =
-        filterMorphRelationDuplicateFieldsDTO<FieldMetadataEntity>(
-          targetObjectMetadataFields,
-        );
-      const targetFieldMetadataSelected =
-        targetObjectMetadataWithoutDuplicates.find(
-          (fieldMetadata) => fieldMetadata.name === targetFieldMetadata.name,
-        );
+    const sourceObjectMetadata = objectMetadataMaps.byId[objectMetadataId];
+    const targetObjectMetadata =
+      objectMetadataMaps.byId[relationTargetObjectMetadataId];
+    const sourceFieldMetadata =
+      sourceObjectMetadata?.fieldsById[fieldMetadataId];
+    const targetFieldMetadata =
+      targetObjectMetadata?.fieldsById[relationTargetFieldMetadataId];
 
-      if (!isDefined(targetFieldMetadataSelected)) {
-        throw new FieldMetadataException(
-          `Target field metadata not found for field metadata ${id}`,
-          FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
-        );
-      }
+    if (
+      !isDefined(sourceObjectMetadata) ||
+      !isDefined(targetObjectMetadata) ||
+      !isDefined(sourceFieldMetadata) ||
+      !isDefined(targetFieldMetadata)
+    ) {
+      throw new FieldMetadataException(
+        `Field relation metadata not found for field metadata ${fieldMetadataId}`,
+        FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+      );
+    }
 
-      const targetFieldMetadataOverride = isRelationTargetMorphRelation
-        ? targetFieldMetadataSelected
-        : targetFieldMetadata;
+    // Morph relation specific:
+    // to keep the fieldMetadata API simple
+    // we decided to override the targetFieldMetadata with the existing one
+    // in case the relation target is a morph relation
+    const isRelationTargetMorphRelation =
+      isFieldMetadataTypeMorphRelation(targetFieldMetadata);
 
-      return {
-        type: RelationType.MANY_TO_ONE, // does not make sense like that, we cannot know which settings was used to create relation pair
-        sourceObjectMetadata: fromObjectMetadataEntityToObjectMetadataDto(
-          getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-            sourceObjectMetadata,
-          ),
+    const targetObjectMetadataFields = Object.values(
+      targetObjectMetadata.fieldsById,
+    );
+
+    //TODO have a look
+    const targetObjectMetadataWithoutDuplicates =
+      filterMorphRelationDuplicateFieldsDTO<FieldMetadataEntity>(
+        targetObjectMetadataFields,
+      );
+    const targetFieldMetadataSelected =
+      targetObjectMetadataWithoutDuplicates.find(
+        (fieldMetadata) => fieldMetadata.name === targetFieldMetadata.name,
+      );
+    ///
+
+    if (!isDefined(targetFieldMetadataSelected)) {
+      throw new FieldMetadataException(
+        `Target field metadata not found for field metadata ${fieldMetadataId}`,
+        FieldMetadataExceptionCode.FIELD_METADATA_RELATION_MALFORMED,
+      );
+    }
+
+    const targetFieldMetadataOverride = isRelationTargetMorphRelation
+      ? targetFieldMetadataSelected
+      : targetFieldMetadata;
+
+    return {
+      type: flatFieldMetadata.settings.relationType,
+      sourceObjectMetadata: fromObjectMetadataEntityToObjectMetadataDto(
+        getObjectMetadataFromObjectMetadataItemWithFieldMaps(
+          sourceObjectMetadata,
         ),
-        sourceFieldMetadata:
-          fromFieldMetadataEntityToFieldMetadataDto(sourceFieldMetadata),
-        targetObjectMetadata: fromObjectMetadataEntityToObjectMetadataDto(
-          getObjectMetadataFromObjectMetadataItemWithFieldMaps(
-            targetObjectMetadata,
-          ),
+      ),
+      sourceFieldMetadata:
+        fromFieldMetadataEntityToFieldMetadataDto(sourceFieldMetadata),
+      targetObjectMetadata: fromObjectMetadataEntityToObjectMetadataDto(
+        getObjectMetadataFromObjectMetadataItemWithFieldMaps(
+          targetObjectMetadata,
         ),
-        targetFieldMetadata: fromFieldMetadataEntityToFieldMetadataDto(
-          targetFieldMetadataOverride,
-        ),
-      };
-    });
+      ),
+      targetFieldMetadata: fromFieldMetadataEntityToFieldMetadataDto(
+        targetFieldMetadataOverride,
+      ),
+    };
   }
 
   // TODO refactor and strictly type

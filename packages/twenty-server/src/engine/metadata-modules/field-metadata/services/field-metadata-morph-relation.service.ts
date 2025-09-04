@@ -210,7 +210,7 @@ export class FieldMetadataMorphRelationService {
       );
 
     return allMorphFlatFieldMetadatas.map((morphFlatFieldMetadata) => ({
-      type: RelationType.MANY_TO_ONE, // does not make sense like that, we cannot know which settings was used to create relation pair
+      type: flatFieldMetadata.settings.relationType,
       sourceObjectMetadata: fromFlatObjectMetadataToObjectMetadataDto(
         sourceFlatObjectMetadata,
       ),

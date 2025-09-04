@@ -33,7 +33,6 @@ import {
   UpdateOneFieldMetadataInput,
   type UpdateFieldInput,
 } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { BeforeUpdateOneField } from 'src/engine/metadata-modules/field-metadata/hooks/before-update-one-field.hook';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { FieldMetadataServiceV2 } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service-v2';
@@ -42,7 +41,6 @@ import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metada
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
-import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 
 @UseGuards(WorkspaceAuthGuard)
 @UsePipes(ResolverValidationPipe)
@@ -166,16 +164,18 @@ export class FieldMetadataResolver {
   @ResolveField(() => RelationDTO, { nullable: true })
   async relation(
     @AuthWorkspace() workspace: Workspace,
-    @Parent() fieldMetadata: FieldMetadataEntity<FieldMetadataType.RELATION>,
+    @Parent() flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION>,
     @Context() context: { loaders: IDataloaders },
   ): Promise<RelationDTO | null> {
-    if (!isMorphOrRelationFieldMetadataType(fieldMetadata.type)) {
+    if (
+      !isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.RELATION)
+    ) {
       return null;
     }
 
     try {
       return await context.loaders.relationLoader.load({
-        fieldMetadata,
+        flatFieldMetadata,
         workspaceId: workspace.id,
       });
     } catch (error) {
