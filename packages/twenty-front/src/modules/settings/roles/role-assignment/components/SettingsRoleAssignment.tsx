@@ -1,7 +1,5 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
-import {
-    currentWorkspaceMemberState
-} from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
 import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
@@ -18,9 +16,9 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
-    useFindManyAgentsQuery,
-    useGetApiKeysQuery,
-    type Agent,
+  useFindManyAgentsQuery,
+  useGetApiKeysQuery,
+  type Agent,
 } from '~/generated-metadata/graphql';
 import { FeatureFlagKey, type ApiKeyForRole } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

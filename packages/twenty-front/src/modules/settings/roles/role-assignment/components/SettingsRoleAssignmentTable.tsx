@@ -1,6 +1,6 @@
 import {
-    SettingsRoleAssignmentTableRow,
-    type RoleTarget,
+  SettingsRoleAssignmentTableRow,
+  type RoleTarget,
 } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentTableRow';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -126,7 +126,10 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
   ): RoleTarget => {
     switch (roleTargetType) {
       case 'member':
-        return { type: roleTargetType, data: roleTarget as PartialWorkspaceMember };
+        return {
+          type: roleTargetType,
+          data: roleTarget as PartialWorkspaceMember,
+        };
       case 'agent':
         return { type: roleTargetType, data: roleTarget as Agent };
       case 'apiKey':

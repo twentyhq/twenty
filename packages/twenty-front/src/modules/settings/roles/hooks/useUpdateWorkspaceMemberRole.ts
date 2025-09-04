@@ -1,9 +1,7 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import {
-    useUpdateWorkspaceMemberRoleMutation,
-} from '~/generated-metadata/graphql';
+import { useUpdateWorkspaceMemberRoleMutation } from '~/generated-metadata/graphql';
 import { type PartialWorkspaceMember } from '../types/RoleWithPartialMembers';
 
 type AddWorkspaceMemberToRoleAndUpdateStateParams = {

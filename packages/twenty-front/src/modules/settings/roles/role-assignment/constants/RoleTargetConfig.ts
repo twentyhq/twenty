@@ -2,11 +2,12 @@ import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMembe
 import { SettingsRoleAssignmentEntityPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown';
 import { SettingsRoleAssignmentWorkspaceMemberPickerDropdown } from '@/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown';
 import { t } from '@lingui/core/macro';
-import {
-    type Agent,
-} from '~/generated-metadata/graphql';
+import { type Agent } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
-import { type PartialWorkspaceMember, type RoleWithPartialMembers } from '../../types/RoleWithPartialMembers';
+import {
+  type PartialWorkspaceMember,
+  type RoleWithPartialMembers,
+} from '../../types/RoleWithPartialMembers';
 import { type RoleMaps } from '../types/role-maps';
 
 export const ROLE_TARGET_CONFIG = {

@@ -7,10 +7,10 @@ import styled from '@emotion/styled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
-    Avatar,
-    IconKey,
-    OverflowingTextWithTooltip,
-    useIcons,
+  Avatar,
+  IconKey,
+  OverflowingTextWithTooltip,
+  useIcons,
 } from 'twenty-ui/display';
 import { type Agent } from '~/generated-metadata/graphql';
 import { type ApiKeyForRole } from '~/generated/graphql';
