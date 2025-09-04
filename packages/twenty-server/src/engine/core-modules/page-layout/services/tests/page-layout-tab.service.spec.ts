@@ -28,6 +28,8 @@ describe('PageLayoutTabService', () => {
     position: 0,
     pageLayoutId: 'page-layout-id',
     pageLayout: {} as any,
+    workspaceId: 'workspace-id',
+    workspace: {} as any,
     widgets: [],
     createdAt: new Date(),
     updatedAt: new Date(),
