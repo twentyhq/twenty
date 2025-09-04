@@ -153,6 +153,7 @@ export const RelationFromManyFieldInput = () => {
         }
       }}
       onCreate={canCreateNew ? handleCreateNew : undefined}
+      objectMetadataItemIdForCreate={relationObjectMetadataItem.id}
       onClickOutside={handleSubmit}
       layoutDirection={
         layoutDirection === 'downward'
