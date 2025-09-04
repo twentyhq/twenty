@@ -809,22 +809,6 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
-export type CustomDomainRecord = {
-  __typename?: 'CustomDomainRecord';
-  key: Scalars['String'];
-  status: Scalars['String'];
-  type: Scalars['String'];
-  validationType: Scalars['String'];
-  value: Scalars['String'];
-};
-
-export type CustomDomainValidRecords = {
-  __typename?: 'CustomDomainValidRecords';
-  customDomain: Scalars['String'];
-  id: Scalars['UUID'];
-  records: Array<CustomDomainRecord>;
-};
-
 /** Database Event Action */
 export enum DatabaseEventAction {
   CREATED = 'CREATED',
@@ -1152,6 +1136,22 @@ export enum HealthIndicatorId {
   worker = 'worker'
 }
 
+export type HostnameRecord = {
+  __typename?: 'HostnameRecord';
+  key: Scalars['String'];
+  status: Scalars['String'];
+  type: Scalars['String'];
+  validationType: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type HostnameValidRecords = {
+  __typename?: 'HostnameValidRecords';
+  customDomain: Scalars['String'];
+  id: Scalars['UUID'];
+  records: Array<HostnameRecord>;
+};
+
 export enum IdentityProviderType {
   OIDC = 'OIDC',
   SAML = 'SAML'
@@ -1326,7 +1326,7 @@ export type Mutation = {
   assignRoleToAgent: Scalars['Boolean'];
   assignRoleToApiKey: Scalars['Boolean'];
   authorizeApp: AuthorizeApp;
-  checkCustomDomainValidRecords?: Maybe<CustomDomainValidRecords>;
+  checkCustomDomainValidRecords?: Maybe<HostnameValidRecords>;
   checkoutSession: BillingSessionOutput;
   computeStepOutputSchema: Scalars['JSON'];
   createAgentChatThread: AgentChatThread;
@@ -1352,6 +1352,7 @@ export type Mutation = {
   createOneServerlessFunction: ServerlessFunction;
   createPageLayout: PageLayout;
   createPageLayoutTab: PageLayoutTab;
+  createPublicDomain: PublicDomain;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWebhook: Webhook;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
@@ -1374,6 +1375,7 @@ export type Mutation = {
   deleteOneServerlessFunction: ServerlessFunction;
   deletePageLayout: PageLayout;
   deletePageLayoutTab: Scalars['Boolean'];
+  deletePublicDomain: Scalars['Boolean'];
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
@@ -1617,6 +1619,11 @@ export type MutationCreatePageLayoutTabArgs = {
 };
 
 
+export type MutationCreatePublicDomainArgs = {
+  input: PublicDomainInput;
+};
+
+
 export type MutationCreateSamlIdentityProviderArgs = {
   input: SetupSamlSsoInput;
 };
@@ -1719,6 +1726,11 @@ export type MutationDeletePageLayoutArgs = {
 
 export type MutationDeletePageLayoutTabArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationDeletePublicDomainArgs = {
+  input: PublicDomainInput;
 };
 
 
@@ -2406,6 +2418,18 @@ export type PostgresCredentials = {
   password: Scalars['String'];
   user: Scalars['String'];
   workspaceId: Scalars['UUID'];
+};
+
+export type PublicDomain = {
+  __typename?: 'PublicDomain';
+  createdAt: Scalars['DateTime'];
+  domain: Scalars['String'];
+  id: Scalars['UUID'];
+  isValidated: Scalars['Boolean'];
+};
+
+export type PublicDomainInput = {
+  domain: Scalars['String'];
 };
 
 export type PublicFeatureFlag = {

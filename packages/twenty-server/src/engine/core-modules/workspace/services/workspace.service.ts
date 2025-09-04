@@ -11,7 +11,6 @@ import { Repository } from 'typeorm';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import {
@@ -43,6 +42,10 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 import { extractVersionMajorMinorPatch } from 'src/utils/version/extract-version-major-minor-patch';
+import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import { CUSTOM_DOMAIN_ACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-activated';
+import { CUSTOM_DOMAIN_DEACTIVATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/custom-domain/custom-domain-deactivated';
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -65,8 +68,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly permissionsService: PermissionsService,
-    private readonly customDomainService: CustomDomainService,
+    private readonly dnsManagerService: DnsManagerService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
+    private readonly auditService: AuditService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {
@@ -121,7 +125,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       workspace.customDomain !== customDomain &&
       isDefined(workspace.customDomain)
     ) {
-      await this.customDomainService.updateCustomDomain(
+      await this.dnsManagerService.updateHostname(
         workspace.customDomain,
         customDomain,
       );
@@ -132,7 +136,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       workspace.customDomain !== customDomain &&
       !isDefined(workspace.customDomain)
     ) {
-      await this.customDomainService.registerCustomDomain(customDomain);
+      await this.dnsManagerService.registerHostname(customDomain);
     }
   }
 
@@ -173,7 +177,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     let customDomainRegistered = false;
 
     if (payload.customDomain === null && isDefined(workspace.customDomain)) {
-      await this.customDomainService.deleteCustomHostnameByHostnameSilently(
+      await this.dnsManagerService.deleteHostnameSilently(
         workspace.customDomain,
       );
       workspace.isCustomDomainEnabled = false;
@@ -220,8 +224,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     } catch (error) {
       // revert custom domain registration on error
       if (payload.customDomain && customDomainRegistered) {
-        this.customDomainService
-          .deleteCustomHostnameByHostnameSilently(payload.customDomain)
+        this.dnsManagerService
+          .deleteHostnameSilently(payload.customDomain)
           .catch((err) => {
             this.exceptionHandlerService.captureExceptions([err]);
           });
@@ -347,7 +351,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     );
 
     if (workspace.customDomain) {
-      await this.customDomainService.deleteCustomHostnameByHostnameSilently(
+      await this.dnsManagerService.deleteHostnameSilently(
         workspace.customDomain,
       );
       this.logger.log(`workspace ${id} custom domain deleted`);
@@ -486,5 +490,39 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         );
       }
     }
+  }
+
+  async checkCustomDomainValidRecords(workspace: Workspace) {
+    if (!workspace.customDomain) return;
+
+    const customDomainDetails = await this.dnsManagerService.getHostnameDetails(
+      workspace.customDomain,
+    );
+
+    if (!customDomainDetails) return;
+
+    await this.dnsManagerService.refreshHostname(customDomainDetails);
+
+    const isCustomDomainWorking =
+      await this.dnsManagerService.isHostnameWorking(workspace.customDomain);
+
+    if (workspace.isCustomDomainEnabled !== isCustomDomainWorking) {
+      workspace.isCustomDomainEnabled = isCustomDomainWorking;
+
+      await this.workspaceRepository.save(workspace);
+
+      const analytics = this.auditService.createContext({
+        workspaceId: workspace.id,
+      });
+
+      analytics.insertWorkspaceEvent(
+        workspace.isCustomDomainEnabled
+          ? CUSTOM_DOMAIN_ACTIVATED_EVENT
+          : CUSTOM_DOMAIN_DEACTIVATED_EVENT,
+        {},
+      );
+    }
+
+    return customDomainDetails;
   }
 }

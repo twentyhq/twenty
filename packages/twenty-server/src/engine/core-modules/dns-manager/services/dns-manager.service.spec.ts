@@ -6,23 +6,23 @@ import { type CustomHostnameCreateResponse } from 'cloudflare/resources/custom-h
 import { AuditContextMock } from 'test/utils/audit-context.mock';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { DomainManagerException } from 'src/engine/core-modules/domain-manager/domain-manager.exception';
-import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import { DnsManagerException } from 'src/engine/core-modules/dns-manager/exceptions/dns-manager.exception';
 
 jest.mock('cloudflare');
 
-describe('CustomDomainService', () => {
-  let customDomainService: CustomDomainService;
+describe('DnsManagerService', () => {
+  let dnsManagerService: DnsManagerService;
   let twentyConfigService: TwentyConfigService;
   let domainManagerService: DomainManagerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CustomDomainService,
+        DnsManagerService,
         {
           provide: TwentyConfigService,
           useValue: {
@@ -50,12 +50,12 @@ describe('CustomDomainService', () => {
       ],
     }).compile();
 
-    customDomainService = module.get<CustomDomainService>(CustomDomainService);
+    dnsManagerService = module.get<DnsManagerService>(DnsManagerService);
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
     domainManagerService =
       module.get<DomainManagerService>(DomainManagerService);
 
-    (customDomainService as any).cloudflareClient = {
+    (dnsManagerService as any).cloudflareClient = {
       customHostnames: {
         list: jest.fn(),
         create: jest.fn(),
@@ -70,30 +70,25 @@ describe('CustomDomainService', () => {
 
     jest.spyOn(twentyConfigService, 'get').mockReturnValue(mockApiKey);
 
-    const instance = new CustomDomainService(
-      twentyConfigService,
-      {} as any,
-      {} as any,
-      {} as any,
-    );
+    const instance = new DnsManagerService(twentyConfigService, {} as any);
 
     expect(twentyConfigService.get).toHaveBeenCalledWith('CLOUDFLARE_API_KEY');
     expect(Cloudflare).toHaveBeenCalledWith({ apiToken: mockApiKey });
     expect(instance.cloudflareClient).toBeDefined();
   });
 
-  describe('registerCustomDomain', () => {
+  describe('registerHostname', () => {
     it('should throw an error when the hostname is already registered', async () => {
       const customDomain = 'example.com';
 
       jest
-        .spyOn(customDomainService, 'getCustomDomainDetails')
+        .spyOn(dnsManagerService, 'getHostnameDetails')
         .mockResolvedValueOnce({} as any);
 
       await expect(
-        customDomainService.registerCustomDomain(customDomain),
-      ).rejects.toThrow(DomainManagerException);
-      expect(customDomainService.getCustomDomainDetails).toHaveBeenCalledWith(
+        dnsManagerService.registerHostname(customDomain),
+      ).rejects.toThrow(DnsManagerException);
+      expect(dnsManagerService.getHostnameDetails).toHaveBeenCalledWith(
         customDomain,
       );
     });
@@ -108,12 +103,12 @@ describe('CustomDomainService', () => {
       };
 
       jest
-        .spyOn(customDomainService, 'getCustomDomainDetails')
+        .spyOn(dnsManagerService, 'getHostnameDetails')
         .mockResolvedValueOnce(undefined);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
-      (customDomainService as any).cloudflareClient = cloudflareMock;
+      (dnsManagerService as any).cloudflareClient = cloudflareMock;
 
-      await customDomainService.registerCustomDomain(customDomain);
+      await dnsManagerService.registerHostname(customDomain);
 
       expect(createMock).toHaveBeenCalledWith({
         zone_id: 'test-zone-id',
@@ -123,7 +118,7 @@ describe('CustomDomainService', () => {
     });
   });
 
-  describe('getCustomDomainDetails', () => {
+  describe('getHostnameDetails', () => {
     it('should return undefined if no custom domain details are found', async () => {
       const customDomain = 'example.com';
       const cloudflareMock = {
@@ -133,10 +128,9 @@ describe('CustomDomainService', () => {
       };
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
-      (customDomainService as any).cloudflareClient = cloudflareMock;
+      (dnsManagerService as any).cloudflareClient = cloudflareMock;
 
-      const result =
-        await customDomainService.getCustomDomainDetails(customDomain);
+      const result = await dnsManagerService.getHostnameDetails(customDomain);
 
       expect(result).toBeUndefined();
       expect(cloudflareMock.customHostnames.list).toHaveBeenCalledWith({
@@ -166,10 +160,9 @@ describe('CustomDomainService', () => {
       jest
         .spyOn(domainManagerService, 'getBaseUrl')
         .mockReturnValue(new URL('https://front.domain'));
-      (customDomainService as any).cloudflareClient = cloudflareMock;
+      (dnsManagerService as any).cloudflareClient = cloudflareMock;
 
-      const result =
-        await customDomainService.getCustomDomainDetails(customDomain);
+      const result = await dnsManagerService.getHostnameDetails(customDomain);
 
       expect(result).toEqual({
         id: 'custom-id',
@@ -203,10 +196,9 @@ describe('CustomDomainService', () => {
       jest
         .spyOn(domainManagerService, 'getBaseUrl')
         .mockReturnValue(new URL('https://front.domain'));
-      (customDomainService as any).cloudflareClient = cloudflareMock;
+      (dnsManagerService as any).cloudflareClient = cloudflareMock;
 
-      const result =
-        await customDomainService.getCustomDomainDetails(customDomain);
+      const result = await dnsManagerService.getHostnameDetails(customDomain);
 
       expect(result).toEqual({
         id: 'custom-id',
@@ -224,47 +216,45 @@ describe('CustomDomainService', () => {
       };
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
-      (customDomainService as any).cloudflareClient = cloudflareMock;
+      (dnsManagerService as any).cloudflareClient = cloudflareMock;
 
       await expect(
-        customDomainService.getCustomDomainDetails(customDomain),
+        dnsManagerService.getHostnameDetails(customDomain),
       ).rejects.toThrow(Error);
     });
   });
 
-  describe('updateCustomDomain', () => {
+  describe('updateHostname', () => {
     it('should update a custom domain and register a new one', async () => {
       const fromHostname = 'old.com';
       const toHostname = 'new.com';
 
       jest
-        .spyOn(customDomainService, 'getCustomDomainDetails')
+        .spyOn(dnsManagerService, 'getHostnameDetails')
         .mockResolvedValueOnce({ id: 'old-id' } as any);
       jest
-        .spyOn(customDomainService, 'deleteCustomHostname')
+        .spyOn(dnsManagerService, 'deleteHostname')
         .mockResolvedValueOnce(undefined);
       const registerSpy = jest
-        .spyOn(customDomainService, 'registerCustomDomain')
+        .spyOn(dnsManagerService, 'registerHostname')
         .mockResolvedValueOnce({} as unknown as CustomHostnameCreateResponse);
 
-      await customDomainService.updateCustomDomain(fromHostname, toHostname);
+      await dnsManagerService.updateHostname(fromHostname, toHostname);
 
-      expect(customDomainService.getCustomDomainDetails).toHaveBeenCalledWith(
+      expect(dnsManagerService.getHostnameDetails).toHaveBeenCalledWith(
         fromHostname,
       );
-      expect(customDomainService.deleteCustomHostname).toHaveBeenCalledWith(
-        'old-id',
-      );
+      expect(dnsManagerService.deleteHostname).toHaveBeenCalledWith('old-id');
       expect(registerSpy).toHaveBeenCalledWith(toHostname);
     });
   });
 
-  describe('deleteCustomHostnameByHostnameSilently', () => {
+  describe('deleteHostnameSilently', () => {
     it('should delete the custom hostname silently', async () => {
       const customDomain = 'example.com';
 
       jest
-        .spyOn(customDomainService, 'getCustomDomainDetails')
+        .spyOn(dnsManagerService, 'getHostnameDetails')
         .mockResolvedValueOnce({ id: 'custom-id' } as any);
       const deleteMock = jest.fn();
       const cloudflareMock = {
@@ -274,12 +264,10 @@ describe('CustomDomainService', () => {
       };
 
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
-      (customDomainService as any).cloudflareClient = cloudflareMock;
+      (dnsManagerService as any).cloudflareClient = cloudflareMock;
 
       await expect(
-        customDomainService.deleteCustomHostnameByHostnameSilently(
-          customDomain,
-        ),
+        dnsManagerService.deleteHostnameSilently(customDomain),
       ).resolves.toBeUndefined();
       expect(deleteMock).toHaveBeenCalledWith('custom-id', {
         zone_id: 'test-zone-id',
@@ -290,13 +278,11 @@ describe('CustomDomainService', () => {
       const customDomain = 'example.com';
 
       jest
-        .spyOn(customDomainService, 'getCustomDomainDetails')
+        .spyOn(dnsManagerService, 'getHostnameDetails')
         .mockRejectedValueOnce(new Error('Failure'));
 
       await expect(
-        customDomainService.deleteCustomHostnameByHostnameSilently(
-          customDomain,
-        ),
+        dnsManagerService.deleteHostnameSilently(customDomain),
       ).resolves.toBeUndefined();
     });
   });

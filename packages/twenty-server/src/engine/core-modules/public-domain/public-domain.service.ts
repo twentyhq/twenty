@@ -11,12 +11,12 @@ import {
   PublicDomainException,
   PublicDomainExceptionCode,
 } from 'src/engine/core-modules/public-domain/public-domain.exception';
-import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
+import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 
 @Injectable()
 export class PublicDomainService {
   constructor(
-    private readonly customDomainService: CustomDomainService,
+    private readonly dnsManagerService: DnsManagerService,
     @InjectRepository(ApprovedAccessDomain)
     private readonly approvedAccessDomainRepository: Repository<ApprovedAccessDomain>,
     @InjectRepository(PublicDomain)
@@ -30,10 +30,8 @@ export class PublicDomainService {
     domain: string;
     workspaceId: string;
   }): Promise<void> {
-    await this.customDomainService.deleteRedirectRuleSilently(domain);
-    await this.customDomainService.deleteCustomHostnameByHostnameSilently(
-      domain,
-    );
+    await this.dnsManagerService.deleteRedirectRuleSilently(domain);
+    await this.dnsManagerService.deleteHostnameSilently(domain);
     await this.publicDomainRepository.delete({ domain, workspaceId });
   }
 
@@ -79,17 +77,15 @@ export class PublicDomainService {
       workspaceId,
     });
 
-    await this.customDomainService.registerCustomDomain(domain);
+    await this.dnsManagerService.registerHostname(domain);
 
-    await this.customDomainService.registerRedirectRule(domain);
+    await this.dnsManagerService.registerRedirectRule(domain);
 
     try {
       await this.publicDomainRepository.insert(publicDomain);
     } catch (error) {
-      await this.customDomainService.deleteRedirectRuleSilently(domain);
-      await this.customDomainService.deleteCustomHostnameByHostnameSilently(
-        domain,
-      );
+      await this.dnsManagerService.deleteRedirectRuleSilently(domain);
+      await this.dnsManagerService.deleteHostnameSilently(domain);
 
       throw error;
     }

@@ -3,14 +3,14 @@ import {
   CustomException,
 } from 'src/utils/custom-exception';
 
-export class DomainManagerException extends CustomException<
-  keyof typeof DomainManagerExceptionCode,
+export class DnsManagerException extends CustomException<
+  keyof typeof DnsManagerExceptionCode,
   true
 > {}
 
-export const DomainManagerExceptionCode = appendCommonExceptionCode({
-  CLOUDFLARE_CLIENT_NOT_INITIALIZED: 'CLOUDFLARE_CLIENT_NOT_INITIALIZED',
+export const DnsManagerExceptionCode = appendCommonExceptionCode({
   HOSTNAME_ALREADY_REGISTERED: 'HOSTNAME_ALREADY_REGISTERED',
   HOSTNAME_NOT_REGISTERED: 'HOSTNAME_NOT_REGISTERED',
   INVALID_INPUT_DATA: 'INVALID_INPUT_DATA',
+  CLOUDFLARE_CLIENT_NOT_INITIALIZED: 'CLOUDFLARE_CLIENT_NOT_INITIALIZED',
 } as const);

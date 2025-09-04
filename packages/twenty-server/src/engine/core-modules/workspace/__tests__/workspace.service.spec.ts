@@ -6,7 +6,6 @@ import { type Repository } from 'typeorm';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -26,6 +25,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
+import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
@@ -34,7 +34,7 @@ describe('WorkspaceService', () => {
   let workspaceRepository: Repository<Workspace>;
   let workspaceCacheStorageService: WorkspaceCacheStorageService;
   let messageQueueService: MessageQueueService;
-  let customDomainService: CustomDomainService;
+  let dnsManagerService: DnsManagerService;
   let billingSubscriptionService: BillingSubscriptionService;
 
   beforeEach(async () => {
@@ -86,7 +86,7 @@ describe('WorkspaceService', () => {
           UserWorkspaceService,
           UserService,
           DomainManagerService,
-          CustomDomainService,
+          DnsManagerService,
           TwentyConfigService,
           EmailService,
           OnboardingService,
@@ -128,8 +128,8 @@ describe('WorkspaceService', () => {
     messageQueueService = module.get<MessageQueueService>(
       getQueueToken(MessageQueue.deleteCascadeQueue),
     );
-    customDomainService = module.get<CustomDomainService>(CustomDomainService);
-    customDomainService.deleteCustomHostnameByHostnameSilently = jest.fn();
+    dnsManagerService = module.get<DnsManagerService>(DnsManagerService);
+    dnsManagerService.deleteHostnameSilently = jest.fn();
     billingSubscriptionService = module.get<BillingSubscriptionService>(
       BillingSubscriptionService,
     );
@@ -267,9 +267,9 @@ describe('WorkspaceService', () => {
 
       await service.deleteWorkspace(mockWorkspace.id, false);
 
-      expect(
-        customDomainService.deleteCustomHostnameByHostnameSilently,
-      ).toHaveBeenCalledWith(customDomain);
+      expect(dnsManagerService.deleteHostnameSilently).toHaveBeenCalledWith(
+        customDomain,
+      );
       expect(workspaceRepository.delete).toHaveBeenCalledWith(mockWorkspace.id);
     });
 
@@ -288,9 +288,7 @@ describe('WorkspaceService', () => {
 
       await service.deleteWorkspace(mockWorkspace.id, true);
 
-      expect(
-        customDomainService.deleteCustomHostnameByHostnameSilently,
-      ).not.toHaveBeenCalled();
+      expect(dnsManagerService.deleteHostnameSilently).not.toHaveBeenCalled();
       expect(workspaceRepository.softDelete).toHaveBeenCalledWith({
         id: mockWorkspace.id,
       });

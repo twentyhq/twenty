@@ -6,21 +6,19 @@ import { AuditContextMock } from 'test/utils/audit-context.mock';
 import { type Repository } from 'typeorm';
 
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { CloudflareController } from 'src/engine/core-modules/domain-manager/controllers/cloudflare.controller';
-import { type CustomDomainValidRecords } from 'src/engine/core-modules/domain-manager/dtos/custom-domain-valid-records';
-import { CustomDomainService } from 'src/engine/core-modules/domain-manager/services/custom-domain.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/services/domain-manager.service';
+import { CloudflareController } from 'src/engine/core-modules/dns-manager/controllers/cloudflare.controller';
+import { type HostnameValidRecords } from 'src/engine/core-modules/dns-manager/dtos/hostname-valid-records';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 
 describe('CloudflareController - customHostnameWebhooks', () => {
   let controller: CloudflareController;
   let WorkspaceRepository: Repository<Workspace>;
   let twentyConfigService: TwentyConfigService;
-  let domainManagerService: DomainManagerService;
-  let customDomainService: CustomDomainService;
+  let dnsManagerService: DnsManagerService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -34,15 +32,15 @@ describe('CloudflareController - customHostnameWebhooks', () => {
           },
         },
         {
-          provide: DomainManagerService,
+          provide: DnsManagerService,
           useValue: {
             isCustomDomainWorking: jest.fn(),
           },
         },
         {
-          provide: CustomDomainService,
+          provide: DnsManagerService,
           useValue: {
-            getCustomDomainDetails: jest.fn(),
+            getHostnameDetails: jest.fn(),
           },
         },
         {
@@ -75,9 +73,7 @@ describe('CloudflareController - customHostnameWebhooks', () => {
     controller = module.get<CloudflareController>(CloudflareController);
     WorkspaceRepository = module.get(getRepositoryToken(Workspace));
     twentyConfigService = module.get<TwentyConfigService>(TwentyConfigService);
-    domainManagerService =
-      module.get<DomainManagerService>(DomainManagerService);
-    customDomainService = module.get<CustomDomainService>(CustomDomainService);
+    dnsManagerService = module.get<DnsManagerService>(DnsManagerService);
   });
 
   it('should handle exception and return status 200 if hostname is missing', async () => {
@@ -111,18 +107,14 @@ describe('CloudflareController - customHostnameWebhooks', () => {
     } as unknown as Response;
 
     jest.spyOn(twentyConfigService, 'get').mockReturnValue('correct-secret');
-    jest
-      .spyOn(customDomainService, 'getCustomDomainDetails')
-      .mockResolvedValue({
-        records: [
-          {
-            success: true,
-          },
-        ],
-      } as unknown as CustomDomainValidRecords);
-    jest
-      .spyOn(domainManagerService, 'isCustomDomainWorking')
-      .mockReturnValue(true);
+    jest.spyOn(dnsManagerService, 'getHostnameDetails').mockResolvedValue({
+      records: [
+        {
+          success: true,
+        },
+      ],
+    } as unknown as HostnameValidRecords);
+    jest.spyOn(dnsManagerService, 'isHostnameWorking').mockResolvedValue(true);
     jest.spyOn(WorkspaceRepository, 'findOneBy').mockResolvedValue({
       customDomain: 'example.com',
       isCustomDomainEnabled: false,
@@ -133,7 +125,7 @@ describe('CloudflareController - customHostnameWebhooks', () => {
     expect(WorkspaceRepository.findOneBy).toHaveBeenCalledWith({
       customDomain: 'example.com',
     });
-    expect(customDomainService.getCustomDomainDetails).toHaveBeenCalledWith(
+    expect(dnsManagerService.getHostnameDetails).toHaveBeenCalledWith(
       'example.com',
     );
     expect(WorkspaceRepository.save).toHaveBeenCalledWith({
@@ -162,7 +154,7 @@ describe('CloudflareController - customHostnameWebhooks', () => {
     } as Workspace);
 
     jest
-      .spyOn(customDomainService, 'getCustomDomainDetails')
+      .spyOn(dnsManagerService, 'getHostnameDetails')
       .mockResolvedValue(undefined);
 
     await controller.customHostnameWebhooks(req, res);
@@ -193,18 +185,14 @@ describe('CloudflareController - customHostnameWebhooks', () => {
       customDomain: 'nothing-change.com',
       isCustomDomainEnabled: true,
     } as Workspace);
-    jest
-      .spyOn(customDomainService, 'getCustomDomainDetails')
-      .mockResolvedValue({
-        records: [
-          {
-            success: true,
-          },
-        ],
-      } as unknown as CustomDomainValidRecords);
-    jest
-      .spyOn(domainManagerService, 'isCustomDomainWorking')
-      .mockReturnValue(true);
+    jest.spyOn(dnsManagerService, 'getHostnameDetails').mockResolvedValue({
+      records: [
+        {
+          success: true,
+        },
+      ],
+    } as unknown as HostnameValidRecords);
+    jest.spyOn(dnsManagerService, 'isHostnameWorking').mockResolvedValue(true);
 
     await controller.customHostnameWebhooks(req, res);
 

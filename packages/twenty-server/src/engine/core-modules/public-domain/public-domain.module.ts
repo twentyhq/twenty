@@ -6,12 +6,12 @@ import { PublicDomainService } from 'src/engine/core-modules/public-domain/publi
 import { ApprovedAccessDomain } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
 import { PublicDomain } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { PublicDomainResolver } from 'src/engine/core-modules/public-domain/public-domain.resolver';
-import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
+import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
 
 @Module({
   imports: [
     NestjsQueryTypeOrmModule.forFeature([ApprovedAccessDomain, PublicDomain]),
-    DomainManagerModule,
+    DnsManagerModule,
   ],
   providers: [PublicDomainService, PublicDomainResolver],
 })
