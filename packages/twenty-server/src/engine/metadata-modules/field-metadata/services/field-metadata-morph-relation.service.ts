@@ -181,7 +181,7 @@ export class FieldMetadataMorphRelationService {
   }: {
     flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>;
     workspaceId: string;
-  }): Promise<Omit<RelationDTO, 'type'>[]> {
+  }): Promise<RelationDTO[]> {
     const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
       await this.workspaceMetadataCacheService.getExistingOrRecomputeFlatObjectMetadataMaps(
         {
@@ -210,6 +210,7 @@ export class FieldMetadataMorphRelationService {
       );
 
     return allMorphFlatFieldMetadatas.map((morphFlatFieldMetadata) => ({
+      type: RelationType.MANY_TO_ONE, // does not make sense like that, we cannot know which settings was used to create relation pair
       sourceObjectMetadata: fromFlatObjectMetadataToObjectMetadataDto(
         sourceFlatObjectMetadata,
       ),
