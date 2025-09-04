@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import axios, { type AxiosRequestConfig } from 'axios';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type BodyType,
-  parseDataFromContentType,
-} from 'twenty-shared/workflow';
+import { parseDataFromContentType } from 'twenty-shared/workflow';
 
 import { HttpToolParametersZodSchema } from 'src/engine/core-modules/tool/tools/http-tool/http-tool.schema';
 import { type HttpRequestInput } from 'src/engine/core-modules/tool/tools/http-tool/types/http-request-input.type';

@@ -1,12 +1,14 @@
 import { type HttpRequestFormData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/constants/HttpRequest';
 import { httpRequestTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/http-request-action/states/httpRequestTestDataFamilyState';
 import { type HttpRequestTestData } from '@/workflow/workflow-steps/workflow-actions/http-request-action/types/HttpRequestTestData';
+import { isMethodWithBody } from '@/workflow/workflow-steps/workflow-actions/http-request-action/utils/isMethodWithBody';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { isDefined, resolveInput } from 'twenty-shared/utils';
-import { parseDataFromContentType } from 'twenty-shared/workflow';
+import { resolveInput } from 'twenty-shared/utils';
+import {
+  parseDataFromContentType
+} from 'twenty-shared/workflow';
 import { type HttpRequestBody } from '../constants/HttpRequest';
-import { isMethodWithBody } from '../utils/isMethodWithBody';
 
 const convertFlatVariablesToNestedContext = (flatVariables: {
   [variablePath: string]: any;
@@ -48,7 +50,7 @@ export const useTestHttpRequest = (actionId: string) => {
       headers: headers,
     };
 
-    if (isMethodWithBody(method) && isDefined(body)) {
+    if (isMethodWithBody(method) && body !== undefined) {
       const contentType = headers['content-type'];
 
       requestOptions.body = parseDataFromContentType(body, contentType);
