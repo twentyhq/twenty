@@ -11,7 +11,7 @@ export const TABLE_Z_INDEX = {
   },
   header: {
     default: 6,
-    stickyColumn: 10,
+    stickyColumn: 12,
   },
   columnGrip: 30,
 };
