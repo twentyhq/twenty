@@ -32,7 +32,7 @@ export class PublicDomain {
   @Column({ type: 'boolean', default: false, nullable: false })
   isValidated: boolean;
 
-  @Column()
+  @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
   @ManyToOne(() => Workspace, (workspace) => workspace.publicDomains, {

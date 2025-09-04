@@ -16,6 +16,8 @@ describe('CloudflareController - customHostnameWebhooks', () => {
   let domainManagerService: DomainManagerService;
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CloudflareController],
       providers: [

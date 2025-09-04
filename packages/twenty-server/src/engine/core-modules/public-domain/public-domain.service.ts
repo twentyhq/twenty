@@ -60,7 +60,7 @@ export class PublicDomainService {
     ) {
       throw new PublicDomainException(
         'Domain already used for workspace custom domain',
-        PublicDomainExceptionCode.PUBLIC_DOMAIN_ALREADY_REGISTERED,
+        PublicDomainExceptionCode.DOMAIN_ALREADY_REGISTERED_AS_CUSTOM_DOMAIN,
         {
           userFriendlyMessage: t`Domain already used for workspace custom domain`,
         },

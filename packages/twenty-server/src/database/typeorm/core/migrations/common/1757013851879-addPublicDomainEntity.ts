@@ -1,7 +1,7 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddPublicDomainEntity1756991248581 implements MigrationInterface {
-  name = 'AddPublicDomainEntity1756991248581';
+export class AddPublicDomainEntity1757013851879 implements MigrationInterface {
+  name = 'AddPublicDomainEntity1757013851879';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(

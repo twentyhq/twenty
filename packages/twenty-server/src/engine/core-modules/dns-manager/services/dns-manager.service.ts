@@ -58,7 +58,7 @@ export class DnsManagerService {
       throw new DnsManagerException(
         'Hostname already registered',
         DnsManagerExceptionCode.HOSTNAME_ALREADY_REGISTERED,
-        { userFriendlyMessage: 'Hostname already registered' },
+        { userFriendlyMessage: 'Domain is already registered' },
       );
     }
 
@@ -126,7 +126,7 @@ export class DnsManagerService {
       };
     }
 
-    // should never append. error 5xx
+    // should never happen. error 5xx
     throw new Error('More than one custom hostname found in cloudflare');
   }
 
