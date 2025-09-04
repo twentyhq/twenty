@@ -11,9 +11,10 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ApolloError } from '@apollo/client';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconAt, IconMailCog, Status } from 'twenty-ui/display';
 import { useGetApprovedAccessDomainsQuery } from '~/generated-metadata/graphql';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -25,6 +26,7 @@ export const SettingsApprovedAccessDomainsListCard = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const navigate = useNavigate();
   const { t } = useLingui();
+  const { localeCatalog } = useRecoilValue(dateLocaleState);
 
   const [approvedAccessDomains, setApprovedAccessDomains] = useRecoilState(
     approvedAccessDomainsState,
@@ -43,7 +45,10 @@ export const SettingsApprovedAccessDomainsListCard = () => {
   });
 
   const getItemDescription = (createdAt: string) => {
-    const beautifyPastDateRelative = beautifyPastDateRelativeToNow(createdAt);
+    const beautifyPastDateRelative = beautifyPastDateRelativeToNow(
+      createdAt,
+      localeCatalog,
+    );
     return t`Added ${beautifyPastDateRelative}`;
   };
 
