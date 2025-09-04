@@ -1,7 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
-import { DataSource, type EntityManager, In, Repository } from 'typeorm';
+import {
+  DataSource,
+  type EntityManager,
+  In,
+  IsNull,
+  Not,
+  Repository,
+} from 'typeorm';
 
 import { ApiKey } from 'src/engine/core-modules/api-key/api-key.entity';
 import {
@@ -145,6 +152,13 @@ export class ApiKeyRoleService {
       );
     }
 
+    if (!role.canBeAssignedToApiKeys) {
+      throw new ApiKeyException(
+        `Role "${role.label}" cannot be assigned to API keys`,
+        ApiKeyExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS,
+      );
+    }
+
     const existingRoleTarget = await this.roleTargetsRepository.findOne({
       where: {
         apiKeyId,
@@ -189,5 +203,36 @@ export class ApiKeyRoleService {
     }
 
     return rolesMap;
+  }
+
+  public async getApiKeysAssignedToRole(
+    roleId: string,
+    workspaceId: string,
+  ): Promise<ApiKey[]> {
+    const roleTargets = await this.roleTargetsRepository.find({
+      where: {
+        roleId,
+        workspaceId,
+        apiKeyId: Not(IsNull()),
+      },
+    });
+
+    const apiKeyIds = roleTargets
+      .map((roleTarget) => roleTarget.apiKeyId)
+      .filter((apiKeyId): apiKeyId is string => apiKeyId !== null);
+
+    if (!apiKeyIds.length) {
+      return [];
+    }
+
+    const apiKeys = await this.apiKeyRepository.find({
+      where: {
+        id: In(apiKeyIds),
+        workspaceId,
+        revokedAt: IsNull(),
+      },
+    });
+
+    return apiKeys;
   }
 }

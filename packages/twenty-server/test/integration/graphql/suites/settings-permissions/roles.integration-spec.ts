@@ -89,7 +89,7 @@ describe('roles permissions', () => {
 
       expect(resp.status).toBe(200);
       expect(resp.body.errors).toBeUndefined();
-      expect(resp.body.data.getRoles).toHaveLength(4);
+      expect(resp.body.data.getRoles).toHaveLength(5);
       expect(resp.body.data.getRoles).toEqual(
         expect.arrayContaining([
           {
