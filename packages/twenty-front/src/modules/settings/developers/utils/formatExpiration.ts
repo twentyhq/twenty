@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { DateTime } from 'luxon';
 
@@ -12,17 +13,25 @@ export const doesNeverExpire = (expiresAt: string) => {
   return dateDiff.years > NEVER_EXPIRE_DELTA_IN_YEARS / 10;
 };
 
+export const isExpired = (expiresAt: string | null) => {
+  if (!isNonEmptyString(expiresAt) || doesNeverExpire(expiresAt)) {
+    return false;
+  }
+  const dateDiff = beautifyDateDiff(expiresAt, undefined, true);
+  return dateDiff.includes('-');
+};
+
 export const formatExpiration = (
   expiresAt: string | null,
   withExpiresMention = false,
   short = true,
 ) => {
   if (!isNonEmptyString(expiresAt) || doesNeverExpire(expiresAt)) {
-    return withExpiresMention ? 'Never expires' : 'Never';
+    return withExpiresMention ? t`Never expires` : t`Never`;
   }
   const dateDiff = beautifyDateDiff(expiresAt, undefined, short);
   if (dateDiff.includes('-')) {
-    return 'Expired';
+    return t`Expired`;
   }
-  return withExpiresMention ? `Expires in ${dateDiff}` : `In ${dateDiff}`;
+  return withExpiresMention ? t`Expires in ${dateDiff}` : t`In ${dateDiff}`;
 };
