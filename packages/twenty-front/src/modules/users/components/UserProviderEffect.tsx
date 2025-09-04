@@ -176,10 +176,7 @@ export const UserProviderEffect = () => {
     }
 
     if (isDefined(workspaceMembers)) {
-      setCurrentWorkspaceMembers(
-        workspaceMembers.map(affectDefaultValuesOnEmptyWorkspaceMemberFields) ??
-          [],
-      );
+      setCurrentWorkspaceMembers(workspaceMembers);
     }
 
     if (isDefined(deletedWorkspaceMembers)) {

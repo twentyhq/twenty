@@ -2,14 +2,14 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Select } from '@/ui/input/components/Select';
 import { useRecoilValue } from 'recoil';
 import { type IconComponent, useIcons } from 'twenty-ui/display';
-import { type Role } from '~/generated-metadata/graphql';
+import { type GetRolesQuery } from '~/generated-metadata/graphql';
 
 type SettingsDevelopersRoleSelectorProps = {
   value?: string | null | undefined;
   onChange: (roleId: string) => void;
   label?: string;
   description?: string;
-  roles: Role[];
+  roles: GetRolesQuery['getRoles'];
 };
 
 export const SettingsDevelopersRoleSelector = ({

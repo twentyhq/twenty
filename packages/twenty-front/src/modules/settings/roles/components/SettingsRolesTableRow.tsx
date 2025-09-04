@@ -15,8 +15,8 @@ import {
   TooltipDelay,
   useIcons,
 } from 'twenty-ui/display';
-import { type Role } from '~/generated-metadata/graphql';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
+import { type RoleWithPartialMembers } from '../types/RoleWithPartialMembers';
 
 const StyledAssignedText = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
@@ -56,7 +56,7 @@ const StyledTableRow = styled(TableRow)`
 `;
 
 type SettingsRolesTableRowProps = {
-  role: Role;
+  role: RoleWithPartialMembers;
 };
 
 export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {

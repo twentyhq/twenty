@@ -65,13 +65,7 @@ export const useLoadCurrentUser = () => {
     setCurrentUser(user);
 
     if (isDefined(user.workspaceMembers)) {
-      const workspaceMembers = user.workspaceMembers.map((workspaceMember) => ({
-        ...workspaceMember,
-        colorScheme: workspaceMember.colorScheme as ColorScheme,
-        locale: workspaceMember.locale ?? SOURCE_LOCALE,
-      }));
-
-      setCurrentWorkspaceMembers(workspaceMembers);
+      setCurrentWorkspaceMembers(user.workspaceMembers);
     }
 
     if (isDefined(user.availableWorkspaces)) {
