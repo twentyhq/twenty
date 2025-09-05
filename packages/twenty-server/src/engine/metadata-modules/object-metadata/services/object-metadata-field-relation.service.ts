@@ -519,13 +519,28 @@ export class ObjectMetadataFieldRelationService {
     return fieldMetadatas;
   }
 
+  // Not maintained on v1, this side effect is broken and will duplicated field name references on
+  // object update
+  // It's functional on v2
   public async updateMorphRelationsJoinColumnName({
     existingObjectMetadata,
+    objectMetadataForUpdate: _,
     queryRunner,
   }: {
     existingObjectMetadata: Pick<
       ObjectMetadataItemWithFieldMaps,
       'nameSingular' | 'isCustom' | 'id' | 'labelPlural' | 'icon' | 'fieldsById'
+    >;
+    objectMetadataForUpdate: Pick<
+      ObjectMetadataItemWithFieldMaps,
+      | 'nameSingular'
+      | 'isCustom'
+      | 'workspaceId'
+      | 'id'
+      | 'labelSingular'
+      | 'labelPlural'
+      | 'icon'
+      | 'fieldsById'
     >;
     queryRunner: QueryRunner;
   }): Promise<
