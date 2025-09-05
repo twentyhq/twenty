@@ -1,7 +1,7 @@
 import { createState } from 'twenty-ui/utilities';
-import { type Widget } from '../mocks/mockWidgets';
+import { type PageLayoutWidget } from './savedPageLayoutsState';
 
-export const pageLayoutWidgetsState = createState<Widget[]>({
+export const pageLayoutWidgetsState = createState<PageLayoutWidget[]>({
   key: 'pageLayoutWidgetsState',
   defaultValue: [],
 });

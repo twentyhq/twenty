@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
-import { type Widget, WidgetType } from '../mocks/mockWidgets';
+import { WidgetType } from '../mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
 import { pageLayoutCurrentTabIdForCreationState } from '../states/pageLayoutCurrentTabIdForCreation';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
@@ -29,27 +29,38 @@ export const useCreatePageLayoutIframeWidget = () => {
           .getValue();
 
         if (!activeTabId) {
-          throw new Error('No active tab selected');
+          return;
         }
 
-        const newWidget: Widget = {
-          id: `widget-${uuidv4()}`,
-          type: WidgetType.IFRAME,
-          title,
-          pageLayoutTabId: activeTabId,
-          configuration: {
-            url,
-          },
-        };
-
+        const widgetId = `widget-${uuidv4()}`;
         const defaultSize = { w: 6, h: 6 };
         const position = getDefaultWidgetPosition(
           pageLayoutDraggedArea,
           defaultSize,
         );
 
+        const newWidget: PageLayoutWidget = {
+          id: widgetId,
+          pageLayoutTabId: activeTabId,
+          title,
+          type: WidgetType.IFRAME,
+          gridPosition: {
+            row: position.y,
+            column: position.x,
+            rowSpan: position.h,
+            columnSpan: position.w,
+          },
+          configuration: {
+            url,
+          },
+          objectMetadataId: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          deletedAt: null,
+        };
+
         const newLayout = {
-          i: newWidget.id,
+          i: widgetId,
           x: position.x,
           y: position.y,
           w: position.w,
@@ -68,32 +79,12 @@ export const useCreatePageLayoutIframeWidget = () => {
         };
         set(pageLayoutCurrentLayoutsState, updatedLayouts);
 
-        const widgetWithPosition: PageLayoutWidget = {
-          id: newWidget.id,
-          pageLayoutTabId: activeTabId,
-          title: newWidget.title,
-          type: newWidget.type,
-          gridPosition: {
-            row: position.y,
-            column: position.x,
-            rowSpan: position.h,
-            columnSpan: position.w,
-          },
-          configuration: newWidget.configuration as
-            | Record<string, unknown>
-            | undefined,
-          objectMetadataId: null,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          deletedAt: null,
-        };
-
         set(pageLayoutTabsState, (prevTabs) => {
           return prevTabs.map((tab) => {
             if (tab.id === activeTabId) {
               return {
                 ...tab,
-                widgets: [...tab.widgets, widgetWithPosition],
+                widgets: [...tab.widgets, newWidget],
               };
             }
             return tab;
@@ -106,7 +97,7 @@ export const useCreatePageLayoutIframeWidget = () => {
             if (tab.id === activeTabId) {
               return {
                 ...tab,
-                widgets: [...tab.widgets, widgetWithPosition],
+                widgets: [...tab.widgets, newWidget],
               };
             }
             return tab;

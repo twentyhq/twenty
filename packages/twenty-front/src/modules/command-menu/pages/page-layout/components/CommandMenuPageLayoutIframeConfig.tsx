@@ -5,6 +5,7 @@ import { usePageLayoutWidgetUpdate } from '@/settings/page-layout/hooks/usePageL
 import { pageLayoutEditingWidgetIdState } from '@/settings/page-layout/states/pageLayoutEditingWidgetIdState';
 import { pageLayoutWidgetsState } from '@/settings/page-layout/states/pageLayoutWidgetsState';
 import styled from '@emotion/styled';
+import { isString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { isValidUrl } from 'twenty-shared/utils';
@@ -44,7 +45,8 @@ export const CommandMenuPageLayoutIframeConfig = () => {
   const isEditMode = !!editingWidget;
 
   const [title, setTitle] = useState(editingWidget?.title || '');
-  const [url, setUrl] = useState(editingWidget?.configuration?.url || '');
+  const configUrl = editingWidget?.configuration?.url;
+  const [url, setUrl] = useState(isString(configUrl) ? configUrl : '');
   const [urlError, setUrlError] = useState('');
 
   const validateUrl = (urlString: string): boolean => {
@@ -117,8 +119,6 @@ export const CommandMenuPageLayoutIframeConfig = () => {
           title={isEditMode ? 'Save Changes' : 'Create Widget'}
           onClick={handleSubmit}
           disabled={!isFormValid}
-          variant="primary"
-          size="small"
         />
       </StyledButtonContainer>
     </StyledContainer>

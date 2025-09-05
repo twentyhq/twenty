@@ -4,7 +4,6 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { type Widget } from '../mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutPersistedState } from '../states/pageLayoutPersistedState';
@@ -53,22 +52,7 @@ export const PageLayoutInitializationEffect = ({
                 (a, b) => a.position - b.position,
               )[0];
 
-              const widgets: Widget[] = firstTab.widgets.map((w) => ({
-                id: w.id,
-                title: w.title,
-                type: w.type,
-                pageLayoutTabId: w.pageLayoutTabId,
-                configuration: w.configuration
-                  ? Object.fromEntries(
-                      Object.entries(w.configuration).map(([key, value]) => [
-                        key,
-                        String(value),
-                      ]),
-                    )
-                  : undefined,
-                data: w.data,
-              }));
-              set(pageLayoutWidgetsState, widgets);
+              set(pageLayoutWidgetsState, firstTab.widgets);
 
               const layouts = firstTab.widgets.map((w) => ({
                 i: w.id,

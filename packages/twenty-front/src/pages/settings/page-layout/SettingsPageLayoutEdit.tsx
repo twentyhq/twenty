@@ -74,6 +74,10 @@ const StyledGridContainer = styled.div`
   }
 `;
 
+const StyledTabList = styled(TabList)`
+  padding-left: ${({ theme }) => theme.spacing(2)};
+`;
+
 const StyledGridOverlay = styled.div<{
   isDragSelecting?: boolean;
   breakpoint: PageLayoutBreakpoint;
@@ -358,7 +362,7 @@ export const SettingsPageLayoutEdit = () => {
         }
       >
         {pageLayoutTabs.length > 0 && (
-          <TabList
+          <StyledTabList
             tabs={tabListTabs}
             behaveAsLinks={false}
             componentInstanceId="page-layout-tabs"

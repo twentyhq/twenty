@@ -1,10 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  type GraphSubType,
-  type Widget,
-  type WidgetType,
-} from '../mocks/mockWidgets';
+import { type GraphSubType, type WidgetType } from '../mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
 import { pageLayoutCurrentTabIdForCreationState } from '../states/pageLayoutCurrentTabIdForCreation';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
@@ -39,7 +35,7 @@ export const usePageLayoutWidgetCreate = () => {
           .getValue();
 
         if (!activeTabId) {
-          throw new Error('No active tab selected');
+          return;
         }
 
         const existingWidgetCount = pageLayoutWidgets.filter(
@@ -47,17 +43,7 @@ export const usePageLayoutWidgetCreate = () => {
             w.type === widgetType && w.configuration?.graphType === graphType,
         ).length;
         const title = getWidgetTitle(graphType, existingWidgetCount);
-
-        const newWidget: Widget = {
-          id: `widget-${uuidv4()}`,
-          type: widgetType,
-          title,
-          pageLayoutTabId: activeTabId,
-          configuration: {
-            graphType: graphType as string,
-          },
-          data: widgetData,
-        };
+        const widgetId = `widget-${uuidv4()}`;
 
         const defaultSize = getWidgetSize(graphType);
         const position = getDefaultWidgetPosition(
@@ -65,8 +51,29 @@ export const usePageLayoutWidgetCreate = () => {
           defaultSize,
         );
 
+        const newWidget: PageLayoutWidget = {
+          id: widgetId,
+          pageLayoutTabId: activeTabId,
+          title,
+          type: widgetType,
+          gridPosition: {
+            row: position.y,
+            column: position.x,
+            rowSpan: position.h,
+            columnSpan: position.w,
+          },
+          configuration: {
+            graphType,
+          },
+          data: widgetData,
+          objectMetadataId: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          deletedAt: null,
+        };
+
         const newLayout = {
-          i: newWidget.id,
+          i: widgetId,
           x: position.x,
           y: position.y,
           w: position.w,
@@ -85,34 +92,12 @@ export const usePageLayoutWidgetCreate = () => {
         };
         set(pageLayoutCurrentLayoutsState, updatedLayouts);
 
-        const widgetWithPosition: PageLayoutWidget = {
-          id: newWidget.id,
-          pageLayoutTabId: activeTabId,
-          title: newWidget.title,
-          type: newWidget.type,
-          gridPosition: {
-            row: position.y,
-            column: position.x,
-            rowSpan: position.h,
-            columnSpan: position.w,
-          },
-          configuration: newWidget.configuration as
-            | Record<string, unknown>
-            | undefined,
-          data: newWidget.data,
-          objectMetadataId: null,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          deletedAt: null,
-        };
-
-        // Update the tabs with the new widget
         set(pageLayoutTabsState, (prevTabs) => {
           return prevTabs.map((tab) => {
             if (tab.id === activeTabId) {
               return {
                 ...tab,
-                widgets: [...tab.widgets, widgetWithPosition],
+                widgets: [...tab.widgets, newWidget],
               };
             }
             return tab;
@@ -125,7 +110,7 @@ export const usePageLayoutWidgetCreate = () => {
             if (tab.id === activeTabId) {
               return {
                 ...tab,
-                widgets: [...tab.widgets, widgetWithPosition],
+                widgets: [...tab.widgets, newWidget],
               };
             }
             return tab;

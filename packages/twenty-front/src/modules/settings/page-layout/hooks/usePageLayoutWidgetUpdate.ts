@@ -1,5 +1,5 @@
 import { useRecoilCallback } from 'recoil';
-import { type Widget } from '../mocks/mockWidgets';
+import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutTabsState } from '../states/pageLayoutTabsState';
 import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
@@ -7,7 +7,7 @@ import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
 export const usePageLayoutWidgetUpdate = () => {
   const handleUpdateWidget = useRecoilCallback(
     ({ snapshot, set }) =>
-      (widgetId: string, updates: Partial<Widget>) => {
+      (widgetId: string, updates: Partial<PageLayoutWidget>) => {
         const pageLayoutWidgets = snapshot
           .getLoadable(pageLayoutWidgetsState)
           .getValue();

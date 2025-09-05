@@ -15,15 +15,6 @@ export enum GraphSubType {
   BAR = 'BAR',
 }
 
-export type Widget = {
-  id: string;
-  type: WidgetType;
-  title: string;
-  pageLayoutTabId?: string;
-  configuration?: Record<string, string>;
-  data?: any;
-};
-
 export const mockPageLayoutWidgets: PageLayoutWidget[] = [
   {
     id: 'widget-1',
@@ -192,25 +183,6 @@ export const mockPageLayoutWidgets: PageLayoutWidget[] = [
     deletedAt: null,
   },
 ];
-
-// We don't build mock tabs anymore - they're created dynamically
-
-// Backward compatibility - keep old mockWidgets for existing code
-export const mockWidgets: Widget[] = mockPageLayoutWidgets.map((w) => ({
-  id: w.id,
-  type: w.type,
-  title: w.title,
-  pageLayoutTabId: w.pageLayoutTabId,
-  configuration: w.configuration
-    ? Object.fromEntries(
-        Object.entries(w.configuration).map(([key, value]) => [
-          key,
-          String(value),
-        ]),
-      )
-    : undefined,
-  data: w.data,
-}));
 
 export const mockLayouts: Layouts = {
   desktop: [
