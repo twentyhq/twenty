@@ -150,89 +150,65 @@ describe('update-one-field-metadata-related-record', () => {
           expected: null,
         },
       },
-      // {
-      //   title: 'should update related multi selected options view filter',
-      //   context: {
-      //     updateOptions: (options) =>
-      //       options.map((option, index) =>
-      //         isEven(option, index) ? fakeOptionUpdate(option) : option,
-      //       ),
-      //   },
-      // },
-      // {
-      //   title: 'should update related solo selected option view filter',
-      //   context: {
-      //     createViewFilter: {
-      //       displayValue: ALL_OPTIONS[5].label,
-      //       value: [ALL_OPTIONS[5].value],
-      //     },
-      //     updateOptions: (options) => [fakeOptionUpdate(options[5])],
-      //   },
-      // },
-      // {
-      //   title:
-      //     'should handle partial deletion of selected options in view filter',
-      //   context: {
-      //     updateOptions: (options) => options.slice(4),
-      //   },
-      // },
-      // {
-      //   title:
-      //     'should handle reordering of options while maintaining view filter values',
-      //   context: {
-      //     createViewFilter: {
-      //       displayValue: '2 options',
-      //       value: ALL_OPTIONS.slice(0, 2).map((option) => option.value),
-      //     },
-      //     updateOptions: (options) => [...options].reverse(),
-      //   },
-      // },
-      // {
-      //   title:
-      //     'should handle no changes update of options while maintaining existing view filter values',
-      //   context: {
-      //     updateOptions: (options) => options,
-      //   },
-      // },
-      // {
-      //   title:
-      //     'should handle adding new options while maintaining existing view filter',
-      //   context: {
-      //     fieldMetadata: {
-      //       options: ALL_OPTIONS.slice(0, 5),
-      //       type: fieldType,
-      //     },
-      //     createViewFilter: {
-      //       displayValue: '2 options',
-      //       value: ALL_OPTIONS.slice(0, 2).map((option) => option.value),
-      //     },
-      //     updateOptions: (options) => [
-      //       ...options,
-      //       ...generateOptions(6).slice(5),
-      //     ],
-      //   },
-      // },
-      // {
-      //   title:
-      //     'should update display value with options label if less than 3 options are selected',
-      //   context: {
-      //     updateOptions: (options) => options.slice(8),
-      //   },
-      // },
-      // {
-      //   title: 'should update the display value on an option label change only',
-      //   context: {
-      //     createViewFilter: {
-      //       displayValue: 'Option 3',
-      //       value: ALL_OPTIONS.slice(0, 3).map((option) => option.value),
-      //     },
-      //     updateOptions: (options) =>
-      //       options.map((option) => ({
-      //         ...option,
-      //         label: `${option.label} updated`,
-      //       })),
-      //   },
-      // },
+      {
+        title: 'should update related multi selected options view filter',
+        context: {
+          updateOptions: (options) =>
+            options.map((option, index) =>
+              isEven(option, index) ? fakeOptionUpdate(option) : option,
+            ),
+        },
+      },
+      {
+        title: 'should update related solo selected option view filter',
+        context: {
+          createViewFilter: {
+            value: [ALL_OPTIONS[5].value],
+          },
+          updateOptions: (options) => [fakeOptionUpdate(options[5])],
+        },
+      },
+      {
+        title:
+          'should handle partial deletion of selected options in view filter',
+        context: {
+          updateOptions: (options) => options.slice(4),
+        },
+      },
+      {
+        title:
+          'should handle reordering of options while maintaining view filter values',
+        context: {
+          createViewFilter: {
+            value: ALL_OPTIONS.slice(0, 2).map((option) => option.value),
+          },
+          updateOptions: (options) => [...options].reverse(),
+        },
+      },
+      {
+        title:
+          'should handle no changes update of options while maintaining existing view filter values',
+        context: {
+          updateOptions: (options) => options,
+        },
+      },
+      {
+        title:
+          'should handle adding new options while maintaining existing view filter',
+        context: {
+          fieldMetadata: {
+            options: ALL_OPTIONS.slice(0, 5),
+            type: fieldType,
+          },
+          createViewFilter: {
+            value: ALL_OPTIONS.slice(0, 2).map((option) => option.value),
+          },
+          updateOptions: (options) => [
+            ...options,
+            ...generateOptions(6).slice(5),
+          ],
+        },
+      },
     ];
 
     test.each(testCases)(
@@ -301,9 +277,7 @@ describe('update-one-field-metadata-related-record', () => {
           expect.arrayContaining(updatedViewFilter.value as string[]),
         );
 
-        expect(updatedViewFilter).toMatchSnapshot({
-          id: expect.any(String),
-        });
+        expect(updatedViewFilter.value).toMatchSnapshot();
       },
     );
 
@@ -312,15 +286,15 @@ describe('update-one-field-metadata-related-record', () => {
     const failingTestCases: EachTestingContext<{
       createViewFilterValue: unknown;
     }>[] = [
-      // {
-      //   title:
-      //     'should throw error if view filter value is not a stringified JSON array',
-      //   context: {
-      //     createViewFilterValue: JSON.stringify(
-      //       'not an array stringified json',
-      //     ),
-      //   },
-      // },
+      {
+        title:
+          'should throw error if view filter value is not a stringified JSON array',
+        context: {
+          createViewFilterValue: JSON.stringify(
+            'not an array stringified json',
+          ),
+        },
+      },
     ];
 
     test.each(failingTestCases)(

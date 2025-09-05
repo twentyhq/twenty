@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   Patch,
   Post,
@@ -12,12 +11,18 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
 import { UpdateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-field.input';
 import { type ViewFieldEntity } from 'src/engine/core-modules/view/entities/view-field.entity';
+import {
+  generateViewFieldExceptionMessage,
+  generateViewFieldUserFriendlyExceptionMessage,
+  ViewFieldException,
+  ViewFieldExceptionCode,
+  ViewFieldExceptionMessageKey,
+} from 'src/engine/core-modules/view/exceptions/view-field.exception';
 import { ViewFieldRestApiExceptionFilter } from 'src/engine/core-modules/view/filters/view-field-rest-api-exception.filter';
 import { ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -50,7 +55,18 @@ export class ViewFieldController {
     const viewField = await this.viewFieldService.findById(id, workspace.id);
 
     if (!isDefined(viewField)) {
-      throw new NotFoundException(t`View field not found (id: ${id})`);
+      throw new ViewFieldException(
+        generateViewFieldExceptionMessage(
+          ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+          id,
+        ),
+        ViewFieldExceptionCode.VIEW_FIELD_NOT_FOUND,
+        {
+          userFriendlyMessage: generateViewFieldUserFriendlyExceptionMessage(
+            ViewFieldExceptionMessageKey.VIEW_FIELD_NOT_FOUND,
+          ),
+        },
+      );
     }
 
     return viewField;
