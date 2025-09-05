@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
+import { UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
 import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import {
   PageLayoutTabException,
@@ -127,7 +128,7 @@ export class PageLayoutWidgetService {
   async update(
     id: string,
     workspaceId: string,
-    updateData: QueryDeepPartialEntity<PageLayoutWidgetEntity>,
+    updateData: UpdatePageLayoutWidgetInput,
   ): Promise<PageLayoutWidgetEntity> {
     const existingWidget = await this.pageLayoutWidgetRepository.findOne({
       where: {
@@ -147,7 +148,10 @@ export class PageLayoutWidgetService {
       );
     }
 
-    await this.pageLayoutWidgetRepository.update({ id }, updateData);
+    await this.pageLayoutWidgetRepository.update(
+      { id },
+      updateData as QueryDeepPartialEntity<PageLayoutWidgetEntity>,
+    );
 
     return this.findByIdOrThrow(id, workspaceId);
   }

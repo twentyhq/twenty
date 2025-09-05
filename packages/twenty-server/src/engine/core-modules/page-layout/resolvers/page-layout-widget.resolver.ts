@@ -1,12 +1,9 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-
 import { CreatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
 import { PageLayoutWidgetDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout-widget.dto';
-import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/core-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -54,11 +51,7 @@ export class PageLayoutWidgetResolver {
     @Args('input') input: UpdatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.update(
-      id,
-      workspace.id,
-      input as QueryDeepPartialEntity<PageLayoutWidgetEntity>,
-    );
+    return this.pageLayoutWidgetService.update(id, workspace.id, input);
   }
 
   @Mutation(() => PageLayoutWidgetDTO)

@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { GraphQLJSON } from 'graphql-type-json';
+import { Type } from 'class-transformer';
 import {
   IsEnum,
   IsObject,
@@ -9,11 +9,11 @@ import {
   IsUUID,
   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { GraphQLJSON } from 'graphql-type-json';
 
-import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
-import { GridPositionInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { GridPositionInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
+import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 
 @InputType()
 export class UpdatePageLayoutWidgetInput {

@@ -12,12 +12,10 @@ import {
 } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { CreatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
 import { type PageLayoutWidgetDTO } from 'src/engine/core-modules/page-layout/dtos/page-layout-widget.dto';
-import { PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import {
   generatePageLayoutWidgetExceptionMessage,
   PageLayoutWidgetException,
@@ -80,11 +78,7 @@ export class PageLayoutWidgetController {
     @Body() input: UpdatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutWidgetDTO> {
-    return this.pageLayoutWidgetService.update(
-      id,
-      workspace.id,
-      input as QueryDeepPartialEntity<PageLayoutWidgetEntity>,
-    );
+    return this.pageLayoutWidgetService.update(id, workspace.id, input);
   }
 
   @Delete(':id')
