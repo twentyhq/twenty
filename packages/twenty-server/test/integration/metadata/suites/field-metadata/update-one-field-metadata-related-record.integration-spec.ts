@@ -265,7 +265,6 @@ describe('update-one-field-metadata-related-record', () => {
           value: updatedViewFilter.value,
           fieldMetadataId: updatedViewFilter.fieldMetadataId,
           operand: updatedViewFilter.operand,
-          viewId: updatedViewFilter.viewId,
           viewFilterGroupId: updatedViewFilter.viewFilterGroupId,
           positionInViewFilterGroup:
             updatedViewFilter.positionInViewFilterGroup,
