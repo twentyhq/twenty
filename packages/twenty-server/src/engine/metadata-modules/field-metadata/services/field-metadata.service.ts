@@ -116,7 +116,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     if (isWorkspaceMigrationV2Enabled) {
       return this.fieldMetadataServiceV2.createOne({
-        fieldMetadataInput,
+        createFieldInput: fieldMetadataInput,
         workspaceId: fieldMetadataInput.workspaceId,
       });
     }
@@ -642,7 +642,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     if (isWorkspaceMigrationV2Enabled) {
       return this.fieldMetadataServiceV2.createMany({
-        fieldMetadataInputs,
+        createFieldInputs: fieldMetadataInputs,
         workspaceId,
       });
     }

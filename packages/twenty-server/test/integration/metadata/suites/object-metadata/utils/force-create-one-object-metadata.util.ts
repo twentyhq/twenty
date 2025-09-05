@@ -35,7 +35,7 @@ export const forceCreateOneObjectMetadata = async ({
     },
   });
 
-  if (!isDefined(result.errors)) {
+  if (!isDefined(result.errors) || result.errors.length === 0) {
     return result;
   }
 

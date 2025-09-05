@@ -218,7 +218,7 @@ export class FieldMetadataRelationService {
     return fieldMetadataInput;
   }
 
-  // TODO refactor
+  // TODO refactor and rename
   async findCachedFieldMetadataRelation({
     flatFieldMetadata,
     workspaceId,
