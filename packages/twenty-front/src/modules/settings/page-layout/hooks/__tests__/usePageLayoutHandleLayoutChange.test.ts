@@ -4,9 +4,12 @@ import { usePageLayoutHandleLayoutChange } from '../usePageLayoutHandleLayoutCha
 
 describe('usePageLayoutHandleLayoutChange', () => {
   it('should update layouts and draft state when layout changes', () => {
-    const { result } = renderHook(() => usePageLayoutHandleLayoutChange(), {
-      wrapper: RecoilRoot,
-    });
+    const { result } = renderHook(
+      () => usePageLayoutHandleLayoutChange('tab-1'),
+      {
+        wrapper: RecoilRoot,
+      },
+    );
 
     const newLayouts = {
       desktop: [
@@ -27,9 +30,12 @@ describe('usePageLayoutHandleLayoutChange', () => {
   });
 
   it('should handle empty layouts', () => {
-    const { result } = renderHook(() => usePageLayoutHandleLayoutChange(), {
-      wrapper: RecoilRoot,
-    });
+    const { result } = renderHook(
+      () => usePageLayoutHandleLayoutChange('tab-1'),
+      {
+        wrapper: RecoilRoot,
+      },
+    );
 
     const emptyLayouts = {
       desktop: [],
@@ -45,7 +51,7 @@ describe('usePageLayoutHandleLayoutChange', () => {
 
   it('should maintain callback reference across renders', () => {
     const { result, rerender } = renderHook(
-      () => usePageLayoutHandleLayoutChange(),
+      () => usePageLayoutHandleLayoutChange('tab-1'),
       {
         wrapper: RecoilRoot,
       },

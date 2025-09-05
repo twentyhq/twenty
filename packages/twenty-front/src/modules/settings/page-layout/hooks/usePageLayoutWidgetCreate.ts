@@ -6,9 +6,12 @@ import {
   type WidgetType,
 } from '../mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
+import { pageLayoutCurrentTabIdForCreationState } from '../states/pageLayoutCurrentTabIdForCreation';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
+import { pageLayoutTabsState } from '../states/pageLayoutTabsState';
 import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
+import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
 import {
   getDefaultWidgetData,
   getWidgetSize,
@@ -31,6 +34,13 @@ export const usePageLayoutWidgetCreate = () => {
         const pageLayoutDraggedArea = snapshot
           .getLoadable(pageLayoutDraggedAreaState)
           .getValue();
+        const activeTabId = snapshot
+          .getLoadable(pageLayoutCurrentTabIdForCreationState)
+          .getValue();
+
+        if (!activeTabId) {
+          throw new Error('No active tab selected');
+        }
 
         const existingWidgetCount = pageLayoutWidgets.filter(
           (w) =>
@@ -42,8 +52,9 @@ export const usePageLayoutWidgetCreate = () => {
           id: `widget-${uuidv4()}`,
           type: widgetType,
           title,
+          pageLayoutTabId: activeTabId,
           configuration: {
-            graphType,
+            graphType: graphType as string,
           },
           data: widgetData,
         };
@@ -74,19 +85,51 @@ export const usePageLayoutWidgetCreate = () => {
         };
         set(pageLayoutCurrentLayoutsState, updatedLayouts);
 
-        const widgetWithPosition = {
-          ...newWidget,
+        const widgetWithPosition: PageLayoutWidget = {
+          id: newWidget.id,
+          pageLayoutTabId: activeTabId,
+          title: newWidget.title,
+          type: newWidget.type,
           gridPosition: {
             row: position.y,
             column: position.x,
             rowSpan: position.h,
             columnSpan: position.w,
           },
+          configuration: newWidget.configuration as
+            | Record<string, unknown>
+            | undefined,
+          data: newWidget.data,
+          objectMetadataId: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          deletedAt: null,
         };
+
+        // Update the tabs with the new widget
+        set(pageLayoutTabsState, (prevTabs) => {
+          return prevTabs.map((tab) => {
+            if (tab.id === activeTabId) {
+              return {
+                ...tab,
+                widgets: [...tab.widgets, widgetWithPosition],
+              };
+            }
+            return tab;
+          });
+        });
 
         set(pageLayoutDraftState, (prev) => ({
           ...prev,
-          widgets: [...prev.widgets, widgetWithPosition],
+          tabs: prev.tabs.map((tab) => {
+            if (tab.id === activeTabId) {
+              return {
+                ...tab,
+                widgets: [...tab.widgets, widgetWithPosition],
+              };
+            }
+            return tab;
+          }),
         }));
 
         set(pageLayoutDraggedAreaState, null);

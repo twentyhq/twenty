@@ -1,4 +1,5 @@
 import { type Layouts } from 'react-grid-layout';
+import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
 
 export enum WidgetType {
   VIEW = 'VIEW',
@@ -18,15 +19,24 @@ export type Widget = {
   id: string;
   type: WidgetType;
   title: string;
+  pageLayoutTabId?: string;
   configuration?: Record<string, string>;
   data?: any;
 };
 
-export const mockWidgets: Widget[] = [
+export const mockPageLayoutWidgets: PageLayoutWidget[] = [
   {
     id: 'widget-1',
+    pageLayoutTabId: 'tab-overview',
     type: WidgetType.GRAPH,
     title: 'Sales Pipeline',
+    objectMetadataId: null,
+    gridPosition: {
+      row: 0,
+      column: 0,
+      rowSpan: 2,
+      columnSpan: 3,
+    },
     configuration: {
       graphType: GraphSubType.NUMBER,
     },
@@ -34,11 +44,22 @@ export const mockWidgets: Widget[] = [
       value: '1,234',
       trendPercentage: 12.5,
     },
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+    deletedAt: null,
   },
   {
     id: 'widget-2',
+    pageLayoutTabId: 'tab-overview',
     type: WidgetType.GRAPH,
     title: 'Conversion Rate',
+    objectMetadataId: null,
+    gridPosition: {
+      row: 0,
+      column: 6,
+      rowSpan: 5,
+      columnSpan: 3,
+    },
     configuration: {
       graphType: GraphSubType.GAUGE,
     },
@@ -48,11 +69,22 @@ export const mockWidgets: Widget[] = [
       max: 1,
       label: 'Conversion rate',
     },
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+    deletedAt: null,
   },
   {
     id: 'widget-3',
+    pageLayoutTabId: 'tab-analytics',
     type: WidgetType.GRAPH,
     title: 'Lead Distribution',
+    objectMetadataId: null,
+    gridPosition: {
+      row: 2,
+      column: 0,
+      rowSpan: 5,
+      columnSpan: 6,
+    },
     configuration: {
       graphType: GraphSubType.PIE,
     },
@@ -90,11 +122,22 @@ export const mockWidgets: Widget[] = [
         },
       ],
     },
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+    deletedAt: null,
   },
   {
     id: 'widget-4',
+    pageLayoutTabId: 'tab-reports',
     type: WidgetType.GRAPH,
     title: 'Monthly Performance',
+    objectMetadataId: null,
+    gridPosition: {
+      row: 0,
+      column: 9,
+      rowSpan: 8,
+      columnSpan: 4,
+    },
     configuration: {
       graphType: GraphSubType.BAR,
     },
@@ -144,8 +187,30 @@ export const mockWidgets: Widget[] = [
       xAxisLabel: 'Month',
       yAxisLabel: 'Count',
     },
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z',
+    deletedAt: null,
   },
 ];
+
+// We don't build mock tabs anymore - they're created dynamically
+
+// Backward compatibility - keep old mockWidgets for existing code
+export const mockWidgets: Widget[] = mockPageLayoutWidgets.map((w) => ({
+  id: w.id,
+  type: w.type,
+  title: w.title,
+  pageLayoutTabId: w.pageLayoutTabId,
+  configuration: w.configuration
+    ? Object.fromEntries(
+        Object.entries(w.configuration).map(([key, value]) => [
+          key,
+          String(value),
+        ]),
+      )
+    : undefined,
+  data: w.data,
+}));
 
 export const mockLayouts: Layouts = {
   desktop: [

@@ -1,6 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
+import { pageLayoutTabsState } from '../states/pageLayoutTabsState';
 import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
 
 export const usePageLayoutWidgetDelete = () => {
@@ -29,9 +30,32 @@ export const usePageLayoutWidgetDelete = () => {
         };
         set(pageLayoutCurrentLayoutsState, updatedLayouts);
 
+        const widgetToRemove = pageLayoutWidgets.find((w) => w.id === widgetId);
+        const tabId = widgetToRemove?.pageLayoutTabId;
+
+        set(pageLayoutTabsState, (prevTabs) => {
+          return prevTabs.map((tab) => {
+            if (tab.id === tabId) {
+              return {
+                ...tab,
+                widgets: tab.widgets.filter((w) => w.id !== widgetId),
+              };
+            }
+            return tab;
+          });
+        });
+
         set(pageLayoutDraftState, (prev) => ({
           ...prev,
-          widgets: prev.widgets.filter((w) => w.id !== widgetId),
+          tabs: prev.tabs.map((tab) => {
+            if (tab.id === tabId) {
+              return {
+                ...tab,
+                widgets: tab.widgets.filter((w) => w.id !== widgetId),
+              };
+            }
+            return tab;
+          }),
         }));
       },
     [],

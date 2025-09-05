@@ -10,7 +10,8 @@ import { useRecoilComponentState } from '@/ui/utilities/state/component-state/ho
 import styled from '@emotion/styled';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TabButton } from 'twenty-ui/input';
+import { IconPlus } from 'twenty-ui/display';
+import { IconButton, TabButton } from 'twenty-ui/input';
 import { TabListDropdown } from './TabListDropdown';
 import { TabListFromUrlOptionalEffect } from './TabListFromUrlOptionalEffect';
 import { TabMoreButton } from './TabMoreButton';
@@ -51,6 +52,13 @@ const StyledHiddenMeasurement = styled.div`
   visibility: hidden;
 `;
 
+const StyledAddButton = styled.div`
+  display: flex;
+  align-items: center;
+  height: ${({ theme }) => theme.spacing(10)};
+  margin-left: ${TAB_LIST_GAP}px;
+`;
+
 export const TabList = ({
   tabs,
   loading,
@@ -58,6 +66,7 @@ export const TabList = ({
   isInRightDrawer,
   className,
   componentInstanceId,
+  onAddTab,
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
   const navigate = useNavigate();
@@ -70,6 +79,7 @@ export const TabList = ({
   const [tabWidthsById, setTabWidthsById] = useState<TabWidthsById>({});
   const [containerWidth, setContainerWidth] = useState(0);
   const [moreButtonWidth, setMoreButtonWidth] = useState(0);
+  const [addButtonWidth, setAddButtonWidth] = useState(0);
 
   const activeTabExists = visibleTabs.some((tab) => tab.id === activeTabId);
   const initialActiveTabId = activeTabExists ? activeTabId : visibleTabs[0]?.id;
@@ -80,8 +90,16 @@ export const TabList = ({
       tabWidthsById,
       containerWidth,
       moreButtonWidth,
+      addButtonWidth: onAddTab ? addButtonWidth : 0,
     });
-  }, [tabWidthsById, containerWidth, moreButtonWidth, visibleTabs]);
+  }, [
+    tabWidthsById,
+    containerWidth,
+    moreButtonWidth,
+    addButtonWidth,
+    visibleTabs,
+    onAddTab,
+  ]);
 
   const hiddenTabsCount = visibleTabs.length - visibleTabCount;
   const hasHiddenTabs = hiddenTabsCount > 0;
@@ -150,6 +168,15 @@ export const TabList = ({
     [],
   );
 
+  const handleAddButtonWidthChange = useCallback(
+    (dimensions: { width: number; height: number }) => {
+      setAddButtonWidth((prev) => {
+        return prev !== dimensions.width ? dimensions.width : prev;
+      });
+    },
+    [],
+  );
+
   if (visibleTabs.length === 0) {
     return null;
   }
@@ -187,6 +214,19 @@ export const TabList = ({
             <NodeDimension onDimensionChange={handleMoreButtonWidthChange}>
               <TabMoreButton hiddenTabsCount={1} active={false} />
             </NodeDimension>
+
+            {onAddTab && (
+              <NodeDimension onDimensionChange={handleAddButtonWidthChange}>
+                <StyledAddButton>
+                  <IconButton
+                    Icon={IconPlus}
+                    size="small"
+                    variant="tertiary"
+                    onClick={onAddTab}
+                  />
+                </StyledAddButton>
+              </NodeDimension>
+            )}
           </StyledHiddenMeasurement>
         )}
 
@@ -226,6 +266,17 @@ export const TabList = ({
                 onTabSelect={handleTabSelectFromDropdown}
                 loading={loading}
               />
+            )}
+
+            {onAddTab && (
+              <StyledAddButton>
+                <IconButton
+                  Icon={IconPlus}
+                  size="small"
+                  variant="tertiary"
+                  onClick={onAddTab}
+                />
+              </StyledAddButton>
             )}
           </StyledContainer>
         </NodeDimension>

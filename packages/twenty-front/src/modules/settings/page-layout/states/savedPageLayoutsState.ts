@@ -7,25 +7,48 @@ export enum PageLayoutType {
   RECORD_PAGE = 'RECORD_PAGE',
 }
 
+export type GridPosition = {
+  row: number;
+  column: number;
+  rowSpan: number;
+  columnSpan: number;
+};
+
+export type PageLayoutWidget = {
+  id: string;
+  pageLayoutTabId: string;
+  title: string;
+  type: WidgetType;
+  objectMetadataId?: string | null;
+  gridPosition: GridPosition;
+  configuration?: Record<string, unknown> | null;
+  data?: any; // TODO: Remove when backend connected - data will be fetched dynamically
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+};
+
+export type PageLayoutTab = {
+  id: string;
+  title: string;
+  position: number;
+  pageLayoutId: string;
+  widgets: PageLayoutWidget[];
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+};
+
 export type SavedPageLayout = {
   id: string;
   name: string;
   type: PageLayoutType;
+  workspaceId?: string;
+  objectMetadataId?: string | null;
+  tabs: PageLayoutTab[];
   createdAt: string;
   updatedAt: string;
-  widgets: Array<{
-    id: string;
-    title: string;
-    type: WidgetType;
-    gridPosition: {
-      row: number;
-      column: number;
-      rowSpan: number;
-      columnSpan: number;
-    };
-    configuration?: Record<string, string>;
-    data?: any; // TODO: Remove when backend connected - data will be fetched dynamically
-  }>;
+  deletedAt?: string | null;
 };
 
 export const savedPageLayoutsState = createState<SavedPageLayout[]>({

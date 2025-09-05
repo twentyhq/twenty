@@ -2,11 +2,13 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useEffect, useState } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 as uuidv4 } from 'uuid';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { type Widget } from '../mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutPersistedState } from '../states/pageLayoutPersistedState';
+import { pageLayoutTabsState } from '../states/pageLayoutTabsState';
 import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
 import {
   PageLayoutType,
@@ -40,37 +42,72 @@ export const PageLayoutInitializationEffect = ({
             set(pageLayoutDraftState, {
               name: layout.name,
               type: layout.type,
-              widgets: layout.widgets,
+              workspaceId: layout.workspaceId,
+              objectMetadataId: layout.objectMetadataId,
+              tabs: layout.tabs,
             });
 
-            const widgets: Widget[] = layout.widgets.map((w) => ({
-              id: w.id,
-              title: w.title,
-              type: w.type,
-              configuration: w.configuration,
-              data: w.data,
-            }));
-            set(pageLayoutWidgetsState, widgets);
+            set(pageLayoutTabsState, layout.tabs);
+            if (layout.tabs.length > 0) {
+              const firstTab = [...layout.tabs].sort(
+                (a, b) => a.position - b.position,
+              )[0];
 
-            const layouts = layout.widgets.map((w) => ({
-              i: w.id,
-              x: w.gridPosition.column,
-              y: w.gridPosition.row,
-              w: w.gridPosition.columnSpan,
-              h: w.gridPosition.rowSpan,
-            }));
-            set(pageLayoutCurrentLayoutsState, {
-              desktop: layouts,
-              mobile: layouts.map((l) => ({ ...l, w: 1, x: 0 })),
-            });
+              const widgets: Widget[] = firstTab.widgets.map((w) => ({
+                id: w.id,
+                title: w.title,
+                type: w.type,
+                pageLayoutTabId: w.pageLayoutTabId,
+                configuration: w.configuration
+                  ? Object.fromEntries(
+                      Object.entries(w.configuration).map(([key, value]) => [
+                        key,
+                        String(value),
+                      ]),
+                    )
+                  : undefined,
+                data: w.data,
+              }));
+              set(pageLayoutWidgetsState, widgets);
+
+              const layouts = firstTab.widgets.map((w) => ({
+                i: w.id,
+                x: w.gridPosition.column,
+                y: w.gridPosition.row,
+                w: w.gridPosition.columnSpan,
+                h: w.gridPosition.rowSpan,
+              }));
+              set(pageLayoutCurrentLayoutsState, {
+                desktop: layouts,
+                mobile: layouts.map((l) => ({ ...l, w: 1, x: 0 })),
+              });
+            } else {
+              set(pageLayoutWidgetsState, []);
+              set(pageLayoutCurrentLayoutsState, { desktop: [], mobile: [] });
+            }
           }
         } else {
+          const defaultTab = {
+            id: `tab-${uuidv4()}`,
+            title: 'Main',
+            position: 0,
+            pageLayoutId: '',
+            widgets: [],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            deletedAt: null,
+          };
+
           set(pageLayoutDraftState, {
             name: '',
             type: PageLayoutType.DASHBOARD,
-            widgets: [],
+            workspaceId: undefined,
+            objectMetadataId: null,
+            tabs: [defaultTab],
           });
           set(pageLayoutPersistedState, undefined);
+          set(pageLayoutTabsState, [defaultTab]);
+
           set(pageLayoutWidgetsState, []);
           set(pageLayoutCurrentLayoutsState, { desktop: [], mobile: [] });
         }

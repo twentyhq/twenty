@@ -101,7 +101,12 @@ export const SettingsPageLayouts = () => {
                   {layout.name}
                 </StyledNameTableCell>
                 <TableCell>{layout.type}</TableCell>
-                <TableCell>{layout.widgets.length}</TableCell>
+                <TableCell>
+                  {layout.tabs.reduce(
+                    (total, tab) => total + tab.widgets.length,
+                    0,
+                  )}
+                </TableCell>
                 <StyledActionTableCell
                   onClick={(event) => {
                     event.stopPropagation();
