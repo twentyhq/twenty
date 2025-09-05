@@ -7,8 +7,6 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutPersistedState } from '../states/pageLayoutPersistedState';
-import { pageLayoutTabsState } from '../states/pageLayoutTabsState';
-import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
 import {
   PageLayoutType,
   savedPageLayoutsState,
@@ -46,11 +44,7 @@ export const PageLayoutInitializationEffect = ({
               tabs: layout.tabs,
             });
 
-            set(pageLayoutTabsState, layout.tabs);
             if (layout.tabs.length > 0) {
-              const allWidgets = layout.tabs.flatMap((tab) => tab.widgets);
-              set(pageLayoutWidgetsState, allWidgets);
-
               const tabLayouts: Record<string, any> = {};
               layout.tabs.forEach((tab) => {
                 const layouts = tab.widgets.map((w) => ({
@@ -67,7 +61,6 @@ export const PageLayoutInitializationEffect = ({
               });
               set(pageLayoutCurrentLayoutsState, tabLayouts);
             } else {
-              set(pageLayoutWidgetsState, []);
               set(pageLayoutCurrentLayoutsState, {});
             }
           }
@@ -91,9 +84,6 @@ export const PageLayoutInitializationEffect = ({
             tabs: [defaultTab],
           });
           set(pageLayoutPersistedState, undefined);
-          set(pageLayoutTabsState, [defaultTab]);
-
-          set(pageLayoutWidgetsState, []);
           set(pageLayoutCurrentLayoutsState, {
             [defaultTab.id]: { desktop: [], mobile: [] },
           });

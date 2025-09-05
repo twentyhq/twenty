@@ -5,8 +5,6 @@ import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayout
 import { pageLayoutCurrentTabIdForCreationState } from '../states/pageLayoutCurrentTabIdForCreation';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
-import { pageLayoutTabsState } from '../states/pageLayoutTabsState';
-import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
 import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
 import { addWidgetToTab } from '../utils/addWidgetToTab';
 import { createUpdatedTabLayouts } from '../utils/createUpdatedTabLayouts';
@@ -23,8 +21,8 @@ export const usePageLayoutWidgetCreate = () => {
       (widgetType: WidgetType, graphType: GraphSubType) => {
         const widgetData = getDefaultWidgetData(graphType);
 
-        const pageLayoutWidgets = snapshot
-          .getLoadable(pageLayoutWidgetsState)
+        const pageLayoutDraft = snapshot
+          .getLoadable(pageLayoutDraftState)
           .getValue();
         const allTabLayouts = snapshot
           .getLoadable(pageLayoutCurrentLayoutsState)
@@ -40,7 +38,8 @@ export const usePageLayoutWidgetCreate = () => {
           return;
         }
 
-        const existingWidgetCount = pageLayoutWidgets.filter(
+        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
+        const existingWidgetCount = allWidgets.filter(
           (w) =>
             w.type === widgetType && w.configuration?.graphType === graphType,
         ).length;
@@ -82,19 +81,12 @@ export const usePageLayoutWidgetCreate = () => {
           h: position.h,
         };
 
-        const updatedWidgets = [...pageLayoutWidgets, newWidget];
-        set(pageLayoutWidgetsState, updatedWidgets);
-
         const updatedLayouts = createUpdatedTabLayouts(
           allTabLayouts,
           activeTabId,
           newLayout,
         );
         set(pageLayoutCurrentLayoutsState, updatedLayouts);
-
-        set(pageLayoutTabsState, (prevTabs) =>
-          addWidgetToTab(prevTabs, activeTabId, newWidget),
-        );
 
         set(pageLayoutDraftState, (prev) => ({
           ...prev,

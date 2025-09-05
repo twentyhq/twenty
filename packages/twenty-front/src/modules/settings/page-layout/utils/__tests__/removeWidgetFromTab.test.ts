@@ -99,7 +99,7 @@ describe('removeWidgetFromTab', () => {
   });
 
   it('should return a new array without mutating the original', () => {
-    const originalTabs = JSON.parse(JSON.stringify(mockTabs));
+    const originalTabs = structuredClone(mockTabs);
     const result = removeWidgetFromTab(mockTabs, 'tab-1', 'widget-1');
 
     expect(result).not.toBe(mockTabs);

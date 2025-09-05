@@ -21,8 +21,6 @@ import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pag
 import { pageLayoutCurrentTabIdForCreationState } from '@/settings/page-layout/states/pageLayoutCurrentTabIdForCreation';
 import { pageLayoutEditingWidgetIdState } from '@/settings/page-layout/states/pageLayoutEditingWidgetIdState';
 import { pageLayoutSelectedCellsState } from '@/settings/page-layout/states/pageLayoutSelectedCellsState';
-import { pageLayoutTabsState } from '@/settings/page-layout/states/pageLayoutTabsState';
-import { pageLayoutWidgetsState } from '@/settings/page-layout/states/pageLayoutWidgetsState';
 import { type PageLayoutWidget } from '@/settings/page-layout/states/savedPageLayoutsState';
 import { calculateTotalGridRows } from '@/settings/page-layout/utils/calculateTotalGridRows';
 import { generateCellId } from '@/settings/page-layout/utils/generateCellId';
@@ -145,8 +143,6 @@ export const SettingsPageLayoutEdit = () => {
   const pageLayoutCurrentLayouts = useRecoilValue(
     pageLayoutCurrentLayoutsState,
   );
-  const pageLayoutWidgets = useRecoilValue(pageLayoutWidgetsState);
-  const pageLayoutTabs = useRecoilValue(pageLayoutTabsState);
   const setPageLayoutCurrentTabIdForCreation = useSetRecoilState(
     pageLayoutCurrentTabIdForCreationState,
   );
@@ -160,6 +156,18 @@ export const SettingsPageLayoutEdit = () => {
   const activeTabId = useRecoilComponentValue(
     activeTabIdComponentState,
     'page-layout-tabs',
+  );
+
+  // Derive widgets and tabs from draft state
+  const activeTabWidgets = useMemo(() => {
+    if (!activeTabId || activeTabId === 'add-new-tab') return [];
+    const activeTab = pageLayoutDraft.tabs.find((t) => t.id === activeTabId);
+    return activeTab?.widgets || [];
+  }, [pageLayoutDraft.tabs, activeTabId]);
+
+  const allWidgets = useMemo(
+    () => pageLayoutDraft.tabs.flatMap((tab) => tab.widgets),
+    [pageLayoutDraft.tabs],
   );
 
   const {
@@ -184,7 +192,7 @@ export const SettingsPageLayoutEdit = () => {
 
   const handleEditWidget = useCallback(
     (widgetId: string) => {
-      const widget = pageLayoutWidgets.find((w) => w.id === widgetId);
+      const widget = allWidgets.find((w) => w.id === widgetId);
       if (!widget) return;
 
       setPageLayoutEditingWidgetId(widgetId);
@@ -202,7 +210,7 @@ export const SettingsPageLayoutEdit = () => {
       }
     },
     [
-      pageLayoutWidgets,
+      allWidgets,
       setPageLayoutEditingWidgetId,
       navigateCommandMenu,
       setPageLayoutCurrentTabIdForCreation,
@@ -210,17 +218,12 @@ export const SettingsPageLayoutEdit = () => {
     ],
   );
 
-  const activeTabWidgets = useMemo(() => {
-    if (!activeTabId || activeTabId === 'add-new-tab') return [];
-    return pageLayoutWidgets.filter(
-      (widget) => widget.pageLayoutTabId === activeTabId,
-    );
-  }, [pageLayoutWidgets, activeTabId]);
-
   const activeTabLayouts = useMemo(() => {
     if (!activeTabId) return { desktop: [], mobile: [] };
 
-    const activeTab = pageLayoutTabs.find((tab) => tab.id === activeTabId);
+    const activeTab = pageLayoutDraft.tabs.find(
+      (tab) => tab.id === activeTabId,
+    );
     if (!activeTab) return { desktop: [], mobile: [] };
 
     const desktopLayouts = activeTab.widgets.map((w) => ({
@@ -234,7 +237,7 @@ export const SettingsPageLayoutEdit = () => {
     const mobileLayouts = desktopLayouts.map((l) => ({ ...l, w: 1, x: 0 }));
 
     return { desktop: desktopLayouts, mobile: mobileLayouts };
-  }, [activeTabId, pageLayoutTabs]);
+  }, [activeTabId, pageLayoutDraft.tabs]);
 
   const isEmptyState = activeTabWidgets.length === 0;
 
@@ -262,31 +265,32 @@ export const SettingsPageLayoutEdit = () => {
   }, [handleCreateTab, setActiveTabId]);
 
   const tabListTabs: SingleTabProps[] = useMemo(() => {
-    return [...pageLayoutTabs]
+    return [...pageLayoutDraft.tabs]
       .sort((a, b) => a.position - b.position)
       .map((tab) => ({
         id: tab.id,
         title: tab.title,
       }));
-  }, [pageLayoutTabs]);
+  }, [pageLayoutDraft.tabs]);
 
   const handleSaveClick = async () => {
     setIsSaving(true);
     try {
-      const allWidgets: PageLayoutWidget[] = pageLayoutTabs.flatMap((tab) =>
-        tab.widgets.map((widget) => ({
-          ...widget,
-          pageLayoutTabId: widget.pageLayoutTabId || tab.id,
-          objectMetadataId: widget.objectMetadataId || null,
-          createdAt: widget.createdAt || new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          deletedAt: widget.deletedAt || null,
-        })),
+      const allWidgets: PageLayoutWidget[] = pageLayoutDraft.tabs.flatMap(
+        (tab) =>
+          tab.widgets.map((widget) => ({
+            ...widget,
+            pageLayoutTabId: widget.pageLayoutTabId || tab.id,
+            objectMetadataId: widget.objectMetadataId || null,
+            createdAt: widget.createdAt || new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            deletedAt: widget.deletedAt || null,
+          })),
       );
 
       setPageLayoutDraft((prev) => ({
         ...prev,
-        tabs: pageLayoutTabs,
+        tabs: pageLayoutDraft.tabs,
       }));
 
       await savePageLayout(allWidgets);
@@ -331,7 +335,7 @@ export const SettingsPageLayoutEdit = () => {
               isSaveDisabled={
                 !isDirty ||
                 !pageLayoutDraft.name.trim() ||
-                pageLayoutWidgets.length === 0
+                allWidgets.length === 0
               }
             />
             {!isEmptyState && (
@@ -346,7 +350,7 @@ export const SettingsPageLayoutEdit = () => {
           </StyledActionButtonContainer>
         }
       >
-        {pageLayoutTabs.length > 0 && (
+        {pageLayoutDraft.tabs.length > 0 && (
           <StyledTabList
             tabs={tabListTabs}
             behaveAsLinks={false}

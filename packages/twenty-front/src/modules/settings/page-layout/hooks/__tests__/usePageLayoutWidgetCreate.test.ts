@@ -4,7 +4,8 @@ import {
 } from '@/settings/page-layout/mocks/mockWidgets';
 import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
 import { pageLayoutCurrentTabIdForCreationState } from '@/settings/page-layout/states/pageLayoutCurrentTabIdForCreation';
-import { pageLayoutWidgetsState } from '@/settings/page-layout/states/pageLayoutWidgetsState';
+import { pageLayoutDraftState } from '@/settings/page-layout/states/pageLayoutDraftState';
+import { PageLayoutType } from '@/settings/page-layout/states/savedPageLayoutsState';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
 import { usePageLayoutWidgetCreate } from '../usePageLayoutWidgetCreate';
@@ -24,14 +25,17 @@ describe('usePageLayoutWidgetCreate', () => {
         const setActiveTabId = useSetRecoilState(
           pageLayoutCurrentTabIdForCreationState,
         );
-        const pageLayoutWidgets = useRecoilValue(pageLayoutWidgetsState);
+        const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
+        const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
+        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
         const pageLayoutCurrentLayouts = useRecoilValue(
           pageLayoutCurrentLayoutsState,
         );
         const createWidget = usePageLayoutWidgetCreate();
         return {
           setActiveTabId,
-          pageLayoutWidgets,
+          setPageLayoutDraft,
+          allWidgets,
           pageLayoutCurrentLayouts,
           createWidget,
         };
@@ -42,6 +46,24 @@ describe('usePageLayoutWidgetCreate', () => {
     );
 
     act(() => {
+      result.current.setPageLayoutDraft({
+        name: 'Test Layout',
+        type: PageLayoutType.DASHBOARD,
+        workspaceId: undefined,
+        objectMetadataId: null,
+        tabs: [
+          {
+            id: 'tab-1',
+            title: 'Tab 1',
+            position: 0,
+            pageLayoutId: '',
+            widgets: [],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            deletedAt: null,
+          },
+        ],
+      });
       result.current.setActiveTabId('tab-1');
     });
 
@@ -52,8 +74,8 @@ describe('usePageLayoutWidgetCreate', () => {
       );
     });
 
-    expect(result.current.pageLayoutWidgets).toHaveLength(1);
-    expect(result.current.pageLayoutWidgets[0].pageLayoutTabId).toBe('tab-1');
+    expect(result.current.allWidgets).toHaveLength(1);
+    expect(result.current.allWidgets[0].pageLayoutTabId).toBe('tab-1');
 
     expect(result.current.pageLayoutCurrentLayouts['tab-1']).toBeDefined();
     expect(
@@ -63,8 +85,44 @@ describe('usePageLayoutWidgetCreate', () => {
   });
 
   it('should handle different graph types', () => {
-    const { result } = renderHook(() => usePageLayoutWidgetCreate(), {
-      wrapper: RecoilRoot,
+    const { result } = renderHook(
+      () => {
+        const setPageLayoutDraft = useSetRecoilState(pageLayoutDraftState);
+        const setActiveTabId = useSetRecoilState(
+          pageLayoutCurrentTabIdForCreationState,
+        );
+        const createWidget = usePageLayoutWidgetCreate();
+        return {
+          setPageLayoutDraft,
+          setActiveTabId,
+          createWidget,
+        };
+      },
+      {
+        wrapper: RecoilRoot,
+      },
+    );
+
+    act(() => {
+      result.current.setPageLayoutDraft({
+        name: 'Test Layout',
+        type: PageLayoutType.DASHBOARD,
+        workspaceId: undefined,
+        objectMetadataId: null,
+        tabs: [
+          {
+            id: 'tab-1',
+            title: 'Tab 1',
+            position: 0,
+            pageLayoutId: '',
+            widgets: [],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            deletedAt: null,
+          },
+        ],
+      });
+      result.current.setActiveTabId('tab-1');
     });
 
     const graphTypes = [
@@ -76,22 +134,28 @@ describe('usePageLayoutWidgetCreate', () => {
 
     graphTypes.forEach((graphType) => {
       act(() => {
-        result.current.handleCreateWidget(WidgetType.GRAPH, graphType);
+        result.current.createWidget.handleCreateWidget(
+          WidgetType.GRAPH,
+          graphType,
+        );
       });
     });
 
-    expect(typeof result.current.handleCreateWidget).toBe('function');
+    expect(typeof result.current.createWidget.handleCreateWidget).toBe(
+      'function',
+    );
   });
 
   it('should not create widget when activeTabId is null', () => {
     const { result } = renderHook(
       () => {
-        const pageLayoutWidgets = useRecoilValue(pageLayoutWidgetsState);
+        const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
+        const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
         const pageLayoutCurrentLayouts = useRecoilValue(
           pageLayoutCurrentLayoutsState,
         );
         const createWidget = usePageLayoutWidgetCreate();
-        return { pageLayoutWidgets, pageLayoutCurrentLayouts, createWidget };
+        return { allWidgets, pageLayoutCurrentLayouts, createWidget };
       },
       {
         wrapper: RecoilRoot,
@@ -105,7 +169,7 @@ describe('usePageLayoutWidgetCreate', () => {
       );
     });
 
-    expect(result.current.pageLayoutWidgets).toHaveLength(0);
+    expect(result.current.allWidgets).toHaveLength(0);
     expect(Object.keys(result.current.pageLayoutCurrentLayouts)).toHaveLength(
       0,
     );

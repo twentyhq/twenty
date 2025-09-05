@@ -1,6 +1,5 @@
 import { pageLayoutCurrentLayoutsState } from '@/settings/page-layout/states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '@/settings/page-layout/states/pageLayoutDraftState';
-import { pageLayoutTabsState } from '@/settings/page-layout/states/pageLayoutTabsState';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { usePageLayoutTabCreate } from '../usePageLayoutTabCreate';
@@ -20,7 +19,6 @@ describe('usePageLayoutTabCreate', () => {
     const { result } = renderHook(
       () => ({
         createTab: usePageLayoutTabCreate(),
-        pageLayoutTabs: useRecoilValue(pageLayoutTabsState),
         pageLayoutCurrentLayouts: useRecoilValue(pageLayoutCurrentLayoutsState),
         pageLayoutDraft: useRecoilValue(pageLayoutDraftState),
       }),
@@ -34,18 +32,15 @@ describe('usePageLayoutTabCreate', () => {
       newTabId = result.current.createTab.handleCreateTab();
     });
 
-    expect(result.current.pageLayoutTabs).toHaveLength(1);
-    expect(result.current.pageLayoutTabs[0].id).toBe('tab-mock-uuid');
-    expect(result.current.pageLayoutTabs[0].title).toBe('Tab 1');
-    expect(result.current.pageLayoutTabs[0].position).toBe(0);
-    expect(result.current.pageLayoutTabs[0].widgets).toEqual([]);
+    expect(result.current.pageLayoutDraft.tabs[0].id).toBe('tab-mock-uuid');
+    expect(result.current.pageLayoutDraft.tabs[0].title).toBe('Tab 1');
+    expect(result.current.pageLayoutDraft.tabs[0].position).toBe(0);
+    expect(result.current.pageLayoutDraft.tabs[0].widgets).toEqual([]);
 
     expect(result.current.pageLayoutCurrentLayouts['tab-mock-uuid']).toEqual({
       desktop: [],
       mobile: [],
     });
-
-    expect(result.current.pageLayoutDraft.tabs).toHaveLength(1);
 
     expect(newTabId!).toBe('tab-mock-uuid');
   });
@@ -56,7 +51,7 @@ describe('usePageLayoutTabCreate', () => {
     const { result } = renderHook(
       () => ({
         createTab: usePageLayoutTabCreate(),
-        pageLayoutTabs: useRecoilValue(pageLayoutTabsState),
+        pageLayoutDraft: useRecoilValue(pageLayoutDraftState),
       }),
       {
         wrapper: RecoilRoot,
@@ -67,7 +62,9 @@ describe('usePageLayoutTabCreate', () => {
       result.current.createTab.handleCreateTab('Custom Tab Name');
     });
 
-    expect(result.current.pageLayoutTabs[0].title).toBe('Custom Tab Name');
+    expect(result.current.pageLayoutDraft.tabs[0].title).toBe(
+      'Custom Tab Name',
+    );
   });
 
   it('should increment position for subsequent tabs', () => {
@@ -78,7 +75,7 @@ describe('usePageLayoutTabCreate', () => {
     const { result } = renderHook(
       () => ({
         createTab: usePageLayoutTabCreate(),
-        pageLayoutTabs: useRecoilValue(pageLayoutTabsState),
+        pageLayoutDraft: useRecoilValue(pageLayoutDraftState),
       }),
       {
         wrapper: RecoilRoot,
@@ -93,11 +90,11 @@ describe('usePageLayoutTabCreate', () => {
       result.current.createTab.handleCreateTab();
     });
 
-    expect(result.current.pageLayoutTabs).toHaveLength(2);
-    expect(result.current.pageLayoutTabs[0].position).toBe(0);
-    expect(result.current.pageLayoutTabs[0].title).toBe('Tab 1');
-    expect(result.current.pageLayoutTabs[1].position).toBe(1);
-    expect(result.current.pageLayoutTabs[1].title).toBe('Tab 2');
+    expect(result.current.pageLayoutDraft.tabs).toHaveLength(2);
+    expect(result.current.pageLayoutDraft.tabs[0].position).toBe(0);
+    expect(result.current.pageLayoutDraft.tabs[0].title).toBe('Tab 1');
+    expect(result.current.pageLayoutDraft.tabs[1].position).toBe(1);
+    expect(result.current.pageLayoutDraft.tabs[1].title).toBe('Tab 2');
   });
 
   it('should create isolated layouts for multiple tabs', () => {

@@ -5,8 +5,6 @@ import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayout
 import { pageLayoutCurrentTabIdForCreationState } from '../states/pageLayoutCurrentTabIdForCreation';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState';
-import { pageLayoutTabsState } from '../states/pageLayoutTabsState';
-import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
 import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
 import { addWidgetToTab } from '../utils/addWidgetToTab';
 import { createUpdatedTabLayouts } from '../utils/createUpdatedTabLayouts';
@@ -16,9 +14,6 @@ export const useCreatePageLayoutIframeWidget = () => {
   const createPageLayoutIframeWidget = useRecoilCallback(
     ({ snapshot, set }) =>
       (title: string, url: string) => {
-        const pageLayoutWidgets = snapshot
-          .getLoadable(pageLayoutWidgetsState)
-          .getValue();
         const allTabLayouts = snapshot
           .getLoadable(pageLayoutCurrentLayoutsState)
           .getValue();
@@ -69,19 +64,12 @@ export const useCreatePageLayoutIframeWidget = () => {
           h: position.h,
         };
 
-        const updatedWidgets = [...pageLayoutWidgets, newWidget];
-        set(pageLayoutWidgetsState, updatedWidgets);
-
         const updatedLayouts = createUpdatedTabLayouts(
           allTabLayouts,
           activeTabId,
           newLayout,
         );
         set(pageLayoutCurrentLayoutsState, updatedLayouts);
-
-        set(pageLayoutTabsState, (prevTabs) =>
-          addWidgetToTab(prevTabs, activeTabId, newWidget),
-        );
 
         set(pageLayoutDraftState, (prev) => ({
           ...prev,

@@ -2,8 +2,8 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useCreatePageLayoutIframeWidget } from '@/settings/page-layout/hooks/useCreatePageLayoutIframeWidget';
 import { usePageLayoutWidgetUpdate } from '@/settings/page-layout/hooks/usePageLayoutWidgetUpdate';
+import { pageLayoutDraftState } from '@/settings/page-layout/states/pageLayoutDraftState';
 import { pageLayoutEditingWidgetIdState } from '@/settings/page-layout/states/pageLayoutEditingWidgetIdState';
-import { pageLayoutWidgetsState } from '@/settings/page-layout/states/pageLayoutWidgetsState';
 import styled from '@emotion/styled';
 import { isString } from '@sniptt/guards';
 import { useState } from 'react';
@@ -37,9 +37,10 @@ export const CommandMenuPageLayoutIframeConfig = () => {
   const { handleUpdateWidget } = usePageLayoutWidgetUpdate();
   const [pageLayoutEditingWidgetId, setPageLayoutEditingWidgetId] =
     useRecoilState(pageLayoutEditingWidgetIdState);
-  const pageLayoutWidgets = useRecoilValue(pageLayoutWidgetsState);
+  const pageLayoutDraft = useRecoilValue(pageLayoutDraftState);
 
-  const editingWidget = pageLayoutWidgets.find(
+  const allWidgets = pageLayoutDraft.tabs.flatMap((tab) => tab.widgets);
+  const editingWidget = allWidgets.find(
     (w) => w.id === pageLayoutEditingWidgetId,
   );
   const isEditMode = !!editingWidget;

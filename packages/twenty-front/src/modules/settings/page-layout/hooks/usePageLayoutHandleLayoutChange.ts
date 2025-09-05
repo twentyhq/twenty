@@ -3,8 +3,6 @@ import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
-import { pageLayoutTabsState } from '../states/pageLayoutTabsState';
-import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
 import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
 import { convertLayoutsToWidgets } from '../utils/convertLayoutsToWidgets';
 
@@ -23,18 +21,25 @@ export const usePageLayoutHandleLayoutChange = (activeTabId: string | null) => {
           [activeTabId]: allLayouts,
         });
 
-        const pageLayoutWidgets = snapshot
-          .getLoadable(pageLayoutWidgetsState)
+        const pageLayoutDraft = snapshot
+          .getLoadable(pageLayoutDraftState)
           .getValue();
 
+        // Get current tab's widgets
+        const currentTab = pageLayoutDraft.tabs.find(
+          (t) => t.id === activeTabId,
+        );
+        const currentWidgets = currentTab?.widgets || [];
+
         const updatedWidgets = convertLayoutsToWidgets(
-          pageLayoutWidgets,
+          currentWidgets,
           allLayouts,
         );
 
         if (isDefined(activeTabId)) {
-          set(pageLayoutTabsState, (prevTabs) => {
-            return prevTabs.map((tab) => {
+          set(pageLayoutDraftState, (prev) => ({
+            ...prev,
+            tabs: prev.tabs.map((tab) => {
               if (tab.id === activeTabId) {
                 const tabWidgets: PageLayoutWidget[] = updatedWidgets
                   .filter((w) => w.pageLayoutTabId === activeTabId)
@@ -59,14 +64,9 @@ export const usePageLayoutHandleLayoutChange = (activeTabId: string | null) => {
                 };
               }
               return tab;
-            });
-          });
+            }),
+          }));
         }
-
-        set(pageLayoutDraftState, (prev) => ({
-          ...prev,
-          widgets: updatedWidgets,
-        }));
       },
     [activeTabId],
   );

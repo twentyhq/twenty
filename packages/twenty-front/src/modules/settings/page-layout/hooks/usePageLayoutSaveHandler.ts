@@ -46,7 +46,7 @@ export const usePageLayoutSaveHandler = () => {
           objectMetadataId: pageLayoutDraft.objectMetadataId,
           tabs: updatedTabs,
           createdAt: isEditMode
-            ? existingLayout?.createdAt || new Date().toISOString()
+            ? (existingLayout?.createdAt ?? new Date().toISOString())
             : new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           deletedAt: null,
