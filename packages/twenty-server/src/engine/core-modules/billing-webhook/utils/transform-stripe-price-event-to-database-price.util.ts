@@ -4,53 +4,40 @@ import type Stripe from 'stripe';
 
 import { BillingPriceBillingScheme } from 'src/engine/core-modules/billing/enums/billing-price-billing-scheme.enum';
 import { BillingPriceTaxBehavior } from 'src/engine/core-modules/billing/enums/billing-price-tax-behavior.enum';
-import { BillingPriceTiersMode } from 'src/engine/core-modules/billing/enums/billing-price-tiers-mode.enum';
 import { BillingPriceType } from 'src/engine/core-modules/billing/enums/billing-price-type.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 
 export const transformStripePriceEventToDatabasePrice = (
-  data: Stripe.PriceCreatedEvent.Data | Stripe.PriceUpdatedEvent.Data,
+  data: Stripe.Price,
 ) => {
   return {
-    stripePriceId: data.object.id,
-    active: data.object.active,
-    stripeProductId: String(data.object.product),
-    stripeMeterId: data.object.recurring?.meter,
-    currency: data.object.currency.toUpperCase(),
-    nickname: data.object.nickname === null ? undefined : data.object.nickname,
-    taxBehavior: data.object.tax_behavior
-      ? getTaxBehavior(data.object.tax_behavior)
+    stripePriceId: data.id,
+    active: data.active,
+    stripeProductId: String(data.product),
+    stripeMeterId: data.recurring?.meter,
+    currency: data.currency.toUpperCase(),
+    nickname: data.nickname === null ? undefined : data.nickname,
+    taxBehavior: data.tax_behavior
+      ? getTaxBehavior(data.tax_behavior)
       : undefined,
-    type: getBillingPriceType(data.object.type),
-    billingScheme: getBillingPriceBillingScheme(data.object.billing_scheme),
+    type: getBillingPriceType(data.type),
+    billingScheme: getBillingPriceBillingScheme(data.billing_scheme),
     unitAmountDecimal:
-      data.object.unit_amount_decimal === null
-        ? undefined
-        : data.object.unit_amount_decimal,
-    unitAmount: data.object.unit_amount
-      ? Number(data.object.unit_amount)
-      : undefined,
+      data.unit_amount_decimal === null ? undefined : data.unit_amount_decimal,
+    unitAmount: data.unit_amount ? Number(data.unit_amount) : undefined,
     transformQuantity:
-      data.object.transform_quantity === null
-        ? undefined
-        : data.object.transform_quantity,
-    usageType: data.object.recurring?.usage_type
-      ? getBillingPriceUsageType(data.object.recurring.usage_type)
+      data.transform_quantity === null ? undefined : data.transform_quantity,
+    usageType: data.recurring?.usage_type
+      ? getBillingPriceUsageType(data.recurring.usage_type)
       : undefined,
-    interval: data.object.recurring?.interval
-      ? getBillingPriceInterval(data.object.recurring.interval)
+    interval: data.recurring?.interval
+      ? getBillingPriceInterval(data.recurring.interval)
       : undefined,
     currencyOptions:
-      data.object.currency_options === null
-        ? undefined
-        : data.object.currency_options,
-    tiers: data.object.tiers === null ? undefined : data.object.tiers,
-    tiersMode: data.object.tiers_mode
-      ? getBillingPriceTiersMode(data.object.tiers_mode)
-      : undefined,
-    recurring:
-      data.object.recurring === null ? undefined : data.object.recurring,
+      data.currency_options === null ? undefined : data.currency_options,
+    tiers: data.tiers === null ? undefined : data.tiers,
+    recurring: data.recurring === null ? undefined : data.recurring,
   };
 };
 
@@ -89,15 +76,6 @@ const getBillingPriceUsageType = (data: Stripe.Price.Recurring.UsageType) => {
       return BillingUsageType.LICENSED;
     case 'metered':
       return BillingUsageType.METERED;
-  }
-};
-
-const getBillingPriceTiersMode = (data: Stripe.Price.TiersMode) => {
-  switch (data) {
-    case 'graduated':
-      return BillingPriceTiersMode.GRADUATED;
-    case 'volume':
-      return BillingPriceTiersMode.VOLUME;
   }
 };
 

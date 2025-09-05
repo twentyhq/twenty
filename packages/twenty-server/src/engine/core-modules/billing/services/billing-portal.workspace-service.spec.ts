@@ -24,7 +24,7 @@ const buildWorkspace = (id: string): Workspace =>
   }) as unknown as Workspace;
 
 const buildPricesPerPlan = () => ({
-  baseProductPrice: { stripePriceId: 'price_base' } as BillingPrice,
+  licensedProductsPrices: [{ stripePriceId: 'price_base' } as BillingPrice],
   meteredProductsPrices: [
     {
       stripePriceId: 'price_metered_default',
@@ -32,9 +32,8 @@ const buildPricesPerPlan = () => ({
         { flat_amount: 1000, up_to: 100 },
         { flat_amount: 0, up_to: null },
       ],
-    } as unknown as BillingPrice,
+    } as BillingPrice,
   ],
-  otherLicensedProductsPrices: [],
 });
 
 const buildStripeSubscription = (id = 'sub_123'): Stripe.Subscription =>

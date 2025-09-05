@@ -247,6 +247,24 @@ export type BillingEndTrialPeriodOutput = {
   status?: Maybe<SubscriptionStatus>;
 };
 
+export type BillingLicensedProduct = BillingProductDto & {
+  __typename?: 'BillingLicensedProduct';
+  description: Scalars['String'];
+  images?: Maybe<Array<Scalars['String']>>;
+  metadata: BillingProductMetadata;
+  name: Scalars['String'];
+  prices?: Maybe<Array<BillingPriceLicensedDto>>;
+};
+
+export type BillingMeteredProduct = BillingProductDto & {
+  __typename?: 'BillingMeteredProduct';
+  description: Scalars['String'];
+  images?: Maybe<Array<Scalars['String']>>;
+  metadata: BillingProductMetadata;
+  name: Scalars['String'];
+  prices?: Maybe<Array<BillingPriceMeteredDto>>;
+};
+
 export type BillingMeteredProductUsageOutput = {
   __typename?: 'BillingMeteredProductUsageOutput';
   grantedCredits: Scalars['Float'];
@@ -265,9 +283,8 @@ export enum BillingPlanKey {
 
 export type BillingPlanOutput = {
   __typename?: 'BillingPlanOutput';
-  baseProduct: BillingProduct;
-  meteredProducts: Array<BillingProduct>;
-  otherLicensedProducts: Array<BillingProduct>;
+  licensedProducts: Array<BillingLicensedProduct>;
+  meteredProducts: Array<BillingMeteredProduct>;
   planKey: BillingPlanKey;
 };
 
@@ -284,16 +301,7 @@ export type BillingPriceMeteredDto = {
   priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String'];
-  tiers?: Maybe<Array<BillingPriceTierDto>>;
-  tiersMode?: Maybe<BillingPriceTiersMode>;
-};
-
-export type BillingPriceOutput = {
-  __typename?: 'BillingPriceOutput';
-  amount: Scalars['Float'];
-  nickname: Scalars['String'];
-  recurringInterval: SubscriptionInterval;
-  stripePriceId: Scalars['String'];
+  tiers: Array<BillingPriceTierDto>;
 };
 
 export type BillingPriceTierDto = {
@@ -303,21 +311,19 @@ export type BillingPriceTierDto = {
   upTo?: Maybe<Scalars['Float']>;
 };
 
-/** The different billing price tiers modes */
-export enum BillingPriceTiersMode {
-  GRADUATED = 'GRADUATED',
-  VOLUME = 'VOLUME'
-}
-
-export type BillingPriceUnionDto = BillingPriceLicensedDto | BillingPriceMeteredDto;
-
 export type BillingProduct = {
   __typename?: 'BillingProduct';
   description: Scalars['String'];
   images?: Maybe<Array<Scalars['String']>>;
   metadata: BillingProductMetadata;
   name: Scalars['String'];
-  prices?: Maybe<Array<BillingPriceUnionDto>>;
+};
+
+export type BillingProductDto = {
+  description: Scalars['String'];
+  images?: Maybe<Array<Scalars['String']>>;
+  metadata: BillingProductMetadata;
+  name: Scalars['String'];
 };
 
 /** The different billing products available */
@@ -340,21 +346,36 @@ export type BillingSessionOutput = {
 
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
-  billingSubscriptionItems?: Maybe<Array<BillingSubscriptionItem>>;
+  billingSubscriptionItems?: Maybe<Array<BillingSubscriptionItemDto>>;
   currentPeriodEnd?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
   interval?: Maybe<SubscriptionInterval>;
   metadata: Scalars['JSON'];
+  phases: Array<BillingSubscriptionSchedulePhase>;
   status: SubscriptionStatus;
 };
 
-export type BillingSubscriptionItem = {
-  __typename?: 'BillingSubscriptionItem';
-  billingProduct?: Maybe<BillingProduct>;
+export type BillingSubscriptionItemDto = {
+  __typename?: 'BillingSubscriptionItemDTO';
+  billingProduct: BillingProductDto;
   hasReachedCurrentPeriodCap: Scalars['Boolean'];
   id: Scalars['UUID'];
   quantity?: Maybe<Scalars['Float']>;
-  stripePriceId?: Maybe<Scalars['String']>;
+  stripePriceId: Scalars['String'];
+};
+
+export type BillingSubscriptionSchedulePhase = {
+  __typename?: 'BillingSubscriptionSchedulePhase';
+  endDate: Scalars['Float'];
+  items: Array<BillingSubscriptionSchedulePhaseItem>;
+  startDate: Scalars['Float'];
+  trialEnd?: Maybe<Scalars['Float']>;
+};
+
+export type BillingSubscriptionSchedulePhaseItem = {
+  __typename?: 'BillingSubscriptionSchedulePhaseItem';
+  price: Scalars['String'];
+  quantity?: Maybe<Scalars['Float']>;
 };
 
 export type BillingTrialPeriodDto = {
@@ -1430,6 +1451,7 @@ export type Mutation = {
   runWorkflowVersion: WorkflowRun;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendInvitations: SendInvitationsOutput;
+  setMeteredSubscriptionPrice: BillingUpdateOutput;
   signIn: AvailableWorkspacesAndAccessTokensOutput;
   signUp: AvailableWorkspacesAndAccessTokensOutput;
   signUpInNewWorkspace: SignUpOutput;
@@ -1438,9 +1460,9 @@ export type Mutation = {
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   submitFormStep: Scalars['Boolean'];
   switchToEnterprisePlan: BillingUpdateOutput;
-  switchToYearlyInterval: BillingUpdateOutput;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
+  toggleSubscriptionInterval: BillingUpdateOutput;
   trackAnalytics: Analytics;
   unsyncRemoteTable: RemoteTable;
   updateApiKey?: Maybe<ApiKey>;
@@ -1459,7 +1481,6 @@ export type Mutation = {
   updateOneRole: Role;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
-  updateSubscriptionItemPrice: BillingUpdateOutput;
   updateWebhook?: Maybe<Webhook>;
   updateWorkflowRunStep: WorkflowAction;
   updateWorkflowVersionPositions: Scalars['Boolean'];
@@ -1928,6 +1949,11 @@ export type MutationSendInvitationsArgs = {
 };
 
 
+export type MutationSetMeteredSubscriptionPriceArgs = {
+  priceId: Scalars['String'];
+};
+
+
 export type MutationSignInArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
@@ -2071,11 +2097,6 @@ export type MutationUpdateOneServerlessFunctionArgs = {
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String'];
   passwordResetToken: Scalars['String'];
-};
-
-
-export type MutationUpdateSubscriptionItemPriceArgs = {
-  priceId: Scalars['String'];
 };
 
 
@@ -2467,10 +2488,9 @@ export type Query = {
   getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
   index: Index;
   indexMetadatas: IndexConnection;
-  listAvailableMeteredBillingPrices: Array<BillingPriceOutput>;
+  listPlans: Array<BillingPlanOutput>;
   object: Object;
   objects: ObjectConnection;
-  plans: Array<BillingPlanOutput>;
   search: SearchResultConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
   versionInfo: VersionInfo;
@@ -3060,9 +3080,7 @@ export type SubscriptionOnDbEventArgs = {
 };
 
 export enum SubscriptionInterval {
-  Day = 'Day',
   Month = 'Month',
-  Week = 'Week',
   Year = 'Year'
 }
 
@@ -4103,6 +4121,14 @@ export type ValidatePasswordResetTokenQueryVariables = Exact<{
 
 export type ValidatePasswordResetTokenQuery = { __typename?: 'Query', validatePasswordResetToken: { __typename?: 'ValidatePasswordResetToken', id: string, email: string } };
 
+export type BillingPriceLicensedFragmentFragment = { __typename?: 'BillingPriceLicensedDTO', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType };
+
+export type BillingPriceMeteredFragmentFragment = { __typename?: 'BillingPriceMeteredDTO', priceUsageType: BillingUsageType, recurringInterval: SubscriptionInterval, stripePriceId: string, tiers: Array<{ __typename?: 'BillingPriceTierDTO', flatAmount?: number | null, unitAmount?: number | null, upTo?: number | null }> };
+
+export type BillingSubscriptionSchedulePhaseFragmentFragment = { __typename?: 'BillingSubscriptionSchedulePhase', startDate: number, endDate: number, trialEnd?: number | null, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> };
+
+export type BillingSubscriptionSchedulePhaseItemFragmentFragment = { __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null };
+
 export type CheckoutSessionMutationVariables = Exact<{
   recurringInterval: SubscriptionInterval;
   successUrlPath?: InputMaybe<Scalars['String']>;
@@ -4118,27 +4144,22 @@ export type EndSubscriptionTrialPeriodMutationVariables = Exact<{ [key: string]:
 
 export type EndSubscriptionTrialPeriodMutation = { __typename?: 'Mutation', endSubscriptionTrialPeriod: { __typename?: 'BillingEndTrialPeriodOutput', status?: SubscriptionStatus | null, hasPaymentMethod: boolean } };
 
+export type SetMeteredSubscriptionPriceMutationVariables = Exact<{
+  priceId: Scalars['String'];
+}>;
+
+
+export type SetMeteredSubscriptionPriceMutation = { __typename?: 'Mutation', setMeteredSubscriptionPrice: { __typename?: 'BillingUpdateOutput', success: boolean } };
+
 export type SwitchSubscriptionToEnterprisePlanMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SwitchSubscriptionToEnterprisePlanMutation = { __typename?: 'Mutation', switchToEnterprisePlan: { __typename?: 'BillingUpdateOutput', success: boolean } };
 
-export type SwitchSubscriptionToYearlyIntervalMutationVariables = Exact<{ [key: string]: never; }>;
+export type ToggleSubscriptionIntervalMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SwitchSubscriptionToYearlyIntervalMutation = { __typename?: 'Mutation', switchToYearlyInterval: { __typename?: 'BillingUpdateOutput', success: boolean } };
-
-export type UpdateSubscriptionItemPriceMutationVariables = Exact<{
-  priceId: Scalars['String'];
-}>;
-
-
-export type UpdateSubscriptionItemPriceMutation = { __typename?: 'Mutation', updateSubscriptionItemPrice: { __typename?: 'BillingUpdateOutput', success: boolean } };
-
-export type BillingBaseProductPricesQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type BillingBaseProductPricesQuery = { __typename?: 'Query', plans: Array<{ __typename?: 'BillingPlanOutput', planKey: BillingPlanKey, baseProduct: { __typename?: 'BillingProduct', name: string, prices?: Array<{ __typename?: 'BillingPriceLicensedDTO', unitAmount: number, stripePriceId: string, recurringInterval: SubscriptionInterval } | { __typename?: 'BillingPriceMeteredDTO' }> | null } }> };
+export type ToggleSubscriptionIntervalMutation = { __typename?: 'Mutation', toggleSubscriptionInterval: { __typename?: 'BillingUpdateOutput', success: boolean } };
 
 export type BillingPortalSessionQueryVariables = Exact<{
   returnUrlPath?: InputMaybe<Scalars['String']>;
@@ -4152,10 +4173,10 @@ export type GetMeteredProductsUsageQueryVariables = Exact<{ [key: string]: never
 
 export type GetMeteredProductsUsageQuery = { __typename?: 'Query', getMeteredProductsUsage: Array<{ __typename?: 'BillingMeteredProductUsageOutput', productKey: BillingProductKey, usedCredits: number, grantedCredits: number, unitPriceCents: number }> };
 
-export type ListAvailableMeteredBillingPricesQueryVariables = Exact<{ [key: string]: never; }>;
+export type ListPlansQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListAvailableMeteredBillingPricesQuery = { __typename?: 'Query', listAvailableMeteredBillingPrices: Array<{ __typename?: 'BillingPriceOutput', nickname: string, amount: number, stripePriceId: string, recurringInterval: SubscriptionInterval }> };
+export type ListPlansQuery = { __typename?: 'Query', listPlans: Array<{ __typename?: 'BillingPlanOutput', planKey: BillingPlanKey, licensedProducts: Array<{ __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceLicensedDTO', stripePriceId: string, unitAmount: number, recurringInterval: SubscriptionInterval, priceUsageType: BillingUsageType }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }>, meteredProducts: Array<{ __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, prices?: Array<{ __typename?: 'BillingPriceMeteredDTO', priceUsageType: BillingUsageType, recurringInterval: SubscriptionInterval, stripePriceId: string, tiers: Array<{ __typename?: 'BillingPriceTierDTO', flatAmount?: number | null, unitAmount?: number | null, upTo?: number | null }> }> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } }> }> };
 
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: string, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: string, schema?: string | null, label: string, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };
 
@@ -4667,7 +4688,7 @@ export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutationVaria
 
 export type VerifyTwoFactorAuthenticationMethodForAuthenticatedUserMutation = { __typename?: 'Mutation', verifyTwoFactorAuthenticationMethodForAuthenticatedUser: { __typename?: 'VerifyTwoFactorAuthenticationMethodOutput', success: boolean } };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', permissionFlags?: Array<PermissionFlagType> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, isTwoFactorAuthenticationEnforced: boolean, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId?: string | null, billingProduct?: { __typename?: 'BillingProduct', name: string, description: string, metadata: { __typename?: 'BillingProductMetadata', planKey: BillingPlanKey, priceUsageBased: BillingUsageType, productKey: BillingProductKey } } | null }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null, defaultAgent?: { __typename?: 'Agent', id: string } | null, views?: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string }> }> | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', permissionFlags?: Array<PermissionFlagType> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, isTwoFactorAuthenticationEnforced: boolean, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', startDate: number, endDate: number, trialEnd?: number | null, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', startDate: number, endDate: number, trialEnd?: number | null, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null, defaultAgent?: { __typename?: 'Agent', id: string } | null, views?: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string }> }> | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } };
 
 export type WorkspaceUrlsFragmentFragment = { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null };
 
@@ -4686,7 +4707,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', permissionFlags?: Array<PermissionFlagType> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, isTwoFactorAuthenticationEnforced: boolean, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItem', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId?: string | null, billingProduct?: { __typename?: 'BillingProduct', name: string, description: string, metadata: { __typename?: 'BillingProductMetadata', planKey: BillingPlanKey, priceUsageBased: BillingUsageType, productKey: BillingProductKey } } | null }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null, defaultAgent?: { __typename?: 'Agent', id: string } | null, views?: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string }> }> | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canAccessFullAdminPanel: boolean, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars?: any | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale?: string | null, userEmail: string, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, calendarStartDay?: number | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, deletedWorkspaceMembers?: Array<{ __typename?: 'DeletedWorkspaceMember', id: string, avatarUrl?: string | null, userEmail: string, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, currentUserWorkspace?: { __typename?: 'UserWorkspace', permissionFlags?: Array<PermissionFlagType> | null, objectRecordsPermissions?: Array<PermissionsOnAllObjectRecords> | null, objectPermissions?: Array<{ __typename?: 'ObjectPermission', objectMetadataId: string, canReadObjectRecords?: boolean | null, canUpdateObjectRecords?: boolean | null, canSoftDeleteObjectRecords?: boolean | null, canDestroyObjectRecords?: boolean | null, restrictedFields?: any | null }> | null, twoFactorAuthenticationMethodSummary?: Array<{ __typename?: 'TwoFactorAuthenticationMethodDTO', twoFactorAuthenticationMethodId: string, status: string, strategy: string }> | null } | null, currentWorkspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, isGoogleAuthEnabled: boolean, isMicrosoftAuthEnabled: boolean, isPasswordAuthEnabled: boolean, subdomain: string, hasValidEnterpriseKey: boolean, customDomain?: string | null, isCustomDomainEnabled: boolean, metadataVersion: number, workspaceMembersCount?: number | null, isTwoFactorAuthenticationEnforced: boolean, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, featureFlags?: Array<{ __typename?: 'FeatureFlagDTO', key: FeatureFlagKey, value: boolean }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, interval?: SubscriptionInterval | null, metadata: any, currentPeriodEnd?: string | null, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', startDate: number, endDate: number, trialEnd?: number | null, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }>, billingSubscriptionItems?: Array<{ __typename?: 'BillingSubscriptionItemDTO', id: string, hasReachedCurrentPeriodCap: boolean, quantity?: number | null, stripePriceId: string, billingProduct: { __typename?: 'BillingLicensedProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } | { __typename?: 'BillingMeteredProduct', name: string, description: string, images?: Array<string> | null, metadata: { __typename?: 'BillingProductMetadata', productKey: BillingProductKey, planKey: BillingPlanKey, priceUsageBased: BillingUsageType } } }> | null } | null, billingSubscriptions: Array<{ __typename?: 'BillingSubscription', id: string, status: SubscriptionStatus, metadata: any, phases: Array<{ __typename?: 'BillingSubscriptionSchedulePhase', startDate: number, endDate: number, trialEnd?: number | null, items: Array<{ __typename?: 'BillingSubscriptionSchedulePhaseItem', price: string, quantity?: number | null }> }> }>, defaultRole?: { __typename?: 'Role', id: string, label: string, description?: string | null, icon?: string | null, canUpdateAllSettings: boolean, canAccessAllTools: boolean, isEditable: boolean, canReadAllObjectRecords: boolean, canUpdateAllObjectRecords: boolean, canSoftDeleteAllObjectRecords: boolean, canDestroyAllObjectRecords: boolean } | null, defaultAgent?: { __typename?: 'Agent', id: string } | null, views?: Array<{ __typename?: 'CoreView', id: string, name: string, objectMetadataId: string, type: ViewType, key?: ViewKey | null, icon: string, position: number, isCompact: boolean, openRecordIn: ViewOpenRecordIn, kanbanAggregateOperation?: AggregateOperations | null, kanbanAggregateOperationFieldMetadataId?: string | null, anyFieldFilterValue?: string | null, viewFields: Array<{ __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null }>, viewFilters: Array<{ __typename?: 'CoreViewFilter', id: string, fieldMetadataId: string, operand: ViewFilterOperand, value: any, viewFilterGroupId?: string | null, positionInViewFilterGroup?: number | null, subFieldName?: string | null, viewId: string }>, viewFilterGroups: Array<{ __typename?: 'CoreViewFilterGroup', id: string, parentViewFilterGroupId?: string | null, logicalOperator: ViewFilterGroupLogicalOperator, positionInViewFilterGroup?: number | null, viewId: string }>, viewSorts: Array<{ __typename?: 'CoreViewSort', id: string, fieldMetadataId: string, direction: ViewSortDirection, viewId: string }>, viewGroups: Array<{ __typename?: 'CoreViewGroup', id: string, fieldMetadataId: string, isVisible: boolean, fieldValue: string, position: number, viewId: string }> }> | null } | null, availableWorkspaces: { __typename?: 'AvailableWorkspaces', availableWorkspacesForSignIn: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }>, availableWorkspacesForSignUp: Array<{ __typename?: 'AvailableWorkspace', id: string, displayName?: string | null, loginToken?: string | null, inviteHash?: string | null, personalInviteToken?: string | null, logo?: string | null, workspaceUrls: { __typename?: 'WorkspaceUrls', subdomainUrl: string, customUrl?: string | null }, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } } };
 
 export type ViewFieldFragmentFragment = { __typename?: 'CoreViewField', id: string, fieldMetadataId: string, viewId: string, isVisible: boolean, position: number, size: number, aggregateOperation?: AggregateOperations | null };
 
@@ -5161,6 +5182,26 @@ export const AvailableSsoIdentityProvidersFragmentFragmentDoc = gql`
   }
 }
     `;
+export const BillingPriceLicensedFragmentFragmentDoc = gql`
+    fragment BillingPriceLicensedFragment on BillingPriceLicensedDTO {
+  stripePriceId
+  unitAmount
+  recurringInterval
+  priceUsageType
+}
+    `;
+export const BillingPriceMeteredFragmentFragmentDoc = gql`
+    fragment BillingPriceMeteredFragment on BillingPriceMeteredDTO {
+  priceUsageType
+  recurringInterval
+  stripePriceId
+  tiers {
+    flatAmount
+    unitAmount
+    upTo
+  }
+}
+    `;
 export const RemoteServerFieldsFragmentDoc = gql`
     fragment RemoteServerFields on RemoteServer {
   id
@@ -5282,6 +5323,22 @@ export const WorkspaceUrlsFragmentFragmentDoc = gql`
   customUrl
 }
     `;
+export const BillingSubscriptionSchedulePhaseItemFragmentFragmentDoc = gql`
+    fragment BillingSubscriptionSchedulePhaseItemFragment on BillingSubscriptionSchedulePhaseItem {
+  price
+  quantity
+}
+    `;
+export const BillingSubscriptionSchedulePhaseFragmentFragmentDoc = gql`
+    fragment BillingSubscriptionSchedulePhaseFragment on BillingSubscriptionSchedulePhase {
+  startDate
+  endDate
+  trialEnd
+  items {
+    ...BillingSubscriptionSchedulePhaseItemFragment
+  }
+}
+    ${BillingSubscriptionSchedulePhaseItemFragmentFragmentDoc}`;
 export const RoleFragmentFragmentDoc = gql`
     fragment RoleFragment on Role {
   id
@@ -5473,6 +5530,9 @@ export const UserQueryFragmentFragmentDoc = gql`
       interval
       metadata
       currentPeriodEnd
+      phases {
+        ...BillingSubscriptionSchedulePhaseFragment
+      }
       billingSubscriptionItems {
         id
         hasReachedCurrentPeriodCap
@@ -5481,10 +5541,11 @@ export const UserQueryFragmentFragmentDoc = gql`
         billingProduct {
           name
           description
+          images
           metadata {
+            productKey
             planKey
             priceUsageBased
-            productKey
           }
         }
       }
@@ -5493,6 +5554,9 @@ export const UserQueryFragmentFragmentDoc = gql`
       id
       status
       metadata
+      phases {
+        ...BillingSubscriptionSchedulePhaseFragment
+      }
     }
     workspaceMembersCount
     defaultRole {
@@ -5515,6 +5579,7 @@ export const UserQueryFragmentFragmentDoc = gql`
 ${DeletedWorkspaceMemberQueryFragmentFragmentDoc}
 ${ObjectPermissionFragmentFragmentDoc}
 ${WorkspaceUrlsFragmentFragmentDoc}
+${BillingSubscriptionSchedulePhaseFragmentFragmentDoc}
 ${RoleFragmentFragmentDoc}
 ${ViewFragmentFragmentDoc}
 ${AvailableWorkspacesFragmentFragmentDoc}`;
@@ -7162,6 +7227,39 @@ export function useEndSubscriptionTrialPeriodMutation(baseOptions?: Apollo.Mutat
 export type EndSubscriptionTrialPeriodMutationHookResult = ReturnType<typeof useEndSubscriptionTrialPeriodMutation>;
 export type EndSubscriptionTrialPeriodMutationResult = Apollo.MutationResult<EndSubscriptionTrialPeriodMutation>;
 export type EndSubscriptionTrialPeriodMutationOptions = Apollo.BaseMutationOptions<EndSubscriptionTrialPeriodMutation, EndSubscriptionTrialPeriodMutationVariables>;
+export const SetMeteredSubscriptionPriceDocument = gql`
+    mutation SetMeteredSubscriptionPrice($priceId: String!) {
+  setMeteredSubscriptionPrice(priceId: $priceId) {
+    success
+  }
+}
+    `;
+export type SetMeteredSubscriptionPriceMutationFn = Apollo.MutationFunction<SetMeteredSubscriptionPriceMutation, SetMeteredSubscriptionPriceMutationVariables>;
+
+/**
+ * __useSetMeteredSubscriptionPriceMutation__
+ *
+ * To run a mutation, you first call `useSetMeteredSubscriptionPriceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetMeteredSubscriptionPriceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setMeteredSubscriptionPriceMutation, { data, loading, error }] = useSetMeteredSubscriptionPriceMutation({
+ *   variables: {
+ *      priceId: // value for 'priceId'
+ *   },
+ * });
+ */
+export function useSetMeteredSubscriptionPriceMutation(baseOptions?: Apollo.MutationHookOptions<SetMeteredSubscriptionPriceMutation, SetMeteredSubscriptionPriceMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SetMeteredSubscriptionPriceMutation, SetMeteredSubscriptionPriceMutationVariables>(SetMeteredSubscriptionPriceDocument, options);
+      }
+export type SetMeteredSubscriptionPriceMutationHookResult = ReturnType<typeof useSetMeteredSubscriptionPriceMutation>;
+export type SetMeteredSubscriptionPriceMutationResult = Apollo.MutationResult<SetMeteredSubscriptionPriceMutation>;
+export type SetMeteredSubscriptionPriceMutationOptions = Apollo.BaseMutationOptions<SetMeteredSubscriptionPriceMutation, SetMeteredSubscriptionPriceMutationVariables>;
 export const SwitchSubscriptionToEnterprisePlanDocument = gql`
     mutation SwitchSubscriptionToEnterprisePlan {
   switchToEnterprisePlan {
@@ -7194,115 +7292,38 @@ export function useSwitchSubscriptionToEnterprisePlanMutation(baseOptions?: Apol
 export type SwitchSubscriptionToEnterprisePlanMutationHookResult = ReturnType<typeof useSwitchSubscriptionToEnterprisePlanMutation>;
 export type SwitchSubscriptionToEnterprisePlanMutationResult = Apollo.MutationResult<SwitchSubscriptionToEnterprisePlanMutation>;
 export type SwitchSubscriptionToEnterprisePlanMutationOptions = Apollo.BaseMutationOptions<SwitchSubscriptionToEnterprisePlanMutation, SwitchSubscriptionToEnterprisePlanMutationVariables>;
-export const SwitchSubscriptionToYearlyIntervalDocument = gql`
-    mutation SwitchSubscriptionToYearlyInterval {
-  switchToYearlyInterval {
+export const ToggleSubscriptionIntervalDocument = gql`
+    mutation ToggleSubscriptionInterval {
+  toggleSubscriptionInterval {
     success
   }
 }
     `;
-export type SwitchSubscriptionToYearlyIntervalMutationFn = Apollo.MutationFunction<SwitchSubscriptionToYearlyIntervalMutation, SwitchSubscriptionToYearlyIntervalMutationVariables>;
+export type ToggleSubscriptionIntervalMutationFn = Apollo.MutationFunction<ToggleSubscriptionIntervalMutation, ToggleSubscriptionIntervalMutationVariables>;
 
 /**
- * __useSwitchSubscriptionToYearlyIntervalMutation__
+ * __useToggleSubscriptionIntervalMutation__
  *
- * To run a mutation, you first call `useSwitchSubscriptionToYearlyIntervalMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSwitchSubscriptionToYearlyIntervalMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useToggleSubscriptionIntervalMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleSubscriptionIntervalMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [switchSubscriptionToYearlyIntervalMutation, { data, loading, error }] = useSwitchSubscriptionToYearlyIntervalMutation({
+ * const [toggleSubscriptionIntervalMutation, { data, loading, error }] = useToggleSubscriptionIntervalMutation({
  *   variables: {
  *   },
  * });
  */
-export function useSwitchSubscriptionToYearlyIntervalMutation(baseOptions?: Apollo.MutationHookOptions<SwitchSubscriptionToYearlyIntervalMutation, SwitchSubscriptionToYearlyIntervalMutationVariables>) {
+export function useToggleSubscriptionIntervalMutation(baseOptions?: Apollo.MutationHookOptions<ToggleSubscriptionIntervalMutation, ToggleSubscriptionIntervalMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<SwitchSubscriptionToYearlyIntervalMutation, SwitchSubscriptionToYearlyIntervalMutationVariables>(SwitchSubscriptionToYearlyIntervalDocument, options);
+        return Apollo.useMutation<ToggleSubscriptionIntervalMutation, ToggleSubscriptionIntervalMutationVariables>(ToggleSubscriptionIntervalDocument, options);
       }
-export type SwitchSubscriptionToYearlyIntervalMutationHookResult = ReturnType<typeof useSwitchSubscriptionToYearlyIntervalMutation>;
-export type SwitchSubscriptionToYearlyIntervalMutationResult = Apollo.MutationResult<SwitchSubscriptionToYearlyIntervalMutation>;
-export type SwitchSubscriptionToYearlyIntervalMutationOptions = Apollo.BaseMutationOptions<SwitchSubscriptionToYearlyIntervalMutation, SwitchSubscriptionToYearlyIntervalMutationVariables>;
-export const UpdateSubscriptionItemPriceDocument = gql`
-    mutation UpdateSubscriptionItemPrice($priceId: String!) {
-  updateSubscriptionItemPrice(priceId: $priceId) {
-    success
-  }
-}
-    `;
-export type UpdateSubscriptionItemPriceMutationFn = Apollo.MutationFunction<UpdateSubscriptionItemPriceMutation, UpdateSubscriptionItemPriceMutationVariables>;
-
-/**
- * __useUpdateSubscriptionItemPriceMutation__
- *
- * To run a mutation, you first call `useUpdateSubscriptionItemPriceMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateSubscriptionItemPriceMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateSubscriptionItemPriceMutation, { data, loading, error }] = useUpdateSubscriptionItemPriceMutation({
- *   variables: {
- *      priceId: // value for 'priceId'
- *   },
- * });
- */
-export function useUpdateSubscriptionItemPriceMutation(baseOptions?: Apollo.MutationHookOptions<UpdateSubscriptionItemPriceMutation, UpdateSubscriptionItemPriceMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateSubscriptionItemPriceMutation, UpdateSubscriptionItemPriceMutationVariables>(UpdateSubscriptionItemPriceDocument, options);
-      }
-export type UpdateSubscriptionItemPriceMutationHookResult = ReturnType<typeof useUpdateSubscriptionItemPriceMutation>;
-export type UpdateSubscriptionItemPriceMutationResult = Apollo.MutationResult<UpdateSubscriptionItemPriceMutation>;
-export type UpdateSubscriptionItemPriceMutationOptions = Apollo.BaseMutationOptions<UpdateSubscriptionItemPriceMutation, UpdateSubscriptionItemPriceMutationVariables>;
-export const BillingBaseProductPricesDocument = gql`
-    query billingBaseProductPrices {
-  plans {
-    planKey
-    baseProduct {
-      name
-      prices {
-        ... on BillingPriceLicensedDTO {
-          unitAmount
-          stripePriceId
-          recurringInterval
-        }
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useBillingBaseProductPricesQuery__
- *
- * To run a query within a React component, call `useBillingBaseProductPricesQuery` and pass it any options that fit your needs.
- * When your component renders, `useBillingBaseProductPricesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useBillingBaseProductPricesQuery({
- *   variables: {
- *   },
- * });
- */
-export function useBillingBaseProductPricesQuery(baseOptions?: Apollo.QueryHookOptions<BillingBaseProductPricesQuery, BillingBaseProductPricesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<BillingBaseProductPricesQuery, BillingBaseProductPricesQueryVariables>(BillingBaseProductPricesDocument, options);
-      }
-export function useBillingBaseProductPricesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BillingBaseProductPricesQuery, BillingBaseProductPricesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<BillingBaseProductPricesQuery, BillingBaseProductPricesQueryVariables>(BillingBaseProductPricesDocument, options);
-        }
-export type BillingBaseProductPricesQueryHookResult = ReturnType<typeof useBillingBaseProductPricesQuery>;
-export type BillingBaseProductPricesLazyQueryHookResult = ReturnType<typeof useBillingBaseProductPricesLazyQuery>;
-export type BillingBaseProductPricesQueryResult = Apollo.QueryResult<BillingBaseProductPricesQuery, BillingBaseProductPricesQueryVariables>;
+export type ToggleSubscriptionIntervalMutationHookResult = ReturnType<typeof useToggleSubscriptionIntervalMutation>;
+export type ToggleSubscriptionIntervalMutationResult = Apollo.MutationResult<ToggleSubscriptionIntervalMutation>;
+export type ToggleSubscriptionIntervalMutationOptions = Apollo.BaseMutationOptions<ToggleSubscriptionIntervalMutation, ToggleSubscriptionIntervalMutationVariables>;
 export const BillingPortalSessionDocument = gql`
     query BillingPortalSession($returnUrlPath: String) {
   billingPortalSession(returnUrlPath: $returnUrlPath) {
@@ -7375,43 +7396,71 @@ export function useGetMeteredProductsUsageLazyQuery(baseOptions?: Apollo.LazyQue
 export type GetMeteredProductsUsageQueryHookResult = ReturnType<typeof useGetMeteredProductsUsageQuery>;
 export type GetMeteredProductsUsageLazyQueryHookResult = ReturnType<typeof useGetMeteredProductsUsageLazyQuery>;
 export type GetMeteredProductsUsageQueryResult = Apollo.QueryResult<GetMeteredProductsUsageQuery, GetMeteredProductsUsageQueryVariables>;
-export const ListAvailableMeteredBillingPricesDocument = gql`
-    query listAvailableMeteredBillingPrices {
-  listAvailableMeteredBillingPrices {
-    nickname
-    amount
-    stripePriceId
-    recurringInterval
+export const ListPlansDocument = gql`
+    query listPlans {
+  listPlans {
+    planKey
+    licensedProducts {
+      name
+      description
+      images
+      metadata {
+        productKey
+        planKey
+        priceUsageBased
+      }
+      ... on BillingLicensedProduct {
+        prices {
+          ...BillingPriceLicensedFragment
+        }
+      }
+    }
+    meteredProducts {
+      name
+      description
+      images
+      metadata {
+        productKey
+        planKey
+        priceUsageBased
+      }
+      ... on BillingMeteredProduct {
+        prices {
+          ...BillingPriceMeteredFragment
+        }
+      }
+    }
   }
 }
-    `;
+    ${BillingPriceLicensedFragmentFragmentDoc}
+${BillingPriceMeteredFragmentFragmentDoc}`;
 
 /**
- * __useListAvailableMeteredBillingPricesQuery__
+ * __useListPlansQuery__
  *
- * To run a query within a React component, call `useListAvailableMeteredBillingPricesQuery` and pass it any options that fit your needs.
- * When your component renders, `useListAvailableMeteredBillingPricesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useListPlansQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListPlansQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useListAvailableMeteredBillingPricesQuery({
+ * const { data, loading, error } = useListPlansQuery({
  *   variables: {
  *   },
  * });
  */
-export function useListAvailableMeteredBillingPricesQuery(baseOptions?: Apollo.QueryHookOptions<ListAvailableMeteredBillingPricesQuery, ListAvailableMeteredBillingPricesQueryVariables>) {
+export function useListPlansQuery(baseOptions?: Apollo.QueryHookOptions<ListPlansQuery, ListPlansQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ListAvailableMeteredBillingPricesQuery, ListAvailableMeteredBillingPricesQueryVariables>(ListAvailableMeteredBillingPricesDocument, options);
+        return Apollo.useQuery<ListPlansQuery, ListPlansQueryVariables>(ListPlansDocument, options);
       }
-export function useListAvailableMeteredBillingPricesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListAvailableMeteredBillingPricesQuery, ListAvailableMeteredBillingPricesQueryVariables>) {
+export function useListPlansLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListPlansQuery, ListPlansQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ListAvailableMeteredBillingPricesQuery, ListAvailableMeteredBillingPricesQueryVariables>(ListAvailableMeteredBillingPricesDocument, options);
+          return Apollo.useLazyQuery<ListPlansQuery, ListPlansQueryVariables>(ListPlansDocument, options);
         }
-export type ListAvailableMeteredBillingPricesQueryHookResult = ReturnType<typeof useListAvailableMeteredBillingPricesQuery>;
-export type ListAvailableMeteredBillingPricesLazyQueryHookResult = ReturnType<typeof useListAvailableMeteredBillingPricesLazyQuery>;
-export type ListAvailableMeteredBillingPricesQueryResult = Apollo.QueryResult<ListAvailableMeteredBillingPricesQuery, ListAvailableMeteredBillingPricesQueryVariables>;
+export type ListPlansQueryHookResult = ReturnType<typeof useListPlansQuery>;
+export type ListPlansLazyQueryHookResult = ReturnType<typeof useListPlansLazyQuery>;
+export type ListPlansQueryResult = Apollo.QueryResult<ListPlansQuery, ListPlansQueryVariables>;
 export const CreateServerDocument = gql`
     mutation createServer($input: CreateRemoteServerInput!) {
   createOneRemoteServer(input: $input) {

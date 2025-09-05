@@ -3,7 +3,6 @@
 import { transformStripePriceEventToDatabasePrice } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-price-event-to-database-price.util';
 import { BillingPriceBillingScheme } from 'src/engine/core-modules/billing/enums/billing-price-billing-scheme.enum';
 import { BillingPriceTaxBehavior } from 'src/engine/core-modules/billing/enums/billing-price-tax-behavior.enum';
-import { BillingPriceTiersMode } from 'src/engine/core-modules/billing/enums/billing-price-tiers-mode.enum';
 import { BillingPriceType } from 'src/engine/core-modules/billing/enums/billing-price-type.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
@@ -55,7 +54,6 @@ describe('transformStripePriceEventToDatabasePrice', () => {
       interval: SubscriptionInterval.Month,
       currencyOptions: undefined,
       tiers: undefined,
-      tiersMode: undefined,
       recurring: {
         usage_type: 'licensed',
         interval: 'month',
@@ -124,20 +122,6 @@ describe('transformStripePriceEventToDatabasePrice', () => {
     });
   });
 
-  it('should handle all tiers modes correctly', () => {
-    const tiersModes = [
-      ['graduated', BillingPriceTiersMode.GRADUATED],
-      ['volume', BillingPriceTiersMode.VOLUME],
-    ];
-
-    tiersModes.forEach(([stripeTiersMode, expectedTiersMode]) => {
-      const mockData = createMockPriceData({ tiers_mode: stripeTiersMode });
-      const result = transformStripePriceEventToDatabasePrice(mockData as any);
-
-      expect(result.tiersMode).toBe(expectedTiersMode);
-    });
-  });
-
   it('should handle all intervals correctly', () => {
     const intervals = [
       ['month', SubscriptionInterval.Month],
@@ -170,7 +154,6 @@ describe('transformStripePriceEventToDatabasePrice', () => {
 
     expect(result.billingScheme).toBe(BillingPriceBillingScheme.TIERED);
     expect(result.tiers).toEqual(mockTiers);
-    expect(result.tiersMode).toBe(BillingPriceTiersMode.GRADUATED);
   });
 
   it('should handle metered pricing with transform quantity', () => {

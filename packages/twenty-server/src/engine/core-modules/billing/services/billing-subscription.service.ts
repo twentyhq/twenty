@@ -30,6 +30,7 @@ import { BillingProductService } from 'src/engine/core-modules/billing/services/
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
+import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -56,6 +57,7 @@ export class BillingSubscriptionService {
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
     @InjectRepository(BillingSubscriptionItem)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
+    private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
   ) {}
 
   async getCurrentBillingSubscriptionOrThrow(criteria: {
@@ -184,18 +186,108 @@ export class BillingSubscriptionService {
     return entitlement.value;
   }
 
-  async switchToYearlyInterval(workspace: Workspace) {
+  async toggleInterval(workspace: Workspace) {
     const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
 
-    if (billingSubscription.interval === SubscriptionInterval.Year) {
-      throw new BillingException(
-        'Cannot switch from yearly to monthly billing interval',
-        BillingExceptionCode.BILLING_SUBSCRIPTION_INTERVAL_NOT_SWITCHABLE,
-      );
-    }
+    return billingSubscription.interval === SubscriptionInterval.Year
+      ? this.switchToMonthlyInterval(billingSubscription)
+      : this.switchToYearlyInterval(billingSubscription);
+  }
 
+  async switchToMonthlyInterval(billingSubscription: BillingSubscription) {
+    const subscription =
+      await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
+        billingSubscription.stripeSubscriptionId,
+      );
+
+    const currentLicensedBillingSubscriptionItem = findOrThrow(
+      billingSubscription.billingSubscriptionItems,
+      (item) =>
+        item.billingProduct.metadata.priceUsageBased ===
+        BillingUsageType.LICENSED,
+    );
+
+    billingValidator.assertIsLicensedSubscriptionItem(
+      currentLicensedBillingSubscriptionItem,
+    );
+
+    const currentMeteredBillingSubscriptionItem = findOrThrow(
+      billingSubscription.billingSubscriptionItems,
+      (item) =>
+        item.billingProduct.metadata.priceUsageBased ===
+        BillingUsageType.METERED,
+    );
+
+    billingValidator.assertIsMeteredSubscriptionItem(
+      currentMeteredBillingSubscriptionItem,
+    );
+
+    const pricesPerPlanResult =
+      await this.billingPlanService.getPricesPerPlanByInterval({
+        planKey: getPlanKeyFromSubscription(billingSubscription),
+        interval: SubscriptionInterval.Month,
+      });
+
+    const targetLicensedPrice = findOrThrow(
+      pricesPerPlanResult.licensedProductsPrices,
+      (price) =>
+        price.billingProduct.metadata.productKey ===
+        BillingProductKey.BASE_PRODUCT,
+      new BillingException(
+        `Base product not found`,
+        BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
+      ),
+    );
+
+    const targetMeteredPrice = await this.findMeteredMatchingPrice(
+      pricesPerPlanResult.meteredProductsPrices,
+      currentMeteredBillingSubscriptionItem.stripePriceId,
+      currentMeteredBillingSubscriptionItem.stripeProductId,
+      SubscriptionInterval.Month,
+      SubscriptionInterval.Year,
+    );
+
+    const schedule =
+      await this.stripeSubscriptionScheduleService.findOrCreateSubscriptionSchedule(
+        subscription,
+      );
+
+    const nextPhase = {
+      items: [
+        {
+          price: targetLicensedPrice.stripePriceId,
+          quantity: currentLicensedBillingSubscriptionItem.quantity,
+        },
+        { price: targetMeteredPrice.stripePriceId },
+      ],
+      start_date: subscription.current_period_end,
+      proration_behavior: 'none' as const,
+      billing_thresholds:
+        this.stripeSubscriptionService.getBillingThresholdsByInterval(
+          SubscriptionInterval.Month,
+        ),
+    };
+
+    const currentPhase = schedule.phases[0];
+
+    return this.stripeSubscriptionScheduleService.updateSchedule(schedule.id, {
+      phases: [
+        {
+          start_date: currentPhase.start_date,
+          end_date: currentPhase.end_date,
+          items: currentPhase.items.map((it) => ({
+            price: typeof it.price === 'string' ? it.price : it.price!.id,
+            quantity: it.quantity ?? undefined,
+          })),
+        },
+        nextPhase,
+      ],
+    });
+  }
+
+  async switchToYearlyInterval(billingSubscription: BillingSubscription) {
     const interval = SubscriptionInterval.Year;
 
     const planKey = getPlanKeyFromSubscription(billingSubscription);
@@ -283,19 +375,12 @@ export class BillingSubscriptionService {
         billingProduct.metadata.priceUsageBased === BillingUsageType.METERED,
     );
 
-    const { tiers: currentMeteredBillingPriceTiers } =
-      await this.billingPriceRepository.findOneByOrFail({
-        stripePriceId: currentMeteredBillingSubscriptionItem.stripePriceId,
-      });
-
-    billingValidator.assertIsMeteredTiersSchemaOrThrow(
-      currentMeteredBillingPriceTiers,
-    );
-
-    const yearlyMeteredMatchingPrice = this.findYearlyMeteredMatchingPrice(
+    const yearlyMeteredMatchingPrice = await this.findMeteredMatchingPrice(
       billingPricesPerPlanAndIntervalArray,
-      currentMeteredBillingPriceTiers,
+      currentMeteredBillingSubscriptionItem.stripePriceId,
       currentMeteredBillingSubscriptionItem.stripeProductId,
+      SubscriptionInterval.Year,
+      SubscriptionInterval.Month,
     );
 
     return billingSubscription.billingSubscriptionItems.map(
@@ -317,37 +402,57 @@ export class BillingSubscriptionService {
     );
   }
 
-  private findYearlyMeteredMatchingPrice(
+  async findMeteredMatchingPrice(
     billingPricesPerPlanAndIntervalArray: BillingPrice[],
-    currentMeteredBillingPriceTiers: MeterBillingPriceTiers,
+    baseStripePriceId: string,
     currentStripeProductId: string,
-  ): BillingPrice & { tiers: MeterBillingPriceTiers } {
-    const meteredYearlyCandidates = billingPricesPerPlanAndIntervalArray.filter(
-      (price) =>
-        price.billingProduct.metadata.priceUsageBased ===
-          BillingUsageType.METERED &&
-        price.interval === SubscriptionInterval.Year,
+    targetInterval: SubscriptionInterval,
+    sourceInterval: SubscriptionInterval,
+  ): Promise<Omit<BillingPrice, 'tiers'> & { tiers: MeterBillingPriceTiers }> {
+    if (sourceInterval === targetInterval) {
+      throw new BillingException(
+        `Interval ${sourceInterval} is the same as the target interval ${targetInterval}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_INTERVAL_NOT_SWITCHABLE,
+      );
+    }
+
+    const { tiers: currentMeteredBillingPriceTiers } =
+      await this.billingPriceRepository.findOneByOrFail({
+        stripePriceId: baseStripePriceId,
+      });
+
+    billingValidator.assertIsMeteredTiersSchemaOrThrow(
+      currentMeteredBillingPriceTiers,
     );
 
-    const validCandidates = meteredYearlyCandidates.filter((price) =>
-      billingValidator.isMeteredTiersSchema(price.tiers),
-    ) as Array<
-      BillingPrice & {
-        tiers: MeterBillingPriceTiers;
-      }
-    >;
+    const meteredCandidates = billingPricesPerPlanAndIntervalArray.filter(
+      (price) =>
+        price.billingProduct.metadata.priceUsageBased ===
+          BillingUsageType.METERED && price.interval === targetInterval,
+    );
 
-    const currentMonthlyCap = currentMeteredBillingPriceTiers[0].up_to;
-    const currentYearlyCap = currentMonthlyCap * 12;
+    const validCandidates = meteredCandidates.filter((price) =>
+      billingValidator.isMeteredTiersSchema(price.tiers),
+    ) as Array<BillingPrice & { tiers: MeterBillingPriceTiers }>;
+
+    const currentCap = currentMeteredBillingPriceTiers[0].up_to;
+
+    const factor =
+      sourceInterval === SubscriptionInterval.Year &&
+      targetInterval === SubscriptionInterval.Month
+        ? 1 / 12
+        : 12;
+
+    const referenceCap = currentCap * factor;
 
     const match = validCandidates
-      .filter((price) => price.tiers[0].up_to <= currentYearlyCap)
+      .filter((price) => price.tiers[0].up_to <= referenceCap)
       .sort((a, b) => a.tiers[0].up_to - b.tiers[0].up_to)
       .pop();
 
     if (!match) {
       throw new BillingException(
-        `Cannot find matching price for product ${currentStripeProductId}`,
+        `Cannot find matching ${String(targetInterval).toLowerCase()} price for product ${currentStripeProductId}`,
         BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
       );
     }

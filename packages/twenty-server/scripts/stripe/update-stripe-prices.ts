@@ -187,8 +187,8 @@ const main = async () => {
     for (const price of data) {
       if (price.nickname && !createdNicknames.includes(price.nickname)) {
         if (price.active) {
-          await stripe.prices.update(price.id, { active: false });
-          console.log(`Archived: ${price.id} (${price.nickname})`);
+          // await stripe.prices.update(price.id, { active: false });
+          // console.log(`Archived: ${price.id} (${price.nickname})`);
         }
       }
     }

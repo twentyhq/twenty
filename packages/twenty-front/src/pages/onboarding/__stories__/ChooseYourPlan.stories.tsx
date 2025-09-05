@@ -3,7 +3,6 @@ import { type Meta, type StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { HttpResponse, graphql } from 'msw';
 
-import { BILLING_BASE_PRODUCT_PRICES } from '@/billing/graphql/queries/billingBaseProductPrices';
 import { AppPath } from '@/types/AppPath';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import {
@@ -18,6 +17,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUserData } from '~/testing/mock-data/users';
+import { LIST_PLANS } from '@/billing/graphql/queries/listPlans';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Onboarding/ChooseYourPlan',
@@ -36,30 +36,27 @@ const meta: Meta<PageDecoratorArgs> = {
             },
           });
         }),
-        graphql.query(
-          getOperationName(BILLING_BASE_PRODUCT_PRICES) ?? '',
-          () => {
-            return HttpResponse.json({
-              data: {
-                plans: [
-                  {
-                    planKey: BillingPlanKey.PRO,
-                    baseProduct: {
-                      prices: [
-                        {
-                          __typename: 'BillingPriceLicensedDTO',
-                          unitAmount: 900,
-                          stripePriceId: 'monthly8usd',
-                          recurringInterval: SubscriptionInterval.Month,
-                        },
-                      ],
-                    },
+        graphql.query(getOperationName(LIST_PLANS) ?? '', () => {
+          return HttpResponse.json({
+            data: {
+              plans: [
+                {
+                  planKey: BillingPlanKey.PRO,
+                  baseProduct: {
+                    prices: [
+                      {
+                        __typename: 'BillingPriceLicensedDTO',
+                        unitAmount: 900,
+                        stripePriceId: 'monthly8usd',
+                        recurringInterval: SubscriptionInterval.Month,
+                      },
+                    ],
                   },
-                ],
-              },
-            });
-          },
-        ),
+                },
+              ],
+            },
+          });
+        }),
         ...graphqlMocks.handlers,
       ],
     },

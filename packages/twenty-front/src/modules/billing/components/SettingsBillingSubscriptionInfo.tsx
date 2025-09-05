@@ -1,14 +1,18 @@
 import { SubscriptionInfoContainer } from '@/billing/components/SubscriptionInfoContainer';
-import { SubscriptionInfoRowContainer } from '@/billing/components/internal/SubscriptionInfoRowContainer';
-
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { formatMonthlyPrices } from '@/billing/utils/formatMonthlyPrices';
 import {
-  isMonthlyPlan as isMonthlyPlanFn,
-  isYearlyPlan as isYearlyPlanFn,
-  isProPlan as isProPlanFn,
-  isEnterprisePlan as isEnterprisePlanFn,
+  SubscriptionInfoHeaderRow,
+  SubscriptionInfoRowContainer,
+} from '@/billing/components/internal/SubscriptionInfoRowContainer';
+
+import {
+  type CurrentWorkspace,
+  currentWorkspaceState,
+} from '@/auth/states/currentWorkspaceState';
+import {
   getIntervalLabel,
+  isMonthlyPlan as isMonthlyPlanFn,
+  isProPlan as isProPlanFn,
+  isYearlyPlan as isYearlyPlanFn,
 } from '@/billing/utils/subscriptionFlags';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -16,36 +20,43 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import styled from '@emotion/styled';
 import { useLingui } from '@lingui/react/macro';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/components';
 import {
   H2Title,
   IconArrowUp,
   IconCalendarEvent,
+  IconCalendarRepeat,
   IconCircleX,
+  IconCoins,
   IconTag,
   IconUsers,
-  IconCalendarRepeat,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import {
   BillingPlanKey,
-  type BillingPlanOutput,
   BillingProductKey,
   PermissionFlagType,
   SubscriptionInterval,
   SubscriptionStatus,
-  useBillingBaseProductPricesQuery,
   useSwitchSubscriptionToEnterprisePlanMutation,
-  useSwitchSubscriptionToYearlyIntervalMutation,
+  useToggleSubscriptionIntervalMutation,
 } from '~/generated-metadata/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 import { useEndSubscriptionTrialPeriod } from '@/billing/hooks/useEndSubscriptionTrialPeriod';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { formatNumber } from '~/utils/format/number';
+import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
+import { useFormatPrices } from '@/billing/hooks/useFormatPrices';
+import { useNextBillingPhase } from '@/billing/hooks/useNextBillingPhase';
+import { PlanTag } from '@/billing/components/internal/PlanTag';
 
-const SWITCH_BILLING_INTERVAL_MODAL_ID = 'switch-billing-interval-modal';
+const SWITCH_BILLING_INTERVAL_TO_MONTHLY_MODAL_ID =
+  'switch-billing-interval-to-monthly-modal';
+
+const SWITCH_BILLING_INTERVAL_TO_YEARLY_MODAL_ID =
+  'switch-billing-interval-to-yearly-modal';
 
 const SWITCH_BILLING_PLAN_MODAL_ID = 'switch-billing-plan-modal';
 
@@ -58,34 +69,50 @@ const StyledSwitchButtonContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
-export const SettingsBillingSubscriptionInfo = () => {
+export const SettingsBillingSubscriptionInfo = ({
+  currentWorkspace,
+  currentBillingSubscription,
+}: {
+  currentWorkspace: CurrentWorkspace;
+  currentBillingSubscription: NonNullable<
+    CurrentWorkspace['currentBillingSubscription']
+  >;
+}) => {
   const { t } = useLingui();
 
   const { openModal } = useModal();
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
+  const { getCurrentMeteredBillingPrice, getCurrentPlan } = useBillingPlan();
+
+  const {
+    hasNextBillingPhase,
+    getNextInterval,
+    getNextPlan,
+    nextPrepaidCredits,
+    getNextBillingSeats,
+  } = useNextBillingPhase();
+
   const subscriptionStatus = useSubscriptionStatus();
 
-  const { data: pricesData } = useBillingBaseProductPricesQuery();
+  const { formatMonthlyPrices } = useFormatPrices();
 
-  const [switchToYearlyInterval] =
-    useSwitchSubscriptionToYearlyIntervalMutation();
+  const [toggleSubscriptionIntervalMutation] =
+    useToggleSubscriptionIntervalMutation();
 
   const [switchToEnterprisePlan] =
     useSwitchSubscriptionToEnterprisePlanMutation();
 
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
-    currentWorkspaceState,
-  );
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+
+  const currentMeterPrice = getCurrentMeteredBillingPrice();
 
   const isMonthlyPlan = isMonthlyPlanFn(currentWorkspace);
 
   const isYearlyPlan = isYearlyPlanFn(currentWorkspace);
 
   const isProPlan = isProPlanFn(currentWorkspace);
-
-  const isEnterprisePlan = isEnterprisePlanFn(currentWorkspace);
 
   const isTrialPeriod = subscriptionStatus === SubscriptionStatus.Trialing;
 
@@ -95,54 +122,52 @@ export const SettingsBillingSubscriptionInfo = () => {
   const { endTrialPeriod, isLoading: isEndTrialPeriodLoading } =
     useEndSubscriptionTrialPeriod();
 
-  const planDescriptor = isProPlan
-    ? { color: 'sky' as const, label: t`Pro` }
-    : isEnterprisePlan
-      ? { color: 'purple' as const, label: t`Organization` }
-      : undefined;
+  const getIntervalLabelAsAdjectiveCapitalize = (isMonthlyPlan: boolean) => {
+    return capitalize(getIntervalLabel(isMonthlyPlan, true));
+  };
+  const intervalLabel = getIntervalLabel(isMonthlyPlan);
 
-  const planTag = planDescriptor ? (
-    <>
-      <Tag color={planDescriptor.color} text={planDescriptor.label} />
-      {isTrialPeriod && <Tag color="blue" text={t`Trial`} />}
-    </>
-  ) : undefined;
-
-  const intervalLabel = capitalize(getIntervalLabel(isMonthlyPlan, true));
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
     usePermissionFlagMap();
 
-  const seats =
-    currentWorkspace?.currentBillingSubscription?.billingSubscriptionItems?.find(
-      (item) =>
-        item.billingProduct?.metadata.productKey ===
-        BillingProductKey.BASE_PRODUCT,
-    )?.quantity as number | undefined;
+  const seats = currentBillingSubscription.billingSubscriptionItems?.find(
+    (item) =>
+      item.billingProduct.metadata.productKey ===
+      BillingProductKey.BASE_PRODUCT,
+  )?.quantity as number | undefined;
 
-  const baseProductPrices = pricesData?.plans as BillingPlanOutput[];
+  const formattedPrices = formatMonthlyPrices();
 
-  const formattedPrices = formatMonthlyPrices(baseProductPrices);
+  const renewDate = currentBillingSubscription.currentPeriodEnd;
 
-  const renewDate =
-    currentWorkspace?.currentBillingSubscription?.currentPeriodEnd;
+  const beautifiedRenewDate = renewDate
+    ? beautifyExactDate(renewDate)
+    : undefined;
 
   const yearlyPrice =
     formattedPrices?.[
-      currentWorkspace?.currentBillingSubscription?.metadata[
-        'plan'
-      ] as BillingPlanKey
+      currentBillingSubscription.metadata['plan'] as BillingPlanKey
     ]?.[SubscriptionInterval.Year];
+
+  const monthlyPrice =
+    formattedPrices?.[
+      currentBillingSubscription.metadata['plan'] as BillingPlanKey
+    ]?.[SubscriptionInterval.Month];
 
   const enterprisePrice =
     formattedPrices?.[BillingPlanKey.ENTERPRISE]?.[
-      currentWorkspace?.currentBillingSubscription?.interval as
+      currentBillingSubscription.interval as
         | SubscriptionInterval.Month
         | SubscriptionInterval.Year
     ];
 
   const switchInterval = async () => {
     try {
-      await switchToYearlyInterval();
+      await toggleSubscriptionIntervalMutation();
+      const message =
+        currentBillingSubscription.interval === SubscriptionInterval.Month
+          ? t`Subscription has been switched to Yearly.`
+          : t`Subscription will be switch to Monthly the ${beautifiedRenewDate}.`;
       if (isDefined(currentWorkspace?.currentBillingSubscription)) {
         const newCurrentWorkspace = {
           ...currentWorkspace,
@@ -153,12 +178,10 @@ export const SettingsBillingSubscriptionInfo = () => {
         };
         setCurrentWorkspace(newCurrentWorkspace);
       }
-      enqueueSuccessSnackBar({
-        message: t`Subscription has been switched to Yearly.`,
-      });
+      enqueueSuccessSnackBar({ message });
     } catch {
       enqueueErrorSnackBar({
-        message: t`Error while switching subscription to Yearly.`,
+        message: t`Error while switching subscription.`,
       });
     }
   };
@@ -193,27 +216,65 @@ export const SettingsBillingSubscriptionInfo = () => {
     <Section>
       <H2Title title={t`Subscription`} description={t`About my subscription`} />
       <SubscriptionInfoContainer>
+        <SubscriptionInfoHeaderRow show={hasNextBillingPhase} />
         <SubscriptionInfoRowContainer
           label={t`Plan`}
           Icon={IconTag}
-          value={planTag}
+          currentValue={
+            <PlanTag
+              plan={getCurrentPlan().planKey}
+              isTrialPeriod={isTrialPeriod}
+            />
+          }
+          nextValue={
+            hasNextBillingPhase ? (
+              <PlanTag
+                plan={getNextPlan().planKey}
+                isTrialPeriod={isTrialPeriod}
+              />
+            ) : undefined
+          }
         />
         <SubscriptionInfoRowContainer
           label={t`Billing interval`}
           Icon={IconCalendarEvent}
-          value={intervalLabel}
+          currentValue={getIntervalLabelAsAdjectiveCapitalize(
+            getCurrentMeteredBillingPrice().recurringInterval ===
+              SubscriptionInterval.Month,
+          )}
+          nextValue={
+            hasNextBillingPhase
+              ? getIntervalLabelAsAdjectiveCapitalize(
+                  getNextInterval() === SubscriptionInterval.Month,
+                )
+              : undefined
+          }
         />
         {renewDate && (
           <SubscriptionInfoRowContainer
             label={t`Renewal date`}
             Icon={IconCalendarRepeat}
-            value={beautifyExactDate(renewDate)}
+            currentValue={beautifyExactDate(renewDate)}
+            nextValue={
+              hasNextBillingPhase
+                ? beautifyExactDate(
+                    currentBillingSubscription.phases[1].endDate * 1000,
+                  )
+                : undefined
+            }
           />
         )}
         <SubscriptionInfoRowContainer
           label={t`Seats`}
           Icon={IconUsers}
-          value={seats}
+          currentValue={seats}
+          nextValue={hasNextBillingPhase ? getNextBillingSeats() : undefined}
+        />
+        <SubscriptionInfoRowContainer
+          label={t`Credits by ${intervalLabel}`}
+          Icon={IconCoins}
+          currentValue={formatNumber(currentMeterPrice.tiers[0].upTo)}
+          nextValue={formatNumber(nextPrepaidCredits())}
         />
       </SubscriptionInfoContainer>
       <StyledSwitchButtonContainer>
@@ -222,7 +283,20 @@ export const SettingsBillingSubscriptionInfo = () => {
             Icon={IconArrowUp}
             title={t`Switch to Yearly`}
             variant="secondary"
-            onClick={() => openModal(SWITCH_BILLING_INTERVAL_MODAL_ID)}
+            onClick={() =>
+              openModal(SWITCH_BILLING_INTERVAL_TO_YEARLY_MODAL_ID)
+            }
+            disabled={!canSwitchSubscription}
+          />
+        )}
+        {isYearlyPlan && (
+          <Button
+            Icon={IconArrowUp}
+            title={t`Switch to Monthly`}
+            variant="secondary"
+            onClick={() =>
+              openModal(SWITCH_BILLING_INTERVAL_TO_MONTHLY_MODAL_ID)
+            }
             disabled={!canSwitchSubscription}
           />
         )}
@@ -246,9 +320,17 @@ export const SettingsBillingSubscriptionInfo = () => {
         )}
       </StyledSwitchButtonContainer>
       <ConfirmationModal
-        modalId={SWITCH_BILLING_INTERVAL_MODAL_ID}
+        modalId={SWITCH_BILLING_INTERVAL_TO_MONTHLY_MODAL_ID}
         title={t`Change to Yearly?`}
-        subtitle={t`You will be charged $${yearlyPrice} per user per month billed annually. A prorata with your current subscription will be applied.`}
+        subtitle={t`You will be charged $${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied.`}
+        onConfirmClick={switchInterval}
+        confirmButtonText={t`Confirm`}
+        confirmButtonAccent={'blue'}
+      />
+      <ConfirmationModal
+        modalId={SWITCH_BILLING_INTERVAL_TO_MONTHLY_MODAL_ID}
+        title={t`Change to Monthly?`}
+        subtitle={t`You will be charged $${monthlyPrice} per user per month billed monthly. The change will be applied the ${beautifiedRenewDate}.`}
         onConfirmClick={switchInterval}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent={'blue'}

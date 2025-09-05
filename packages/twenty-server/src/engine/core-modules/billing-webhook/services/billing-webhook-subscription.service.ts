@@ -29,6 +29,7 @@ import {
   CleanWorkspaceDeletionWarningUserVarsJob,
   type CleanWorkspaceDeletionWarningUserVarsJobData,
 } from 'src/engine/workspace-manager/workspace-cleaner/jobs/clean-workspace-deletion-warning-user-vars.job';
+import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -50,6 +51,7 @@ export class BillingWebhookSubscriptionService {
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly workspaceService: WorkspaceService,
+    private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
   ) {}
 
   async processStripeEvent(
@@ -83,7 +85,12 @@ export class BillingWebhookSubscriptionService {
     );
 
     await this.billingSubscriptionRepository.upsert(
-      transformStripeSubscriptionEventToDatabaseSubscription(workspaceId, data),
+      transformStripeSubscriptionEventToDatabaseSubscription(
+        workspaceId,
+        await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
+          data.object.id,
+        ),
+      ),
       {
         conflictPaths: ['stripeSubscriptionId'],
         skipUpdateIfNoValuesChanged: true,

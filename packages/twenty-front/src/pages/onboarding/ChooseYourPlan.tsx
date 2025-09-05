@@ -7,7 +7,6 @@ import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { SubscriptionPrice } from '@/billing/components/SubscriptionPrice';
 import { TrialCard } from '@/billing/components/TrialCard';
 import { useHandleCheckoutSession } from '@/billing/hooks/useHandleCheckoutSession';
-import { isBillingPriceLicensed } from '@/billing/utils/isBillingPriceLicensed';
 import { billingState } from '@/client-config/states/billingState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { AppPath } from '@/types/AppPath';
@@ -23,11 +22,8 @@ import {
   ClickToActionLink,
   TWENTY_PRICING_LINK,
 } from 'twenty-ui/navigation';
-import {
-  BillingPlanKey,
-  type BillingPriceLicensedDto,
-  useBillingBaseProductPricesQuery,
-} from '~/generated-metadata/graphql';
+import { BillingPlanKey } from '~/generated-metadata/graphql';
+import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 
 const StyledSubscriptionContainer = styled.div<{
   withLongerMarginBottom: boolean;
@@ -95,6 +91,9 @@ export const ChooseYourPlan = () => {
   const billing = useRecoilValue(billingState);
   const { t } = useLingui();
 
+  const { getBaseProductByPlanKey, getBaseLicensedPriceByPlanKeyAndInterval } =
+    useBillingPlan();
+
   const [billingCheckoutSession, setBillingCheckoutSession] = useRecoilState(
     billingCheckoutSessionState,
   );
@@ -107,9 +106,8 @@ export const ChooseYourPlan = () => {
   if (isDefined(verifyEmailRedirectPath)) {
     setVerifyEmailRedirectPath(undefined);
   }
-  const { data: plans } = useBillingBaseProductPricesQuery();
 
-  const currentPlan = billingCheckoutSession.plan;
+  const currentPlanKey = billingCheckoutSession.plan;
 
   const getPlanBenefits = (planKey: BillingPlanKey) => {
     if (planKey === BillingPlanKey.ENTERPRISE) {
@@ -134,16 +132,12 @@ export const ChooseYourPlan = () => {
     ];
   };
 
-  const benefits = getPlanBenefits(currentPlan);
+  const benefits = getPlanBenefits(currentPlanKey);
 
-  const baseProduct = plans?.plans.find(
-    (plan) => plan.planKey === currentPlan,
-  )?.baseProduct;
-
-  const baseProductPrice = baseProduct?.prices?.find(
-    (price): price is BillingPriceLicensedDto =>
-      isBillingPriceLicensed(price) &&
-      price.recurringInterval === billingCheckoutSession.interval,
+  const baseProduct = getBaseProductByPlanKey(currentPlanKey);
+  const baseProductPrice = getBaseLicensedPriceByPlanKeyAndInterval(
+    currentPlanKey,
+    billingCheckoutSession.interval,
   );
 
   const hasWithoutCreditCardTrialPeriod = billing?.trialPeriods.some(
@@ -168,7 +162,7 @@ export const ChooseYourPlan = () => {
         billingCheckoutSession.requirePaymentMethod !== withCreditCard
       ) {
         setBillingCheckoutSession({
-          plan: currentPlan,
+          plan: currentPlanKey,
           interval: baseProductPrice.recurringInterval,
           requirePaymentMethod: withCreditCard,
         });
@@ -180,9 +174,6 @@ export const ChooseYourPlan = () => {
 
   const withCreditCardTrialPeriodDuration = withCreditCardTrialPeriod?.duration;
 
-  const planName = plans?.plans.find((plan) => plan.planKey === currentPlan)
-    ?.baseProduct.name;
-
   return (
     <Modal.Content isVerticalCentered>
       {isDefined(baseProductPrice) && isDefined(billing) ? (
@@ -193,7 +184,7 @@ export const ChooseYourPlan = () => {
               : t`Get your subscription`}
           </Title>
           {hasWithoutCreditCardTrialPeriod ? (
-            <SubTitle>{planName}</SubTitle>
+            <SubTitle>{baseProduct.name}</SubTitle>
           ) : (
             withCreditCardTrialPeriod && (
               <SubTitle>

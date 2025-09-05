@@ -11,13 +11,13 @@ import { BACKGROUND_LIGHT, COLOR } from 'twenty-ui/theme';
 import { SubscriptionStatus } from '~/generated/graphql';
 import { formatAmount } from '~/utils/format/formatAmount';
 import { formatNumber } from '~/utils/format/number';
-import { useListAvailableMeteredBillingPricesQuery } from '~/generated-metadata/graphql';
 import { MeteredPriceSelector } from '@/billing/components/internal/MeteredPriceSelector';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import {
   getIntervalLabel,
   isMonthlyPlan,
 } from '@/billing/utils/subscriptionFlags';
+import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 
 const StyledLineSeparator = styled.div`
   width: 100%;
@@ -32,13 +32,12 @@ export const SettingsBillingCreditsSection = ({
 }) => {
   const subscriptionStatus = useSubscriptionStatus();
 
+  const { getCurrentMeteredPricesByInterval } = useBillingPlan();
+
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
 
   const { usedCredits, grantedCredits, unitPriceCents } =
     useGetWorkflowNodeExecutionUsage();
-
-  const { data: meteredBillingPrices } =
-    useListAvailableMeteredBillingPricesQuery();
 
   const progressBarValue = (usedCredits / grantedCredits) * 100;
 
@@ -50,6 +49,10 @@ export const SettingsBillingCreditsSection = ({
 
   const costExtraCredits = (extraCreditsUsed * unitPriceCents) / 100;
 
+  const meteredBillingPrices = getCurrentMeteredPricesByInterval(
+    currentWorkspace.currentBillingSubscription?.interval,
+  );
+
   return (
     <>
       <Section>
@@ -60,7 +63,7 @@ export const SettingsBillingCreditsSection = ({
         <SubscriptionInfoContainer>
           <SettingsBillingLabelValueItem
             label={t`Credits Used`}
-            value={`${formatNumber(usedCredits)}/${formatAmount(grantedCredits)}`}
+            value={`${formatNumber(usedCredits, { abbreviate: true })}/${formatAmount(grantedCredits)}`}
           />
           <ProgressBar
             value={progressBarValue}
@@ -73,7 +76,7 @@ export const SettingsBillingCreditsSection = ({
           {!isTrialing && (
             <SettingsBillingLabelValueItem
               label={t`Extra Credits Used`}
-              value={`${formatNumber(extraCreditsUsed)}`}
+              value={`${formatAmount(extraCreditsUsed)}`}
             />
           )}
           <SettingsBillingLabelValueItem
@@ -90,18 +93,10 @@ export const SettingsBillingCreditsSection = ({
         </SubscriptionInfoContainer>
       </Section>
       <Section>
-        {meteredBillingPrices?.listAvailableMeteredBillingPrices && (
-          <MeteredPriceSelector
-            billingSubscriptionItems={
-              currentWorkspace.currentBillingSubscription
-                ?.billingSubscriptionItems ?? []
-            }
-            meteredBillingPrices={
-              meteredBillingPrices.listAvailableMeteredBillingPrices
-            }
-            isTrialing={isTrialing}
-          />
-        )}
+        <MeteredPriceSelector
+          meteredBillingPrices={meteredBillingPrices}
+          isTrialing={isTrialing}
+        />
       </Section>
     </>
   );
