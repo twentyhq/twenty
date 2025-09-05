@@ -2,7 +2,10 @@ import { Action } from '@/action-menu/actions/components/Action';
 import { ActionScope } from '@/action-menu/actions/types/ActionScope';
 import { ActionType } from '@/action-menu/actions/types/ActionType';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { getSelectedRecordIdsFromTargetedRecordsRule } from '@/context-store/utils/getSelectedRecordIdsFromTargetedRecordsRule';
 import { type ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useRecordIndexIdFromCurrentContextStore } from '@/object-record/record-index/hooks/useRecordIndexIdFromCurrentContextStore';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { useActiveWorkflowVersionsWithManualTrigger } from '@/workflow/hooks/useActiveWorkflowVersionsWithManualTrigger';
@@ -10,7 +13,7 @@ import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 
@@ -26,10 +29,18 @@ export const useRunWorkflowRecordActions = ({
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const selectedRecordIds =
-    contextStoreTargetedRecordsRule.mode === 'selection'
-      ? contextStoreTargetedRecordsRule.selectedRecordIds
-      : undefined;
+  const { recordIndexId } = useRecordIndexIdFromCurrentContextStore();
+
+  const allRecordIds = useRecoilValue(
+    recordIndexAllRecordIdsComponentSelector.selectorFamily({
+      instanceId: recordIndexId,
+    }),
+  );
+
+  const selectedRecordIds = getSelectedRecordIdsFromTargetedRecordsRule(
+    contextStoreTargetedRecordsRule,
+    allRecordIds,
+  );
 
   const { records: activeWorkflowVersions } =
     useActiveWorkflowVersionsWithManualTrigger({
@@ -89,7 +100,7 @@ export const useRunWorkflowRecordActions = ({
         component: (
           <Action
             onClick={async () => {
-              if (!isDefined(selectedRecordIds)) {
+              if (selectedRecordIds.length === 0) {
                 return;
               }
 
