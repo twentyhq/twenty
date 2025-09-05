@@ -1,15 +1,15 @@
 import { t } from '@lingui/core/macro';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import {
-  capitalize,
   computeMorphRelationFieldJoinColumnName,
-  isDefined,
+  isDefined
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
+import { computeMorphRelationFieldName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morh-relation-field-name.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
@@ -69,7 +69,11 @@ export const fromMorphRelationCreateFieldInputToFlatFieldMetadatas = async ({
   const morphId = v4();
   const flatFieldMetadatas = morphRelationCreationPayload.flatMap(
     ({ relationCreationPayload, targetFlatObjectMetadata }) => {
-      const currentMorphRelationFieldName = `${createFieldInput.name}${capitalize(targetFlatObjectMetadata.nameSingular)}`;
+      const currentMorphRelationFieldName = computeMorphRelationFieldName({
+        fieldName: createFieldInput.name,
+        relationType: relationCreationPayload.type,
+        targetObjectMetadata: targetFlatObjectMetadata,
+      });
       const sourceFlatObjectMetadataJoinColumnName =
         computeMorphRelationFieldJoinColumnName({
           name: createFieldInput.name,
