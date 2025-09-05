@@ -34,7 +34,7 @@ export type RelationLoaderPayload = {
   flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION>;
 };
 
-// 
+//
 export type MorphRelationLoaderPayload = {
   workspaceId: string;
   flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>; // Not accurate what is this in reality ?
