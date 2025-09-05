@@ -53,13 +53,6 @@ exports[`update-one-field-metadata-related-record MULTI_SELECT should throw erro
 ]
 `;
 
-exports[`update-one-field-metadata-related-record MULTI_SELECT should update display value with options label if less than 3 options are selected 1`] = `
-[
-  "OPTION_8",
-  "OPTION_9",
-]
-`;
-
 exports[`update-one-field-metadata-related-record MULTI_SELECT should update related multi selected options view filter 1`] = `
 [
   "OPTION_0_UPDATED",
@@ -78,14 +71,6 @@ exports[`update-one-field-metadata-related-record MULTI_SELECT should update rel
 exports[`update-one-field-metadata-related-record MULTI_SELECT should update related solo selected option view filter 1`] = `
 [
   "OPTION_5_UPDATED",
-]
-`;
-
-exports[`update-one-field-metadata-related-record MULTI_SELECT should update the display value on an option label change only 1`] = `
-[
-  "OPTION_0",
-  "OPTION_1",
-  "OPTION_2",
 ]
 `;
 
@@ -142,13 +127,6 @@ exports[`update-one-field-metadata-related-record SELECT should throw error if v
 ]
 `;
 
-exports[`update-one-field-metadata-related-record SELECT should update display value with options label if less than 3 options are selected 1`] = `
-[
-  "OPTION_8",
-  "OPTION_9",
-]
-`;
-
 exports[`update-one-field-metadata-related-record SELECT should update related multi selected options view filter 1`] = `
 [
   "OPTION_0_UPDATED",
@@ -167,13 +145,5 @@ exports[`update-one-field-metadata-related-record SELECT should update related m
 exports[`update-one-field-metadata-related-record SELECT should update related solo selected option view filter 1`] = `
 [
   "OPTION_5_UPDATED",
-]
-`;
-
-exports[`update-one-field-metadata-related-record SELECT should update the display value on an option label change only 1`] = `
-[
-  "OPTION_0",
-  "OPTION_1",
-  "OPTION_2",
 ]
 `;

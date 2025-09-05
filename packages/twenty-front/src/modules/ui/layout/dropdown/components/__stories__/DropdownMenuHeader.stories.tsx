@@ -61,11 +61,11 @@ export const ContextDropdownAndAvatar: Story = {
     ),
     EndComponent: (
       <Dropdown
-        dropdownId={'story-dropdown-id-context-menu'}
+        dropdownId="story-dropdown-id-context-menu"
         dropdownComponents={
           <DropdownContent>
             <DropdownMenuItemsContainer>
-              <MenuItem LeftIcon={IconPlus} text={`Create Workspace`} />
+              <MenuItem LeftIcon={IconPlus} text="Create Workspace" />
             </DropdownMenuItemsContainer>
           </DropdownContent>
         }

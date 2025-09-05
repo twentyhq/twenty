@@ -1,8 +1,8 @@
-import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { createState } from 'twenty-ui/utilities';
 
 export const currentWorkspaceMembersState = createState<
-  CurrentWorkspaceMember[]
+  PartialWorkspaceMember[]
 >({
   key: 'currentWorkspaceMembersState',
   defaultValue: [],

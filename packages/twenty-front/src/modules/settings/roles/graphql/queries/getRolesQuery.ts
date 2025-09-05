@@ -4,11 +4,11 @@ import { FIELD_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/fi
 import { OBJECT_PERMISSION_FRAGMENT } from '@/settings/roles/graphql/fragments/objectPermissionFragment';
 import { PERMISSION_FLAG_FRAGMENT } from '@/settings/roles/graphql/fragments/permissionFlagFragment';
 import { ROLE_FRAGMENT } from '@/settings/roles/graphql/fragments/roleFragment';
-import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/workspaceMemberQueryFragment';
+import { PARTIAL_WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/fragments/partialWorkspaceMemberQueryFragment';
 import { gql } from '@apollo/client';
 
 export const GET_ROLES = gql`
-  ${WORKSPACE_MEMBER_QUERY_FRAGMENT}
+  ${PARTIAL_WORKSPACE_MEMBER_QUERY_FRAGMENT}
   ${ROLE_FRAGMENT}
   ${AGENT_FRAGMENT}
   ${API_KEY_FOR_ROLE_FRAGMENT}
@@ -19,7 +19,7 @@ export const GET_ROLES = gql`
     getRoles {
       ...RoleFragment
       workspaceMembers {
-        ...WorkspaceMemberQueryFragment
+        ...PartialWorkspaceMemberQueryFragment
       }
       agents {
         ...AgentFields

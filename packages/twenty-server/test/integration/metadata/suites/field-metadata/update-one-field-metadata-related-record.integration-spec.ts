@@ -4,7 +4,6 @@ import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import {
   createTestViewFilterWithRestApi,
   createTestViewWithRestApi,
@@ -17,7 +16,6 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { ViewFilterOperand } from 'src/engine/core-modules/view/enums/view-filter-operand';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 import { type ViewFilterValue } from 'src/engine/core-modules/view/types/view-filter-value.type';
@@ -25,7 +23,6 @@ import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
 } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspaces.util';
 
 type Option = FieldMetadataDefaultOption | FieldMetadataComplexOption;
 
@@ -76,13 +73,6 @@ describe('update-one-field-metadata-related-record', () => {
     options,
     type: fieldMetadataType,
   }: FieldMetadataOptionsAndType) => {
-    await updateFeatureFlag({
-      expectToFail: false,
-      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      value: false,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
-
     const singular = faker.lorem.words();
     const plural = singular + faker.lorem.word();
     const {
@@ -127,12 +117,6 @@ describe('update-one-field-metadata-related-record', () => {
   };
 
   afterEach(async () => {
-    await updateFeatureFlag({
-      expectToFail: false,
-      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      value: true,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
     if (isDefined(idToDelete)) {
       await deleteOneObjectMetadata({
         input: { idToDelete: idToDelete },

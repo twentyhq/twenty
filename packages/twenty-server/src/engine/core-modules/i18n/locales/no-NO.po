@@ -1046,7 +1046,7 @@ msgstr "Forventet at de samme begrensningsfeltene brukes konsekvent på tvers av
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "External ID"
-msgstr ""
+msgstr "Extern ID"
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1514,7 +1514,7 @@ msgstr "Er arrangør"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Is Sent Folder"
-msgstr ""
+msgstr "Er sendt mappe"
 
 #. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1528,7 +1528,7 @@ msgstr "Er synkronisering aktivert"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Is Synced"
-msgstr ""
+msgstr "Er synkronisert"
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1837,7 +1837,7 @@ msgstr "Morph-relasjonsopprettingsdata må ha samme relasjonstype"
 #. js-lingui-id: nU54nm
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to other object metadata"
-msgstr ""
+msgstr "Morph-relasjonsopprettingsdata må kun inneholde relasjon til annet objektmetadata"
 
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -1879,12 +1879,12 @@ msgstr "Navnet \"{computedMetadataNameFromLabel}\" kan ikke være det samme på 
 #. js-lingui-id: Ge9TXE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{flatFieldMetadataName}\" is not available"
-msgstr ""
+msgstr "Navnet \"{flatFieldMetadataName}\" er ikke tilgjengelig"
 
 #. js-lingui-id: h8ic2G
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
-msgstr ""
+msgstr "Navnet \"{flatFieldMetadataName}\" er ikke tilgjengelig fordi det allerede brukes av et annet felt"
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2869,7 +2869,7 @@ msgstr "Status for arbeidsflytversjon"
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
 msgid "This name is not available as it is already used by another field."
-msgstr ""
+msgstr "Dette navnet er ikke tilgjengelig fordi det allerede brukes av et annet felt."
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
@@ -3102,6 +3102,11 @@ msgstr "Vis"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "Visningsfelt"
+
+#. js-lingui-id: Xm6R6B
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "View field already exists."
+msgstr "Visningsfeltet eksisterer allerede."
 
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts

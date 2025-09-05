@@ -1,20 +1,20 @@
-import { t } from '@lingui/core/macro';
 import { useMutation } from '@apollo/client';
+import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { H2Title } from 'twenty-ui/display';
 
 import { UPDATE_SUBSCRIPTION_ITEM_PRICE } from '@/billing/graphql/mutations/updateSubscriptionItemPrice';
 import { findMeteredPriceInCurrentWorkspaceSubscriptions } from '@/billing/utils/findPriceInCurrentWorkspaceSubscriptions';
-import { Select } from '@/ui/input/components/Select';
+import { getIntervalLabel } from '@/billing/utils/subscriptionFlags';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { formatNumber } from '~/utils/format/number';
+import { Select } from '@/ui/input/components/Select';
 import {
   type BillingPriceOutput,
   type BillingSubscriptionItem,
   SubscriptionInterval,
 } from '~/generated/graphql';
 import { findOrThrow } from '~/utils/array/findOrThrow';
-import { getIntervalLabel } from '@/billing/utils/subscriptionFlags';
+import { formatNumber } from '~/utils/format/number';
 
 const compareByAmountAsc = (a: BillingPriceOutput, b: BillingPriceOutput) =>
   a.amount - b.amount;
@@ -86,7 +86,7 @@ export const MeteredPriceSelector = ({
         description={t`Number of new credits allocated every ${recurringInterval}`}
       />
       <Select
-        dropdownId={'settings-billing-metered-price'}
+        dropdownId="settings-billing-metered-price"
         options={options}
         value={currentMeteredBillingPrice?.stripePriceId}
         onChange={handleChange}

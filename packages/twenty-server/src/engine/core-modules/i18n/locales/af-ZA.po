@@ -1046,7 +1046,7 @@ msgstr "Verwag dat dieselfde beperkingsvelde konsekwent gebruik sal word oor al 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "External ID"
-msgstr ""
+msgstr "Eksterne ID"
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1514,7 +1514,7 @@ msgstr "Is Organiseerder"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Is Sent Folder"
-msgstr ""
+msgstr "Is Stuur-Map"
 
 #. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1528,7 +1528,7 @@ msgstr "Is Sinkronisasie Geaktiveer"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Is Synced"
-msgstr ""
+msgstr "Is Gesinkroniseer"
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1837,7 +1837,7 @@ msgstr "Morfverhouding-skeppingsladings moet dieselfde verhoudingtipes hê"
 #. js-lingui-id: nU54nm
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to other object metadata"
-msgstr ""
+msgstr "Morph-verhouding skeppayloads moet slegs verhouding tot ander voorwerp metadata bevat"
 
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
@@ -1879,12 +1879,12 @@ msgstr "Naam \"{computedMetadataNameFromLabel}\" kan nie aan beide kante van die
 #. js-lingui-id: Ge9TXE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{flatFieldMetadataName}\" is not available"
-msgstr ""
+msgstr "Naam \"{flatFieldMetadataName}\" is nie beskikbaar nie"
 
 #. js-lingui-id: h8ic2G
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
 msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
-msgstr ""
+msgstr "Naam \"{flatFieldMetadataName}\" is nie beskikbaar nie aangesien dit reeds deur 'n ander veld gebruik word"
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2869,7 +2869,7 @@ msgstr "Die werkvloei weergawe se status"
 #. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
 msgid "This name is not available as it is already used by another field."
-msgstr ""
+msgstr "Hierdie naam is nie beskikbaar nie aangesien dit reeds deur 'n ander veld gebruik word."
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
@@ -3102,6 +3102,11 @@ msgstr "Beskou"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "Beskou Veld"
+
+#. js-lingui-id: Xm6R6B
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "View field already exists."
+msgstr "Aansigveld bestaan reeds."
 
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts

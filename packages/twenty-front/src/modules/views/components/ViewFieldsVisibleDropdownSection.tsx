@@ -83,7 +83,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
           <MenuItemDraggable
             LeftIcon={getIcon(fieldMetadataItemLabelIdentifier.icon)}
             text={fieldMetadataItemLabelIdentifier.label}
-            accent={'placeholder'}
+            accent="placeholder"
             showGrip={true}
             isDragDisabled
           />

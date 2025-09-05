@@ -33,6 +33,11 @@ msgstr ": Vide"
 msgid ": Future"
 msgstr ": Futur"
 
+#. js-lingui-id: uhan84
+#: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
+msgid ": Loading..."
+msgstr ": Chargement..."
+
 #. js-lingui-id: Nk/d+Z
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid ": Not"
@@ -78,7 +83,7 @@ msgstr "[chaîne vide]"
 #. placeholder {2}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, formatDistance, formatDistanceToNow, type Locale, } from 'date-fns'; import { DateTime } from 'luxon'; import { DateFormat } from '@/localization/constants/DateFormat'; import { SOURCE_LOCALE } from 'twenty-shared/translations'; import { isDefined } from 'twenty-shared/utils'; import { CustomError } from '@/error-handler/CustomError'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; const getLuxonLocale = () => { return SOURCE_LOCALE === 'en' ? 'en-US' : SOURCE_LOCALE; }; export const parseDate = (dateToParse: Date | string | number) => { if (dateToParse === 'now') return DateTime.fromJSDate(new Date()); let formattedDate: DateTime | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = DateTime.fromISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = DateTime.fromJSDate(dateToParse); } else if (isNumber(dateToParse)) { formattedDate = DateTime.fromMillis(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!formattedDate.isValid) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate.setLocale(getLuxonLocale()); }; const isSameDay = (a: DateTime, b: DateTime): boolean => a.hasSame(b, 'day') && a.hasSame(b, 'month') && a.hasSame(b, 'year'); export const formatDate = ( dateToFormat: Date | string | number, format: string, ) => { try { const parsedDate = parseDate(dateToFormat); return parsedDate.toFormat(format); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local()); const dateFormat = isToday ? 'T' : 'DD · T'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local()); if (isToday) { return t`Today`; } return formatDate(dateToBeautify, 'DD'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.toJSDate().getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate.toJSDate(), { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return ( differenceInCalendarDays( DateTime.local().toJSDate(), parsedDate.toJSDate(), ) >= 1 ); } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const dateDiff = DateTime.fromISO(date).diff( dateToCompareWith ? DateTime.fromISO(dateToCompareWith) : DateTime.now(), ['years', 'days'], ); const years = Math.floor(dateDiff.years); const days = Math.floor(dateDiff.days); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date).toJSDate(); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{days} {1}} other {{days} {2}}}"
-msgstr ""
+msgstr "{0, plural, one {{jours} {1}} other {{jours} {2}}}"
 
 #. js-lingui-id: FYY5cK
 #. placeholder {0}: Math.abs(years)
@@ -86,7 +91,7 @@ msgstr ""
 #. placeholder {2}: import { isDate, isNumber, isString } from '@sniptt/guards'; import { differenceInCalendarDays, formatDistance, formatDistanceToNow, type Locale, } from 'date-fns'; import { DateTime } from 'luxon'; import { DateFormat } from '@/localization/constants/DateFormat'; import { SOURCE_LOCALE } from 'twenty-shared/translations'; import { isDefined } from 'twenty-shared/utils'; import { CustomError } from '@/error-handler/CustomError'; import { i18n } from '@lingui/core'; import { plural, t } from '@lingui/core/macro'; import { logError } from './logError'; const getLuxonLocale = () => { return SOURCE_LOCALE === 'en' ? 'en-US' : SOURCE_LOCALE; }; export const parseDate = (dateToParse: Date | string | number) => { if (dateToParse === 'now') return DateTime.fromJSDate(new Date()); let formattedDate: DateTime | null = null; if (!dateToParse) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } else if (isString(dateToParse)) { formattedDate = DateTime.fromISO(dateToParse); } else if (isDate(dateToParse)) { formattedDate = DateTime.fromJSDate(dateToParse); } else if (isNumber(dateToParse)) { formattedDate = DateTime.fromMillis(dateToParse); } if (!formattedDate) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } if (!formattedDate.isValid) { throw new CustomError( `Invalid date passed to formatPastDate: "${dateToParse}"`, 'INVALID_DATE_FORMAT', ); } return formattedDate.setLocale(getLuxonLocale()); }; const isSameDay = (a: DateTime, b: DateTime): boolean => a.hasSame(b, 'day') && a.hasSame(b, 'month') && a.hasSame(b, 'year'); export const formatDate = ( dateToFormat: Date | string | number, format: string, ) => { try { const parsedDate = parseDate(dateToFormat); return parsedDate.toFormat(format); } catch (error) { logError(error); return ''; } }; export const beautifyExactDateTime = ( dateToBeautify: Date | string | number, ) => { const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local()); const dateFormat = isToday ? 'T' : 'DD · T'; return formatDate(dateToBeautify, dateFormat); }; export const beautifyExactDate = (dateToBeautify: Date | string | number) => { const isToday = isSameDay(parseDate(dateToBeautify), DateTime.local()); if (isToday) { return t`Today`; } return formatDate(dateToBeautify, 'DD'); }; export const beautifyPastDateRelativeToNow = ( pastDate: Date | string | number, locale?: Locale, ) => { try { const parsedDate = parseDate(pastDate); const now = new Date(); const diffInSeconds = Math.abs( (now.getTime() - parsedDate.toJSDate().getTime()) / 1000, ); // For very recent times (less than 30 seconds), show "now" if (diffInSeconds < 30) { return t`now`; } return formatDistanceToNow(parsedDate.toJSDate(), { addSuffix: true, locale, includeSeconds: true, }); } catch (error) { logError(error); return ''; } }; export const hasDatePassed = (date: Date | string | number) => { try { const parsedDate = parseDate(date); return ( differenceInCalendarDays( DateTime.local().toJSDate(), parsedDate.toJSDate(), ) >= 1 ); } catch (error) { logError(error); return false; } }; export const beautifyDateDiff = ( date: string, dateToCompareWith?: string, short = false, locale?: Locale, ) => { // For simple cases, use date-fns which has excellent locale support if (!short && isDefined(locale)) { const fromDate = new Date(date); const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date(); return formatDistance(fromDate, toDate, { locale }); } // Manual implementation for complex cases or when locale is not available const dateDiff = DateTime.fromISO(date).diff( dateToCompareWith ? DateTime.fromISO(dateToCompareWith) : DateTime.now(), ['years', 'days'], ); const years = Math.floor(dateDiff.years); const days = Math.floor(dateDiff.days); let result = ''; if (years !== 0) { result = plural(Math.abs(years), { one: `${years} ${t`year`}`, other: `${years} ${t`years`}`, }); if (short) return result; } if (years !== 0 && days !== 0) { result += ` ${t`and`} `; } if (days !== 0) { const daysPart = plural(Math.abs(days), { one: `${days} ${t`day`}`, other: `${days} ${t`days`}`, }); result += daysPart; } return result; }; export const formatToHumanReadableDate = (date: Date | string) => { const parsedJSDate = parseDate(date).toJSDate(); return i18n.date(parsedJSDate, { dateStyle: 'medium' }); }; export const getDateFormatString = ( dateFormat: DateFormat, isDateTimeInput: boolean, ): string => { const timePart = isDateTimeInput ? ' HH:mm' : ''; switch (dateFormat) { case DateFormat.DAY_FIRST: return `dd/MM/yyyy${timePart}`; case DateFormat.YEAR_FIRST: return `yyyy-MM-dd${timePart}`; case DateFormat.MONTH_FIRST: default: return `MM/dd/yyyy${timePart}`; } }; 
 #: src/utils/date-utils.ts
 msgid "{0, plural, one {{years} {1}} other {{years} {2}}}"
-msgstr ""
+msgstr "{0, plural, one {{années} {1}} other {{années} {2}}}"
 
 #. js-lingui-id: ROdDR9
 #: src/modules/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel.ts
@@ -126,7 +131,7 @@ msgstr "{roleLabel} ne peut pas {humanReadableAction} des enregistrements {objec
 #. js-lingui-id: uHZWwU
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
-msgstr ""
+msgstr "{roleTargetName} sera assigné(e) au rôle \"{newRoleName}\"."
 
 #. js-lingui-id: WN9tFl
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
@@ -204,6 +209,16 @@ msgstr "Méthode 2FA supprimée avec succès."
 msgid "2FA Method Reset"
 msgstr "Réinitialisation de la méthode 2FA"
 
+#. js-lingui-id: keUlu+
+#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+msgid "A draft already exists"
+msgstr "Un brouillon existe déjà"
+
+#. js-lingui-id: OITESn
+#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
+msgstr "Un brouillon existe déjà pour ce workflow. Êtes-vous sûr de vouloir l'effacer ?"
+
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "A role must be selected for the API key"
@@ -266,7 +281,7 @@ msgstr "Compte"
 #. js-lingui-id: 9o6rjW
 #: src/utils/title-utils.ts
 msgid "Account - Settings"
-msgstr ""
+msgstr "Compte - Paramètres"
 
 #. js-lingui-id: nD0Y+a
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -326,6 +341,7 @@ msgid "Activate Workflow"
 msgstr "Activer le workflow"
 
 #. js-lingui-id: F6pfE9
+#: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
@@ -355,6 +371,11 @@ msgstr "Ajouter un compte"
 msgid "Add Approved Access Domain"
 msgstr "Ajouter un domaine d'accès approuvé"
 
+#. js-lingui-id: We0vOO
+#: src/modules/ui/input/editor/components/CustomSideMenu.tsx
+msgid "Add Block"
+msgstr "Ajouter un bloc"
+
 #. js-lingui-id: DpV70M
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -365,7 +386,7 @@ msgstr "Ajouter un champ"
 #: src/modules/activities/files/components/Attachments.tsx
 #: src/modules/activities/files/components/Attachments.tsx
 msgid "Add file"
-msgstr ""
+msgstr "Ajouter un fichier"
 
 #. js-lingui-id: vCSBPD
 #: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
@@ -392,7 +413,7 @@ msgstr "Ajoutez des entrées à votre formulaire"
 #. js-lingui-id: rejvy6
 #: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 msgid "Add layout"
-msgstr ""
+msgstr "Ajouter une disposition"
 
 #. js-lingui-id: Hkobke
 #: src/modules/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew.tsx
@@ -476,7 +497,7 @@ msgstr "Ajouter une vue"
 #. js-lingui-id: iRpDWj
 #: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
 msgid "Add Widget"
-msgstr ""
+msgstr "Ajouter un widget"
 
 #. js-lingui-id: m2qDV8
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateTitle.ts
@@ -561,7 +582,7 @@ msgstr "Agent non trouvé"
 #. js-lingui-id: jJT5pC
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Agent Roles"
-msgstr ""
+msgstr "Rôles d'Agent"
 
 #. js-lingui-id: 8Uv5e6
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -650,7 +671,7 @@ msgstr "Tous les objets standard"
 #. js-lingui-id: XLzFVD
 #: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
 msgid "All workspace members already have this role"
-msgstr ""
+msgstr "Tous les membres de l'espace de travail ont déjà ce rôle"
 
 #. js-lingui-id: MLmnB2
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -756,7 +777,7 @@ msgstr "Clé API copiée dans le presse-papiers"
 #. js-lingui-id: K84VsN
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "API Key Roles"
-msgstr ""
+msgstr "Rôles des clés API"
 
 #. js-lingui-id: 5h8ooz
 #: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
@@ -772,7 +793,7 @@ msgstr "Clés API"
 #. js-lingui-id: VIs5Hx
 #: src/utils/title-utils.ts
 msgid "API Keys - Settings"
-msgstr ""
+msgstr "Clés API - Paramètres"
 
 #. js-lingui-id: vByqA1
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -825,7 +846,7 @@ msgstr "Apparence"
 #. js-lingui-id: d7+zQ6
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
 msgid "Applicability"
-msgstr ""
+msgstr "Applicabilité"
 
 #. js-lingui-id: UDlRcx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainValidationEffect.tsx
@@ -875,17 +896,17 @@ msgstr "Demander à l'IA"
 #. js-lingui-id: OBqG7p
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 msgid "Assign {roleTargetName}?"
-msgstr ""
+msgstr "Assigner {roleTargetName} ?"
 
 #. js-lingui-id: krsgB0
 #: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
 msgid "Assign to agent"
-msgstr ""
+msgstr "Assigner à un agent"
 
 #. js-lingui-id: ngx6hS
 #: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
 msgid "Assign to API key"
-msgstr ""
+msgstr "Assigner à la clé API"
 
 #. js-lingui-id: 2y2quh
 #: src/modules/settings/roles/role-assignment/constants/RoleTargetConfig.ts
@@ -895,22 +916,22 @@ msgstr "Assigner à un membre"
 #. js-lingui-id: sqEW29
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
 msgid "Assignable to Agents"
-msgstr ""
+msgstr "Attribuable aux agents"
 
 #. js-lingui-id: kOksfH
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
 msgid "Assignable to API Keys"
-msgstr ""
+msgstr "Attribuable aux clés API"
 
 #. js-lingui-id: 6cOTMx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
 msgid "Assignable to team members"
-msgstr ""
+msgstr "Attribuable aux membres de l'équipe"
 
 #. js-lingui-id: 7qh2Hx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Assigned {roleTargetDisplayName}"
-msgstr ""
+msgstr "Assigné {roleTargetDisplayName}"
 
 #. js-lingui-id: lxQ+5m
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
@@ -1163,6 +1184,11 @@ msgstr "Annuler votre abonnement"
 msgid "Catalan"
 msgstr "Catalan"
 
+#. js-lingui-id: tHntRt
+#: src/modules/ui/input/editor/components/CustomSideMenu.tsx
+msgid "Change Color"
+msgstr "Changer la couleur"
+
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Change email"
@@ -1346,7 +1372,7 @@ msgstr "Code couleur"
 #. js-lingui-id: P8gRog
 #: src/modules/spreadsheet-import/utils/setColumn.ts
 msgid "column data is not compatible with Multi-Select. Format required is '[\"option1\", \"option2\"]' or option1,option2."
-msgstr ""
+msgstr "les données de colonne ne sont pas compatibles avec la sélection multiple. Le format requis est '[\"option1\", \"option2\"]' ou option1,option2."
 
 #. js-lingui-id: 93hd3e
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -1529,12 +1555,12 @@ msgstr "Continuer avec Microsoft"
 #. js-lingui-id: XgMEX4
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Control which folders are synced"
-msgstr ""
+msgstr "Contrôler quels dossiers sont synchronisés"
 
 #. js-lingui-id: +iFqZW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleApplicability.tsx
 msgid "Control which types of entities this role can be assigned to"
-msgstr ""
+msgstr "Contrôler les types d'entités auxquels ce rôle peut être attribué"
 
 #. js-lingui-id: FxVG/l
 #: src/hooks/useCopyToClipboard.tsx
@@ -1709,7 +1735,7 @@ msgstr "Créer un profil"
 #. js-lingui-id: ccH5/A
 #: src/utils/title-utils.ts
 msgid "Create Profile"
-msgstr ""
+msgstr "Créer un profil"
 
 #. js-lingui-id: GPuEIc
 #: src/modules/command-menu/components/CommandMenu.tsx
@@ -1908,7 +1934,7 @@ msgstr "Modèle de données"
 #. js-lingui-id: zAfYtx
 #: src/utils/title-utils.ts
 msgid "Data model - Settings"
-msgstr ""
+msgstr "Modèle de données - Paramètres"
 
 #. js-lingui-id: r+cVRP
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -1945,12 +1971,12 @@ msgstr "Format de date"
 #. js-lingui-id: /ITcnz
 #: src/utils/date-utils.ts
 msgid "day"
-msgstr ""
+msgstr "jour"
 
 #. js-lingui-id: J/Upwb
 #: src/utils/date-utils.ts
 msgid "days"
-msgstr ""
+msgstr "jours"
 
 #. js-lingui-id: cpDASC
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -1987,6 +2013,7 @@ msgid "Deactivate Workflow"
 msgstr "Désactiver le workflow"
 
 #. js-lingui-id: yAT3be
+#: src/pages/settings/SettingsProfile.tsx
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "Deactivated"
 msgstr "Désactivé"
@@ -2014,7 +2041,7 @@ msgstr "Code du pays par défaut"
 #. js-lingui-id: CGhRMh
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Default Role"
-msgstr ""
+msgstr "Rôle par défaut"
 
 #. js-lingui-id: TlEEts
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
@@ -2058,6 +2085,8 @@ msgstr "supprimer"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/ui/input/editor/components/CustomSideMenu.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -2376,6 +2405,7 @@ msgstr "Date la plus ancienne"
 
 #. js-lingui-id: ePK91l
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
@@ -2398,6 +2428,11 @@ msgstr "Modifier le compte"
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Edit Agent"
 msgstr "Modifier l'agent"
+
+#. js-lingui-id: X8x8v5
+#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
+msgid "Edit Connection"
+msgstr "Modifier la connexion"
 
 #. js-lingui-id: 6vZ75d
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -2424,6 +2459,11 @@ msgstr "Modifier le mode de paiement, consulter vos factures et plus encore"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Edit Records on All Objects"
 msgstr "Modifier les enregistrements sur tous les objets"
+
+#. js-lingui-id: vjOt/P
+#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
+msgid "Edit the information to connect your database"
+msgstr "Modifiez les informations pour connecter votre base de données"
 
 #. js-lingui-id: 6o1M/Q
 #: src/pages/settings/domains/SettingsDomains.tsx
@@ -2543,7 +2583,7 @@ msgstr "Tableau vide"
 #. js-lingui-id: 8X+jbk
 #: src/modules/activities/emails/components/EmailThreads.tsx
 msgid "Empty Inbox"
-msgstr ""
+msgstr "Boîte de réception vide"
 
 #. js-lingui-id: 3hSGoJ
 #: src/modules/workflow/workflow-steps/components/WorkflowRunStepOutputDetail.tsx
@@ -2596,12 +2636,12 @@ msgstr "Entrer le nom de l'agent*"
 #. js-lingui-id: kOybqX
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
 msgid "Enter array of items or variable expression"
-msgstr ""
+msgstr "Entrez un tableau d'articles ou une expression de variable"
 
 #. js-lingui-id: uyFQs5
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
 msgid "Enter array of step IDs"
-msgstr ""
+msgstr "Entrez un tableau d'ID de étapes"
 
 #. js-lingui-id: 9/30HU
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatSelectDescription.tsx
@@ -2755,7 +2795,7 @@ msgstr "Exclure les personnes et domaines suivants de ma synchronisation de cour
 #. js-lingui-id: uwM4yU
 #: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 msgid "Existing layouts"
-msgstr ""
+msgstr "Dispositions existantes"
 
 #. js-lingui-id: fV7V51
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -2800,7 +2840,7 @@ msgstr "Expérience"
 #. js-lingui-id: 8TiwZn
 #: src/utils/title-utils.ts
 msgid "Experience - Settings"
-msgstr ""
+msgstr "Expérience - Paramètres"
 
 #. js-lingui-id: LxRNPw
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -2822,7 +2862,7 @@ msgstr "Expiré"
 #. js-lingui-id: KnN1Tu
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Expires"
-msgstr ""
+msgstr "Expire"
 
 #. js-lingui-id: i9qiyR
 #: src/pages/settings/SettingsWorkspaceMembers.tsx
@@ -2832,7 +2872,7 @@ msgstr "Expire dans"
 #. js-lingui-id: 1RvVK1
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Expires in {dateDiff}"
-msgstr ""
+msgstr "Expire dans {dateDiff}"
 
 #. js-lingui-id: GS+Mus
 #: src/modules/object-record/record-index/export/hooks/useRecordIndexExportRecords.ts
@@ -3080,12 +3120,12 @@ msgstr "Prénom"
 #. js-lingui-id: kNqMMd
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
 msgid "Folder"
-msgstr ""
+msgstr "Dossier"
 
 #. js-lingui-id: NRJn87
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Folder Management"
-msgstr ""
+msgstr "Gestion des dossiers"
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
@@ -3126,7 +3166,7 @@ msgstr "Fonctions"
 #. js-lingui-id: tkr79G
 #: src/utils/title-utils.ts
 msgid "Functions - Settings"
-msgstr ""
+msgstr "Fonctions - Paramètres"
 
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -3139,7 +3179,7 @@ msgstr "Général"
 #. js-lingui-id: p+rXSW
 #: src/utils/title-utils.ts
 msgid "General - Settings"
-msgstr ""
+msgstr "Général - Paramètres"
 
 #. js-lingui-id: DDcvSo
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3480,7 +3520,7 @@ msgstr "Importation des données ..."
 #. js-lingui-id: HiyKEP
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "In {dateDiff}"
-msgstr ""
+msgstr "Dans {dateDiff}"
 
 #. js-lingui-id: NoNwIX
 #: src/pages/settings/data-model/SettingsObjects.tsx
@@ -3492,7 +3532,7 @@ msgstr "Inactif"
 #. js-lingui-id: Gp4Yi6
 #: src/modules/activities/emails/components/EmailThreads.tsx
 msgid "Inbox"
-msgstr ""
+msgstr "Boîte de réception"
 
 #. js-lingui-id: pZ/USH
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -3502,7 +3542,12 @@ msgstr "Index"
 #. js-lingui-id: T6szT2
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
 msgid "Initial loop step IDs"
-msgstr ""
+msgstr "ID de l'étape initiale de la boucle"
+
+#. js-lingui-id: XU5AOg
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+msgid "Input"
+msgstr "Entrée "
 
 #. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -3514,6 +3559,11 @@ msgstr "L'entrée doit être en camel case et ne peut pas commencer par un chiff
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 msgid "Input settings"
 msgstr "Paramètres d'entrée"
+
+#. js-lingui-id: T8avpe
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+msgid "Insert a JSON input, then press \"Run\" to test your function."
+msgstr "Insérez une entrée JSON, puis appuyez sur « Exécuter » pour tester votre fonction."
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -3530,6 +3580,7 @@ msgstr "Instructions pour l'IA"
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
+#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
 msgstr "Intégrations"
@@ -3537,7 +3588,7 @@ msgstr "Intégrations"
 #. js-lingui-id: RGm66q
 #: src/utils/title-utils.ts
 msgid "Integrations - Settings"
-msgstr ""
+msgstr "Intégrations - Paramètres"
 
 #. js-lingui-id: ntgzzG
 #: src/modules/settings/integrations/components/SettingsIntegrationMCP.tsx
@@ -3766,12 +3817,12 @@ msgstr "Italien"
 #. js-lingui-id: +qz/bj
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/WorkflowEditActionIterator.tsx
 msgid "Items to iterate over"
-msgstr ""
+msgstr "Objets à itérer"
 
 #. js-lingui-id: E08FMd
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Iterator"
-msgstr ""
+msgstr "Itérateur"
 
 #. js-lingui-id: dFtidv
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -3858,7 +3909,7 @@ msgstr "Derniers 7 jours (du plus ancien au plus récent)"
 #. js-lingui-id: P4FGJG
 #: src/modules/activities/emails/components/EmailThreadHeader.tsx
 msgid "Last message {lastMessageSentAtFormatted}"
-msgstr ""
+msgstr "Dernier message {lastMessageSentAtFormatted}"
 
 #. js-lingui-id: UXBCwc
 #: src/pages/onboarding/CreateProfile.tsx
@@ -3905,7 +3956,7 @@ msgstr "Disposition"
 #. js-lingui-id: A/oBX5
 #: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
 msgid "Layout Name"
-msgstr ""
+msgstr "Nom de la disposition"
 
 #. js-lingui-id: 8QyoLb
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -3943,6 +3994,11 @@ msgstr "Clair"
 msgid "Link copied to clipboard"
 msgstr "Lien copié dans le presse-papiers"
 
+#. js-lingui-id: HhVDr2
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+msgid "Listing"
+msgstr "Lister"
+
 #. js-lingui-id: DL2sg0
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Listings"
@@ -3960,7 +4016,6 @@ msgstr "Chargement des données de métriques..."
 
 #. js-lingui-id: Z3FXyt
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
-#: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -4023,12 +4078,12 @@ msgstr "Gérer les membres"
 #. js-lingui-id: GzInS6
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Manage roles and permissions for team members and API keys"
-msgstr ""
+msgstr "Gérer les rôles et les autorisations pour les membres de l'équipe et les clés API"
 
 #. js-lingui-id: wMlk+o
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "Manage roles and permissions for team members, agents, and API keys"
-msgstr ""
+msgstr "Gérer les rôles et les autorisations pour les membres de l'équipe, les agents et les clés API"
 
 #. js-lingui-id: eGGH1l
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -4103,7 +4158,7 @@ msgstr "Membres"
 #. js-lingui-id: Max/je
 #: src/utils/title-utils.ts
 msgid "Members - Settings"
-msgstr ""
+msgstr "Membres - Paramètres"
 
 #. js-lingui-id: UODtG8
 #: src/modules/action-menu/actions/record-actions/constants/DefaultRecordActionsConfig.tsx
@@ -4314,12 +4369,12 @@ msgstr "Aller au workflow précédent"
 #. js-lingui-id: qqeAJM
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Never"
-msgstr ""
+msgstr "Jamais"
 
 #. js-lingui-id: O1Aswy
 #: src/modules/settings/developers/utils/formatExpiration.ts
 msgid "Never expires"
-msgstr ""
+msgstr "N'expire jamais"
 
 #. js-lingui-id: isRobC
 #: src/pages/settings/data-model/SettingsNewObject.tsx
@@ -4396,6 +4451,11 @@ msgstr "Nouvelle configuration SSO"
 msgid "New SSO provider"
 msgstr "Nouveau fournisseur SSO"
 
+#. js-lingui-id: hXzOVo
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
+msgid "Next"
+msgstr "Suivant"
+
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -4413,6 +4473,16 @@ msgstr "Neuvième"
 msgid "No"
 msgstr "Non"
 
+#. js-lingui-id: xUXmJM
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RelationToOneFieldInput.tsx
+msgid "No {fieldLabel}"
+msgstr "Pas de {fieldLabel}"
+
+#. js-lingui-id: yWS1Mx
+#: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordPicker.tsx
+msgid "No {objectNameSingular}"
+msgstr "Pas de {objectNameSingular}"
+
 #. js-lingui-id: vhsJG1
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
 msgid "No Agent"
@@ -4421,12 +4491,12 @@ msgstr "Aucun agent"
 #. js-lingui-id: f9b1sj
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "No agents assigned"
-msgstr ""
+msgstr "Aucun agent attribué"
 
 #. js-lingui-id: 2jU+NX
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No agents available"
-msgstr ""
+msgstr "Aucun agent disponible"
 
 #. js-lingui-id: pC+mOo
 #: src/pages/settings/ai/components/SettingsAgentHandoffForm.tsx
@@ -4436,22 +4506,22 @@ msgstr "Aucun agent disponible pour le transfert"
 #. js-lingui-id: mU1OkO
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No agents match your search"
-msgstr ""
+msgstr "Aucun agent ne correspond à votre recherche"
 
 #. js-lingui-id: 9mx36q
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "No API keys assigned"
-msgstr ""
+msgstr "Aucune clé API attribuée"
 
 #. js-lingui-id: QnvikC
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No API keys available"
-msgstr ""
+msgstr "Aucune clé API disponible"
 
 #. js-lingui-id: wZT6U/
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "No API keys match your search"
-msgstr ""
+msgstr "Aucune clé API ne correspond à votre recherche"
 
 #. js-lingui-id: tFxVHz
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowStepFilterFieldSelect.tsx
@@ -4488,6 +4558,16 @@ msgstr "Aucune donnée contenant des erreurs"
 msgid "No data found"
 msgstr "Aucune donnée trouvée"
 
+#. js-lingui-id: P4KXUa
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
+msgid "No Deleted {objectLabelSingular} found"
+msgstr "Aucun {objectLabelSingular} supprimé trouvé"
+
+#. js-lingui-id: s7QKq9
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
+msgid "No deleted records matching the filter criteria were found."
+msgstr "Aucun enregistrement supprimé correspondant aux critères de filtre n'a été trouvé."
+
 #. js-lingui-id: flmDTf
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
 msgid "No description"
@@ -4496,17 +4576,17 @@ msgstr "Aucune description"
 #. js-lingui-id: mINrlz
 #: src/modules/activities/emails/components/EmailThreads.tsx
 msgid "No email exchange has occurred with this record yet."
-msgstr ""
+msgstr "Aucun échange d'e-mails n'a encore eu lieu avec cet enregistrement."
 
 #. js-lingui-id: 23Rceg
 #: src/modules/activities/files/components/Attachments.tsx
 msgid "No Files"
-msgstr ""
+msgstr "Aucun fichier"
 
 #. js-lingui-id: 1jgsYC
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard.tsx
 msgid "No folders found for this account"
-msgstr ""
+msgstr "Aucun dossier trouvé pour ce compte"
 
 #. js-lingui-id: xlUOps
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
@@ -4580,6 +4660,7 @@ msgstr "Aucune autorisation n'a été définie pour les objets individuels."
 
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
+#: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
 msgid "No records found"
 msgstr "Aucun enregistrement trouvé"
 
@@ -4627,6 +4708,7 @@ msgstr "Aucune version de workflow pour l'instant"
 #. js-lingui-id: EdQY6l
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "None"
 msgstr "Aucun"
@@ -4687,7 +4769,7 @@ msgstr "Notes"
 #. js-lingui-id: YwzE9K
 #: src/utils/date-utils.ts
 msgid "now"
-msgstr ""
+msgstr "maintenant"
 
 #. js-lingui-id: HptUxX
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
@@ -4818,6 +4900,11 @@ msgstr "Options"
 msgid "or"
 msgstr "ou"
 
+#. js-lingui-id: ZAVklK
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Or"
+msgstr "Ou"
+
 #. js-lingui-id: ucgZ0o
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Organization"
@@ -4841,7 +4928,7 @@ msgstr "Autres espaces de travail"
 #. js-lingui-id: NuKR0h
 #: src/modules/command-menu/pages/workflow/action/components/CommandMenuWorkflowSelectActionContent.tsx
 msgid "Others"
-msgstr ""
+msgstr "Autres"
 
 #. js-lingui-id: p5ufK6
 #: src/pages/onboarding/BookCallDecision.tsx
@@ -4853,13 +4940,18 @@ msgstr "Notre équipe peut vous aider à configurer votre espace de travail pour
 msgid "Output Field {fieldNumber}"
 msgstr "Champ de sortie {fieldNumber}"
 
+#. js-lingui-id: in6CUw
+#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+msgid "Override Draft"
+msgstr "Remplacer le brouillon"
+
 #. js-lingui-id: lXe6vt
 #: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 #: src/pages/settings/page-layout/SettingsPageLayoutEdit.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Page Layouts"
-msgstr ""
+msgstr "Mises en page de la page"
 
 #. js-lingui-id: boJlGf
 #: src/pages/not-found/NotFound.tsx
@@ -5063,6 +5155,12 @@ msgstr "Discussions AI Précédentes"
 msgid "Price updated."
 msgstr "Prix mis à jour."
 
+#. js-lingui-id: 0Ni6nR
+#: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
+msgid "Primary Email"
+msgstr "Email principal"
+
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Privacy Policy"
@@ -5089,7 +5187,7 @@ msgstr "Profil"
 #. js-lingui-id: 6Fs5Ks
 #: src/utils/title-utils.ts
 msgid "Profile - Settings"
-msgstr ""
+msgstr "Profil - Paramètres"
 
 #. js-lingui-id: GVxbU6
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -5208,6 +5306,11 @@ msgstr "Communiqués"
 msgid "Reload"
 msgstr "Recharger"
 
+#. js-lingui-id: qlAIQ1
+#: src/modules/object-metadata/components/RemoteNavigationDrawerSection.tsx
+msgid "Remote"
+msgstr "À distance"
+
 #. js-lingui-id: t/YqKh
 #: src/modules/ui/input/components/ImageInput.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -5223,6 +5326,11 @@ msgstr "Supprimer le compte"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove as default"
 msgstr "Supprimer comme défaut"
+
+#. js-lingui-id: 2HpFUd
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
+msgid "Remove Deleted filter"
+msgstr "Supprimer le filtre supprimé"
 
 #. js-lingui-id: rn2/2V
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
@@ -5249,6 +5357,16 @@ msgstr "Supprimer le transfert"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove option"
 msgstr "Supprimer l'option"
+
+#. js-lingui-id: NRCCKG
+#: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
+msgid "Remove Sorting"
+msgstr "Supprimer le tri"
+
+#. js-lingui-id: qMPWg0
+#: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
+msgid "Remove sorting?"
+msgstr "Supprimer le tri ?"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -5395,6 +5513,11 @@ msgstr "Roumain"
 msgid "Run a workflow and return here to view its executions"
 msgstr "Exécutez un workflow et revenez ici pour voir ses exécutions"
 
+#. js-lingui-id: UPaWvi
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+msgid "Run Function"
+msgstr "Exécuter la fonction"
+
 #. js-lingui-id: nji0/X
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Russian"
@@ -5464,7 +5587,7 @@ msgstr "Rechercher un type"
 #. js-lingui-id: +7s4fw
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "Search agents"
-msgstr ""
+msgstr "Rechercher des agents"
 
 #. js-lingui-id: 4fd0q+
 #: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
@@ -5474,7 +5597,7 @@ msgstr "Rechercher un agent..."
 #. js-lingui-id: kdagxk
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Search an assigned {roleTargetDisplayName}..."
-msgstr ""
+msgstr "Rechercher un {roleTargetDisplayName} attribué..."
 
 #. js-lingui-id: k7kp5/
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
@@ -5498,7 +5621,7 @@ msgstr "Rechercher n'importe quel champ"
 #. js-lingui-id: FzcOoG
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 msgid "Search API keys"
-msgstr ""
+msgstr "Rechercher des clés API"
 
 #. js-lingui-id: 3UPqHL
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableSearchInput.tsx
@@ -5916,7 +6039,7 @@ msgstr "Se connecter"
 #. js-lingui-id: Vt3mQ2
 #: src/utils/title-utils.ts
 msgid "Sign in or Create an account"
-msgstr ""
+msgstr "Se connecter ou Créer un compte"
 
 #. js-lingui-id: e+RpCP
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -6124,6 +6247,7 @@ msgstr "Le sujet, le corps et les pièces jointes seront partagés avec votre é
 
 #. js-lingui-id: hQRttt
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Submit"
 msgstr "Soumettre"
 
@@ -6201,7 +6325,7 @@ msgstr "Passer à l'annuel"
 #. js-lingui-id: Nu4DdT
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersTableHeader.tsx
 msgid "Sync"
-msgstr ""
+msgstr "Synchroniser"
 
 #. js-lingui-id: 5TRY4+
 #: src/modules/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer.tsx
@@ -6301,6 +6425,11 @@ msgstr "Test"
 msgid "Test Workflow"
 msgstr "Tester le workflow"
 
+#. js-lingui-id: 3nWPN6
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+msgid "Test your function"
+msgstr "Testez votre fonction"
+
 #. js-lingui-id: xeiujy
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Text"
@@ -6396,12 +6525,12 @@ msgstr "Thème "
 #. js-lingui-id: Wn862P
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuItem.tsx
 msgid "then"
-msgstr ""
+msgstr "puis"
 
 #. js-lingui-id: l2fWLK
 #: src/modules/activities/files/components/Attachments.tsx
 msgid "There are no associated files with this record."
-msgstr ""
+msgstr "Il n'y a pas de fichiers associés à cet enregistrement."
 
 #. js-lingui-id: /cSDOy
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -6448,6 +6577,11 @@ msgstr "Cette action est irréversible. Cela supprimera définitivement la confi
 msgid "This database value overrides environment settings. "
 msgstr "Cette valeur de base de données remplace les paramètres d'environnement."
 
+#. js-lingui-id: E4JJ5C
+#: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
+msgid "This is required to enable manual row reordering."
+msgstr "Ceci est nécessaire pour activer le réagencement manuel des lignes."
+
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
 msgid "This role can {humanReadableAction} all records"
@@ -6456,7 +6590,7 @@ msgstr "Ce rôle peut {humanReadableAction} tous les enregistrements"
 #. js-lingui-id: BifDEA
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "This role is assigned to these {roleTargetDisplayName}."
-msgstr ""
+msgstr "Ce rôle est attribué à ces {roleTargetDisplayName}."
 
 #. js-lingui-id: C/wr0z
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -6781,7 +6915,7 @@ msgstr "L'utilisateur n'est pas connecté"
 #. js-lingui-id: LVecP9
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
 msgid "User Roles"
-msgstr ""
+msgstr "Rôles utilisateur"
 
 #. js-lingui-id: Sxm8rQ
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -6804,6 +6938,7 @@ msgid "Validate Data"
 msgstr "Valider les données"
 
 #. js-lingui-id: wMHvYH
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 msgid "Value"
@@ -6838,7 +6973,7 @@ msgstr "Variable mise à jour avec succès."
 #. js-lingui-id: uSMfoN
 #: src/utils/title-utils.ts
 msgid "Verify"
-msgstr ""
+msgstr "Vérifier"
 
 #. js-lingui-id: IoglDq
 #: src/pages/auth/SignInUp.tsx
@@ -7006,7 +7141,7 @@ msgstr "Quand la clé sera désactivée"
 #. js-lingui-id: tL6W2K
 #: src/pages/settings/page-layout/SettingsPageLayouts.tsx
 msgid "Widgets"
-msgstr ""
+msgstr "Widgets"
 
 #. js-lingui-id: woYYQq
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -7112,7 +7247,7 @@ msgstr "annuel"
 #. js-lingui-id: +BGee5
 #: src/utils/date-utils.ts
 msgid "years"
-msgstr ""
+msgstr "ans"
 
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -7145,6 +7280,13 @@ msgstr "Vous n'êtes pas autorisé à créer des enregistrements pour cet objet"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "Vous pouvez configurer toute combinaison de IMAP (réception de emails), SMTP (envoi de emails) et CalDAV (synchronisation de calendrier)."
+
+#. js-lingui-id: aiJY7y
+#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
+"If you need to make changes, please create a new connection or unsync the tables first."
+msgstr "Vous ne pouvez pas modifier cette connexion car elle a des tables suivies. Si vous devez apporter des modifications, veuillez créer une nouvelle connexion ou désynchroniser d'abord les tables."
 
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

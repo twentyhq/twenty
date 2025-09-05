@@ -1,4 +1,4 @@
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { type SettingsRoleAssignmentConfirmationModalSelectedRoleTarget } from '@/settings/roles/role-assignment/types/SettingsRoleAssignmentConfirmationModalSelectedRoleTarget';
 
