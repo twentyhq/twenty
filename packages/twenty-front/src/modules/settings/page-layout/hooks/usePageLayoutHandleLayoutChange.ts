@@ -12,7 +12,16 @@ export const usePageLayoutHandleLayoutChange = (activeTabId: string | null) => {
   const handleLayoutChange = useRecoilCallback(
     ({ snapshot, set }) =>
       (_: Layout[], allLayouts: Layouts) => {
-        set(pageLayoutCurrentLayoutsState, allLayouts);
+        if (!activeTabId) return;
+
+        const currentTabLayouts = snapshot
+          .getLoadable(pageLayoutCurrentLayoutsState)
+          .getValue();
+
+        set(pageLayoutCurrentLayoutsState, {
+          ...currentTabLayouts,
+          [activeTabId]: allLayouts,
+        });
 
         const pageLayoutWidgets = snapshot
           .getLoadable(pageLayoutWidgetsState)

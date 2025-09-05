@@ -11,27 +11,33 @@ export const usePageLayoutWidgetDelete = () => {
         const pageLayoutWidgets = snapshot
           .getLoadable(pageLayoutWidgetsState)
           .getValue();
-        const pageLayoutCurrentLayouts = snapshot
+        const allTabLayouts = snapshot
           .getLoadable(pageLayoutCurrentLayoutsState)
           .getValue();
+
+        const widgetToRemove = pageLayoutWidgets.find((w) => w.id === widgetId);
+        const tabId = widgetToRemove?.pageLayoutTabId;
 
         const updatedWidgets = pageLayoutWidgets.filter(
           (w) => w.id !== widgetId,
         );
         set(pageLayoutWidgetsState, updatedWidgets);
 
-        const updatedLayouts = {
-          desktop: (pageLayoutCurrentLayouts.desktop || []).filter(
-            (layout) => layout.i !== widgetId,
-          ),
-          mobile: (pageLayoutCurrentLayouts.mobile || []).filter(
-            (layout) => layout.i !== widgetId,
-          ),
-        };
-        set(pageLayoutCurrentLayoutsState, updatedLayouts);
-
-        const widgetToRemove = pageLayoutWidgets.find((w) => w.id === widgetId);
-        const tabId = widgetToRemove?.pageLayoutTabId;
+        if (tabId !== undefined && allTabLayouts[tabId] !== undefined) {
+          const currentTabLayouts = allTabLayouts[tabId];
+          const updatedLayouts = {
+            desktop: (currentTabLayouts.desktop || []).filter(
+              (layout) => layout.i !== widgetId,
+            ),
+            mobile: (currentTabLayouts.mobile || []).filter(
+              (layout) => layout.i !== widgetId,
+            ),
+          };
+          set(pageLayoutCurrentLayoutsState, {
+            ...allTabLayouts,
+            [tabId]: updatedLayouts,
+          });
+        }
 
         set(pageLayoutTabsState, (prevTabs) => {
           return prevTabs.map((tab) => {

@@ -142,9 +142,8 @@ export const SettingsPageLayoutEdit = () => {
   const [pageLayoutCurrentBreakpoint, setPageLayoutCurrentBreakpoint] =
     useRecoilState(pageLayoutCurrentBreakpointState);
   const pageLayoutSelectedCells = useRecoilValue(pageLayoutSelectedCellsState);
-  const pageLayoutCurrentLayouts = useRecoilValue(
-    pageLayoutCurrentLayoutsState,
-  );
+  const [pageLayoutCurrentLayouts, setPageLayoutCurrentLayouts] =
+    useRecoilState(pageLayoutCurrentLayoutsState);
   const pageLayoutWidgets = useRecoilValue(pageLayoutWidgetsState);
   const [pageLayoutTabs, setPageLayoutTabs] =
     useRecoilState(pageLayoutTabsState);
@@ -238,10 +237,13 @@ export const SettingsPageLayoutEdit = () => {
 
   const isEmptyState = activeTabWidgets.length === 0;
 
-  const gridRows = useMemo(
-    () => calculateTotalGridRows(pageLayoutCurrentLayouts),
-    [pageLayoutCurrentLayouts],
-  );
+  const gridRows = useMemo(() => {
+    const currentTabLayouts = pageLayoutCurrentLayouts[activeTabId || ''] || {
+      desktop: [],
+      mobile: [],
+    };
+    return calculateTotalGridRows(currentTabLayouts);
+  }, [pageLayoutCurrentLayouts, activeTabId]);
 
   const handleCancel = () => {
     navigateSettings(SettingsPath.PageLayout);
@@ -273,8 +275,20 @@ export const SettingsPageLayoutEdit = () => {
       tabs: updatedTabs,
     }));
 
+    // Initialize empty layout for the new tab
+    setPageLayoutCurrentLayouts((prev) => ({
+      ...prev,
+      [newTab.id]: { desktop: [], mobile: [] },
+    }));
+
     setActiveTabId(newTab.id);
-  }, [pageLayoutTabs, setPageLayoutTabs, setPageLayoutDraft, setActiveTabId]);
+  }, [
+    pageLayoutTabs,
+    setPageLayoutTabs,
+    setPageLayoutDraft,
+    setActiveTabId,
+    setPageLayoutCurrentLayouts,
+  ]);
 
   const tabListTabs: SingleTabProps[] = useMemo(() => {
     return [...pageLayoutTabs]
@@ -398,7 +412,7 @@ export const SettingsPageLayoutEdit = () => {
                 ? EMPTY_LAYOUT
                 : activeTabLayouts.desktop.length > 0
                   ? activeTabLayouts
-                  : pageLayoutCurrentLayouts
+                  : pageLayoutCurrentLayouts[activeTabId || ''] || EMPTY_LAYOUT
             }
             breakpoints={PAGE_LAYOUT_CONFIG.breakpoints}
             cols={PAGE_LAYOUT_CONFIG.columns}

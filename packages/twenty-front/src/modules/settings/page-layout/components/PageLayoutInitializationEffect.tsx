@@ -48,26 +48,27 @@ export const PageLayoutInitializationEffect = ({
 
             set(pageLayoutTabsState, layout.tabs);
             if (layout.tabs.length > 0) {
-              const firstTab = [...layout.tabs].sort(
-                (a, b) => a.position - b.position,
-              )[0];
+              const allWidgets = layout.tabs.flatMap((tab) => tab.widgets);
+              set(pageLayoutWidgetsState, allWidgets);
 
-              set(pageLayoutWidgetsState, firstTab.widgets);
-
-              const layouts = firstTab.widgets.map((w) => ({
-                i: w.id,
-                x: w.gridPosition.column,
-                y: w.gridPosition.row,
-                w: w.gridPosition.columnSpan,
-                h: w.gridPosition.rowSpan,
-              }));
-              set(pageLayoutCurrentLayoutsState, {
-                desktop: layouts,
-                mobile: layouts.map((l) => ({ ...l, w: 1, x: 0 })),
+              const tabLayouts: Record<string, any> = {};
+              layout.tabs.forEach((tab) => {
+                const layouts = tab.widgets.map((w) => ({
+                  i: w.id,
+                  x: w.gridPosition.column,
+                  y: w.gridPosition.row,
+                  w: w.gridPosition.columnSpan,
+                  h: w.gridPosition.rowSpan,
+                }));
+                tabLayouts[tab.id] = {
+                  desktop: layouts,
+                  mobile: layouts.map((l) => ({ ...l, w: 1, x: 0 })),
+                };
               });
+              set(pageLayoutCurrentLayoutsState, tabLayouts);
             } else {
               set(pageLayoutWidgetsState, []);
-              set(pageLayoutCurrentLayoutsState, { desktop: [], mobile: [] });
+              set(pageLayoutCurrentLayoutsState, {});
             }
           }
         } else {
@@ -93,7 +94,9 @@ export const PageLayoutInitializationEffect = ({
           set(pageLayoutTabsState, [defaultTab]);
 
           set(pageLayoutWidgetsState, []);
-          set(pageLayoutCurrentLayoutsState, { desktop: [], mobile: [] });
+          set(pageLayoutCurrentLayoutsState, {
+            [defaultTab.id]: { desktop: [], mobile: [] },
+          });
         }
       },
     [],

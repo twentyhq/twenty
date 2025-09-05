@@ -17,7 +17,7 @@ export const useCreatePageLayoutIframeWidget = () => {
         const pageLayoutWidgets = snapshot
           .getLoadable(pageLayoutWidgetsState)
           .getValue();
-        const pageLayoutCurrentLayouts = snapshot
+        const allTabLayouts = snapshot
           .getLoadable(pageLayoutCurrentLayoutsState)
           .getValue();
         const pageLayoutDraggedArea = snapshot
@@ -70,14 +70,23 @@ export const useCreatePageLayoutIframeWidget = () => {
         const updatedWidgets = [...pageLayoutWidgets, newWidget];
         set(pageLayoutWidgetsState, updatedWidgets);
 
+        const currentTabLayouts = allTabLayouts[activeTabId] || {
+          desktop: [],
+          mobile: [],
+        };
+
         const updatedLayouts = {
-          desktop: [...(pageLayoutCurrentLayouts.desktop || []), newLayout],
+          desktop: [...(currentTabLayouts.desktop || []), newLayout],
           mobile: [
-            ...(pageLayoutCurrentLayouts.mobile || []),
+            ...(currentTabLayouts.mobile || []),
             { ...newLayout, w: 1, x: 0 },
           ],
         };
-        set(pageLayoutCurrentLayoutsState, updatedLayouts);
+
+        set(pageLayoutCurrentLayoutsState, {
+          ...allTabLayouts,
+          [activeTabId]: updatedLayouts,
+        });
 
         set(pageLayoutTabsState, (prevTabs) => {
           return prevTabs.map((tab) => {
