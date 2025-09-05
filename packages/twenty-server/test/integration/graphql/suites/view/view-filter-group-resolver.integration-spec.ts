@@ -41,10 +41,10 @@ describe('View Filter Group Resolver', () => {
       },
     } = await createOneObjectMetadata({
       input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
+        nameSingular: 'myFilterGroupTestObject',
+        namePlural: 'myFilterGroupTestObjects',
+        labelSingular: 'My Filter Group Test Object',
+        labelPlural: 'My Filter Group Test Objects',
         icon: 'Icon123',
       },
     });

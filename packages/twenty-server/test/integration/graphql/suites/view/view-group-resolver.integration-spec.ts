@@ -41,10 +41,10 @@ describe('View Group Resolver', () => {
       },
     } = await createOneObjectMetadata({
       input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
+        nameSingular: 'myGroupTestObject',
+        namePlural: 'myGroupTestObjects',
+        labelSingular: 'My Group Test Object',
+        labelPlural: 'My Group Test Objects',
         icon: 'Icon123',
       },
     });
