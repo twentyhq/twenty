@@ -22,7 +22,7 @@ export type PageLayoutWidget = {
   objectMetadataId?: string | null;
   gridPosition: GridPosition;
   configuration?: Record<string, unknown> | null;
-  data?: any; // TODO: Remove when backend connected - data will be fetched dynamically
+  data?: any;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
