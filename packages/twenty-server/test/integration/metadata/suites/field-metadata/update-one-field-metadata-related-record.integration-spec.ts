@@ -263,7 +263,6 @@ describe('update-one-field-metadata-related-record', () => {
 
         expect({
           value: updatedViewFilter.value,
-          fieldMetadataId: updatedViewFilter.fieldMetadataId,
           operand: updatedViewFilter.operand,
           viewFilterGroupId: updatedViewFilter.viewFilterGroupId,
           positionInViewFilterGroup:

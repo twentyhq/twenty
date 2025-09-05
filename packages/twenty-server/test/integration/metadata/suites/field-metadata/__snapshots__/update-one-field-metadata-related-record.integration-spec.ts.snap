@@ -2,7 +2,6 @@
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should handle adding new options while maintaining existing view filter 1`] = `
 {
-  "fieldMetadataId": "b7d53a4f-628a-4a50-af7d-ccc1b7bac562",
   "operand": "IS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
@@ -11,13 +10,11 @@ exports[`update-one-field-metadata-related-record MULTI_SELECT should handle add
     "OPTION_1",
   ],
   "viewFilterGroupId": null,
-  "viewId": "596525db-8ab0-4f4d-9d71-c99932b095bf",
 }
 `;
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should handle no changes update of options while maintaining existing view filter values 1`] = `
 {
-  "fieldMetadataId": "248a7cc5-c37f-469e-a05c-0bef35f28d67",
   "operand": "IS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
@@ -34,13 +31,11 @@ exports[`update-one-field-metadata-related-record MULTI_SELECT should handle no 
     "OPTION_9",
   ],
   "viewFilterGroupId": null,
-  "viewId": "a41af0c1-c252-467e-94b2-3c98134eb417",
 }
 `;
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should handle partial deletion of selected options in view filter 1`] = `
 {
-  "fieldMetadataId": "1f29d861-4f6e-49b6-a4ae-a30bcd67b8a7",
   "operand": "IS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
@@ -53,13 +48,11 @@ exports[`update-one-field-metadata-related-record MULTI_SELECT should handle par
     "OPTION_9",
   ],
   "viewFilterGroupId": null,
-  "viewId": "3cdef0b1-1470-468c-bfbb-1c18e795df4e",
 }
 `;
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should handle reordering of options while maintaining view filter values 1`] = `
 {
-  "fieldMetadataId": "8ecacaf7-1979-47df-b1ad-c93a2c3fd793",
   "operand": "IS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
@@ -68,7 +61,6 @@ exports[`update-one-field-metadata-related-record MULTI_SELECT should handle reo
     "OPTION_1",
   ],
   "viewFilterGroupId": null,
-  "viewId": "e6ae8e19-8ead-4bda-9a67-4cd06df5ece3",
 }
 `;
 
@@ -87,7 +79,6 @@ exports[`update-one-field-metadata-related-record MULTI_SELECT should throw erro
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should update related multi selected options view filter 1`] = `
 {
-  "fieldMetadataId": "44c5ee5b-163e-4b0c-bf3e-adf9cf1e556e",
   "operand": "IS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
@@ -104,13 +95,11 @@ exports[`update-one-field-metadata-related-record MULTI_SELECT should update rel
     "OPTION_9",
   ],
   "viewFilterGroupId": null,
-  "viewId": "d8c02bea-e483-4112-82ba-ac53bf9bd5c7",
 }
 `;
 
 exports[`update-one-field-metadata-related-record MULTI_SELECT should update related solo selected option view filter 1`] = `
 {
-  "fieldMetadataId": "a20ca8ab-f819-42bf-9ba6-2a1954db56d1",
   "operand": "IS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
@@ -118,13 +107,11 @@ exports[`update-one-field-metadata-related-record MULTI_SELECT should update rel
     "OPTION_5_UPDATED",
   ],
   "viewFilterGroupId": null,
-  "viewId": "f8278467-d947-4165-bfdc-8b29500e3401",
 }
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should handle adding new options while maintaining existing view filter 1`] = `
 {
-  "fieldMetadataId": "a102069d-25de-4d3a-a0ce-24bdd1b699b8",
   "operand": "IS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
@@ -133,13 +120,11 @@ exports[`update-one-field-metadata-related-record SELECT should handle adding ne
     "OPTION_1",
   ],
   "viewFilterGroupId": null,
-  "viewId": "bffa916c-6f77-4a8f-8a88-5e0dc48387c5",
 }
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should handle no changes update of options while maintaining existing view filter values 1`] = `
 {
-  "fieldMetadataId": "81ca1d75-04fd-41f2-b13b-353c1fbb4c94",
   "operand": "IS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
@@ -156,13 +141,11 @@ exports[`update-one-field-metadata-related-record SELECT should handle no change
     "OPTION_9",
   ],
   "viewFilterGroupId": null,
-  "viewId": "a467967b-90ba-4d3d-b975-07fc0597126f",
 }
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should handle partial deletion of selected options in view filter 1`] = `
 {
-  "fieldMetadataId": "dd1f4f8e-a707-4886-9d3e-be69ee744ae1",
   "operand": "IS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
@@ -175,13 +158,11 @@ exports[`update-one-field-metadata-related-record SELECT should handle partial d
     "OPTION_9",
   ],
   "viewFilterGroupId": null,
-  "viewId": "788c9e49-2ad6-4142-a7a1-210752cde07f",
 }
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should handle reordering of options while maintaining view filter values 1`] = `
 {
-  "fieldMetadataId": "169bebec-e173-4f1d-9596-5febf0f357f8",
   "operand": "IS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
@@ -190,7 +171,6 @@ exports[`update-one-field-metadata-related-record SELECT should handle reorderin
     "OPTION_1",
   ],
   "viewFilterGroupId": null,
-  "viewId": "febb453b-74cb-4715-85bf-3e8101097999",
 }
 `;
 
@@ -209,7 +189,6 @@ exports[`update-one-field-metadata-related-record SELECT should throw error if v
 
 exports[`update-one-field-metadata-related-record SELECT should update related multi selected options view filter 1`] = `
 {
-  "fieldMetadataId": "34a9fe4d-7d20-4a84-8fd1-b8c63dd5af1c",
   "operand": "IS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
@@ -226,13 +205,11 @@ exports[`update-one-field-metadata-related-record SELECT should update related m
     "OPTION_9",
   ],
   "viewFilterGroupId": null,
-  "viewId": "a2d3b8c1-d736-4e1c-89b0-7eab663b8c5c",
 }
 `;
 
 exports[`update-one-field-metadata-related-record SELECT should update related solo selected option view filter 1`] = `
 {
-  "fieldMetadataId": "9c899be1-f69e-4cf5-ba5d-1889d1d17cbc",
   "operand": "IS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
@@ -240,6 +217,5 @@ exports[`update-one-field-metadata-related-record SELECT should update related s
     "OPTION_5_UPDATED",
   ],
   "viewFilterGroupId": null,
-  "viewId": "5aee1ad1-a569-45bb-8e8f-d9c87c1045b7",
 }
 `;
