@@ -123,13 +123,13 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
   }
 
   private setUpgradeContextVersionsAndCommandsForCurrentAppVersion() {
-    const ugpradeContextIsAlreadyDefined = [
+    const upgradeContextIsAlreadyDefined = [
       this.currentAppVersion,
       this.commands,
       this.fromWorkspaceVersion,
     ].every(isDefined);
 
-    if (ugpradeContextIsAlreadyDefined) {
+    if (upgradeContextIsAlreadyDefined) {
       return;
     }
 
@@ -172,6 +172,8 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     passedParams: string[],
     options: ActiveOrSuspendedWorkspacesMigrationCommandOptions,
   ): Promise<void> {
+    this.setUpgradeContextVersionsAndCommandsForCurrentAppVersion();
+
     const shouldSkipUpgradeIfFreshInstallation =
       await this.shouldSkipUpgradeIfFreshInstallation();
 
