@@ -6,6 +6,7 @@ import {
 
 import {
   type CurrentWorkspace,
+  currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import {
   getIntervalLabel,
