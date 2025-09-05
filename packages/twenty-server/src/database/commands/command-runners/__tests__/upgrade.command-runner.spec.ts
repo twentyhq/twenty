@@ -418,6 +418,7 @@ describe('UpgradeCommandRunner', () => {
 
         expect(failReport.length).toBe(0);
         expect(successReport.length).toBe(1);
+        expect(runCoreMigrationsSpy).toHaveBeenCalledTimes(1);
         expect(runAfterSyncMetadataSpy).toHaveBeenCalledTimes(1);
         expect(runBeforeSyncMetadataSpy).toHaveBeenCalledTimes(1);
         const { workspaceId } = successReport[0];
