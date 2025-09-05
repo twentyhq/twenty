@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -11,6 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CreateViewInput } from 'src/engine/core-modules/view/dtos/inputs/create-view.input';
@@ -47,8 +49,14 @@ export class ViewController {
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ViewDTO | null> {
-    return this.viewService.findById(id, workspace.id);
+  ): Promise<ViewDTO> {
+    const view = await this.viewService.findById(id, workspace.id);
+
+    if (!isDefined(view)) {
+      throw new NotFoundException(t`View not found (id: ${id})`);
+    }
+
+    return view;
   }
 
   @Post()

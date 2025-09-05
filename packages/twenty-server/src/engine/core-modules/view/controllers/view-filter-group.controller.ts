@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -11,6 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CreateViewFilterGroupInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-filter-group.input';
@@ -46,8 +48,17 @@ export class ViewFilterGroupController {
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ViewFilterGroupDTO | null> {
-    return this.viewFilterGroupService.findById(id, workspace.id);
+  ): Promise<ViewFilterGroupDTO> {
+    const viewFilterGroup = await this.viewFilterGroupService.findById(
+      id,
+      workspace.id,
+    );
+
+    if (!isDefined(viewFilterGroup)) {
+      throw new NotFoundException(t`View filter group not found (id: ${id})`);
+    }
+
+    return viewFilterGroup;
   }
 
   @Post()

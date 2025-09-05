@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -11,6 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CreateViewFieldInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-field.input';
@@ -44,8 +46,14 @@ export class ViewFieldController {
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ViewFieldEntity | null> {
-    return this.viewFieldService.findById(id, workspace.id);
+  ): Promise<ViewFieldEntity> {
+    const viewField = await this.viewFieldService.findById(id, workspace.id);
+
+    if (!isDefined(viewField)) {
+      throw new NotFoundException(t`View field not found (id: ${id})`);
+    }
+
+    return viewField;
   }
 
   @Patch(':id')

@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -11,6 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CreateViewSortInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-sort.input';
@@ -44,8 +46,14 @@ export class ViewSortController {
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ViewSortDTO | null> {
-    return this.viewSortService.findById(id, workspace.id);
+  ): Promise<ViewSortDTO> {
+    const viewSort = await this.viewSortService.findById(id, workspace.id);
+
+    if (!isDefined(viewSort)) {
+      throw new NotFoundException(t`View sort not found (id: ${id})`);
+    }
+
+    return viewSort;
   }
 
   @Post()

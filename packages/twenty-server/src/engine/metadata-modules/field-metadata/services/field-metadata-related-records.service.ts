@@ -77,7 +77,7 @@ export class FieldMetadataRelatedRecordsService {
           );
 
           for (const viewGroup of viewGroupsToDelete) {
-            await this.viewGroupService.delete(
+            await this.viewGroupService.destroy(
               viewGroup.id,
               newFieldMetadata.workspaceId,
             );
@@ -217,7 +217,7 @@ export class FieldMetadataRelatedRecordsService {
         );
 
         if (afterDeleteViewFilterOptions.length === 0) {
-          await this.viewFilterService.delete(
+          await this.viewFilterService.destroy(
             viewFilter.id,
             newFieldMetadata.workspaceId,
           );
@@ -270,7 +270,7 @@ export class FieldMetadataRelatedRecordsService {
         workspaceId: fieldMetadata.workspaceId,
       });
     } else if (!fieldMetadata.isNullable && noValueGroup) {
-      await this.viewGroupService.delete(
+      await this.viewGroupService.destroy(
         noValueGroup.id,
         fieldMetadata.workspaceId,
       );

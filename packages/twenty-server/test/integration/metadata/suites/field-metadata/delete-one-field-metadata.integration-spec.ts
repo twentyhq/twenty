@@ -95,7 +95,7 @@ describe('deleteOne', () => {
       expect(
         updatedViewResponse.kanbanAggregateOperationFieldMetadataId,
       ).toBeNull();
-      expect(updatedViewResponse.kanbanAggregateOperation).toBe('COUNT');
+      expect(updatedViewResponse.kanbanAggregateOperation).toBe(null);
     });
   });
 });
