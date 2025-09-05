@@ -15,6 +15,18 @@ import { type ViewEntity } from 'src/engine/core-modules/view/entities/view.enti
 import { ViewOpenRecordIn } from 'src/engine/core-modules/view/enums/view-open-record-in';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
 
+export const findViewByIdWithRestApi = async (
+  viewId: string,
+): Promise<ViewEntity> => {
+  const response = await makeRestAPIRequest({
+    method: 'get',
+    path: `/metadata/views/${viewId}`,
+    bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  });
+
+  return response.body;
+};
+
 export const createTestViewWithRestApi = async (
   overrides: Partial<ViewEntity> = {},
 ): Promise<ViewEntity> => {
