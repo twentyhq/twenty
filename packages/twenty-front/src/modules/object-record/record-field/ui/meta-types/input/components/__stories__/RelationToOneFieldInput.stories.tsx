@@ -24,6 +24,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { getCanvasElementForDropdownTesting } from 'twenty-ui/testing';
 import { RelationToOneFieldInput } from '../RelationToOneFieldInput';
 
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 import { getFieldInputEventContextProviderWithJestMocks } from './utils/getFieldInputEventContextProviderWithJestMocks';
 
 const RelationWorkspaceSetterEffect = () => {
@@ -140,6 +141,7 @@ const meta: Meta = {
     clearMocksDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
+    I18nFrontDecorator,
   ],
   parameters: {
     clearMocks: true,

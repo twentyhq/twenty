@@ -1,6 +1,9 @@
 import { CALENDAR_EVENT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
 import { PERSON_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
-import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import {
+  WORKSPACE_MEMBER_DATA_SEED_IDS,
+  getWorkspaceMemberDataSeeds,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 
 type CalendarEventParticipantDataSeed = {
@@ -269,7 +272,7 @@ const CREATE_EVENT_PARTICIPANTS = (
 };
 
 const GENERATE_CALENDAR_EVENT_PARTICIPANT_SEEDS =
-  (): CalendarEventParticipantDataSeed[] => {
+  (workspaceId: string): CalendarEventParticipantDataSeed[] => {
     const PARTICIPANT_SEEDS: CalendarEventParticipantDataSeed[] = [];
     let PARTICIPANT_INDEX = 1;
 
@@ -283,7 +286,9 @@ const GENERATE_CALENDAR_EVENT_PARTICIPANT_SEEDS =
     const PERSON_IDS = Object.keys(PERSON_DATA_SEED_IDS).map(
       (key) => PERSON_DATA_SEED_IDS[key as keyof typeof PERSON_DATA_SEED_IDS],
     );
-    const WORKSPACE_MEMBER_IDS = Object.values(WORKSPACE_MEMBER_DATA_SEED_IDS);
+    const WORKSPACE_MEMBER_IDS = getWorkspaceMemberDataSeeds(workspaceId).map(
+      (member) => member.id,
+    );
 
     for (const EVENT_ID of EVENT_IDS) {
       const RESULT = CREATE_EVENT_PARTICIPANTS(
@@ -300,5 +305,9 @@ const GENERATE_CALENDAR_EVENT_PARTICIPANT_SEEDS =
     return PARTICIPANT_SEEDS;
   };
 
-export const CALENDAR_EVENT_PARTICIPANT_DATA_SEEDS =
-  GENERATE_CALENDAR_EVENT_PARTICIPANT_SEEDS();
+
+export const getCalendarEventParticipantDataSeeds = (
+  workspaceId: string,
+): CalendarEventParticipantDataSeed[] => {
+  return GENERATE_CALENDAR_EVENT_PARTICIPANT_SEEDS(workspaceId);
+};
