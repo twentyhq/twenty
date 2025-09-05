@@ -91,8 +91,8 @@ export const getWorkspaceMemberDataSeeds = (
     // Apple workspace gets all workspace members (original + random)
     return WORKSPACE_MEMBER_DATA_SEEDS;
   } else if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
-    // YC workspace gets only the original 3 workspace members
-    return originalWorkspaceMembers.slice(0, 3); // Tim, Jony, Jane
+    // YC workspace gets all 4 original workspace members
+    return originalWorkspaceMembers;
   }
 
   return originalWorkspaceMembers;
