@@ -11,17 +11,17 @@ import { useState } from 'react';
 import { IconX, OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 
-type WorkflowVariablesDropdownWorkflowStepItemsProps = {
+type WorkflowVariablesDropdownStepsProps = {
   dropdownId: string;
   steps: StepOutputSchemaV2[];
   onSelect: (value: string) => void;
 };
 
-export const WorkflowVariablesDropdownWorkflowStepItems = ({
+export const WorkflowVariablesDropdownSteps = ({
   dropdownId,
   steps,
   onSelect,
-}: WorkflowVariablesDropdownWorkflowStepItemsProps) => {
+}: WorkflowVariablesDropdownStepsProps) => {
   const { getIcon } = useIcons();
   const [searchInputValue, setSearchInputValue] = useState('');
 
