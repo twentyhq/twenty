@@ -127,15 +127,18 @@ describe('update-one-field-metadata-related-record', () => {
   };
 
   afterEach(async () => {
-    await updateFeatureFlag({
-      expectToFail: false,
-      featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
-      value: true,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
-    if (isDefined(idToDelete)) {
-      await deleteOneObjectMetadata({
-        input: { idToDelete: idToDelete },
+    try {
+      if (isDefined(idToDelete)) {
+        await deleteOneObjectMetadata({
+          input: { idToDelete: idToDelete },
+        });
+      }
+    } finally {
+      await updateFeatureFlag({
+        expectToFail: false,
+        featureFlag: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
+        value: true,
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
       });
     }
   });
