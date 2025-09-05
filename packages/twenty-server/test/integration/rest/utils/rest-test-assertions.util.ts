@@ -32,3 +32,16 @@ export const assertRestApiErrorResponse = <T = Record<string, unknown>>(
     expect(response.body.message).toContain(expectedErrorMessage);
   }
 };
+
+export const assertRestApiErrorNotFoundResponse = (
+  response: RestResponse<{ statusCode: number; messages: [] }>,
+  expectedStatus = 404,
+  expectedErrorMessage?: string,
+) => {
+  expect(response.status).toBe(expectedStatus);
+  expect(response.body.statusCode).toBe(expectedStatus);
+
+  if (expectedErrorMessage && response.body.message) {
+    expect(response.body.message).toContain(expectedErrorMessage);
+  }
+};

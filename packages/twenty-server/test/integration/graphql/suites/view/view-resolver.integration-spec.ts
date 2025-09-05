@@ -40,10 +40,10 @@ describe('View Resolver', () => {
       },
     } = await createOneObjectMetadata({
       input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
+        nameSingular: 'myViewTestObject',
+        namePlural: 'myViewTestObjects',
+        labelSingular: 'My View Test Object',
+        labelPlural: 'My View Test Objects',
         icon: 'Icon123',
       },
     });

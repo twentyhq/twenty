@@ -1,3 +1,4 @@
+import { useDeleteOneFieldMetadataItem } from '@/object-metadata/hooks/useDeleteOneFieldMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
@@ -108,11 +109,10 @@ export const SettingsObjectFieldItemTableRow = ({
     fieldName: fieldMetadataItem.name,
   });
 
-  const {
-    activateMetadataField,
-    deactivateMetadataField,
-    deleteMetadataField,
-  } = useFieldMetadataItem();
+  const { activateMetadataField, deactivateMetadataField } =
+    useFieldMetadataItem();
+
+  const { deleteOneFieldMetadataItem } = useDeleteOneFieldMetadataItem();
 
   const handleDisableField = async (
     activeFieldMetadatItem: FieldMetadataItem,
@@ -293,7 +293,12 @@ export const SettingsObjectFieldItemTableRow = ({
             onActivate={() =>
               activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id)
             }
-            onDelete={() => deleteMetadataField(fieldMetadataItem)}
+            onDelete={() =>
+              deleteOneFieldMetadataItem({
+                idToDelete: fieldMetadataItem.id,
+                objectMetadataId: objectMetadataItem.id,
+              })
+            }
           />
         ) : (
           <LightIconButton
