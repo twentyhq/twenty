@@ -104,21 +104,28 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       }
 
       const areAllWorkspacesInPreviousMinorVersionOrAbove =
-        allActiveOrSuspendedWorkspaces.every(
-          (workspace) =>
-            isDefined(workspace.version) &&
-            ['higher', 'equal'].includes(
-              compareVersionMajorAndMinor(
-                workspace.version,
-                fromWorkspaceVersion.version,
-              ),
-            ),
-        );
+        allActiveOrSuspendedWorkspaces.every((workspace) => {
+          if (!isDefined(workspace.version)) {
+            return false;
+          }
+
+          const versionCompareResult = compareVersionMajorAndMinor(
+            workspace.version,
+            fromWorkspaceVersion.version,
+          );
+
+          if (versionCompareResult === 'lower') {
+            return false;
+          }
+
+          return true;
+        });
 
       return areAllWorkspacesInPreviousMinorVersionOrAbove;
     } catch (error) {
       this.logger.error('Error checking workspaces below version:', error);
-      throw error;
+
+      return false;
     }
   }
 
@@ -193,10 +200,13 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     if (!areAllWorkspacesInPreviousMinorVersionOrAbove) {
       this.logger.log(
         chalk.red(
-          'Not able to run upgrade command, aborting the whole upgrade operation. Please check that all workspaces are in a previous minor version or above.',
+          `Not able to run upgrade command, aborting the whole upgrade operation.
+          Please check that all workspaces are at least at the previous minor version ${this.fromWorkspaceVersion.version}
+          If the workspaces are not at the previous minor version, please go back to the previous minor version and run the upgrade command again.`,
         ),
       );
-      throw new Error('Could not run upgrade aborting');
+
+      return;
     }
 
     await this.runCoreMigrations();
