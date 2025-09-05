@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import {
   computeMorphRelationFieldJoinColumnName,
-  isDefined
+  isDefined,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
