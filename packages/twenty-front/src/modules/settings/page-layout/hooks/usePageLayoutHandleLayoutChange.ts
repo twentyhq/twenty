@@ -10,8 +10,7 @@ export const usePageLayoutHandleLayoutChange = (activeTabId: string | null) => {
   const handleLayoutChange = useRecoilCallback(
     ({ snapshot, set }) =>
       (_: Layout[], allLayouts: Layouts) => {
-        if (!activeTabId) return;
-
+        if (!isDefined(activeTabId)) return;
         const currentTabLayouts = snapshot
           .getLoadable(pageLayoutCurrentLayoutsState)
           .getValue();
@@ -28,10 +27,9 @@ export const usePageLayoutHandleLayoutChange = (activeTabId: string | null) => {
         const currentTab = pageLayoutDraft.tabs.find(
           (tab) => tab.id === activeTabId,
         );
-        const currentWidgets = currentTab?.widgets || [];
-
+        if (!currentTab) return;
         const updatedWidgets = convertLayoutsToWidgets(
-          currentWidgets,
+          currentTab.widgets,
           allLayouts,
         );
 

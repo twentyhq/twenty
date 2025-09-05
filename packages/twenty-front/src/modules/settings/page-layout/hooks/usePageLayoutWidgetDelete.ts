@@ -15,7 +15,6 @@ export const usePageLayoutWidgetDelete = () => {
           .getLoadable(pageLayoutCurrentLayoutsState)
           .getValue();
 
-        // Find which tab contains the widget
         const tabWithWidget = pageLayoutDraft.tabs.find((tab) =>
           tab.widgets.some((w) => w.id === widgetId),
         );
