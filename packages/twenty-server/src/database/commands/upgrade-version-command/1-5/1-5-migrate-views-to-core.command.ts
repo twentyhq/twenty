@@ -80,7 +80,6 @@ export class MigrateViewsToCoreCommand extends ActiveOrSuspendedWorkspacesMigrat
           this.logger.log(
             `Successfully migrated views to core schema for workspace ${workspaceId}`,
           );
-          throw new Error('test');
         }
       } catch (error) {
         if (queryRunner.isTransactionActive) {

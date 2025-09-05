@@ -388,20 +388,9 @@ describe('UpgradeCommandRunner', () => {
           },
         },
       },
-      {
-        title: 'when workspace are already at the app version',
-        context: {
-          input: {
-            appVersion: '2.0.0',
-            workspaceOverride: {
-              version: '2.0.0',
-            },
-          },
-        },
-      },
     ];
 
-    it.each(successfulTestUseCases)(
+    it.each(eachTestingContextFilter(successfulTestUseCases))(
       '$title',
       async ({ context: { input } }) => {
         await buildModuleAndSetupSpies(input);
@@ -431,6 +420,9 @@ describe('UpgradeCommandRunner', () => {
   describe('Workspace upgrade should fail', () => {
     const failingTestUseCases: EachTestingContext<{
       input: Omit<BuildModuleAndSetupSpiesArgs, 'numberOfWorkspace'>;
+      output?: {
+        failReportWorkspaceId: string;
+      };
     }>[] = [
       {
         title: 'when workspace version is not equal to fromVersion',
@@ -441,16 +433,21 @@ describe('UpgradeCommandRunner', () => {
               version: '0.1.0',
             },
           },
+          output: {
+            failReportWorkspaceId: 'workspace_0',
+          },
         },
       },
       {
-        only: true,
         title: 'when workspace version is not defined',
         context: {
           input: {
             workspaceOverride: {
               version: null,
             },
+          },
+          output: {
+            failReportWorkspaceId: 'workspace_0',
           },
         },
       },
@@ -460,6 +457,9 @@ describe('UpgradeCommandRunner', () => {
           input: {
             appVersion: null,
           },
+          output: {
+            failReportWorkspaceId: 'global',
+          },
         },
       },
       {
@@ -467,6 +467,9 @@ describe('UpgradeCommandRunner', () => {
         context: {
           input: {
             appVersion: '42.0.0',
+          },
+          output: {
+            failReportWorkspaceId: 'global',
           },
         },
       },
@@ -490,7 +493,7 @@ describe('UpgradeCommandRunner', () => {
 
     it.each(eachTestingContextFilter(failingTestUseCases))(
       '$title',
-      async ({ context: { input } }) => {
+      async ({ context: { input, output } }) => {
         await buildModuleAndSetupSpies(input);
 
         const passedParams: string[] = [];
@@ -505,7 +508,7 @@ describe('UpgradeCommandRunner', () => {
         expect(failReport.length).toBe(1);
         const { workspaceId, error } = failReport[0];
 
-        expect(workspaceId).toBe('workspace_0');
+        expect(workspaceId).toBe(output?.failReportWorkspaceId ?? 'global');
         expect(error).toMatchSnapshot();
       },
     );

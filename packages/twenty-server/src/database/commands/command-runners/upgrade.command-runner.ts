@@ -109,16 +109,20 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
             return true;
           }
 
-          const versionCompareResult = compareVersionMajorAndMinor(
-            workspace.version,
-            fromWorkspaceVersion.version,
-          );
+          try {
+            const versionCompareResult = compareVersionMajorAndMinor(
+              workspace.version,
+              fromWorkspaceVersion.version,
+            );
 
-          if (versionCompareResult === 'lower') {
+            return versionCompareResult === 'lower';
+          } catch (error) {
+            this.logger.error(
+              `Error checking workspace ${workspace.id} version: ${error.message}`,
+            );
+
             return true;
           }
-
-          return false;
         });
 
       return workspacesThatAreBelowFromWorkspaceVersion;
@@ -179,35 +183,45 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
     passedParams: string[],
     options: ActiveOrSuspendedWorkspacesMigrationCommandOptions,
   ): Promise<void> {
-    this.setUpgradeContextVersionsAndCommandsForCurrentAppVersion();
+    try {
+      this.setUpgradeContextVersionsAndCommandsForCurrentAppVersion();
 
-    const shouldSkipUpgradeIfFreshInstallation =
-      await this.shouldSkipUpgradeIfFreshInstallation();
+      const shouldSkipUpgradeIfFreshInstallation =
+        await this.shouldSkipUpgradeIfFreshInstallation();
 
-    if (shouldSkipUpgradeIfFreshInstallation) {
-      this.logger.log(
-        chalk.blue('Fresh installation detected, skipping migration'),
-      );
+      if (shouldSkipUpgradeIfFreshInstallation) {
+        this.logger.log(
+          chalk.blue('Fresh installation detected, skipping migration'),
+        );
 
-      return;
-    }
+        return;
+      }
 
-    const workspacesThatAreBelowFromWorkspaceVersion =
-      await this.workspacesThatAreBelowFromWorkspaceVersion(
-        this.fromWorkspaceVersion,
-      );
+      const workspacesThatAreBelowFromWorkspaceVersion =
+        await this.workspacesThatAreBelowFromWorkspaceVersion(
+          this.fromWorkspaceVersion,
+        );
 
-    if (workspacesThatAreBelowFromWorkspaceVersion.length > 0) {
-      this.migrationReport.fail.push(
-        ...workspacesThatAreBelowFromWorkspaceVersion.map((workspace) => ({
-          error: new Error(
-            `Unable to run the upgrade command. Aborting the upgrade process.
+      if (workspacesThatAreBelowFromWorkspaceVersion.length > 0) {
+        this.migrationReport.fail.push(
+          ...workspacesThatAreBelowFromWorkspaceVersion.map((workspace) => ({
+            error: new Error(
+              `Unable to run the upgrade command. Aborting the upgrade process.
 Please ensure that all workspaces are on at least the previous minor version (${this.fromWorkspaceVersion.version}).
 If any workspaces are not on the previous minor version, roll back to that version and run the upgrade command again.`,
-          ),
-          workspaceId: workspace.id,
-        })),
-      );
+            ),
+            workspaceId: workspace.id,
+          })),
+        );
+      }
+    } catch (error) {
+      this.migrationReport.fail.push({
+        error,
+        workspaceId: 'global',
+      });
+    }
+
+    if (this.migrationReport.fail.length > 0) {
       this.migrationReport.fail.forEach(({ error, workspaceId }) =>
         this.logger.error(
           `Error in workspace ${workspaceId}: ${error.message}`,
