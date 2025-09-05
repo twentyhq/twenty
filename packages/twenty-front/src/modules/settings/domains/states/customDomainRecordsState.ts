@@ -1,8 +1,8 @@
-import { type CustomDomainValidRecords } from '~/generated/graphql';
+import { type HostnameValidRecords } from '~/generated/graphql';
 import { createState } from 'twenty-ui/utilities';
 
 export const customDomainRecordsState = createState<{
-  customDomainRecords: CustomDomainValidRecords | null;
+  customDomainRecords: HostnameValidRecords | null;
   isLoading: boolean;
 }>({
   key: 'customDomainRecordsState',

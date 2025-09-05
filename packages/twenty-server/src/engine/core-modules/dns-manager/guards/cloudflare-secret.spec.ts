@@ -3,8 +3,7 @@ import { type ExecutionContext } from '@nestjs/common';
 import * as crypto from 'crypto';
 
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-
-import { CloudflareSecretMatchGuard } from './cloudflare-secret.guard';
+import { CloudflareSecretMatchGuard } from 'src/engine/core-modules/dns-manager/guards/cloudflare-secret.guard';
 
 describe('CloudflareSecretMatchGuard.canActivate', () => {
   let guard: CloudflareSecretMatchGuard;
