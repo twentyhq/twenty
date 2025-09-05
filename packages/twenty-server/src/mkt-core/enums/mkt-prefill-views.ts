@@ -1,3 +1,10 @@
+import { mktInvoicesAllView } from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-invoice-all.view';
+import { mktSInvoicesAllView } from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-all.view';
+import { mktSInvoiceAuthsAllView } from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-auth-all.view';
+import { mktSInvoiceItemsAllView } from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-item-all.view';
+import { mktSInvoiceMetadataAllView } from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-metadata-all.view';
+import { mktSInvoicePaymentsAllView } from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-payment-all.view';
+import { mktSInvoiceTaxBreakdownsAllView } from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-tax-breakdown-all.view';
 import { mktAttributesAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-attribute-all.view';
 import { mktContractsAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-contract-all.view';
 import { mktLicensesAllView } from 'src/mkt-core/dev-seeder/prefill-data/mkt-license-all.view';
@@ -17,7 +24,6 @@ import { mktDataAccessPoliciesAllView } from 'src/mkt-core/dev-seeder/prefill-vi
 import { mktDepartmentsAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-department-all.view';
 import { mktDepartmentHierarchiesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-department-hierarchy-all.view';
 import { mktEmploymentStatusesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-employment-status-all.view';
-import { mktInvoicesAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-invoice-all.view';
 import { mktKpisAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-kpi-all.view';
 import { mktOrganizationLevelsAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-organization-level-all.view';
 import { mktPermissionAuditsAllView } from 'src/mkt-core/dev-seeder/prefill-view/mkt-permission-audit-all.view';
@@ -54,6 +60,12 @@ export const MKT_ALL_VIEWS = [
   mktContractsAllView,
   // invoice views
   mktInvoicesAllView,
+  mktSInvoiceAuthsAllView,
+  mktSInvoicesAllView,
+  mktSInvoicePaymentsAllView,
+  mktSInvoiceItemsAllView,
+  mktSInvoiceTaxBreakdownsAllView,
+  mktSInvoiceMetadataAllView,
   // payment views
   mktPaymentMethodsAllView,
   mktPaymentsAllView,

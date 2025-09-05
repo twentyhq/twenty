@@ -1,3 +1,5 @@
+import { SINVOICE_STATUS } from 'src/mkt-core/order/constants';
+
 type MktOrderDataSeed = {
   id: string;
   name: string;
@@ -11,6 +13,8 @@ type MktOrderDataSeed = {
   currency: string;
   note: string;
   requireContract: boolean;
+  sInvoiceStatus: SINVOICE_STATUS;
+  
   createdBySource: string;
   createdByWorkspaceMemberId: string | null;
   createdByName: string;
@@ -38,6 +42,7 @@ export const MKT_ORDER_DATA_SEED_COLUMNS: (keyof MktOrderDataSeed)[] = [
   'currency',
   'note',
   'requireContract',
+  'sInvoiceStatus',
   'createdBySource',
   'createdByWorkspaceMemberId',
   'createdByName',
@@ -75,6 +80,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Annual license renewal for enterprise software suite',
     requireContract: true,
+    sInvoiceStatus: SINVOICE_STATUS.PENDING,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'John Doe',
@@ -92,6 +98,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Initial cloud infrastructure setup and configuration',
     requireContract: true,
+    sInvoiceStatus: SINVOICE_STATUS.PENDING,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'Jane Smith',
@@ -109,6 +116,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Marketing automation platform subscription',
     requireContract: false,
+    sInvoiceStatus: SINVOICE_STATUS.PENDING,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'Mike Johnson',
@@ -126,6 +134,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Customer support ticketing system implementation',
     requireContract: true,
+    sInvoiceStatus: SINVOICE_STATUS.PENDING,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'John Doe',
@@ -143,6 +152,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Custom data analytics dashboard development',
     requireContract: true,
+    sInvoiceStatus: SINVOICE_STATUS.PENDING,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'Jane Smith',
@@ -160,6 +170,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'E-commerce platform integration and customization',
     requireContract: true,
+    sInvoiceStatus: SINVOICE_STATUS.PENDING,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'Mike Johnson',
@@ -177,6 +188,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Cross-platform mobile application development',
     requireContract: true,
+    sInvoiceStatus: SINVOICE_STATUS.PENDING,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'John Doe',
@@ -194,6 +206,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Comprehensive security audit and penetration testing',
     requireContract: true,
+    sInvoiceStatus: SINVOICE_STATUS.PENDING,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'Jane Smith',
@@ -211,6 +224,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Content management system setup and training',
     requireContract: false,
+    sInvoiceStatus: SINVOICE_STATUS.PENDING,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'Mike Johnson',
@@ -228,6 +242,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'API gateway setup and microservices integration',
     requireContract: true,
+    sInvoiceStatus: SINVOICE_STATUS.PENDING,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'John Doe',
@@ -245,6 +260,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Business intelligence and reporting tools license',
     requireContract: true,
+    sInvoiceStatus: SINVOICE_STATUS.PENDING,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'Jane Smith',
@@ -262,6 +278,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'CI/CD pipeline and DevOps infrastructure setup',
     requireContract: true,
+    sInvoiceStatus: SINVOICE_STATUS.PENDING,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'Mike Johnson',
@@ -279,6 +296,7 @@ export const MKT_ORDER_DATA_SEEDS: MktOrderDataSeed[] = [
     currency: 'USD',
     note: 'Team training and certification program',
     requireContract: false,
+    sInvoiceStatus: SINVOICE_STATUS.PENDING,
     createdBySource: 'API',
     createdByWorkspaceMemberId: null,
     createdByName: 'John Doe',

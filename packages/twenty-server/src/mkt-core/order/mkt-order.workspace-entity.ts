@@ -23,12 +23,15 @@ import {
 import { MKT_ORDER_FIELD_IDS } from 'src/mkt-core/constants/mkt-field-ids';
 import { MKT_OBJECT_IDS } from 'src/mkt-core/constants/mkt-object-ids';
 import { MktContractWorkspaceEntity } from 'src/mkt-core/contract/mkt-contract.workspace-entity';
-import { MktInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/mkt-invoice.workspace-entity';
+import { MktInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-invoice.workspace-entity';
 import { MktLicenseWorkspaceEntity } from 'src/mkt-core/license/mkt-license.workspace-entity';
 import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
-import { ORDER_STATUS_OPTIONS, OrderStatus } from './constants';
+import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
+import { MktSInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { ORDER_STATUS_OPTIONS, OrderStatus, SINVOICE_STATUS,SINVOICE_STATUS_OPTIONS } from './constants';
 
 // Define fields to be used for search
 const SEARCH_FIELDS_FOR_ORDER: FieldTypeAndNameMetadata[] = [
@@ -138,6 +141,16 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   requireContract?: boolean;
 
+  @WorkspaceField({
+    standardId: MKT_ORDER_FIELD_IDS.sInvoiceStatus,
+    type: FieldMetadataType.SELECT,
+    label: msg`SInvoice Status`,
+    description: msg`Status of the SInvoice`,
+    options: SINVOICE_STATUS_OPTIONS,
+  })
+  @WorkspaceIsNullable()
+  sInvoiceStatus?: SINVOICE_STATUS;
+
   @WorkspaceRelation({
     standardId: MKT_ORDER_FIELD_IDS.orderItems,
     type: RelationType.ONE_TO_MANY,
@@ -177,6 +190,36 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   mktContracts: Relation<MktContractWorkspaceEntity[]>;
 
+  
+  @WorkspaceRelation({
+    standardId: MKT_ORDER_FIELD_IDS.mktSInvoice,
+    type: RelationType.ONE_TO_MANY,
+    label: msg`SInvoice`,
+    description: msg`SInvoice linked to the order`,
+    icon: 'IconBox',
+    inverseSideTarget: () => MktSInvoiceWorkspaceEntity,
+    inverseSideFieldKey: 'mktOrder',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  mktSInvoice: Relation<MktSInvoiceWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: MKT_ORDER_FIELD_IDS.accountOwner,
+    type: RelationType.MANY_TO_ONE,
+    label: msg`Account Owner`,
+    description: msg`Your team member responsible for managing the order account`,
+    icon: 'IconUserCircle',
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
+    inverseSideFieldKey: 'accountOwnerForMktOrders',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  accountOwner: Relation<WorkspaceMemberWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('accountOwner')
+  accountOwnerId: string | null;
+
   @WorkspaceRelation({
     standardId: MKT_ORDER_FIELD_IDS.timelineActivities,
     type: RelationType.ONE_TO_MANY,
@@ -207,22 +250,6 @@ export class MktOrderWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   searchVector: string;
-
-  // @WorkspaceRelation({
-  //   standardId: MKT_ORDER_FIELD_IDS.accountOwner,
-  //   type: RelationType.MANY_TO_ONE,
-  //   label: msg`Account Owner`,
-  //   description: msg`Your team member responsible for managing the order account`,
-  //   icon: 'IconUserCircle',
-  //   inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
-  //   inverseSideFieldKey: 'accountOwnerForMktOrders',
-  //   onDelete: RelationOnDeleteAction.CASCADE,
-  // })
-  // @WorkspaceIsNullable()
-  // accountOwner: Relation<WorkspaceMemberWorkspaceEntity> | null;
-
-  // @WorkspaceJoinColumn('accountOwner')
-  // accountOwnerId: string | null;
 
   @WorkspaceField({
     standardId: MKT_ORDER_FIELD_IDS.createdBy,

@@ -4,7 +4,13 @@ import { MktComboWorkspaceEntity } from 'src/mkt-core/combo/mkt-combo.workspace-
 import { MktContractWorkspaceEntity } from 'src/mkt-core/contract/mkt-contract.workspace-entity';
 import { MktCustomerTagWorkspaceEntity } from 'src/mkt-core/customer-tag/mkt-customer-tag.workspace-entity';
 import { MktCustomerWorkspaceEntity } from 'src/mkt-core/customer/mkt-customer.workspace-entity';
-import { MktInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/mkt-invoice.workspace-entity';
+import { MktInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-invoice.workspace-entity';
+import { MktSInvoiceAuthWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-auth.workspace-entity';
+import { MktSInvoiceItemWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-item.workspace-entity';
+import { MktSInvoiceMetadataWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-metadata.workspace-entity';
+import { MktSInvoicePaymentWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-payment.workspace-entity';
+import { MktSInvoiceTaxBreakdownWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice-tax-breakdown.workspace-entity';
+import { MktSInvoiceWorkspaceEntity } from 'src/mkt-core/invoice/objects/mkt-sinvoice.workspace-entity';
 import { MktLicenseWorkspaceEntity } from 'src/mkt-core/license/mkt-license.workspace-entity';
 import { MktDataAccessPolicyWorkspaceEntity } from 'src/mkt-core/mkt-data-access-policy/mkt-data-access-policy.workspace-entity';
 import { MktDepartmentHierarchyWorkspaceEntity } from 'src/mkt-core/mkt-department-hierarchy/mkt-department-hierarchy.workspace-entity';
@@ -21,7 +27,6 @@ import { MktResellerWorkspaceEntity } from 'src/mkt-core/mkt-reseller/mkt-resell
 import { MktStaffStatusHistoryWorkspaceEntity } from 'src/mkt-core/mkt-staff-status-history/mkt-staff-status-history.workspace-entity';
 import { MktTemporaryPermissionWorkspaceEntity } from 'src/mkt-core/mkt-temporary-permission/mkt-temporary-permission.workspace-entity';
 import { MktOrderItemWorkspaceEntity } from 'src/mkt-core/order-item/mkt-order-item.workspace-entity';
-import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
 import { MktPaymentMethodWorkspaceEntity } from 'src/mkt-core/payment-method/mkt-payment-method.workspace-entity';
 import { MktPaymentWorkspaceEntity } from 'src/mkt-core/payment/mkt-payment.workspace-entity';
 import { MktProductWorkspaceEntity } from 'src/mkt-core/product/standard-objects/mkt-product.workspace-entity';
@@ -46,7 +51,7 @@ export const MKT_WORKSPACE_ENTITIES = [
   MktComboWorkspaceEntity,
   MktComboVariantWorkspaceEntity,
   // Order
-  MktOrderWorkspaceEntity,
+  //MktOrderWorkspaceEntity,
   MktOrderItemWorkspaceEntity,
   // Template
   MktTemplateWorkspaceEntity,
@@ -56,6 +61,12 @@ export const MKT_WORKSPACE_ENTITIES = [
   MktLicenseWorkspaceEntity,
   // Invoice
   MktInvoiceWorkspaceEntity,
+  MktSInvoiceAuthWorkspaceEntity,
+  MktSInvoiceWorkspaceEntity,
+  MktSInvoicePaymentWorkspaceEntity,
+  MktSInvoiceItemWorkspaceEntity,
+  MktSInvoiceTaxBreakdownWorkspaceEntity,
+  MktSInvoiceMetadataWorkspaceEntity,
   // Payment
   MktPaymentMethodWorkspaceEntity,
   MktPaymentWorkspaceEntity,

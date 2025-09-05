@@ -237,6 +237,7 @@ export const MKT_ORDER_FIELD_IDS = {
   subtotal: 'a54ffe1f-a15e-471a-b644-f2a8f6396863',
   discount: '97e1ed20-01ba-48f0-b3b9-15eca354a115',
   tax: '86a4bf34-9808-4908-b2d6-65cb4d146bc0',
+  sInvoiceStatus: '3986dded-a1f3-4f53-9c2a-8e67d1af8cd3',
 
   // relations
   mktContracts: '66277a67-41c6-4709-820f-dda8df091ae9', // ONE_TO_MANY relation with contracts
@@ -245,10 +246,11 @@ export const MKT_ORDER_FIELD_IDS = {
   items: '5c818b2a-bd61-4423-b1bc-ac89781f4324',
   person: '4d6b6ef3-6d6b-4323-9e4f-a7f01d97e68d',
   mktComboVariants: '28a25b7e-3b7e-4746-ac46-7ac7a2a1d67b',
+  mktSInvoice: 'c53bbfe4-0c46-42ac-99a7-f24df8ef56a7',
   //common relations or fields
   position: '9d970deb-f1e5-4cc4-8b36-9ad83ca03ee5',
   createdBy: '6d52adfa-9230-4df0-84fc-d51c646e8538',
-  accountOwner: '8e8ab1f5-3777-488f-ac6b-495f6b816c5f',
+  accountOwner: '26791ba0-12ef-4596-a659-f096106bc868',
   timelineActivities: '5ddc8d4c-e8f3-4b36-a367-3b812d9f7d02',
   searchVector: '68623375-43f6-49ed-b29f-291f4cd34921',
   orderItems: '1a2b3c4d-5e6f-7890-1234-567890abcdef',
@@ -333,6 +335,174 @@ export const MKT_INVOICE_FIELD_IDS = {
   accountOwner: '244704b8-1beb-400e-be86-ebc92c165a07',
   timelineActivities: 'fafa89ea-f3d3-439e-a3c2-8d42939aa6e8',
   searchVector: '7df8f89a-374c-4ba1-8326-a8a78c5d6b6c',
+};
+
+export const MKT_SINVOICE_AUTH_FIELD_IDS = {
+  // fields
+  name: '6d2acb91-711f-498e-bb91-6c832928c62d',
+  username: '2151a44d-8957-4c37-9dc2-b30cd30cfa26',
+  password: '810a017b-ed7c-41f7-a813-bd9f13519c14',
+  accessToken: '30ca3f13-1049-4df2-b3d8-65d988ba358a',
+  refreshToken: 'fcfa152f-d0a1-47db-b542-d8b43153eff6',
+  expiresAt: 'b49c491f-e184-4213-8562-0425c7adece2',
+
+  // common relations or fields
+  position: '4c20ed36-8702-44e6-b47b-4040fe38752c',
+  createdBy: '678b9ac3-1def-434b-be29-26ae50d94e73',
+  // relations
+  accountOwner: 'aa5b5cf3-b7d9-45af-bdb9-6c1dc37c0b9a',
+  timelineActivities: '51ea6895-e07c-42d7-bc95-f9d3cbd860ff',
+  searchVector: '6b90048c-9ae3-4fc1-9723-55c95f55590b',
+};
+
+export const MKT_SINVOICE_FIELD_IDS = {
+  name: 'e1a7ca79-ef83-4b4a-82a5-f2aef48772a4',
+  //generalInvoiceInfo
+  invoiceType: '0332915a-73f8-4318-b440-ed2aeaf339b7',
+  templateCode: 'c54db1b5-e5e2-498b-abb3-b9ab1c9a41c0',
+  invoiceSeries: '68e8f81a-779a-48de-ba59-b191bf1938c4',
+  currencyCode: 'fcb8bed6-23de-40ca-935a-da7ffc9e48a0',
+  exchangeRate: '36796f27-e8f9-47a3-8b14-e3c22e275da5',
+  adjustmentType: '6ffb1b03-51a5-4c31-b100-c0e7fbb244cb',
+  paymentStatus: 'ba26f355-4f83-4b92-82f2-1c1bafe6a3af',
+  cusGetInvoiceRight: '7af5774a-fb30-4c5e-8223-e7affe3c008f',
+  invoiceIssuedDate: '5154d339-54cd-4fd6-b127-678776d894dc',
+  transactionUuid: '30b8a1d1-eec1-4d86-b49d-2c0fc3e26918',
+  //buyerInfo
+  buyerName: '93a00c01-fd9e-4453-b7f4-921a2870ef32',
+  buyerLegalName: '2a189d77-3811-48ea-8d23-8e4178b10442',
+  buyerTaxCode: '7910d294-c510-4c0e-ab2e-4cd5ceb8afba',
+  buyerAddressLine: '4c32d772-3140-4132-a498-842418ef3133',
+  buyerPhoneNumber: '105d1d68-7b65-48c3-a583-c70756ade3a7',
+  buyerEmail: '0fdd4e32-d106-4a1c-91fd-555e27281d07',
+  buyerIdNo: '275cbda2-3fc1-4f7c-b2db-191b171d4d90',
+  buyerIdType: '38f23203-5f62-4a52-8af0-8647094127d8',
+  buyerNotGetInvoice: 'c48f2a55-d06a-48b8-bf22-f38de9d8188a',
+
+  //relations
+  mktSInvoicePayments: 'd9d177b1-4ee0-4b2a-a13b-04002ac33429',
+  mktSInvoiceItems: 'fbca73ac-126e-4ace-bd51-dd3a84548ef3',
+  mktSInvoiceTaxBreakdowns: 'c4739855-bd2e-4b77-b17b-35c21958304e',
+  mktSInvoiceMetadata: '34af692b-5ae6-473d-bd9c-ca873b5e96b8',
+  mktOrder: '9c7e7a37-86c3-4374-9ec7-283a6f076f8a',
+  
+  //summarizeInfo
+  sumOfTotalLineAmountWithoutTax: '53e5992f-0aa3-4d20-98bf-1db3b0e2ed3a',
+  totalAmountAfterDiscount: '53359824-1975-4116-a3a0-c6b0837c694f',
+  totalAmountWithoutTax: '18ecffe4-7351-4159-88aa-e826d6a41133',
+  totalTaxAmount: '22a8ec38-c86a-4c7e-ae91-2b9864d3fef3',
+  totalAmountWithTax: '46e1bbd9-5b50-42ab-8e07-dbbe001d79e9',
+  totalAmountWithTaxInWords: 'f6c8fe49-d4e9-4825-9f72-d8b93757268d',
+  discountAmount: '17f9ab0c-4f8e-4600-8957-1eb031a22972',
+  //metadata
+  //response
+  description: 'e0fae56d-d95c-4d36-9f9e-db6b14335c4c',
+  supplierTaxCode: 'd654ef6f-cce3-4d76-9444-a6eabdcf5820',
+  invoiceNo: 'bebea4a9-b029-418e-9125-1793761cf5ee',
+  transactionID: 'be239bcf-19c7-4c6f-b38d-bf5b3bf15575',
+  reservationCode: 'ba9da2a8-12f7-4018-8c96-a6af270ef884',
+  codeOfTax: 'b2058784-d824-41e5-a838-3aace9b6b946',
+  //errors
+  errorCode: 'f36110d9-b4a3-48cd-ba4f-a9dfd2e488c7',
+  errorMessage: 'a093e941-b901-47be-85f7-835ef2b54bcb',
+  errorData: 'e7b188dc-7f46-4445-9c2d-17f1bd7b6385',
+
+  //common relations or fields
+  position: '92284b0a-e2b4-4c57-b849-6c0a50fec818',
+  createdBy: 'ca00de3f-7745-44f5-8ca8-6c368b5623c8',
+  accountOwner: '20707cec-f627-43c4-8a43-dcad9ead4cb0',
+  timelineActivities: '2e6206a2-5a43-425d-8529-062ba37846e7',
+  searchVector: 'dfcbc3e6-4d1b-4c29-aece-e5e6570fbd69',
+};
+
+export const MKT_SINVOICE_PAYMENT_FIELD_IDS = {
+  //fields
+  name: '75a3e242-a154-4b25-8fb5-cb893a6ddd47',
+  paymentMethodName: 'a1d46e66-74c4-4741-bb5f-a9bf5482717e',
+  amount: '64af82c4-84da-4ab5-a078-ec4ce6f24c7c',
+  currency: '6d536048-84b8-4f5b-8b44-9783e046b81a',
+  status: '94b60586-cda3-44d8-ae4b-7d2458bba76d',
+  paymentDate: '94e366c1-3c14-4fe4-9803-51c8a95cf8c1',
+  description: '87fecc02-60b6-4de0-955b-27d05a47949a',
+
+  //relations
+  mktSInvoice: '9ff83a4c-46d0-4f7b-bf50-19ed9ef9ed8a',
+
+  //common relations or fields
+  position: 'd12f0fda-e756-4422-837d-5452679eae7b',
+  createdBy: '94d6c748-ae10-484b-9ab7-fb0434666f5c',
+  accountOwner: 'c1850749-c9fb-4d96-a534-e8cbb5589a80',
+  timelineActivities: '31d10198-139f-422c-b5f8-cfe5984472c5',
+  searchVector: 'ffdf4ab1-f0d4-4302-8b20-83b44b0821bf',
+};
+
+
+export const MKT_SINVOICE_ITEM_FIELD_IDS = {
+  //fields
+  name: '4315b8dd-d2cc-4082-a850-ae5b593457df',
+  lineNumber: 'e87ec8d3-0a83-42d4-b070-0af4da157ee0',
+  selection: '1e2700a2-b601-4687-829d-c9b7afadc1ea',
+  itemCode: '9c61785c-44de-4934-93d9-1fd41ea7e528',
+  itemName: '9d83f750-8264-4c31-b653-60623d74d30e',
+  unitName: 'a7d91ceb-b8d8-44ad-84e7-b4fa6472706c',
+  quantity: '72545991-627d-4b68-aa7c-0cc64af74fca',
+  unitPrice: 'db900531-a7da-44f3-bdd0-03a4d092fbd8',
+  itemTotalAmountWithoutTax: '679b543c-93ec-4598-bf57-1b03b569c5d9',
+  itemTotalAmountAfterDiscount: '2d9ef20a-9f5a-4010-8f3a-773d2e431c96',
+  itemTotalAmountWithTax: '0a4ccf05-b623-41db-aadf-7d46ae212b16',
+  taxPercentage: '28dd5e45-645c-4e88-85e1-f4057e22f8d4',
+  taxAmount: '431e1915-3036-4e47-bd34-f958bde92e56',
+  discount: '70b7fdde-597b-4ef2-b7fb-15e60def6b7a',
+  itemDiscount: '362072d3-f464-49f5-bf80-d91f9bdca9af',
+  itemNote: 'e7f247fb-7c33-4767-9369-2c26d3cd5c4c',
+  isIncreaseItem: '0adc66c2-979b-489c-aaf3-2211943b7cd1',
+
+  //relations
+  mktSInvoice: 'dd83fb41-a390-4b26-a164-72ca621c4b1e',
+
+  //common relations or fields
+  position: '105c9a0a-5df3-416b-b3ec-913ea170619b',
+  createdBy: 'c4f739b7-0382-4b69-8509-77e7ad92353b',
+  accountOwner: 'e89b7b94-4a97-4add-96b2-29347c28ae5c',
+  timelineActivities: '6decd6f1-dd12-4e83-9a2b-bca342d1b3ff',
+  searchVector: 'c288a042-4a04-4da2-8d57-a3944aaaac36',
+};
+
+export const MKT_SINVOICE_TAX_BREAKDOWN_FIELD_IDS = {
+  //fields
+  name: 'd9214a4c-cece-49d8-a211-c46a2e5546ef',
+  taxPercentage: 'e6809b0f-d749-4fda-a72a-ef731fac23ff',
+  taxableAmount: 'fb1bdce3-7a24-44f5-aa48-25f2519b6ce6',
+  taxAmount: '98e207cb-914b-4d93-9121-66f40a8a32b6',
+
+  //relations
+  mktSInvoice: '0738b823-e440-40d5-a378-1988f66f3841',
+
+  //common relations or fields
+  position: '53df9018-5286-4542-9942-ee08c2ad1872',
+  createdBy: '0f199217-46d8-4567-b113-d9b0768f54a7',
+  accountOwner: 'd68ee01a-0c99-4919-916d-ac0aee4f8226',
+  timelineActivities: 'ff162819-004a-465e-ac6e-4faf3601b881',
+  searchVector: 'b4c7d72b-d84b-4abd-bb71-27d13cf9b38b',
+};
+
+export const MKT_SINVOICE_METADATA_FIELD_IDS = {
+  //fields
+  name: '59abd231-7e18-4980-891d-0740a5422f56',
+  keyTag: '41c752b6-6029-447f-be3a-7516daab6541',
+  stringValue: 'f415bac0-a04f-47b6-ac32-dd8e10b2eeaa',
+  valueType: '5b902365-faab-4a22-9fa3-77d638e0ea3b',
+  keyLabel: '10ac367b-769b-4273-ae0e-4fcee5295572',
+
+  //relations
+  mktSInvoice: '0870fec6-3d6e-4012-b1ea-8283d4f964b3',
+
+  //common relations or fields
+  position: '49ec535d-44e8-4bbc-9dc4-8d0d48a6bbc5',
+  createdBy: '68fb79ac-97a5-4abc-95b2-0d8fff9d13bf',
+  accountOwner: '38d029ef-d8d6-486a-acb5-c22fd648f1d5',
+  timelineActivities: '78bc2be1-6a50-4abf-9be7-5bca69597907',
+  searchVector: 'd8f8bc60-8cf2-4017-addf-e6165d10d163',
 };
 
 export const MKT_TEMPLATE_FIELD_IDS = {
@@ -422,9 +592,15 @@ export const TIMELINE_ACTIVITY_MKT_FIELD_IDS = {
   mktOrderItem: 'c8d7e6f5-4321-0987-6543-21098765432a',
   //invoices
   mktInvoice: 'a0b038a6-cab6-4777-b51c-861c5671bb49',
+  mktSInvoiceAuth: 'f27fadef-d54e-41b3-b688-453e4d29a4ea',
+  mktSInvoice: '46478145-a644-4d3a-88c3-06b5b3ed5159',
+  mktSInvoicePayment: 'bc929c21-d9a2-49f1-9832-13d12b8cb911',
+  mktSInvoiceTaxBreakdown: 'ed99f68d-9e42-474b-9057-a3b9b5f4c7d7',
+  mktSInvoiceMetadata: 'fc693847-c30a-4df4-b878-b84efe68d916',
   mktTemplate: 'f0fb46f9-c26f-4154-b17e-326ca166f8c9',
   mktPayment: 'bf8a9b90-6d5e-4f40-9c30-8b7f6e5d4c50',
   mktPaymentMethod: 'cf8a9b91-6d5e-4f41-9c31-8b7f6e5d4c51',
+  mktSInvoiceItem: 'fe30be83-1b86-4ec5-b584-2c059f0438b7',
   //kpi system - removed timeline activity references as they're not implemented
 };
 
@@ -470,7 +646,7 @@ export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   accountOwnerForMktCombos: '90e6970d-8c23-4562-8c25-cece175b20e8',
   accountOwnerForMktComboVariants: '35abe762-d4e7-4c16-b4c6-e22c990dc0b5',
   //orders
-  accountOwnerForMktOrders: 'dbbf2703-8803-4c21-9b10-2cf38b045d4b',
+  accountOwnerForMktOrders: '797601a1-d5f0-4c33-a4af-0232f02f7c68',
   accountOwnerForMktLicenses: 'a343e640-2214-4896-a0e2-830ee854a778',
   accountOwnerForMktContracts: '87d29139-844b-44b9-a3e7-3f9e5a3e4165',
   accountOwnerForMktOrderItems: '5f4e3d2c-1b0a-9876-5432-109876543210',
@@ -478,7 +654,13 @@ export const WORKSPACE_MEMBER_MKT_FIELD_IDS = {
   accountOwnerForMktPaymentMethods: 'ef8a9b93-6d5e-4f43-9c33-8b7f6e5d4c53',
   //invoices
   accountOwnerForMktInvoices: 'ab600d66-5755-4934-b5c3-19036927cf92',
+  accountOwnerForMktSInvoiceAuths: '6b134cc7-ca30-4576-9b91-29912326de57',
   accountOwnerForMktTemplates: 'a88096b8-e818-4421-afc2-5b1ab207aca3',
+  accountOwnerForMktSInvoices: 'b99f2abd-47b5-49e3-ad51-188179489dd9',
+  accountOwnerForMktSInvoicePayments: '0506abb4-0afc-4c2d-8341-d284643878eb',
+  accountOwnerForMktSInvoiceItems: '8070950e-f1d3-4fc3-9282-6efce02f44d7',
+  accountOwnerForMktSInvoiceTaxBreakdowns: '84fb2cfe-172c-470f-8417-164869884253',
+  accountOwnerForMktSInvoiceMetadata: '1a930b9c-fc8e-49b6-a430-d765bfc07921',
   //kpi system
   accountOwnerForMktKpiTemplates: '40404040-7c8d-9e0f-1a2b-3c4d5e6f7a8b',
   changedKpiHistories: '40404040-0b1c-2d3e-4f5a-6b7c8d9e0f1a',

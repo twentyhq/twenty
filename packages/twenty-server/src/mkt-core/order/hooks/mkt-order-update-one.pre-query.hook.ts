@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject,Injectable,Logger } from '@nestjs/common';
 
 import { WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -10,15 +10,17 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { LicenseGenerationJobData } from 'src/mkt-core/license/jobs/license-generation.job';
-import { OrderStatus } from 'src/mkt-core/order/constants/order-status.constants';
+import { SInvoiceIntegrationJobData } from 'src/mkt-core/invoice/jobs/s-invoice-integration.job';
+import { OrderStatus,SINVOICE_STATUS } from 'src/mkt-core/order/constants/order-status.constants';
 import { MktOrderWorkspaceEntity } from 'src/mkt-core/order/mkt-order.workspace-entity';
+
 
 @Injectable()
 @WorkspaceQueryHook('mktOrder.updateOne')
 export class MktOrderUpdateOnePreQueryHook
   implements WorkspacePreQueryHookInstance
 {
+  private readonly logger = new Logger(MktOrderUpdateOnePreQueryHook.name);
   constructor(
     @Inject(getQueueToken(MessageQueue.billingQueue))
     private readonly messageQueueService: MessageQueueService,
@@ -34,41 +36,86 @@ export class MktOrderUpdateOnePreQueryHook
     const input = payload?.data;
     const orderId = payload?.id;
 
-    if (!input || !orderId) {
+    this.logger.log(`Updating order: ${orderId}`);
+    const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
+
+
+    if (!orderId || !workspaceId) {
       return payload;
     }
 
-    // check if status is paid
-    if (input.status === OrderStatus.PAID) {
-      const workspaceId =
-        this.scopedWorkspaceContextFactory.create().workspaceId;
+    this.logger.log(`Updating order ${orderId} with input: ${JSON.stringify(input)}`);
 
-      if (!workspaceId) {
-        return payload;
-      }
+    if(input?.status){
+      return payload;
+    }
 
-      // get current order to check status
-      const orderRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderWorkspaceEntity>(
-          workspaceId,
-          'mktOrder',
-          { shouldBypassPermissionChecks: true },
-        );
+    const orderRepository =
+    await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderWorkspaceEntity>(
+      workspaceId,
+      'mktOrder',
+      { shouldBypassPermissionChecks: true },
+    );
+    const currentOrder = await orderRepository.findOne({
+      where: { id: orderId },
+    });
 
-      const currentOrder = await orderRepository.findOne({
-        where: { id: orderId },
-      });
-
-      if (currentOrder && currentOrder.status !== OrderStatus.PAID) {
-        // status changed to paid, trigger license generation job
-        const jobData: LicenseGenerationJobData = {
-          orderId,
-          workspaceId,
-        };
-
-        await this.messageQueueService.add('LicenseGenerationJob', jobData);
+    if (currentOrder && currentOrder.status === OrderStatus.PAID && input?.sInvoiceStatus === SINVOICE_STATUS.SEND) {
+      const jobData: SInvoiceIntegrationJobData = {
+        orderId,
+        workspaceId,
+      };
+      
+      try {
+        await this.messageQueueService.add('SInvoiceIntegrationJob', jobData);
+        this.logger.log(`[S-INVOICE JOB] Successfully added S-Invoice integration job to queue for order: ${orderId}`);
+      } catch (error) {
+        this.logger.error(`[S-INVOICE JOB] Failed to add S-Invoice integration job to queue for order: ${orderId}`, error);
       }
     }
+
+    // // check if status is paid
+    // if (input.status === OrderStatus.PAID) {
+    //   const workspaceId =
+    //     this.scopedWorkspaceContextFactory.create().workspaceId;
+
+    //   if (!workspaceId) {
+    //     return payload;
+    //   }
+
+    //   // get current order to check status
+    //   const orderRepository =
+    //     await this.twentyORMGlobalManager.getRepositoryForWorkspace<MktOrderWorkspaceEntity>(
+    //       workspaceId,
+    //       'mktOrder',
+    //       { shouldBypassPermissionChecks: true },
+    //     );
+
+    //   const currentOrder = await orderRepository.findOne({
+    //     where: { id: orderId },
+    //   });
+
+    //   if (currentOrder && currentOrder.status !== OrderStatus.PAID) {
+    //     // status changed to paid, trigger license generation job
+    //     const jobData: LicenseGenerationJobData = {
+    //       orderId,
+    //       workspaceId,
+    //     };
+
+    //     //await this.messageQueueService.add('LicenseGenerationJob', jobData);
+    //   }
+
+    //   if (currentOrder && currentOrder.sInvoiceStatus !== SINVOICE_STATUS.SEND) {
+    //     // status changed to paid, trigger S-Invoice integration job
+    //     const jobData: SInvoiceIntegrationJobData = {
+    //       orderId,
+    //       workspaceId,
+    //     };
+        
+    //     this.logger.log(`Triggering S-Invoice integration job for order: ${orderId}`);
+    //     await this.messageQueueService.add('SInvoiceIntegrationJob', jobData);
+    //   }
+    // }
 
     return payload;
   }

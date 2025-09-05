@@ -21,6 +21,12 @@ export const MKT_OBJECT_IDS = {
   mktOrderItem: '7a3b1f2e-4c5d-6e7f-8901-234567890abc',
   //invoices
   mktInvoice: 'c8696169-73a2-44db-8a2a-c6335f0cc18e',
+  mktSInvoiceAuth: 'dd137d9a-f587-4bb6-a336-7b04dce1bf49',
+  mktSInvoice: 'cf36548a-2521-401c-b9a7-6bfea83a8937',
+  mktSInvoicePayment: '771b20e1-6622-4d62-9eaf-3ef1f71f82fa',
+  mktSInvoiceItem: '43bbebfe-290a-4130-8a9b-479c7f40fa0e',
+  mktSInvoiceTaxBreakdown: 'de02c6ea-fbdd-41d3-9396-c8ba425a946a',
+  mktSInvoiceMetadata: 'c3dc1dfc-b5b8-4d91-a14d-fb43d397809b',
   mktTemplate: '0b9f9dbd-6c1a-4418-9302-97c38c2dc0a0',
   mktPayment: '8b4c2d1e-5f6a-7b8c-9d0e-1f2a3b4c5d6e',
   mktPaymentMethod: '9c5d3e2f-6a7b-8c9d-0e1f-2a3b4c5d6e7f',

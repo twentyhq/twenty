@@ -56,10 +56,6 @@ import {
   MKT_EMPLOYMENT_STATUS_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-employment-status-data-seeds.constants';
 import {
-  MKT_INVOICE_DATA_SEED_COLUMNS,
-  MKT_INVOICE_DATA_SEEDS,
-} from 'src/mkt-core/dev-seeder/constants/mkt-invoice-data-seeds.constants';
-import {
   MKT_KPI_DATA_SEED_COLUMNS,
   MKT_KPI_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-kpi-data-seeds.constants';
@@ -123,7 +119,34 @@ import {
   MKT_TEMPORARY_PERMISSION_DATA_SEED_COLUMNS,
   MKT_TEMPORARY_PERMISSION_DATA_SEEDS,
 } from 'src/mkt-core/dev-seeder/constants/mkt-temporary-permission-data-seeds.constants';
-
+import {
+  MKT_INVOICE_DATA_SEED_COLUMNS,
+  MKT_INVOICE_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-invoice-data-seeds.constants';
+import {
+  MKT_SINVOICE_AUTH_DATA_SEED_COLUMNS,
+  MKT_SINVOICE_AUTH_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-auth-data-seeds.constants';
+import {
+  MKT_SINVOICE_DATA_SEED_COLUMNS,
+  MKT_SINVOICE_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-data-seeds.constants';
+import {
+  MKT_SINVOICE_ITEM_DATA_SEED_COLUMNS,
+  MKT_SINVOICE_ITEM_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-item-data-seeds.constants';
+import {
+  MKT_SINVOICE_METADATA_DATA_SEED_COLUMNS,
+  MKT_SINVOICE_METADATA_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-metadata-data-seeds.constants';
+import {
+  MKT_SINVOICE_PAYMENT_DATA_SEED_COLUMNS,
+  MKT_SINVOICE_PAYMENT_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-payment-data-seeds.constants';
+import {
+  MKT_SINVOICE_TAX_BREAKDOWN_DATA_SEED_COLUMNS,
+  MKT_SINVOICE_TAX_BREAKDOWN_DATA_SEEDS,
+} from 'src/mkt-core/dev-seeder/invoice-seeder/mkt-sinvoice-tax-breakdown-data-seeds.constants';
 export const MKT_RECORD_SEEDS_CONFIGS_FIRST_PHASE_TABLES = [
   // Organization configs
   {
@@ -221,10 +244,41 @@ export const MKT_RECORD_SEEDS_CONFIGS = [
     pgColumns: MKT_LICENSE_DATA_SEED_COLUMNS,
     recordSeeds: MKT_LICENSE_DATA_SEEDS,
   },
+  // Invoice configs
   {
     tableName: 'mktInvoice',
     pgColumns: MKT_INVOICE_DATA_SEED_COLUMNS,
     recordSeeds: MKT_INVOICE_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktSInvoiceAuth',
+    pgColumns: MKT_SINVOICE_AUTH_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_SINVOICE_AUTH_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktSInvoice',
+    pgColumns: MKT_SINVOICE_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_SINVOICE_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktSInvoicePayment',
+    pgColumns: MKT_SINVOICE_PAYMENT_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_SINVOICE_PAYMENT_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktSInvoiceItem',
+    pgColumns: MKT_SINVOICE_ITEM_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_SINVOICE_ITEM_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktSInvoiceTaxBreakdown',
+    pgColumns: MKT_SINVOICE_TAX_BREAKDOWN_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_SINVOICE_TAX_BREAKDOWN_DATA_SEEDS,
+  },
+  {
+    tableName: 'mktSInvoiceMetadata',
+    pgColumns: MKT_SINVOICE_METADATA_DATA_SEED_COLUMNS,
+    recordSeeds: MKT_SINVOICE_METADATA_DATA_SEEDS,
   },
   // Payment configs
   {

@@ -1,3 +1,10 @@
+import { prefillMktInvoices } from 'src/mkt-core/dev-seeder/invoice-seeder/prefill-mkt-invoices';
+import { prefillMktSInvoiceAuths } from 'src/mkt-core/dev-seeder/invoice-seeder/prefill-mkt-sinvoice-auths';
+import { prefillMktSInvoiceItems } from 'src/mkt-core/dev-seeder/invoice-seeder/prefill-mkt-sinvoice-items';
+import { prefillMktSInvoiceMetadata } from 'src/mkt-core/dev-seeder/invoice-seeder/prefill-mkt-sinvoice-metadata';
+import { prefillMktSInvoicePayments } from 'src/mkt-core/dev-seeder/invoice-seeder/prefill-mkt-sinvoice-payments';
+import { prefillMktSInvoiceTaxBreakdowns } from 'src/mkt-core/dev-seeder/invoice-seeder/prefill-mkt-sinvoice-tax-breakdowns';
+import { prefillMktSInvoices } from 'src/mkt-core/dev-seeder/invoice-seeder/prefill-mkt-sinvoices';
 import { prefillMktAttributes } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-attributes';
 import { prefillMktComboVariants } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-combo-variants';
 import { prefillMktCombos } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-combos';
@@ -8,7 +15,6 @@ import { prefillMktDataAccessPolicies } from 'src/mkt-core/dev-seeder/prefill-da
 import { prefillMktDepartmentHierarchies } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-department-hierarchies';
 import { prefillMktDepartments } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-departments';
 import { prefillMktEmploymentStatuses } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-employment-statuses';
-import { prefillMktInvoices } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-invoices';
 import { prefillMktKpiTemplates } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-kpi-templates';
 import { prefillMktKpis } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-kpis';
 import { prefillMktLicenses } from 'src/mkt-core/dev-seeder/prefill-data/prefill-mkt-licenses';
@@ -55,6 +61,12 @@ export const MKT_PREFILLS = [
   prefillMktLicenses,
   // invoice prefills
   prefillMktInvoices,
+  prefillMktSInvoiceAuths,
+  prefillMktSInvoices,
+  prefillMktSInvoicePayments,
+  prefillMktSInvoiceItems,
+  prefillMktSInvoiceTaxBreakdowns,
+  prefillMktSInvoiceMetadata,
   // payment prefills (after orders to reference existing orders)
   prefillMktPaymentMethods,
   prefillMktPayments,
