@@ -12,7 +12,7 @@ import {
 import { GraphQLJSON } from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { GridPositionInput } from 'src/engine/core-modules/page-layout/dtos/inputs/create-page-layout-widget.input';
+import { GridPositionInput } from 'src/engine/core-modules/page-layout/dtos/inputs/grid-position.input';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 
 @InputType()
