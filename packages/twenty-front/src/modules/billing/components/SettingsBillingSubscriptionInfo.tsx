@@ -271,10 +271,12 @@ export const SettingsBillingSubscriptionInfo = ({
           nextValue={hasNextBillingPhase ? getNextBillingSeats() : undefined}
         />
         <SubscriptionInfoRowContainer
-          label={t`Credits by ${intervalLabel}`}
+          label={t`Credits by period`}
           Icon={IconCoins}
           currentValue={formatNumber(currentMeterPrice.tiers[0].upTo)}
-          nextValue={formatNumber(nextPrepaidCredits())}
+          nextValue={
+            hasNextBillingPhase ? formatNumber(nextPrepaidCredits()) : undefined
+          }
         />
       </SubscriptionInfoContainer>
       <StyledSwitchButtonContainer>

@@ -254,6 +254,8 @@ export class BillingSubscriptionService {
         subscription,
       );
 
+    const currentPhase = schedule.phases[0];
+
     const nextPhase = {
       items: [
         {
@@ -262,15 +264,13 @@ export class BillingSubscriptionService {
         },
         { price: targetMeteredPrice.stripePriceId },
       ],
-      start_date: subscription.current_period_end,
+      start_date: currentPhase.end_date ?? subscription.current_period_end,
       proration_behavior: 'none' as const,
       billing_thresholds:
         this.stripeSubscriptionService.getBillingThresholdsByInterval(
           SubscriptionInterval.Month,
         ),
     };
-
-    const currentPhase = schedule.phases[0];
 
     return this.stripeSubscriptionScheduleService.updateSchedule(schedule.id, {
       phases: [

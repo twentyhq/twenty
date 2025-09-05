@@ -23,7 +23,11 @@ export class BillingWebhookSubscriptionScheduleService {
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
   ) {}
 
-  async processStripeEvent(data: Stripe.SubscriptionScheduleUpdatedEvent.Data) {
+  async processStripeEvent(
+    data:
+      | Stripe.SubscriptionScheduleUpdatedEvent.Data
+      | Stripe.SubscriptionScheduleCanceledEvent.Data,
+  ) {
     const schedule = data.object as Stripe.SubscriptionSchedule;
 
     if (!isDefined(schedule.subscription)) {

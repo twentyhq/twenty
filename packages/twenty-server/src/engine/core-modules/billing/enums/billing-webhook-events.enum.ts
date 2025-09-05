@@ -14,5 +14,4 @@ export enum BillingWebhookEvent {
   ALERT_TRIGGERED = 'billing.alert.triggered',
   INVOICE_FINALIZED = 'invoice.finalized',
   SUBSCRIPTION_SCHEDULE_UPDATED = 'subscription_schedule.updated',
-  SUBSCRIPTION_SCHEDULE_RELEASED = 'subscription_schedule.released',
 }
