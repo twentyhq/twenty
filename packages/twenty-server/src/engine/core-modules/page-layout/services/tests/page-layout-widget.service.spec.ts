@@ -10,8 +10,10 @@ import {
   PageLayoutTabExceptionCode,
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-tab.exception';
 import {
+  generatePageLayoutWidgetExceptionMessage,
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
+  PageLayoutWidgetExceptionMessageKey,
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-widget.exception';
 import { PageLayoutTabService } from 'src/engine/core-modules/page-layout/services/page-layout-tab.service';
 import { PageLayoutWidgetService } from 'src/engine/core-modules/page-layout/services/page-layout-widget.service';
@@ -335,6 +337,7 @@ describe('PageLayoutWidgetService', () => {
         where: {
           id,
           workspaceId,
+          deletedAt: IsNull(),
         },
       });
       expect(pageLayoutWidgetRepository.findOne).toHaveBeenNthCalledWith(2, {
@@ -477,6 +480,7 @@ describe('PageLayoutWidgetService', () => {
         select: {
           id: true,
           deletedAt: true,
+          pageLayoutTabId: true,
         },
         where: {
           id,
@@ -529,6 +533,51 @@ describe('PageLayoutWidgetService', () => {
       ).rejects.toHaveProperty(
         'code',
         PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
+    });
+
+    it('should throw an exception when parent tab is not accessible', async () => {
+      const id = 'page-layout-widget-id';
+      const workspaceId = 'workspace-id';
+      const deletedWidget = {
+        ...mockPageLayoutWidget,
+        deletedAt: new Date(),
+        pageLayoutTabId: 'deleted-tab-id',
+      };
+
+      jest
+        .spyOn(pageLayoutWidgetRepository, 'findOne')
+        .mockResolvedValue(deletedWidget);
+      jest
+        .spyOn(pageLayoutTabService, 'findByIdOrThrow')
+        .mockRejectedValue(
+          new PageLayoutTabException(
+            'Page layout tab not found',
+            PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_NOT_FOUND,
+          ),
+        );
+
+      await expect(
+        pageLayoutWidgetService.restore(id, workspaceId),
+      ).rejects.toThrow(PageLayoutWidgetException);
+      await expect(
+        pageLayoutWidgetService.restore(id, workspaceId),
+      ).rejects.toHaveProperty(
+        'code',
+        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      );
+      await expect(
+        pageLayoutWidgetService.restore(id, workspaceId),
+      ).rejects.toHaveProperty(
+        'message',
+        generatePageLayoutWidgetExceptionMessage(
+          PageLayoutWidgetExceptionMessageKey.PAGE_LAYOUT_TAB_NOT_FOUND,
+        ),
+      );
+
+      expect(pageLayoutTabService.findByIdOrThrow).toHaveBeenCalledWith(
+        'deleted-tab-id',
+        workspaceId,
       );
     });
   });

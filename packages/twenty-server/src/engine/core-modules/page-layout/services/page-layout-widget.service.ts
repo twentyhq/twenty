@@ -195,6 +195,7 @@ export class PageLayoutWidgetService {
       select: {
         id: true,
         deletedAt: true,
+        pageLayoutTabId: true,
       },
       where: {
         id,
@@ -220,6 +221,26 @@ export class PageLayoutWidgetService {
         ),
         PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
       );
+    }
+
+    try {
+      await this.pageLayoutTabService.findByIdOrThrow(
+        pageLayoutWidget.pageLayoutTabId,
+        workspaceId,
+      );
+    } catch (error) {
+      if (
+        error instanceof PageLayoutTabException &&
+        error.code === PageLayoutTabExceptionCode.PAGE_LAYOUT_TAB_NOT_FOUND
+      ) {
+        throw new PageLayoutWidgetException(
+          generatePageLayoutWidgetExceptionMessage(
+            PageLayoutWidgetExceptionMessageKey.PAGE_LAYOUT_TAB_NOT_FOUND,
+          ),
+          PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        );
+      }
+      throw error;
     }
 
     await this.pageLayoutWidgetRepository.restore(id);

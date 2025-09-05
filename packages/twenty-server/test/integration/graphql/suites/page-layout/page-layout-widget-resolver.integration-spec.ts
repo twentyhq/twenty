@@ -1,5 +1,6 @@
 import { TEST_NOT_EXISTING_PAGE_LAYOUT_WIDGET_ID } from 'test/integration/constants/test-page-layout-widget-ids.constants';
 import { createPageLayoutWidgetOperationFactory } from 'test/integration/graphql/utils/create-page-layout-widget-operation-factory.util';
+import { deletePageLayoutTabOperationFactory } from 'test/integration/graphql/utils/delete-page-layout-tab-operation-factory.util';
 import { deletePageLayoutWidgetOperationFactory } from 'test/integration/graphql/utils/delete-page-layout-widget-operation-factory.util';
 import { destroyPageLayoutWidgetOperationFactory } from 'test/integration/graphql/utils/destroy-page-layout-widget-operation-factory.util';
 import { findPageLayoutWidgetOperationFactory } from 'test/integration/graphql/utils/find-page-layout-widget-operation-factory.util';
@@ -440,6 +441,49 @@ describe('Page Layout Widget Resolver', () => {
         generatePageLayoutWidgetExceptionMessage(
           PageLayoutWidgetExceptionMessageKey.PAGE_LAYOUT_WIDGET_NOT_FOUND,
           TEST_NOT_EXISTING_PAGE_LAYOUT_WIDGET_ID,
+        ),
+      );
+    });
+
+    it('should throw an error when restoring widget with deleted parent tab', async () => {
+      const separateTab = await createTestPageLayoutTabWithGraphQL({
+        title: 'Tab for Widget Restore Test',
+        pageLayoutId: testPageLayoutId,
+        position: 1,
+      });
+
+      const input = {
+        title: 'Widget with Deleted Tab',
+        type: WidgetType.GRAPH,
+        pageLayoutTabId: separateTab.id,
+        gridPosition: { row: 1, column: 1, rowSpan: 1, columnSpan: 1 },
+        configuration: {},
+      };
+
+      const widget = await createTestPageLayoutWidgetWithGraphQL(input);
+
+      const deleteWidgetOperation = deletePageLayoutWidgetOperationFactory({
+        pageLayoutWidgetId: widget.id,
+      });
+
+      await makeGraphqlAPIRequest(deleteWidgetOperation);
+
+      const deleteTabOperation = deletePageLayoutTabOperationFactory({
+        pageLayoutTabId: separateTab.id,
+      });
+
+      await makeGraphqlAPIRequest(deleteTabOperation);
+
+      const restoreOperation = restorePageLayoutWidgetOperationFactory({
+        pageLayoutWidgetId: widget.id,
+      });
+      const restoreResponse = await makeGraphqlAPIRequest(restoreOperation);
+
+      assertGraphQLErrorResponse(
+        restoreResponse,
+        ErrorCode.BAD_USER_INPUT,
+        generatePageLayoutWidgetExceptionMessage(
+          PageLayoutWidgetExceptionMessageKey.PAGE_LAYOUT_TAB_NOT_FOUND,
         ),
       );
     });

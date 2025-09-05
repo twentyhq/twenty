@@ -7,8 +7,10 @@ import { PageLayoutTabEntity } from 'src/engine/core-modules/page-layout/entitie
 import { type PageLayoutWidgetEntity } from 'src/engine/core-modules/page-layout/entities/page-layout-widget.entity';
 import { WidgetType } from 'src/engine/core-modules/page-layout/enums/widget-type.enum';
 import {
+  generatePageLayoutTabExceptionMessage,
   PageLayoutTabException,
   PageLayoutTabExceptionCode,
+  PageLayoutTabExceptionMessageKey,
 } from 'src/engine/core-modules/page-layout/exceptions/page-layout-tab.exception';
 import {
   PageLayoutException,
@@ -493,6 +495,7 @@ describe('PageLayoutTabService', () => {
         select: {
           id: true,
           deletedAt: true,
+          pageLayoutId: true,
         },
         where: {
           id,
@@ -538,6 +541,51 @@ describe('PageLayoutTabService', () => {
       ).rejects.toHaveProperty(
         'code',
         PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA,
+      );
+    });
+
+    it('should throw an exception when parent page layout is not accessible', async () => {
+      const id = 'page-layout-tab-id';
+      const workspaceId = 'workspace-id';
+      const deletedTab = {
+        ...mockPageLayoutTab,
+        deletedAt: new Date(),
+        pageLayoutId: 'deleted-page-layout-id',
+      };
+
+      jest
+        .spyOn(pageLayoutTabRepository, 'findOne')
+        .mockResolvedValue(deletedTab);
+      jest
+        .spyOn(pageLayoutService, 'findByIdOrThrow')
+        .mockRejectedValue(
+          new PageLayoutException(
+            'Page layout not found',
+            PageLayoutExceptionCode.PAGE_LAYOUT_NOT_FOUND,
+          ),
+        );
+
+      await expect(
+        pageLayoutTabService.restore(id, workspaceId),
+      ).rejects.toThrow(PageLayoutTabException);
+      await expect(
+        pageLayoutTabService.restore(id, workspaceId),
+      ).rejects.toHaveProperty(
+        'code',
+        PageLayoutTabExceptionCode.INVALID_PAGE_LAYOUT_TAB_DATA,
+      );
+      await expect(
+        pageLayoutTabService.restore(id, workspaceId),
+      ).rejects.toHaveProperty(
+        'message',
+        generatePageLayoutTabExceptionMessage(
+          PageLayoutTabExceptionMessageKey.PAGE_LAYOUT_NOT_FOUND,
+        ),
+      );
+
+      expect(pageLayoutService.findByIdOrThrow).toHaveBeenCalledWith(
+        'deleted-page-layout-id',
+        workspaceId,
       );
     });
   });
