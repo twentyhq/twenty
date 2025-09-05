@@ -22,17 +22,19 @@ import {
 import { MenuItemSelect } from 'twenty-ui/navigation';
 import { useVariableDropdown } from '../hooks/useVariableDropdown';
 
-type WorkflowVariablesDropdownAllItemsProps = {
+type WorkflowVariablesDropdownStepItemsProps = {
   step: StepOutputSchemaV2;
   onSelect: (value: string) => void;
   onBack: () => void;
+  shouldDisplayRecordObjects: boolean;
 };
 
-export const WorkflowVariablesDropdownAllItems = ({
+export const WorkflowVariablesDropdownStepItems = ({
   step,
   onSelect,
   onBack,
-}: WorkflowVariablesDropdownAllItemsProps) => {
+  shouldDisplayRecordObjects,
+}: WorkflowVariablesDropdownStepItemsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const {
@@ -83,12 +85,16 @@ export const WorkflowVariablesDropdownAllItems = ({
       )
     : undefined;
 
-  const shouldDisplaySubStepObject = isDefined(searchInputValue)
+  const isObjectFoundThroughSearch = isDefined(searchInputValue)
     ? isDefined(displayedSubStepObject?.label) &&
       displayedSubStepObject?.label
         .toLowerCase()
         .includes(searchInputValue.toLowerCase())
     : true;
+
+  const shouldDisplaySubStepObject =
+    shouldDisplayRecordObjects && isObjectFoundThroughSearch;
+
   const objectLabel = displayedSubStepObjectMetadata?.labelSingular;
 
   return (

@@ -4,9 +4,8 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
 import { type InputSchemaPropertyType } from '@/workflow/types/InputSchema';
-import { WorkflowVariablesDropdownAllItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownAllItems';
-import { WorkflowVariablesDropdownFieldItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownFieldItems';
-import { WorkflowVariablesDropdownWorkflowStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownWorkflowStepItems';
+import { WorkflowVariablesDropdownStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems';
+import { WorkflowVariablesDropdownSteps } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps';
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/workflow-variables/constants/SearchVariablesDropdownId';
 
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
@@ -122,22 +121,17 @@ export const WorkflowVariablesDropdown = ({
       }
       dropdownComponents={
         !isDefined(selectedStep) ? (
-          <WorkflowVariablesDropdownWorkflowStepItems
+          <WorkflowVariablesDropdownSteps
             dropdownId={dropdownId}
             steps={availableVariablesInWorkflowStep}
             onSelect={handleStepSelect}
           />
-        ) : shouldDisplayRecordObjects ? (
-          <WorkflowVariablesDropdownAllItems
-            step={selectedStep}
-            onSelect={handleSubItemSelect}
-            onBack={handleBack}
-          />
         ) : (
-          <WorkflowVariablesDropdownFieldItems
+          <WorkflowVariablesDropdownStepItems
             step={selectedStep}
             onSelect={handleSubItemSelect}
             onBack={handleBack}
+            shouldDisplayRecordObjects={shouldDisplayRecordObjects}
           />
         )
       }
