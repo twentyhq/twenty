@@ -4,7 +4,10 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayoutsState';
+import {
+  pageLayoutCurrentLayoutsState,
+  type TabLayouts,
+} from '../states/pageLayoutCurrentLayoutsState';
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutPersistedState } from '../states/pageLayoutPersistedState';
 import {
@@ -45,7 +48,7 @@ export const PageLayoutInitializationEffect = ({
             });
 
             if (layout.tabs.length > 0) {
-              const tabLayouts: Record<string, any> = {};
+              const tabLayouts: TabLayouts = {};
               layout.tabs.forEach((tab) => {
                 const layouts = tab.widgets.map((w) => ({
                   i: w.id,
