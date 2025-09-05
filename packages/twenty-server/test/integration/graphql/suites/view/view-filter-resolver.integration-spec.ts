@@ -38,6 +38,7 @@ describe('View Filter Resolver', () => {
         createOneObject: { id: objectMetadataId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'myFilterTestObject',
         namePlural: 'myFilterTestObjects',
@@ -54,6 +55,7 @@ describe('View Filter Resolver', () => {
         createOneField: { id: fieldMetadataId },
       },
     } = await createOneFieldMetadata({
+      expectToFail: false,
       input: {
         name: 'testField',
         label: 'Test Field',
@@ -68,8 +70,10 @@ describe('View Filter Resolver', () => {
 
   afterAll(async () => {
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
+    await cleanupViewRecords();
   });
 
   beforeEach(async () => {
@@ -81,10 +85,6 @@ describe('View Filter Resolver', () => {
     });
 
     testViewId = view.id;
-  });
-
-  afterAll(async () => {
-    await cleanupViewRecords();
   });
 
   describe('getCoreViewFilters', () => {

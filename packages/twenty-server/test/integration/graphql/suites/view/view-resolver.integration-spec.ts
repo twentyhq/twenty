@@ -39,6 +39,7 @@ describe('View Resolver', () => {
         createOneObject: { id: objectMetadataId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'myViewTestObject',
         namePlural: 'myViewTestObjects',
@@ -53,15 +54,13 @@ describe('View Resolver', () => {
 
   afterAll(async () => {
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
-  });
-
-  beforeEach(async () => {
     await cleanupViewRecords();
   });
 
-  afterAll(async () => {
+  beforeEach(async () => {
     await cleanupViewRecords();
   });
 
