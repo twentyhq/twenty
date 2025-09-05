@@ -19,8 +19,9 @@ const StyledTr = styled.tr<{
     isDragging
       ? `1px solid ${theme.border.color.medium}`
       : '1px solid transparent'};
+
+  border-left: none;
   position: relative;
-  transition: border-left-color 0.2s ease-in-out;
 
   &[data-next-row-active-or-focused='true'] {
     td {
