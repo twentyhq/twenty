@@ -125,7 +125,6 @@ export const SettingsBillingSubscriptionInfo = ({
   const getIntervalLabelAsAdjectiveCapitalize = (isMonthlyPlan: boolean) => {
     return capitalize(getIntervalLabel(isMonthlyPlan, true));
   };
-  const intervalLabel = getIntervalLabel(isMonthlyPlan);
 
   const { [PermissionFlagType.WORKSPACE]: hasPermissionToEndTrialPeriod } =
     usePermissionFlagMap();
