@@ -1,6 +1,6 @@
 import { type FieldMetadataType, type FromTo } from 'twenty-shared/types';
-import { computeMorphRelationFieldJoinColumnName } from 'twenty-shared/utils';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadataMaps } from 'src/engine/metadata-modules/flat-object-metadata-maps/types/flat-object-metadata-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -13,7 +13,6 @@ type RenameFlatObjectMetadataManyToOneMorphRelationTargetFlatFieldMetadatasSetti
 export const renameFlatObjectMetadataManyToOneMorphRelationTargetFlatFieldMetadatasSettingsJoinColumnName =
   ({
     fromFlatObjectMetadata,
-    toFlatObjectMetadata,
     existingFlatObjectMetadataMaps,
   }: RenameFlatObjectMetadataManyToOneMorphRelationTargetFlatFieldMetadatasSettingsJoinColumnNameArgs): FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>[] => {
     const manyToOneMorphRelationFlatFieldMetadatas =
@@ -27,9 +26,8 @@ export const renameFlatObjectMetadataManyToOneMorphRelationTargetFlatFieldMetada
     const updatedFlatFieldMetadatas =
       manyToOneMorphRelationFlatFieldMetadatas.map(
         (morphRelationFlatFieldMetadata) => {
-          const newJoinColumnName = computeMorphRelationFieldJoinColumnName({
+          const newJoinColumnName = computeMorphOrRelationFieldJoinColumnName({
             name: morphRelationFlatFieldMetadata.name,
-            targetObjectMetadataNameSingular: toFlatObjectMetadata.nameSingular,
           });
 
           return {
