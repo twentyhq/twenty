@@ -13,6 +13,7 @@ import {
 } from 'test/integration/rest/utils/view-rest-api.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AggregateOperations } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { ViewType } from 'src/engine/core-modules/view/enums/view-type.enum';
@@ -68,6 +69,10 @@ describe('deleteOne', () => {
     it('should reset kanban aggregate operation when deleting a field used as kanbanAggregateOperationFieldMetadataId', async () => {
       const viewThatShouldBeUpdated = await findViewByIdWithRestApi(viewId);
 
+      if (!isDefined(viewThatShouldBeUpdated)) {
+        throw new Error('View not found, this should not happen');
+      }
+
       expect(
         viewThatShouldBeUpdated.kanbanAggregateOperationFieldMetadataId,
       ).toBe(testFieldId);
@@ -91,6 +96,10 @@ describe('deleteOne', () => {
       expect(data.deleteOneField.id).toBe(testFieldId);
 
       const updatedViewResponse = await findViewByIdWithRestApi(viewId);
+
+      if (!isDefined(updatedViewResponse)) {
+        throw new Error('View not found, this should not happen');
+      }
 
       expect(
         updatedViewResponse.kanbanAggregateOperationFieldMetadataId,
