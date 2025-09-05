@@ -4,9 +4,9 @@ import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersStates';
+import { currentWorkspaceDeletedMembersState } from '@/auth/states/currentWorkspaceDeletedMembersState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { DateFormat } from '@/localization/constants/DateFormat';
@@ -176,10 +176,7 @@ export const UserProviderEffect = () => {
     }
 
     if (isDefined(workspaceMembers)) {
-      setCurrentWorkspaceMembers(
-        workspaceMembers.map(affectDefaultValuesOnEmptyWorkspaceMemberFields) ??
-          [],
-      );
+      setCurrentWorkspaceMembers(workspaceMembers);
     }
 
     if (isDefined(deletedWorkspaceMembers)) {

@@ -1,9 +1,13 @@
 import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
-import { type Role } from '~/generated/graphql';
+import { type RoleWithPartialMembers } from '../types/RoleWithPartialMembers';
 
-export const settingsDraftRoleFamilyState = createFamilyState<Role, string>({
+export const settingsDraftRoleFamilyState = createFamilyState<
+  RoleWithPartialMembers,
+  string
+>({
   key: 'settingsDraftRoleFamilyState',
   defaultValue: {
+    __typename: 'Role',
     id: '',
     label: '',
     description: '',

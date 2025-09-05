@@ -5,6 +5,7 @@ import { useLingui } from '@lingui/react/macro';
 import { IconEye } from 'twenty-ui/display';
 import { FloatingButton } from 'twenty-ui/input';
 import { Card } from 'twenty-ui/layout';
+import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 import DarkCoverImage from '../../assets/cover-dark.png';
 import LightCoverImage from '../../assets/cover-light.png';
 
@@ -36,7 +37,7 @@ export const SettingsObjectCoverImage = () => {
           Icon={IconEye}
           title={t`Visualize`}
           size="small"
-          to={'/settings/' + SettingsPath.ObjectOverview}
+          to={getSettingsPath(SettingsPath.ObjectOverview)}
         />
       </StyledButtonContainer>
     </StyledCoverImageContainer>

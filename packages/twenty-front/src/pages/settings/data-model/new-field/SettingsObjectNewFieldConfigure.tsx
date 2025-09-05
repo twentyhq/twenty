@@ -240,7 +240,7 @@ export const SettingsObjectNewFieldConfigure = () => {
             />
             <SettingsDataModelFieldSettingsFormCard
               fieldType={fieldType}
-              existingFieldMetadataId={''}
+              existingFieldMetadataId=""
               objectNameSingular={activeObjectMetadataItem.nameSingular}
             />
           </Section>

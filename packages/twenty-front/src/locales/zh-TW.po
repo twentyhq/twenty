@@ -209,6 +209,16 @@ msgstr "2FA 方法已成功刪除。"
 msgid "2FA Method Reset"
 msgstr "2FA 方法重置"
 
+#. js-lingui-id: keUlu+
+#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+msgid "A draft already exists"
+msgstr ""
+
+#. js-lingui-id: OITESn
+#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
+msgstr ""
+
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "A role must be selected for the API key"
@@ -331,6 +341,7 @@ msgid "Activate Workflow"
 msgstr "啟用工作流程"
 
 #. js-lingui-id: F6pfE9
+#: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
@@ -359,6 +370,11 @@ msgstr "新增帳戶"
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Add Approved Access Domain"
 msgstr "添加已批准的訪問域"
+
+#. js-lingui-id: We0vOO
+#: src/modules/ui/input/editor/components/CustomSideMenu.tsx
+msgid "Add Block"
+msgstr ""
 
 #. js-lingui-id: DpV70M
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -1167,6 +1183,11 @@ msgstr "取消訂閱"
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Catalan"
 msgstr "加泰羅尼亞語"
+
+#. js-lingui-id: tHntRt
+#: src/modules/ui/input/editor/components/CustomSideMenu.tsx
+msgid "Change Color"
+msgstr ""
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -1992,6 +2013,7 @@ msgid "Deactivate Workflow"
 msgstr "停用工作流程"
 
 #. js-lingui-id: yAT3be
+#: src/pages/settings/SettingsProfile.tsx
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "Deactivated"
 msgstr "已停用"
@@ -2063,6 +2085,8 @@ msgstr "刪除"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 #: src/modules/views/view-picker/components/ViewPickerCreateButton.tsx
+#: src/modules/ui/input/editor/components/CustomSideMenu.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -2381,6 +2405,7 @@ msgstr "最早日期"
 
 #. js-lingui-id: ePK91l
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
@@ -2403,6 +2428,11 @@ msgstr "編輯帳戶"
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 msgid "Edit Agent"
 msgstr "編輯代理"
+
+#. js-lingui-id: X8x8v5
+#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
+msgid "Edit Connection"
+msgstr ""
 
 #. js-lingui-id: 6vZ75d
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection.tsx
@@ -2429,6 +2459,11 @@ msgstr "編輯付款方式、查看發票等"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Edit Records on All Objects"
 msgstr "編輯所有物件的記錄"
+
+#. js-lingui-id: vjOt/P
+#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
+msgid "Edit the information to connect your database"
+msgstr ""
 
 #. js-lingui-id: 6o1M/Q
 #: src/pages/settings/domains/SettingsDomains.tsx
@@ -3509,6 +3544,11 @@ msgstr "索引"
 msgid "Initial loop step IDs"
 msgstr ""
 
+#. js-lingui-id: XU5AOg
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+msgid "Input"
+msgstr ""
+
 #. js-lingui-id: JE2tjr
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
@@ -3519,6 +3559,11 @@ msgstr "輸入必須為駝峰式大小寫，且不能以數字開頭"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 msgid "Input settings"
 msgstr "輸入設置"
+
+#. js-lingui-id: T8avpe
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+msgid "Insert a JSON input, then press \"Run\" to test your function."
+msgstr ""
 
 #. js-lingui-id: AwUsnG
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
@@ -3535,6 +3580,7 @@ msgstr "AI 指示"
 #: src/pages/settings/integrations/SettingsIntegrations.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
 #: src/pages/settings/integrations/SettingsIntegrationMCPPage.tsx
+#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Integrations"
 msgstr "集成"
@@ -3947,6 +3993,11 @@ msgstr "淺色模式"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Link copied to clipboard"
 msgstr "鏈接已複製到剪貼板"
+
+#. js-lingui-id: HhVDr2
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
+msgid "Listing"
+msgstr ""
 
 #. js-lingui-id: DL2sg0
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
@@ -4400,6 +4451,11 @@ msgstr "新的 SSO 配置"
 msgid "New SSO provider"
 msgstr "新的 SSO 提供者"
 
+#. js-lingui-id: hXzOVo
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
+msgid "Next"
+msgstr ""
+
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/SelectSheetStep/SelectSheetStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -4416,6 +4472,16 @@ msgstr "第九"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
 msgid "No"
 msgstr "否"
+
+#. js-lingui-id: xUXmJM
+#: src/modules/object-record/record-field/ui/meta-types/input/components/RelationToOneFieldInput.tsx
+msgid "No {fieldLabel}"
+msgstr ""
+
+#. js-lingui-id: yWS1Mx
+#: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordPicker.tsx
+msgid "No {objectNameSingular}"
+msgstr ""
 
 #. js-lingui-id: vhsJG1
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowEditActionAiAgent.tsx
@@ -4491,6 +4557,16 @@ msgstr "沒有包含錯誤的數據"
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 msgid "No data found"
 msgstr "未找到數據"
+
+#. js-lingui-id: P4KXUa
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
+msgid "No Deleted {objectLabelSingular} found"
+msgstr ""
+
+#. js-lingui-id: s7QKq9
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
+msgid "No deleted records matching the filter criteria were found."
+msgstr ""
 
 #. js-lingui-id: flmDTf
 #: src/pages/settings/ai/components/SettingsAgentHandoffTable.tsx
@@ -4584,6 +4660,7 @@ msgstr "尚未為個別對象設定權限。"
 
 #. js-lingui-id: EqGTpW
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
+#: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
 msgid "No records found"
 msgstr "未找到記錄"
 
@@ -4631,6 +4708,7 @@ msgstr "尚無工作流程版本"
 #. js-lingui-id: EdQY6l
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterMenuContent.tsx
+#: src/modules/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterAggregateOperationMenuItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "None"
 msgstr "無"
@@ -4822,6 +4900,11 @@ msgstr "選項"
 msgid "or"
 msgstr "或"
 
+#. js-lingui-id: ZAVklK
+#: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
+msgid "Or"
+msgstr ""
+
 #. js-lingui-id: ucgZ0o
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Organization"
@@ -4856,6 +4939,11 @@ msgstr "我們的團隊可以幫助您設置工作區，以滿足您的具體需
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "Output Field {fieldNumber}"
 msgstr "輸出欄位 {fieldNumber}"
+
+#. js-lingui-id: in6CUw
+#: src/modules/workflow/components/OverrideWorkflowDraftConfirmationModal.tsx
+msgid "Override Draft"
+msgstr ""
 
 #. js-lingui-id: lXe6vt
 #: src/pages/settings/page-layout/SettingsPageLayouts.tsx
@@ -5067,6 +5155,12 @@ msgstr "上一次的 AI 聊天"
 msgid "Price updated."
 msgstr "價格已更新。"
 
+#. js-lingui-id: 0Ni6nR
+#: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormEmailsFieldInput.tsx
+msgid "Primary Email"
+msgstr ""
+
 #. js-lingui-id: LcET2C
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "Privacy Policy"
@@ -5212,6 +5306,11 @@ msgstr "版本"
 msgid "Reload"
 msgstr "重新載入"
 
+#. js-lingui-id: qlAIQ1
+#: src/modules/object-metadata/components/RemoteNavigationDrawerSection.tsx
+msgid "Remote"
+msgstr ""
+
 #. js-lingui-id: t/YqKh
 #: src/modules/ui/input/components/ImageInput.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
@@ -5227,6 +5326,11 @@ msgstr "移除帳戶"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove as default"
 msgstr "刪除默認值"
+
+#. js-lingui-id: 2HpFUd
+#: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
+msgid "Remove Deleted filter"
+msgstr ""
 
 #. js-lingui-id: rn2/2V
 #: src/modules/workflow/workflow-diagram/workflow-edges/components/WorkflowDiagramFilterEdgeEditable.tsx
@@ -5253,6 +5357,16 @@ msgstr "移除交接"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Remove option"
 msgstr "移除選項"
+
+#. js-lingui-id: NRCCKG
+#: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
+msgid "Remove Sorting"
+msgstr ""
+
+#. js-lingui-id: qMPWg0
+#: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
+msgid "Remove sorting?"
+msgstr ""
 
 #. js-lingui-id: oQjB9l
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -5398,6 +5512,11 @@ msgstr "羅馬尼亞語"
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Run a workflow and return here to view its executions"
 msgstr "運行工作流程並返回此處查看其執行情況"
+
+#. js-lingui-id: UPaWvi
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+msgid "Run Function"
+msgstr ""
 
 #. js-lingui-id: nji0/X
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -6128,6 +6247,7 @@ msgstr "主題、正文和附件將與您的團隊共享。"
 
 #. js-lingui-id: hQRttt
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
+#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
 msgid "Submit"
 msgstr "提交"
 
@@ -6305,6 +6425,11 @@ msgstr "測試"
 msgid "Test Workflow"
 msgstr "測試工作流程"
 
+#. js-lingui-id: 3nWPN6
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab.tsx
+msgid "Test your function"
+msgstr ""
+
 #. js-lingui-id: xeiujy
 #: src/modules/ai/constants/OutputFieldTypeOptions.ts
 msgid "Text"
@@ -6451,6 +6576,11 @@ msgstr "此操作無法撤銷。這將永久移除交接配置。"
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
 msgstr "此資料庫值覆蓋環境設置。"
+
+#. js-lingui-id: E4JJ5C
+#: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
+msgid "This is required to enable manual row reordering."
+msgstr ""
 
 #. js-lingui-id: vbLBMd
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
@@ -6808,6 +6938,7 @@ msgid "Validate Data"
 msgstr "驗證數據"
 
 #. js-lingui-id: wMHvYH
+#: src/modules/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 msgid "Value"
@@ -7149,6 +7280,13 @@ msgstr "您無權在此對象中創建記錄"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "您可以根據需要設置 IMAP（接收電子郵件）、SMTP（發送電子郵件）和 CalDAV（日曆同步）的任何組合。"
+
+#. js-lingui-id: aiJY7y
+#: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
+"If you need to make changes, please create a new connection or unsync the tables first."
+msgstr ""
 
 #. js-lingui-id: zEM7Ne
 #: src/modules/billing/components/SettingsBillingSubscriptionInfo.tsx

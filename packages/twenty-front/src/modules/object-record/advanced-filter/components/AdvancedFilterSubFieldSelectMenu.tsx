@@ -132,7 +132,7 @@ export const AdvancedFilterSubFieldSelectMenu = ({
         >
           {compositeFieldTypeIsFilterableByAnySubField && (
             <SelectableListItem
-              itemId={'-1'}
+              itemId="-1"
               key={`select-filter-${-1}`}
               onEnter={() => {
                 handleSelectFilter(fieldMetadataItemUsedInDropdown);

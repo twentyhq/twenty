@@ -72,8 +72,8 @@ export const Info = ({
         <StyledLink to={to}>
           <Button
             title={buttonTitle}
-            size={'small'}
-            variant={'secondary'}
+            size="small"
+            variant="secondary"
             accent={accent}
           />
         </StyledLink>
@@ -82,8 +82,8 @@ export const Info = ({
         <Button
           title={buttonTitle}
           onClick={onClick}
-          size={'small'}
-          variant={'secondary'}
+          size="small"
+          variant="secondary"
           accent={accent}
         />
       )}

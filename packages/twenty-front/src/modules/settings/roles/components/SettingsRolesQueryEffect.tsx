@@ -2,11 +2,12 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { settingsRoleIdsState } from '@/settings/roles/states/settingsRoleIdsState';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
+import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useEffect } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-shared/utils';
-import { type Role, useGetRolesQuery } from '~/generated-metadata/graphql';
+import { useGetRolesQuery } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const SettingsRolesQueryEffect = () => {
@@ -20,7 +21,7 @@ export const SettingsRolesQueryEffect = () => {
 
   const populateRoles = useRecoilCallback(
     ({ set, snapshot }) =>
-      (roles: Role[]) => {
+      (roles: RoleWithPartialMembers[]) => {
         const roleIds = roles.map((role) => role.id);
         set(settingsRoleIdsState, roleIds);
         roles.forEach((role) => {
