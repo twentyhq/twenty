@@ -10,6 +10,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { getCurrentSubStepFromPath } from '@/workflow/workflow-variables/utils/getCurrentSubStepFromPath';
 import { getStepHeaderLabel } from '@/workflow/workflow-variables/utils/getStepHeaderLabel';
+import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItemIcon';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/utils/isRecordOutputSchemaV2';
 import { useLingui } from '@lingui/react/macro';
@@ -144,7 +145,15 @@ export const WorkflowVariablesDropdownStepItems = ({
             onClick={() => handleSelectField(key)}
             text={subStep.label || key}
             hasSubMenu={!subStep.isLeaf}
-            LeftIcon={subStep.icon ? getIcon(subStep.icon) : undefined}
+            LeftIcon={
+              subStep.icon
+                ? getIcon(subStep.icon)
+                : getIcon(
+                    getStepItemIcon({
+                      itemType: subStep.type,
+                    }),
+                  )
+            }
             contextualText={
               subStep.isLeaf ? subStep?.value?.toString() : undefined
             }
