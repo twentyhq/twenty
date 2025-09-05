@@ -80,13 +80,11 @@ export class PageLayoutWidgetController {
     @Body() input: UpdatePageLayoutWidgetInput,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutWidgetDTO> {
-    const updatedPageLayoutWidget = await this.pageLayoutWidgetService.update(
+    return this.pageLayoutWidgetService.update(
       id,
       workspace.id,
       input as QueryDeepPartialEntity<PageLayoutWidgetEntity>,
     );
-
-    return updatedPageLayoutWidget;
   }
 
   @Delete(':id')
@@ -94,11 +92,6 @@ export class PageLayoutWidgetController {
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<PageLayoutWidgetDTO> {
-    const deletedPageLayoutWidget = await this.pageLayoutWidgetService.delete(
-      id,
-      workspace.id,
-    );
-
-    return deletedPageLayoutWidget;
+    return this.pageLayoutWidgetService.delete(id, workspace.id);
   }
 }
