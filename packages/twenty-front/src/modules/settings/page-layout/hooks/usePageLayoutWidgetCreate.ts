@@ -8,6 +8,8 @@ import { pageLayoutDraggedAreaState } from '../states/pageLayoutDraggedAreaState
 import { pageLayoutTabsState } from '../states/pageLayoutTabsState';
 import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
 import { type PageLayoutWidget } from '../states/savedPageLayoutsState';
+import { addWidgetToTab } from '../utils/addWidgetToTab';
+import { createUpdatedTabLayouts } from '../utils/createUpdatedTabLayouts';
 import {
   getDefaultWidgetData,
   getWidgetSize,
@@ -83,47 +85,20 @@ export const usePageLayoutWidgetCreate = () => {
         const updatedWidgets = [...pageLayoutWidgets, newWidget];
         set(pageLayoutWidgetsState, updatedWidgets);
 
-        const currentTabLayouts = allTabLayouts[activeTabId] || {
-          desktop: [],
-          mobile: [],
-        };
+        const updatedLayouts = createUpdatedTabLayouts(
+          allTabLayouts,
+          activeTabId,
+          newLayout,
+        );
+        set(pageLayoutCurrentLayoutsState, updatedLayouts);
 
-        const updatedLayouts = {
-          desktop: [...(currentTabLayouts.desktop || []), newLayout],
-          mobile: [
-            ...(currentTabLayouts.mobile || []),
-            { ...newLayout, w: 1, x: 0 },
-          ],
-        };
-
-        set(pageLayoutCurrentLayoutsState, {
-          ...allTabLayouts,
-          [activeTabId]: updatedLayouts,
-        });
-
-        set(pageLayoutTabsState, (prevTabs) => {
-          return prevTabs.map((tab) => {
-            if (tab.id === activeTabId) {
-              return {
-                ...tab,
-                widgets: [...tab.widgets, newWidget],
-              };
-            }
-            return tab;
-          });
-        });
+        set(pageLayoutTabsState, (prevTabs) =>
+          addWidgetToTab(prevTabs, activeTabId, newWidget),
+        );
 
         set(pageLayoutDraftState, (prev) => ({
           ...prev,
-          tabs: prev.tabs.map((tab) => {
-            if (tab.id === activeTabId) {
-              return {
-                ...tab,
-                widgets: [...tab.widgets, newWidget],
-              };
-            }
-            return tab;
-          }),
+          tabs: addWidgetToTab(prev.tabs, activeTabId, newWidget),
         }));
 
         set(pageLayoutDraggedAreaState, null);

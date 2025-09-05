@@ -3,6 +3,8 @@ import { pageLayoutCurrentLayoutsState } from '../states/pageLayoutCurrentLayout
 import { pageLayoutDraftState } from '../states/pageLayoutDraftState';
 import { pageLayoutTabsState } from '../states/pageLayoutTabsState';
 import { pageLayoutWidgetsState } from '../states/pageLayoutWidgetsState';
+import { removeWidgetFromTab } from '../utils/removeWidgetFromTab';
+import { removeWidgetLayoutFromTab } from '../utils/removeWidgetLayoutFromTab';
 
 export const usePageLayoutWidgetDelete = () => {
   const handleRemoveWidget = useRecoilCallback(
@@ -23,46 +25,23 @@ export const usePageLayoutWidgetDelete = () => {
         );
         set(pageLayoutWidgetsState, updatedWidgets);
 
-        if (tabId !== undefined && allTabLayouts[tabId] !== undefined) {
-          const currentTabLayouts = allTabLayouts[tabId];
-          const updatedLayouts = {
-            desktop: (currentTabLayouts.desktop || []).filter(
-              (layout) => layout.i !== widgetId,
-            ),
-            mobile: (currentTabLayouts.mobile || []).filter(
-              (layout) => layout.i !== widgetId,
-            ),
-          };
-          set(pageLayoutCurrentLayoutsState, {
-            ...allTabLayouts,
-            [tabId]: updatedLayouts,
-          });
+        if (tabId !== undefined) {
+          const updatedLayouts = removeWidgetLayoutFromTab(
+            allTabLayouts,
+            tabId,
+            widgetId,
+          );
+          set(pageLayoutCurrentLayoutsState, updatedLayouts);
+
+          set(pageLayoutTabsState, (prevTabs) =>
+            removeWidgetFromTab(prevTabs, tabId, widgetId),
+          );
+
+          set(pageLayoutDraftState, (prev) => ({
+            ...prev,
+            tabs: removeWidgetFromTab(prev.tabs, tabId, widgetId),
+          }));
         }
-
-        set(pageLayoutTabsState, (prevTabs) => {
-          return prevTabs.map((tab) => {
-            if (tab.id === tabId) {
-              return {
-                ...tab,
-                widgets: tab.widgets.filter((w) => w.id !== widgetId),
-              };
-            }
-            return tab;
-          });
-        });
-
-        set(pageLayoutDraftState, (prev) => ({
-          ...prev,
-          tabs: prev.tabs.map((tab) => {
-            if (tab.id === tabId) {
-              return {
-                ...tab,
-                widgets: tab.widgets.filter((w) => w.id !== widgetId),
-              };
-            }
-            return tab;
-          }),
-        }));
       },
     [],
   );

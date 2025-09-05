@@ -13,6 +13,7 @@ import { usePageLayoutDraftState } from '@/settings/page-layout/hooks/usePageLay
 import { usePageLayoutDragSelection } from '@/settings/page-layout/hooks/usePageLayoutDragSelection';
 import { usePageLayoutHandleLayoutChange } from '@/settings/page-layout/hooks/usePageLayoutHandleLayoutChange';
 import { usePageLayoutSaveHandler } from '@/settings/page-layout/hooks/usePageLayoutSaveHandler';
+import { usePageLayoutTabCreate } from '@/settings/page-layout/hooks/usePageLayoutTabCreate';
 import { usePageLayoutWidgetDelete } from '@/settings/page-layout/hooks/usePageLayoutWidgetDelete';
 import { WidgetType } from '@/settings/page-layout/mocks/mockWidgets';
 import { pageLayoutCurrentBreakpointState } from '@/settings/page-layout/states/pageLayoutCurrentBreakpointState';
@@ -47,7 +48,6 @@ import { useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconAppWindow, IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { v4 as uuidv4 } from 'uuid';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getSettingsPath } from '~/utils/navigation/getSettingsPath';
 
@@ -142,11 +142,11 @@ export const SettingsPageLayoutEdit = () => {
   const [pageLayoutCurrentBreakpoint, setPageLayoutCurrentBreakpoint] =
     useRecoilState(pageLayoutCurrentBreakpointState);
   const pageLayoutSelectedCells = useRecoilValue(pageLayoutSelectedCellsState);
-  const [pageLayoutCurrentLayouts, setPageLayoutCurrentLayouts] =
-    useRecoilState(pageLayoutCurrentLayoutsState);
+  const pageLayoutCurrentLayouts = useRecoilValue(
+    pageLayoutCurrentLayoutsState,
+  );
   const pageLayoutWidgets = useRecoilValue(pageLayoutWidgetsState);
-  const [pageLayoutTabs, setPageLayoutTabs] =
-    useRecoilState(pageLayoutTabsState);
+  const pageLayoutTabs = useRecoilValue(pageLayoutTabsState);
   const setPageLayoutCurrentTabIdForCreation = useSetRecoilState(
     pageLayoutCurrentTabIdForCreationState,
   );
@@ -180,6 +180,7 @@ export const SettingsPageLayoutEdit = () => {
 
   const { handleRemoveWidget } = usePageLayoutWidgetDelete();
   const { handleLayoutChange } = usePageLayoutHandleLayoutChange(activeTabId);
+  const { handleCreateTab } = usePageLayoutTabCreate();
 
   const handleEditWidget = useCallback(
     (widgetId: string) => {
@@ -256,39 +257,9 @@ export const SettingsPageLayoutEdit = () => {
   );
 
   const handleAddTab = useCallback(() => {
-    const newTab = {
-      id: `tab-${uuidv4()}`,
-      title: `Tab ${pageLayoutTabs.length + 1}`,
-      position: pageLayoutTabs.length,
-      pageLayoutId: '',
-      widgets: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      deletedAt: null,
-    };
-
-    const updatedTabs = [...pageLayoutTabs, newTab];
-    setPageLayoutTabs(updatedTabs);
-
-    setPageLayoutDraft((prev) => ({
-      ...prev,
-      tabs: updatedTabs,
-    }));
-
-    // Initialize empty layout for the new tab
-    setPageLayoutCurrentLayouts((prev) => ({
-      ...prev,
-      [newTab.id]: { desktop: [], mobile: [] },
-    }));
-
-    setActiveTabId(newTab.id);
-  }, [
-    pageLayoutTabs,
-    setPageLayoutTabs,
-    setPageLayoutDraft,
-    setActiveTabId,
-    setPageLayoutCurrentLayouts,
-  ]);
+    const newTabId = handleCreateTab();
+    setActiveTabId(newTabId);
+  }, [handleCreateTab, setActiveTabId]);
 
   const tabListTabs: SingleTabProps[] = useMemo(() => {
     return [...pageLayoutTabs]
