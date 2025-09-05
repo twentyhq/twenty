@@ -44,7 +44,10 @@ export const EditableFilterChip = ({
     : recordFilter.label;
 
   const labelKey = `${fieldNameLabel}`;
-  const labelValue = getRecordFilterLabelValue(recordFilter);
+  const labelValue = getRecordFilterLabelValue({
+    recordFilter,
+    fieldMetadataOptions: fieldMetadataItem.options ?? [],
+  });
 
   return (
     <SortOrFilterChip

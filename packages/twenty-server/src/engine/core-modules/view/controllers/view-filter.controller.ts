@@ -15,7 +15,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CreateViewFilterInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-filter.input';
 import { UpdateViewFilterInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-filter.input';
-import { type ViewFilterDTO } from 'src/engine/core-modules/view/dtos/view-filter.dto';
+import { ViewFilterDTO } from 'src/engine/core-modules/view/dtos/view-filter.dto';
+import {
+  generateViewFilterExceptionMessage,
+  generateViewFilterUserFriendlyExceptionMessage,
+  ViewFilterException,
+  ViewFilterExceptionCode,
+  ViewFilterExceptionMessageKey,
+} from 'src/engine/core-modules/view/exceptions/view-filter.exception';
 import { ViewFilterRestApiExceptionFilter } from 'src/engine/core-modules/view/filters/view-filter-rest-api-exception.filter';
 import { ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -44,8 +51,25 @@ export class ViewFilterController {
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ViewFilterDTO | null> {
-    return this.viewFilterService.findById(id, workspace.id);
+  ): Promise<ViewFilterDTO> {
+    const viewFilter = await this.viewFilterService.findById(id, workspace.id);
+
+    if (!isDefined(viewFilter)) {
+      throw new ViewFilterException(
+        generateViewFilterExceptionMessage(
+          ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
+          id,
+        ),
+        ViewFilterExceptionCode.VIEW_FILTER_NOT_FOUND,
+        {
+          userFriendlyMessage: generateViewFilterUserFriendlyExceptionMessage(
+            ViewFilterExceptionMessageKey.VIEW_FILTER_NOT_FOUND,
+          ),
+        },
+      );
+    }
+
+    return viewFilter;
   }
 
   @Post()

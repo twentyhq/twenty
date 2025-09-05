@@ -41,6 +41,9 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
       defaultValue
       options
       isLabelSyncedWithName
+      object {
+        id
+      }
     }
   }
 `;
@@ -65,6 +68,9 @@ export const UPDATE_ONE_FIELD_METADATA_ITEM = gql`
       updatedAt
       settings
       isLabelSyncedWithName
+      object {
+        id
+      }
     }
   }
 `;
@@ -132,6 +138,9 @@ export const DELETE_ONE_FIELD_METADATA_ITEM = gql`
       createdAt
       updatedAt
       settings
+      object {
+        id
+      }
     }
   }
 `;

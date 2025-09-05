@@ -56,22 +56,12 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_CORE_VIEW_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
         workspaceId: workspaceId,
         value: false,
       },
       {
         key: FeatureFlagKey.IS_API_KEY_ROLES_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },
