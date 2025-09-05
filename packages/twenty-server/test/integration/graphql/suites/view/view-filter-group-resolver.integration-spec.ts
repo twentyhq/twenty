@@ -40,6 +40,7 @@ describe('View Filter Group Resolver', () => {
         createOneObject: { id: objectMetadataId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
         nameSingular: 'myFilterGroupTestObject',
         namePlural: 'myFilterGroupTestObjects',
@@ -54,8 +55,10 @@ describe('View Filter Group Resolver', () => {
 
   afterAll(async () => {
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
+    await cleanupViewRecords();
   });
 
   beforeEach(async () => {
@@ -67,10 +70,6 @@ describe('View Filter Group Resolver', () => {
     });
 
     testViewId = view.id;
-  });
-
-  afterAll(async () => {
-    await cleanupViewRecords();
   });
 
   describe('getCoreViewFilterGroups', () => {
