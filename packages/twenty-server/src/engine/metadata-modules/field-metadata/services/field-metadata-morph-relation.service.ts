@@ -223,6 +223,7 @@ export class FieldMetadataMorphRelationService {
         existingFlatObjectMetadataMaps.byId[
           morphFlatFieldMetadata.relationTargetObjectMetadataId
         ];
+
       if (!isDefined(targetFlatObjectMetadataWithFlatFieldMaps)) {
         throw new FlatObjectMetadataMapsException(
           'Morph relation dataloader could not find related object metadata in cache',
@@ -234,6 +235,7 @@ export class FieldMetadataMorphRelationService {
         targetFlatObjectMetadataWithFlatFieldMaps.fieldsById[
           morphFlatFieldMetadata.relationTargetFieldMetadataId
         ];
+
       if (!isDefined(targetFlatFieldMetadata)) {
         throw new FlatObjectMetadataMapsException(
           'Morph relation dataloader could not find related object metadata in cache',

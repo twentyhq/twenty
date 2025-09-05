@@ -268,25 +268,23 @@ export class ObjectRecordsToGraphqlConnectionHelper {
         }
 
         if (Array.isArray(objectValue)) {
-          processedObjectRecord[fieldMetadata.name] = this.createConnection(
-            {
-              objectRecords: objectValue,
-              parentObjectRecord: objectRecord,
-              objectRecordsAggregatedValues:
-                objectRecordsAggregatedValues[fieldMetadata.name],
-              selectedAggregatedFields:
-                selectedAggregatedFields[fieldMetadata.name],
-              objectName: targetObjectMetadata.nameSingular,
-              take,
-              totalCount:
-                objectRecordsAggregatedValues[fieldMetadata.name]?.totalCount ??
-                objectValue.length,
-              order,
-              hasNextPage: false,
-              hasPreviousPage: false,
-              depth: depth + 1,
-            },
-          );
+          processedObjectRecord[fieldMetadata.name] = this.createConnection({
+            objectRecords: objectValue,
+            parentObjectRecord: objectRecord,
+            objectRecordsAggregatedValues:
+              objectRecordsAggregatedValues[fieldMetadata.name],
+            selectedAggregatedFields:
+              selectedAggregatedFields[fieldMetadata.name],
+            objectName: targetObjectMetadata.nameSingular,
+            take,
+            totalCount:
+              objectRecordsAggregatedValues[fieldMetadata.name]?.totalCount ??
+              objectValue.length,
+            order,
+            hasNextPage: false,
+            hasPreviousPage: false,
+            depth: depth + 1,
+          });
         } else if (isPlainObject(objectValue)) {
           const targetObjectMetadata = getTargetObjectMetadataOrThrow(
             fieldMetadata,
