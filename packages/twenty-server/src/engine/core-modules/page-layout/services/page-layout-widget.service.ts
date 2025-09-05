@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { EntityManager, IsNull, Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import { UpdatePageLayoutWidgetInput } from 'src/engine/core-modules/page-layout/dtos/inputs/update-page-layout-widget.input';
@@ -27,11 +27,22 @@ export class PageLayoutWidgetService {
     private readonly pageLayoutTabService: PageLayoutTabService,
   ) {}
 
+  private getRepository(
+    transactionManager?: EntityManager,
+  ): Repository<PageLayoutWidgetEntity> {
+    return transactionManager
+      ? transactionManager.getRepository(PageLayoutWidgetEntity)
+      : this.pageLayoutWidgetRepository;
+  }
+
   async findByPageLayoutTabId(
     workspaceId: string,
     pageLayoutTabId: string,
+    transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetEntity[]> {
-    return this.pageLayoutWidgetRepository.find({
+    const repository = this.getRepository(transactionManager);
+
+    return repository.find({
       where: {
         pageLayoutTabId,
         workspaceId,
@@ -44,8 +55,11 @@ export class PageLayoutWidgetService {
   async findByIdOrThrow(
     id: string,
     workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetEntity> {
-    const pageLayoutWidget = await this.pageLayoutWidgetRepository.findOne({
+    const repository = this.getRepository(transactionManager);
+
+    const pageLayoutWidget = await repository.findOne({
       where: {
         id,
         workspaceId,
@@ -69,6 +83,7 @@ export class PageLayoutWidgetService {
   async create(
     pageLayoutWidgetData: Partial<PageLayoutWidgetEntity>,
     workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetEntity> {
     if (!isDefined(pageLayoutWidgetData.title)) {
       throw new PageLayoutWidgetException(
@@ -101,14 +116,17 @@ export class PageLayoutWidgetService {
       await this.pageLayoutTabService.findByIdOrThrow(
         pageLayoutWidgetData.pageLayoutTabId,
         workspaceId,
+        transactionManager,
       );
 
-      const pageLayoutWidget = this.pageLayoutWidgetRepository.create({
+      const repository = this.getRepository(transactionManager);
+
+      const pageLayoutWidget = repository.create({
         ...pageLayoutWidgetData,
         workspaceId,
       });
 
-      return this.pageLayoutWidgetRepository.save(pageLayoutWidget);
+      return repository.save(pageLayoutWidget);
     } catch (error) {
       if (
         error instanceof PageLayoutTabException &&
@@ -129,8 +147,11 @@ export class PageLayoutWidgetService {
     id: string,
     workspaceId: string,
     updateData: UpdatePageLayoutWidgetInput,
+    transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetEntity> {
-    const existingWidget = await this.pageLayoutWidgetRepository.findOne({
+    const repository = this.getRepository(transactionManager);
+
+    const existingWidget = await repository.findOne({
       where: {
         id,
         workspaceId,
@@ -148,27 +169,40 @@ export class PageLayoutWidgetService {
       );
     }
 
-    await this.pageLayoutWidgetRepository.update(
+    await repository.update(
       { id },
       updateData as QueryDeepPartialEntity<PageLayoutWidgetEntity>,
     );
 
-    return this.findByIdOrThrow(id, workspaceId);
+    return this.findByIdOrThrow(id, workspaceId, transactionManager);
   }
 
   async delete(
     id: string,
     workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetEntity> {
-    const pageLayoutWidget = await this.findByIdOrThrow(id, workspaceId);
+    const pageLayoutWidget = await this.findByIdOrThrow(
+      id,
+      workspaceId,
+      transactionManager,
+    );
 
-    await this.pageLayoutWidgetRepository.softDelete(id);
+    const repository = this.getRepository(transactionManager);
+
+    await repository.softDelete(id);
 
     return pageLayoutWidget;
   }
 
-  async destroy(id: string, workspaceId: string): Promise<boolean> {
-    const pageLayoutWidget = await this.pageLayoutWidgetRepository.findOne({
+  async destroy(
+    id: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<boolean> {
+    const repository = this.getRepository(transactionManager);
+
+    const pageLayoutWidget = await repository.findOne({
       where: {
         id,
         workspaceId,
@@ -186,7 +220,7 @@ export class PageLayoutWidgetService {
       );
     }
 
-    await this.pageLayoutWidgetRepository.delete(id);
+    await repository.delete(id);
 
     return true;
   }
@@ -194,8 +228,11 @@ export class PageLayoutWidgetService {
   async restore(
     id: string,
     workspaceId: string,
+    transactionManager?: EntityManager,
   ): Promise<PageLayoutWidgetEntity> {
-    const pageLayoutWidget = await this.pageLayoutWidgetRepository.findOne({
+    const repository = this.getRepository(transactionManager);
+
+    const pageLayoutWidget = await repository.findOne({
       select: {
         id: true,
         deletedAt: true,
@@ -231,6 +268,7 @@ export class PageLayoutWidgetService {
       await this.pageLayoutTabService.findByIdOrThrow(
         pageLayoutWidget.pageLayoutTabId,
         workspaceId,
+        transactionManager,
       );
     } catch (error) {
       if (
@@ -247,11 +285,12 @@ export class PageLayoutWidgetService {
       throw error;
     }
 
-    await this.pageLayoutWidgetRepository.restore(id);
+    await repository.restore(id);
 
     const restoredPageLayoutWidget = await this.findByIdOrThrow(
       id,
       workspaceId,
+      transactionManager,
     );
 
     return restoredPageLayoutWidget;
