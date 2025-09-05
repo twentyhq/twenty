@@ -715,6 +715,15 @@ export type CreatePageLayoutTabInput = {
   title: Scalars['String'];
 };
 
+export type CreatePageLayoutWidgetInput = {
+  configuration?: InputMaybe<Scalars['JSON']>;
+  gridPosition: GridPositionInput;
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  pageLayoutTabId: Scalars['UUID'];
+  title: Scalars['String'];
+  type?: InputMaybe<WidgetType>;
+};
+
 export type CreateRemoteServerInput = {
   foreignDataWrapperOptions: Scalars['JSON'];
   foreignDataWrapperType: Scalars['String'];
@@ -1187,6 +1196,21 @@ export type GetWebhookDto = {
   id: Scalars['UUID'];
 };
 
+export type GridPosition = {
+  __typename?: 'GridPosition';
+  column: Scalars['Float'];
+  columnSpan: Scalars['Float'];
+  row: Scalars['Float'];
+  rowSpan: Scalars['Float'];
+};
+
+export type GridPositionInput = {
+  column: Scalars['Float'];
+  columnSpan: Scalars['Float'];
+  row: Scalars['Float'];
+  rowSpan: Scalars['Float'];
+};
+
 export enum HealthIndicatorId {
   app = 'app',
   connectedAccount = 'connectedAccount',
@@ -1396,6 +1420,7 @@ export type Mutation = {
   createOneServerlessFunction: ServerlessFunction;
   createPageLayout: PageLayout;
   createPageLayoutTab: PageLayoutTab;
+  createPageLayoutWidget: PageLayoutWidget;
   createSAMLIdentityProvider: SetupSsoOutput;
   createWebhook: Webhook;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
@@ -1419,6 +1444,7 @@ export type Mutation = {
   deleteOneServerlessFunction: ServerlessFunction;
   deletePageLayout: PageLayout;
   deletePageLayoutTab: Scalars['Boolean'];
+  deletePageLayoutWidget: PageLayoutWidget;
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethodOutput;
   deleteUser: User;
@@ -1434,6 +1460,7 @@ export type Mutation = {
   destroyCoreViewSort: Scalars['Boolean'];
   destroyPageLayout: Scalars['Boolean'];
   destroyPageLayoutTab: Scalars['Boolean'];
+  destroyPageLayoutWidget: Scalars['Boolean'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
   emailPasswordResetLink: EmailPasswordResetLink;
@@ -1459,6 +1486,7 @@ export type Mutation = {
   resendWorkspaceInvitation: SendInvitationsOutput;
   restorePageLayout: PageLayout;
   restorePageLayoutTab: PageLayoutTab;
+  restorePageLayoutWidget: PageLayoutWidget;
   revokeApiKey?: Maybe<ApiKey>;
   runWorkflowVersion: WorkflowRun;
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
@@ -1493,6 +1521,7 @@ export type Mutation = {
   updateOneServerlessFunction: ServerlessFunction;
   updatePageLayout: PageLayout;
   updatePageLayoutTab: PageLayoutTab;
+  updatePageLayoutWidget: PageLayoutWidget;
   updatePasswordViaResetToken: InvalidatePassword;
   updateSubscriptionItemPrice: BillingUpdateOutput;
   updateWebhook?: Maybe<Webhook>;
@@ -1681,6 +1710,11 @@ export type MutationCreatePageLayoutTabArgs = {
 };
 
 
+export type MutationCreatePageLayoutWidgetArgs = {
+  input: CreatePageLayoutWidgetInput;
+};
+
+
 export type MutationCreateSamlIdentityProviderArgs = {
   input: SetupSamlSsoInput;
 };
@@ -1791,6 +1825,11 @@ export type MutationDeletePageLayoutTabArgs = {
 };
 
 
+export type MutationDeletePageLayoutWidgetArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationDeleteSsoIdentityProviderArgs = {
   input: DeleteSsoInput;
 };
@@ -1857,6 +1896,11 @@ export type MutationDestroyPageLayoutArgs = {
 
 
 export type MutationDestroyPageLayoutTabArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationDestroyPageLayoutWidgetArgs = {
   id: Scalars['String'];
 };
 
@@ -1976,6 +2020,11 @@ export type MutationRestorePageLayoutArgs = {
 
 
 export type MutationRestorePageLayoutTabArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationRestorePageLayoutWidgetArgs = {
   id: Scalars['String'];
 };
 
@@ -2152,6 +2201,12 @@ export type MutationUpdatePageLayoutArgs = {
 export type MutationUpdatePageLayoutTabArgs = {
   id: Scalars['String'];
   input: UpdatePageLayoutTabInput;
+};
+
+
+export type MutationUpdatePageLayoutWidgetArgs = {
+  id: Scalars['String'];
+  input: UpdatePageLayoutWidgetInput;
 };
 
 
@@ -2452,6 +2507,21 @@ export enum PageLayoutType {
   RECORD_PAGE = 'RECORD_PAGE'
 }
 
+export type PageLayoutWidget = {
+  __typename?: 'PageLayoutWidget';
+  configuration?: Maybe<Scalars['JSON']>;
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  gridPosition: GridPosition;
+  id: Scalars['UUID'];
+  objectMetadataId?: Maybe<Scalars['UUID']>;
+  pageLayoutTabId: Scalars['UUID'];
+  title: Scalars['String'];
+  type: WidgetType;
+  updatedAt: Scalars['DateTime'];
+  workspaceId: Scalars['UUID'];
+};
+
 export type PermissionFlag = {
   __typename?: 'PermissionFlag';
   flag: PermissionFlagType;
@@ -2573,6 +2643,8 @@ export type Query = {
   getPageLayout?: Maybe<PageLayout>;
   getPageLayoutTab: PageLayoutTab;
   getPageLayoutTabs: Array<PageLayoutTab>;
+  getPageLayoutWidget: PageLayoutWidget;
+  getPageLayoutWidgets: Array<PageLayoutWidget>;
   getPageLayouts: Array<PageLayout>;
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getPublicWorkspaceDataByDomain: PublicWorkspaceDataOutput;
@@ -2794,6 +2866,16 @@ export type QueryGetPageLayoutTabArgs = {
 
 export type QueryGetPageLayoutTabsArgs = {
   pageLayoutId: Scalars['String'];
+};
+
+
+export type QueryGetPageLayoutWidgetArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryGetPageLayoutWidgetsArgs = {
+  pageLayoutTabId: Scalars['String'];
 };
 
 
@@ -3429,6 +3511,14 @@ export type UpdatePageLayoutTabInput = {
   title?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdatePageLayoutWidgetInput = {
+  configuration?: InputMaybe<Scalars['JSON']>;
+  gridPosition?: InputMaybe<GridPositionInput>;
+  objectMetadataId?: InputMaybe<Scalars['UUID']>;
+  title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<WidgetType>;
+};
+
 export type UpdateRemoteServerInput = {
   foreignDataWrapperOptions?: InputMaybe<Scalars['JSON']>;
   id: Scalars['UUID'];
@@ -3746,6 +3836,13 @@ export type Webhook = {
   workspace: Workspace;
   workspaceId: Scalars['UUID'];
 };
+
+export enum WidgetType {
+  FIELDS = 'FIELDS',
+  GRAPH = 'GRAPH',
+  IFRAME = 'IFRAME',
+  VIEW = 'VIEW'
+}
 
 export type WorkerQueueMetrics = {
   __typename?: 'WorkerQueueMetrics';
