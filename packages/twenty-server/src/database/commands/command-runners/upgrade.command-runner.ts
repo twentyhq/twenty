@@ -208,6 +208,11 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
           workspaceId: workspace.id,
         })),
       );
+      this.migrationReport.fail.forEach(({ error, workspaceId }) =>
+        this.logger.error(
+          `Error in workspace ${workspaceId}: ${error.message}`,
+        ),
+      );
 
       return;
     }
