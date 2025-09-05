@@ -1,8 +1,11 @@
 import { type EachTestingContext } from 'twenty-shared/testing';
 
+import { type ViewFieldService } from 'src/engine/core-modules/view/services/view-field.service';
+import { type ViewFilterService } from 'src/engine/core-modules/view/services/view-filter.service';
+import { type ViewGroupService } from 'src/engine/core-modules/view/services/view-group.service';
+import { type ViewService } from 'src/engine/core-modules/view/services/view.service';
 import { type FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
-import { type TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 
 type GetOptionsDifferencesTestContext = EachTestingContext<{
   oldOptions: FieldMetadataDefaultOption[];
@@ -21,11 +24,18 @@ type GetOptionsDifferencesTestContext = EachTestingContext<{
 describe('FieldMetadataRelatedRecordsService', () => {
   describe('getOptionsDifferences', () => {
     let service: FieldMetadataRelatedRecordsService;
-    let twentyORMGlobalManager: TwentyORMGlobalManager;
+    let viewService: ViewService = {} as ViewService;
+    let viewFieldService: ViewFieldService = {} as ViewFieldService;
+    let viewFilterService: ViewFilterService = {} as ViewFilterService;
+    let viewGroupService: ViewGroupService = {} as ViewGroupService;
 
     beforeEach(() => {
-      twentyORMGlobalManager = {} as TwentyORMGlobalManager;
-      service = new FieldMetadataRelatedRecordsService(twentyORMGlobalManager);
+      service = new FieldMetadataRelatedRecordsService(
+        viewService,
+        viewFieldService,
+        viewFilterService,
+        viewGroupService,
+      );
     });
 
     const testCases: GetOptionsDifferencesTestContext[] = [

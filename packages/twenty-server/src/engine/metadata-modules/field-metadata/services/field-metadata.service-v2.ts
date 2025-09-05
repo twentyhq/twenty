@@ -83,10 +83,14 @@ export class FieldMetadataServiceV2 {
     const flatObjectMetadataMapsWithImpactedObject =
       getSubFlatObjectMetadataMapsOrThrow({
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-        objectMetadataIds: flatFieldMetadatasToDelete.map(
-          (flatFieldMetadataToDelete) =>
-            flatFieldMetadataToDelete.objectMetadataId,
-        ),
+        objectMetadataIds: [
+          ...new Set(
+            flatFieldMetadatasToDelete.map(
+              (flatFieldMetadataToDelete) =>
+                flatFieldMetadataToDelete.objectMetadataId,
+            ),
+          ),
+        ],
       });
 
     const toFlatObjectMetadataMaps = flatFieldMetadatasToDelete.reduce(
@@ -145,20 +149,33 @@ export class FieldMetadataServiceV2 {
       throw inputTranspilationResult.error;
     }
 
-    const optimisticiallyUpdatedFlatFieldMetadata =
+    const optimisticallyUpdatedFlatFieldMetadatas =
       inputTranspilationResult.result;
 
+    const objectMetadataIdWithRelatedObjectMetadataIds = [
+      ...new Set(
+        optimisticallyUpdatedFlatFieldMetadatas.flatMap(
+          ({ objectMetadataId, relationTargetObjectMetadataId }) =>
+            isDefined(relationTargetObjectMetadataId)
+              ? [objectMetadataId, relationTargetObjectMetadataId]
+              : [objectMetadataId],
+        ),
+      ),
+    ];
     const fromFlatObjectMetadataMaps = getSubFlatObjectMetadataMapsOrThrow({
       flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      objectMetadataIds: [
-        optimisticiallyUpdatedFlatFieldMetadata.objectMetadataId,
-      ],
+      objectMetadataIds: objectMetadataIdWithRelatedObjectMetadataIds,
     });
+
     const toFlatObjectMetadataMaps =
-      replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
-        flatObjectMetadataMaps: fromFlatObjectMetadataMaps,
-        flatFieldMetadata: optimisticiallyUpdatedFlatFieldMetadata,
-      });
+      optimisticallyUpdatedFlatFieldMetadatas.reduce(
+        (flatObjectMetadataMaps, flatFieldMetadata) =>
+          replaceFlatFieldMetadataInFlatObjectMetadataMapsOrThrow({
+            flatObjectMetadataMaps,
+            flatFieldMetadata,
+          }),
+        fromFlatObjectMetadataMaps,
+      );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -182,7 +199,7 @@ export class FieldMetadataServiceV2 {
 
     return this.fieldMetadataRepository.findOneOrFail({
       where: {
-        id: optimisticiallyUpdatedFlatFieldMetadata.id,
+        id: optimisticallyUpdatedFlatFieldMetadatas[0].id,
         workspaceId,
       },
     });

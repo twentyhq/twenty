@@ -87,7 +87,7 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
           <Button
             Icon={IconPlus}
             title="New task"
-            variant={'secondary'}
+            variant="secondary"
             onClick={() =>
               openCreateActivity({
                 targetableObjects: [targetableObject],

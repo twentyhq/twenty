@@ -1046,7 +1046,7 @@ msgstr "Es wird erwartet, dass die gleichen Einschränkungsfelder konsistent üb
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "External ID"
-msgstr ""
+msgstr "Externe ID"
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1514,7 +1514,7 @@ msgstr "Ist Organisator"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Is Sent Folder"
-msgstr ""
+msgstr "Gesendeter Ordner"
 
 #. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1528,7 +1528,7 @@ msgstr "Ist Synchronisierung aktiviert"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Is Synced"
-msgstr ""
+msgstr "Synchronisiert"
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1834,6 +1834,11 @@ msgstr "Erforderliche Felder fehlen: Mindestens eine einzigartige Einschränkung
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "Morph-Beziehungserstellungsdaten müssen denselben Beziehungstyp haben"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr "Morph-Beziehungserstellungsdaten dürfen nur Beziehungen zu anderen Objektmetadaten enthalten"
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
@@ -1871,15 +1876,15 @@ msgstr "Name"
 msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 msgstr "Name \"{computedMetadataNameFromLabel}\" darf nicht auf beiden Seiten der Beziehung gleich sein"
 
-#. js-lingui-id: 2m6Fru
+#. js-lingui-id: Ge9TXE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available"
-msgstr "Name \"{name}\" ist nicht verfügbar"
+msgid "Name \"{flatFieldMetadataName}\" is not available"
+msgstr "Name \"{flatFieldMetadataName}\" ist nicht verfügbar"
 
-#. js-lingui-id: U8mbyw
+#. js-lingui-id: h8ic2G
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr "Name \"{name}\" ist nicht verfügbar, da er bereits von einem anderen Feld verwendet wird"
+msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
+msgstr "Name \"{flatFieldMetadataName}\" ist nicht verfügbar, da er bereits von einem anderen Feld verwendet wird"
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2861,10 +2866,10 @@ msgstr "Der Name der Workflow-Version"
 msgid "The workflow version status"
 msgstr "Der Status der Workflow-Version"
 
-#. js-lingui-id: NbABJb
+#. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field"
-msgstr "Dieser Name ist nicht verfügbar, da er bereits von einem anderen Feld verwendet wird"
+msgid "This name is not available as it is already used by another field."
+msgstr "Dieser Name ist nicht verfügbar, da er bereits von einem anderen Feld verwendet wird."
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
@@ -3097,6 +3102,11 @@ msgstr "Ansicht"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "Ansichtsfeld"
+
+#. js-lingui-id: Xm6R6B
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "View field already exists."
+msgstr "Ansichts-Feld existiert bereits."
 
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts

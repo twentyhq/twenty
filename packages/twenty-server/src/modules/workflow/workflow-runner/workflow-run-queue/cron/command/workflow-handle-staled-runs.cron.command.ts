@@ -6,7 +6,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import {
   WORKFLOW_HANDLE_STALED_RUNS_CRON_PATTERN,
   WorkflowHandleStaledRunsJob,
-} from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-handle-staled-runs.job';
+} from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/jobs/workflow-handle-staled-runs.cron.job';
 
 @Command({
   name: 'cron:workflow:handle-staled-runs',

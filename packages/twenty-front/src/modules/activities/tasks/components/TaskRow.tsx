@@ -128,7 +128,7 @@ export const TaskRow = ({ task }: { task: Task }) => {
           <FieldContextProvider
             objectNameSingular={CoreObjectNameSingular.Task}
             objectRecordId={task.id}
-            fieldMetadataName={'taskTargets'}
+            fieldMetadataName="taskTargets"
             fieldPosition={0}
           >
             <StopPropagationContainer>

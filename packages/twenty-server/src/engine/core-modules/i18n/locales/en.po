@@ -1829,6 +1829,11 @@ msgstr "Missing required fields: at least one unique constraint have to be fully
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "Morph relation creation payloads must have the same relation type"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr "Morph relation creation payloads must only contain relation to other object metadata"
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
@@ -1866,15 +1871,15 @@ msgstr "Name"
 msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 msgstr "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 
-#. js-lingui-id: 2m6Fru
+#. js-lingui-id: Ge9TXE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available"
-msgstr "Name \"{name}\" is not available"
+msgid "Name \"{flatFieldMetadataName}\" is not available"
+msgstr "Name \"{flatFieldMetadataName}\" is not available"
 
-#. js-lingui-id: U8mbyw
+#. js-lingui-id: h8ic2G
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr "Name \"{name}\" is not available as it is already used by another field"
+msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
+msgstr "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2856,10 +2861,10 @@ msgstr "The workflow version name"
 msgid "The workflow version status"
 msgstr "The workflow version status"
 
-#. js-lingui-id: NbABJb
+#. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field"
-msgstr "This name is not available as it is already used by another field"
+msgid "This name is not available as it is already used by another field."
+msgstr "This name is not available as it is already used by another field."
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
@@ -3092,6 +3097,11 @@ msgstr "View"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "View Field"
+
+#. js-lingui-id: Xm6R6B
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "View field already exists."
+msgstr "View field already exists."
 
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts

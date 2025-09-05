@@ -39,7 +39,6 @@ export const mapViewFieldsToColumnDefinitions = ({
         fieldMetadataId: viewField.fieldMetadataId,
         label: correspondingColumnDefinition.label,
         metadata: correspondingColumnDefinition.metadata,
-        infoTooltipContent: correspondingColumnDefinition.infoTooltipContent,
         iconName: correspondingColumnDefinition.iconName,
         type: correspondingColumnDefinition.type,
         position: isLabelIdentifier ? 0 : viewField.position,

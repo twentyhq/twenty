@@ -14,4 +14,7 @@ export enum CommandMenuPages {
   SearchRecords = 'search-records',
   AskAI = 'ask-ai',
   ViewPreviousAIChats = 'view-previous-ai-chats',
+  PageLayoutWidgetTypeSelect = 'page-layout-widget-type-select',
+  PageLayoutGraphTypeSelect = 'page-layout-graph-type-select',
+  PageLayoutIframeConfig = 'page-layout-iframe-config',
 }

@@ -21,6 +21,8 @@ export const getActionIcon = (actionType: WorkflowActionType) => {
       return CORE_ACTIONS.find((item) => item.type === actionType)?.icon;
     case 'FORM':
       return HUMAN_INPUT_ACTIONS.find((item) => item.type === actionType)?.icon;
+    case 'ITERATOR':
+      return 'IconRepeat';
     default:
       return 'IconDefault';
   }

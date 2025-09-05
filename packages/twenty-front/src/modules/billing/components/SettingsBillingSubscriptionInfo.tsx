@@ -6,7 +6,6 @@ import {
 
 import {
   type CurrentWorkspace,
-  currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import {
   getIntervalLabel,
@@ -335,7 +334,7 @@ export const SettingsBillingSubscriptionInfo = ({
         subtitle={t`You will be charged $${monthlyPrice} per user per month billed monthly. The change will be applied the ${beautifiedRenewDate}.`}
         onConfirmClick={switchInterval}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent={'blue'}
+        confirmButtonAccent="blue"
       />
       <ConfirmationModal
         modalId={SWITCH_BILLING_PLAN_MODAL_ID}
@@ -347,7 +346,7 @@ export const SettingsBillingSubscriptionInfo = ({
         }
         onConfirmClick={switchPlan}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent={'blue'}
+        confirmButtonAccent="blue"
       />
       <ConfirmationModal
         modalId={END_TRIAL_PERIOD_MODAL_ID}
@@ -355,7 +354,7 @@ export const SettingsBillingSubscriptionInfo = ({
         subtitle={t`We will activate your paid plan. Do you want to proceed?`}
         onConfirmClick={endTrialPeriod}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent={'blue'}
+        confirmButtonAccent="blue"
         loading={isEndTrialPeriodLoading}
       />
     </Section>

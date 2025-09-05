@@ -1046,7 +1046,7 @@ msgstr "S'esperava que els mateixos camps de restricció fossin usats de manera 
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "External ID"
-msgstr ""
+msgstr "ID extern"
 
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
@@ -1514,7 +1514,7 @@ msgstr "Es Organitzador"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Is Sent Folder"
-msgstr ""
+msgstr "És carpeta enviada"
 
 #. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1528,7 +1528,7 @@ msgstr "Està habilitada la Sincronització"
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
 msgid "Is Synced"
-msgstr ""
+msgstr "Està sincronitzat"
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1834,6 +1834,11 @@ msgstr "Falten camps obligatoris: almenys una restricció única ha d'estar comp
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "Les càrregues útils de creació de relacions de morfologia han de tenir el mateix tipus de relació"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr "Les càrregues útils de creació de relacions de morfologia només han de contenir relacions amb metadades d'objectes externs"
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
@@ -1871,15 +1876,15 @@ msgstr "Nom"
 msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 msgstr "El nom \"{computedMetadataNameFromLabel}\" no pot ser el mateix a ambdós costats de la relació"
 
-#. js-lingui-id: 2m6Fru
+#. js-lingui-id: Ge9TXE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available"
-msgstr "Aquest nom no està disponible \"{name}\"."
+msgid "Name \"{flatFieldMetadataName}\" is not available"
+msgstr "Aquest nom no està disponible \"{flatFieldMetadataName}\"."
 
-#. js-lingui-id: U8mbyw
+#. js-lingui-id: h8ic2G
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr "Aquest nom no està disponible \"{name}\" ja que ja és utilitzat per un altre camp."
+msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
+msgstr "Aquest nom no està disponible \"{flatFieldMetadataName}\" ja que ja és utilitzat per un altre camp."
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2861,10 +2866,10 @@ msgstr "El nom de la versió del flux de treball"
 msgid "The workflow version status"
 msgstr "L'estat de la versió del flux de treball"
 
-#. js-lingui-id: NbABJb
+#. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field"
-msgstr "Aquest nom no està disponible ja que ja és utilitzat per un altre camp"
+msgid "This name is not available as it is already used by another field."
+msgstr "Aquest nom no està disponible ja que ja és utilitzat per un altre camp."
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
@@ -3097,6 +3102,11 @@ msgstr "Vista"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "Camp de la vista"
+
+#. js-lingui-id: Xm6R6B
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "View field already exists."
+msgstr "El camp de vista ja existeix."
 
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts

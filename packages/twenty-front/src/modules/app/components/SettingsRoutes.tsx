@@ -125,8 +125,14 @@ const SettingsWorkspace = lazy(() =>
 );
 
 const SettingsDomains = lazy(() =>
-  import('~/pages/settings/domains').then((module) => ({
+  import('~/pages/settings/domains/SettingsDomains').then((module) => ({
     default: module.SettingsDomains,
+  })),
+);
+
+const SettingsDomain = lazy(() =>
+  import('~/pages/settings/domains/SettingsDomain').then((module) => ({
+    default: module.SettingsDomain,
   })),
 );
 
@@ -145,12 +151,6 @@ const SettingsAI = lazy(() =>
 const SettingsAgentForm = lazy(() =>
   import('~/pages/settings/ai/SettingsAgentForm').then((module) => ({
     default: module.SettingsAgentForm,
-  })),
-);
-
-const SettingsDomain = lazy(() =>
-  import('~/pages/settings/workspace/SettingsDomain').then((module) => ({
-    default: module.SettingsDomain,
   })),
 );
 
@@ -287,10 +287,18 @@ const SettingsObjectFieldEdit = lazy(() =>
   ),
 );
 
-const PageLayoutEdition = lazy(() =>
-  import('~/pages/settings/page-layout/PageLayoutEdition').then((module) => ({
-    default: module.PageLayoutEdition,
+const SettingsPageLayouts = lazy(() =>
+  import('~/pages/settings/page-layout/SettingsPageLayouts').then((module) => ({
+    default: module.SettingsPageLayouts,
   })),
+);
+
+const SettingsPageLayoutEdit = lazy(() =>
+  import('~/pages/settings/page-layout/SettingsPageLayoutEdit').then(
+    (module) => ({
+      default: module.SettingsPageLayoutEdit,
+    }),
+  ),
 );
 
 const SettingsSecurity = lazy(() =>
@@ -378,11 +386,13 @@ const SettingsRoleAddObjectLevel = lazy(() =>
 type SettingsRoutesProps = {
   isFunctionSettingsEnabled?: boolean;
   isAdminPageEnabled?: boolean;
+  isPageLayoutFeatureFlagEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
   isFunctionSettingsEnabled,
   isAdminPageEnabled,
+  isPageLayoutFeatureFlagEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
@@ -604,10 +614,22 @@ export const SettingsRoutes = ({
           />
         </>
       )}
-      <Route
-        path={SettingsPath.PageLayoutEdition}
-        element={<PageLayoutEdition />}
-      />
+      {isPageLayoutFeatureFlagEnabled && (
+        <>
+          <Route
+            path={SettingsPath.PageLayout}
+            element={<SettingsPageLayouts />}
+          />
+          <Route
+            path={SettingsPath.PageLayoutNew}
+            element={<SettingsPageLayoutEdit />}
+          />
+          <Route
+            path={SettingsPath.PageLayoutEdit}
+            element={<SettingsPageLayoutEdit />}
+          />
+        </>
+      )}
       <Route
         element={
           <SettingsProtectedRouteWrapper

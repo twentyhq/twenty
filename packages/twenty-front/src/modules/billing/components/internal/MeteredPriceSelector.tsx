@@ -1,5 +1,5 @@
-import { t } from '@lingui/core/macro';
 import { useMutation } from '@apollo/client';
+import { t } from '@lingui/core/macro';
 import { useMemo, useState, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { H2Title } from 'twenty-ui/display';
@@ -8,12 +8,12 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 
 import { SET_METERED_SUBSCRIPTION_PRICE } from '@/billing/graphql/mutations/setMeteredSubscriptionPrice';
-import { Select } from '@/ui/input/components/Select';
+import { getIntervalLabel } from '@/billing/utils/subscriptionFlags';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { formatNumber } from '~/utils/format/number';
+import { Select } from '@/ui/input/components/Select';
 import { SubscriptionInterval } from '~/generated/graphql';
 import { findOrThrow } from '~/utils/array/findOrThrow';
-import { getIntervalLabel } from '@/billing/utils/subscriptionFlags';
+import { formatNumber } from '~/utils/format/number';
 import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 import {
   type BillingPriceTiers,
@@ -149,7 +149,7 @@ export const MeteredPriceSelector = ({
       />
       <StyledRow>
         <StyledSelect
-          dropdownId={'settings-billing-metered-price'}
+          dropdownId="settings-billing-metered-price"
           options={options}
           value={selectedPriceId ?? currentMeteredBillingPrice.stripePriceId}
           onChange={handleChange}

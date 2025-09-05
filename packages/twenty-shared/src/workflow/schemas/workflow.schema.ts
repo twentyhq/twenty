@@ -219,6 +219,15 @@ export const workflowFilterActionSettingsSchema =
     }),
   });
 
+export const workflowIteratorActionSettingsSchema =
+  baseWorkflowActionSettingsSchema.extend({
+    input: z.object({
+      items: z.union([z.array(z.union([z.string(), z.number(), z.boolean(), z.null(), z.record(z.any()), z.any()])), z.string()]).optional(),
+      // TODO: should never be a string once fix the UI
+      initialLoopStepIds: z.union([z.array(z.string()), z.string()]).optional(),
+    }),
+  });
+
 // Action schemas
 export const workflowCodeActionSchema = baseWorkflowActionSchema.extend({
   type: z.literal('CODE'),
@@ -270,6 +279,11 @@ export const workflowFilterActionSchema = baseWorkflowActionSchema.extend({
   settings: workflowFilterActionSettingsSchema,
 });
 
+export const workflowIteratorActionSchema = baseWorkflowActionSchema.extend({
+  type: z.literal('ITERATOR'),
+  settings: workflowIteratorActionSettingsSchema,
+});
+
 // Combined action schema
 export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowCodeActionSchema,
@@ -282,6 +296,7 @@ export const workflowActionSchema = z.discriminatedUnion('type', [
   workflowHttpRequestActionSchema,
   workflowAiAgentActionSchema,
   workflowFilterActionSchema,
+  workflowIteratorActionSchema,
 ]);
 
 // Trigger schemas
@@ -291,7 +306,7 @@ export const workflowDatabaseEventTriggerSchema = baseTriggerSchema.extend({
     eventName: z
       .string()
       .regex(
-        /^[a-z][a-z0-9_]*\.(created|updated|deleted)$/,
+        /^[a-z][a-zA-Z0-9_]*\.(created|updated|deleted)$/,
         'Event name must follow the pattern: objectName.action (e.g., "company.created", "person.updated")',
       )
       .describe(

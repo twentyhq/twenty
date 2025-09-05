@@ -60,9 +60,9 @@ export const DefaultLayout = () => {
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
   const location = useLocation();
-  const isPageLayoutEditor = location.pathname.includes(
-    '/settings/page-layout/edition',
-  );
+  const isPageLayoutEditor =
+    location.pathname.includes('/settings/page-layout/new') ||
+    location.pathname.match(/\/settings\/page-layout\/[^/]+$/);
   const theme = useTheme();
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();

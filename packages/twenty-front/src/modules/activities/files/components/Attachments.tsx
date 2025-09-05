@@ -9,6 +9,7 @@ import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttac
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -47,6 +48,8 @@ export const Attachments = ({
   const { uploadAttachmentFile } = useUploadAttachmentFile();
 
   const [isDraggingFile, setIsDraggingFile] = useState(false);
+
+  const { t } = useLingui();
 
   const onUploadFile = async (file: File) => {
     await uploadAttachmentFile(file, targetableObject);
@@ -100,10 +103,10 @@ export const Attachments = ({
             <AnimatedPlaceholder type="noFile" />
             <AnimatedPlaceholderEmptyTextContainer>
               <AnimatedPlaceholderEmptyTitle>
-                No Files
+                <Trans>No Files</Trans>
               </AnimatedPlaceholderEmptyTitle>
               <AnimatedPlaceholderEmptySubTitle>
-                There are no associated files with this record.
+                <Trans>There are no associated files with this record.</Trans>
               </AnimatedPlaceholderEmptySubTitle>
             </AnimatedPlaceholderEmptyTextContainer>
             <StyledFileInput
@@ -115,7 +118,7 @@ export const Attachments = ({
             {hasObjectUpdatePermissions && (
               <Button
                 Icon={IconPlus}
-                title="Add file"
+                title={t`Add file`}
                 variant="secondary"
                 onClick={handleUploadFileClick}
               />
@@ -136,7 +139,7 @@ export const Attachments = ({
       />
       <AttachmentList
         targetableObject={targetableObject}
-        title="All"
+        title={t`All`}
         attachments={attachments ?? []}
         button={
           hasObjectUpdatePermissions && (
@@ -144,7 +147,7 @@ export const Attachments = ({
               Icon={IconPlus}
               size="small"
               variant="secondary"
-              title="Add file"
+              title={t`Add file`}
               onClick={handleUploadFileClick}
             ></Button>
           )

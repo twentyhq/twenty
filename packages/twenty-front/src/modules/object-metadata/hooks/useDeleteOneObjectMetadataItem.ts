@@ -8,6 +8,7 @@ import {
 import { DELETE_ONE_OBJECT_METADATA_ITEM } from '../graphql/mutations';
 
 import { useRefreshObjectMetadataItems } from '@/object-metadata/hooks/useRefreshObjectMetadataItems';
+import { useRefreshCoreViewsByObjectMetadataId } from '@/views/hooks/useRefreshCoreViewsByObjectMetadataId';
 
 export const useDeleteOneObjectMetadataItem = () => {
   const [mutate] = useMutation<
@@ -17,6 +18,9 @@ export const useDeleteOneObjectMetadataItem = () => {
 
   const { refreshObjectMetadataItems } =
     useRefreshObjectMetadataItems('network-only');
+
+  const { refreshCoreViewsByObjectMetadataId } =
+    useRefreshCoreViewsByObjectMetadataId();
 
   const deleteOneObjectMetadataItem = async (
     idToDelete: DeleteOneObjectMetadataItemMutationVariables['idToDelete'],
@@ -28,6 +32,7 @@ export const useDeleteOneObjectMetadataItem = () => {
     });
 
     await refreshObjectMetadataItems();
+    await refreshCoreViewsByObjectMetadataId(idToDelete);
 
     return result;
   };

@@ -76,6 +76,15 @@ export class WorkflowSchemaWorkspaceService {
           formFieldMetadataItems: step.settings.input,
           workspaceId,
         });
+      case WorkflowActionType.ITERATOR: {
+        return {
+          nextItemToProcess: {
+            isLeaf: true,
+            type: 'unknown',
+            value: generateFakeValue('unknown'),
+          },
+        };
+      }
       case WorkflowActionType.CODE: // StepOutput schema is computed on serverlessFunction draft execution
       default:
         return {};

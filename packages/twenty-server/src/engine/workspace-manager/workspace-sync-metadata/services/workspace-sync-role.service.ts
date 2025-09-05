@@ -1,12 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { removePropertiesFromRecord } from 'twenty-shared/utils';
-import { IsNull, Not, type EntityManager } from 'typeorm';
+import { IsNull, Not, type EntityManager, type Repository } from 'typeorm';
 
 import { ComparatorAction } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { type WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
 import { fromRoleEntityToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/from-role-entity-to-flat-role.util';
+import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
+import { PermissionFlagType } from 'src/engine/metadata-modules/permissions/constants/permission-flag-type.constants';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceRoleComparator } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/workspace-role.comparator';
 import { StandardRoleFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-role.factory';
@@ -28,12 +30,15 @@ export class WorkspaceSyncRoleService {
     this.logger.log('Syncing standard role metadata');
 
     const roleRepository = manager.getRepository(RoleEntity);
+    const permissionFlagRepository =
+      manager.getRepository(PermissionFlagEntity);
 
     const existingStandardRoleEntities = await roleRepository.find({
       where: {
         workspaceId: context.workspaceId,
         standardId: Not(IsNull()),
       },
+      relations: ['permissionFlags'],
     });
 
     const targetStandardRoles = this.standardRoleFactory.create(
@@ -57,10 +62,23 @@ export class WorkspaceSyncRoleService {
             'id',
           ]);
 
-          await roleRepository.save({
+          const createdRole = await roleRepository.save({
             ...flatRoleData,
             workspaceId: context.workspaceId,
           });
+
+          const roleDefinition = standardRoleDefinitions.find(
+            (def) => def.standardId === roleToCreate.standardId,
+          );
+
+          if (roleDefinition?.permissionFlags?.length) {
+            await this.syncPermissionFlags(
+              permissionFlagRepository,
+              createdRole.id,
+              context.workspaceId,
+              roleDefinition.permissionFlags,
+            );
+          }
           break;
         }
 
@@ -74,6 +92,19 @@ export class WorkspaceSyncRoleService {
           ]);
 
           await roleRepository.update({ id: roleToUpdate.id }, flatRoleData);
+
+          const roleDefinition = standardRoleDefinitions.find(
+            (def) => def.standardId === roleToUpdate.standardId,
+          );
+
+          if (roleDefinition?.permissionFlags) {
+            await this.syncPermissionFlags(
+              permissionFlagRepository,
+              roleToUpdate.id,
+              context.workspaceId,
+              roleDefinition.permissionFlags,
+            );
+          }
           break;
         }
 
@@ -84,6 +115,30 @@ export class WorkspaceSyncRoleService {
           break;
         }
       }
+    }
+  }
+
+  private async syncPermissionFlags(
+    permissionFlagRepository: Repository<PermissionFlagEntity>,
+    roleId: string,
+    workspaceId: string,
+    permissionFlags: PermissionFlagType[],
+  ): Promise<void> {
+    await permissionFlagRepository.delete({
+      roleId,
+      workspaceId,
+    });
+
+    if (permissionFlags.length > 0) {
+      const newPermissionFlags = permissionFlags.map((flag) =>
+        permissionFlagRepository.create({
+          roleId,
+          workspaceId,
+          flag,
+        }),
+      );
+
+      await permissionFlagRepository.save(newPermissionFlags);
     }
   }
 }

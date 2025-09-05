@@ -126,7 +126,7 @@ export const SettingsAgentHandoffTable = ({
           <TableHeader>
             <Trans>Description</Trans>
           </TableHeader>
-          <TableHeader align={'right'} />
+          <TableHeader align="right" />
         </TableRow>
         <StyledTableRows>
           {filteredHandoffTargets.length > 0 ? (
@@ -141,7 +141,7 @@ export const SettingsAgentHandoffTable = ({
                     text={handoff.description || t`No description`}
                   />
                 </StyledTableCell>
-                <TableCell align={'right'}>
+                <TableCell align="right">
                   <StyledButtonContainer>
                     <IconButton
                       onClick={() => {

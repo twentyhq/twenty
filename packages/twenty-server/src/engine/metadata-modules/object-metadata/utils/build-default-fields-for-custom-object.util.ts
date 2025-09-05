@@ -9,7 +9,7 @@ import {
 
 export const buildDefaultFieldsForCustomObject = (
   workspaceId: string,
-): Partial<FieldMetadataEntity>[] => [
+): Array<Partial<FieldMetadataEntity> & { id: string }> => [
   {
     id: v4(),
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.id,
@@ -39,7 +39,7 @@ export const buildDefaultFieldsForCustomObject = (
     isCustom: false,
     isUIReadOnly: false,
     workspaceId,
-    defaultValue: "'Untitled'",
+    defaultValue: "''",
   },
   {
     id: v4(),

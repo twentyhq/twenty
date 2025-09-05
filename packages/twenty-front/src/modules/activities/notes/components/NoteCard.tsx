@@ -95,7 +95,7 @@ export const NoteCard = ({
         <FieldContextProvider
           objectNameSingular={CoreObjectNameSingular.Note}
           objectRecordId={note.id}
-          fieldMetadataName={'noteTargets'}
+          fieldMetadataName="noteTargets"
           fieldPosition={0}
         >
           <ActivityTargetsInlineCell

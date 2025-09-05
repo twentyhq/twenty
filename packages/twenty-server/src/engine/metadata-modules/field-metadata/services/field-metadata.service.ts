@@ -72,7 +72,6 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
-import { ViewService } from 'src/modules/view/services/view.service';
 
 type GenerateMigrationArgs = {
   fieldMetadata: FieldMetadataEntity<
@@ -95,7 +94,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly fieldMetadataRelatedRecordsService: FieldMetadataRelatedRecordsService,
-    private readonly viewService: ViewService,
     private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly fieldMetadataValidationService: FieldMetadataValidationService,
@@ -402,9 +400,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       return updatedFieldMetadata;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
-
       throw error;
     } finally {
       await queryRunner.release();
@@ -463,6 +465,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           },
         );
       }
+
+      await this.fieldMetadataRelatedRecordsService.resetViewKanbanAggregateOperation(
+        fieldMetadata,
+      );
 
       if (isFieldMetadataTypeRelation(fieldMetadata)) {
         const fieldMetadataIdsToDelete: string[] = [];
@@ -603,11 +609,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       await queryRunner.commitTransaction();
 
-      await this.viewService.resetKanbanAggregateOperationByFieldMetadataId({
-        workspaceId,
-        fieldMetadataId: fieldMetadata.id,
-      });
-
       await this.workspaceMetadataVersionService.incrementMetadataVersion(
         workspaceId,
       );
@@ -615,9 +616,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       return fieldMetadata;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
-
       throw error;
     } finally {
       await queryRunner.release();
@@ -802,9 +807,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       return createdFieldMetadatas;
     } catch (error) {
       if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.trace(`Failed to rollback transaction: ${error.message}`);
+        }
       }
-
       throw error;
     } finally {
       await queryRunner.release();

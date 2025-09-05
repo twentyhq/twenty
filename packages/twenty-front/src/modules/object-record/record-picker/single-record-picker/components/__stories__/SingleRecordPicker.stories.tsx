@@ -12,6 +12,7 @@ import { SingleRecordPicker } from '@/object-record/record-picker/single-record-
 import { type SingleRecordPickerRecord } from '@/object-record/record-picker/single-record-picker/types/SingleRecordPickerRecord';
 import { IconUserCircle } from 'twenty-ui/display';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { I18nFrontDecorator } from '~/testing/decorators/I18nFrontDecorator';
 
 const records = allMockPersonRecords.map<SingleRecordPickerRecord>(
   (person) => ({
@@ -30,6 +31,7 @@ const meta: Meta<typeof SingleRecordPicker> = {
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
+    I18nFrontDecorator,
   ],
   args: {
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,

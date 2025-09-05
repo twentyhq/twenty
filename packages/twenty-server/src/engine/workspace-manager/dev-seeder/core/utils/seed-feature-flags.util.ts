@@ -56,11 +56,6 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_CORE_VIEW_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_WORKSPACE_MIGRATION_V2_ENABLED,
         workspaceId: workspaceId,
         value: false,
@@ -71,14 +66,19 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_CORE_VIEW_SYNCING_ENABLED,
+        key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKey.IS_PAGE_LAYOUT_ENABLED,
+        key: FeatureFlagKey.IS_WORKFLOW_ITERATOR_ENABLED,
         workspaceId: workspaceId,
-        value: true,
+        value: false,
+      },
+      {
+        key: FeatureFlagKey.IS_DATABASE_EVENT_TRIGGER_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
       },
     ])
     .execute();

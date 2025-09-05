@@ -5,10 +5,12 @@ import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RemoteNavigationDrawerSection = () => {
   const currentUser = useRecoilValue(currentUserState);
+  const { t } = useLingui();
 
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -22,7 +24,7 @@ export const RemoteNavigationDrawerSection = () => {
 
   return (
     <NavigationDrawerSectionForObjectMetadataItems
-      sectionTitle={'Remote'}
+      sectionTitle={t`Remote`}
       objectMetadataItems={filteredActiveNonSystemObjectMetadataItems}
       isRemote={true}
     />

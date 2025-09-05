@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { format, getYear } from 'date-fns';
+import { useRecoilValue } from 'recoil';
 
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from '@/activities/calendar/constants/Calendar';
@@ -24,6 +25,7 @@ import {
   Section,
 } from 'twenty-ui/layout';
 import { type TimelineCalendarEventsWithTotal } from '~/generated/graphql';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -48,6 +50,8 @@ export const Calendar = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
+  const { localeCatalog } = useRecoilValue(dateLocaleState);
+
   const [query, queryName] =
     targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person
       ? [
@@ -131,7 +135,9 @@ export const Calendar = ({
           const year = getYear(monthTime);
           const lastMonthTimeOfYear = monthTimesByYear[year]?.[0];
           const isLastMonthOfYear = lastMonthTimeOfYear === monthTime;
-          const monthLabel = format(monthTime, 'MMMM');
+          const monthLabel = format(monthTime, 'MMMM', {
+            locale: localeCatalog,
+          });
 
           return (
             <Section key={monthTime}>

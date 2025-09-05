@@ -103,9 +103,13 @@ export {
   IconCalendar,
   IconCalendarDue,
   IconCalendarEvent,
+  IconCalendarRepeat,
   IconCalendarTime,
   IconCalendarX,
+  IconChartBar,
   IconChartCandle,
+  IconChartDots3,
+  IconChartPie,
   IconCheck,
   IconCheckbox,
   IconChevronDown,
@@ -216,6 +220,7 @@ export {
   IconFolderPlus,
   IconFolderRoot,
   IconForbid,
+  IconFrame,
   IconFunction,
   IconGauge,
   IconGitBranchDeleted,
@@ -284,6 +289,7 @@ export {
   IconNorthStar,
   IconNoteOff,
   IconNotes,
+  IconNumber,
   IconNumber9,
   IconNumbers,
   IconPaperclip,
@@ -393,7 +399,6 @@ export {
   IconWebhook,
   IconWorld,
   IconX,
-  IconCalendarRepeat,
 } from './icon/components/TablerIcons';
 export { useIcons } from './icon/hooks/useIcons';
 export { IconsProvider } from './icon/providers/IconsProvider';

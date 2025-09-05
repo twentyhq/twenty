@@ -1,8 +1,7 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isFlatFieldMetadataEntityOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import {
   FlatObjectMetadataMapsException,
   FlatObjectMetadataMapsExceptionCode,
@@ -36,17 +35,8 @@ export const addFlatFieldMetadataToFlatObjectMetadataWithFlatFieldMapsOrThrow =
       | FlatFieldMetadataMaps['fieldIdByJoinColumnName']
       | undefined = undefined;
 
-    if (
-      isFlatFieldMetadataEntityOfType(
-        flatFieldMetadata,
-        FieldMetadataType.RELATION,
-      ) ||
-      isFlatFieldMetadataEntityOfType(
-        flatFieldMetadata,
-        FieldMetadataType.MORPH_RELATION,
-      )
-    ) {
-      if (isDefined(flatFieldMetadata.settings?.joinColumnName)) {
+    if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
+      if (isDefined(flatFieldMetadata.settings.joinColumnName)) {
         updatedFieldIdByJoinColumnName = {
           [flatFieldMetadata.settings.joinColumnName]: flatFieldMetadata.id,
         };

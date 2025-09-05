@@ -2,7 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FLAT_FIELD_METADATA_JSONB_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-jsonb-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isFlatFieldMetadataEntityOfTypes } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-types.util';
+import { isFlatFieldMetadataOfTypes } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-types.util';
 
 export const isFlatFieldMetadataJsonbProperty = ({
   flatFieldMetadata,
@@ -12,7 +12,7 @@ export const isFlatFieldMetadataJsonbProperty = ({
   property: keyof FlatFieldMetadata;
 }): boolean => {
   if (property === 'defaultValue') {
-    return isFlatFieldMetadataEntityOfTypes(flatFieldMetadata, [
+    return isFlatFieldMetadataOfTypes(flatFieldMetadata, [
       FieldMetadataType.LINKS,
       FieldMetadataType.PHONES,
       FieldMetadataType.EMAILS,
