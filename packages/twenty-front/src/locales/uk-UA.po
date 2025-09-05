@@ -7283,9 +7283,11 @@ msgstr "Ви можете налаштувати будь-яку комбіна�
 
 #. js-lingui-id: aiJY7y
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "You cannot edit this connection because it has tracked tables.\n"
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
-msgstr "Ви не можете редагувати це з'єднання, тому що воно має відстежувані таблиці.\n"
+msgstr ""
+"Ви не можете редагувати це з'єднання, тому що воно має відстежувані таблиці.\n"
 "Якщо вам потрібно внести зміни, створіть нове з'єднання або спочатку відключіть таблиці."
 
 #. js-lingui-id: zEM7Ne

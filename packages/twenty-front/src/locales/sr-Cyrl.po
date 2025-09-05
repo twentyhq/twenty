@@ -7283,9 +7283,11 @@ msgstr "Можете подесити било коју комбинацију �
 
 #. js-lingui-id: aiJY7y
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "You cannot edit this connection because it has tracked tables.\n"
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
-msgstr "Не можете измењивати ову везу јер има праћене табеле.\n"
+msgstr ""
+"Не можете измењивати ову везу јер има праћене табеле.\n"
 "Ако желите да извршите измене, креирајте нову везу или најпре искључите табеле."
 
 #. js-lingui-id: zEM7Ne

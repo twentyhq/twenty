@@ -7283,9 +7283,11 @@ msgstr "Puteți seta orice combinație de IMAP (primirea emailurilor), SMTP (tri
 
 #. js-lingui-id: aiJY7y
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "You cannot edit this connection because it has tracked tables.\n"
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
-msgstr "Nu poți edita această conexiune deoarece are mese urmărite.\n"
+msgstr ""
+"Nu poți edita această conexiune deoarece are mese urmărite.\n"
 "Dacă ai nevoie să faci modificări, te rugăm să creezi o nouă conexiune sau să anulezi sincronizarea mesei mai întâi."
 
 #. js-lingui-id: zEM7Ne

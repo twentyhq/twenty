@@ -7283,9 +7283,11 @@ msgstr "Voit määrittää minkä tahansa yhdistelmän IMAP (sähköpostien vast
 
 #. js-lingui-id: aiJY7y
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "You cannot edit this connection because it has tracked tables.\n"
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
-msgstr "Et voi muokata tätä yhteyttä, koska siinä on seurattuja tauluja.\n"
+msgstr ""
+"Et voi muokata tätä yhteyttä, koska siinä on seurattuja tauluja.\n"
 "Jos tarvitset muutoksia, luo uusi yhteys tai katkaise taulujen synkronointi ensin."
 
 #. js-lingui-id: zEM7Ne

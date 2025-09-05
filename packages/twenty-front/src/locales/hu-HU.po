@@ -7283,9 +7283,11 @@ msgstr "Beállíthat bármilyen kombinációt az IMAP (e-mailek fogadása), SMTP
 
 #. js-lingui-id: aiJY7y
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "You cannot edit this connection because it has tracked tables.\n"
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
-msgstr "Nem szerkesztheted ezt a kapcsolatot, mert követett táblák vannak benne.\n"
+msgstr ""
+"Nem szerkesztheted ezt a kapcsolatot, mert követett táblák vannak benne.\n"
 "Ha módosítani szeretnél rajta, hozz létre egy új kapcsolatot vagy szüntesd meg előbb a táblák szinkronizációját."
 
 #. js-lingui-id: zEM7Ne

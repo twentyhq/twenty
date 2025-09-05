@@ -7283,9 +7283,11 @@ msgstr "Du kan sette opp en hvilken som helst kombinasjon av IMAP (motta e-post)
 
 #. js-lingui-id: aiJY7y
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "You cannot edit this connection because it has tracked tables.\n"
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
-msgstr "Du kan ikke redigere denne tilkoblingen fordi den har sporede tabeller.\n"
+msgstr ""
+"Du kan ikke redigere denne tilkoblingen fordi den har sporede tabeller.\n"
 "Hvis du trenger å gjøre endringer, vennligst opprett en ny tilkobling eller opphev synkroniseringen av tabellene først."
 
 #. js-lingui-id: zEM7Ne

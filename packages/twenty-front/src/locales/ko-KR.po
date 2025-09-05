@@ -7283,9 +7283,11 @@ msgstr "IMAP(이메일 수신), SMTP(이메일 발신), CalDAV(캘린더 동기�
 
 #. js-lingui-id: aiJY7y
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "You cannot edit this connection because it has tracked tables.\n"
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
-msgstr "이 연결은 추적된 테이블이 있어 수정할 수 없습니다.\n"
+msgstr ""
+"이 연결은 추적된 테이블이 있어 수정할 수 없습니다.\n"
 "변경이 필요하면 새 연결을 생성하거나 먼저 테이블의 동기화를 해제하세요."
 
 #. js-lingui-id: zEM7Ne

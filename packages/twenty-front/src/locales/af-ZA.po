@@ -7283,9 +7283,11 @@ msgstr "U kan enige kombinasie van IMAP (ontvang e-posse), SMTP (stuur e-posse),
 
 #. js-lingui-id: aiJY7y
 #: src/modules/settings/integrations/database-connection/components/SettingsIntegrationEditDatabaseConnectionContent.tsx
-msgid "You cannot edit this connection because it has tracked tables.\n"
+msgid ""
+"You cannot edit this connection because it has tracked tables.\n"
 "If you need to make changes, please create a new connection or unsync the tables first."
-msgstr "Jy kan nie hierdie verbinding wysig omdat dit opgespoorde tabelle het nie.\n"
+msgstr ""
+"Jy kan nie hierdie verbinding wysig omdat dit opgespoorde tabelle het nie.\n"
 "As jy veranderinge wil aanbring, skep asseblief 'n nuwe verbinding of ontkoppel eers die tabelle."
 
 #. js-lingui-id: zEM7Ne
