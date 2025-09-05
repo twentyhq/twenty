@@ -16,6 +16,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { CreateViewFilterGroupInput } from 'src/engine/core-modules/view/dtos/inputs/create-view-filter-group.input';
 import { UpdateViewFilterGroupInput } from 'src/engine/core-modules/view/dtos/inputs/update-view-filter-group.input';
 import { type ViewFilterGroupDTO } from 'src/engine/core-modules/view/dtos/view-filter-group.dto';
+import {
+  generateViewFilterGroupExceptionMessage,
+  generateViewFilterGroupUserFriendlyExceptionMessage,
+  ViewFilterGroupException,
+  ViewFilterGroupExceptionCode,
+  ViewFilterGroupExceptionMessageKey,
+} from 'src/engine/core-modules/view/exceptions/view-filter-group.exception';
 import { ViewFilterGroupRestApiExceptionFilter } from 'src/engine/core-modules/view/filters/view-filter-group-rest-api-exception.filter';
 import { ViewFilterGroupService } from 'src/engine/core-modules/view/services/view-filter-group.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -46,8 +53,29 @@ export class ViewFilterGroupController {
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<ViewFilterGroupDTO | null> {
-    return this.viewFilterGroupService.findById(id, workspace.id);
+  ): Promise<ViewFilterGroupDTO> {
+    const viewFilterGroup = await this.viewFilterGroupService.findById(
+      id,
+      workspace.id,
+    );
+
+    if (!isDefined(viewFilterGroup)) {
+      throw new ViewFilterGroupException(
+        generateViewFilterGroupExceptionMessage(
+          ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+          id,
+        ),
+        ViewFilterGroupExceptionCode.VIEW_FILTER_GROUP_NOT_FOUND,
+        {
+          userFriendlyMessage:
+            generateViewFilterGroupUserFriendlyExceptionMessage(
+              ViewFilterGroupExceptionMessageKey.VIEW_FILTER_GROUP_NOT_FOUND,
+            ),
+        },
+      );
+    }
+
+    return viewFilterGroup;
   }
 
   @Post()

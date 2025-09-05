@@ -25,6 +25,7 @@ export enum ViewFieldExceptionMessageKey {
   VIEW_FIELD_NOT_FOUND = 'VIEW_FIELD_NOT_FOUND',
   INVALID_VIEW_FIELD_DATA = 'INVALID_VIEW_FIELD_DATA',
   FIELD_METADATA_ID_REQUIRED = 'FIELD_METADATA_ID_REQUIRED',
+  VIEW_FIELD_ALREADY_EXISTS = 'VIEW_FIELD_ALREADY_EXISTS',
 }
 
 export const generateViewFieldExceptionMessage = (
@@ -42,6 +43,8 @@ export const generateViewFieldExceptionMessage = (
       return `Invalid view field data${id ? ` for view field id: ${id}` : ''}`;
     case ViewFieldExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
       return 'FieldMetadataId is required';
+    case ViewFieldExceptionMessageKey.VIEW_FIELD_ALREADY_EXISTS:
+      return 'View field already exists';
     default:
       assertUnreachable(key);
   }
@@ -57,5 +60,7 @@ export const generateViewFieldUserFriendlyExceptionMessage = (
       return t`ViewId is required to create a view field.`;
     case ViewFieldExceptionMessageKey.FIELD_METADATA_ID_REQUIRED:
       return t`FieldMetadataId is required to create a view field.`;
+    case ViewFieldExceptionMessageKey.VIEW_FIELD_ALREADY_EXISTS:
+      return t`View field already exists.`;
   }
 };

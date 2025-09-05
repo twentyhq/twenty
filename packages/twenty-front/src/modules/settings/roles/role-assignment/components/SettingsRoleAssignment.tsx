@@ -1,8 +1,5 @@
-import {
-  currentWorkspaceMemberState,
-  type CurrentWorkspaceMember,
-} from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
 import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
@@ -25,6 +22,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { FeatureFlagKey, type ApiKeyForRole } from '~/generated/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { type PartialWorkspaceMember } from '../../types/RoleWithPartialMembers';
 import { ROLE_ASSIGNMENT_CONFIRMATION_MODAL_ID } from '../constants/RoleAssignmentConfirmationModalId';
 import { ROLE_TARGET_CONFIG } from '../constants/RoleTargetConfig';
 import { buildRoleMaps } from '../utils/build-role-maps';
@@ -127,8 +125,8 @@ export const SettingsRoleAssignment = ({
             workspaceMember: {
               id: member.id,
               name: member.name,
-              colorScheme: '',
-              userEmail: '',
+              userEmail: member.userEmail,
+              avatarUrl: member.avatarUrl,
             },
           });
           break;
@@ -168,7 +166,7 @@ export const SettingsRoleAssignment = ({
   };
 
   const handleSelectEntity = (
-    entity: CurrentWorkspaceMember | Agent | ApiKeyForRole,
+    entity: PartialWorkspaceMember | Agent | ApiKeyForRole,
     entityType: keyof typeof ROLE_TARGET_CONFIG,
   ) => {
     const config = ROLE_TARGET_CONFIG[entityType];

@@ -5,10 +5,16 @@ import chunk from 'lodash.chunk';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { CALENDAR_EVENT_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
-import { CALENDAR_EVENT_PARTICIPANT_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-participant-data-seeds.constant';
+import {
+  CalendarEventParticipantDataSeed,
+  getCalendarEventParticipantDataSeeds,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-participant-data-seeds.constant';
 import { COMPANY_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { MESSAGE_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
-import { MESSAGE_PARTICIPANT_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-participant-data-seeds.constant';
+import {
+  getMessageParticipantDataSeeds,
+  MessageParticipantDataSeed,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-participant-data-seeds.constant';
 import { NOTE_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/note-data-seeds.constant';
 import { NOTE_TARGET_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/note-target-data-seeds.constant';
 import { OPPORTUNITY_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
@@ -116,6 +122,10 @@ export class TimelineActivitySeederService {
     schemaName: string;
     workspaceId: string;
   }) {
+    // Get workspace-specific participant data
+    const calendarEventParticipants =
+      getCalendarEventParticipantDataSeeds(workspaceId);
+    const messageParticipants = getMessageParticipantDataSeeds(workspaceId);
     const timelineActivities: TimelineActivitySeedData[] = [];
     const metadataIds = await this.getObjectMetadataIds(workspaceId);
     let activityIndex = 0;
@@ -159,6 +169,8 @@ export class TimelineActivitySeederService {
           index,
           activityIndex,
           linkedObjectMetadataId,
+          calendarEventParticipants,
+          messageParticipants,
         });
 
         timelineActivities.push(...linkedActivities);
@@ -179,6 +191,8 @@ export class TimelineActivitySeederService {
           index,
           activityIndex,
           linkedObjectMetadataId,
+          calendarEventParticipants,
+          messageParticipants,
         });
 
         timelineActivities.push(...linkedActivities);
@@ -367,14 +381,23 @@ export class TimelineActivitySeederService {
     index,
     activityIndex,
     linkedObjectMetadataId,
+    calendarEventParticipants,
+    messageParticipants,
   }: {
     activityType: 'note' | 'task' | 'calendarEvent' | 'message';
     recordSeed: Record<string, unknown>;
     index: number;
     activityIndex: number;
     linkedObjectMetadataId: string;
+    calendarEventParticipants: CalendarEventParticipantDataSeed[];
+    messageParticipants: MessageParticipantDataSeed[];
   }): TimelineActivitySeedData[] {
-    const targetInfos = this.getActivityTargetInfos(activityType, recordSeed);
+    const targetInfos = this.getActivityTargetInfos(
+      activityType,
+      recordSeed,
+      calendarEventParticipants,
+      messageParticipants,
+    );
 
     if (targetInfos.length === 0) {
       return [];
@@ -395,12 +418,16 @@ export class TimelineActivitySeederService {
   private getActivityTargetInfos(
     activityType: 'note' | 'task' | 'calendarEvent' | 'message',
     recordSeed: Record<string, unknown>,
+    calendarEventParticipants: CalendarEventParticipantDataSeed[],
+    messageParticipants: MessageParticipantDataSeed[],
   ): ActivityTargetInfo[] {
     const targetGetters = {
       note: () => this.getNoteTargetInfos(recordSeed),
       task: () => this.getTaskTargetInfos(recordSeed),
-      calendarEvent: () => this.getCalendarEventTargetInfos(recordSeed),
-      message: () => this.getMessageTargetInfos(recordSeed),
+      calendarEvent: () =>
+        this.getCalendarEventTargetInfos(recordSeed, calendarEventParticipants),
+      message: () =>
+        this.getMessageTargetInfos(recordSeed, messageParticipants),
     };
 
     const getter = targetGetters[activityType];
@@ -462,8 +489,9 @@ export class TimelineActivitySeederService {
 
   private getCalendarEventTargetInfos(
     recordSeed: Record<string, unknown>,
+    calendarEventParticipants: CalendarEventParticipantDataSeed[],
   ): ActivityTargetInfo[] {
-    const eventParticipants = CALENDAR_EVENT_PARTICIPANT_DATA_SEEDS.filter(
+    const eventParticipants = calendarEventParticipants.filter(
       (participant) => participant.calendarEventId === recordSeed.id,
     );
 
@@ -473,7 +501,7 @@ export class TimelineActivitySeederService {
       if (participant.personId) {
         targetInfos.push({
           targetType: 'person',
-          targetId: participant.personId as string,
+          targetId: participant.personId,
         });
 
         const person = PERSON_DATA_SEEDS.find(
@@ -494,14 +522,15 @@ export class TimelineActivitySeederService {
 
   private getMessageTargetInfos(
     recordSeed: Record<string, unknown>,
+    messageParticipants: MessageParticipantDataSeed[],
   ): ActivityTargetInfo[] {
-    const messageParticipants = MESSAGE_PARTICIPANT_DATA_SEEDS.filter(
+    const filteredMessageParticipants = messageParticipants.filter(
       (participant) => participant.messageId === recordSeed.id,
     );
 
     const targetInfos: ActivityTargetInfo[] = [];
 
-    messageParticipants.forEach((participant) => {
+    filteredMessageParticipants.forEach((participant) => {
       if (participant.personId) {
         targetInfos.push({
           targetType: 'person',
@@ -515,7 +544,7 @@ export class TimelineActivitySeederService {
         if (person?.companyId) {
           targetInfos.push({
             targetType: 'company',
-            targetId: person.companyId as string,
+            targetId: person.companyId,
           });
         }
       }

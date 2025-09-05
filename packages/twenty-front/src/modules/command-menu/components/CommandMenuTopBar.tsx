@@ -158,7 +158,7 @@ export const CommandMenuTopBar = () => {
           <Button
             Icon={IconX}
             dataTestId="page-header-close-command-menu-button"
-            size={'small'}
+            size="small"
             variant="secondary"
             accent="default"
             hotkeys={[getOsControlSymbol(), 'K']}

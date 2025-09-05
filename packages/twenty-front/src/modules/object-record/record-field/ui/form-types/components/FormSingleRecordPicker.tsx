@@ -16,6 +16,7 @@ import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useId } from 'react';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -77,6 +78,8 @@ export const FormSingleRecordPicker = ({
   testId,
   VariablePicker,
 }: FormSingleRecordPickerProps) => {
+  const { t } = useLingui();
+
   const theme = useTheme();
   const draftValue: FormSingleRecordPickerValue = isStandaloneVariableString(
     defaultValue,
@@ -177,7 +180,7 @@ export const FormSingleRecordPicker = ({
           <Dropdown
             dropdownId={dropdownId}
             dropdownPlacement="bottom-start"
-            clickableComponentWidth={'100%'}
+            clickableComponentWidth="100%"
             onClose={handleCloseRelationPickerDropdown}
             onOpen={handleOpenDropdown}
             dropdownOffset={{ y: parseInt(theme.spacing(1), 10) }}
@@ -207,7 +210,7 @@ export const FormSingleRecordPicker = ({
                 focusId={dropdownId}
                 componentInstanceId={dropdownId}
                 EmptyIcon={IconForbid}
-                emptyLabel={'No ' + objectNameSingular}
+                emptyLabel={t`No ${objectNameSingular}`}
                 onCancel={() => closeDropdown(dropdownId)}
                 onRecordSelected={handleRecordSelected}
                 objectNameSingular={objectNameSingular}

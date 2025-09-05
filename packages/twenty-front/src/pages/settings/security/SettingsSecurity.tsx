@@ -55,9 +55,9 @@ export const SettingsSecurity = () => {
               adornment={
                 <Tag
                   text={t`Enterprise`}
-                  color={'transparent'}
+                  color="transparent"
                   Icon={IconLock}
-                  variant={'border'}
+                  variant="border"
                 />
               }
             />

@@ -116,7 +116,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                 accent="tertiary"
               />
             }
-            dropdownId={'multi-workspace-dropdown-context-menu'}
+            dropdownId="multi-workspace-dropdown-context-menu"
             dropdownComponents={
               <DropdownContent>
                 <DropdownMenuItemsContainer>

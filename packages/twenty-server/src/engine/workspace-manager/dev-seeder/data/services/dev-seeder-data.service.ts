@@ -20,7 +20,7 @@ import {
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
 import {
   CALENDAR_EVENT_PARTICIPANT_DATA_SEED_COLUMNS,
-  CALENDAR_EVENT_PARTICIPANT_DATA_SEEDS,
+  getCalendarEventParticipantDataSeeds,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-participant-data-seeds.constant';
 import {
   COMPANY_DATA_SEED_COLUMNS,
@@ -43,8 +43,8 @@ import {
   MESSAGE_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
 import {
+  getMessageParticipantDataSeeds,
   MESSAGE_PARTICIPANT_DATA_SEED_COLUMNS,
-  MESSAGE_PARTICIPANT_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-participant-data-seeds.constant';
 import {
   MESSAGE_THREAD_DATA_SEED_COLUMNS,
@@ -83,17 +83,17 @@ import {
   TASK_TARGET_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/task-target-data-seeds.constant';
 import {
+  getWorkspaceMemberDataSeeds,
   WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
-  WORKSPACE_MEMBER_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/prefill-workflows';
 
-const RECORD_SEEDS_CONFIGS = [
+const getRecordSeedsConfigs = (workspaceId: string) => [
   {
     tableName: 'workspaceMember',
     pgColumns: WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
-    recordSeeds: WORKSPACE_MEMBER_DATA_SEEDS,
+    recordSeeds: getWorkspaceMemberDataSeeds(workspaceId),
   },
   {
     tableName: 'company',
@@ -143,7 +143,7 @@ const RECORD_SEEDS_CONFIGS = [
   {
     tableName: 'calendarEventParticipant',
     pgColumns: CALENDAR_EVENT_PARTICIPANT_DATA_SEED_COLUMNS,
-    recordSeeds: CALENDAR_EVENT_PARTICIPANT_DATA_SEEDS,
+    recordSeeds: getCalendarEventParticipantDataSeeds(workspaceId),
   },
   {
     tableName: 'messageChannel',
@@ -168,7 +168,7 @@ const RECORD_SEEDS_CONFIGS = [
   {
     tableName: 'messageParticipant',
     pgColumns: MESSAGE_PARTICIPANT_DATA_SEED_COLUMNS,
-    recordSeeds: MESSAGE_PARTICIPANT_DATA_SEEDS,
+    recordSeeds: getMessageParticipantDataSeeds(workspaceId),
   },
   {
     tableName: '_pet',
@@ -213,7 +213,7 @@ export class DevSeederDataService {
 
     await this.coreDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {
-        for (const recordSeedsConfig of RECORD_SEEDS_CONFIGS) {
+        for (const recordSeedsConfig of getRecordSeedsConfigs(workspaceId)) {
           const objectMetadata = objectMetadataItems.find(
             (item) =>
               computeTableName(item.nameSingular, item.isCustom) ===

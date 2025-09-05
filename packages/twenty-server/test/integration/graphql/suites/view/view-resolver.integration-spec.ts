@@ -39,11 +39,12 @@ describe('View Resolver', () => {
         createOneObject: { id: objectMetadataId },
       },
     } = await createOneObjectMetadata({
+      expectToFail: false,
       input: {
-        nameSingular: 'myTestObject',
-        namePlural: 'myTestObjects',
-        labelSingular: 'My Test Object',
-        labelPlural: 'My Test Objects',
+        nameSingular: 'myViewTestObject',
+        namePlural: 'myViewTestObjects',
+        labelSingular: 'My View Test Object',
+        labelPlural: 'My View Test Objects',
         icon: 'Icon123',
       },
     });
@@ -53,15 +54,13 @@ describe('View Resolver', () => {
 
   afterAll(async () => {
     await deleteOneObjectMetadata({
+      expectToFail: false,
       input: { idToDelete: testObjectMetadataId },
     });
-  });
-
-  beforeEach(async () => {
     await cleanupViewRecords();
   });
 
-  afterAll(async () => {
+  beforeEach(async () => {
     await cleanupViewRecords();
   });
 

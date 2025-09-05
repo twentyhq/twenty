@@ -1,8 +1,8 @@
 import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
-import { type Role } from '~/generated/graphql';
+import { type RoleWithPartialMembers } from '../types/RoleWithPartialMembers';
 
 export const settingsPersistedRoleFamilyState = createFamilyState<
-  Role | undefined,
+  RoleWithPartialMembers | undefined,
   string
 >({
   key: 'settingsPersistedRoleFamilyState',

@@ -1042,6 +1042,12 @@ msgstr "crwdns1125:0crwdne1125:0"
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
 msgstr "crwdns6652:0{connectFieldName}crwdne6652:0"
 
+#. js-lingui-id: 5KfWxA
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "External ID"
+msgstr "crwdns7452:0crwdne7452:0"
+
 #. js-lingui-id: 6Ki4Pv
 #: src/modules/favorite/standard-objects/favorite.workspace-entity.ts
 msgid "Favorite"
@@ -1504,6 +1510,12 @@ msgstr "crwdns1225:0crwdne1225:0"
 msgid "Is Organizer"
 msgstr "crwdns1227:0crwdne1227:0"
 
+#. js-lingui-id: VrHWrH
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Is Sent Folder"
+msgstr "crwdns7458:0crwdne7458:0"
+
 #. js-lingui-id: Mqzqb8
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
 #: src/modules/messaging/common/standard-objects/message-channel.workspace-entity.ts
@@ -1511,6 +1523,12 @@ msgstr "crwdns1227:0crwdne1227:0"
 #: src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity.ts
 msgid "Is Sync Enabled"
 msgstr "crwdns1229:0crwdne1229:0"
+
+#. js-lingui-id: BHCUSr
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+#: src/modules/messaging/common/standard-objects/message-folder.workspace-entity.ts
+msgid "Is Synced"
+msgstr "crwdns7460:0crwdne7460:0"
 
 #. js-lingui-id: 27z+FV
 #: src/modules/person/standard-objects/person.workspace-entity.ts
@@ -1816,6 +1834,11 @@ msgstr "crwdns6654:0{connectFieldName}crwdne6654:0"
 msgid "Morph relation creation payloads must have the same relation type"
 msgstr "crwdns7374:0crwdne7374:0"
 
+#. js-lingui-id: nU54nm
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
+msgid "Morph relation creation payloads must only contain relation to other object metadata"
+msgstr "crwdns7498:0crwdne7498:0"
+
 #. js-lingui-id: Z/Awgf
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
 msgid "Morph relation creation payloads must only contain relation to the same object metadata"
@@ -1853,15 +1876,15 @@ msgstr "crwdns1331:0crwdne1331:0"
 msgid "Name \"{computedMetadataNameFromLabel}\" cannot be the same on both side of the relation"
 msgstr "crwdns6770:0{computedMetadataNameFromLabel}crwdne6770:0"
 
-#. js-lingui-id: 2m6Fru
+#. js-lingui-id: Ge9TXE
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available"
-msgstr "crwdns7286:0{name}crwdne7286:0"
+msgid "Name \"{flatFieldMetadataName}\" is not available"
+msgstr "crwdns7492:0{flatFieldMetadataName}crwdne7492:0"
 
-#. js-lingui-id: U8mbyw
+#. js-lingui-id: h8ic2G
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util.ts
-msgid "Name \"{name}\" is not available as it is already used by another field"
-msgstr "crwdns7288:0{name}crwdne7288:0"
+msgid "Name \"{flatFieldMetadataName}\" is not available as it is already used by another field"
+msgstr "crwdns7494:0{flatFieldMetadataName}crwdne7494:0"
 
 #. js-lingui-id: RGz1nY
 #: src/engine/metadata-modules/field-metadata/services/field-metadata-validation.service.ts
@@ -2843,10 +2866,10 @@ msgstr "crwdns1571:0crwdne1571:0"
 msgid "The workflow version status"
 msgstr "crwdns1573:0crwdne1573:0"
 
-#. js-lingui-id: NbABJb
+#. js-lingui-id: mAs70Y
 #: src/engine/metadata-modules/utils/validate-field-name-availability.utils.ts
-msgid "This name is not available as it is already used by another field"
-msgstr "crwdns6772:0crwdne6772:0"
+msgid "This name is not available as it is already used by another field."
+msgstr "crwdns7466:0crwdne7466:0"
 
 #. js-lingui-id: yIUmAs
 #: src/engine/metadata-modules/utils/validate-metadata-name-is-not-reserved-keyword.ts
@@ -3079,6 +3102,11 @@ msgstr "crwdns1631:0crwdne1631:0"
 #: src/modules/view/standard-objects/view-field.workspace-entity.ts
 msgid "View Field"
 msgstr "crwdns1633:0crwdne1633:0"
+
+#. js-lingui-id: Xm6R6B
+#: src/engine/core-modules/view/exceptions/view-field.exception.ts
+msgid "View field already exists."
+msgstr "crwdns7618:0crwdne7618:0"
 
 #. js-lingui-id: 6jpoH4
 #: src/modules/view/standard-objects/view-group.workspace-entity.ts

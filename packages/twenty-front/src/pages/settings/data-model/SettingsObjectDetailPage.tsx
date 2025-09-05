@@ -157,7 +157,7 @@ export const SettingsObjectDetailPage = () => {
         ]}
         actionButton={
           activeTabId === SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
-            <UndecoratedLink to={'./new-field/select'}>
+            <UndecoratedLink to="./new-field/select">
               <Button
                 title={t`New Field`}
                 variant="primary"

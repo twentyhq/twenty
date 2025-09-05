@@ -27,7 +27,7 @@ export const WorkflowDiagramHandleTarget = ({
 }: WorkflowDiagramHandleTargetProps) => {
   return (
     <StyledHandle
-      type={'target'}
+      type="target"
       position={Position.Top}
       isConnectableEnd={isConnectable}
       isConnectableStart={false}
