@@ -70,14 +70,13 @@ describe('createUpdatedTabLayouts', () => {
     expect(mockTabLayouts['tab-1'].desktop).toHaveLength(1);
   });
 
-  it('should handle undefined desktop/mobile arrays gracefully', () => {
-    const sparseLayouts: TabLayouts = {
+  it('should throw an error for malformed tab layouts', () => {
+    const malformedLayouts: TabLayouts = {
       'tab-1': {} as any,
     };
 
-    const result = createUpdatedTabLayouts(sparseLayouts, 'tab-1', newLayout);
-
-    expect(result['tab-1'].desktop).toHaveLength(1);
-    expect(result['tab-1'].mobile).toHaveLength(1);
+    expect(() => {
+      createUpdatedTabLayouts(malformedLayouts, 'tab-1', newLayout);
+    }).toThrow();
   });
 });
