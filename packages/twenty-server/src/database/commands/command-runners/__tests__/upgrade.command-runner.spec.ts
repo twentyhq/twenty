@@ -389,7 +389,6 @@ describe('UpgradeCommandRunner', () => {
         },
       },
       {
-        only: true,
         title: 'when workspace are already at the app version',
         context: {
           input: {

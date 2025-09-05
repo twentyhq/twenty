@@ -201,9 +201,9 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
       this.migrationReport.fail.push(
         ...workspacesThatAreBelowFromWorkspaceVersion.map((workspace) => ({
           error: new Error(
-            `Not able to run upgrade command, aborting the whole upgrade operation.
-          Please check that all workspaces are at least at the previous minor version ${this.fromWorkspaceVersion.version}
-          If the workspaces are not at the previous minor version, please go back to the previous minor version and run the upgrade command again.`,
+            `Unable to run the upgrade command. Aborting the upgrade process.
+Please ensure that all workspaces are on at least the previous minor version (${this.fromWorkspaceVersion.version}).
+If any workspaces are not on the previous minor version, roll back to that version and run the upgrade command again.`,
           ),
           workspaceId: workspace.id,
         })),
@@ -262,6 +262,12 @@ export abstract class UpgradeCommandRunner extends ActiveOrSuspendedWorkspacesMi
         return;
       }
       case 'higher': {
+        this.logger.log(
+          chalk.blue(
+            `Upgrade for workspace ${workspaceId} ignored as is already at a higher version.`,
+          ),
+        );
+
         return;
       }
       default: {
